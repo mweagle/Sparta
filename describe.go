@@ -127,7 +127,16 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 
 	// Add the root object
 	rootObjectID := serviceName
-	nodes = append(nodes, nodeObject(rootObjectID, "database", 0))
+	rootObjectJSON := &ArbitraryJSONObject{
+		"id":    rootObjectID,
+		"label": rootObjectID,
+		"shape": "star",
+		"size":  30,
+		"font": ArbitraryJSONObject{
+			"size": 30,
+		},
+	}
+	nodes = append(nodes, rootObjectJSON)
 
 	for eachGroup, eachLambda := range lambdaAWSInfos {
 		logger.Info("Appending: ", eachLambda.lambdaFnName)
