@@ -65,6 +65,9 @@ in service.
       - You'll need to change *MY_S3_BUCKET_NAME* to an accessible S3 bucketname
   1. Visit the AWS Lambda console and confirm your Lambda function is accessible
 
+See also the [Sparta Application](https://github.com/mweagle/SpartaApplication) for
+an example.
+
 ### Prerequisites
 
   1. Verify your golang SDK credentials are [properly configured](https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Credentials)
