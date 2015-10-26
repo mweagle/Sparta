@@ -48,17 +48,17 @@ in service.
     // http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html
     const LAMBDA_EXECUTION_ROLE_NAME = "MyLambdaExecutionRole"
 
-      func helloWorld(event *sparta.LambdaEvent,
+    func helloWorld(event *sparta.LambdaEvent,
                      context *sparta.LambdaContext,
                      w *http.ResponseWriter,
                      logger *logrus.Logger) {
 
-        logger.WithFields(logrus.Fields{
-          "RequestID": context.AWSRequestId,
-        }).Info("Hello world log message")
+      logger.WithFields(logrus.Fields{
+        "RequestID": context.AWSRequestId,
+      }).Info("Hello world log message")
 
-        fmt.Fprintf(*w, "Hello World! Data: %s", event)
-      }
+      fmt.Fprintf(*w, "Hello World! Data: %s", event)
+    }
 
     func main() {
       var lambdaFunctions []*sparta.LambdaAWSInfo
