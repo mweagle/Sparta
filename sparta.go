@@ -84,7 +84,7 @@ type lambdaRequest struct {
 //
 // Content written to the ResponseWriter will be used as the
 // response/Error value provided to AWS Lambda.
-type LambdaFunction func(LambdaEvent, LambdaContext, http.ResponseWriter)
+type LambdaFunction func(*LambdaEvent, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
 
 // Additional options for lambda execution.  See the AWS Lambda FunctionConfiguration
 // (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html) docs

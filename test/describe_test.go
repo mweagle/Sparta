@@ -19,12 +19,12 @@ func testLogger() *logrus.Logger {
 	return logger
 }
 
-func mockLambda1(event sparta.LambdaEvent, context sparta.LambdaContext, w http.ResponseWriter) {
-	fmt.Fprintf(w, "mockLambda1!")
+func mockLambda1(event *sparta.LambdaEvent, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(*w, "mockLambda1!")
 }
 
-func mockLambda2(event sparta.LambdaEvent, context sparta.LambdaContext, w http.ResponseWriter) {
-	fmt.Fprintf(w, "mockLambda2!")
+func mockLambda2(event *sparta.LambdaEvent, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(*w, "mockLambda2!")
 }
 
 func sampleData() []*sparta.LambdaAWSInfo {

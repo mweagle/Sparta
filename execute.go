@@ -54,7 +54,7 @@ func (handler *lambdaHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 		http.Error(w, "Unsupported path: "+lambdaFunc, http.StatusBadRequest)
 		return
 	}
-	lambdaAWSInfo.lambdaFn(reqeuest.Event, reqeuest.Context, w)
+	lambdaAWSInfo.lambdaFn(&reqeuest.Event, &reqeuest.Context, &w, handler.logger)
 }
 
 // Creates an HTTP listener to dispatch execution
