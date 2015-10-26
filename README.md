@@ -69,7 +69,7 @@ in service.
                                 sparta.NewLambda(LAMBDA_EXECUTION_ROLE_NAME,
                                 helloWorld,
                                 nil))
-      sparta.Main("SpartaApplication", "This is a sample Sparta application", sampleData())
+      sparta.Main("SpartaApplication", "This is a sample Sparta application", lambdaFunctions)
     }
     ```
   1. `go get ./...`
