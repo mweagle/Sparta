@@ -20,11 +20,17 @@
 
 package sparta
 
+import (
+	"fmt"
+	"github.com/Sirupsen/logrus"
+	"net/http"
+)
+
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func helloWorld(event sparta.LambdaEvent, context sparta.LambdaContext, w http.ResponseWriter) {
-	fmt.Fprintf(w, "Hello World!")
+func mainHelloWorld(event *LambdaEvent, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(*w, "Hello World!")
 }
 
 // Should be main() in your application
@@ -49,8 +55,8 @@ func helloWorld(event sparta.LambdaEvent, context sparta.LambdaContext, w http.R
 //         -p, --port     Alternative port for HTTP binding
 //         -s, --signal   Process ID to signal with SIGUSR2 once ready
 func ExampleMain() {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	helloWorldLambda := sparta.NewLambda("PreexistingAWSLambdaRoleName", helloWorld, nil)
+	var lambdaFunctions []*LambdaAWSInfo
+	helloWorldLambda := NewLambda("PreexistingAWSLambdaRoleName", mainHelloWorld, nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
-	sparta.Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions)
+	Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions)
 }

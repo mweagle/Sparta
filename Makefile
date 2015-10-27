@@ -27,7 +27,7 @@ build: generate
 	GO15VENDOREXPERIMENT=1 go build .
 
 test: build
-	GO15VENDOREXPERIMENT=1 go test ./test/...
+	GO15VENDOREXPERIMENT=1 go test -v .
 
 run: build
 	./sparta
@@ -39,4 +39,4 @@ execute: build
 	./sparta execute
 
 describe: generate
-	GO15VENDOREXPERIMENT=1 go test ./test/test_describe.go
+	go test ./describe_test.go
