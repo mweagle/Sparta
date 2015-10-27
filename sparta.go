@@ -20,7 +20,7 @@
 
 // Per https://blog.golang.org/generate, generate the CONSTANTS.go
 // file from the source resources
-//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources/index.js ./resources/vis/vis.min.css ./resources/vis/vis.min.js
+//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources/index.js ./resources/mermaid/mermaid.css ./resources/mermaid/mermaid.min.js
 
 package sparta
 

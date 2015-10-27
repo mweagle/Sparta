@@ -23,7 +23,7 @@
 package sparta
 
 import (
-	"encoding/json"
+	"bytes"
 	"errors"
 	"fmt"
 	"github.com/Sirupsen/logrus"
@@ -37,56 +37,25 @@ const DESCRIPTION_TEMPLATE = `<!doctype html>
 <head>
   <title>{{ .ServiceName }}</title>
 
-  <script type="text/javascript">
-  {{ .VisJS }}
-  </script>
-  <style> {{ .VisCSS }} </style>
-  <style type="text/css">
-    #lambdaCloud {
-      border: 4px solid lightgray;
+	<style>
+	{{ .MermaidCSS }}
+	</style>
 
-	    max-width: 100%;
-	    max-height: 100%;
-	    bottom: 0;
-	    left: 0;
-	    margin: auto;
-	    overflow: auto;
-	    position: fixed;
-	    right: 0;
-	    top: 0;
+	<script>
+	{{ .MermaidJS}}
 
-    }
-  </style>
+	mermaid.initialize({startOnLoad:true});
+
+	</script>
 </head>
 <body>
-
 	<h3>{{ .ServiceName }} - {{ .ServiceDescription }}</h3>
-	<div id="lambdaCloud"></div>
+	<div class="mermaid">
+		%% Example code
+		graph LR
 
-<script type="text/javascript">
-
-  // create a network
-  var container = document.getElementById('lambdaCloud');
-  var data = {
-    nodes: {{ .Nodes }},
-    edges: {{ .Edges }}
-  };
- 	var options = {
-      layout: {
-      		randomSeed:3,
-          hierarchical: {
-              direction: "LR",
-              sortMethod: "directed"
-          }
-      },
-			edges: {
-			       smooth: true,
-			       arrows: {to : true }
-			}
-	};
-  var network = new vis.Network(container, data, options);
-</script>
-
+    {{ .MermaidData}}
+	</div>
 </body>
 </html>
 `
@@ -111,6 +80,14 @@ func edgeObject(from string, to string, edgeLabel string) *ArbitraryJSONObject {
 	}
 }
 
+func writenode(writer io.Writer, nodeName string) {
+	fmt.Fprintf(writer, "%s[%s]\n", nodeName, nodeName)
+}
+
+func writelink(writer io.Writer, fromNode string, toNode string) {
+	fmt.Fprintf(writer, "%s-->%s\n", fromNode, toNode)
+}
+
 // Produces a graphical representation of your service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
 // line option.
@@ -121,27 +98,17 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		return errors.New(err.Error())
 	}
 
-	// Create the graph
-	nodes := make([]*ArbitraryJSONObject, 0)
-	edges := make([]*ArbitraryJSONObject, 0)
+	var b bytes.Buffer
 
-	// Add the root object
-	rootObjectID := serviceName
-	rootObjectJSON := &ArbitraryJSONObject{
-		"id":    rootObjectID,
-		"label": rootObjectID,
-		"shape": "star",
-		"size":  30,
-		"font": ArbitraryJSONObject{
-			"size": 30,
-		},
-	}
-	nodes = append(nodes, rootObjectJSON)
+	// Setup the root object
+	writenode(&b, serviceName)
+	fmt.Fprintf(&b, "style %s fill:#f9f,stroke:#333,stroke-width:4px;\n", serviceName)
 
-	for eachGroup, eachLambda := range lambdaAWSInfos {
-		logger.Info("Appending: ", eachLambda.lambdaFnName)
-		nodes = append(nodes, nodeObject(eachLambda.lambdaFnName, "box", eachGroup))
-		edges = append(edges, edgeObject(eachLambda.lambdaFnName, rootObjectID, ""))
+	for _, eachLambda := range lambdaAWSInfos {
+		logger.Debug("Appending: ", eachLambda.lambdaFnName)
+		// Create the node...
+		writenode(&b, eachLambda.lambdaFnName)
+		writelink(&b, eachLambda.lambdaFnName, serviceName)
 
 		// Create permission & event mappings
 		// functions declared in this
@@ -150,41 +117,28 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 			if "" != *eachPermission.SourceArn {
 				nodeName = *eachPermission.SourceArn
 			}
-			nodes = append(nodes, nodeObject(nodeName, "dot", eachGroup))
-			edges = append(edges, edgeObject(nodeName, eachLambda.lambdaFnName, *eachPermission.Action))
+			writenode(&b, nodeName)
+			writelink(&b, nodeName, eachLambda.lambdaFnName)
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
 			nodeName := *eachEventSourceMapping.EventSourceArn
-			nodes = append(nodes, nodeObject(nodeName, "dot", eachGroup))
-			edgeLabel := fmt.Sprintf("StartingPosition=%s", *eachEventSourceMapping.StartingPosition)
-			edges = append(edges, edgeObject(nodeName, eachLambda.lambdaFnName, edgeLabel))
+			writenode(&b, nodeName)
+			writelink(&b, nodeName, eachLambda.lambdaFnName)
 		}
 	}
-	logger.Info("Node count: ", len(nodes))
-	nodeContent, err := json.Marshal(nodes)
-	if err != nil {
-		return errors.New("Failed to Marshal node content: " + err.Error())
-	}
-	edgeContent, err := json.Marshal(edges)
-	if err != nil {
-		return errors.New("Failed to Marshal edge template: " + err.Error())
-	}
-
 	params := struct {
 		ServiceName        string
 		ServiceDescription string
-		VisJS              string
-		VisCSS             string
-		Nodes              string
-		Edges              string
+		MermaidCSS         string
+		MermaidJS          string
+		MermaidData        string
 	}{
 		serviceName,
 		serviceDescription,
-		FSMustString(false, "/resources/vis/vis.min.js"),
-		FSMustString(false, "/resources/vis/vis.min.css"),
-		string(nodeContent),
-		string(edgeContent),
+		FSMustString(false, "/resources/mermaid/mermaid.css"),
+		FSMustString(false, "/resources/mermaid/mermaid.min.js"),
+		b.String(),
 	}
 	return tmpl.Execute(outputWriter, params)
 }
