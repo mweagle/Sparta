@@ -1,5 +1,5 @@
 vendor/*
-test/graph.html
+graph.html
 
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
