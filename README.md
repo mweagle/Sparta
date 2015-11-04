@@ -1,6 +1,6 @@
 # Sparta <p align="center">
 
-<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/site/SpartanShieldSmall.png" />
+<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/SpartanShieldSmall.png" />
 </div>
 
 ## Overview
@@ -99,7 +99,7 @@ via the `describe` command line argument.
 go run application.go describe --out ./graph.html && open ./graph.html
 ```
 
-![Description Sample Output](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/site/describe.jpg)
+![Description Sample Output](https://raw.githubusercontent.com/mweagle/Sparta/master/site/describe.jpg)
 
 ## Additional documentation
 
