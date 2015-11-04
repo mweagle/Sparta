@@ -17,7 +17,7 @@ Functions must implement
 
 where
 
-  * `LambdaEvent` :  The arbitrary JSON object data provided to the function.
+  * `LambdaEvent` :  The arbitrary `interface{}` event data provided to the function.
   * `LambdaContext` : _golang_ compatible representation of the AWS Lambda [Context](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html)
   * `http.ResponseWriter` : Writer for response. The HTTP status code & response body is translated to a pass/fail result provided to the `context.done()` handler.
   * `*logrus.Logger` : [logrus](https://github.com/Sirupsen/logrus) logger with JSON output. See an [example](https://github.com/Sirupsen/logrus#example) for including JSON fields.
@@ -32,7 +32,6 @@ Given a set of registered _golang_ functions, Sparta will:
 Note that Lambda updates may be performed with [no interruption](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
 in service.
 
-
 ## Example - Provisioning
 
   1. Create _application.go_ :
@@ -40,6 +39,7 @@ in service.
     package main
 
     import (
+      "encoding/json"
       "fmt"
       "github.com/Sirupsen/logrus"
       sparta "github.com/mweagle/Sparta"
@@ -60,7 +60,11 @@ in service.
         "RequestID": context.AWSRequestId,
       }).Info("Hello world log message")
 
-      fmt.Fprintf(*w, "Hello World! Data: %s", event)
+      eventData, err := json.Marshal(*event)
+      if err != nil {
+        logger.Error("Failed to marshal event data: ", err.Error())
+      }
+      fmt.Fprintf(*w, "Hello World! Event: %s", string(eventData))
     }
 
     func main() {

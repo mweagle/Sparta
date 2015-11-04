@@ -20,6 +20,17 @@
 
 // +build !lambdabinary
 
+// TODO: Include AWS SDK dist https://github.com/aws/aws-sdk-js/blob/master/dist/aws-sdk.js in package to manage custom resources.
+// Per https://blog.golang.org/generate, generate the CONSTANTS.go
+// file from the source resources
+//  	go:generate npm install --prefix=./resources/cloudformation aws-sdk
+//		go:generate rm -rfv ./resources/cloudformation/node_modules/aws-sdk/dist
+//		go:generate rm -rfv ./resources/cloudformation/node_modules/aws-sdk/dist-tools
+//		go:generate sh -c "ls -Rm ./resources/cloudformation/node_modules > ./resources/cloudformation/aws.manifest"
+// First minify them...
+//go:generate go run ./vendor/github.com/tdewolff/minify/cmd/minify/main.go -d ./resources/provision
+// Then embed them
+//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources
 package sparta
 
 import (
@@ -31,10 +42,12 @@ import (
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	_ "github.com/tdewolff/minify/js"
 	"io"
 	"io/ioutil"
 	"os"
@@ -51,28 +64,20 @@ type workflowContext struct {
 	lambdaIAMRoleNameMap map[string]string
 	s3Bucket             string
 	s3LambdaZipKey       string
+	awsSession           *session.Session
 	logger               *logrus.Logger
 }
 
-type workflowStep func(ctx *workflowContext) (workflowStep, error)
-
-/*
-Return an AWS configuration option configured from the command line
-http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
-*/
-func awsConfig() *aws.Config {
-	region := os.Getenv("AWS_DEFAULT_REGION")
-	if "" == region {
-		region = "us-east-1"
-	}
-	return aws.NewConfig().WithRegion(region).WithMaxRetries(3)
+type customResourceManager struct {
 }
+
+type workflowStep func(ctx *workflowContext) (workflowStep, error)
 
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
 	ctx.lambdaIAMRoleNameMap = make(map[string]string, 0)
-	svc := iam.New(awsConfig())
+	svc := iam.New(ctx.awsSession)
 
 	for _, eachLambda := range ctx.lambdaAWSInfos {
 		_, exists := ctx.lambdaIAMRoleNameMap[eachLambda.ExecutionRoleName]
@@ -101,11 +106,11 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	// Create an entry of the form:
 	// exports['foo'] = createForwarder('lambdaInfo.lambdaNama');
-	nodeJSName := sanitizedName(lambdaInfo.lambdaFnName)
-	logger.Info("Creating NodeJS function: " + nodeJSName)
-	return fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
-		nodeJSName,
+	logger.Info("Creating NodeJS function: " + lambdaInfo.jsHandlerName())
+	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
+		lambdaInfo.jsHandlerName(),
 		lambdaInfo.lambdaFnName)
+	return primaryEntry
 }
 
 // Return the StackEvents for the given StackName/StackID
@@ -156,7 +161,6 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, err
 		}
-		// Set the executable bit on the source
 		defer os.Remove(executableOutput)
 
 		// Binary size
@@ -166,7 +170,7 @@ func createPackageStep() workflowStep {
 		}
 		// Minimum hello world size is 2.3M
 		// Minimum HTTP hello world is 6.3M
-		ctx.logger.Debug("Executable binary size (MB): ", stat.Size()/(1024*1024))
+		ctx.logger.Info("Executable binary size (MB): ", stat.Size()/(1024*1024))
 
 		workingDir, err := os.Getwd()
 		if err != nil {
@@ -204,7 +208,7 @@ func createPackageStep() workflowStep {
 			return nil, errors.New("Failed to create ZIP entry: index.js")
 		}
 		nodeJSSource := FSMustString(false, "/resources/index.js")
-		nodeJSSource += "// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
+		nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 		for _, eachLambda := range ctx.lambdaAWSInfos {
 			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
 		}
@@ -220,7 +224,7 @@ func createPackageStep() workflowStep {
 	}
 }
 
-// Upload the
+// Upload the ZIP archive to S3
 func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		ctx.logger.Info("Uploading ZIP archive to S3")
@@ -234,9 +238,6 @@ func createUploadStep(packagePath string) workflowStep {
 			os.Remove(packagePath)
 		}()
 
-		s3Client := s3.New(awsConfig())
-		uploadOptions := &s3manager.UploadOptions{S3: s3Client}
-
 		body, err := os.Open(packagePath)
 		if nil != err {
 			return nil, err
@@ -248,7 +249,7 @@ func createUploadStep(packagePath string) workflowStep {
 			ContentType: aws.String("application/zip"),
 			Body:        body,
 		}
-		uploader := s3manager.NewUploader(uploadOptions)
+		uploader := s3manager.NewUploader(session.New())
 		result, err := uploader.Upload(uploadInput)
 		if nil != err {
 			return nil, err
@@ -261,15 +262,15 @@ func createUploadStep(packagePath string) workflowStep {
 }
 
 // Does a given stack exist?
-func stackExists(stackNameOrID string, logger *logrus.Logger) (bool, error) {
-	awsCloudFormation := cloudformation.New(awsConfig())
+func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger *logrus.Logger) (bool, error) {
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackNameOrID),
 	}
-	describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
 	logger.Debug("DescribeStackOutput: ", describeStacksOutput)
 	exists := false
 	if err != nil {
+		logger.Info("DescribeStackOutputError: ", err)
 		// If the stack doesn't exist, then no worries
 		if strings.Contains(err.Error(), "does not exist") {
 			exists = false
@@ -283,19 +284,20 @@ func stackExists(stackNameOrID string, logger *logrus.Logger) (bool, error) {
 }
 
 func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
+	awsCloudFormation := cloudformation.New(ctx.awsSession)
 
 	// Does it exist?
-	exists, err := stackExists(ctx.serviceName, ctx.logger)
+	exists, err := stackExists(ctx.serviceName, awsCloudFormation, ctx.logger)
 	if nil != err {
 		return nil, err
 	}
-	awsCloudFormation := cloudformation.New(awsConfig())
 	stackID := ""
 	if exists {
 		// Update stack
 		updateStackInput := &cloudformation.UpdateStackInput{
-			StackName:   aws.String(ctx.serviceName),
-			TemplateURL: aws.String(cfTemplateURL),
+			StackName:    aws.String(ctx.serviceName),
+			TemplateURL:  aws.String(cfTemplateURL),
+			Capabilities: []*string{aws.String("CAPABILITY_IAM")},
 		}
 		updateStackResponse, err := awsCloudFormation.UpdateStack(updateStackInput)
 		if nil != err {
@@ -310,6 +312,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			TemplateURL:      aws.String(cfTemplateURL),
 			TimeoutInMinutes: aws.Int64(5),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
+			Capabilities:     []*string{aws.String("CAPABILITY_IAM")},
 		}
 		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
 		if nil != err {
@@ -393,8 +396,6 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 
 func ensureCloudFormationStack(s3Key string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
-		awsConfig := awsConfig()
-
 		// We're going to create a template that represents the new state of the
 		// lambda world.
 		cloudFormationTemplate := ArbitraryJSONObject{
@@ -403,10 +404,13 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		}
 		resources := make(ArbitraryJSONObject, 0)
 		for _, eachEntry := range ctx.lambdaAWSInfos {
-			err := eachEntry.toCloudFormationResources(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, resources)
+			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, resources, ctx.logger)
 			if nil != err {
 				return nil, err
 			}
+			// Custom configuration for each permission - could be handled
+			// in `export`, but putting it here allows us to eliminate
+			// the codepath while building for AWS lambda distribution
 		}
 		cloudFormationTemplate["Resources"] = resources
 
@@ -418,8 +422,6 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		}
 
 		// Upload the template to S3
-		s3Client := s3.New(awsConfig)
-		uploadOptions := &s3manager.UploadOptions{S3: s3Client}
 		contentBody := string(cfTemplate)
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		hash := sha1.New()
@@ -434,8 +436,8 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			ContentType: aws.String("application/json"),
 			Body:        strings.NewReader(contentBody),
 		}
-		ctx.logger.Debug("Cloudformation template:\n", contentBody)
-		uploader := s3manager.NewUploader(uploadOptions)
+		ctx.logger.Debug("CloudFormation template:\n", contentBody)
+		uploader := s3manager.NewUploader(ctx.awsSession)
 		templateUploadResult, err := uploader.Upload(uploadInput)
 		if nil != err {
 			return nil, err
@@ -468,13 +470,27 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 //  https://docs.google.com/document/d/1Bz5-UB7g2uPBdOx-rw5t9MxJwkfpx90cqG9AFL0JAYo/edit
 //  https://medium.com/@freeformz/go-1-5-s-vendor-experiment-fd3e830f52c3#.voiicue1j
 //
+// type Configuration struct {
+//     Val   string
+//     Proxy struct {
+//         Address string
+//         Port    string
+//     }
+// }
+
 func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, s3Bucket string, logger *logrus.Logger) error {
+
 	ctx := &workflowContext{
 		serviceName:        serviceName,
 		serviceDescription: serviceDescription,
 		lambdaAWSInfos:     lambdaAWSInfos,
 		s3Bucket:           s3Bucket,
+		awsSession:         awsSession(logger),
 		logger:             logger}
+
+	// TODO: Append the createCustomResource lambda handler
+	// in case we need to configure push sources.  But what ARN to
+	// use for LambdaExecution?
 
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)
@@ -482,7 +498,7 @@ func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*
 			ctx.logger.Error(err.Error())
 			if "" != ctx.s3LambdaZipKey {
 				ctx.logger.Info("Attempting to cleanup ZIP archive: ", ctx.s3LambdaZipKey)
-				s3Client := s3.New(awsConfig())
+				s3Client := s3.New(ctx.awsSession)
 				params := &s3.DeleteObjectInput{
 					Bucket: aws.String(ctx.s3Bucket),
 					Key:    aws.String(ctx.s3LambdaZipKey),

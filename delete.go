@@ -31,7 +31,10 @@ import (
 // Delete the provided serviceName.  Failing to delete a non-existent
 // service is not considered an error.  Note that the delete does
 func Delete(serviceName string, logger *logrus.Logger) error {
-	exists, err := stackExists(serviceName, logger)
+	session := awsSession(logger)
+	awsCloudFormation := cloudformation.New(session)
+
+	exists, err := stackExists(serviceName, awsCloudFormation, logger)
 	if nil != err {
 		return err
 	}
@@ -40,7 +43,6 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 		params := &cloudformation.DeleteStackInput{
 			StackName: aws.String(serviceName),
 		}
-		awsCloudFormation := cloudformation.New(awsConfig())
 		resp, err := awsCloudFormation.DeleteStack(params)
 		if nil != resp {
 			logger.Info("Stack delete issued: ", resp)

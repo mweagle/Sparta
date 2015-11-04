@@ -32,8 +32,8 @@ import (
 
 type provisionedResources []*cloudformation.StackResourceSummary
 
-func stackLambdaResources(serviceName string, logger *logrus.Logger) (provisionedResources, error) {
-	awsCloudFormation := cloudformation.New(awsConfig())
+func stackLambdaResources(serviceName string, cf *cloudformation.CloudFormation, logger *logrus.Logger) (provisionedResources, error) {
+
 	resources := make(provisionedResources, 0)
 	nextToken := ""
 	for {
@@ -43,7 +43,7 @@ func stackLambdaResources(serviceName string, logger *logrus.Logger) (provisione
 		if "" != nextToken {
 			params.NextToken = aws.String(nextToken)
 		}
-		resp, err := awsCloudFormation.ListStackResources(params)
+		resp, err := cf.ListStackResources(params)
 
 		if err != nil {
 			logger.Error(err.Error())
@@ -83,14 +83,17 @@ func promptForSelection(lambdaFunctions provisionedResources) *cloudformation.St
 
 // Interactively invoke the previously provisioned Lambda functions
 func Explore(serviceName string, logger *logrus.Logger) error {
-	exists, err := stackExists(serviceName, logger)
+	session := awsSession(logger)
+	awsCloudFormation := cloudformation.New(session)
+
+	exists, err := stackExists(serviceName, awsCloudFormation, logger)
 	if nil != err {
 		return err
 	} else if !exists {
 		logger.Info("Stack does not exist: ", serviceName)
 		return nil
 	} else {
-		resources, err := stackLambdaResources(serviceName, logger)
+		resources, err := stackLambdaResources(serviceName, awsCloudFormation, logger)
 		if nil != err {
 			return nil
 		}

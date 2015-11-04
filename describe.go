@@ -29,6 +29,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"io"
 	"strconv"
+	"strings"
 	"text/template"
 )
 
@@ -41,15 +42,33 @@ const DESCRIPTION_TEMPLATE = `<!doctype html>
 	{{ .MermaidCSS }}
 	</style>
 
+
+  <style>
+    body {
+      background-color: #F5F5F5;
+      font-family: "-apple-system", Menlo, Arial, Helvetica, sans-serif;
+      font-size: smaller;
+    }
+    h2 {
+      font-variant: small-caps;
+    }
+  </style>
 	<script>
 	{{ .MermaidJS}}
 
-	mermaid.initialize({startOnLoad:true});
+	mermaid.initialize({startOnLoad:true,
+										htmlLabels: true,
+									  flowchart:{
+									     useMaxWidth: true
+									  }
+										});
 
 	</script>
 </head>
 <body>
-	<h3>{{ .ServiceName }} - {{ .ServiceDescription }}</h3>
+	<h2> {{ .ServiceName }} </h2>
+	<h5> {{ .ServiceDescription }}</h5>
+	<hr />
 	<div class="mermaid">
 		%% Example code
 		graph LR
@@ -80,12 +99,18 @@ func edgeObject(from string, to string, edgeLabel string) *ArbitraryJSONObject {
 	}
 }
 
-func writenode(writer io.Writer, nodeName string) {
+func writenode(writer io.Writer, nodeName string, nodeColor string) {
+	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", nodeName, nodeColor)
 	fmt.Fprintf(writer, "%s[%s]\n", nodeName, nodeName)
 }
 
-func writelink(writer io.Writer, fromNode string, toNode string) {
-	fmt.Fprintf(writer, "%s-->%s\n", fromNode, toNode)
+func writelink(writer io.Writer, fromNode string, toNode string, label string) {
+	if "" != label {
+		fmt.Fprintf(writer, "%s-- \"%s\" -->%s\n", fromNode, label, toNode)
+	} else {
+		fmt.Fprintf(writer, "%s-->%s\n", fromNode, toNode)
+	}
+
 }
 
 // Produces a graphical representation of your service's Lambda and data sources.  Typically
@@ -101,30 +126,28 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 	var b bytes.Buffer
 
 	// Setup the root object
-	writenode(&b, serviceName)
-	fmt.Fprintf(&b, "style %s fill:#f9f,stroke:#333,stroke-width:4px;\n", serviceName)
+	writenode(&b, serviceName, "2AF1EA")
 
 	for _, eachLambda := range lambdaAWSInfos {
 		logger.Debug("Appending: ", eachLambda.lambdaFnName)
 		// Create the node...
-		writenode(&b, eachLambda.lambdaFnName)
-		writelink(&b, eachLambda.lambdaFnName, serviceName)
+		writenode(&b, eachLambda.lambdaFnName, "00A49F")
+		writelink(&b, eachLambda.lambdaFnName, serviceName, "")
 
 		// Create permission & event mappings
 		// functions declared in this
 		for _, eachPermission := range eachLambda.Permissions {
-			nodeName := *eachPermission.Principal
-			if "" != *eachPermission.SourceArn {
-				nodeName = *eachPermission.SourceArn
-			}
-			writenode(&b, nodeName)
-			writelink(&b, nodeName, eachLambda.lambdaFnName)
+			name, link := eachPermission.descriptionInfo()
+
+			// Style it to have the Amazon color
+			writenode(&b, name, "F1702A")
+			writelink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
 			nodeName := *eachEventSourceMapping.EventSourceArn
-			writenode(&b, nodeName)
-			writelink(&b, nodeName, eachLambda.lambdaFnName)
+			writenode(&b, nodeName, "F1702A")
+			writelink(&b, nodeName, eachLambda.lambdaFnName, "")
 		}
 	}
 	params := struct {

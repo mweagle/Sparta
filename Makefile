@@ -19,11 +19,18 @@ get: clean ensure_vendor
 	rm -rf ./src/main/vendor/github.com/voxelbrain/goptions/.git
 	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
 	rm -rf ./src/main/vendor/github.com/mjibson/esc/.git
+	git clone --depth=1 https://github.com/tdewolff/minify ./vendor/github.com/tdewolff/minify
+	rm -rf ./src/main/vendor/github.com/tdewolff/minify/.git
+	git clone --depth=1 https://github.com/tdewolff/buffer ./vendor/github.com/tdewolff/buffer
+	rm -rf ./src/main/vendor/github.com/tdewolff/buffer/.git
 
 generate:
-	go generate
+	go generate -x
 
-build: generate
+vet: generate
+	go vet .
+
+build: generate vet
 	GO15VENDOREXPERIMENT=1 go build .
 
 test: build
@@ -33,10 +40,11 @@ run: build
 	./sparta
 
 provision: build
-	./sparta --level info provision --s3Bucket weagle
+	go run ./applications/hello_world.go --level info provision --s3Bucket weagle
 
 execute: build
 	./sparta execute
 
-describe: generate
-	go test ./describe_test.go
+describe: build
+	rm -rf ./graph.html
+	go test -v -run TestDescribe
