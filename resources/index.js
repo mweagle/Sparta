@@ -39,10 +39,7 @@ function makeRequest(path, event, context) {
     });
     res.on('end', function() {
       var err = (res.statusCode >= 400) ? new Error(body) : null;
-      var doneValue = (res.statusCode <= 299) ? body : null;
-      if (!doneValue && !err) {
-        err = new Error('Unsupported status code: ' + res.statusCode);
-      }
+      var doneValue = ((res.statusCode >= 200) && (res.statusCode <= 299)) ? body : null;
       context.done(err, doneValue);
     });
   });
