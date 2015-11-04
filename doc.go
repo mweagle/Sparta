@@ -18,5 +18,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package sparta supports running golang functions as AWS Lambda handlers
+// The sparta package transforms a set of golang functions into a deployable
+// package that includes:
+// 	1. NodeJS proxy logic
+// 	2. A golang binary
+// 	3. Dynamically generated CloudFormation template that supports: create/update & delete operations.
+//
+// See the Main() docs for more information.
 package sparta
