@@ -18,11 +18,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// The sparta package transforms a set of golang functions into a deployable
-// package that includes:
-// 	1. NodeJS proxy logic
-// 	2. A golang binary
-// 	3. Dynamically generated CloudFormation template that supports create/update & delete operations.
-//
-// See the Main() docs for more information.
 package sparta
+
+import (
+	"fmt"
+	"github.com/Sirupsen/logrus"
+	"net/http"
+)
+
+func lambdaHelloWorld(event *LambdaEvent, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(*w, "Hello World!")
+}
+
+func ExampleNewLambda() {
+	// IAM role is implicitly created to support the lambda execution.
+	//
+	roleDefinition := sparta.IAMRoleDefinition{}
+	roleDefinition.Privileges = append(roleDefinition.Privileges, sparta.IAMRolePrivilege{
+		Actions: []string{"s3:GetObject",
+			"s3:PutObject"},
+		Resource: "arn:aws:s3:::*",
+	})
+	helloWorldLambda := NewLambda(sparta.IAMRoleDefinition{}, lambdaHelloWorld, nil)
+	if nil != helloWorldLambda {
+		fmt.Printf("Failed to create new Lambda function")
+	}
+}
