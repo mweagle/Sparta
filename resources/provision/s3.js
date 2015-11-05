@@ -3,7 +3,7 @@
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
 var response = require('cfn-response');
 var AWS = require('aws-sdk');
-console.log('AWS SDK v.' + AWS.VERSION);
+console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 exports.handler = function(event, context) {
   var responseData = {};
   try {
