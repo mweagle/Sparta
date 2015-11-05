@@ -20,17 +20,13 @@
 
 // +build !lambdabinary
 
-// TODO: Include AWS SDK dist https://github.com/aws/aws-sdk-js/blob/master/dist/aws-sdk.js in package to manage custom resources.
-// Per https://blog.golang.org/generate, generate the CONSTANTS.go
-// file from the source resources
-//  	go:generate npm install --prefix=./resources/cloudformation aws-sdk
-//		go:generate rm -rfv ./resources/cloudformation/node_modules/aws-sdk/dist
-//		go:generate rm -rfv ./resources/cloudformation/node_modules/aws-sdk/dist-tools
-//		go:generate sh -c "ls -Rm ./resources/cloudformation/node_modules > ./resources/cloudformation/aws.manifest"
 // First minify them...
 //go:generate go run ./vendor/github.com/tdewolff/minify/cmd/minify/main.go -d ./resources/provision
+//
 // Then embed them
 //go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources
+//
+
 package sparta
 
 import (
@@ -58,14 +54,15 @@ import (
 )
 
 type workflowContext struct {
-	serviceName          string
-	serviceDescription   string
-	lambdaAWSInfos       []*LambdaAWSInfo
-	lambdaIAMRoleNameMap map[string]string
-	s3Bucket             string
-	s3LambdaZipKey       string
-	awsSession           *session.Session
-	logger               *logrus.Logger
+	serviceName             string
+	serviceDescription      string
+	lambdaAWSInfos          []*LambdaAWSInfo
+	cloudformationResources ArbitraryJSONObject
+	lambdaIAMRoleNameMap    map[string]interface{}
+	s3Bucket                string
+	s3LambdaZipKey          string
+	awsSession              *session.Session
+	logger                  *logrus.Logger
 }
 
 type customResourceManager struct {
@@ -75,26 +72,52 @@ type workflowStep func(ctx *workflowContext) (workflowStep, error)
 
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
+	// The map is either a literal Arn from a pre-existing role name
+	// or a ArbitraryJSONObject{
+	// 	"Fn::GetAtt": []string{iamRoleDefinitionName, "Arn"},
+	// }
+
+	// Don't verify them, just create them...
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
-	ctx.lambdaIAMRoleNameMap = make(map[string]string, 0)
+	ctx.lambdaIAMRoleNameMap = make(map[string]interface{}, 0)
 	svc := iam.New(ctx.awsSession)
 
 	for _, eachLambda := range ctx.lambdaAWSInfos {
-		_, exists := ctx.lambdaIAMRoleNameMap[eachLambda.ExecutionRoleName]
-		if !exists {
-			// Check the role
-			params := &iam.GetRoleInput{
-				RoleName: aws.String(eachLambda.ExecutionRoleName),
+		if "" != eachLambda.RoleName && nil != eachLambda.RoleDefinition {
+			return nil, errors.New("Both RoleName and RoleDefinition defined for lambda: " + eachLambda.lambdaFnName)
+		}
+
+		// Get the IAM role name
+		if "" != eachLambda.RoleName {
+			_, exists := ctx.lambdaIAMRoleNameMap[eachLambda.RoleName]
+			if !exists {
+				// Check the role
+				params := &iam.GetRoleInput{
+					RoleName: aws.String(eachLambda.RoleName),
+				}
+				ctx.logger.Debug("Checking IAM RoleName: ", eachLambda.RoleName)
+				resp, err := svc.GetRole(params)
+				if err != nil {
+					ctx.logger.Error(err.Error())
+					return nil, err
+				}
+				// Cache it - we'll need it later when we create the
+				// CloudFormation template which needs the execution Arn (not role)
+				ctx.lambdaIAMRoleNameMap[eachLambda.RoleName] = *resp.Role.Arn
 			}
-			ctx.logger.Debug("Checking IAM RoleName: ", eachLambda.ExecutionRoleName)
-			resp, err := svc.GetRole(params)
-			if err != nil {
-				ctx.logger.Error(err.Error())
-				return nil, err
+		} else {
+			logicalName := eachLambda.RoleDefinition.logicalName()
+			_, exists := ctx.lambdaIAMRoleNameMap[logicalName]
+			if !exists {
+				// Insert it into the resource creation map and add
+				// the "Ref" entry to the hashmap
+				ctx.cloudformationResources[logicalName] = eachLambda.RoleDefinition.rolePolicy()
+
+				ctx.lambdaIAMRoleNameMap[logicalName] = ArbitraryJSONObject{
+					"Fn::GetAtt": []string{logicalName, "Arn"},
+				}
 			}
-			// Cache it - we'll need it later when we create the
-			// CloudFormation template which needs the execution Arn (not role)
-			ctx.lambdaIAMRoleNameMap[eachLambda.ExecutionRoleName] = *resp.Role.Arn
+
 		}
 	}
 	ctx.logger.Info("IAM roles verified. Count: ", len(ctx.lambdaIAMRoleNameMap))
@@ -402,9 +425,8 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			"AWSTemplateFormatVersion": "2010-09-09",
 			"Description":              ctx.serviceDescription,
 		}
-		resources := make(ArbitraryJSONObject, 0)
 		for _, eachEntry := range ctx.lambdaAWSInfos {
-			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, resources, ctx.logger)
+			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.logger)
 			if nil != err {
 				return nil, err
 			}
@@ -412,7 +434,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			// in `export`, but putting it here allows us to eliminate
 			// the codepath while building for AWS lambda distribution
 		}
-		cloudFormationTemplate["Resources"] = resources
+		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 
 		// Generate a complete CloudFormation template
 		cfTemplate, err := json.Marshal(cloudFormationTemplate)
@@ -481,12 +503,13 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, s3Bucket string, logger *logrus.Logger) error {
 
 	ctx := &workflowContext{
-		serviceName:        serviceName,
-		serviceDescription: serviceDescription,
-		lambdaAWSInfos:     lambdaAWSInfos,
-		s3Bucket:           s3Bucket,
-		awsSession:         awsSession(logger),
-		logger:             logger}
+		serviceName:             serviceName,
+		serviceDescription:      serviceDescription,
+		lambdaAWSInfos:          lambdaAWSInfos,
+		cloudformationResources: make(ArbitraryJSONObject, 0),
+		s3Bucket:                s3Bucket,
+		awsSession:              awsSession(logger),
+		logger:                  logger}
 
 	// TODO: Append the createCustomResource lambda handler
 	// in case we need to configure push sources.  But what ARN to

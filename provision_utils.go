@@ -21,28 +21,12 @@
 package sparta
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/Sirupsen/logrus"
-	"math/rand"
-	"strconv"
+	"reflect"
 	"strings"
-	"time"
 )
-
-func init() {
-	rand.Seed(time.Now().Unix())
-}
-
-var commonIAMStatements = []ArbitraryJSONObject{
-	{
-		"Action":   []string{"logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"},
-		"Effect":   "Allow",
-		"Resource": "arn:aws:logs:*:*:*",
-	},
-}
 
 var PushSourceConfigurationPermissions = map[string][]string{
 	"s3.amazonaws.com": {"s3:GetBucketNotificationConfiguration",
@@ -53,37 +37,24 @@ var PushSourceConfigurationPermissions = map[string][]string{
 		"sns:Unsubscribe"},
 }
 
-func cloudFormationResourceName(prefix string) string {
-	randValue := rand.Int63()
-	hash := sha1.New()
-	hash.Write([]byte(prefix))
-	hash.Write([]byte(strconv.FormatInt(randValue, 10)))
-	return fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
-}
-
 func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	// AWS service basename
 	awsServiceName := strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
-	iamResourceName := fmt.Sprintf("Custom%sIAMRole", awsServiceName)
-	_, exists := resources[iamResourceName]
-	if !exists {
-		logger.Info("Creating IAM Role Resource for AWS service: ", awsServiceName)
-
-		iamRoleDef, err := createIAMRoleResource(awsPrincipalName, sourceArn, logger)
-		if nil != err {
-			return "", err
-		}
-		resources[iamResourceName] = iamRoleDef
+	// TODO - Check sourceArn for equivalence
+	iamResourceName, err := ensureIAMRoleResource(awsPrincipalName, sourceArn, resources, logger)
+	if nil != err {
+		return "", err
 	}
+
 	iamRoleRef := ArbitraryJSONObject{
 		"Fn::GetAtt": []string{iamResourceName, "Arn"},
 	}
 	// Custom handler resource for this service type
-	lambdaHandlerName := fmt.Sprintf("%sNotificationHandler", awsServiceName)
-	_, exists = resources[lambdaHandlerName]
+	subscriberHandlerName := fmt.Sprintf("%sSubscriber", awsServiceName)
+	_, exists := resources[subscriberHandlerName]
 	if !exists {
 		logger.Info("Creating Subscription Lambda Resource for AWS service: ", awsServiceName)
 
@@ -106,58 +77,76 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 				"Timeout": "30",
 			},
 		}
-		resources[lambdaHandlerName] = customResourceHandlerDef
+		resources[subscriberHandlerName] = customResourceHandlerDef
 	}
-	return lambdaHandlerName, nil
+	return subscriberHandlerName, nil
 }
 
-func createIAMRoleResource(awsPrincipalName string, sourceArn string, logger *logrus.Logger) (interface{}, error) {
-
-	statements := commonIAMStatements
-
+func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	principalActions, exists := PushSourceConfigurationPermissions[awsPrincipalName]
 	if !exists {
-		return nil, errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
+		return "", errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
 	}
-	logger.Info("IAMRole Actions: ", principalActions)
 
-	statements = append(statements, ArbitraryJSONObject{
-		"Effect":   "Allow",
-		"Action":   principalActions,
-		"Resource": sourceArn,
-	})
+	// First determine if there is one provisioned...
+	var iamRoleResourceNames []string
+	for eachName, eachResource := range resources {
+		logger.Debug("Checking IAM Policy equality: ", eachName)
+		if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
+			properties := eachResource.(ArbitraryJSONObject)["Properties"]
+			policies := properties.(ArbitraryJSONObject)["Policies"]
+			for _, eachPolicyEntry := range policies.([]ArbitraryJSONObject) {
+				policyDocument := eachPolicyEntry["PolicyDocument"]
+				statements := policyDocument.(ArbitraryJSONObject)["Statement"]
+				for _, eachStatement := range statements.([]ArbitraryJSONObject) {
+					if eachStatement["Resource"] == sourceArn &&
+						reflect.DeepEqual(eachStatement["Action"], principalActions) {
+						iamRoleResourceNames = append(iamRoleResourceNames, eachName)
+					}
+				}
+			}
+		}
+	}
+	logger.WithFields(logrus.Fields{
+		"MatchingIAMRoleNames": iamRoleResourceNames,
+		"PrincipalActions":     principalActions,
+		"Principal":            awsPrincipalName,
+	}).Debug("Ensuring IAM Role results")
 
-	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
-		"Properties": ArbitraryJSONObject{
-			"AssumeRolePolicyDocument": ArbitraryJSONObject{
-				"Version": "2012-10-17",
-				"Statement": []ArbitraryJSONObject{
+	if len(iamRoleResourceNames) > 1 {
+		return "", errors.New("More than 1 IAM Role found for entry: " + awsPrincipalName)
+	} else if len(iamRoleResourceNames) == 1 {
+		logger.Debug("Using prexisting IAM Role: " + iamRoleResourceNames[0])
+		return iamRoleResourceNames[0], nil
+	} else {
+		// Provision a new one and add it...
+		newIAMRoleResourceName := cloudFormationResourceName("IAMRole")
+		logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
+
+		statements := CommonIAMStatements
+		logger.Info("IAMRole Actions: ", principalActions)
+
+		statements = append(statements, ArbitraryJSONObject{
+			"Effect":   "Allow",
+			"Action":   principalActions,
+			"Resource": sourceArn,
+		})
+
+		iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
+			"Properties": ArbitraryJSONObject{
+				"AssumeRolePolicyDocument": AssumePolicyDocument,
+				"Policies": []ArbitraryJSONObject{
 					{
-						"Effect": "Allow",
-						"Principal": ArbitraryJSONObject{
-							"Service": []string{"lambda.amazonaws.com"},
+						"PolicyName": "configurator",
+						"PolicyDocument": ArbitraryJSONObject{
+							"Version":   "2012-10-17",
+							"Statement": statements,
 						},
-						"Action": []string{"sts:AssumeRole"},
-					},
-					{
-						"Effect": "Allow",
-						"Principal": ArbitraryJSONObject{
-							"Service": []string{"ec2.amazonaws.com"},
-						},
-						"Action": []string{"sts:AssumeRole"},
 					},
 				},
 			},
-			"Policies": []ArbitraryJSONObject{
-				{
-					"PolicyName": "configurator",
-					"PolicyDocument": ArbitraryJSONObject{
-						"Version":   "2012-10-17",
-						"Statement": statements,
-					},
-				},
-			},
-		},
+		}
+		resources[newIAMRoleResourceName] = iamPolicy
+		return newIAMRoleResourceName, nil
 	}
-	return iamPolicy, nil
 }
