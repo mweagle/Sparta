@@ -20,7 +20,7 @@ function makeRequest(path, event, context) {
     context: context
   };
   var stringified = JSON.stringify(requestBody);
-  var contentLength = Buffer.byteLength(stringified);
+  var contentLength = Buffer.byteLength(stringified, 'utf-8');
   var options = {
     host: 'localhost',
     port: 9999,
