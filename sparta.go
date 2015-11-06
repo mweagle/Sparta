@@ -1,23 +1,3 @@
-// Copyright (c) 2015 Matt Weagle <mweagle@gmail.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package sparta
 
 import (
@@ -44,26 +24,47 @@ import (
 	"time"
 )
 
+func init() {
+	rand.Seed(time.Now().Unix())
+}
+
+// AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+const (
+	// @enum AWSPrincipal
+	S3Principal = "s3.amazonaws.com"
+	// @enum AWSPrincipal
+	SNSPrincipal = "sns.amazonaws.com"
+	// @enum AWSPrincipal
+	EC2Principal = "ec2.amazonaws.com"
+	// @enum AWSPrincipal
+	LambdaPrincipal = "lambda.amazonaws.com"
+)
+
+// Shared IAM::Role policy document
 var AssumePolicyDocument = ArbitraryJSONObject{
 	"Version": "2012-10-17",
 	"Statement": []ArbitraryJSONObject{
 		{
 			"Effect": "Allow",
 			"Principal": ArbitraryJSONObject{
-				"Service": []string{"lambda.amazonaws.com"},
+				"Service": []string{LambdaPrincipal},
 			},
 			"Action": []string{"sts:AssumeRole"},
 		},
 		{
 			"Effect": "Allow",
 			"Principal": ArbitraryJSONObject{
-				"Service": []string{"ec2.amazonaws.com"},
+				"Service": []string{EC2Principal},
 			},
 			"Action": []string{"sts:AssumeRole"},
 		},
 	},
 }
 
+// Shared IAM::Role Policy Statement values so that all roles have access
+// to CloudFormation Logs.  See
+// http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
+// for more information.
 var CommonIAMStatements = []ArbitraryJSONObject{
 	{
 		"Action":   []string{"logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"},
@@ -75,7 +76,9 @@ var CommonIAMStatements = []ArbitraryJSONObject{
 // RE for sanitizing golang/JS layer
 var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
 
-// Arbitrary JSON key-value object
+// Arbitrary JSON key-value object. CloudFormation resource representations
+// are aggregated as []ArbitraryJSONObject before being marsharled to JSON
+// for API operations.
 type ArbitraryJSONObject map[string]interface{}
 
 // Represents the untyped Event data provided via JSON
@@ -117,56 +120,53 @@ type lambdaRequest struct {
 // response/Error value provided to AWS Lambda.
 type LambdaFunction func(*LambdaEvent, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
 
-type TemplateDecorator func(roleNameMap map[string]string, template ArbitraryJSONObject, logger *logrus.Logger)
-
 // Additional options for lambda execution.  See the AWS Lambda FunctionConfiguration
 // (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html) docs
 // for more information. Note that the "Runtime" field will be automatically set
 // to "nodejs" (at least until golang is officially supported)
 type LambdaFunctionOptions struct {
+	// Additional function description
 	Description string
-	MemorySize  int64
-	Timeout     int64
+	// Memory limit
+	MemorySize int64
+	// Timeout (seconds)
+	Timeout int64
 }
-
-/*
-params := &sns.SubscribeInput{
-	Protocol: aws.String("protocol"), // Required
-	TopicArn: aws.String("topicARN"), // Required
-	Endpoint: aws.String("endpoint"),
-}
-// so we need two custom resources:
-	- 1 to issue the subscription request via http://docs.aws.amazon.com/sdk-for-go/api/service/sns/SNS.html#Subscribe-instance_method
-		- Needs to be parameterized with specific params for this function :(
-	- 1 to ACK the subscription with http://docs.aws.amazon.com/sdk-for-go/api/service/sns/SNS.html#ConfirmSubscription-instance_method
-		- Can be the same ACK for all subscriptions, needs http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html
-*/
-// type SNSAddPermissionInput struct {
-// 	lambda.AddPermissionInput
-// 	TopicARN string
-// }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
+
+// Interface for polymorphic collection of Permission entries that support
+// specialization for additional resource generation.
 type LambdaPermissionExporter interface {
+	// Export the permission object to a set of CloudFormation resources
+	// in the provided resources param.  The targetLambdaFuncRef
+	// interface represents the Fn::GetAtt "Arn" JSON value
+	// of the parent Lambda target
 	export(targetLambdaFuncRef interface{},
 		resources ArbitraryJSONObject,
 		logger *logrus.Logger) (string, error)
+	// Return a `describe` compatible output for the given permission
 	descriptionInfo() (string, string)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// BasePermission
-////////////////////////////////////////////////////////////////////////////////
-///
+// START - BasePermission
+//
+
+// Base Lambda Permission (http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html)
+// type.
 type BasePermission struct {
-	StatementId   string `json:"StatementId,omitempty"`
+	// The AWS account ID (without hyphens) of the source owner
 	SourceAccount string `json:"SourceAccount,omitempty"`
-	SourceArn     string `json:"SourceArn,omitempty"`
-	Qualifier     string `json:"Qualifier,omitempty"`
+	// The ARN of a resource that is invoking your function.
+	SourceArn string `json:"SourceArn,omitempty"`
 }
 
-func (perm BasePermission) export(principal string, targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func (perm BasePermission) export(principal string,
+	targetLambdaFuncRef interface{},
+	resources ArbitraryJSONObject,
+	logger *logrus.Logger) (string, error) {
 	properties := ArbitraryJSONObject{
 		"Action":       "lambda:InvokeFunction",
 		"FunctionName": targetLambdaFuncRef,
@@ -201,8 +201,21 @@ func (perm BasePermission) descriptionInfo(b *bytes.Buffer, logger *logrus.Logge
 	return errors.New("Describe not implemented")
 }
 
+//
+// END - BasePermission
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - LambdaPermission
+//
+
+// Lambda Permission type that creates a Lambda::Permission entry
+// in the generated template, but does NOT automatically register the lambda
+// with the BasePermission.SourceArn.  Typically used to register lambdas with
+// externally managed event producers
 type LambdaPermission struct {
 	BasePermission
+	// The entity for which you are granting permission to invoke the Lambda function
 	Principal string
 }
 
@@ -216,12 +229,22 @@ func (perm LambdaPermission) descriptionInfo() (string, string) {
 	return "Source", perm.BasePermission.SourceArn
 }
 
+//
+// END - LambdaPermission
 ////////////////////////////////////////////////////////////////////////////////
-// S3Permission
+
 ////////////////////////////////////////////////////////////////////////////////
-///
+// START - S3Permission
+//
+
+// Permission data that imples the S3 BasePermission.SourceArn should be
+// updated (via PutBucketNotificationConfiguration) to automatically push
+// events to the parent Lambda.
+// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
+// for more information.
 type S3Permission struct {
 	BasePermission
+	// S3 events to register for.
 	Events []string                           `json:"Events,omitempty"`
 	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
@@ -232,13 +255,19 @@ func (perm S3Permission) bucketName() string {
 }
 
 func (perm S3Permission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
-	targetLambdaResourceName, err := perm.BasePermission.export("s3.amazonaws.com", targetLambdaFuncRef, resources, logger)
+
+	// Verify that the principal is S3
+	if "" != perm.BasePermission.SourceArn && perm.BasePermission.SourceArn != S3Principal {
+		return "", errors.New("Invalid SourceArn for S3Permission: " + perm.BasePermission.SourceArn)
+	}
+
+	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal, targetLambdaFuncRef, resources, logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource("s3.amazonaws.com", perm.SourceArn, resources, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, perm.SourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
@@ -269,7 +298,7 @@ func (perm S3Permission) export(targetLambdaFuncRef interface{}, resources Arbit
 		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
 	}
 	// Save it
-	resourceInvokerName := cloudFormationResourceName(fmt.Sprintf("ConfigS3%s", targetLambdaResourceName))
+	resourceInvokerName := CloudFormationResourceName(fmt.Sprintf("ConfigS3%s", targetLambdaResourceName))
 	resources[resourceInvokerName] = customResourceInvoker
 	return "", nil
 }
@@ -278,10 +307,18 @@ func (perm S3Permission) descriptionInfo() (string, string) {
 	return perm.BasePermission.SourceArn, fmt.Sprintf("%s", perm.Events)
 }
 
+//
+// END - S3Permission
+///////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////////////////
-// SNSPermission
-////////////////////////////////////////////////////////////////////////////////
-///
+// SNSPermission - START
+
+// Permission data that imples the S3 BasePermission.SourceArn should be
+// updated (via PutBucketNotificationConfiguration) to automatically push
+// events to the parent Lambda.
+// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
+// for more information.
 type SNSPermission struct {
 	BasePermission
 }
@@ -292,13 +329,19 @@ func (perm SNSPermission) topicName() string {
 }
 
 func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
-	targetLambdaResourceName, err := perm.BasePermission.export("sns.amazonaws.com", targetLambdaFuncRef, resources, logger)
+
+	// Verify that the principal is S3
+	if "" != perm.BasePermission.SourceArn && perm.BasePermission.SourceArn != SNSPrincipal {
+		return "", errors.New("Invalid SourceArn for SNSPermission: " + perm.BasePermission.SourceArn)
+	}
+
+	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal, targetLambdaFuncRef, resources, logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource("sns.amazonaws.com", perm.SourceArn, resources, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, perm.SourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
@@ -322,7 +365,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources Arbi
 		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
 	}
 	// Save it
-	subscriberResourceName := cloudFormationResourceName(fmt.Sprintf("SubscriberSNS%s", targetLambdaResourceName))
+	subscriberResourceName := CloudFormationResourceName(fmt.Sprintf("SubscriberSNS%s", targetLambdaResourceName))
 	resources[subscriberResourceName] = customResourceSubscriber
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -346,7 +389,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources Arbi
 		"DependsOn": []string{subscriberResourceName},
 	}
 	// Save it
-	unsubscriberResourceName := cloudFormationResourceName(fmt.Sprintf("UnsubscriberSNS%s", targetLambdaResourceName))
+	unsubscriberResourceName := CloudFormationResourceName(fmt.Sprintf("UnsubscriberSNS%s", targetLambdaResourceName))
 	resources[unsubscriberResourceName] = customResourceUnsubscriber
 
 	return "", nil
@@ -357,18 +400,36 @@ func (perm SNSPermission) descriptionInfo() (string, string) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// START - IAM Role handlers
-////////////////////////////////////////////////////////////////////////////////
+// START - IAM
+//
 
+// Stores data necessary to create an IAM Policy Document
+// as part of the inline IAM::Role resource definition.  See
+// http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
+// for more information
 type IAMRolePrivilege struct {
-	Actions  []string
+	// What actions you will allow.
+	// Each AWS service has its own set of actions.
+	// For example, you might allow a user to use the Amazon S3 ListBucket action,
+	// which returns information about the items in a bucket.
+	// Any actions that you don't explicitly allow are denied.
+	Actions []string
+	// Which resources you allow the action on. For example, what specific Amazon
+	// S3 buckets will you allow the user to perform the ListBucket action on?
+	// Users cannot access any resources that you have not explicitly granted
+	// permissions to.
 	Resource string
 }
 
+// Structure that stores a slice of Privileges to enable for the given IAM::Role.
+// Note that the CommonIAMStatements will be automatically included and do
+// not need to be multiply specified.
 type IAMRoleDefinition struct {
+	// Slice of IAMRolePrivilege entries
 	Privileges []IAMRolePrivilege
 }
 
+// Returns an IAM::Role policy entry for this definition
 func (roleDefinition *IAMRoleDefinition) rolePolicy() ArbitraryJSONObject {
 	statements := CommonIAMStatements
 	for _, eachPrivilege := range roleDefinition.Privileges {
@@ -396,17 +457,22 @@ func (roleDefinition *IAMRoleDefinition) rolePolicy() ArbitraryJSONObject {
 	return iamPolicy
 }
 
+// Returns the stable logical name for this IAMRoleDefinition
 func (roleDefinition *IAMRoleDefinition) logicalName() string {
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprintf("%s", roleDefinition.Privileges)))
 	return fmt.Sprintf("IAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 }
 
+//
+// END - IAM
+////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////////////////
 // START - LambdaAWSInfo
-////////////////////////////////////////////////////////////////////////////////
 //
-// Represents data to provision a golang-based NodeJS AWS Lambda function
+
+// Represents data to provision a golang-based AWS Lambda function.
 type LambdaAWSInfo struct {
 	// internal function name, determined by reflection
 	lambdaFnName string
@@ -415,8 +481,10 @@ type LambdaAWSInfo struct {
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
 	// the FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 	// docs for more info.
+	// Note that either `RoleName` or `RoleDefinition` must be supplied
 	RoleName string
-	// Role provider, either as string or a role definition
+	// IAM Role Definition if the stack should implicitly create an IAM role for
+	// lambda execution. Note that either `RoleName` or `RoleDefinition` must be supplied
 	RoleDefinition *IAMRoleDefinition
 	// Additional exeuction options
 	Options *LambdaFunctionOptions
@@ -428,13 +496,12 @@ type LambdaAWSInfo struct {
 	// Event Source docs (http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 	// for more information
 	EventSourceMappings []*lambda.CreateEventSourceMappingInput
-	// TODO: Provide hook for TemplateDecorator
 }
 
-// Return a JavaScript compatible function name to proxy a golang reflection-derived
-// name
+// Returns a JavaScript compatible function name for the golang function name.  This
+// value will be used as the URL path component for the HTTP proxying layer.
 func (info *LambdaAWSInfo) jsHandlerName() string {
-	return reSanitize.ReplaceAllString(info.lambdaFnName, "_")
+	return sanitizedName(info.lambdaFnName)
 }
 
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
@@ -524,12 +591,15 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private
-////////////////////////////////////////////////////////////////////////////////
-// Sanitize a function name
+//
+// Sanitize the provided input by replacing illegal characters with underscores
 func sanitizedName(input string) string {
 	return reSanitize.ReplaceAllString(input, "_")
 }
 
+// Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// object that attaches a debug level handler to all AWS requests from services
+// sharing the session value.
 func awsSession(logger *logrus.Logger) *session.Session {
 	sess := session.New()
 	sess.Handlers.Send.PushFront(func(r *request.Request) {
@@ -544,11 +614,11 @@ func awsSession(logger *logrus.Logger) *session.Session {
 	return sess
 }
 
-func init() {
-	rand.Seed(time.Now().Unix())
-}
-
-func cloudFormationResourceName(prefix string) string {
+// Returns a CloudFormation compatible resource name suitable as a logical
+// ID value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+// for more information.  The `prefix` value should provide a hint as to the
+// resource type (eg, `SNSConfigurator`, `ImageTranscoder`)
+func CloudFormationResourceName(prefix string) string {
 	randValue := rand.Int63()
 	hash := sha1.New()
 	hash.Write([]byte(prefix))
@@ -560,10 +630,12 @@ func cloudFormationResourceName(prefix string) string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
-// Returns a new LambdaAWSInfo struct capable of being provisioned
+// Returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
+// roleNameOrIAMRoleDefinition must either be a `string` or `IAMRoleDefinition`
+// type
 func NewLambda(roleNameOrIAMRoleDefinition interface{}, fn LambdaFunction, lambdaOptions *LambdaFunctionOptions) *LambdaAWSInfo {
 	if nil == lambdaOptions {
-		lambdaOptions = &LambdaFunctionOptions{}
+		lambdaOptions = &LambdaFunctionOptions{"", 128, 3}
 	}
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(fn).Pointer())
 	lambda := &LambdaAWSInfo{
@@ -574,20 +646,17 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{}, fn LambdaFunction, lambd
 		EventSourceMappings: make([]*lambda.CreateEventSourceMappingInput, 0),
 	}
 
-	switch roleNameOrIAMRoleDefinition.(type) {
+	switch v := roleNameOrIAMRoleDefinition.(type) {
 	case string:
 		lambda.RoleName = roleNameOrIAMRoleDefinition.(string)
 	case IAMRoleDefinition:
 		definition := roleNameOrIAMRoleDefinition.(IAMRoleDefinition)
 		lambda.RoleDefinition = &definition
 	default:
-		fmt.Println("unknown")
+		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
 	}
 
 	// Defaults
-	if nil == lambda.Options {
-		lambda.Options = &LambdaFunctionOptions{"", 128, 3}
-	}
 	if lambda.Options.MemorySize <= 0 {
 		lambda.Options.MemorySize = 128
 	}

@@ -1,23 +1,3 @@
-// Copyright (c) 2015 Matt Weagle <mweagle@gmail.com>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-
 package sparta
 
 import (
@@ -28,7 +8,10 @@ import (
 	"strings"
 )
 
-var PushSourceConfigurationPermissions = map[string][]string{
+// Common IAM Policy Actions for Lambda push-source configuration management.
+// The configuration is handled by CustomResources inserted into the generated
+// CloudFormation template.
+var PushSourceConfigurationActions = map[string][]string{
 	"s3.amazonaws.com": {"s3:GetBucketNotificationConfiguration",
 		"s3:PutBucketNotificationConfiguration"},
 	"sns.amazonaws.com": {"sns:ConfirmSubscription",
@@ -83,7 +66,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 }
 
 func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
-	principalActions, exists := PushSourceConfigurationPermissions[awsPrincipalName]
+	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
 	if !exists {
 		return "", errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
 	}
@@ -120,7 +103,7 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 		return iamRoleResourceNames[0], nil
 	} else {
 		// Provision a new one and add it...
-		newIAMRoleResourceName := cloudFormationResourceName("IAMRole")
+		newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
 		logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
 
 		statements := CommonIAMStatements
