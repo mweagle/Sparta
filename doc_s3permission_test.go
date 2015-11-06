@@ -10,6 +10,8 @@ func s3LambdaProcessor(event *sparta.LambdaEvent, context *sparta.LambdaContext,
 	eventData, err := json.Marshal(*event)
 	if err != nil {
 		logger.Error("Failed to marshal event data: ", err.Error())
+		http.Error(*w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	logger.Info("Event data: ", string(eventData))
 }
