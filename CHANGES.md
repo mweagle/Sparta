@@ -20,6 +20,7 @@
     - Changed  [AddPermissionInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-AddPermissionInput) type to _sparta_ types:
       - `LambdaPermission`
       - `S3Permission`
+      - `SNSPermission`
 
 ## v0.0.2
   - Update describe command to use [mermaid](https://github.com/knsv/mermaid) for resource dependency tree
