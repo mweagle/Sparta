@@ -13,7 +13,7 @@ import (
 	"text/template"
 )
 
-const DESCRIPTION_TEMPLATE = `<!doctype html>
+const descriptionTemplate = `<!doctype html>
 <html>
 <head>
   <title>{{ .ServiceName }}</title>
@@ -98,7 +98,7 @@ func writelink(writer io.Writer, fromNode string, toNode string, label string) {
 // line option.
 func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, outputWriter io.Writer, logger *logrus.Logger) error {
 
-	tmpl, err := template.New("description").Parse(DESCRIPTION_TEMPLATE)
+	tmpl, err := template.New("description").Parse(descriptionTemplate)
 	if err != nil {
 		return errors.New(err.Error())
 	}

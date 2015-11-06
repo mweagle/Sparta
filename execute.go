@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-const DEFAULT_HTTP_PORT = 9999
+// Port used for HTTP proxying communication
+const default_HTTP_Port = 9999
 
 type dispatchMap map[string]*LambdaAWSInfo
 
@@ -40,7 +41,7 @@ func (handler *lambdaHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 // Creates an HTTP listener to dispatch execution
 func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, logger *logrus.Logger) error {
 	if port <= 0 {
-		port = DEFAULT_HTTP_PORT
+		port = default_HTTP_Port
 	}
 	logger.Info("Execute!")
 
