@@ -40,7 +40,7 @@ const (
 	LambdaPrincipal = "lambda.amazonaws.com"
 )
 
-// Shared IAM::Role policy document
+// Shared IAM::Role PolicyDocument used as part of IAM::Role resource definitions
 var AssumePolicyDocument = ArbitraryJSONObject{
 	"Version": "2012-10-17",
 	"Statement": []ArbitraryJSONObject{
@@ -244,8 +244,12 @@ func (perm LambdaPermission) descriptionInfo() (string, string) {
 // for more information.
 type S3Permission struct {
 	BasePermission
-	// S3 events to register for.
-	Events []string                           `json:"Events,omitempty"`
+	// S3 events to register for (eg: `[]string{"s3:ObjectCreated:*", "s3:ObjectRemoved:*"}`).
+	Events []string `json:"Events,omitempty"`
+	// S3.NotificationConfigurationFilter
+	// to scope event forwarding.  See
+	// 		http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html
+	// for more information.
 	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
