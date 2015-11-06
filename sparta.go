@@ -260,11 +260,6 @@ func (perm S3Permission) bucketName() string {
 
 func (perm S3Permission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 
-	// Verify that the principal is S3
-	if "" != perm.BasePermission.SourceArn && perm.BasePermission.SourceArn != S3Principal {
-		return "", errors.New("Invalid SourceArn for S3Permission: " + perm.BasePermission.SourceArn)
-	}
-
 	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal, targetLambdaFuncRef, resources, logger)
 	if nil != err {
 		return "", err
@@ -333,11 +328,6 @@ func (perm SNSPermission) topicName() string {
 }
 
 func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
-
-	// Verify that the principal is S3
-	if "" != perm.BasePermission.SourceArn && perm.BasePermission.SourceArn != SNSPrincipal {
-		return "", errors.New("Invalid SourceArn for SNSPermission: " + perm.BasePermission.SourceArn)
-	}
 
 	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal, targetLambdaFuncRef, resources, logger)
 	if nil != err {
