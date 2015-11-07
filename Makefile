@@ -27,12 +27,16 @@ get: clean ensure_vendor
 generate:
 	go generate -x
 
+format:
+		go fmt .
+
 vet: generate
 	go vet .
 
-build: generate vet
+build: generate format vet
 	GO15VENDOREXPERIMENT=1 go build .
-
+	@echo "Build complete"
+	
 test: build
 	GO15VENDOREXPERIMENT=1 go test -v .
 
