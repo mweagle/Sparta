@@ -1,18 +1,24 @@
 package sparta
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"github.com/Sirupsen/logrus"
-	"reflect"
 	"strings"
 )
+
+const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
 
 // Common IAM Policy Actions for Lambda push-source configuration management.
 // The configuration is handled by CustomResources inserted into the generated
 // CloudFormation template.
 var PushSourceConfigurationActions = map[string][]string{
-	"s3.amazonaws.com": {"s3:GetBucketNotificationConfiguration",
+	"s3.amazonaws.com": {"s3:GetBucketLocation",
+		"s3:GetBucketNotification",
+		"s3:PutBucketNotification",
+		"s3:GetBucketNotificationConfiguration",
 		"s3:PutBucketNotificationConfiguration"},
 	"sns.amazonaws.com": {"sns:ConfirmSubscription",
 		"sns:GetTopicAttributes",
@@ -27,7 +33,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
 	// TODO - Check sourceArn for equivalence
-	iamResourceName, err := ensureIAMRoleResource(awsPrincipalName, sourceArn, resources, logger)
+	iamResourceName, err := ensureIAMRoleResource(awsServiceName, awsPrincipalName, sourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
@@ -65,42 +71,27 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	return subscriberHandlerName, nil
 }
 
-func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
 	if !exists {
 		return "", errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
 	}
 
-	// First determine if there is one provisioned...
-	var iamRoleResourceNames []string
-	for eachName, eachResource := range resources {
-		logger.Debug("Checking IAM Policy equality: ", eachName)
-		if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
-			properties := eachResource.(ArbitraryJSONObject)["Properties"]
-			policies := properties.(ArbitraryJSONObject)["Policies"]
-			for _, eachPolicyEntry := range policies.([]ArbitraryJSONObject) {
-				policyDocument := eachPolicyEntry["PolicyDocument"]
-				statements := policyDocument.(ArbitraryJSONObject)["Statement"]
-				for _, eachStatement := range statements.([]ArbitraryJSONObject) {
-					if eachStatement["Resource"] == sourceArn &&
-						reflect.DeepEqual(eachStatement["Action"], principalActions) {
-						iamRoleResourceNames = append(iamRoleResourceNames, eachName)
-					}
-				}
-			}
-		}
-	}
+	hash := sha1.New()
+	hash.Write([]byte(fmt.Sprintf("%s%s", awsPrincipalName, salt)))
+	roleName := fmt.Sprintf("%sConfigIAMRole%s", awsServiceName, hex.EncodeToString(hash.Sum(nil)))
+
 	logger.WithFields(logrus.Fields{
-		"MatchingIAMRoleNames": iamRoleResourceNames,
-		"PrincipalActions":     principalActions,
-		"Principal":            awsPrincipalName,
+		"PrincipalActions": principalActions,
+		"Principal":        awsPrincipalName,
 	}).Debug("Ensuring IAM Role results")
 
-	if len(iamRoleResourceNames) > 1 {
-		return "", errors.New("More than 1 IAM Role found for entry: " + awsPrincipalName)
-	} else if len(iamRoleResourceNames) == 1 {
-		logger.Debug("Using prexisting IAM Role: " + iamRoleResourceNames[0])
-		return iamRoleResourceNames[0], nil
+	_, exists = resources[roleName]
+
+	// If it exists, make sure these permissions are enabled on it...
+	if exists {
+		logger.Debug("Using prexisting IAM Role: " + roleName)
+		return roleName, nil
 	} else {
 		// Provision a new one and add it...
 		newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
@@ -120,7 +111,7 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 				"AssumeRolePolicyDocument": AssumePolicyDocument,
 				"Policies": []ArbitraryJSONObject{
 					{
-						"PolicyName": "configurator",
+						"PolicyName": fmt.Sprintf("%sConfigurator%s", awsServiceName, CloudFormationResourceName("")),
 						"PolicyDocument": ArbitraryJSONObject{
 							"Version":   "2012-10-17",
 							"Statement": statements,
@@ -129,7 +120,7 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 				},
 			},
 		}
-		resources[newIAMRoleResourceName] = iamPolicy
-		return newIAMRoleResourceName, nil
+		resources[roleName] = iamPolicy
+		return roleName, nil
 	}
 }
