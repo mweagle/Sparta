@@ -28,12 +28,12 @@ generate:
 	go generate -x
 
 format:
-		go fmt .
+	go fmt .
 
 vet: generate
 	go vet .
 
-build: generate format vet
+build: format generate vet
 	GO15VENDOREXPERIMENT=1 go build .
 	@echo "Build complete"
 	
