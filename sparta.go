@@ -611,7 +611,8 @@ func awsSession(logger *logrus.Logger) *session.Session {
 // Returns a CloudFormation compatible resource name suitable as a logical
 // ID value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
-// resource type (eg, `SNSConfigurator`, `ImageTranscoder`)
+// resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
+// name is not content-addressable.
 func CloudFormationResourceName(prefix string) string {
 	randValue := rand.Int63()
 	hash := sha1.New()
