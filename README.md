@@ -24,18 +24,20 @@ where
 
 Given a set of registered _golang_ functions, Sparta will:
 
-  * Verify the [IAM roles](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html)
+  * Either verify or provision the defined [IAM roles](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html)
   * Build a deployable application via `Provision()`
   * Zip the contents and associated JS proxying logic
   * Dynamically create a CloudFormation template to either create or update the service state.
+  * Optionally register with S3 and SNS for push source configuration
+
 
 Note that Lambda updates may be performed with [no interruption](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
 in service.
 
-## Example - Provisioning
+## Sample Lambda Application
 
   1. Create _application.go_ :
-    ```
+    ```go
     package main
 
     import (
@@ -46,36 +48,36 @@ in service.
       "net/http"
     )
 
-    // Sparta depends on this role being preconfigured.
-    // To create the Lambda Execution role name, see
-    // http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html
-    const LAMBDA_EXECUTION_ROLE_NAME = "MyLambdaExecutionRole"
-
-    func helloWorld(event *sparta.LambdaEvent,
-                     context *sparta.LambdaContext,
-                     w *http.ResponseWriter,
-                     logger *logrus.Logger) {
+    func echoEvent(event *sparta.LambdaEvent,
+                   context *sparta.LambdaContext,
+                   w *http.ResponseWriter,
+                   logger *logrus.Logger) {
 
       logger.WithFields(logrus.Fields{
         "RequestID": context.AWSRequestId,
-      }).Info("Hello world log message")
+      }).Info("Request received")
 
       eventData, err := json.Marshal(*event)
       if err != nil {
         logger.Error("Failed to marshal event data: ", err.Error())
+        http.Error(*w, err.Error(), http.StatusInternalServerError)
       }
-      fmt.Fprintf(*w, "Hello World! Event: %s", string(eventData))
+      logger.Info("Event data: ", string(eventData))
     }
 
     func main() {
       var lambdaFunctions []*sparta.LambdaAWSInfo
-      lambdaFunctions = append(lambdaFunctions,
-                                sparta.NewLambda(LAMBDA_EXECUTION_ROLE_NAME,
-                                helloWorld,
-                                nil))
-      sparta.Main("SpartaApplication", "This is a sample Sparta application", lambdaFunctions)
+
+      lambdaEcho := sparta.NewLambda(sparta.IAMRoleDefinition{},
+                                      echoEvent,
+                                      nil)
+      lambdaFunctions = append(lambdaFunctions, lambdaEcho)
+      sparta.Main("SpartaEcho",
+                   "This is a sample Sparta application",
+                   lambdaFunctions)
     }
     ```
+
   1. `go get ./...`
   1. `go run application.go provision --s3Bucket MY_S3_BUCKET_NAME`
       - You'll need to change *MY_S3_BUCKET_NAME* to an accessible S3 bucketname
@@ -84,13 +86,26 @@ in service.
 See also the [Sparta Application](https://github.com/mweagle/SpartaApplication) for
 an example.
 
+
+## Examples - Advanced
+
+The `[]sparta.LambdaAWSInfo.Permissions` slice allows Lambda functions to automatically manage remote [event sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources) subscriptions. Push-based event sources are updated via CustomResources that are injected into the CloudFormation template if appropriate.
+
+Examples:
+
+  * [S3 Subscriber](https://github.com/mweagle/Sparta/blob/master/doc_s3permission_test.go)
+  * [SNS Subscriber](https://github.com/mweagle/Sparta/blob/master/doc_snspermission_test.go)
+
+The per-service API logic is inline NodeJS [ZipFile](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-zipfile) code. See the [provision](https://github.com/mweagle/Sparta/tree/master/resources/provision)
+directory for more.
+
 ### Prerequisites
 
   1. Verify your golang SDK credentials are [properly configured](https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Credentials)
-  1. Verify that the Lambda IAM Permissions are [properly configured](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html) and that the correct IAM RoleName is provided to `sparta.NewLambda()`
+  1. If referring to pre-existing IAM Roles, verify that the Lambda IAM Permissions are [properly configured](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html) and that the correct IAM RoleName is provided to `sparta.NewLambda()`
       - More information on the Lambda permission model is available [here](https://aws.amazon.com/blogs/compute/easy-authorization-of-aws-lambda-functions)
 
-## Example - Describing
+## Lambda Flow Graph
 
 It's also possible to generate a visual representation of your Lambda connections
 via the `describe` command line argument.
@@ -112,6 +127,7 @@ Run `godoc -http=:8090 -index=true` in the source directory.
     - Do not run your next [$1B unicorn](https://en.wikipedia.org/wiki/Unicorn_%28finance%29) on it
     - Or if you do, perhaps we should have coffee?
   1. _golang_ isn't officially supported by AWS (yet)
+    - But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
     - Because of this, there is a per-container initialization cost of:
         - Copying the embedded binary to _/tmp_
         - Changing the binary permissions
