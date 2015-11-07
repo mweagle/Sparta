@@ -100,6 +100,8 @@ Examples:
 The per-service API logic is inline NodeJS [ZipFile](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html#cfn-lambda-function-code-zipfile) code. See the [provision](https://github.com/mweagle/Sparta/tree/master/resources/provision)
 directory for more.
 
+See also the [Sparta Application](https://github.com/mweagle/SpartaApplication) for a standalone example.
+
 ### Prerequisites
 
   1. Verify your golang SDK credentials are [properly configured](https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Credentials)
