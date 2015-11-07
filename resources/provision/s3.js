@@ -5,11 +5,9 @@ var response = require('cfn-response');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 // awsConfig.logger = console;
-
 console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
-
+var s3 = new AWS.S3(awsConfig);
 exports.handler = function(event, context) {
-  console.log('EVENT DATA: ' + JSON.stringify(event, null, ' '));
   var responseData = {};
   try {
     var onUpdateConfigResponse = function(e, updateResponse) {
@@ -23,41 +21,49 @@ exports.handler = function(event, context) {
         responseData.Error = e.toString();
         response.send(event, context, response.FAILED, responseData);
       } else if (event.ResourceProperties) {
-        var addIDs = (event.RequestType !== 'Delete') ? [event.ResourceProperties.LambdaTarget] : [];
+        var props = event.ResourceProperties;
+        var addIDs = (event.RequestType !== 'Delete') ? [props.LambdaTarget] : [];
         var removeArns = [];
         if (event.OldResourceProperties && event.OldResourceProperties.LambdaTarget) {
           removeArns.push(event.OldResourceProperties.LambdaTarget);
         }
         if (event.RequestType === 'Delete') {
-          removeArns.push(event.ResourceProperties.LambdaTarget);
+          removeArns.push(props.LambdaTarget);
         }
-        var lambdas = [];
+        var lambdas = configResponse.LambdaFunctionConfigurations || [];
         addIDs.forEach(function() {
-          lambdas.push(event.ResourceProperties.Permission);
-          lambdas[lambdas.length - 1].LambdaFunctionArn = event.ResourceProperties.LambdaTarget;
+          lambdas.push(props.Permission);
+          lambdas[lambdas.length - 1].LambdaFunctionArn = props.LambdaTarget;
         });
-        (configResponse.LambdaFunctionConfigurations || []).forEach(function(eachConfig) {
-          if (removeArns.indexOf(eachConfig.LambdaFunctionArn) !== -1) {
-            lambdas.push(eachConfig);
+        var pruned = {};
+        lambdas.forEach(function(eachConfig) {
+          var arnKey = eachConfig.LambdaFunctionArn;
+          if (removeArns.indexOf(arnKey) === -1) {
+            pruned[arnKey] = eachConfig;
           }
         });
-        configResponse.LambdaFunctionConfigurations = lambdas;
+        configResponse.LambdaFunctionConfigurations = Object.keys(pruned).map(function (e) {return pruned[e];});
         // Put it back
-        var s3 = new AWS.S3(awsConfig);
-        console.log('Bucket: ' + event.ResourceProperties.Bucket + ', Value: ' + JSON.stringify(configResponse));
+        var logMsg = {
+          Remove: removeArns,
+          Add: addIDs,
+          Event: event,
+          Config: configResponse,
+          Type: event.RequestType
+        };
+        console.log('S3 Config: ' + JSON.stringify(logMsg));
         s3.putBucketNotificationConfiguration({
           Bucket: event.ResourceProperties.Bucket,
           NotificationConfiguration: configResponse
         }, onUpdateConfigResponse);
       } else {
         response.send(event, context, response.FAILED, {
-          'Error': 'No ResourceProperties'
+          'Error': 'Invalid props'
         });
       }
     };
-    var s3 = new AWS.S3(awsConfig);
     var params = {
-      Bucket: 'napidocs-log'
+      Bucket: event.ResourceProperties.Bucket
     };
     s3.getBucketNotificationConfiguration(params, onResponse);
   } catch (e) {
