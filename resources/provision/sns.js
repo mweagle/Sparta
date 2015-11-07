@@ -1,14 +1,17 @@
 //http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
 //http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
 var cfnResponse = require('cfn-response');
+var AWS = require('aws-sdk');
+var awsConfig = new AWS.Config({});
+// awsConfig.logger = console;
+
+console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 
 exports.handler = function(event, context) {
   var responseData = {};
   console.log('SNS handler');
   try {
-    var AWS = require('aws-sdk');
-    console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
-    var sns = new AWS.SNS();
+    var sns = new AWS.SNS(awsConfig);
     var mode = (event && event.ResourceProperties) ?
                 event.ResourceProperties.Mode : '';
 

@@ -3,8 +3,13 @@
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
 var response = require('cfn-response');
 var AWS = require('aws-sdk');
+var awsConfig = new AWS.Config({});
+// awsConfig.logger = console;
+
 console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
+
 exports.handler = function(event, context) {
+  console.log('EVENT DATA: ' + JSON.stringify(event, null, ' '));
   var responseData = {};
   try {
     var onUpdateConfigResponse = function(e, updateResponse) {
@@ -38,7 +43,7 @@ exports.handler = function(event, context) {
         });
         configResponse.LambdaFunctionConfigurations = lambdas;
         // Put it back
-        var s3 = new AWS.S3();
+        var s3 = new AWS.S3(awsConfig);
         console.log('Bucket: ' + event.ResourceProperties.Bucket + ', Value: ' + JSON.stringify(configResponse));
         s3.putBucketNotificationConfiguration({
           Bucket: event.ResourceProperties.Bucket,
@@ -50,7 +55,7 @@ exports.handler = function(event, context) {
         });
       }
     };
-    var s3 = new AWS.S3();
+    var s3 = new AWS.S3(awsConfig);
     var params = {
       Bucket: 'napidocs-log'
     };
