@@ -37,6 +37,7 @@ in service.
 ## Sample Lambda Application
 
   1. Create _application.go_ :
+  
     ```go
     package main
 
