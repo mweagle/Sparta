@@ -90,7 +90,7 @@ an example.
 
 ## Examples - Advanced
 
-The `[]sparta.LambdaAWSInfo.Permissions` slice allows Lambda functions to automatically manage remote [event sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources) subscriptions. Push-based event sources are updated via CustomResources that are injected into the CloudFormation template if appropriate.
+The `[]sparta.LambdaAWSInfo.Permissions` slice allows Lambda functions to automatically manage remote [event source](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources) subscriptions. Push-based event sources are updated via CustomResources that are injected into the CloudFormation template if appropriate.
 
 Examples:
 
