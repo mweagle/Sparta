@@ -28,6 +28,11 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
+// Arbitrary JSON key-value object. CloudFormation resource representations
+// are aggregated as []ArbitraryJSONObject before being marsharled to JSON
+// for API operations.
+type ArbitraryJSONObject map[string]interface{}
+
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 const (
 	// @enum AWSPrincipal
@@ -61,25 +66,39 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 	},
 }
 
-// Shared IAM::Role Policy Statement values so that all roles have access
-// to CloudFormation Logs.  See
+// Shared IAM::Role Policy Statement values for different AWS
+// service types.  See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
+// for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
-var CommonIAMStatements = []ArbitraryJSONObject{
-	{
-		"Action":   []string{"logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"},
+var CommonIAMStatements = map[string]ArbitraryJSONObject{
+	"cloudformation": ArbitraryJSONObject{
+		"Action": []string{"logs:CreateLogGroup",
+			"logs:CreateLogStream",
+			"logs:PutLogEvents"},
 		"Effect":   "Allow",
 		"Resource": "arn:aws:logs:*:*:*",
+	},
+	"dynamodb": ArbitraryJSONObject{
+		"Effect": "Allow",
+		"Action": []string{"dynamodb:DescribeStream",
+			"dynamodb:GetRecords",
+			"dynamodb:GetShardIterator",
+			"dynamodb:ListStreams",
+		},
+	},
+	"kinesis": ArbitraryJSONObject{
+		"Effect": "Allow",
+		"Action": []string{"kinesis:GetRecords",
+			"kinesis:GetShardIterator",
+			"kinesis:DescribeStream",
+			"kinesis:ListStreams",
+		},
 	},
 }
 
 // RE for sanitizing golang/JS layer
 var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
-
-// Arbitrary JSON key-value object. CloudFormation resource representations
-// are aggregated as []ArbitraryJSONObject before being marsharled to JSON
-// for API operations.
-type ArbitraryJSONObject map[string]interface{}
 
 // Represents the untyped Event data provided via JSON
 // to a Lambda handler.  See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html
@@ -424,8 +443,8 @@ type IAMRoleDefinition struct {
 }
 
 // Returns an IAM::Role policy entry for this definition
-func (roleDefinition *IAMRoleDefinition) rolePolicy() ArbitraryJSONObject {
-	statements := CommonIAMStatements
+func (roleDefinition *IAMRoleDefinition) rolePolicy(eventSourceMappings []*lambda.CreateEventSourceMappingInput, logger *logrus.Logger) ArbitraryJSONObject {
+	statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
 	for _, eachPrivilege := range roleDefinition.Privileges {
 		statements = append(statements, ArbitraryJSONObject{
 			"Effect":   "Allow",
@@ -434,12 +453,26 @@ func (roleDefinition *IAMRoleDefinition) rolePolicy() ArbitraryJSONObject {
 		})
 	}
 
+	// // http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+	for _, eachEventSourceMapping := range eventSourceMappings {
+		arnParts := strings.Split(*eachEventSourceMapping.EventSourceArn, ":")
+		// 3rd slot is service scope
+		if len(arnParts) >= 2 {
+			awsService := arnParts[2]
+			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
+			serviceStatements, exists := CommonIAMStatements[awsService]
+			if exists {
+				statements = append(statements, serviceStatements)
+				statements[len(statements)-1]["Resource"] = *eachEventSourceMapping.EventSourceArn
+			}
+		}
+	}
 	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
 		"Properties": ArbitraryJSONObject{
 			"AssumeRolePolicyDocument": AssumePolicyDocument,
 			"Policies": []ArbitraryJSONObject{
 				{
-					"PolicyName": "lambdaRole",
+					"PolicyName": CloudFormationResourceName("LambdaPolicy"),
 					"PolicyDocument": ArbitraryJSONObject{
 						"Version":   "2012-10-17",
 						"Statement": statements,
@@ -510,6 +543,9 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 	dependsOn := make([]string, 0)
 
 	iamRoleArnName := info.RoleName
+	// If there is no user supplied role, that means that the associated
+	// IAMRoleDefinition name has been created and this resource needs to
+	// depend on that existing.
 	if iamRoleArnName == "" {
 		iamRoleArnName = info.RoleDefinition.logicalName()
 		dependsOn = append(dependsOn, iamRoleArnName)

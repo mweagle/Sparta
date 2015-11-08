@@ -97,7 +97,7 @@ func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourc
 		newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
 		logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
 
-		statements := CommonIAMStatements
+		statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
 		logger.Info("IAMRole Actions: ", principalActions)
 
 		statements = append(statements, ArbitraryJSONObject{

@@ -91,7 +91,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 			if !exists {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
-				ctx.cloudformationResources[logicalName] = eachLambda.RoleDefinition.rolePolicy()
+				ctx.cloudformationResources[logicalName] = eachLambda.RoleDefinition.rolePolicy(eachLambda.EventSourceMappings, ctx.logger)
 
 				ctx.lambdaIAMRoleNameMap[logicalName] = ArbitraryJSONObject{
 					"Fn::GetAtt": []string{logicalName, "Arn"},
@@ -396,6 +396,93 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	}
 }
 
+func decorateResources(resources ArbitraryJSONObject, logger *logrus.Logger) error {
+
+	// statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
+
+	// // Allow the core IAM policy the ability to STS for any IAM resource
+	// statements = append(statements, ArbitraryJSONObject{
+	// 	"Effect":   "Allow",
+	// 	"Action":   []string{"sts:AssumeRole"},
+	// 	"Resource": "arn:aws:iam::*",
+	// })
+
+	// iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
+	// 	"Properties": ArbitraryJSONObject{
+	// 		"AssumeRolePolicyDocument": AssumePolicyDocument,
+	// 		"Policies": []ArbitraryJSONObject{
+	// 			{
+	// 				"PolicyName": CloudFormationResourceName("IAMRoleSTSChecker"),
+	// 				"PolicyDocument": ArbitraryJSONObject{
+	// 					"Version":   "2012-10-17",
+	// 					"Statement": statements,
+	// 				},
+	// 			},
+	// 		},
+	// 	},
+	// }
+	// iamPolicyName := CloudFormationResourceName("IAMRoleCheck")
+
+	// iamRoleCheckLambda := ArbitraryJSONObject{
+	// 	"Type": "AWS::Lambda::Function",
+	// 	"Properties": ArbitraryJSONObject{
+	// 		"Code": ArbitraryJSONObject{
+	// 			"ZipFile": FSMustString(false, "/resources/provision/iamRoleCheck.min.js"),
+	// 		},
+	// 		"Role": ArbitraryJSONObject{
+	// 			"Fn::GetAtt": []string{iamPolicyName, "Arn"},
+	// 		},
+	// 		"Handler": "index.handler",
+	// 		"Runtime": "nodejs",
+	// 		"Timeout": "30",
+	// 	},
+	// }
+	// iamRoleCheckLambdaName := CloudFormationResourceName("IAMRoleCheckLambda")
+	// resources[iamRoleCheckLambdaName] = iamRoleCheckLambda
+	// // Run through the resources, and if we find any IAM::Role definitions then add a CustomResource that
+	// // depends on them to verify the STS cache is updated...
+	// for eachResourceName, eachResource := range resources {
+	// 	if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
+	// 		logger.Debug("Adding IAM STS check for role: ", eachResourceName)
+	// 		customResourceInvoker := ArbitraryJSONObject{
+	// 			"Type":    "AWS::CloudFormation::CustomResource",
+	// 			"Version": "1.0",
+	// 			"Properties": ArbitraryJSONObject{
+	// 				"ServiceToken": ArbitraryJSONObject{
+	// 					"Fn::GetAtt": []string{iamRoleCheckLambdaName, "Arn"},
+	// 				},
+	// 				"RoleArn": ArbitraryJSONObject{
+	// 					"Fn::GetAtt": []string{eachResourceName, "Arn"},
+	// 				},
+	// 			},
+	// 		}
+	// 		iamCheckInvocationName := CloudFormationResourceName("IAMCheck")
+
+	// 		resources[iamCheckInvocationName] = customResourceInvoker
+
+	// 		// And anything that depends on that role also depends on the role being
+	// 		// validated
+	// 		for _, eachReferrer := range resources {
+	// 			var dependsInterface, ok = eachReferrer.(ArbitraryJSONObject)["DependsOn"]
+	// 			if ok {
+	// 				dependsArray := dependsInterface.([]string)
+	// 				for _, eachMember := range dependsArray {
+	// 					if eachMember == eachResourceName {
+	// 						revisedDepends := append(dependsArray, iamCheckInvocationName)
+	// 						eachReferrer.(ArbitraryJSONObject)["DependsOn"] = revisedDepends
+	// 						break
+	// 					}
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
+	// // Insert it at the end s.t. we don't iterate over it...
+	// resources[iamPolicyName] = iamPolicy
+
+	return nil
+}
+
 func ensureCloudFormationStack(s3Key string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		// We're going to create a template that represents the new state of the
@@ -414,6 +501,9 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			// the codepath while building for AWS lambda distribution
 		}
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
+
+		// Insert the IAM role verification code to allow for STS EC.
+		decorateResources(ctx.cloudformationResources, ctx.logger)
 
 		// Generate a complete CloudFormation template
 		cfTemplate, err := json.Marshal(cloudFormationTemplate)
