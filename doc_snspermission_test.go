@@ -1,30 +1,29 @@
 package sparta
 
+import (
+	"encoding/json"
+	"github.com/Sirupsen/logrus"
+	"net/http"
+)
+
 const SNS_TOPIC = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
 
-func snsProcessor(event *sparta.LambdaEvent, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func snsProcessor(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestId,
 	}).Info("SNSEvent")
-
-	eventData, err := json.Marshal(*event)
-	if err != nil {
-		logger.Error("Failed to marshal event data: ", err.Error())
-		http.Error(*w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	logger.Info("Event data: ", string(eventData))
+	logger.Info("Event data: ", string(*event))
 }
 
 func ExampleSNSPermission() {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
+	var lambdaFunctions []*LambdaAWSInfo
 
-	snsLambda := sparta.NewLambda(sparta.IAMRoleDefinition{}, snsProcessor, nil)
-	lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-		BasePermission: sparta.BasePermission{
+	snsLambda := NewLambda(IAMRoleDefinition{}, snsProcessor, nil)
+	snsLambda.Permissions = append(snsLambda.Permissions, SNSPermission{
+		BasePermission: BasePermission{
 			SourceArn: SNS_TOPIC,
 		},
 	})
 	lambdaFunctions = append(lambdaFunctions, snsLambda)
-	sparta.Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions)
+	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions)
 }

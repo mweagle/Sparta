@@ -17,7 +17,7 @@
       - Describe now includes push/pull Lambda event sources
     - Fixed latent bug where Lambda functions didn't have CloudFormation::Log privileges
   - :warning: **BREAKING**
-    - Changed `LambdaEvent` type to `interface{}`
+    - Changed `LambdaEvent` type to `json.RawMessage`
     - Changed  [AddPermissionInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-AddPermissionInput) type to _sparta_ types:
       - `LambdaPermission`
       - `S3Permission`

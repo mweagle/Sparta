@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/Sirupsen/logrus"
@@ -100,11 +101,6 @@ var CommonIAMStatements = map[string]ArbitraryJSONObject{
 // RE for sanitizing golang/JS layer
 var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
 
-// Represents the untyped Event data provided via JSON
-// to a Lambda handler.  See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-handler.html
-// for more information
-type LambdaEvent interface{}
-
 // Represents the Lambda Context object provided by the AWS Lambda runtime.
 // See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
 // for more information on field values.  Note that the golang version doesn't functions
@@ -123,8 +119,8 @@ type LambdaContext struct {
 // Package private type to deserialize NodeJS proxied
 // Lambda Event and Context information
 type lambdaRequest struct {
-	Event   LambdaEvent   `json:"event"`
-	Context LambdaContext `json:"context"`
+	Event   json.RawMessage `json:"event"`
+	Context LambdaContext   `json:"context"`
 }
 
 // golang AWS Lambda handler function signature.  Standard HTTP response codes
@@ -137,7 +133,7 @@ type lambdaRequest struct {
 //
 // Content written to the ResponseWriter will be used as the
 // response/Error value provided to AWS Lambda.
-type LambdaFunction func(*LambdaEvent, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
+type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
 
 // Additional options for lambda execution.  See the AWS Lambda FunctionConfiguration
 // (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html) docs

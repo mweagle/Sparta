@@ -1,12 +1,13 @@
 package sparta
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"net/http"
 )
 
-func lambdaHelloWorld(event *LambdaEvent, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func lambdaHelloWorld(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(*w, "Hello World!")
 }
 

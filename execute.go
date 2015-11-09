@@ -24,18 +24,22 @@ func (handler *lambdaHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 	// Remove the leading slash and dispatch it to the golang handler
 	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
 	decoder := json.NewDecoder(req.Body)
-	var reqeuest lambdaRequest
-	err := decoder.Decode(&reqeuest)
+	var request lambdaRequest
+	err := decoder.Decode(&request)
 	if nil != err {
 		http.Error(w, "Failed to decode request", http.StatusBadRequest)
 		return
 	}
+	handler.logger.WithFields(logrus.Fields{
+		"Request": request,
+	}).Debug("Dispatching")
+
 	lambdaAWSInfo := handler.lambdaDispatchMap[lambdaFunc]
 	if nil == lambdaAWSInfo {
 		http.Error(w, "Unsupported path: "+lambdaFunc, http.StatusBadRequest)
 		return
 	}
-	lambdaAWSInfo.lambdaFn(&reqeuest.Event, &reqeuest.Context, &w, handler.logger)
+	lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, &w, handler.logger)
 }
 
 // Creates an HTTP listener to dispatch execution

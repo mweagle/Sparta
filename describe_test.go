@@ -2,6 +2,7 @@ package sparta_test
 
 import (
 	sparta "Sparta"
+	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
@@ -13,11 +14,11 @@ import (
 
 const LAMBDA_EXECUTE_ARN = "LambdaExecutor"
 
-func mockLambda1(event *sparta.LambdaEvent, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func mockLambda1(event *json.RawMessage, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(*w, "mockLambda1!")
 }
 
-func mockLambda2(event *sparta.LambdaEvent, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func mockLambda2(event *json.RawMessage, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(*w, "mockLambda2!")
 }
 
@@ -26,8 +27,7 @@ func sampleData() []*sparta.LambdaAWSInfo {
 	lambdaFn := sparta.NewLambda(LAMBDA_EXECUTE_ARN, mockLambda1, nil)
 	lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
 		BasePermission: sparta.BasePermission{
-			StatementId: "MyUniqueID",
-			SourceArn:   "arn:aws:s3:::sampleBucket",
+			SourceArn: "arn:aws:s3:::sampleBucket",
 		},
 		// Event Filters are defined at
 		// http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html
@@ -36,8 +36,7 @@ func sampleData() []*sparta.LambdaAWSInfo {
 
 	lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 		BasePermission: sparta.BasePermission{
-			StatementId: "MyUniqueID",
-			SourceArn:   "arn:aws:sns:us-west-2:000000000000:someTopic",
+			SourceArn: "arn:aws:sns:us-west-2:000000000000:someTopic",
 		},
 	})
 

@@ -44,7 +44,7 @@ run: build
 	./sparta
 
 provision: build
-	go run ./applications/hello_world.go --level info provision --s3Bucket weagle
+	go run ./applications/hello_world.go --level info provision --s3Bucket $(S3_BUCKET)
 
 execute: build
 	./sparta execute

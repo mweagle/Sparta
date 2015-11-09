@@ -10,17 +10,17 @@ Sparta takes a set of _golang_ functions and automatically provisions them in
 
 Functions must implement
 
-    type LambdaFunction func(*LambdaEvent,
+    type LambdaFunction func(*json.RawMessage,
                               *LambdaContext,
                               *http.ResponseWriter,
                               *logrus.Logger)
 
 where
 
-  * `LambdaEvent` :  The arbitrary `interface{}` event data provided to the function.
+  * `json.RawMessage` :  The arbitrary `json.RawMessage` event data provided to the function.
   * `LambdaContext` : _golang_ compatible representation of the AWS Lambda [Context](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html)
   * `http.ResponseWriter` : Writer for response. The HTTP status code & response body is translated to a pass/fail result provided to the `context.done()` handler.
-  * `*logrus.Logger` : [logrus](https://github.com/Sirupsen/logrus) logger with JSON output. See an [example](https://github.com/Sirupsen/logrus#example) for including JSON fields.
+  * `logrus.Logger` : [logrus](https://github.com/Sirupsen/logrus) logger with JSON output. See an [example](https://github.com/Sirupsen/logrus#example) for including JSON fields.
 
 Given a set of registered _golang_ functions, Sparta will:
 

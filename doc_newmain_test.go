@@ -1,6 +1,7 @@
 package sparta
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func mainHelloWorld(event *LambdaEvent, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func mainHelloWorld(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(*w, "Hello World!")
 }
 
