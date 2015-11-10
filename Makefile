@@ -36,13 +36,16 @@ vet: generate
 build: format generate vet
 	GO15VENDOREXPERIMENT=1 go build .
 	@echo "Build complete"
-	
+
 test: build
 	GO15VENDOREXPERIMENT=1 go test -v .
 
 run: build
 	./sparta
 
+tags:
+	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .
+	
 provision: build
 	go run ./applications/hello_world.go --level info provision --s3Bucket $(S3_BUCKET)
 
