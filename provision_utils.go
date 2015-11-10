@@ -5,13 +5,15 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
 )
 
 const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
 
-// Common IAM Policy Actions for Lambda push-source configuration management.
+// PushSourceConfigurationActions map stores common IAM Policy Actions for Lambda
+// push-source configuration management.
 // The configuration is handled by CustomResources inserted into the generated
 // CloudFormation template.
 var PushSourceConfigurationActions = map[string][]string{
@@ -92,35 +94,35 @@ func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourc
 	if exists {
 		logger.Debug("Using prexisting IAM Role: " + roleName)
 		return roleName, nil
-	} else {
-		// Provision a new one and add it...
-		newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
-		logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
+	}
 
-		statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
-		logger.Info("IAMRole Actions: ", principalActions)
+	// Provision a new one and add it...
+	newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
+	logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
 
-		statements = append(statements, ArbitraryJSONObject{
-			"Effect":   "Allow",
-			"Action":   principalActions,
-			"Resource": sourceArn,
-		})
+	statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
+	logger.Info("IAMRole Actions: ", principalActions)
 
-		iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
-			"Properties": ArbitraryJSONObject{
-				"AssumeRolePolicyDocument": AssumePolicyDocument,
-				"Policies": []ArbitraryJSONObject{
-					{
-						"PolicyName": fmt.Sprintf("%sConfigurator%s", awsServiceName, CloudFormationResourceName("")),
-						"PolicyDocument": ArbitraryJSONObject{
-							"Version":   "2012-10-17",
-							"Statement": statements,
-						},
+	statements = append(statements, ArbitraryJSONObject{
+		"Effect":   "Allow",
+		"Action":   principalActions,
+		"Resource": sourceArn,
+	})
+
+	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
+		"Properties": ArbitraryJSONObject{
+			"AssumeRolePolicyDocument": AssumePolicyDocument,
+			"Policies": []ArbitraryJSONObject{
+				{
+					"PolicyName": fmt.Sprintf("%sConfigurator%s", awsServiceName, CloudFormationResourceName("")),
+					"PolicyDocument": ArbitraryJSONObject{
+						"Version":   "2012-10-17",
+						"Statement": statements,
 					},
 				},
 			},
-		}
-		resources[roleName] = iamPolicy
-		return roleName, nil
+		},
 	}
+	resources[roleName] = iamPolicy
+	return roleName, nil
 }

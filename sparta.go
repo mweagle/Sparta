@@ -8,12 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/voxelbrain/goptions"
 	"math/rand"
 	"net/http"
 	"os"
@@ -23,13 +17,20 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/voxelbrain/goptions"
 )
 
 func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-// Arbitrary JSON key-value object. CloudFormation resource representations
+// ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
 // for API operations.
 type ArbitraryJSONObject map[string]interface{}
@@ -46,7 +47,8 @@ const (
 	LambdaPrincipal = "lambda.amazonaws.com"
 )
 
-// Shared IAM::Role PolicyDocument used as part of IAM::Role resource definitions
+// AssumePolicyDocument defines common a IAM::Role PolicyDocument
+// used as part of IAM::Role resource definitions
 var AssumePolicyDocument = ArbitraryJSONObject{
 	"Version": "2012-10-17",
 	"Statement": []ArbitraryJSONObject{
@@ -67,7 +69,7 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 	},
 }
 
-// Shared IAM::Role Policy Statement values for different AWS
+// CommonIAMStatements defines common IAM::Role Policy Statement values for different AWS
 // service types.  See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 // for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
@@ -101,12 +103,12 @@ var CommonIAMStatements = map[string]ArbitraryJSONObject{
 // RE for sanitizing golang/JS layer
 var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
 
-// Represents the Lambda Context object provided by the AWS Lambda runtime.
+// LambdaContext defines the AWS Lambda Context object provided by the AWS Lambda runtime.
 // See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
 // for more information on field values.  Note that the golang version doesn't functions
 // defined on the Context object.
 type LambdaContext struct {
-	AWSRequestId       string `json:"awsRequestId"`
+	AWSRequestID       string `json:"awsRequestId"`
 	InvokeID           string `json:"invokeid"`
 	LogGroupName       string `json:"logGroupName"`
 	LogStreamName      string `json:"logStreamName"`
@@ -123,10 +125,10 @@ type lambdaRequest struct {
 	Context LambdaContext   `json:"context"`
 }
 
-// golang AWS Lambda handler function signature.  Standard HTTP response codes
-// are used to signal AWS Lambda success/failure on the proxied context() object.
-// See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html for
-// more information.
+// LambdaFunction is the golang function signature required to support AWS Lambda execution.
+// Standard HTTP response codes are used to signal AWS Lambda success/failure on the
+// proxied context() object.  See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
+// for more information.
 //
 // 	200 - 299       : Success
 // 	<200 || >= 300  : Failure
@@ -135,9 +137,9 @@ type lambdaRequest struct {
 // response/Error value provided to AWS Lambda.
 type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
 
-// Additional options for lambda execution.  See the AWS Lambda FunctionConfiguration
-// (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html) docs
-// for more information. Note that the "Runtime" field will be automatically set
+// LambdaFunctionOptions defines additional AWS Lambda execution params.  See the
+// AWS Lambda FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
+// docs for more information. Note that the "Runtime" field will be automatically set
 // to "nodejs" (at least until golang is officially supported)
 type LambdaFunctionOptions struct {
 	// Additional function description
@@ -151,8 +153,8 @@ type LambdaFunctionOptions struct {
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
 
-// Interface for polymorphic collection of Permission entries that support
-// specialization for additional resource generation.
+// LambdaPermissionExporter defines an interface for polymorphic collection of
+// Permission entries that support specialization for additional resource generation.
 type LambdaPermissionExporter interface {
 	// Export the permission object to a set of CloudFormation resources
 	// in the provided resources param.  The targetLambdaFuncRef
@@ -169,8 +171,8 @@ type LambdaPermissionExporter interface {
 // START - BasePermission
 //
 
-// Base Lambda Permission (http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html)
-// type.
+// BasePermission (http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html)
+// type for common AWS Lambda permission data.
 type BasePermission struct {
 	// The AWS account ID (without hyphens) of the source owner
 	SourceAccount string `json:"SourceAccount,omitempty"`
@@ -224,7 +226,7 @@ func (perm BasePermission) descriptionInfo(b *bytes.Buffer, logger *logrus.Logge
 // START - LambdaPermission
 //
 
-// Lambda Permission type that creates a Lambda::Permission entry
+// LambdaPermission type that creates a Lambda::Permission entry
 // in the generated template, but does NOT automatically register the lambda
 // with the BasePermission.SourceArn.  Typically used to register lambdas with
 // externally managed event producers
@@ -252,9 +254,9 @@ func (perm LambdaPermission) descriptionInfo() (string, string) {
 // START - S3Permission
 //
 
-// Permission data that imples the S3 BasePermission.SourceArn should be
+// S3Permission struct that imples the S3 BasePermission.SourceArn should be
 // updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the parent Lambda.
+// events to the owning Lambda.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
 // for more information.
 type S3Permission struct {
@@ -328,7 +330,7 @@ func (perm S3Permission) descriptionInfo() (string, string) {
 ////////////////////////////////////////////////////////////////////////////////
 // SNSPermission - START
 
-// Permission data that imples the S3 BasePermission.SourceArn should be
+// SNSPermission struct that imples the S3 BasePermission.SourceArn should be
 // updated (via PutBucketNotificationConfiguration) to automatically push
 // events to the parent Lambda.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
@@ -412,7 +414,7 @@ func (perm SNSPermission) descriptionInfo() (string, string) {
 // START - IAM
 //
 
-// Stores data necessary to create an IAM Policy Document
+// IAMRolePrivilege struct stores data necessary to create an IAM Policy Document
 // as part of the inline IAM::Role resource definition.  See
 // http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 // for more information
@@ -430,7 +432,8 @@ type IAMRolePrivilege struct {
 	Resource string
 }
 
-// Structure that stores a slice of Privileges to enable for the given IAM::Role.
+// IAMRoleDefinition stores a slice of IAMRolePrivilege values
+// to "Allow" for the given IAM::Role.
 // Note that the CommonIAMStatements will be automatically included and do
 // not need to be multiply specified.
 type IAMRoleDefinition struct {
@@ -495,7 +498,7 @@ func (roleDefinition *IAMRoleDefinition) logicalName() string {
 // START - LambdaAWSInfo
 //
 
-// Represents data to provision a golang-based AWS Lambda function.
+// LambdaAWSInfo stores all data necessary to provision a golang-based AWS Lambda function.
 type LambdaAWSInfo struct {
 	// internal function name, determined by reflection
 	lambdaFnName string
@@ -536,7 +539,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 	logger *logrus.Logger) error {
 
 	// If we have RoleName, then get the ARN, otherwise get the Ref
-	dependsOn := make([]string, 0)
+	var dependsOn []string
 
 	iamRoleArnName := info.RoleName
 	// If there is no user supplied role, that means that the associated
@@ -640,8 +643,8 @@ func awsSession(logger *logrus.Logger) *session.Session {
 	return sess
 }
 
-// Returns a CloudFormation compatible resource name suitable as a logical
-// ID value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+// CloudFormationResourceName returns a name suitable as a logical
+// CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
@@ -657,7 +660,7 @@ func CloudFormationResourceName(prefix string) string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
-// Returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
+// NewLambda returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
 // roleNameOrIAMRoleDefinition must either be a `string` or `IAMRoleDefinition`
 // type
 func NewLambda(roleNameOrIAMRoleDefinition interface{}, fn LambdaFunction, lambdaOptions *LambdaFunctionOptions) *LambdaAWSInfo {
@@ -693,7 +696,7 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{}, fn LambdaFunction, lambd
 	return lambda
 }
 
-// Returns a new logrus.Logger instance. It is the caller's responsibility
+// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
 // to set the formatter if needed.
 func NewLogger(level string) (*logrus.Logger, error) {
 	logger := logrus.New()
@@ -705,7 +708,7 @@ func NewLogger(level string) (*logrus.Logger, error) {
 	return logger, nil
 }
 
-// Primary handler for transforming an application into a Lambda package.  The
+// Main defines the primary handler for transforming an application into a Sparta package.  The
 // serviceName is used to uniquely identify your service within a region and will
 // be used for subsequent updates.  For provisioning, ensure that you've
 // properly configured AWS credentials for the golang SDK.
@@ -761,7 +764,8 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		logger.Formatter = new(logrus.TextFormatter)
 		fileWriter, err := os.Create(options.Describe.OutputFile)
 		if err != nil {
-			return errors.New(fmt.Sprintf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err))
+			errMsg := fmt.Sprintf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
+			return errors.New(errMsg)
 		}
 		defer fileWriter.Close()
 		return Describe(serviceName, serviceDescription, lambdaAWSInfos, fileWriter, logger)

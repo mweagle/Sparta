@@ -28,8 +28,8 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 			logger.Info("Stack delete issued: ", resp)
 		}
 		return err
-	} else {
-		logger.Info("Stack does not exist: ", serviceName)
 	}
+
+	logger.Info("Stack does not exist: ", serviceName)
 	return nil
 }

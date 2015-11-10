@@ -6,11 +6,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"io"
 	"strconv"
 	"strings"
 	"text/template"
+
+	"github.com/Sirupsen/logrus"
 )
 
 const descriptionTemplate = `<!doctype html>
@@ -93,7 +94,7 @@ func writelink(writer io.Writer, fromNode string, toNode string, label string) {
 
 }
 
-// Produces a graphical representation of your service's Lambda and data sources.  Typically
+// Describe produces a graphical representation of a service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
 // line option.
 func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, outputWriter io.Writer, logger *logrus.Logger) error {

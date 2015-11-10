@@ -16,14 +16,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	_ "github.com/tdewolff/minify/js"
 	"io"
 	"io/ioutil"
 	"os"
@@ -31,6 +23,16 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	// Blank import to support the go:generate directive above
+	_ "github.com/tdewolff/minify/js"
 )
 
 type workflowContext struct {
@@ -117,7 +119,8 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 
 // Return the StackEvents for the given StackName/StackID
 func stackEvents(stackID string, cfService *cloudformation.CloudFormation) ([]*cloudformation.StackEvent, error) {
-	events := make([]*cloudformation.StackEvent, 0)
+	var events []*cloudformation.StackEvent
+
 	nextToken := ""
 	for {
 		params := &cloudformation.DescribeStackEventsInput{
@@ -391,9 +394,8 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			}
 		}
 		return nil, errors.New("Failed to provision: " + ctx.serviceName)
-	} else {
-		return stackInfo, nil
 	}
+	return stackInfo, nil
 }
 
 func decorateResources(resources ArbitraryJSONObject, logger *logrus.Logger) error {
@@ -543,8 +545,9 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 	}
 }
 
-// Compiles, packages, and provisions (either create or update) a Sparta application. The serviceName is the service's logical
-// name and is used to distinguish between create and update operations.  The compilation options/flags are:
+// Provision compiles, packages, and provisions (either via create or update) a Sparta application.
+// The serviceName is the service's logical
+// identify and is used to determine create vs update operations.  The compilation options/flags are:
 //
 // 	TAGS:         -tags lambdabinary
 // 	ENVIRONMENT:  GOOS=linux GOARCH=amd64 GO15VENDOREXPERIMENT=1
@@ -568,7 +571,6 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 //         Port    string
 //     }
 // }
-
 func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, s3Bucket string, logger *logrus.Logger) error {
 
 	ctx := &workflowContext{

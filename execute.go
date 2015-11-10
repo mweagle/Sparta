@@ -3,15 +3,16 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"net/http"
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // Port used for HTTP proxying communication
-const default_HTTP_Port = 9999
+const defaultHTTPPort = 9999
 
 type dispatchMap map[string]*LambdaAWSInfo
 
@@ -42,10 +43,11 @@ func (handler *lambdaHandler) ServeHTTP(w http.ResponseWriter, req *http.Request
 	lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, &w, handler.logger)
 }
 
-// Creates an HTTP listener to dispatch execution
+// Execute creates an HTTP listener to dispatch execution. Typically
+// called via Main() via command line arguments.
 func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, logger *logrus.Logger) error {
 	if port <= 0 {
-		port = default_HTTP_Port
+		port = defaultHTTPPort
 	}
 	logger.Info("Execute!")
 

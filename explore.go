@@ -4,10 +4,11 @@ package sparta
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"strconv"
 )
 
 type provisionedResources []*cloudformation.StackResourceSummary
@@ -61,7 +62,8 @@ func promptForSelection(lambdaFunctions provisionedResources) *cloudformation.St
 	}
 }
 
-// Interactively invoke the previously provisioned Lambda functions
+// Explore supports interactive command line invocation of the previously
+// provisioned Sparta service
 func Explore(serviceName string, logger *logrus.Logger) error {
 	session := awsSession(logger)
 	awsCloudFormation := cloudformation.New(session)

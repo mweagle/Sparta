@@ -7,8 +7,9 @@ package sparta
 
 import (
 	"errors"
-	"github.com/Sirupsen/logrus"
 	"io"
+
+	"github.com/Sirupsen/logrus"
 )
 
 func Delete(serviceName string, logger *logrus.Logger) error {
