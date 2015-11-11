@@ -37,7 +37,7 @@ in service.
 ## Sample Lambda Application
 
   1. Create _application.go_ :
-  
+
     ```go
     package main
 
@@ -55,7 +55,7 @@ in service.
                    logger *logrus.Logger) {
 
       logger.WithFields(logrus.Fields{
-        "RequestID": context.AWSRequestId,
+        "RequestID": context.AWSRequestID,
       }).Info("Request received")
 
       eventData, err := json.Marshal(*event)
@@ -141,5 +141,3 @@ Run `godoc -http=:8090 -index=true` in the source directory.
   1. There are [Lambda Limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that may affect your development
   1. `dry-run` execution isn't yet implemented
   1. There's bound to be more.
-
-
