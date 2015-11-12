@@ -1,11 +1,8 @@
 // +build !lambdabinary
 
-// First minify them...
-//go:generate go run ./vendor/github.com/tdewolff/minify/cmd/minify/main.go -d ./resources/provision
-//
-// Then embed them
+// Embed the custom service handlers
+// TODO: Move these into golang
 //go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources
-//
 
 package sparta
 
@@ -32,8 +29,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	// Blank import to support the go:generate directive above
-	_ "github.com/tdewolff/minify/js"
 )
+
+var customResourceScripts = []string{"cfn-response.js", "s3.js", "sns.js"}
 
 type workflowContext struct {
 	serviceName             string
@@ -224,6 +222,19 @@ func createPackageStep() workflowStep {
 		ctx.logger.Debug("Dynamically generated NodeJS adapter:\n", nodeJSSource)
 		stringReader := strings.NewReader(nodeJSSource)
 		io.Copy(nodeJSWriter, stringReader)
+
+		// Also embed the custom resource creation scripts
+		for _, eachName := range customResourceScripts {
+			resourceName := fmt.Sprintf("/resources/provision/%s", eachName)
+			resourceContent := FSMustString(false, resourceName)
+			stringReader := strings.NewReader(resourceContent)
+			embedWriter, err := lambdaArchive.Create(eachName)
+			if nil != err {
+				return nil, err
+			}
+			ctx.logger.Info("Embedding CustomResource handler: ", eachName)
+			io.Copy(embedWriter, stringReader)
+		}
 		// TODO: Zip template
 		return createUploadStep(tmpFile.Name()), nil
 	}
@@ -398,93 +409,6 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	return stackInfo, nil
 }
 
-func decorateResources(resources ArbitraryJSONObject, logger *logrus.Logger) error {
-
-	// statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
-
-	// // Allow the core IAM policy the ability to STS for any IAM resource
-	// statements = append(statements, ArbitraryJSONObject{
-	// 	"Effect":   "Allow",
-	// 	"Action":   []string{"sts:AssumeRole"},
-	// 	"Resource": "arn:aws:iam::*",
-	// })
-
-	// iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
-	// 	"Properties": ArbitraryJSONObject{
-	// 		"AssumeRolePolicyDocument": AssumePolicyDocument,
-	// 		"Policies": []ArbitraryJSONObject{
-	// 			{
-	// 				"PolicyName": CloudFormationResourceName("IAMRoleSTSChecker"),
-	// 				"PolicyDocument": ArbitraryJSONObject{
-	// 					"Version":   "2012-10-17",
-	// 					"Statement": statements,
-	// 				},
-	// 			},
-	// 		},
-	// 	},
-	// }
-	// iamPolicyName := CloudFormationResourceName("IAMRoleCheck")
-
-	// iamRoleCheckLambda := ArbitraryJSONObject{
-	// 	"Type": "AWS::Lambda::Function",
-	// 	"Properties": ArbitraryJSONObject{
-	// 		"Code": ArbitraryJSONObject{
-	// 			"ZipFile": FSMustString(false, "/resources/provision/iamRoleCheck.min.js"),
-	// 		},
-	// 		"Role": ArbitraryJSONObject{
-	// 			"Fn::GetAtt": []string{iamPolicyName, "Arn"},
-	// 		},
-	// 		"Handler": "index.handler",
-	// 		"Runtime": "nodejs",
-	// 		"Timeout": "30",
-	// 	},
-	// }
-	// iamRoleCheckLambdaName := CloudFormationResourceName("IAMRoleCheckLambda")
-	// resources[iamRoleCheckLambdaName] = iamRoleCheckLambda
-	// // Run through the resources, and if we find any IAM::Role definitions then add a CustomResource that
-	// // depends on them to verify the STS cache is updated...
-	// for eachResourceName, eachResource := range resources {
-	// 	if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
-	// 		logger.Debug("Adding IAM STS check for role: ", eachResourceName)
-	// 		customResourceInvoker := ArbitraryJSONObject{
-	// 			"Type":    "AWS::CloudFormation::CustomResource",
-	// 			"Version": "1.0",
-	// 			"Properties": ArbitraryJSONObject{
-	// 				"ServiceToken": ArbitraryJSONObject{
-	// 					"Fn::GetAtt": []string{iamRoleCheckLambdaName, "Arn"},
-	// 				},
-	// 				"RoleArn": ArbitraryJSONObject{
-	// 					"Fn::GetAtt": []string{eachResourceName, "Arn"},
-	// 				},
-	// 			},
-	// 		}
-	// 		iamCheckInvocationName := CloudFormationResourceName("IAMCheck")
-
-	// 		resources[iamCheckInvocationName] = customResourceInvoker
-
-	// 		// And anything that depends on that role also depends on the role being
-	// 		// validated
-	// 		for _, eachReferrer := range resources {
-	// 			var dependsInterface, ok = eachReferrer.(ArbitraryJSONObject)["DependsOn"]
-	// 			if ok {
-	// 				dependsArray := dependsInterface.([]string)
-	// 				for _, eachMember := range dependsArray {
-	// 					if eachMember == eachResourceName {
-	// 						revisedDepends := append(dependsArray, iamCheckInvocationName)
-	// 						eachReferrer.(ArbitraryJSONObject)["DependsOn"] = revisedDepends
-	// 						break
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
-	// // Insert it at the end s.t. we don't iterate over it...
-	// resources[iamPolicyName] = iamPolicy
-
-	return nil
-}
-
 func ensureCloudFormationStack(s3Key string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		// We're going to create a template that represents the new state of the
@@ -504,11 +428,8 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		}
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 
-		// Insert the IAM role verification code to allow for STS EC.
-		decorateResources(ctx.cloudformationResources, ctx.logger)
-
 		// Generate a complete CloudFormation template
-		cfTemplate, err := json.Marshal(cloudFormationTemplate)
+		cfTemplate, err := json.MarshalIndent(cloudFormationTemplate, "", "\t")
 		if err != nil {
 			ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
 			return nil, err
@@ -529,7 +450,11 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			ContentType: aws.String("application/json"),
 			Body:        strings.NewReader(contentBody),
 		}
-		ctx.logger.Debug("CloudFormation template:\n", contentBody)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"Template": contentBody,
+		}).Debug("CloudFormation template body")
+
 		uploader := s3manager.NewUploader(ctx.awsSession)
 		templateUploadResult, err := uploader.Upload(uploadInput)
 		if nil != err {

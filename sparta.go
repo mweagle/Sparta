@@ -162,6 +162,8 @@ type LambdaPermissionExporter interface {
 	// of the parent Lambda target
 	export(targetLambdaFuncRef interface{},
 		resources ArbitraryJSONObject,
+		S3Bucket string,
+		S3Key string,
 		logger *logrus.Logger) (string, error)
 	// Return a `describe` compatible output for the given permission
 	descriptionInfo() (string, string)
@@ -183,6 +185,8 @@ type BasePermission struct {
 func (perm BasePermission) export(principal string,
 	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
 	logger *logrus.Logger) (string, error) {
 	properties := ArbitraryJSONObject{
 		"Action":       "lambda:InvokeFunction",
@@ -238,8 +242,10 @@ type LambdaPermission struct {
 
 func (perm LambdaPermission) export(targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
 	logger *logrus.Logger) (string, error) {
-	return perm.BasePermission.export(perm.Principal, targetLambdaFuncRef, resources, logger)
+	return perm.BasePermission.export(perm.Principal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
 }
 
 func (perm LambdaPermission) descriptionInfo() (string, string) {
@@ -275,15 +281,19 @@ func (perm S3Permission) bucketName() string {
 	return bucketParts[len(bucketParts)-1]
 }
 
-func (perm S3Permission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func (perm S3Permission) export(targetLambdaFuncRef interface{},
+	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal, targetLambdaFuncRef, resources, logger)
+	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, perm.SourceArn, resources, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, perm.SourceArn, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
@@ -313,8 +323,13 @@ func (perm S3Permission) export(targetLambdaFuncRef interface{}, resources Arbit
 		},
 		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
 	}
-	// Save it
-	resourceInvokerName := CloudFormationResourceName(fmt.Sprintf("ConfigS3%s", targetLambdaResourceName))
+	// Need to use a stable name s.t that the CloudFormation update event
+	// is sent rather than a series of create/delete events that refer to the
+	// same Lambda Target
+	resourceInvokerName := CloudFormationResourceName("ConfigS3",
+		targetLambdaResourceName,
+		perm.BasePermission.SourceAccount,
+		perm.BasePermission.SourceArn)
 	resources[resourceInvokerName] = customResourceInvoker
 	return "", nil
 }
@@ -344,15 +359,19 @@ func (perm SNSPermission) topicName() string {
 	return topicParts[len(topicParts)-1]
 }
 
-func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func (perm SNSPermission) export(targetLambdaFuncRef interface{},
+	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal, targetLambdaFuncRef, resources, logger)
+	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, perm.SourceArn, resources, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, perm.SourceArn, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
@@ -376,7 +395,10 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{}, resources Arbi
 		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
 	}
 	// Save it
-	subscriberResourceName := CloudFormationResourceName(fmt.Sprintf("SubscriberSNS%s", targetLambdaResourceName))
+	subscriberResourceName := CloudFormationResourceName("SubscriberSNS",
+		targetLambdaResourceName,
+		perm.BasePermission.SourceAccount,
+		perm.BasePermission.SourceArn)
 	resources[subscriberResourceName] = customResourceSubscriber
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -582,7 +604,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 
 	// Permissions
 	for _, eachPermission := range info.Permissions {
-		_, err := eachPermission.export(functionAttr, resources, logger)
+		_, err := eachPermission.export(functionAttr, resources, S3Bucket, S3Key, logger)
 		if nil != err {
 			return err
 		}
@@ -648,11 +670,17 @@ func awsSession(logger *logrus.Logger) *session.Session {
 // for more information.  The `prefix` value should provide a hint as to the
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
-func CloudFormationResourceName(prefix string) string {
-	randValue := rand.Int63()
+func CloudFormationResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
 	hash.Write([]byte(prefix))
-	hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+	if len(parts) <= 0 {
+		randValue := rand.Int63()
+		hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+	} else {
+		for _, eachPart := range parts {
+			hash.Write([]byte(eachPart))
+		}
+	}
 	return fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
 }
 

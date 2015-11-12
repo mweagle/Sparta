@@ -147,5 +147,22 @@ var createForwarder = function(path) {
   return forwardToGolangProcess;
 };
 
+// CustomResource Configuration exports
+['s3', 'sns'].forEach(function (eachConfig) {
+  var exportName = util.format('%sConfiguration', eachConfig);
+  exports[exportName] = function(event, context)
+  {
+    console.log('Delegating to configurator: ' + eachConfig);
+    var svc = require(util.format('./%s', eachConfig))
+    svc.handler(event, context);
+  }
+})
+
+exports.s3Configuration = function(event, context)
+{
+  var s3 = require('./s3');
+  s3.handler(event, context);
+}
+
 exports.main = createForwarder('/');
 // Additional golang handlers to be dynamically appended below

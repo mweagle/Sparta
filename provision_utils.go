@@ -21,16 +21,18 @@ var PushSourceConfigurationActions = map[string][]string{
 		"s3:GetBucketNotification",
 		"s3:PutBucketNotification",
 		"s3:GetBucketNotificationConfiguration",
-		"s3:PutBucketNotificationConfiguration"},
+		"s3:PutBucketNotificationConfiguration",
+		"cloudformation:DescribeStacks"},
 	"sns.amazonaws.com": {"sns:ConfirmSubscription",
 		"sns:GetTopicAttributes",
 		"sns:Subscribe",
 		"sns:Unsubscribe"},
 }
 
-func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, S3Bucket string, S3Key string, logger *logrus.Logger) (string, error) {
 	// AWS service basename
 	awsServiceName := strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
+	resourceFilename := strings.ToLower(awsServiceName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
@@ -51,19 +53,21 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 
 		//////////////////////////////////////////////////////////////////////////////
 		// Custom Resource Lambda Handler
-		// NOTE: This path depends on `go generate` already having processed the provision
-		// directory with the https://github.com/tdewolff/minify/tree/master/cmd/minify contents
-		scriptHandlerPath := fmt.Sprintf("/resources/provision/%s.min.js", strings.ToLower(awsServiceName))
-		logger.Debug("Lambda Source: ", scriptHandlerPath)
+		// NOTE: This brittle function name has an analog in ./resources/index.js b/c the
+		// AWS Lamba execution treats the entire ZIP file as a module.  So all module exports
+		// need to be forwarded through the module's index.js file.
+		handlerName := fmt.Sprintf("index.%sConfiguration", resourceFilename)
+		logger.Debug("Lambda Configuration handler: ", handlerName)
 
 		customResourceHandlerDef := ArbitraryJSONObject{
 			"Type": "AWS::Lambda::Function",
 			"Properties": ArbitraryJSONObject{
 				"Code": ArbitraryJSONObject{
-					"ZipFile": FSMustString(false, scriptHandlerPath),
+					"S3Bucket": S3Bucket,
+					"S3Key":    S3Key,
 				},
 				"Role":    iamRoleRef,
-				"Handler": "index.handler",
+				"Handler": handlerName,
 				"Runtime": "nodejs",
 				"Timeout": "30",
 			},
