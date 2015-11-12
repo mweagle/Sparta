@@ -1,3 +1,7 @@
+## v0.0.4 - PENDING
+  - :checkered_flag: **CHANGES**
+    - Lambda implementation of `CustomResources` for push source configuration promoted from inline [ZipFile](http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionCode.html) JS code to external JS files that are proxied via _index.js_ exports.
+
 ## v0.0.3
   - :checkered_flag: **CHANGES**
     - `sparta.NewLambda(...)` supports either `string` or `sparta.IAMRoleDefinition` types for the IAM role execution value
