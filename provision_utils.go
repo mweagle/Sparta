@@ -26,7 +26,10 @@ var PushSourceConfigurationActions = map[string][]string{
 		"sns:GetTopicAttributes",
 		"sns:Subscribe",
 		"sns:Unsubscribe"},
-	"apigateway.amazonaws.com": {"apigateway:*", "lambda:AddPermission", "lambda:RemovePermission", "lambda:getPolicy"},
+	"apigateway.amazonaws.com": {"apigateway:*",
+		"lambda:AddPermission",
+		"lambda:RemovePermission",
+		"lambda:GetPolicy"},
 }
 
 func awsPrincipalToService(awsPrincipalName string) string {
