@@ -4,12 +4,16 @@ var http = require('http');
 var path = require('path');
 var child_process = require('child_process');
 
-//https://forums.aws.amazon.com/message.jspa?messageID=633802
+//TODO: See if https://forums.aws.amazon.com/message.jspa?messageID=633802
+// has been updated with new information
 process.env.PATH = process.env.PATH + ':/var/task';
+
 
 var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME);
 var MAXIMUM_RESPAWN_COUNT = 5;
+
+var PROXIED_MODULES = ['s3', 'sns', 'apigateway']
 
 var golangProcess = null;
 var failCount = 0;
@@ -148,21 +152,30 @@ var createForwarder = function(path) {
 };
 
 // CustomResource Configuration exports
-['s3', 'sns'].forEach(function (eachConfig) {
+PROXIED_MODULES.forEach(function (eachConfig) {
   var exportName = util.format('%sConfiguration', eachConfig);
   exports[exportName] = function(event, context)
   {
-    console.log('Delegating to configurator: ' + eachConfig);
-    var svc = require(util.format('./%s', eachConfig))
-    svc.handler(event, context);
+    try {
+      console.log('Delegating to configurator: ' + eachConfig);
+      var svc = require(util.format('./%s', eachConfig))
+      svc.handler(event, context);
+    } catch (e) {
+      console.error('Failed to load configurator:' + e.toString());
+
+      try {
+        var response = require('cfn-response');
+        var data = {
+          Error: e.toString()
+        }
+        response.send(event, context, response.FAILED, data);
+      }
+      catch (loader) {
+        // NOP
+      }
+    }
   }
 })
-
-exports.s3Configuration = function(event, context)
-{
-  var s3 = require('./s3');
-  s3.handler(event, context);
-}
 
 exports.main = createForwarder('/');
 // Additional golang handlers to be dynamically appended below
