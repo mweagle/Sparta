@@ -1,5 +1,5 @@
 .DEFAULT_GOAL=build
-.PHONY: build test get run
+.PHONY: build test get run tags
 
 ensure_vendor:
 	mkdir -pv vendor
@@ -45,7 +45,7 @@ run: build
 
 tags:
 	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .
-	
+
 provision: build
 	go run ./applications/hello_world.go --level info provision --s3Bucket $(S3_BUCKET)
 
