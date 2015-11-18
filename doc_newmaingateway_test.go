@@ -11,7 +11,7 @@ import (
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func mainHelloWorld(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func mainHelloWorldGateway(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(*w, "Hello World!")
 }
 
@@ -36,9 +36,11 @@ func mainHelloWorld(event *json.RawMessage, context *LambdaContext, w *http.Resp
 //     execute:
 //         -p, --port     Alternative port for HTTP binding
 //         -s, --signal   Process ID to signal with SIGUSR2 once ready
-func ExampleMain_Basic() {
+func ExampleMain_Gateway() {
 	var lambdaFunctions []*LambdaAWSInfo
-	helloWorldLambda := NewLambda("PreexistingAWSLambdaRoleName", mainHelloWorld, nil)
+	helloWorldLambda := NewLambda("PreexistingAWSLambdaRoleName", mainHelloWorldGateway, nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
+
+	// TODO: Add the API Gateway sample
 	Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions, nil)
 }

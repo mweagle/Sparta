@@ -2,15 +2,16 @@ package sparta
 
 import (
 	"encoding/json"
-	"github.com/Sirupsen/logrus"
 	"net/http"
+
+	"github.com/Sirupsen/logrus"
 )
 
-const SNS_TOPIC = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
+const snsTopic = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
 
 func snsProcessor(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
-		"RequestID": context.AWSRequestId,
+		"RequestID": context.AWSRequestID,
 	}).Info("SNSEvent")
 	logger.Info("Event data: ", string(*event))
 }
@@ -21,9 +22,9 @@ func ExampleSNSPermission() {
 	snsLambda := NewLambda(IAMRoleDefinition{}, snsProcessor, nil)
 	snsLambda.Permissions = append(snsLambda.Permissions, SNSPermission{
 		BasePermission: BasePermission{
-			SourceArn: SNS_TOPIC,
+			SourceArn: snsTopic,
 		},
 	})
 	lambdaFunctions = append(lambdaFunctions, snsLambda)
-	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions)
+	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil)
 }
