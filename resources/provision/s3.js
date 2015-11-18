@@ -7,21 +7,21 @@ var awsConfig = new AWS.Config({});
 awsConfig.logger = console;
 console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 var s3 = new AWS.S3(awsConfig);
-var cf = new AWS.CloudFormation(awsConfig);
+var cloudFormation = new AWS.CloudFormation(awsConfig);
 
 exports.handler = function(event, context) {
   var data = {};
   var props = event.ResourceProperties;
   var oldProps = event.OldResourceProperties || {};
 
-  var onEnd = function(e, ret) {
-    data.Error = e || undefined;
-    data.Result = ret || undefined;
+  var onEnd = function(error, returnValue) {
+    data.Error = error || undefined;
+    data.Result = returnValue || undefined;
     response.send(event, context, data.Error ? response.FAILED : response.SUCCESS, data);
   }
-  var onResponse = function(e, s3Config) {
-    if (e) {
-      onEnd(e);
+  var onResponse = function(error, s3Config) {
+    if (error) {
+      onEnd(error);
     } else {
       var funcs = {};
       var delArns = [];
@@ -45,25 +45,27 @@ exports.handler = function(event, context) {
         return funcs[e];
       });
       // Put it back
-      console.log('Result: ' + JSON.stringify({
+      var logMsg = {
         Del: delArns,
         Event: event,
         Config: s3Config,
         Type: event.RequestType
-      }));
+      };
+      console.log('Result: ' + JSON.stringify(logMsg));
       s3.putBucketNotificationConfiguration({
         Bucket: props.Bucket,
         NotificationConfiguration: s3Config
       }, onEnd);
     }
   };
+
   if (event.RequestType === 'Delete') {
-    var onDesc = function(e, del) {
+    var onDescribeStacks = function(e, del) {
       if (e) {
         onEnd(e);
       } else {
-        var ss = del.Stacks[0] ? del.Stacks[0].StackStatus : '';
-        if (ss !== 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS') {
+        var stackStatus = del.Stacks[0] ? del.Stacks[0].StackStatus : '';
+        if (stackStatus !== 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS') {
           s3.getBucketNotificationConfiguration({
             Bucket: props.Bucket
           }, onResponse);
@@ -72,9 +74,9 @@ exports.handler = function(event, context) {
         }
       }
     }
-    cf.describeStacks({
+    cloudFormation.describeStacks({
       StackName: event.StackId
-    }, onDesc);
+    }, onDescribeStacks);
   } else {
     s3.getBucketNotificationConfiguration({
       Bucket: props.Bucket
