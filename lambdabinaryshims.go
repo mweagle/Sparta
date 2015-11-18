@@ -17,7 +17,7 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 	return errors.New("Delete not supported for this binary")
 }
 
-func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, s3Bucket string, logger *logrus.Logger) error {
+func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Bucket string, logger *logrus.Logger) error {
 	logger.Error("Deploy() not supported in AWS Lambda binary")
 	return errors.New("Deploy not supported for this binary")
 

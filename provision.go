@@ -1,13 +1,27 @@
 // +build !lambdabinary
 
+// Install aws-sdk
+//go:generate rm -rf ./node_modules
+//go:generate npm install aws-sdk --prefix ./
+// There's a handful of subdirectories that we don't need at runtime...
+//go:generate rm -rf ./node_modules/aws-sdk/dist/
+//go:generate rm -rf ./node_modules/aws-sdk/dist-tools/
+// Zip up the modules
+//go:generate zip -vr ./resources/provision/node_modules.zip ./node_modules/
+//go:generate rm -rf ./node_modules
+
 // Embed the custom service handlers
 // TODO: Move these into golang
 //go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources
+
+// cleanup
+//go:generate rm -f ./resources/provision/node_modules.zip
 
 package sparta
 
 import (
 	"archive/zip"
+	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
@@ -28,15 +42,20 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	// Blank import to support the go:generate directive above
 )
 
-var customResourceScripts = []string{"cfn-response.js", "s3.js", "sns.js"}
+var customResourceScripts = []string{"cfn-response.js",
+	"underscore-min.js",
+	"async.min.js",
+	"apigateway.js",
+	"s3.js",
+	"sns.js"}
 
 type workflowContext struct {
 	serviceName             string
 	serviceDescription      string
 	lambdaAWSInfos          []*LambdaAWSInfo
+	api                     *API
 	cloudformationResources ArbitraryJSONObject
 	lambdaIAMRoleNameMap    map[string]interface{}
 	s3Bucket                string
@@ -232,10 +251,32 @@ func createPackageStep() workflowStep {
 			if nil != err {
 				return nil, err
 			}
-			ctx.logger.Info("Embedding CustomResource handler: ", eachName)
+			ctx.logger.Info("Embedding CustomResource script: ", eachName)
 			io.Copy(embedWriter, stringReader)
 		}
-		// TODO: Zip template
+
+		// And finally, if there is a node_modules.zip file, then include it.
+		nodeModuleBytes, err := FSByte(false, "/resources/provision/node_modules.zip")
+		if nil == err {
+			nodeModuleReader, err := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
+			if err != nil {
+				return nil, err
+			}
+			for _, zipFile := range nodeModuleReader.File {
+				embedWriter, err := lambdaArchive.Create(zipFile.Name)
+				if nil != err {
+					return nil, err
+				}
+				ctx.logger.Debug("Copying node_module file: ", zipFile.Name)
+				sourceReader, err := zipFile.Open()
+				if err != nil {
+					return nil, err
+				}
+				io.Copy(embedWriter, sourceReader)
+			}
+		} else {
+			ctx.logger.Warn("Failed to load /resources/provision/node_modules.zip for embedding", err)
+		}
 		return createUploadStep(tmpFile.Name()), nil
 	}
 }
@@ -299,6 +340,8 @@ func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger
 	return exists, nil
 }
 
+// TODO: Replace this with the implementation
+// provided by vendor/github.com/aws/aws-sdk-go/service/cloudformation/waiters.go
 func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
 	awsCloudFormation := cloudformation.New(ctx.awsSession)
 
@@ -422,14 +465,17 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			if nil != err {
 				return nil, err
 			}
-			// Custom configuration for each permission - could be handled
-			// in `export`, but putting it here allows us to eliminate
-			// the codepath while building for AWS lambda distribution
 		}
+		// If there's an API gateway definition, provision custom resources
+		// and IAM role to
+		if nil != ctx.api {
+			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.logger)
+		}
+
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 
 		// Generate a complete CloudFormation template
-		cfTemplate, err := json.MarshalIndent(cloudFormationTemplate, "", "\t")
+		cfTemplate, err := json.Marshal(cloudFormationTemplate)
 		if err != nil {
 			ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
 			return nil, err
@@ -450,10 +496,11 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			ContentType: aws.String("application/json"),
 			Body:        strings.NewReader(contentBody),
 		}
-
-		ctx.logger.WithFields(logrus.Fields{
-			"Template": contentBody,
-		}).Debug("CloudFormation template body")
+		formatted, err := json.MarshalIndent(contentBody, "", " ")
+		if nil != err {
+			return nil, err
+		}
+		ctx.logger.Debug("CloudFormation template body: ", string(formatted))
 
 		uploader := s3manager.NewUploader(ctx.awsSession)
 		templateUploadResult, err := uploader.Upload(uploadInput)
@@ -496,20 +543,17 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 //         Port    string
 //     }
 // }
-func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, s3Bucket string, logger *logrus.Logger) error {
+func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Bucket string, logger *logrus.Logger) error {
 
 	ctx := &workflowContext{
-		serviceName:             serviceName,
-		serviceDescription:      serviceDescription,
-		lambdaAWSInfos:          lambdaAWSInfos,
+		serviceName:        serviceName,
+		serviceDescription: serviceDescription,
+		lambdaAWSInfos:     lambdaAWSInfos,
+		api:                api,
 		cloudformationResources: make(ArbitraryJSONObject, 0),
 		s3Bucket:                s3Bucket,
 		awsSession:              awsSession(logger),
 		logger:                  logger}
-
-	// TODO: Append the createCustomResource lambda handler
-	// in case we need to configure push sources.  But what ARN to
-	// use for LambdaExecution?
 
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)

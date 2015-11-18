@@ -21,23 +21,27 @@ var PushSourceConfigurationActions = map[string][]string{
 		"s3:GetBucketNotification",
 		"s3:PutBucketNotification",
 		"s3:GetBucketNotificationConfiguration",
-		"s3:PutBucketNotificationConfiguration",
-		"cloudformation:DescribeStacks"},
+		"s3:PutBucketNotificationConfiguration"},
 	"sns.amazonaws.com": {"sns:ConfirmSubscription",
 		"sns:GetTopicAttributes",
 		"sns:Subscribe",
 		"sns:Unsubscribe"},
+	"apigateway.amazonaws.com": {"apigateway:*", "lambda:AddPermission", "lambda:RemovePermission", "lambda:getPolicy"},
+}
+
+func awsPrincipalToService(awsPrincipalName string) string {
+	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
 func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, S3Bucket string, S3Key string, logger *logrus.Logger) (string, error) {
 	// AWS service basename
-	awsServiceName := strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
-	resourceFilename := strings.ToLower(awsServiceName)
+	awsServiceName := awsPrincipalToService(awsPrincipalName)
+	configuratorExportName := strings.ToLower(awsServiceName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
 	// TODO - Check sourceArn for equivalence
-	iamResourceName, err := ensureIAMRoleResource(awsServiceName, awsPrincipalName, sourceArn, resources, logger)
+	iamResourceName, err := ensureIAMRoleResource(awsPrincipalName, sourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
@@ -56,7 +60,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 		// NOTE: This brittle function name has an analog in ./resources/index.js b/c the
 		// AWS Lamba execution treats the entire ZIP file as a module.  So all module exports
 		// need to be forwarded through the module's index.js file.
-		handlerName := fmt.Sprintf("index.%sConfiguration", resourceFilename)
+		handlerName := fmt.Sprintf("index.%sConfiguration", configuratorExportName)
 		logger.Debug("Lambda Configuration handler: ", handlerName)
 
 		customResourceHandlerDef := ArbitraryJSONObject{
@@ -77,7 +81,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	return subscriberHandlerName, nil
 }
 
-func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
 	if !exists {
 		return "", errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
@@ -85,7 +89,7 @@ func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourc
 
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprintf("%s%s", awsPrincipalName, salt)))
-	roleName := fmt.Sprintf("%sConfigIAMRole%s", awsServiceName, hex.EncodeToString(hash.Sum(nil)))
+	roleName := fmt.Sprintf("ConfigIAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 
 	logger.WithFields(logrus.Fields{
 		"PrincipalActions": principalActions,
@@ -100,17 +104,38 @@ func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourc
 		return roleName, nil
 	}
 
-	// Provision a new one and add it...
-	newIAMRoleResourceName := CloudFormationResourceName("IAMRole")
-	logger.Debug("Inserting new IAM Role: ", newIAMRoleResourceName)
+	logger.WithFields(logrus.Fields{
+		"RoleName": roleName,
+		"Actions":  principalActions,
+	}).Debug("Inserting IAM Role")
 
+	// Provision a new one and add it...
 	statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
-	logger.Info("IAMRole Actions: ", principalActions)
 
 	statements = append(statements, ArbitraryJSONObject{
 		"Effect":   "Allow",
 		"Action":   principalActions,
 		"Resource": sourceArn,
+	})
+	// Include the DescribeStacks privilege s.t custom resource handlers
+	// can determine if a 'DELETE' request is due to an update
+	// or an actual delete request.
+	cfArn := []interface{}{"arn:aws:cloudformation:",
+		ArbitraryJSONObject{
+			"Ref": "AWS::Region",
+		},
+		":",
+		ArbitraryJSONObject{
+			"Ref": "AWS::AccountId",
+		},
+		":stack/*/*"}
+
+	statements = append(statements, ArbitraryJSONObject{
+		"Effect": "Allow",
+		"Action": []string{"cloudformation:DescribeStacks"},
+		"Resource": ArbitraryJSONObject{
+			"Fn::Join": []interface{}{"", cfArn},
+		},
 	})
 
 	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
@@ -118,7 +143,7 @@ func ensureIAMRoleResource(awsServiceName string, awsPrincipalName string, sourc
 			"AssumeRolePolicyDocument": AssumePolicyDocument,
 			"Policies": []ArbitraryJSONObject{
 				{
-					"PolicyName": fmt.Sprintf("%sConfigurator%s", awsServiceName, CloudFormationResourceName("")),
+					"PolicyName": fmt.Sprintf("Configurator%s", CloudFormationResourceName(awsPrincipalName)),
 					"PolicyDocument": ArbitraryJSONObject{
 						"Version":   "2012-10-17",
 						"Statement": statements,

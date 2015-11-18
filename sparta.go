@@ -37,6 +37,8 @@ type ArbitraryJSONObject map[string]interface{}
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 const (
+	// @enum APIGatewayPrincipal
+	APIGatewayPrincipal = "apigateway.amazonaws.com"
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
 	// @enum AWSPrincipal
@@ -63,6 +65,13 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 			"Effect": "Allow",
 			"Principal": ArbitraryJSONObject{
 				"Service": []string{EC2Principal},
+			},
+			"Action": []string{"sts:AssumeRole"},
+		},
+		{
+			"Effect": "Allow",
+			"Principal": ArbitraryJSONObject{
+				"Service": []string{APIGatewayPrincipal},
 			},
 			"Action": []string{"sts:AssumeRole"},
 		},
@@ -592,9 +601,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 
 	// Get the resource name we're going to use s.t. we can tie it to the rest of the
 	// lambda definition
-	hash := sha1.New()
-	hash.Write([]byte(info.lambdaFnName))
-	resourceName := fmt.Sprintf("Lambda%s", hex.EncodeToString(hash.Sum(nil)))
+	resourceName := info.logicalName()
 	resources[resourceName] = primaryResource
 
 	// Create the lambda Ref in case we need a permission or event mapping
@@ -634,6 +641,11 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 		resources[resourceName] = primaryEventSourceMapping
 	}
 	return nil
+}
+
+// Returns the stable logical name for this IAMRoleDefinition
+func (info *LambdaAWSInfo) logicalName() string {
+	return CloudFormationResourceName("Lambda", info.lambdaFnName)
 }
 
 //
@@ -742,7 +754,7 @@ func NewLogger(level string) (*logrus.Logger, error) {
 // properly configured AWS credentials for the golang SDK.
 // See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
 // for more information.
-func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo) error {
+func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API) error {
 
 	// We need to be able to provision an IAM role that has capabilities to
 	// manage the other sources.  That'll give us the role arn to use in the custom
@@ -778,7 +790,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	switch options.Verb {
 	case "provision":
 		logger.Formatter = new(logrus.TextFormatter)
-		return Provision(serviceName, serviceDescription, lambdaAWSInfos, options.Provision.S3Bucket, logger)
+		return Provision(serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, logger)
 	case "execute":
 		logger.Formatter = new(logrus.JSONFormatter)
 		return Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
