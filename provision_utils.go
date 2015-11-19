@@ -113,32 +113,11 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 	}).Debug("Inserting IAM Role")
 
 	// Provision a new one and add it...
-	statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
-
+	statements := CommonIAMStatements["core"]
 	statements = append(statements, ArbitraryJSONObject{
 		"Effect":   "Allow",
 		"Action":   principalActions,
 		"Resource": sourceArn,
-	})
-	// Include the DescribeStacks privilege s.t custom resource handlers
-	// can determine if a 'DELETE' request is due to an update
-	// or an actual delete request.
-	cfArn := []interface{}{"arn:aws:cloudformation:",
-		ArbitraryJSONObject{
-			"Ref": "AWS::Region",
-		},
-		":",
-		ArbitraryJSONObject{
-			"Ref": "AWS::AccountId",
-		},
-		":stack/*/*"}
-
-	statements = append(statements, ArbitraryJSONObject{
-		"Effect": "Allow",
-		"Action": []string{"cloudformation:DescribeStacks"},
-		"Resource": ArbitraryJSONObject{
-			"Fn::Join": []interface{}{"", cfArn},
-		},
 	})
 
 	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
