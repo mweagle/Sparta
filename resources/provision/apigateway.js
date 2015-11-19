@@ -512,11 +512,3 @@ exports.handler = function(event, context) {
     response.send(event, context, response.SUCCESS, data);
   }
 };
-//
-// var data = require('/Users/mweagle/Documents/golang/workspace/src/Sparta/resources/api.json');
-// var apiData = data.Resources.APIGatewayf5eb6283ee9aab1bd72c8aac8fdd2d4a6a5a7696;
-// var event = {
-//   ResourceProperties: apiData.Properties,
-//   RequestType: 'Create'
-// };
-// module.exports.handler(event, {});
