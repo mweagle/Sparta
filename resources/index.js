@@ -13,7 +13,7 @@ var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME);
 var MAXIMUM_RESPAWN_COUNT = 5;
 
-var PROXIED_MODULES = ['s3', 'sns', 'apigateway']
+var PROXIED_MODULES = ['s3', 'sns', 'apigateway'];
 
 var golangProcess = null;
 var failCount = 0;
@@ -151,31 +151,79 @@ var createForwarder = function(path) {
   return forwardToGolangProcess;
 };
 
+var sendResponse = function(event, context, e, results)
+{
+  try {
+    var response = require('cfn-response');
+    var data = {
+      ERROR: e ? e.toString() : undefined,
+      RESULTS: results || undefined
+    };
+    response.send(event, context, e ? response.FAILED : response.SUCCESS, data);
+  }
+  catch (eResponse) {
+    // NOP
+    console.log('ERROR sending response: ' + eResponse.toString());
+  }
+};
+
 // CustomResource Configuration exports
 PROXIED_MODULES.forEach(function (eachConfig) {
   var exportName = util.format('%sConfiguration', eachConfig);
   exports[exportName] = function(event, context)
   {
     try {
-      console.log('Delegating to configurator: ' + eachConfig);
-      var svc = require(util.format('./%s', eachConfig))
-      svc.handler(event, context);
+      var AWS = require('aws-sdk');
+      var awsConfig = new AWS.Config({});
+
+      // If the stack is in update mode, don't delegate
+      var proxyTasks = [];
+      proxyTasks.push(function (taskCB) {
+        var params = {
+          StackName: event.StackId
+        };
+        var awsConfig = new AWS.Config({});
+        awsConfig.logger = console;
+        var cloudFormation = new AWS.CloudFormation(awsConfig);
+        cloudFormation.describeStacks(params, taskCB);
+      });
+
+      // Only delegate to the stack if the update is in progress.
+      var onStackDescription = function(e, stackDescriptionResponse) {
+        if (e)
+        {
+          sendResponse(event, context, e, null);
+        }
+        else {
+          var stackDescription = stackDescriptionResponse.Stacks ? stackDescriptionResponse.Stacks[0] : {};
+          var stackStatus = stackDescription.StackStatus || "";
+          if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
+          {
+            try {
+              console.log('Delegating to configurator: ' + eachConfig);
+              var svc = require(util.format('./%s', eachConfig));
+              svc.handler(event, context);
+            } catch (e) {
+              sendResponse(event, context, e, null);
+            }
+          } else {
+            console.log('Bypassing configurator execution due to status: ' + stackStatus);
+            sendResponse(event, context, e, "NOP");
+          }
+        }
+      };
+      // Get the current stack status
+      var params = {
+        StackName: event.StackId
+      };
+      var cloudFormation = new AWS.CloudFormation(awsConfig);
+      cloudFormation.describeStacks(params, onStackDescription);
     } catch (e) {
       console.error('Failed to load configurator:' + e.toString());
-
-      try {
-        var response = require('cfn-response');
-        var data = {
-          Error: e.toString()
-        }
-        response.send(event, context, response.FAILED, data);
-      }
-      catch (loader) {
-        // NOP
-      }
+      sendResponse(event, context, e, null);
     }
-  }
-})
+  };
+});
 
 exports.main = createForwarder('/');
 // Additional golang handlers to be dynamically appended below
