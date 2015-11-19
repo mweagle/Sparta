@@ -102,14 +102,15 @@ func (api API) MarshalJSON() ([]byte, error) {
 		}
 		ctxNode.APIResources[eachResource.parentLambda.logicalName()] = eachResource
 	}
-
-	return json.Marshal(map[string]interface{}{
-		"Name":        api.name,
-		"Stage":       api.stage,
-		"CloneFrom":   api.CloneFrom,
-		"Description": api.Description,
-		"Resources":   rootResource,
-	})
+	marshalMap := make(map[string]interface{})
+	marshalMap["Name"] = api.name
+	marshalMap["CloneFrom"] = api.CloneFrom
+	marshalMap["Description"] = api.Description
+	marshalMap["Resources"] = rootResource
+	if nil != api.stage {
+		marshalMap["Stage"] = *api.stage
+	}
+	return json.Marshal(marshalMap)
 }
 
 func (api *API) export(S3Bucket string,
