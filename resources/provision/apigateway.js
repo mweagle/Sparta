@@ -432,12 +432,36 @@ var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*,
   };
 };
 
-var ensureDeploymentTask = function(restAPIKeyName /*, resourceProperties, returnData */ ) {
-  return function task(callback /*, results */) {
-//    var apiCreatedResults = results[restAPIKeyName] || {};
-//    var id = apiCreatedResults.id || "";
+var ensureDeploymentTask = function(restAPIKeyName, resourceProperties /*, returnData */ ) {
+  return function task(callback, context) {
+   var apiCreatedResults = context[restAPIKeyName] || {};
+   var restApiId = apiCreatedResults.id || "";
 
-    setImmediate(callback, null, restAPIKeyName);
+   var apiDefinition = resourceProperties.API || {};
+   var stageDefinition = apiDefinition.Stage || {};
+   if (stageDefinition.Name)
+   {
+     var deployTasks = [];
+     deployTasks.push(function (taskCB) {
+       var params = {
+         restApiId: restApiId,
+         stageName: stageDefinition.Name,
+         cacheClusterEnabled: ("true" === stageDefinition.CacheClusterEnabled),
+         cacheClusterSize: _.isEmpty(stageDefinition.CacheClusterSize) ? undefined : stageDefinition.CacheClusterSize,
+         stageDescription: stageDefinition.Description || '',
+         variables: stageDefinition.Variables || {}
+       };
+       logResults('Creating deployment', null, params);
+       apigateway.createDeployment(params, taskCB);
+     });
+    async.waterfall(deployTasks, callback);
+   }
+   else
+   {
+     // No stage requested
+     logResults('Stage not requested', null, restApiId);
+     setImmediate(callback, null, restApiId);
+   }
   };
 };
 
