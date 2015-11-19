@@ -78,33 +78,60 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 	},
 }
 
+// Represents the CloudFormation Arn of this stack.
+var cfArn = []interface{}{"arn:aws:cloudformation:",
+	ArbitraryJSONObject{
+		"Ref": "AWS::Region",
+	},
+	":",
+	ArbitraryJSONObject{
+		"Ref": "AWS::AccountId",
+	},
+	":stack/*/*"}
+
 // CommonIAMStatements defines common IAM::Role Policy Statement values for different AWS
 // service types.  See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
 // for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
-var CommonIAMStatements = map[string]ArbitraryJSONObject{
-	"cloudformation": ArbitraryJSONObject{
-		"Action": []string{"logs:CreateLogGroup",
-			"logs:CreateLogStream",
-			"logs:PutLogEvents"},
-		"Effect":   "Allow",
-		"Resource": "arn:aws:logs:*:*:*",
-	},
-	"dynamodb": ArbitraryJSONObject{
-		"Effect": "Allow",
-		"Action": []string{"dynamodb:DescribeStream",
-			"dynamodb:GetRecords",
-			"dynamodb:GetShardIterator",
-			"dynamodb:ListStreams",
+var CommonIAMStatements = map[string][]ArbitraryJSONObject{
+	"core": []ArbitraryJSONObject{
+		ArbitraryJSONObject{
+			"Action": []string{"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"},
+			"Effect":   "Allow",
+			"Resource": "arn:aws:logs:*:*:*",
+		},
+		ArbitraryJSONObject{
+			"Action":   []string{"cloudwatch:PutMetricData"},
+			"Effect":   "Allow",
+			"Resource": "*",
+		},
+		ArbitraryJSONObject{
+			"Effect": "Allow",
+			"Action": []string{"cloudformation:DescribeStacks"},
+			"Resource": ArbitraryJSONObject{
+				"Fn::Join": []interface{}{"", cfArn},
+			},
 		},
 	},
-	"kinesis": ArbitraryJSONObject{
-		"Effect": "Allow",
-		"Action": []string{"kinesis:GetRecords",
-			"kinesis:GetShardIterator",
-			"kinesis:DescribeStream",
-			"kinesis:ListStreams",
+	"dynamodb": []ArbitraryJSONObject{
+		ArbitraryJSONObject{"Effect": "Allow",
+			"Action": []string{"dynamodb:DescribeStream",
+				"dynamodb:GetRecords",
+				"dynamodb:GetShardIterator",
+				"dynamodb:ListStreams",
+			},
+		}},
+	"kinesis": []ArbitraryJSONObject{
+		ArbitraryJSONObject{
+			"Effect": "Allow",
+			"Action": []string{"kinesis:GetRecords",
+				"kinesis:GetShardIterator",
+				"kinesis:DescribeStream",
+				"kinesis:ListStreams",
+			},
 		},
 	},
 }
@@ -474,7 +501,7 @@ type IAMRoleDefinition struct {
 
 // Returns an IAM::Role policy entry for this definition
 func (roleDefinition *IAMRoleDefinition) rolePolicy(eventSourceMappings []*lambda.CreateEventSourceMappingInput, logger *logrus.Logger) ArbitraryJSONObject {
-	statements := []ArbitraryJSONObject{CommonIAMStatements["cloudformation"]}
+	statements := CommonIAMStatements["core"]
 	for _, eachPrivilege := range roleDefinition.Privileges {
 		statements = append(statements, ArbitraryJSONObject{
 			"Effect":   "Allow",
@@ -492,7 +519,7 @@ func (roleDefinition *IAMRoleDefinition) rolePolicy(eventSourceMappings []*lambd
 			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
 			serviceStatements, exists := CommonIAMStatements[awsService]
 			if exists {
-				statements = append(statements, serviceStatements)
+				statements = append(statements, serviceStatements...)
 				statements[len(statements)-1]["Resource"] = *eachEventSourceMapping.EventSourceArn
 			}
 		}
