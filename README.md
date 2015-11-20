@@ -139,5 +139,9 @@ Run `godoc -http=:8090 -index=true` in the source directory.
     - Depending on [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/), this initialization penalty (~`700ms`) may prove burdensome.
     - See the [JAWS](https://github.com/jaws-framework/JAWS) project for a pure NodeJS environment.
   1. There are [Lambda Limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that may affect your development
-  1. `dry-run` execution isn't yet implemented
-  1. There's bound to be more.
+
+## Outstanding
+  - Implement `-n/--noop` option
+  - Implement APIGateway graph
+  - Support APIGateway inline Model definition
+  - Extend `export()` to allow for _Outputs_ annotation
