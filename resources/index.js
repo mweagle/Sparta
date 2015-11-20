@@ -200,7 +200,8 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
           {
             try {
-              console.log('Delegating to configurator: ' + eachConfig);
+              console.log('APIGateway handling: ' + event.RequestType);
+              console.log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s', event.RequestType, eachConfig,  JSON.stringify(event, null,  ' ')));
               var svc = require(util.format('./%s', eachConfig));
               svc.handler(event, context);
             } catch (e) {
