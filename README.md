@@ -121,7 +121,7 @@ go run application.go describe --out ./graph.html && open ./graph.html
 
 ## Additional documentation
 
-Run `godoc -http=:8090 -index=true` in the source directory.
+View the latest versions at [GoDoc](https://godoc.org/github.com/mweagle/Sparta) or run `make docs` in the source directory & visit http://localhost:8090.
 
 ## Caveats
 
