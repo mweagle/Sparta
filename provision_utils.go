@@ -3,7 +3,6 @@ package sparta
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -87,7 +86,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
 	if !exists {
-		return "", errors.New("Unsupported principal for IAM role creation: " + awsPrincipalName)
+		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
 
 	hash := sha1.New()

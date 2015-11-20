@@ -831,13 +831,12 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		logger.Formatter = new(logrus.TextFormatter)
 		fileWriter, err := os.Create(options.Describe.OutputFile)
 		if err != nil {
-			errMsg := fmt.Sprintf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
-			return errors.New(errMsg)
+			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
 		}
 		defer fileWriter.Close()
 		return Describe(serviceName, serviceDescription, lambdaAWSInfos, fileWriter, logger)
 	default:
 		goptions.PrintHelp()
-		return errors.New("Unsupported subcommand: " + string(options.Verb))
+		return fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))
 	}
 }

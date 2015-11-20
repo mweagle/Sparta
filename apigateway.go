@@ -299,8 +299,7 @@ func NewStage(name string) *Stage {
 func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Resource, error) {
 	_, exists := api.resources[pathPart]
 	if exists {
-		errMsg := fmt.Sprintf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFnName)
-		return nil, errors.New(errMsg)
+		return nil, fmt.Errorf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFnName)
 	}
 	resource := &Resource{
 		pathPart:     pathPart,

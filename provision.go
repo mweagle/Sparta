@@ -83,7 +83,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 
 	for _, eachLambda := range ctx.lambdaAWSInfos {
 		if "" != eachLambda.RoleName && nil != eachLambda.RoleDefinition {
-			return nil, errors.New("Both RoleName and RoleDefinition defined for lambda: " + eachLambda.lambdaFnName)
+			return nil, fmt.Errorf("Both RoleName and RoleDefinition defined for lambda: %s", eachLambda.lambdaFnName)
 		}
 
 		// Get the IAM role name
@@ -214,11 +214,11 @@ func createPackageStep() workflowStep {
 		// File info for the binary executable
 		binaryWriter, err := lambdaArchive.Create(filepath.Base(executableOutput))
 		if err != nil {
-			return nil, errors.New("Failed to create ZIP entry: " + filepath.Base(executableOutput))
+			return nil, fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(executableOutput))
 		}
 		reader, err := os.Open(executableOutput)
 		if err != nil {
-			return nil, errors.New("Failed to open file: " + executableOutput)
+			return nil, fmt.Errorf("Failed to open file: %s", executableOutput)
 		}
 		defer reader.Close()
 		io.Copy(binaryWriter, reader)
@@ -288,7 +288,7 @@ func createUploadStep(packagePath string) workflowStep {
 
 		reader, err := os.Open(packagePath)
 		if err != nil {
-			return nil, errors.New("Failed to upload to S3: " + err.Error())
+			return nil, fmt.Errorf("Failed to upload to S3: %s", err.Error())
 		}
 		defer func() {
 			reader.Close()
@@ -412,7 +412,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 				break
 			}
 		} else {
-			return nil, errors.New("More than one stack returned for: " + stackID)
+			return nil, fmt.Errorf("More than one stack returned for: %s", stackID)
 		}
 	}
 	// What happened?
@@ -447,7 +447,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 				// NOP
 			}
 		}
-		return nil, errors.New("Failed to provision: " + ctx.serviceName)
+		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
 	}
 	return stackInfo, nil
 }
