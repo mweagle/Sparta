@@ -594,6 +594,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	logger *logrus.Logger) error {
 
 	// If we have RoleName, then get the ARN, otherwise get the Ref

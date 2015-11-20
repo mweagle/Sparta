@@ -57,6 +57,7 @@ type workflowContext struct {
 	lambdaAWSInfos          []*LambdaAWSInfo
 	api                     *API
 	cloudformationResources ArbitraryJSONObject
+	cloudformationOutputs   ArbitraryJSONObject
 	lambdaIAMRoleNameMap    map[string]interface{}
 	s3Bucket                string
 	s3LambdaZipKey          string
@@ -448,6 +449,15 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			}
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
+	} else if nil != stackInfo.Outputs {
+		ctx.logger.Info("Stack Outputs:")
+		for _, eachOutput := range stackInfo.Outputs {
+			ctx.logger.WithFields(logrus.Fields{
+				"Key":         *eachOutput.OutputKey,
+				"Value":       *eachOutput.OutputValue,
+				"Description": *eachOutput.Description,
+			}).Info("\tOutput")
+		}
 	}
 	return stackInfo, nil
 }
@@ -461,7 +471,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			"Description":              ctx.serviceDescription,
 		}
 		for _, eachEntry := range ctx.lambdaAWSInfos {
-			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.logger)
+			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
 			if nil != err {
 				return nil, err
 			}
@@ -469,10 +479,11 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		// If there's an API gateway definition, provision custom resources
 		// and IAM role to
 		if nil != ctx.api {
-			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.logger)
+			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
 		}
 
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
+		cloudFormationTemplate["Outputs"] = ctx.cloudformationOutputs
 
 		// Generate a complete CloudFormation template
 		cfTemplate, err := json.Marshal(cloudFormationTemplate)
@@ -551,6 +562,7 @@ func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*
 		lambdaAWSInfos:     lambdaAWSInfos,
 		api:                api,
 		cloudformationResources: make(ArbitraryJSONObject, 0),
+		cloudformationOutputs:   make(ArbitraryJSONObject, 0),
 		s3Bucket:                s3Bucket,
 		awsSession:              awsSession(logger),
 		logger:                  logger}

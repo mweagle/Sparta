@@ -125,10 +125,8 @@ Run `godoc -http=:8090 -index=true` in the source directory.
 
 ## Caveats
 
-  1. This is my first _golang_ project - YMMV
   1. It's a POC first release
     - Do not run your next [$1B unicorn](https://en.wikipedia.org/wiki/Unicorn_%28finance%29) on it
-    - Or if you do, perhaps we should have coffee?
   1. _golang_ isn't officially supported by AWS (yet)
     - But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
     - Because of this, there is a per-container initialization cost of:
@@ -144,4 +142,3 @@ Run `godoc -http=:8090 -index=true` in the source directory.
   - Implement `-n/--noop` option
   - Implement APIGateway graph
   - Support APIGateway inline Model definition
-  - Extend `export()` to allow for _Outputs_ annotation

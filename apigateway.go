@@ -281,13 +281,21 @@ func (api API) MarshalJSON() ([]byte, error) {
 	return json.Marshal(apiJSON)
 }
 
+// export marshals the API data to a CloudFormation compatible representation
 func (api *API) export(S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	logger *logrus.Logger) error {
 
-	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal, "*", resources, S3Bucket, S3Key, logger)
+	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal,
+		"*",
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
+
 	if nil != err {
 		return err
 	}
@@ -307,6 +315,16 @@ func (api *API) export(S3Bucket string,
 
 	apiGatewayInvokerResName := CloudFormationResourceName("APIGateway", api.name)
 	resources[apiGatewayInvokerResName] = apiGatewayInvoker
+
+	// Output it...
+	apiGatewayOutput := ArbitraryJSONObject{
+		"Description": "API Gateway URL",
+		"Value": ArbitraryJSONObject{
+			"Fn::GetAtt": []string{apiGatewayInvokerResName, "URL"},
+		},
+	}
+
+	outputs["URL"] = apiGatewayOutput
 	return nil
 }
 

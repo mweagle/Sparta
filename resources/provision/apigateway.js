@@ -142,7 +142,7 @@ var ensureAPIDeletedTask = function(resourceProperties /*, resultData */) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // BEGIN - CREATE API FUNCTIONS
-var ensureAPICreatedTask = function(resourceProperties, returnData) {
+var ensureAPICreatedTask = function(resourceProperties /*, returnData */) {
   return function task(callback /*, results */ ) {
     var apiProps = resourceProperties.API || {};
     var params = {
@@ -150,14 +150,7 @@ var ensureAPICreatedTask = function(resourceProperties, returnData) {
       cloneFrom: apiProps.CloneFrom || undefined,
       description: apiProps.Description || undefined
     };
-    var terminus = function(e, createResults) {
-      returnData.ensureAPICreated = {
-        Error: e ? e.toString() : undefined,
-        Results: createResults ? createResults : undefined
-      };
-      setImmediate(callback, null, createResults);
-    };
-    apigateway.createRestApi(params, terminus);
+    apigateway.createRestApi(params, callback);
   };
 };
 
@@ -502,7 +495,17 @@ var ensureDeploymentTask = function(restAPIKeyName, resourceProperties /*, retur
          variables: stageDefinition.Variables || {}
        };
        logResults('Creating deployment', null, params);
-       apigateway.createDeployment(params, taskCB);
+       var terminus = function(e, results)
+       {
+         if (!e && results) {
+           results.URL = util.format('https://%s.execute-api.%s.amazonaws.com/%s',
+                                      restApiId,
+                                      lambda.config.region,
+                                      stageDefinition.Name);
+         }
+         taskCB(e, results);
+       };
+       apigateway.createDeployment(params, terminus);
      });
     async.waterfall(deployTasks, callback);
    }
@@ -519,8 +522,11 @@ exports.handler = function(event, context) {
   var data = {};
 
   var onComplete = function(error, returnValue) {
+
     data.Error = error || undefined;
     data.Result = returnValue || undefined;
+    data.URL = (data.Result && data.Result.ensureDeployment) ? data.Result.ensureDeployment.URL : "";
+
     try
     {
       response.send(event, context, data.Error ? response.FAILED : response.SUCCESS, data);
@@ -548,18 +554,18 @@ exports.handler = function(event, context) {
         ];
       }
 
-      tasks.ensureCreated = ['ensureDeleted',
+      tasks.ensureAPICreated = ['ensureDeleted',
         ensureAPICreatedTask(event.ResourceProperties, data)
       ];
 
-      tasks.ensureResources = ['ensureCreated',
-        ensureResourcesCreatedTask('ensureCreated',
+      tasks.ensureResources = ['ensureAPICreated',
+        ensureResourcesCreatedTask('ensureAPICreated',
           event.ResourceProperties,
           data)
       ];
 
       tasks.ensureDeployment = ['ensureResources',
-        ensureDeploymentTask('ensureCreated',
+        ensureDeploymentTask('ensureAPICreated',
           event.ResourceProperties,
           data)
       ];
