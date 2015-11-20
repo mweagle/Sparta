@@ -38,6 +38,16 @@ var lamdbdaURI = function(lambdaArn) {
     lambdaArn);
 };
 
+var toBoolean = function(value)
+{
+  var bValue = _.isBoolean(value) ?  value : false;
+  if (value && _.isString(value) && ('true' === value.toLowerCase()))
+  {
+    bValue = true;
+  }
+  return bValue;
+};
+
 var accumulatedStackLambdas = function(resourcesRoot, accumulator) {
   // If this is the API root node, then be a bit flexible
   accumulator = accumulator || [];
@@ -84,16 +94,18 @@ var ensureLambdaPermissionsDeleted = function(lambdaFunctionArns, callback) {
   async.eachSeries(lambdaFunctionArns, cleanupIterator, callback);
 };
 
-var ensureAPIDeletedTask = function(resourceProperties, oldResourceProperties /*, returnData */) {
+var ensureAPIDeletedTask = function(resourceProperties /*, resultData */) {
+
   return function task(callback /*, results*/ ) {
     var waterfall = [];
+    var apiProps = resourceProperties.API || {};
+
     // Get all the APIs
     waterfall.push(function(cb) {
       apigateway.getRestApis({}, cb);
     });
 
     waterfall.push(function(restAPIs, cb) {
-      var apiProps = resourceProperties.API || {};
       var matchingAPI = _.find(restAPIs.items || [], function(eachRestAPI) {
         return eachRestAPI.name === apiProps.Name;
       });
@@ -102,8 +114,7 @@ var ensureAPIDeletedTask = function(resourceProperties, oldResourceProperties /*
       // cleanup the permissions
       var onAPIDeleted = function(e, results) {
         if (!e) {
-          var oldAPIProps = oldResourceProperties.API || {};
-          var lambdaArns = accumulatedStackLambdas(oldAPIProps.Resources || []);
+          var lambdaArns = accumulatedStackLambdas(apiProps.Resources || []);
           ensureLambdaPermissionsDeleted(lambdaArns, cb);
         } else {
           cb(e, results);
@@ -213,34 +224,73 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
 
     // 1. Create the Method entry
     // Create the method
-    var apiKeyRequired = (typeof(methodDef.APIKeyRequired) === 'boolean') ?
-                          methodDef.APIKeyRequired :
-                          ('true' === methodDef.APIKeyRequired);
-
     creationTasks.putMethod = function(asyncCB) {
+      // Ensure the request params are booleans
+      var requestParams = _.reduce(methodDef.RequestParameters || {},
+                                  function (memo, eachParam, eachKey) {
+                                    memo[eachKey] = toBoolean(eachParam);
+                                    return memo;
+                                  },
+                                {});
+    // TODO: Support Model creation
       var params = methodOpParams({
         authorizationType: methodDef.AuthorizationType || "NONE",
-        apiKeyRequired: apiKeyRequired,
-        requestParameters: {}
+        apiKeyRequired: toBoolean(methodDef.APIKeyRequired),
+        requestParameters: requestParams /*,
+        requestModels: methodDef.RequestModels || {},*/
       });
       apigateway.putMethod(params, asyncCB);
     };
 
-    // 2. Create the Method response
+    var putMethodResponseTask = function(statusCode, models) {
+      return function(taskCB) {
+        var responseModels = _.reduce(models,
+                                 function(memo, eachModelDef, eachContentType)
+                                 {
+                                   memo[eachContentType] = eachModelDef.Name;
+                                   return memo;
+                                 },
+                                 {});
+
+        var params = methodOpParams({
+          statusCode: statusCode.toString(),
+          responseModels: responseModels
+        });
+        //logResults('putMethodResponse', null, params);
+        apigateway.putMethodResponse(params, taskCB);
+      };
+    };
+
+    // 2. Create the Method response, which is a map of status codes to
+    // response objects
     // Create the method responses
     creationTasks.putMethodResponse = Object.keys(creationTasks);
     creationTasks.putMethodResponse.push(function(asyncCB) {
-      var params = methodOpParams({
-        statusCode: '200',
-        responseModels: {
-          'application/json': 'Empty'
-        }
+      var putMethodResponseTasks = [];
+      var responses = methodDef.Responses || {};
+      _.each(responses, function (eachResponseObject, eachResponseStatus) {
+          var models = eachResponseObject.Models || {};
+          //logResults('Response object', null, {STATUS: eachResponseStatus, MODELS: models});
+          putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, models));
       });
-      apigateway.putMethodResponse(params, asyncCB);
+
+      // Run them...
+      async.series(putMethodResponseTasks, asyncCB);
     });
 
     // 3. Create the Method integration
     // Create the method integration
+    var putIntegrationTask = function(statusCode, templates) {
+      return function(taskCB) {
+        var params = methodOpParams({
+          statusCode: statusCode.toString(),
+          responseTemplates: templates || {}
+        });
+        //logResults('putIntegrationResponse', null, params);
+        apigateway.putIntegrationResponse(params, taskCB);
+      };
+    };
+
     creationTasks.putIntegration = Object.keys(creationTasks);
     creationTasks.putIntegration.push(function(asyncCB) {
       var params = methodOpParams({
@@ -256,13 +306,15 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     // The integration responses
     creationTasks.putIntegrationResponse = Object.keys(creationTasks);
     creationTasks.putIntegrationResponse.push(function(asyncCB) {
-      var params = methodOpParams({
-        statusCode: '200',
-        responseTemplates: {
-          'application/json': '',
-        }
-      });
-      apigateway.putIntegrationResponse(params, asyncCB);
+      var integration = methodDef.Integration || {};
+      var responses = integration.Responses || {};
+      var putIntegrationResponseTasks = [];
+      _.each(responses,
+             function(eachResponse, eachStatusCode) {
+              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode, eachResponse.Templates));
+             });
+      async.series(putIntegrationResponseTasks, asyncCB);
+
     });
 
     // 5. Punch a hole into the Lambda s.t. this Arn has permission to invoke the function
@@ -334,7 +386,7 @@ var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*,
 
     // Create all the resources in the custom data
     tasks.push(function(resourceIndex, taskCB) {
-      logResults('Resource Index', null, resourceIndex);
+      //logResults('Resource Index', null, resourceIndex);
       var lambdaRolePolicyCache = {};
 
       var workerError = null;
@@ -361,7 +413,6 @@ var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*,
                 definition: children[eachKey],
                 parentId: processTaskResults.createResource.id
               };
-              logResults('Pushing child task', null, eachKey);
               workerQueue.push(task);
             });
           }
@@ -383,9 +434,9 @@ var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*,
             };
             apigateway.createResource(params, asyncCB);
           } else {
-            logResults('Resource already exists', null, {
-              PATH: rootObject.PathComponent
-            });
+            // logResults('Resource already exists', null, {
+            //   PATH: rootObject.PathComponent
+            // });
             // No need to create a child resource for "/" path
             setImmediate(asyncCB, null, {
               id: resourceIndex["/"]
@@ -398,7 +449,6 @@ var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*,
         processTasks.createMethods = ['createResource'];
         processTasks.createMethods.push(function(asyncCB, context) {
           var createResourceResponse = context.createResource || {};
-          logResults('CONTEXT', null, context);
           logResults('createResource response', null, createResourceResponse);
 
           // The API resources will be created a of the root resource
@@ -467,7 +517,6 @@ var ensureDeploymentTask = function(restAPIKeyName, resourceProperties /*, retur
 
 exports.handler = function(event, context) {
   var data = {};
-  console.log('APIGateway handling: ' + event.RequestType);
 
   var onComplete = function(error, returnValue) {
     data.Error = error || undefined;
@@ -481,13 +530,24 @@ exports.handler = function(event, context) {
       logResults('ALL DONE', error, returnValue);
     }
   };
-  logResults('EVENT Properties', null, event.ResourceProperties);
   if (event.ResourceProperties) {
     var tasks = {};
-
-    tasks.ensureDeleted = ensureAPIDeletedTask(event.ResourceProperties, event.OldResourceProperties || {}, data);
+    tasks.ensureDeleted = ensureAPIDeletedTask(event.ResourceProperties, data);
 
     if (event.RequestType !== 'Delete') {
+
+      var resourceProps = event.ResourceProperties || {};
+      var apiProps = resourceProps.API || {};
+
+      var oldResourceProps = event.OldResourceProperties || {};
+      var oldAPIProps = oldResourceProps.API || {};
+
+      if (!_.isEmpty(oldAPIProps) && (oldAPIProps.Name !== apiProps.Name)) {
+        tasks.ensureOldDeleted= ['ensureDeleted',
+          ensureAPIDeletedTask(event.OldResourceProperties, data)
+        ];
+      }
+
       tasks.ensureCreated = ['ensureDeleted',
         ensureAPICreatedTask(event.ResourceProperties, data)
       ];
@@ -512,3 +572,10 @@ exports.handler = function(event, context) {
     response.send(event, context, response.SUCCESS, data);
   }
 };
+//
+// var apiData = require('./APIProperties.json');
+// var event = {
+//   RequestType: 'Create',
+//   ResourceProperties: apiData
+// };
+// module.exports.handler(event, {});
