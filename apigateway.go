@@ -11,23 +11,33 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+// Model proxies the AWS SDK's Model data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Model
+//
+// NOTE: Dynamic Model creation is currently _NOT_ implemented.
 type Model struct {
 	Description string `json:",omitempty"`
 	Name        string `json:",omitempty"`
 	Schema      string `json:",omitempty"`
 }
 
+// Response proxies the AWS SDK's PutMethodResponseInput data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-PutMethodResponseInput
 type Response struct {
 	Parameters map[string]bool  `json:",omitempty"`
 	Models     map[string]Model `json:",omitempty"`
 }
 
+// IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-IntegrationResponse
 type IntegrationResponse struct {
 	Parameters       map[string]string `json:",omitempty"`
 	SelectionPattern string            `json:",omitempty"`
 	Templates        map[string]string `json:",omitempty"`
 }
 
+// Integration proxies the AWS SDK's Integration data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Integration
 type Integration struct {
 	Parameters         map[string]string
 	CacheKeyParameters []string
@@ -45,13 +55,15 @@ func (integration Integration) defaultIntegrationResponse() IntegrationResponse 
 	}
 }
 
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
 func (integration Integration) MarshalJSON() ([]byte, error) {
 	var responses = integration.Responses
 	if len(responses) <= 0 {
 		responses[http.StatusOK] = integration.defaultIntegrationResponse()
 	}
 
-	for eachStatusCode, _ := range responses {
+	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
 		if "" == httpString {
 			return nil, fmt.Errorf("Invalid HTTP status code in Integration Response: %d", eachStatusCode)
@@ -80,6 +92,8 @@ func (integration Integration) MarshalJSON() ([]byte, error) {
 	return json.Marshal(integrationJSON)
 }
 
+// Method proxies the AWS SDK's Method data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Method
 type Method struct {
 	authorizationType string
 	httpMethod        string
@@ -120,12 +134,14 @@ func (method Method) defaultResponse() Response {
 	}
 }
 
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
 func (method Method) MarshalJSON() ([]byte, error) {
 	responses := method.Responses
 	if len(responses) <= 0 {
 		responses[http.StatusOK] = method.defaultResponse()
 	}
-	for eachStatusCode, _ := range responses {
+	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
 		if "" == httpString {
 			return nil, fmt.Errorf("Invalid HTTP status code in Method Response: %d", eachStatusCode)
@@ -148,12 +164,16 @@ func (method Method) MarshalJSON() ([]byte, error) {
 	})
 }
 
+// Resource proxies the AWS SDK's Resource data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Resource
 type Resource struct {
 	pathPart     string
 	parentLambda *LambdaAWSInfo
 	Methods      map[string]*Method
 }
 
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
 func (resource Resource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
 		"PathPart": resource.pathPart,
@@ -164,6 +184,8 @@ func (resource Resource) MarshalJSON() ([]byte, error) {
 	})
 }
 
+// Stage proxies the AWS SDK's Stage data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Stage
 type Stage struct {
 	name                string
 	CacheClusterEnabled bool
@@ -172,6 +194,8 @@ type Stage struct {
 	Variables           map[string]string
 }
 
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
 func (stage Stage) MarshalJSON() ([]byte, error) {
 	stageJSON := map[string]interface{}{
 		"Name":                stage.name,
@@ -189,9 +213,16 @@ func (stage Stage) MarshalJSON() ([]byte, error) {
 	return json.Marshal(stageJSON)
 }
 
+// API represents the AWS API Gateway data associated with a given Sparta app.  Proxies
+// the AWS SDK's CreateRestApiInput data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-CreateRestApiInput
 type API struct {
-	name        string
-	stage       *Stage
+	// The API name
+	// TOOD: bind this to the stack name to prevent provisioning collisions.
+	name string
+	// Optional stage. If defined, the API will be deployed
+	stage *Stage
+	// Existing API to CloneFrom
 	CloneFrom   string
 	Description string
 	resources   map[string]*Resource
@@ -203,6 +234,8 @@ type resourceNode struct {
 	APIResources  map[string]*Resource
 }
 
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
 func (api API) MarshalJSON() ([]byte, error) {
 
 	// Transform the map of resources into a set of hierarchical resourceNodes
@@ -281,6 +314,8 @@ func (api *API) logicalName() string {
 	return CloudFormationResourceName("APIGateway", api.name, api.stage.name)
 }
 
+// NewAPIGateway returns a new API Gateway structure.  If stage is defined, the API Gateway
+// will also be deployed as part of stack creation.
 func NewAPIGateway(name string, stage *Stage) *API {
 	return &API{
 		name:      name,
@@ -289,6 +324,10 @@ func NewAPIGateway(name string, stage *Stage) *API {
 	}
 }
 
+// NewStage returns a Stage object with the given name.  Providing a Stage value
+// to NewAPIGateway implies that the API Gateway resources should be deployed
+// (eg: made publicly accessible).  See
+// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html
 func NewStage(name string) *Stage {
 	return &Stage{
 		name:      name,
@@ -296,6 +335,8 @@ func NewStage(name string) *Stage {
 	}
 }
 
+// NewResource associates a URL path value with the LambdaAWSInfo golang lambda.  To make
+// the Resource available, associate one or more Methods via NewMethod().
 func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Resource, error) {
 	_, exists := api.resources[pathPart]
 	if exists {
@@ -310,6 +351,8 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 	return resource, nil
 }
 
+// NewMethod associates the httpMethod name with the given Resource.  The returned Method
+// has no authorization requirements.
 func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 	authorizationType := "NONE"
 
@@ -337,6 +380,7 @@ func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 	return method, nil
 }
 
+// NewAuthorizedMethod associates the httpMethod name and authorizationType with the given Resource.
 func (resource *Resource) NewAuthorizedMethod(httpMethod string, authorizationType string) (*Method, error) {
 	method, err := resource.NewMethod(httpMethod)
 	if nil != err {
