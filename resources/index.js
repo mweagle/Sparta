@@ -201,7 +201,8 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           {
             try {
               console.log('APIGateway handling: ' + event.RequestType);
-              console.log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s', event.RequestType, eachConfig,  JSON.stringify(event, null,  ' ')));
+              console.log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s',
+                          event.RequestType, eachConfig,  JSON.stringify(event, null,  ' ')));
               var svc = require(util.format('./%s', eachConfig));
               svc.handler(event, context);
             } catch (e) {
