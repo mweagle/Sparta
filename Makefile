@@ -37,6 +37,10 @@ build: format generate vet
 	GO15VENDOREXPERIMENT=1 go build .
 	@echo "Build complete"
 
+docs:
+	@echo "Publishing go doc to http://localhost:8090"
+	godoc -v -http=:8090 -index=true
+
 test: build
 	GO15VENDOREXPERIMENT=1 go test -v .
 
