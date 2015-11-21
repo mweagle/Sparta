@@ -30,6 +30,9 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
+// The current Sparta version
+const SpartaVersion = "0.0.5"
+
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
 // for API operations.
@@ -625,6 +628,9 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 			"Timeout":     info.Options.Timeout,
 		},
 		"DependsOn": dependsOn,
+		"Metadata": ArbitraryJSONObject{
+			"golangFunc": info.lambdaFnName,
+		},
 	}
 
 	// Get the resource name we're going to use s.t. we can tie it to the rest of the
@@ -788,6 +794,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	// manage the other sources.  That'll give us the role arn to use in the custom
 	// resource execution.
 	options := struct {
+		Noop     bool          `goptions:"-n, --noop, description='Dry-run behavior only (do not provision stack)'"`
 		LogLevel string        `goptions:"-l, --level, description='Log level [panic, fatal, error, warn, info, debug]'"`
 		Help     goptions.Help `goptions:"-h, --help, description='Show this help'"`
 
@@ -818,7 +825,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	switch options.Verb {
 	case "provision":
 		logger.Formatter = new(logrus.TextFormatter)
-		return Provision(serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, logger)
+		return Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, nil, logger)
 	case "execute":
 		logger.Formatter = new(logrus.JSONFormatter)
 		return Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
@@ -835,7 +842,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
 		}
 		defer fileWriter.Close()
-		return Describe(serviceName, serviceDescription, lambdaAWSInfos, fileWriter, logger)
+		return Describe(serviceName, serviceDescription, lambdaAWSInfos, api, fileWriter, logger)
 	default:
 		goptions.PrintHelp()
 		return fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))

@@ -7,78 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 	"text/template"
 
 	"github.com/Sirupsen/logrus"
 )
-
-const descriptionTemplate = `<!doctype html>
-<html>
-<head>
-  <title>{{ .ServiceName }}</title>
-
-	<style>
-	{{ .MermaidCSS }}
-	</style>
-
-
-  <style>
-    body {
-      background-color: #F5F5F5;
-      font-family: "-apple-system", Menlo, Arial, Helvetica, sans-serif;
-      font-size: smaller;
-    }
-    h2 {
-      font-variant: small-caps;
-    }
-  </style>
-	<script>
-	{{ .MermaidJS}}
-
-	mermaid.initialize({startOnLoad:true,
-										htmlLabels: true,
-									  flowchart:{
-									     useMaxWidth: true
-									  }
-										});
-
-	</script>
-</head>
-<body>
-	<h2> {{ .ServiceName }} </h2>
-	<h5> {{ .ServiceDescription }}</h5>
-	<hr />
-	<div class="mermaid">
-		%% Example code
-		graph LR
-
-    {{ .MermaidData}}
-	</div>
-</body>
-</html>
-`
-
-func nodeObject(text string, shape string, group int) *ArbitraryJSONObject {
-	return &ArbitraryJSONObject{
-		"id":    text,
-		"label": text,
-		"shape": shape,
-		"group": strconv.Itoa(group),
-	}
-}
-
-func edgeObject(from string, to string, edgeLabel string) *ArbitraryJSONObject {
-	return &ArbitraryJSONObject{
-		"from":  from,
-		"to":    to,
-		"label": edgeLabel,
-		"color": &ArbitraryJSONObject{
-			"inherit": "both",
-		},
-	}
-}
 
 func writenode(writer io.Writer, nodeName string, nodeColor string) {
 	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", nodeName, nodeColor)
@@ -91,15 +24,36 @@ func writelink(writer io.Writer, fromNode string, toNode string, label string) {
 	} else {
 		fmt.Fprintf(writer, "%s-->%s\n", fromNode, toNode)
 	}
-
+}
+func describeAPI() string {
+	return ""
 }
 
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
 // line option.
-func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, outputWriter io.Writer, logger *logrus.Logger) error {
+func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, outputWriter io.Writer, logger *logrus.Logger) error {
+	var cloudFormationTemplate bytes.Buffer
+	err := Provision(true, serviceName, serviceDescription, lambdaAWSInfos, api, "S3Bucket", &cloudFormationTemplate, logger)
+	if nil != err {
+		return err
+	}
+	/*
+		// Export the template and insert it into an HTML page.  Let the page do the work...
 
-	tmpl, err := template.New("description").Parse(descriptionTemplate)
+		for _, eachEntry := range ctx.lambdaAWSInfos {
+			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+			if nil != err {
+				return nil, err
+			}
+		}
+		// If there's an API gateway definition, provision custom resources
+		// and IAM role to
+		if nil != ctx.api {
+			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+		}
+	*/
+	tmpl, err := template.New("description").Parse(FSMustString(false, "/resources/describe/template.html"))
 	if err != nil {
 		return errors.New(err.Error())
 	}
@@ -110,7 +64,6 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 	writenode(&b, serviceName, "2AF1EA")
 
 	for _, eachLambda := range lambdaAWSInfos {
-		logger.Debug("Appending: ", eachLambda.lambdaFnName)
 		// Create the node...
 		writenode(&b, eachLambda.lambdaFnName, "00A49F")
 		writelink(&b, eachLambda.lambdaFnName, serviceName, "")
@@ -131,18 +84,51 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 			writelink(&b, nodeName, eachLambda.lambdaFnName, "")
 		}
 	}
+	// If there's an API, then output that as well...
+
+	// params := struct {
+	// 	ServiceName        string
+	// 	ServiceDescription string
+	// 	MermaidCSS         string
+	// 	MermaidJS          string
+	// 	MermaidData        string
+	// }{
+	// 	serviceName,
+	// 	serviceDescription,
+	// 	FSMustString(false, "/resources/bootstrap-3.3.5/css/bootstrap.css"),
+	// 	FSMustString(false, "/resources/mermaid/mermaid.css"),
+	// 	FSMustString(false, "/resources/mermaid/mermaid.min.js"),
+	// 	FSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
+	// 	FSMustString(false, "/resources/bootstrap-3.3.5/js/bootstrap.js"),
+	// 	b.String(),
+	// }
 	params := struct {
-		ServiceName        string
-		ServiceDescription string
-		MermaidCSS         string
-		MermaidJS          string
-		MermaidData        string
+		SpartaVersion          string
+		ServiceName            string
+		ServiceDescription     string
+		CloudFormationTemplate string
+		BootstrapCSS           string
+		MermaidCSS             string
+		HighlightsCSS          string
+		JQueryJS               string
+		BootstrapJS            string
+		MermaidJS              string
+		HighlightsJS           string
+		MermaidData            string
 	}{
+		SpartaVersion,
 		serviceName,
 		serviceDescription,
+		cloudFormationTemplate.String(),
+		FSMustString(false, "/resources/bootstrap/css/bootstrap.min.css"),
 		FSMustString(false, "/resources/mermaid/mermaid.css"),
+		FSMustString(false, "/resources/highlights/styles/xcode.css"),
+		FSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
+		FSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
 		FSMustString(false, "/resources/mermaid/mermaid.min.js"),
+		FSMustString(false, "/resources/highlights/highlight.pack.js"),
 		b.String(),
 	}
+
 	return tmpl.Execute(outputWriter, params)
 }

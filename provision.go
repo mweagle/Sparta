@@ -52,6 +52,7 @@ var customResourceScripts = []string{"cfn-response.js",
 	"sns.js"}
 
 type workflowContext struct {
+	noop                    bool
 	serviceName             string
 	serviceDescription      string
 	lambdaAWSInfos          []*LambdaAWSInfo
@@ -62,6 +63,7 @@ type workflowContext struct {
 	s3Bucket                string
 	s3LambdaZipKey          string
 	awsSession              *session.Session
+	templateWriter          io.Writer
 	logger                  *logrus.Logger
 }
 
@@ -117,7 +119,6 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 					"Fn::GetAtt": []string{logicalName, "Arn"},
 				}
 			}
-
 		}
 	}
 	ctx.logger.Info("IAM roles verified. Count: ", len(ctx.lambdaIAMRoleNameMap))
@@ -285,11 +286,9 @@ func createPackageStep() workflowStep {
 // Upload the ZIP archive to S3
 func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
-		ctx.logger.Info("Uploading ZIP archive to S3")
-
 		reader, err := os.Open(packagePath)
 		if err != nil {
-			return nil, fmt.Errorf("Failed to upload to S3: %s", err.Error())
+			return nil, fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
 		}
 		defer func() {
 			reader.Close()
@@ -301,20 +300,28 @@ func createUploadStep(packagePath string) workflowStep {
 			return nil, err
 		}
 		keyName := filepath.Base(packagePath)
+		// Cache it in case there was an error & we need to cleanup
+		ctx.s3LambdaZipKey = keyName
 		uploadInput := &s3manager.UploadInput{
 			Bucket:      &ctx.s3Bucket,
 			Key:         &keyName,
 			ContentType: aws.String("application/zip"),
 			Body:        body,
 		}
-		uploader := s3manager.NewUploader(session.New())
-		result, err := uploader.Upload(uploadInput)
-		if nil != err {
-			return nil, err
+
+		if ctx.noop {
+			ctx.logger.WithFields(logrus.Fields{
+				"UploadInput": uploadInput,
+			}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
+		} else {
+			ctx.logger.Info("Uploading ZIP archive to S3")
+			uploader := s3manager.NewUploader(session.New())
+			result, err := uploader.Upload(uploadInput)
+			if nil != err {
+				return nil, err
+			}
+			ctx.logger.Info("ZIP archive uploaded: ", result.Location)
 		}
-		ctx.logger.Info("ZIP archive uploaded: ", result.Location)
-		// Cache it in case there was an error & we need to cleanup
-		ctx.s3LambdaZipKey = keyName
 		return ensureCloudFormationStack(keyName), nil
 	}
 }
@@ -481,7 +488,6 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		if nil != ctx.api {
 			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
 		}
-
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 		cloudFormationTemplate["Outputs"] = ctx.cloudformationOutputs
 
@@ -499,8 +505,6 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		hash.Write([]byte(contentBody))
 		s3keyName := fmt.Sprintf("%s-%s-cf.json", sanitizedServiceName, hex.EncodeToString(hash.Sum(nil)))
 
-		ctx.logger.Info("Uploading CloudFormation template")
-
 		uploadInput := &s3manager.UploadInput{
 			Bucket:      &ctx.s3Bucket,
 			Key:         &s3keyName,
@@ -512,18 +516,28 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			return nil, err
 		}
 		ctx.logger.Debug("CloudFormation template body: ", string(formatted))
+		if nil != ctx.templateWriter {
+			io.WriteString(ctx.templateWriter, string(formatted))
+		}
 
-		uploader := s3manager.NewUploader(ctx.awsSession)
-		templateUploadResult, err := uploader.Upload(uploadInput)
-		if nil != err {
-			return nil, err
+		if ctx.noop {
+			ctx.logger.WithFields(logrus.Fields{
+				"UploadInput": uploadInput,
+			}).Info("Bypassing template upload & creation due to -n/-noop command line argument")
+		} else {
+			ctx.logger.Info("Uploading CloudFormation template")
+			uploader := s3manager.NewUploader(ctx.awsSession)
+			templateUploadResult, err := uploader.Upload(uploadInput)
+			if nil != err {
+				return nil, err
+			}
+			ctx.logger.Info("CloudFormation template uploaded: ", templateUploadResult.Location)
+			stack, err := convergeStackState(templateUploadResult.Location, ctx)
+			if nil != err {
+				return nil, err
+			}
+			ctx.logger.Info("Stack provisioned: ", stack)
 		}
-		ctx.logger.Info("CloudFormation template uploaded: ", templateUploadResult.Location)
-		stack, err := convergeStackState(templateUploadResult.Location, ctx)
-		if nil != err {
-			return nil, err
-		}
-		ctx.logger.Info("Stack provisioned: ", stack)
 		return nil, nil
 	}
 }
@@ -554,9 +568,17 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 //         Port    string
 //     }
 // }
-func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Bucket string, logger *logrus.Logger) error {
+func Provision(noop bool,
+	serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	s3Bucket string,
+	templateWriter io.Writer,
+	logger *logrus.Logger) error {
 
 	ctx := &workflowContext{
+		noop:               noop,
 		serviceName:        serviceName,
 		serviceDescription: serviceDescription,
 		lambdaAWSInfos:     lambdaAWSInfos,
@@ -565,7 +587,9 @@ func Provision(serviceName string, serviceDescription string, lambdaAWSInfos []*
 		cloudformationOutputs:   make(ArbitraryJSONObject, 0),
 		s3Bucket:                s3Bucket,
 		awsSession:              awsSession(logger),
-		logger:                  logger}
+		templateWriter:          templateWriter,
+		logger:                  logger,
+	}
 
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)
