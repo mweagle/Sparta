@@ -122,7 +122,7 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		cloudFormationTemplate.String(),
 		FSMustString(false, "/resources/bootstrap/css/bootstrap.min.css"),
 		FSMustString(false, "/resources/mermaid/mermaid.css"),
-		FSMustString(false, "/resources/highlights/styles/xcode.css"),
+		FSMustString(false, "/resources/highlights/styles/vs.css"),
 		FSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
 		FSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
 		FSMustString(false, "/resources/mermaid/mermaid.min.js"),
