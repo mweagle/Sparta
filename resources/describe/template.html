@@ -59,19 +59,36 @@
 
     <script>
     var SERVICE_NAME = "{{ .ServiceName }}";
-    var TEMPLATE_DATA = null;
-    try {
-      TEMPLATE_DATA = JSON.parse({{ .CloudFormationTemplate }});
-    }
-    catch (e)
-    {
-      console.log('Failed to parse template: ' + e.toString());
-      TEMPLATE_DATA = {
-        ERROR: e.toString()
-      };
-    }
+
+    var buildAPIGatewayRepresentation = function(template) {
+      // For now see if we can find an API node...
+      var data = {};
+      resourceKeys = Object.keys(template.Resources);
+      resourceKeys.forEach(function (eachKey) {
+        var eachDefinition = template.Resources[eachKey];
+        if (eachDefinition.Type === 'AWS::CloudFormation::CustomResource' &&
+            eachDefinition.Properties &&
+            eachDefinition.Properties.API) {
+              data = eachDefinition.Properties.API;
+            }
+      });
+      $("#rawAPIGatewayContent").text(JSON.stringify(data, null, ' '));
+    };
+
     $( document ).ready(function() {
-        $("#rawTemplateContent").text(JSON.stringify(TEMPLATE_DATA, null, ' '));
+        var CLOUDFORMATION_TEMPLATE = null;
+        try {
+          CLOUDFORMATION_TEMPLATE = JSON.parse({{ .CloudFormationTemplate }});
+        }
+        catch (e)
+        {
+          console.log('Failed to parse template: ' + e.toString());
+          CLOUDFORMATION_TEMPLATE = {
+            ERROR: e.toString()
+          };
+        }
+        buildAPIGatewayRepresentation(CLOUDFORMATION_TEMPLATE);
+        $("#rawTemplateContent").text(JSON.stringify(CLOUDFORMATION_TEMPLATE, null, ' '));
         hljs.initHighlightingOnLoad();
     });
     </script>
@@ -110,15 +127,20 @@
         	</div>
         </div>
         <div role="tabpanel" class="tab-pane" id="apigateway">
-          <div class="jumbotron">
-            <h1>API Gateway</h1>
-            <p>Coming Soon!</p>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h2 class="panel-title">API Gateway <span class="label label-warning">TODO</span></h2>
+            </div>
+            <pre>
+              <code class="JSON" id="rawAPIGatewayContent">
+              </code>
+            </pre>
           </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="cloudformationTemplate">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">CloudFormation Template</h3>
+              <h2 class="panel-title">CloudFormation Template</h2>
             </div>
             <pre>
               <code class="JSON" id="rawTemplateContent">
