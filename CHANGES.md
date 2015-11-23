@@ -2,7 +2,11 @@
   - :checkered_flag: **CHANGES**
     - Preliminary support for API Gateway provisioning
       - See API type for more information.
+    - `describe` output includes:
+      - Dynamically generated CloudFormation Template
+      - API Gateway json
     - Lambda implementation of `CustomResources` for push source configuration promoted from inline [ZipFile](http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionCode.html) JS code to external JS files that are proxied via _index.js_ exports.
+    - [Fixed latent bug](https://github.com/mweagle/Sparta/commit/684b48eb0c2356ba332eee6054f4d57fc48e1419) where remote push source registrations were deleted during stack updates.
     - :warning: **BREAKING**
       - Changed `Sparta.Main()` signature to accept API pointer as fourth argument.  Parameter is optional.
 
