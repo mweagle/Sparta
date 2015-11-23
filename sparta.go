@@ -30,7 +30,7 @@ func init() {
 	rand.Seed(time.Now().Unix())
 }
 
-// The current Sparta version
+// SpartaVersion defines the current Sparta release
 const SpartaVersion = "0.0.5"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
