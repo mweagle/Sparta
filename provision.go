@@ -12,7 +12,7 @@
 
 // Embed the custom service handlers
 // TODO: Move these into golang
-//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -pkg sparta ./resources
+//go:generate go run ./vendor/github.com/mweagle/esc/main.go -o ./CONSTANTS.go -private -pkg sparta ./resources
 
 // cleanup
 //go:generate rm -f ./resources/provision/node_modules.zip
@@ -231,7 +231,7 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, errors.New("Failed to create ZIP entry: index.js")
 		}
-		nodeJSSource := FSMustString(false, "/resources/index.js")
+		nodeJSSource := escFSMustString(false, "/resources/index.js")
 		nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 		for _, eachLambda := range ctx.lambdaAWSInfos {
 			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
@@ -247,7 +247,7 @@ func createPackageStep() workflowStep {
 		// Also embed the custom resource creation scripts
 		for _, eachName := range customResourceScripts {
 			resourceName := fmt.Sprintf("/resources/provision/%s", eachName)
-			resourceContent := FSMustString(false, resourceName)
+			resourceContent := escFSMustString(false, resourceName)
 			stringReader := strings.NewReader(resourceContent)
 			embedWriter, err := lambdaArchive.Create(eachName)
 			if nil != err {
@@ -258,7 +258,7 @@ func createPackageStep() workflowStep {
 		}
 
 		// And finally, if there is a node_modules.zip file, then include it.
-		nodeModuleBytes, err := FSByte(false, "/resources/provision/node_modules.zip")
+		nodeModuleBytes, err := escFSByte(false, "/resources/provision/node_modules.zip")
 		if nil == err {
 			nodeModuleReader, err := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
 			if err != nil {
@@ -311,7 +311,8 @@ func createUploadStep(packagePath string) workflowStep {
 
 		if ctx.noop {
 			ctx.logger.WithFields(logrus.Fields{
-				"UploadInput": uploadInput,
+				"Bucket": ctx.s3Bucket,
+				"Key":    keyName,
 			}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
 		} else {
 			ctx.logger.Info("Uploading ZIP archive to S3")
@@ -522,7 +523,8 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 
 		if ctx.noop {
 			ctx.logger.WithFields(logrus.Fields{
-				"UploadInput": uploadInput,
+				"Bucket": ctx.s3Bucket,
+				"Key":    s3keyName,
 			}).Info("Bypassing template upload & creation due to -n/-noop command line argument")
 		} else {
 			ctx.logger.Info("Uploading CloudFormation template")
