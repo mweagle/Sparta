@@ -256,11 +256,9 @@ func (api API) MarshalJSON() ([]byte, error) {
 					Children:      make(map[string]*resourceNode, 0),
 					APIResources:  make(map[string]*Resource, 0),
 				}
-				fmt.Printf("Inserting part: %s\n", eachPathPart)
 				ctxNode.Children[eachPathPart] = childNode
 			}
 			ctxNode = ctxNode.Children[eachPathPart]
-			fmt.Printf("Descending node: %s\n", ctxNode.PathComponent)
 		}
 		ctxNode.APIResources[eachResource.parentLambda.logicalName()] = eachResource
 	}
