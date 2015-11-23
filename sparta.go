@@ -822,6 +822,11 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		goptions.PrintHelp()
 		os.Exit(1)
 	}
+	logger.WithFields(logrus.Fields{
+		"Option":  options.Verb,
+		"Version": SpartaVersion,
+	}).Info("Welcome to Sparta")
+
 	switch options.Verb {
 	case "provision":
 		logger.Formatter = new(logrus.TextFormatter)
