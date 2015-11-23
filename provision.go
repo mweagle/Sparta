@@ -593,6 +593,10 @@ func Provision(noop bool,
 		logger:                  logger,
 	}
 
+	if len(lambdaAWSInfos) <= 0 {
+		return errors.New("No lambda functions provided to Sparta.Provision()")
+	}
+
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)
 		if err != nil {
