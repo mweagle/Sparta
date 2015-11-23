@@ -1,6 +1,10 @@
-## v0.0.4 - PENDING
+## v0.0.5
   - :checkered_flag: **CHANGES**
+    - Preliminary support for API Gateway provisioning
+      - See API type for more information.
     - Lambda implementation of `CustomResources` for push source configuration promoted from inline [ZipFile](http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionCode.html) JS code to external JS files that are proxied via _index.js_ exports.
+    - :warning: **BREAKING**
+      - Changed `Sparta.Main()` signature to accept API pointer as fourth argument.  Parameter is optional.
 
 ## v0.0.3
   - :checkered_flag: **CHANGES**
