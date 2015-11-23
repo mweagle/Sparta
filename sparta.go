@@ -830,16 +830,16 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	switch options.Verb {
 	case "provision":
 		logger.Formatter = new(logrus.TextFormatter)
-		return Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, nil, logger)
+		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, nil, logger)
 	case "execute":
 		logger.Formatter = new(logrus.JSONFormatter)
-		return Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
+		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
 	case "delete":
 		logger.Formatter = new(logrus.TextFormatter)
-		return Delete(serviceName, logger)
+		err = Delete(serviceName, logger)
 	case "explore":
 		logger.Formatter = new(logrus.TextFormatter)
-		return Explore(serviceName, logger)
+		err = Explore(serviceName, logger)
 	case "describe":
 		logger.Formatter = new(logrus.TextFormatter)
 		fileWriter, err := os.Create(options.Describe.OutputFile)
@@ -847,9 +847,13 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
 		}
 		defer fileWriter.Close()
-		return Describe(serviceName, serviceDescription, lambdaAWSInfos, api, fileWriter, logger)
+		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, fileWriter, logger)
 	default:
 		goptions.PrintHelp()
-		return fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))
+		err = fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))
 	}
+	if nil != err {
+		logger.Error(err)
+	}
+	return err
 }
