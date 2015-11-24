@@ -82,9 +82,14 @@
       var divPanelHeading = $("<div />", {"class":"panel-heading"});
       divPanelHeading.appendTo(divPanel);
       var panelHeadingText = resourcePath + " (" +  golangName + ")";
-      console.log('TEXT: ' + panelHeadingText);
-      $("<div />", {"text" : "Resource: " + resourcePath}).appendTo(divPanelHeading);
-      $("<div />", {"text" : "Go func(): " + golangName}).appendTo(divPanelHeading);
+      var row = $("<div />", {"class" : "row"});
+      row.appendTo(divPanelHeading);
+      $("<div />" ,{"text" : resourcePath, "class" : "col-md-4 text-left"}).appendTo(row);
+      var golangDiv = $("<div />" ,{"class" : "col-md-8 text-right"});
+      golangDiv.appendTo(row);
+      $("<em />", {"text" : golangName}).appendTo(golangDiv);
+
+      // Create the body
       var divPanelBody = $("<div />", {"class" : "panel-body"});
       divPanelBody.appendTo(divPanel);
 
@@ -108,10 +113,12 @@
 
         // Method
         var methodColumn = $( "<td/>", {
-              text: eachMethod
             });
         methodColumn.appendTo(methodRow);
-
+        var methodName = $( "<strong/>", {
+            text: eachMethod
+            });
+        methodName.appendTo(methodColumn);
         // Data
         var dataColumn = $( "<td/>", {
                         });
