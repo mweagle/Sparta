@@ -65,16 +65,16 @@
     return metadata.golangFunc || "N/A";
   };
 
-  var accumulateResources = function(node, parentPath, cloudFormationResources, accumulator)
+  var accumulateResources = function(node, pathPart, cloudFormationResources, accumulator)
   {
     accumulator = accumulator || {};
-    var parentPath = parentPath || ""
+    var pathPart = pathPart || ""
     var apiResources = node.APIResources || {};
     var apiKeys = Object.keys(apiResources);
     apiKeys.forEach(function (eachKey) {
       var apiDef = apiResources[eachKey];
       var golangName = golangFunctionName(eachKey, cloudFormationResources);
-      var resourcePath = parentPath + "/" + node.PathComponent;
+      var resourcePath = pathPart;
       var divPanel = $("<div />" , {"class": "panel panel-default"});
       accumulator[resourcePath] = divPanel;
 
@@ -137,7 +137,7 @@
     var childKeys = Object.keys(children);
     childKeys.forEach(function (eachKey) {
       var eachChild = (children[eachKey]);
-      accumulateResources(eachChild, parentPath, cloudFormationResources, accumulator);
+      accumulateResources(eachChild, pathPart + "/" + eachChild.PathComponent, cloudFormationResources, accumulator);
     });
   }
 
