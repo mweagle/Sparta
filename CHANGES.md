@@ -1,3 +1,7 @@
+## v0.0.6
+  - :checkered_flag: **CHANGES**
+    - Improved API Gateway `describe` output.
+    
 ## v0.0.5
   - :checkered_flag: **CHANGES**
     - Preliminary support for API Gateway provisioning
