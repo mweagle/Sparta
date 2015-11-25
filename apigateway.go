@@ -11,6 +11,22 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+// APIGatewayLambdaJSONEvent provides a pass through mapping
+// of all whitelisted Parameters.  The transformation is defined
+// by the resources/gateway/inputmapping_json.vtl template.
+type APIGatewayLambdaJSONEvent struct {
+	// HTTPMethod
+	Method string `json:"method"`
+	// Body, if available
+	Body json.RawMessage `json:"body"`
+	// Whitelisted HTTP headers
+	Headers map[string]string `json:"headers"`
+	// Whitelisted HTTP query params
+	QueryParams map[string]string `json:"queryParams"`
+	// Whitelisted path parameters
+	PathParams map[string]string `json:"pathParams"`
+}
+
 // Model proxies the AWS SDK's Model data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Model
 //
