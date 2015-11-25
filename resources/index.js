@@ -3,6 +3,7 @@ var fs = require('fs');
 var http = require('http');
 var path = require('path');
 var child_process = require('child_process');
+var GOLANG_CONSTANTS = require('./golang-constants.json');
 
 //TODO: See if https://forums.aws.amazon.com/message.jspa?messageID=633802
 // has been updated with new information
@@ -25,6 +26,7 @@ function makeRequest(path, event, context) {
   };
 
   var stringified = JSON.stringify(requestBody);
+
   var contentLength = Buffer.byteLength(stringified, 'utf-8');
   var options = {
     host: 'localhost',
@@ -44,18 +46,28 @@ function makeRequest(path, event, context) {
       body += chunk;
     });
     res.on('end', function() {
-      var err = (res.statusCode >= 400) ? new Error(body) : null;
-      var doneValue = ((res.statusCode >= 200) && (res.statusCode <= 299)) ? body : null;
+      // TODO: Bridge the NodeJS and golang worlds by including the golang
+      // HTTP status text in the error response if appropriate.  This enables
+      // the API Gateway integration response to use standard golang StatusText regexp
+      // matches to manage HTTP status codes.
+      var responseData = {};
+      responseData.code = res.statusCode;
+      responseData.status = GOLANG_CONSTANTS.HTTP_STATUS_TEXT[res.statusCode.toString()];
+      responseData.error = (res.statusCode >= 400) ? body : undefined;
+      responseData.results = responseData.error ? undefined : body;
       try {
         // TODO: Check content-type before parse attempt
-        if (doneValue)
+        if (responseData.results)
         {
-          doneValue = JSON.parse(doneValue);
+          responseData.results = JSON.parse(responseData.results);
         }
       } catch (e) {
         // NOP
       }
-      context.done(err, doneValue);
+      console.log('GOLANG HTTP RESPONSE: ' + JSON.stringify(responseData, null, ' '));
+      var err = responseData.error ? new Error(JSON.stringify(responseData)) : null;
+      var resp = err ? null : responseData;
+      context.done(err, resp);
     });
   });
   req.on('error', function(e) {

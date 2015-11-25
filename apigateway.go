@@ -52,6 +52,37 @@ type IntegrationResponse struct {
 	Templates        map[string]string `json:",omitempty"`
 }
 
+// DefaultIntegrationResponses returns a map of HTTP status codes to
+// integration response RegExps to return customized HTTP status
+// codes to API Gateway clients.  The regexp is triggered by the
+// presence of a golang HTTP status string in the response body.
+// https://golang.org/src/net/http/status.go
+func DefaultIntegrationResponses() map[int]IntegrationResponse {
+	responseMap := make(map[int]IntegrationResponse)
+
+	for i := 100; i <= 599; i++ {
+		statusText := http.StatusText(i)
+		if "" != statusText {
+			regExp := fmt.Sprintf(".*%s.*", statusText)
+			responseMap[i] = IntegrationResponse{
+				SelectionPattern: regExp,
+				Templates: map[string]string{
+					"application/json": "",
+					"text/plain":       "",
+				},
+			}
+		}
+	}
+	// Status OK is the default
+	responseMap[http.StatusOK] = IntegrationResponse{
+		Templates: map[string]string{
+			"application/json": "",
+			"text/plain":       "",
+		},
+	}
+	return responseMap
+}
+
 // Integration proxies the AWS SDK's Integration data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Integration
 type Integration struct {
@@ -64,14 +95,6 @@ type Integration struct {
 	Responses map[int]IntegrationResponse
 }
 
-func (integration Integration) defaultIntegrationResponse() IntegrationResponse {
-	return IntegrationResponse{
-		Templates: map[string]string{
-			"application/json": "",
-			"text/plain":       "",
-		},
-	}
-}
 func (integration Integration) defaultIntegrationRequestTemplates() map[string]string {
 	return map[string]string{
 		"application/json": escFSMustString(false, "/resources/gateway/inputmapping_json.vtl"),
@@ -83,7 +106,7 @@ func (integration Integration) defaultIntegrationRequestTemplates() map[string]s
 func (integration Integration) MarshalJSON() ([]byte, error) {
 	var responses = integration.Responses
 	if len(responses) <= 0 {
-		responses[http.StatusOK] = integration.defaultIntegrationResponse()
+		responses = DefaultIntegrationResponses()
 	}
 	var requestTemplates = integration.RequestTemplates
 	if len(requestTemplates) <= 0 {

@@ -49,7 +49,8 @@ var customResourceScripts = []string{"cfn-response.js",
 	"async.min.js",
 	"apigateway.js",
 	"s3.js",
-	"sns.js"}
+	"sns.js",
+	"golang-constants.json"}
 
 type workflowContext struct {
 	noop                    bool

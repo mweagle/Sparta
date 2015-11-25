@@ -273,13 +273,13 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
 
     // 3. Create the Method integration
     // Create the method integration
-    var putIntegrationTask = function(statusCode, templates) {
+    var putIntegrationTask = function(statusCode, selectionPattern, templates) {
       return function(taskCB) {
         var params = methodOpParams({
           statusCode: statusCode.toString(),
+          selectionPattern: selectionPattern || undefined,
           responseTemplates: templates || {}
         });
-        //logResults('putIntegrationResponse', null, params);
         apigateway.putIntegrationResponse(params, taskCB);
       };
     };
@@ -306,7 +306,7 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       var putIntegrationResponseTasks = [];
       _.each(responses,
              function(eachResponse, eachStatusCode) {
-              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode, eachResponse.Templates));
+              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode, eachResponse.SelectionPattern, eachResponse.Templates));
              });
       async.series(putIntegrationResponseTasks, asyncCB);
 
