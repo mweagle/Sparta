@@ -40,10 +40,12 @@ type IntegrationResponse struct {
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Integration
 type Integration struct {
 	Parameters         map[string]string
+	RequestTemplates   map[string]string
 	CacheKeyParameters []string
 	CacheNamespace     string
 	Credentials        string
-	Responses          map[int]IntegrationResponse
+
+	Responses map[int]IntegrationResponse
 }
 
 func (integration Integration) defaultIntegrationResponse() IntegrationResponse {
@@ -54,6 +56,11 @@ func (integration Integration) defaultIntegrationResponse() IntegrationResponse 
 		},
 	}
 }
+func (integration Integration) defaultIntegrationRequestTemplates() map[string]string {
+	return map[string]string{
+		"application/json": escFSMustString(false, "/resources/gateway/inputmapping_json.vtl"),
+	}
+}
 
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
@@ -62,7 +69,10 @@ func (integration Integration) MarshalJSON() ([]byte, error) {
 	if len(responses) <= 0 {
 		responses[http.StatusOK] = integration.defaultIntegrationResponse()
 	}
-
+	var requestTemplates = integration.RequestTemplates
+	if len(requestTemplates) <= 0 {
+		requestTemplates = integration.defaultIntegrationRequestTemplates()
+	}
 	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
 		if "" == httpString {
@@ -75,7 +85,8 @@ func (integration Integration) MarshalJSON() ([]byte, error) {
 		stringResponses[strconv.Itoa(eachKey)] = eachValue
 	}
 	integrationJSON := map[string]interface{}{
-		"Responses": stringResponses,
+		"Responses":        stringResponses,
+		"RequestTemplates": requestTemplates,
 	}
 	if len(integration.Parameters) > 0 {
 		integrationJSON["Parameters"] = integration.Parameters
@@ -140,7 +151,9 @@ func (method Method) MarshalJSON() ([]byte, error) {
 	responses := method.Responses
 	if len(responses) <= 0 {
 		responses[http.StatusOK] = method.defaultResponse()
+		responses[http.StatusInternalServerError] = method.defaultResponse()
 	}
+
 	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
 		if "" == httpString {
@@ -380,8 +393,9 @@ func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 		return nil, errors.New(errMsg)
 	}
 	integration := Integration{
-		Parameters: make(map[string]string, 0),
-		Responses:  make(map[int]IntegrationResponse, 0),
+		Parameters:       make(map[string]string, 0),
+		RequestTemplates: make(map[string]string, 0),
+		Responses:        make(map[int]IntegrationResponse, 0),
 	}
 
 	method := &Method{
