@@ -219,7 +219,7 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     // Create the method
     creationTasks.putMethod = function(asyncCB) {
       // Ensure the request params are booleans
-      var requestParams = _.reduce(methodDef.RequestParameters || {},
+      var requestParams = _.reduce(methodDef.Parameters || {},
                                   function (memo, eachParam, eachKey) {
                                     memo[eachKey] = toBoolean(eachParam);
                                     return memo;
