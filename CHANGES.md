@@ -1,7 +1,10 @@
 ## v0.0.6
   - :checkered_flag: **CHANGES**
     - Improved API Gateway `describe` output.
-    
+    - Added [integration response](http://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/) support for to support HTTP status codes defined in [status.go](https://golang.org/src/net/http/status.go).
+      - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map will be used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty at provision time.
+      - The mapping uses regular expressions based on the standard _golang_ HTTP StatusText values.
+      
 ## v0.0.5
   - :checkered_flag: **CHANGES**
     - Preliminary support for API Gateway provisioning
