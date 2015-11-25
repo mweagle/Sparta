@@ -46,9 +46,9 @@ exports.send = function(event, context, responseStatus, responseData, physicalRe
 
     request.on("error", function(error) {
         console.log("send(..) failed executing https.request(..): " + error);
-        context.done();
+        context.done(error);
     });
 
     request.write(responseBody);
     request.end();
-}
+};
