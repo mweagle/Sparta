@@ -38,7 +38,9 @@ build: format generate vet
 	@echo "Build complete"
 
 docs:
-	@echo "Publishing go doc to http://localhost:8090"
+	@echo ""
+	@echo "Sparta godocs: http://localhost:8090/pkg/Sparta/"
+	@echo
 	godoc -v -http=:8090 -index=true
 
 test: build
