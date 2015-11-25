@@ -286,9 +286,11 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
 
     creationTasks.putIntegration = Object.keys(creationTasks);
     creationTasks.putIntegration.push(function(asyncCB) {
+      var integration = methodDef.Integration || {};
       var params = methodOpParams({
         type: 'AWS',
         cacheKeyParameters: [],
+        requestTemplates: integration.RequestTemplates || undefined,
         uri: lamdbdaURI(lambdaArn),
         integrationHttpMethod: 'POST'
       });
