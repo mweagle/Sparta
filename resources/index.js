@@ -23,6 +23,7 @@ function makeRequest(path, event, context) {
     event: event,
     context: context
   };
+
   var stringified = JSON.stringify(requestBody);
   var contentLength = Buffer.byteLength(stringified, 'utf-8');
   var options = {
@@ -35,6 +36,7 @@ function makeRequest(path, event, context) {
       'Content-Length': contentLength
     }
   };
+
   var req = http.request(options, function(res) {
     res.setEncoding('utf8');
     var body = '';
@@ -44,6 +46,15 @@ function makeRequest(path, event, context) {
     res.on('end', function() {
       var err = (res.statusCode >= 400) ? new Error(body) : null;
       var doneValue = ((res.statusCode >= 200) && (res.statusCode <= 299)) ? body : null;
+      try {
+        // TODO: Check content-type before parse attempt
+        if (doneValue)
+        {
+          doneValue = JSON.parse(doneValue);
+        }
+      } catch (e) {
+        // NOP
+      }
       context.done(err, doneValue);
     });
   });
