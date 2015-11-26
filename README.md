@@ -12,7 +12,7 @@ Functions must implement
 
     type LambdaFunction func(*json.RawMessage,
                               *LambdaContext,
-                              *http.ResponseWriter,
+                              http.ResponseWriter,
                               *logrus.Logger)
 
 where
@@ -52,7 +52,7 @@ in service.
 
     func echoEvent(event *sparta.LambdaEvent,
                    context *sparta.LambdaContext,
-                   w *http.ResponseWriter,
+                   w http.ResponseWriter,
                    logger *logrus.Logger) {
 
       logger.WithFields(logrus.Fields{
@@ -128,7 +128,7 @@ import (
 //
 func echoEvent(event *json.RawMessage,
                 context *sparta.LambdaContext,
-                w *http.ResponseWriter,
+                w http.ResponseWriter,
                 logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestID,
