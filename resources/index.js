@@ -89,7 +89,11 @@ var log = function(obj_or_string)
   }
   else
   {
-    console.log(JSON.stringify(obj_or_string));
+    var xformed = {};
+    Object.keys(obj_or_string).forEach(function (eachKey) {
+      xformed[eachKey.toUpperCase()] = obj_or_string[eachKey];
+    });
+    console.log(JSON.stringify(xformed));
   }
 };
 
@@ -220,8 +224,11 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
           {
             try {
-              log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s',
-                          event.RequestType, eachConfig,  JSON.stringify(event, null,  ' ')));
+              log({
+                requestType: event.RequestType,
+                handler: eachConfig,
+                event: event
+              });
               var svc = require(util.format('./%s', eachConfig));
               svc.handler(event, context);
             } catch (e) {
