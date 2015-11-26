@@ -44,6 +44,16 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
+const (
+	// OutputSpartaHomeKey is the keyname used in the CloudFormation Output
+	// that stores the Sparta home URL.
+	OutputSpartaHomeKey = "SpartaHome"
+
+	// OutputSpartaVersionKey is the keyname used in the CloudFormation Output
+	// that stores the Sparta version used to provision/update the service.
+	OutputSpartaVersionKey = "SpartaVersion"
+)
+
 var customResourceScripts = []string{"cfn-response.js",
 	"underscore-min.js",
 	"async.min.js",
@@ -489,6 +499,15 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		// and IAM role to
 		if nil != ctx.api {
 			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+		}
+		// Add Sparta outputs
+		ctx.cloudformationOutputs[OutputSpartaVersionKey] = ArbitraryJSONObject{
+			"Description": "Sparta Version",
+			"Value":       SpartaVersion,
+		}
+		ctx.cloudformationOutputs[OutputSpartaHomeKey] = ArbitraryJSONObject{
+			"Description": "Sparta Home",
+			"Value":       "https://github.com/mweagle/Sparta",
 		}
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 		cloudFormationTemplate["Outputs"] = ctx.cloudformationOutputs
