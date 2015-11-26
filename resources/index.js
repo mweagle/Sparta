@@ -53,6 +53,7 @@ function makeRequest(path, event, context) {
       var responseData = {};
       responseData.code = res.statusCode;
       responseData.status = GOLANG_CONSTANTS.HTTP_STATUS_TEXT[res.statusCode.toString()];
+      responseData.headers = res.headers;
       responseData.error = (res.statusCode >= 400) ? body : undefined;
       responseData.results = responseData.error ? undefined : body;
       try {
@@ -64,7 +65,6 @@ function makeRequest(path, event, context) {
       } catch (e) {
         // NOP
       }
-      console.log('GOLANG HTTP RESPONSE: ' + JSON.stringify(responseData, null, ' '));
       var err = responseData.error ? new Error(JSON.stringify(responseData)) : null;
       var resp = err ? null : responseData;
       context.done(err, resp);
@@ -133,12 +133,10 @@ var createForwarder = function(path) {
         golangProcess = child_process.spawn(SPARTA_BINARY_PATH, ['execute', '--signal', process.pid], {});
 
         golangProcess.stdout.on('data', function(buf) {
-          // Just throw it away...
-          console.log(buf.toString('utf-8'));
+          log(buf.toString('utf-8'));
         });
         golangProcess.stderr.on('data', function(buf) {
-          // Just throw it away...
-          console.log(buf.toString('utf-8'));
+          log(buf.toString('utf-8'));
         });
 
         var terminationHandler = function(eventName) {
@@ -185,8 +183,7 @@ var sendResponse = function(event, context, e, results)
     response.send(event, context, e ? response.FAILED : response.SUCCESS, data);
   }
   catch (eResponse) {
-    // NOP
-    console.log('ERROR sending response: ' + eResponse.toString());
+    log('ERROR sending response: ' + eResponse.toString());
   }
 };
 
@@ -223,8 +220,7 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
           {
             try {
-              console.log('APIGateway handling: ' + event.RequestType);
-              console.log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s',
+              log(util.format('Delegating [%s] to configurator: %s.\nEvent: %s',
                           event.RequestType, eachConfig,  JSON.stringify(event, null,  ' ')));
               var svc = require(util.format('./%s', eachConfig));
               svc.handler(event, context);
@@ -232,7 +228,7 @@ PROXIED_MODULES.forEach(function (eachConfig) {
               sendResponse(event, context, e, null);
             }
           } else {
-            console.log('Bypassing configurator execution due to status: ' + stackStatus);
+            log('Bypassing configurator execution due to status: ' + stackStatus);
             sendResponse(event, context, e, "NOP");
           }
         }
