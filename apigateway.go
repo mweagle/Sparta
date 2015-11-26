@@ -60,7 +60,7 @@ type IntegrationResponse struct {
 func DefaultIntegrationResponses() map[int]IntegrationResponse {
 	responseMap := make(map[int]IntegrationResponse)
 
-	for i := 100; i <= 599; i++ {
+	for i := 200; i <= 599; i++ {
 		statusText := http.StatusText(i)
 		if "" != statusText {
 			regExp := fmt.Sprintf(".*%s.*", statusText)
@@ -160,7 +160,27 @@ type Method struct {
 	Integration Integration
 }
 
-func (method Method) defaultResponse() Response {
+// DefaultMethodResponses returns the default set of Method HTTPStatus->Response
+// pass through responses.  The successfulHTTPStatusCode param is the single
+// 2XX response code to use for the method.
+func DefaultMethodResponses(successfulHTTPStatusCode int) map[int]Response {
+	responses := make(map[int]Response, 0)
+
+	// Only one 2xx status code response may exist on a Method
+	responses[successfulHTTPStatusCode] = defaultResponse()
+
+	// Add mappings for the other return codes
+	for i := 300; i <= 599; i++ {
+		statusText := http.StatusText(i)
+		if "" != statusText {
+			responses[i] = defaultResponse()
+		}
+	}
+	return responses
+}
+
+// Return the default response for the standard response types.
+func defaultResponse() Response {
 	contentTypes := []string{"application/json", "text/plain"}
 	models := make(map[string]Model, 0)
 	for _, eachContentType := range contentTypes {
@@ -185,12 +205,17 @@ func (method Method) defaultResponse() Response {
 }
 
 // MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.
+// CloudFormation template representation.  If method.Responses is empty, the
+// DefaultMethodResponses map will be used, where the HTTP Success code is 201 for POST
+// methods and 200 for all other methodnames.
 func (method Method) MarshalJSON() ([]byte, error) {
 	responses := method.Responses
 	if len(responses) <= 0 {
-		responses[http.StatusOK] = method.defaultResponse()
-		responses[http.StatusInternalServerError] = method.defaultResponse()
+		statusSuccessfulCode := http.StatusOK
+		if method.httpMethod == "POST" {
+			statusSuccessfulCode = http.StatusCreated
+		}
+		responses = DefaultMethodResponses(statusSuccessfulCode)
 	}
 
 	for eachStatusCode := range responses {
