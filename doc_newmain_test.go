@@ -12,8 +12,8 @@ import (
 // example text is to make the documentation compatible with godoc.
 // Should be main() in your application
 
-func mainHelloWorld(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
-	fmt.Fprintf(*w, "Hello World!")
+func mainHelloWorld(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, "Hello World!")
 }
 
 func ExampleMain_basic() {

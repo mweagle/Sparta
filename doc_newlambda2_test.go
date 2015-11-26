@@ -3,12 +3,13 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"net/http"
+
+	"github.com/Sirupsen/logrus"
 )
 
-func lambdaHelloWorld2(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
-	fmt.Fprintf(*w, "Hello World!")
+func lambdaHelloWorld2(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, "Hello World!")
 }
 
 func ExampleNewLambda_iAMRoleDefinition() {

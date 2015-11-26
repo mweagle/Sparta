@@ -14,14 +14,14 @@ import (
 
 func echoAPIGatewayEvent(event *json.RawMessage,
 	context *sparta.LambdaContext,
-	w *http.ResponseWriter,
+	w http.ResponseWriter,
 	logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestID,
 		"Event":     string(*event),
 	}).Info("Request received")
 
-	fmt.Fprintf(*w, "Hello World!")
+	fmt.Fprintf(w, "Hello World!")
 }
 
 // Should be main() in your application

@@ -14,22 +14,22 @@ import (
 
 func echoAPIGatewayHTTPEvent(event *json.RawMessage,
 	context *sparta.LambdaContext,
-	w *http.ResponseWriter,
+	w http.ResponseWriter,
 	logger *logrus.Logger) {
 
 	var lambdaEvent sparta.APIGatewayLambdaJSONEvent
 	err := json.Unmarshal([]byte(*event), &lambdaEvent)
 	if err != nil {
 		logger.Error("Failed to unmarshal event data: ", err.Error())
-		http.Error(*w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	responseBody, err := json.Marshal(lambdaEvent)
 	if err != nil {
-		http.Error(*w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	} else {
-		fmt.Fprint(*w, string(responseBody))
+		fmt.Fprint(w, string(responseBody))
 	}
 }
 

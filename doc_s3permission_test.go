@@ -9,7 +9,7 @@ import (
 
 const s3Bucket = "arn:aws:sns:us-west-2:123412341234:myBucket"
 
-func s3LambdaProcessor(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func s3LambdaProcessor(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestID,
 	}).Info("S3Event")

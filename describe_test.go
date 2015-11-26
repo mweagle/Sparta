@@ -4,22 +4,23 @@ import (
 	sparta "Sparta"
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/lambda"
 	"net/http"
 	"os"
 	"testing"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/lambda"
 )
 
 const LAMBDA_EXECUTE_ARN = "LambdaExecutor"
 
-func mockLambda1(event *json.RawMessage, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
-	fmt.Fprintf(*w, "mockLambda1!")
+func mockLambda1(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, "mockLambda1!")
 }
 
-func mockLambda2(event *json.RawMessage, context *sparta.LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
-	fmt.Fprintf(*w, "mockLambda2!")
+func mockLambda2(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, "mockLambda2!")
 }
 
 func sampleData() []*sparta.LambdaAWSInfo {

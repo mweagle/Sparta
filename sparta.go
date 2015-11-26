@@ -174,7 +174,7 @@ type lambdaRequest struct {
 //
 // Content written to the ResponseWriter will be used as the
 // response/Error value provided to AWS Lambda.
-type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)
+type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)
 
 // LambdaFunctionOptions defines additional AWS Lambda execution params.  See the
 // AWS Lambda FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)

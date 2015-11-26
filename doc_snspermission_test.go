@@ -9,7 +9,7 @@ import (
 
 const snsTopic = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
 
-func snsProcessor(event *json.RawMessage, context *LambdaContext, w *http.ResponseWriter, logger *logrus.Logger) {
+func snsProcessor(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestID,
 	}).Info("SNSEvent")
