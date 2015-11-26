@@ -2,9 +2,16 @@
   - :checkered_flag: **CHANGES**
     - Improved API Gateway `describe` output.
     - Added [integration response](http://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/) support for to support HTTP status codes defined in [status.go](https://golang.org/src/net/http/status.go).
-      - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map will be used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty at provision time.
+      - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map is used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty  (`len(Responses) <= 0`) at provision time.
       - The mapping uses regular expressions based on the standard _golang_ HTTP StatusText values.
-      
+    - Added `SpartaHome` and `SpartaVersion` template [outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
+  - :warning: **BREAKING**
+    - Changed:
+      - `type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)`
+        - **TO**
+      - `type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`
+      - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
+
 ## v0.0.5
   - :checkered_flag: **CHANGES**
     - Preliminary support for API Gateway provisioning
