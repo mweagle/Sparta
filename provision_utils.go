@@ -98,14 +98,38 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 		"Principal":        awsPrincipalName,
 	}).Debug("Ensuring IAM Role results")
 
-	_, exists = resources[roleName]
+	existingResource, exists := resources[roleName]
 
 	// If it exists, make sure these permissions are enabled on it...
 	if exists {
+		statementExists := false
+		properties := existingResource.(ArbitraryJSONObject)["existingResource"]
+		policies := properties.(ArbitraryJSONObject)["Policies"]
+		for _, eachPolicy := range policies.([]ArbitraryJSONObject) {
+			statements := eachPolicy["Statement"]
+			for _, eachStatement := range statements.([]ArbitraryJSONObject) {
+				if eachStatement["Resource"] == sourceArn {
+					statementExists = true
+				}
+			}
+		}
+		if !statementExists {
+			properties := existingResource.(ArbitraryJSONObject)["Properties"]
+			policies := properties.(ArbitraryJSONObject)["Policies"]
+			rootPolicy := policies.([]ArbitraryJSONObject)[0]
+			policyDocument := rootPolicy["PolicyDocument"].(ArbitraryJSONObject)
+			statements := policyDocument["Statements"].([]ArbitraryJSONObject)
+			policyDocument["Statements"] = append(statements, ArbitraryJSONObject{
+				"Effect":   "Allow",
+				"Action":   principalActions,
+				"Resource": sourceArn,
+			})
+		}
 		logger.Debug("Using prexisting IAM Role: " + roleName)
 		return roleName, nil
 	}
 
+	// Create a new IAM Role resource
 	logger.WithFields(logrus.Fields{
 		"RoleName": roleName,
 		"Actions":  principalActions,
