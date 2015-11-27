@@ -1,4 +1,3 @@
-// Sparta package to support AWS S3
 package s3
 
 // EventOwnerIdentity event data
@@ -19,7 +18,7 @@ type Object struct {
 	Sequencer string `json:"sequencer"`
 }
 
-// Event event data
+// S3 event information
 type S3 struct {
 	SchemaVersion   string `json:"s3SchemaVersion"`
 	ConfigurationID string `json:"configurationId"`
