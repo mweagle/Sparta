@@ -1,4 +1,5 @@
-package spartaS3
+// Sparta package to support AWS S3
+package s3
 
 // EventOwnerIdentity event data
 type EventOwnerIdentity struct {
