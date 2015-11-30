@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"Sparta"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,11 +12,11 @@ import (
 // example text is to make the documentation compatible with godoc.
 
 func echoAPIGatewayHTTPEvent(event *json.RawMessage,
-	context *sparta.LambdaContext,
+	context *LambdaContext,
 	w http.ResponseWriter,
 	logger *logrus.Logger) {
 
-	var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+	var lambdaEvent APIGatewayLambdaJSONEvent
 	err := json.Unmarshal([]byte(*event), &lambdaEvent)
 	if err != nil {
 		logger.Error("Failed to unmarshal event data: ", err.Error())
@@ -38,18 +37,20 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 
 	// Create the MyEchoAPI API Gateway, with stagename /test.  The associated
 	// Stage reesource will cause the API to be deployed.
-	apiGateway := sparta.NewAPIGateway("MyEchoHTTPAPI", stage)
-	stage := sparta.NewStage("v1")
+	stage := NewStage("v1")
+	apiGateway := NewAPIGateway("MyEchoHTTPAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := NewLambda(sparta.IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
+	echoAPIGatewayLambdaFn := NewLambda(IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
 
 	// Associate a URL path component with the Lambda function
-	apiGatewayResource, _ := api.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
+	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
 
 	// Associate 1 or more HTTP methods with the Resource.
-	method := apiGatewayResource.NewMethod("GET")
-
+	method, err := apiGatewayResource.NewMethod("GET")
+	if err != nil {
+		panic("Failed to create NewMethod")
+	}
 	// Whitelist query parameters that should be passed to lambda function
 	method.Parameters["method.request.querystring.myKey"] = true
 	method.Parameters["method.request.querystring.myOtherKey"] = true

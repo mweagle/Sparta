@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"Sparta"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,7 +12,7 @@ import (
 // example text is to make the documentation compatible with godoc.
 
 func echoAPIGatewayEvent(event *json.RawMessage,
-	context *sparta.LambdaContext,
+	context *LambdaContext,
 	w http.ResponseWriter,
 	logger *logrus.Logger) {
 	logger.WithFields(logrus.Fields{
@@ -29,14 +28,14 @@ func ExampleMain_apiGateway() {
 
 	// Create the MyEchoAPI API Gateway, with stagename /test.  The associated
 	// Stage reesource will cause the API to be deployed.
-	apiGateway := sparta.NewAPIGateway("MyEchoAPI", stage)
-	stage := sparta.NewStage("test")
+	stage := NewStage("test")
+	apiGateway := NewAPIGateway("MyEchoAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := NewLambda(sparta.IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
+	echoAPIGatewayLambdaFn := NewLambda(IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
 
 	// Associate a URL path component with the Lambda function
-	apiGatewayResource, _ := api.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
+	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
 
 	// Associate 1 or more HTTP methods with the Resource.
 	apiGatewayResource.NewMethod("GET")
