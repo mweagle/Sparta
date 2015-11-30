@@ -18,7 +18,7 @@ exports.handler = function(event, context) {
     data.Error = error || undefined;
     data.Result = returnValue || undefined;
     response.send(event, context, data.Error ? response.FAILED : response.SUCCESS, data);
-  }
+  };
   var onResponse = function(error, s3Config) {
     if (error) {
       onEnd(error);
@@ -73,7 +73,7 @@ exports.handler = function(event, context) {
           onEnd(null, del.Stacks[0]);
         }
       }
-    }
+    };
     cloudFormation.describeStacks({
       StackName: event.StackId
     }, onDescribeStacks);
