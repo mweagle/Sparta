@@ -103,10 +103,10 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 	// If it exists, make sure these permissions are enabled on it...
 	if exists {
 		statementExists := false
-		properties := existingResource.(ArbitraryJSONObject)["existingResource"]
+		properties := existingResource.(ArbitraryJSONObject)["Properties"]
 		policies := properties.(ArbitraryJSONObject)["Policies"]
 		for _, eachPolicy := range policies.([]ArbitraryJSONObject) {
-			statements := eachPolicy["Statement"]
+			statements := eachPolicy["PolicyDocument"].(ArbitraryJSONObject)["Statement"]
 			for _, eachStatement := range statements.([]ArbitraryJSONObject) {
 				if eachStatement["Resource"] == sourceArn {
 					statementExists = true
