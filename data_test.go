@@ -13,6 +13,7 @@ import (
 const LambdaExecuteARN = "LambdaExecutor"
 const s3BucketSourceArn = "arn:aws:s3:::sampleBucket"
 const snsTopicSourceArn = "arn:aws:sns:us-west-2:000000000000:someTopic"
+const dynamoDBTableArn = "arn:aws:dynamodb:us-west-2:000000000000:table/sampleTable"
 
 func mockLambda1(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
 	fmt.Fprintf(w, "mockLambda1!")
@@ -48,7 +49,7 @@ func testLambdaData() []*LambdaAWSInfo {
 	})
 
 	lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &lambda.CreateEventSourceMappingInput{
-		EventSourceArn:   aws.String("arn:aws:dynamodb:us-west-2:000000000000:table/sampleTable"),
+		EventSourceArn:   aws.String(dynamoDBTableArn),
 		StartingPosition: aws.String("TRIM_HORIZON"),
 		BatchSize:        aws.Int64(10),
 	})
