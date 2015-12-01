@@ -1,4 +1,5 @@
 ## v0.0.6 - PENDING
+  - Add _.travis.yml_ for CI support.
   - :checkered_flag: **CHANGES**
     - Improved API Gateway `describe` output.
     - Added [method response](http://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/) support.  
