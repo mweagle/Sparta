@@ -1,0 +1,9 @@
+language: go
+
+before_install:
+  - nvm install 4.1
+  - nvm use 4.1
+
+install: make get
+
+script: make test
