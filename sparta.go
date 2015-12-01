@@ -189,6 +189,21 @@ type LambdaFunctionOptions struct {
 	Timeout int64
 }
 
+// TemplateDecorator if defined, allows Lambda functions to annotate the CloudFormation
+// template definition.  Both the resources and the outputs params
+// are initialized to an empty ArbitraryJSONObject and should
+// be populated with valid CloudFormation types.  The
+// CloudFormationResourceName() function can be used to generate
+// logical resource names for insertion keys.
+// See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html and
+// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for
+// more information.
+type TemplateDecorator func(lambdaResourceName string,
+	lambdaResourceDefinition ArbitraryJSONObject,
+	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
+	logger *logrus.Logger) error
+
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
 
@@ -583,6 +598,9 @@ type LambdaAWSInfo struct {
 	// Event Source docs (http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 	// for more information
 	EventSourceMappings []*lambda.CreateEventSourceMappingInput
+	// Template decorator. If defined, the decorator will be called to insert additional
+	// resources on behalf of this lambda function
+	Decorator TemplateDecorator
 }
 
 // Returns a JavaScript compatible function name for the golang function name.  This
@@ -674,6 +692,40 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 		resourceName := fmt.Sprintf("LambdaES%s", hex.EncodeToString(hash.Sum(nil)))
 		resources[resourceName] = primaryEventSourceMapping
 	}
+
+	// Decorator
+	if nil != info.Decorator {
+		logger.Debug("Decorator found for Lambda: ", info.lambdaFnName)
+		lambdaResources := make(ArbitraryJSONObject, 0)
+		lambdaOutputs := make(ArbitraryJSONObject, 0)
+		err := info.Decorator(resourceName, primaryResource, lambdaResources, lambdaOutputs, logger)
+		if nil != err {
+			return err
+		}
+		// Append the custom resources
+		for eachKey, eachLambdaResource := range lambdaResources {
+			_, exists := resources[eachKey]
+			if exists {
+				errorMsg := fmt.Sprintf("Duplicate CloudFormation resource name (%s) defined by Lambda: %s",
+					eachKey,
+					info.lambdaFnName)
+				return errors.New(errorMsg)
+			}
+			resources[eachKey] = eachLambdaResource
+		}
+		// Append the custom outputs
+		for eachKey, eachLambdaOutput := range lambdaOutputs {
+			_, exists := outputs[eachKey]
+			if exists {
+				errorMsg := fmt.Sprintf("Duplicate CloudFormation output key name (%s) defined by Lambda: %s",
+					eachKey,
+					info.lambdaFnName)
+				return errors.New(errorMsg)
+			}
+			outputs[eachKey] = eachLambdaOutput
+		}
+	}
+
 	return nil
 }
 
