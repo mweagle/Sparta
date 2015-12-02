@@ -8,6 +8,10 @@ clean:
 build: clean
 	hugo
 
+reset:
+		git reset --hard
+		git clean -f -d
+
 commit:
 	git add --all . && git commit
 
