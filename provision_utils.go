@@ -118,8 +118,8 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 			policies := properties.(ArbitraryJSONObject)["Policies"]
 			rootPolicy := policies.([]ArbitraryJSONObject)[0]
 			policyDocument := rootPolicy["PolicyDocument"].(ArbitraryJSONObject)
-			statements := policyDocument["Statements"].([]ArbitraryJSONObject)
-			policyDocument["Statements"] = append(statements, ArbitraryJSONObject{
+			statements := policyDocument["Statement"].([]ArbitraryJSONObject)
+			policyDocument["Statement"] = append(statements, ArbitraryJSONObject{
 				"Effect":   "Allow",
 				"Action":   principalActions,
 				"Resource": sourceArn,
