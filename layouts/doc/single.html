@@ -1,0 +1,12 @@
+{{ partial "head" . }}
+<div class="container">
+<div class="row">
+  <div class="col-md-2">{{ partial "sparta/toc.html" . }}</div>
+  <div class="col-md-8">
+    {{ .Render "single.hat" }}
+    {{ .Render "single.content" }}
+    {{ .Render "single.boot" }}
+  </div>
+</div>
+</div>
+{{ partial "foot" . }}

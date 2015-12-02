@@ -1,0 +1,31 @@
+<script src="{{ "/js/jquery.min-2.1.4.js" | absURL }}"></script>
+<script src="{{ "/js/bootstrap.min-3.3.5.js" | absURL }}"></script>
+
+
+{{ with .Site.DisqusShortname }}
+<script type="text/javascript">
+  (function() {
+    // Don't ever inject Disqus on localhost--it creates unwanted
+    // discussions from 'localhost:1313' on your Disqus account...
+    if (window.location.hostname == "localhost")
+      return;
+
+    var dsq = document.createElement('script'); dsq.async = true; dsq.type = 'text/javascript';
+    dsq.src = '//{{ . }}.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+{{ end }}
+
+<script src="{{ "/js/highlight.pack.js" | absURL }}"></script>
+<script src="{{ "/js/site.js" | absURL }}"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+{{ with .Site.Params.googleAnalytics }}
+<script>
+  var _gaq=[['_setAccount','{{ . }}'],['_trackPageview']];
+  (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+  g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+  s.parentNode.insertBefore(g,s)}(document,'script'));
+</script>
+{{ end }}

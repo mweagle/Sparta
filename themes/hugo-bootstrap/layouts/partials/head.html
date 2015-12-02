@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+{{ "<!--[if lt IE 7]>" | safeHTML }} <html class="no-js lt-ie9 lt-ie8 lt-ie7"> {{ "<![endif]-->" | safeHTML }}
+{{ "<!--[if IE 7]>" | safeHTML }} <html class="no-js lt-ie9 lt-ie8"> {{ "<![endif]-->" | safeHTML }}
+{{ "<!--[if IE 8]>" | safeHTML }} <html class="no-js lt-ie9"> {{ "<![endif]-->" | safeHTML }}
+{{ "<!--[if gt IE 8]><!-->" | safeHTML }} <html class="no-js"> {{ "<!--<![endif]-->" | safeHTML }}
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>{{ .Title }} {{ if ne .Title .Site.Title }} &middot; {{ .Site.Title }}{{ end }}</title>
+  {{ partial "base/metas" . }}
+  {{ partial "base/imports" . }}
+</head>
+<body{{ with .Site.Params.theme }} class="{{ . }}"{{ end }}>
+    {{ partial "base/header" . }}

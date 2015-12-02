@@ -1,0 +1,15 @@
+<div class="metas">
+{{ partial "modules/page/date" . }}
+{{ if .IsPage }}
+  <small>{{ with .Params.author }}
+    &middot; {{ $.Site.Data.Strings.byauthor }} {{ . }}
+  {{ end }}
+  &middot; {{ .Site.Data.Strings.metaReadin }} {{ .ReadingTime }} {{ .Site.Data.Strings.metaReadinMinutes }}
+  &middot; ({{ .WordCount }} {{ .Site.Data.Strings.words }})
+</small>
+
+{{ end }}
+<div class="margin-10">{{ partial "modules/page/tags" . }}
+</div>
+<br>
+</div>

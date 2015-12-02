@@ -1,0 +1,8 @@
+<div class="pull-left">
+  <a class="toplink" href="#">{{ if and (isset .Site.Params "toplink" ) ( ne .Site.Params.toplink "" ) }}{{ .Site.Params.topLink }}{{ else }}{{ $.Site.Data.Strings.backtotop }}{{ end }}</a>
+</div>
+<div class="pull-right">
+  {{ range .Site.Data.FootMenu }}
+  <a href="{{ .URL | absURL }}" {{ if and ( isset . "Title" ) ( ne .Title "" ) }} title="{{ .Title }}" {{ end }}>{{ .Name }}</a>
+  {{ end }}
+</div>

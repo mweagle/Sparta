@@ -1,0 +1,5 @@
+{{ if and ( isset .Site.Params "brand" ) ( ne .Site.Params.brand "" ) }}
+  {{ .Site.Params.brand | markdownify }}
+{{ else }}
+  {{ .Site.Title }}
+{{ end }}

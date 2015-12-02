@@ -1,0 +1,69 @@
+# hostname (and path) to the root eg. http://spf13.com/
+baseurl = "/"
+
+# Site title
+title = "Sparta"
+
+# Copyright
+# copyright = "(c) 2015 Matt Wealge"
+
+# Language
+languageCode = "en-EN"
+
+# Metadata format
+# "yaml", "toml", "json"
+metaDataFormat = "toml"
+
+# Theme to use (located in /themes/THEMENAME/)
+theme = "hugo-bootstrap"
+
+# Pagination
+paginate = 10
+paginatePath = "page"
+
+# Enable Disqus integration
+disqusShortname = "mweagle"
+
+[permalinks]
+    post = "/:year/:month/:day/:slug/"
+    code = "/:slug/"
+
+[taxonomies]
+    tag = "tags"
+    topic = "topics"
+
+[author]
+    name = "Matt Weagle"
+    email = "mweagle@gmail.com"
+#
+# All parameters below here are optional and can be mixed and matched.
+#
+[params]
+    # You can use markdown here.
+    brand = "Sparta"
+    topline = "Run golang functions in AWS Lambda"
+    footline = "[The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.](http://www.erlang-embedded.com/why-erlang/)"
+
+    [params.theme]
+    name = "cosmo"
+
+    # Text for the top menu link, which goes the root URL for the site.
+    # Default (if omitted) is "Home".
+    home = "Home"
+
+    # Select a syntax highight.
+    # Check the static/css/highlight directory for options.
+    highlight = "vs"
+
+    # Google Analytics.
+    googleAnalytics = "UA-70794971-1"
+
+    # Sidebar social links.
+    github = "https://github.com/mweagle" # Your Github profile ID
+    bitbucket = "" # Your Bitbucket profile ID
+    linkedin = "https://www.linkedin.com/in/mweagle" # Your LinkedIn profile ID (from public URL)
+    googleplus = "" # Your Google+ profile ID
+    facebook = "" # Your Facebook profile ID
+    twitter = "mweagle" # Your Twitter profile ID
+    youtube = ""  # Your Youtube channel ID
+    flattr = ""  # populate with your flattr uid

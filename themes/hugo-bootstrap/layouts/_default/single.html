@@ -1,0 +1,11 @@
+{{ partial "head" . }}
+<div class="container">
+<div class="row">
+
+  {{ .Render "single.hat" }}
+  {{ .Render "single.content" }}
+  {{ .Render "single.boot" }}
+
+</div>
+</div>
+{{ partial "foot" . }}

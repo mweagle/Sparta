@@ -1,0 +1,15 @@
+[github]
+    Name = "GitHub"
+    IconClass = "fa-github"
+    URL = "https://github.com/mweagle/Sparta"
+
+[docs]
+  Name = "Documentation"
+  IconClass = "fa-book"
+  URL = "/docs"
+
+[tags]
+    Name = "Tags"
+    IconClass = "fa-tags"
+    Title = "Show list of tags"
+    URL = "/tags"
