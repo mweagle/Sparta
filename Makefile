@@ -1,5 +1,5 @@
 .DEFAULT_GOAL=build
-.PHONY: build test get run tags clean
+.PHONY: build test get run tags clean reset
 
 ensure_vendor:
 	mkdir -pv vendor
@@ -24,7 +24,7 @@ get: clean ensure_vendor
 	git clone --depth=1 https://github.com/tdewolff/buffer ./vendor/github.com/tdewolff/buffer
 	rm -rf ./src/main/vendor/github.com/tdewolff/buffer/.git
 
-clean:
+reset:
 		git reset --hard
 		git clean -f -d
 
