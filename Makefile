@@ -15,10 +15,10 @@ commit-nomessage:
 	git add --all . && git commit -m "Updated documentation"
 
 pull:
-	git pull origin site
+	git pull origin docs
 
 push:
-	git push -f origin site
+	git push -f origin docs
 
 edit: clean
 	# Used for localhost editing
@@ -27,5 +27,5 @@ edit: clean
 publish: build commit push
 	# Publish locally committed content to gh-pages
 	# http://stevenclontz.com/blog/2014/05/08/git-subtree-push-for-deployment/
-	# git push origin `git subtree split --prefix public site`:master --force
+	# git push origin `git subtree split --prefix public docs`:gh-pages --force
 	git subtree push --prefix public origin gh-pages
