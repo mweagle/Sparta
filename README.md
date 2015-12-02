@@ -64,7 +64,7 @@ in service.
       eventData, err := json.Marshal(*event)
       if err != nil {
         logger.Error("Failed to marshal event data: ", err.Error())
-        http.Error(*w, err.Error(), http.StatusInternalServerError)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
       }
       logger.Info("Event data: ", string(eventData))
     }
@@ -137,7 +137,7 @@ func echoEvent(event *json.RawMessage,
 		"Event":     string(*event),
 	}).Info("Request received")
 
-	fmt.Fprintf(*w, "Hello World!")
+	fmt.Fprintf(w, "Hello World!")
 }
 
 func main() {
