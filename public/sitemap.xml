@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/docs/apigateway/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/docs/background/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/docs/concepts/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/docs/eventsources/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/docs/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/docs/introduction/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+</urlset>

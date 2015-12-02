@@ -25,7 +25,7 @@ edit: clean
 	hugo server --watch --verbose
 
 publish: build commit push
-	# Publish locally committed content to master
+	# Publish locally committed content to gh-pages
 	# http://stevenclontz.com/blog/2014/05/08/git-subtree-push-for-deployment/
 	# git push origin `git subtree split --prefix public site`:master --force
 	git subtree push --prefix public origin gh-pages
