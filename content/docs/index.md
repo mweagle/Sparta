@@ -5,4 +5,4 @@ title = "Overview"
 type = "doc"
 +++
 
-Sparta Introductory Documentation
+Please choose a topic from the left.  The [Overview](./docs/overview) section is a good place to start if you just want to get your hands dirty and provision a simple "Hello World" function.
