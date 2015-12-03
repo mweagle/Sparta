@@ -175,7 +175,7 @@ INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified. Count: 1
 INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
 INFO[0007] Executable binary size (MB): 10
-INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/DOCTEST/MyHelloWorldStack737464669
+INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/HelloWorld/MyHelloWorldStack737464669
 INFO[0008] Creating NodeJS proxy entry: main_helloWorld
 INFO[0008] Embedding CustomResource script: cfn-response.js
 INFO[0008] Embedding CustomResource script: underscore-min.js
@@ -199,7 +199,7 @@ INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified. Count: 1
 INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
 INFO[0007] Executable binary size (MB): 10
-INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/DOCTEST/MyHelloWorldStack650982716
+INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/HelloWorld/MyHelloWorldStack650982716
 INFO[0008] Creating NodeJS proxy entry: main_helloWorld
 INFO[0008] Embedding CustomResource script: cfn-response.js
 INFO[0008] Embedding CustomResource script: underscore-min.js
@@ -214,7 +214,7 @@ INFO[0012] Uploading CloudFormation template
 INFO[0012] CloudFormation template uploaded: https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-8ae100efb4eddbed9debb45915a288a179b6592e-cf.json
 INFO[0012] DescribeStackOutputError: ValidationError: Stack with id MyHelloWorldStack does not exist
 	status code: 400, request id: defc0375-9a05-11e5-8ef6-d5823d3e35af
-INFO[0012] Creating stack: arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6
+INFO[0012] Creating stack: arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6
 INFO[0012] Waiting for stack to complete
 INFO[0022] Current state: CREATE_IN_PROGRESS
 INFO[0052] Current state: CREATE_COMPLETE
@@ -235,7 +235,7 @@ INFO[0052] Stack provisioned: {
       OutputKey: &amp;quot;SpartaVersion&amp;quot;,
       OutputValue: &amp;quot;0.0.7&amp;quot;
     }],
-  StackId: &amp;quot;arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&amp;quot;,
+  StackId: &amp;quot;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&amp;quot;,
   StackName: &amp;quot;MyHelloWorldStack&amp;quot;,
   StackStatus: &amp;quot;CREATE_COMPLETE&amp;quot;,
   TimeoutInMinutes: 5
