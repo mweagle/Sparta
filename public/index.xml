@@ -23,16 +23,6 @@
     
     <item>
       <title>Overview</title>
-      <link>http://gosparta.io/docs/background/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/background/</guid>
-      <description>&lt;p&gt;TODO: Background documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
       <link>http://gosparta.io/docs/concepts/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
@@ -63,11 +53,21 @@
     
     <item>
       <title>Overview</title>
-      <link>http://gosparta.io/docs/introduction/</link>
+      <link>http://gosparta.io/docs/overview/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/introduction/</guid>
-      <description>&lt;p&gt;TODO: Introductory documentation&lt;/p&gt;
+      <guid>http://gosparta.io/docs/overview/</guid>
+      <description>&lt;p&gt;TODO: Overview documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/walkthrough/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/walkthrough/</guid>
+      <description>&lt;p&gt;TODO: Walkthrough documentation&lt;/p&gt;
 </description>
     </item>
     
@@ -77,7 +77,17 @@
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/</guid>
-      <description>&lt;p&gt;TODO: Sparta docs&lt;/p&gt;
+      <description>&lt;div class=&#34;jumbotron&#34;&gt;
+  &lt;h1&gt;Sparta &lt;img src=&#34;images/spartanshieldsmall.png&#34; alt=&#34;Sparta shield&#34; height=&#34;80&#34; width=&#34;80&#34;&gt;&lt;/h1&gt;
+  Run &lt;i&gt;golang&lt;/i&gt; functions in AWS Lambda
+  &lt;hr /&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;&#34;No Server Is Easier To Manage Than No Server.&#34;&lt;/p&gt;
+    &lt;footer&gt;Werner Vogels &lt;cite title=&#34;Source Title&#34;&gt;AWS re:Invent 2015&lt;/cite&gt;&lt;/footer&gt;
+  &lt;/blockquote&gt;  
+  &lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;/div&gt;
 </description>
     </item>
     

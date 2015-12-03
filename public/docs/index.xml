@@ -23,16 +23,6 @@
     
     <item>
       <title>Overview</title>
-      <link>http://gosparta.io/docs/background/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/background/</guid>
-      <description>&lt;p&gt;TODO: Background documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
       <link>http://gosparta.io/docs/concepts/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
@@ -63,11 +53,21 @@
     
     <item>
       <title>Overview</title>
-      <link>http://gosparta.io/docs/introduction/</link>
+      <link>http://gosparta.io/docs/overview/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/introduction/</guid>
-      <description>&lt;p&gt;TODO: Introductory documentation&lt;/p&gt;
+      <guid>http://gosparta.io/docs/overview/</guid>
+      <description>&lt;p&gt;TODO: Overview documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/walkthrough/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/walkthrough/</guid>
+      <description>&lt;p&gt;TODO: Walkthrough documentation&lt;/p&gt;
 </description>
     </item>
     

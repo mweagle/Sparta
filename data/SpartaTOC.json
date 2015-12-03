@@ -2,14 +2,7 @@
     "Name": "Overview",
     "IconClass": "",
     "Title": "",
-    "URL": "",
-    "Children": []
-  },
-  {
-    "Name": "Background",
-    "IconClass": "",
-    "Title": "",
-    "URL": "/background",
+    "URL": "/overview",
     "Children": []
   },
   {
@@ -20,10 +13,10 @@
     "Children": []
   },
   {
-    "Name": "Introduction",
+    "Name": "Walkthrough",
     "IconClass": "",
     "Title": "",
-    "URL": "/introduction",
+    "URL": "/walkthrough",
     "Children": []
   },
   {

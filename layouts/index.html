@@ -1,12 +1,5 @@
 {{ partial "head" . }}
 <div class="container">
-  <div class="jumbotron">
-    <h1>Sparta</h1>
-    <p>Run golang functions in AWS Lambda</p>
-    <img src="images/spartanshieldsmall.png" />
-  </div>
-
-
   {{ range where .Site.Pages "Title" "homepage" }}
   	<div class="row doc-main">
   		<p class="doc-entry-meta"></p>

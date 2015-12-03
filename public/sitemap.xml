@@ -13,11 +13,6 @@
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/background/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://gosparta.io/docs/concepts/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
@@ -33,7 +28,12 @@
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/introduction/</loc>
+    <loc>http://gosparta.io/docs/overview/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/walkthrough/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
