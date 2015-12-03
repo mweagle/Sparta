@@ -91,7 +91,7 @@
   <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
 
 </head>
-<body class="map[googleplus: youtube: name:cosmo home:Home github:https://github.com/mweagle bitbucket: twitter:mweagle flattr: highlight:vs googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[home:Home googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle name:cosmo highlight:vs github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -211,7 +211,7 @@
 
 <h2 id="lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</h2>
 
-<p>The first place to start is with the Lambda function definition.</p>
+<p>The first place to start is with the lambda function definition.</p>
 
 <pre><code class="go">func helloWorld(event *json.RawMessage,
                 context *sparta.LambdaContext,
@@ -221,7 +221,7 @@
 }</code></pre>
 
 
-<p>All Sparta Lamba functions have the same function signature that is composed of:</p>
+<p>All Sparta lambda functions have the same function signature that is composed of:</p>
 
 <ul>
 <li><code>json.RawMessage</code> :  The arbitrary <code>json.RawMessage</code> event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.</li>
@@ -245,7 +245,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code> that registers our golang function with Sparta.  <code>NewLambda</code> accepts three parameters:</p>
 
 <ul>
-<li><code>string|IAMRoleDefinition</code> : Either a string literal that refers to a pre-existing IAM role under which the Lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+<li><code>string|IAMRoleDefinition</code> : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> that will be provisioned as part of this deployment and used as the execution role for the lambda function.
 
 <ul>
 <li>In this example, we&rsquo;re defining a new <code>IAMRoleDefinition</code> as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&rsquo;t access any additional AWS services that&rsquo;s all we need.</li>
@@ -342,7 +342,7 @@ INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
-<p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the Lambda package and CloudFormation template to that bucket as part of provisioning.</p>
+<p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
 <pre><code class="language-bash">go run main.go provision --s3Bucket $S3_BUCKET
 
@@ -426,7 +426,7 @@ INFO[0000] Stack delete issued: {
 
 <h2 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h2>
 
-<p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your Lambda function(s) into the broader AWS landscape.</p>
+<p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.</p>
 
 </div>
 

@@ -16,7 +16,7 @@ Note that you must use an AWS region that supports Lambda.  Consult the [Global 
 
 ## Lambda Definition
 
-The first place to start is with the Lambda function definition.
+The first place to start is with the lambda function definition.
 
 {{< highlight go >}}
 
@@ -29,7 +29,7 @@ func helloWorld(event *json.RawMessage,
 
 {{< /highlight >}}      
 
-All Sparta Lamba functions have the same function signature that is composed of:
+All Sparta lambda functions have the same function signature that is composed of:
 
   * `json.RawMessage` :  The arbitrary `json.RawMessage` event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.
   * `LambdaContext` : *Go* compatible representation of the AWS Lambda [Context](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html). This struct includes fields such as `AWSRequestID`, CloudWatch's `LogGroupName`, and the provisioned AWS lambda's ARN (`InvokedFunctionARN`).
@@ -52,7 +52,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)
 
 We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to create a new lambda function via `NewLambda` that registers our golang function with Sparta.  `NewLambda` accepts three parameters:
 
-  * `string|IAMRoleDefinition` : Either a string literal that refers to a pre-existing IAM role under which the Lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+  * `string|IAMRoleDefinition` : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` that will be provisioned as part of this deployment and used as the execution role for the lambda function.
     - In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
   * `LambdaFunction`: The *Go* function to execute.
   * `*LambdaFunctionOptions`: A pointer to any additional execution settings (eg, timeout, memory settings, etc).
@@ -140,7 +140,7 @@ INFO[0008] Bypassing template upload & creation due to -n/-noop command line arg
 
 Then open _graph.html_ in your browser (also linked [here](/images/overview/graph.html) ) to see what will be provisioned.
 
-Since everything looks good, we'll provision the stack via `provision` and verify the lambda function.  Note that the `$S3_BUCKET` value must be an S3 bucket to which you have write access since Sparta uploads the Lambda package and CloudFormation template to that bucket as part of provisioning.
+Since everything looks good, we'll provision the stack via `provision` and verify the lambda function.  Note that the `$S3_BUCKET` value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.
 
 ```bash
 go run main.go provision --s3Bucket $S3_BUCKET
@@ -226,4 +226,4 @@ INFO[0000] Stack delete issued: {
 
 ## Conclusion
 
-Congratulations! You've just deployed your first "serverless" service.  The following sections will dive deeper into what's going on under the hood as well as how to integrate your Lambda function(s) into the broader AWS landscape.      
+Congratulations! You've just deployed your first "serverless" service.  The following sections will dive deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.      
