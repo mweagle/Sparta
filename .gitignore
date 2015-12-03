@@ -1,5 +1,4 @@
 vendor/*
-graph.html
 .atom-build.json
 resources/provision/node_modules/*
 
