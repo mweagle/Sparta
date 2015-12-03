@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  3 
+    "wordCount":  1202 
   }
 </script>
 
@@ -85,8 +85,13 @@
   <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
 
 
+  
+  <script src="/mermaid/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
+
 </head>
-<body class="map[name:cosmo home:Home highlight:vs linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle flattr:]">
+<body class="map[bitbucket: googleplus: youtube: flattr: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle highlight:vs linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle name:cosmo home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -194,7 +199,234 @@
 </header>
 
     <div class="container content">
-  <p>TODO: Overview documentation</p>
+  
+
+<p>Sparta is a framework for developing and deploying <em>Go</em> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all possible error cases for this example to keep things short.</p>
+
+<h2 id="preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</h2>
+
+<p>Sparta uses the <a href="http://aws.amazon.com/sdk-for-go/">AWS SDK for Go</a> to interact with AWS APIs.  Before you get started, ensure that you&rsquo;ve properly configured the <a href="https://github.com/aws/aws-sdk-go/wiki/configuring-sdk">SDK credentials</a>.</p>
+
+<p>Note that you must use an AWS region that supports Lambda.  Consult the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the most up to date release information.</p>
+
+<h2 id="lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</h2>
+
+<p>The first place to start is with the Lambda function definition.</p>
+
+<pre><code class="go">func helloWorld(event *json.RawMessage,
+                context *sparta.LambdaContext,
+                w http.ResponseWriter,
+                logger *logrus.Logger) {
+	fmt.Fprintf(w, &#34;Hello World!&#34;)
+}</code></pre>
+
+
+<p>All Sparta Lamba functions have the same function signature that is composed of:</p>
+
+<ul>
+<li><code>json.RawMessage</code> :  The arbitrary <code>json.RawMessage</code> event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.</li>
+<li><code>LambdaContext</code> : <em>Go</em> compatible representation of the AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">Context</a>. This struct includes fields such as <code>AWSRequestID</code>, CloudWatch&rsquo;s <code>LogGroupName</code>, and the provisioned AWS lambda&rsquo;s ARN (<code>InvokedFunctionARN</code>).</li>
+<li><code>http.ResponseWriter</code> : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the <code>responseWriter</code> is published back via <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">context.done()</a>.</li>
+<li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
+</ul>
+
+<h2 id="registration:d680e8a854a7cbad6d490c445cba2eba">Registration</h2>
+
+<p>The next step is to register <code>helloWorld</code> with Sparta.</p>
+
+<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
+
+helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
+                                helloWorld,
+                                nil)
+lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
+
+
+<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code> that registers our golang function with Sparta.  <code>NewLambda</code> accepts three parameters:</p>
+
+<ul>
+<li><code>string|IAMRoleDefinition</code> : Either a string literal that refers to a pre-existing IAM role under which the Lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+
+<ul>
+<li>In this example, we&rsquo;re defining a new <code>IAMRoleDefinition</code> as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&rsquo;t access any additional AWS services that&rsquo;s all we need.</li>
+</ul></li>
+<li><code>LambdaFunction</code>: The <em>Go</em> function to execute.</li>
+<li><code>*LambdaFunctionOptions</code>: A pointer to any additional execution settings (eg, timeout, memory settings, etc).</li>
+</ul>
+
+<h2 id="delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</h2>
+
+<p>The final step is to define a Sparta service under your applications <code>main</code> package and provide the non-empty slice of lambda functions:</p>
+
+<pre><code class="go">sparta.Main(&#34;MyHelloWorldStack&#34;,
+            &#34;Simple Sparta application that demonstrates core functionality&#34;,
+            lambdaFunctions,
+            nil)</code></pre>
+
+
+<p><code>sparta.Main</code> accepts four parameters:</p>
+
+<ul>
+<li><code>serviceName</code> : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
+
+<ul>
+<li>The <code>serviceName</code> is used as the stable identifier to determine when updates should be applied vs new stacks provisioned.</li>
+</ul></li>
+<li><code>serviceDescription</code>: An optional string used to describe the stack.</li>
+<li><code>[]*LambdaAWSInfo</code> : Slice of <code>sparta.lambdaAWSInfo</code> to provision</li>
+<li><code>*API</code> : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
+
+<ul>
+<li>We&rsquo;ll walk through how to do that in a later example, but for now our lambda functions will only be accessible via the AWS SDK or Console.</li>
+</ul></li>
+</ul>
+
+<h2 id="putting-it-together:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</h2>
+
+<p>Putting everything together, and including the necessary imports, we have:</p>
+
+<pre><code class="go">// File: main.go
+package main
+
+import (
+	&#34;encoding/json&#34;
+	&#34;fmt&#34;
+	&#34;net/http&#34;
+
+	&#34;github.com/Sirupsen/logrus&#34;
+	sparta &#34;github.com/mweagle/Sparta&#34;
+)
+
+func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, &#34;Hello World!&#34;)
+}
+
+func main() {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+
+	helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
+		helloWorld,
+		nil)
+	lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+	sparta.Main(&#34;MyHelloWorldStack&#34;,
+		&#34;Simple Sparta application that demonstrates core functionality&#34;,
+		lambdaFunctions,
+		nil)
+}</code></pre>
+
+
+<h2 id="running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</h2>
+
+<p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
+
+<pre><code class="language-bash">
+go run main.go describe --out ./graph.html
+
+INFO[0000] Welcome to Sparta                             Option=describe Version=0.0.7
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified. Count: 1
+INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
+INFO[0007] Executable binary size (MB): 10
+INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/DOCTEST/MyHelloWorldStack737464669
+INFO[0008] Creating NodeJS proxy entry: main_helloWorld
+INFO[0008] Embedding CustomResource script: cfn-response.js
+INFO[0008] Embedding CustomResource script: underscore-min.js
+INFO[0008] Embedding CustomResource script: async.min.js
+INFO[0008] Embedding CustomResource script: apigateway.js
+INFO[0008] Embedding CustomResource script: s3.js
+INFO[0008] Embedding CustomResource script: sns.js
+INFO[0008] Embedding CustomResource script: golang-constants.json
+INFO[0008] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack737464669
+INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-edaad4631616d70ff87806dfd1399b0bc2f7994a-cf.json
+</code></pre>
+
+<p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
+
+<p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the Lambda package and CloudFormation template to that bucket as part of provisioning.</p>
+
+<pre><code class="language-bash">go run main.go provision --s3Bucket $S3_BUCKET
+
+INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified. Count: 1
+INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
+INFO[0007] Executable binary size (MB): 10
+INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/DOCTEST/MyHelloWorldStack650982716
+INFO[0008] Creating NodeJS proxy entry: main_helloWorld
+INFO[0008] Embedding CustomResource script: cfn-response.js
+INFO[0008] Embedding CustomResource script: underscore-min.js
+INFO[0008] Embedding CustomResource script: async.min.js
+INFO[0008] Embedding CustomResource script: apigateway.js
+INFO[0008] Embedding CustomResource script: s3.js
+INFO[0008] Embedding CustomResource script: sns.js
+INFO[0008] Embedding CustomResource script: golang-constants.json
+INFO[0008] Uploading ZIP archive to S3
+INFO[0012] ZIP archive uploaded: https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack650982716
+INFO[0012] Uploading CloudFormation template
+INFO[0012] CloudFormation template uploaded: https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-8ae100efb4eddbed9debb45915a288a179b6592e-cf.json
+INFO[0012] DescribeStackOutputError: ValidationError: Stack with id MyHelloWorldStack does not exist
+	status code: 400, request id: defc0375-9a05-11e5-8ef6-d5823d3e35af
+INFO[0012] Creating stack: arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6
+INFO[0012] Waiting for stack to complete
+INFO[0022] Current state: CREATE_IN_PROGRESS
+INFO[0052] Current state: CREATE_COMPLETE
+INFO[0052] Stack Outputs:
+INFO[0052] 	Output                                       Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0052] 	Output                                       Description=Sparta Version Key=SpartaVersion Value=0.0.7
+INFO[0052] Stack provisioned: {
+  Capabilities: [&quot;CAPABILITY_IAM&quot;],
+  CreationTime: 2015-12-03 21:36:11.325 +0000 UTC,
+  Description: &quot;Simple Sparta application that demonstrates core functionality&quot;,
+  DisableRollback: false,
+  Outputs: [{
+      Description: &quot;Sparta Home&quot;,
+      OutputKey: &quot;SpartaHome&quot;,
+      OutputValue: &quot;https://github.com/mweagle/Sparta&quot;
+    },{
+      Description: &quot;Sparta Version&quot;,
+      OutputKey: &quot;SpartaVersion&quot;,
+      OutputValue: &quot;0.0.7&quot;
+    }],
+  StackId: &quot;arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&quot;,
+  StackName: &quot;MyHelloWorldStack&quot;,
+  StackStatus: &quot;CREATE_COMPLETE&quot;,
+  TimeoutInMinutes: 5
+}
+</code></pre>
+
+<p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
+
+<h2 id="testing:d680e8a854a7cbad6d490c445cba2eba">Testing</h2>
+
+<p>Find your Lambda function in the list of AWS Lambda functions and click the hyperlink.  The display name will be prefixed by the name of your stack (<em>MyHelloWorldStack</em> in our example):</p>
+
+<p><img src="/images/overview/AWS_Lambda_List.png" alt="AWS Lambda List" /></p>
+
+<p>On the Lambda details page, click the <em>Test</em> button:</p>
+
+<p><img src="/images/overview/AWS_Lambda_Test.png" alt="AWS Lambda Test" /></p>
+
+<p>Accept the Input Test Event sample (our Lambda function doesn&rsquo;t consume the event data) and click <em>Save and test</em>.  The execution result pane should display something similar to:</p>
+
+<p><img src="/images/overview/AWS_Lambda_Execution.png" alt="AWS Lambda Execution" /></p>
+
+<h2 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h2>
+
+<p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
+
+<pre><code class="language-bash">go run main.go delete
+
+INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
+INFO[0000] Stack exists: MyHelloWorldStack
+INFO[0000] Stack delete issued: {
+
+}
+
+</code></pre>
+
+<h2 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h2>
+
+<p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your Lambda function(s) into the broader AWS landscape.</p>
 
 </div>
 

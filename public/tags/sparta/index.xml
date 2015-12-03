@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sparta</title>
-    <link>http://gosparta.io/</link>
-    <description>Recent content on Sparta</description>
+    <title>Sparta on Sparta</title>
+    <link>http://gosparta.io/tags/sparta/</link>
+    <description>Recent content in Sparta on Sparta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
     <lastBuildDate>Sun, 29 Nov 2015 06:50:17 +0000</lastBuildDate>
-    <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://gosparta.io/tags/sparta/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Overview</title>
@@ -38,16 +38,6 @@
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/eventsources/</guid>
       <description>&lt;p&gt;TODO: Event source documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/</guid>
-      <description>&lt;p&gt;Sparta Introductory Documentation&lt;/p&gt;
 </description>
     </item>
     
@@ -295,56 +285,6 @@ INFO[0000] Stack delete issued: {
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/walkthrough/</guid>
       <description>&lt;p&gt;TODO: Walkthrough documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>homepage</title>
-      <link>http://gosparta.io/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/</guid>
-      <description>
-
-&lt;div class=&#34;jumbotron&#34;&gt;
-  &lt;h1&gt;Sparta &lt;img src=&#34;images/spartanshieldsmall.png&#34; alt=&#34;Sparta shield&#34; height=&#34;80&#34; width=&#34;80&#34;&gt;&lt;/h1&gt;
-  Build &amp; deploy &lt;i&gt;golang&lt;/i&gt; functions in AWS Lambda
-  &lt;hr /&gt;
-  &lt;blockquote&gt;
-    &lt;p&gt;&#34;No Server Is Easier To Manage Than No Server.&#34;&lt;/p&gt;
-    &lt;footer&gt;Werner Vogels &lt;cite title=&#34;Source Title&#34;&gt;AWS re:Invent 2015&lt;/cite&gt;&lt;/footer&gt;
-  &lt;/blockquote&gt;  
-  &lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
-&lt;/div&gt;
-
-&lt;p&gt;Sparta provides a framework to build &amp;amp; deploy &lt;em&gt;Go&lt;/em&gt; functions in &lt;a href=&#34;https://aws.amazon.com/lambda/&#34;&gt;AWS Lambda&lt;/a&gt;. While &lt;em&gt;Go&lt;/em&gt; is not &lt;em&gt;yet&lt;/em&gt; officially supported by AWS Lambda (see &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;poll&lt;/a&gt;), it&amp;rsquo;s possible to bundle &amp;amp; launch arbitrary executables in Lambda.&lt;/p&gt;
-
-&lt;p&gt;Sparta provides a HTTP-based translation layer between the proper &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html&#34;&gt;NodeJS&lt;/a&gt; environment and your &lt;em&gt;Go&lt;/em&gt; binary.  In addition to this translation layer, Sparta is also able to:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Manage S3 and SNS-based &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources&#34;&gt;event sources&lt;/a&gt;.
-
-&lt;ul&gt;
-&lt;li&gt;A Lambda function may be invoked in response to S3 or SNS broadcasted events.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Provision an HTTPS &lt;a href=&#34;https://aws.amazon.com/api-gateway/details/&#34;&gt;API Gateway&lt;/a&gt; service that allows Lambda functions to be publicly invoked.&lt;/li&gt;
-&lt;li&gt;Produce diagrams of Lambda &amp;amp; event source interactions&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h2&gt;
-
-&lt;p&gt;To get started using Sparta, begin with the &lt;a href=&#34;./docs&#34;&gt;Documentation&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;problems:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Problems?&lt;/h2&gt;
-
-&lt;p&gt;Please file an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34;&gt;issue&lt;/a&gt; in GitHub.  Thanks.&lt;/p&gt;
-
-&lt;h3 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other resources&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda limits&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/&#34;&gt;The Twelve Days of Lambda&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

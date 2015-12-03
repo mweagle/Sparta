@@ -53,8 +53,13 @@
   <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
 
 
+  
+  <script src="/mermaid/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
+
 </head>
-<body class="map[flattr: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: name:cosmo home:Home highlight:vs linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[bitbucket: googleplus: youtube: flattr: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle highlight:vs linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle name:cosmo home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -122,17 +127,47 @@
   
   	<div class="row doc-main">
   		<p class="doc-entry-meta"></p>
-  		<div class="jumbotron">
+  		
+
+<div class="jumbotron">
   <h1>Sparta <img src="images/spartanshieldsmall.png" alt="Sparta shield" height="80" width="80"></h1>
-  Run <i>golang</i> functions in AWS Lambda
+  Build & deploy <i>golang</i> functions in AWS Lambda
   <hr />
   <blockquote>
     <p>"No Server Is Easier To Manage Than No Server."</p>
     <footer>Werner Vogels <cite title="Source Title">AWS re:Invent 2015</cite></footer>
   </blockquote>  
   <iframe width="560" height="315" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
-
 </div>
+
+<p>Sparta provides a framework to build &amp; deploy <em>Go</em> functions in <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>. While <em>Go</em> is not <em>yet</em> officially supported by AWS Lambda (see <a href="https://twitter.com/awscloud/status/659795641204260864">poll</a>), it&rsquo;s possible to bundle &amp; launch arbitrary executables in Lambda.</p>
+
+<p>Sparta provides a HTTP-based translation layer between the proper <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> environment and your <em>Go</em> binary.  In addition to this translation layer, Sparta is also able to:</p>
+
+<ul>
+<li>Manage S3 and SNS-based <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">event sources</a>.
+
+<ul>
+<li>A Lambda function may be invoked in response to S3 or SNS broadcasted events.</li>
+</ul></li>
+<li>Provision an HTTPS <a href="https://aws.amazon.com/api-gateway/details/">API Gateway</a> service that allows Lambda functions to be publicly invoked.</li>
+<li>Produce diagrams of Lambda &amp; event source interactions</li>
+</ul>
+
+<h2 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h2>
+
+<p>To get started using Sparta, begin with the <a href="./docs">Documentation</a>.</p>
+
+<h2 id="problems:d680e8a854a7cbad6d490c445cba2eba">Problems?</h2>
+
+<p>Please file an <a href="https://github.com/mweagle/Sparta/issues/new">issue</a> in GitHub.  Thanks.</p>
+
+<h3 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other resources</h3>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a></li>
+<li><a href="https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/">The Twelve Days of Lambda</a></li>
+</ul>
 
   	</div>
   
