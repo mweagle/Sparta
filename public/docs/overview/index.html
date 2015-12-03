@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1202 
+    "wordCount":  1228 
   }
 </script>
 
@@ -91,7 +91,7 @@
   <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
 
 </head>
-<body class="map[highlight:vs github:https://github.com/mweagle googleplus: flattr: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:cosmo home:Home googleAnalytics:UA-70794971-1 bitbucket:]">
+<body class="map[highlight:vs github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: name:cosmo googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle flattr: home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -230,9 +230,9 @@
 <li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
 </ul>
 
-<h2 id="registration:d680e8a854a7cbad6d490c445cba2eba">Registration</h2>
+<h2 id="creation:d680e8a854a7cbad6d490c445cba2eba">Creation</h2>
 
-<p>The next step is to register <code>helloWorld</code> with Sparta.</p>
+<p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
 <pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
 
@@ -242,7 +242,7 @@ helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
 lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 
-<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code> that registers our golang function with Sparta.  <code>NewLambda</code> accepts three parameters:</p>
+<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code>.  <code>NewLambda</code> accepts three parameters:</p>
 
 <ul>
 <li><code>string|IAMRoleDefinition</code> : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> that will be provisioned as part of this deployment and used as the execution role for the lambda function.
@@ -277,9 +277,11 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <li><code>*API</code> : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
 
 <ul>
-<li>We&rsquo;ll walk through how to do that in a later example, but for now our lambda functions will only be accessible via the AWS SDK or Console.</li>
+<li>We&rsquo;ll walk through how to do that in a later example, but for now our lambda function will only be accessible via the AWS SDK or Console.</li>
 </ul></li>
 </ul>
+
+<p>Delegating <code>main()</code> to <code>Sparta.Main()</code> transforms the set of lambda functions into a standalone executable with several command line options.  Run <code>go run main.go --help</code> to see the available options.</p>
 
 <h2 id="putting-it-together:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</h2>
 

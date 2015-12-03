@@ -88,9 +88,9 @@
 &lt;li&gt;&lt;code&gt;logrus.Logger&lt;/code&gt; : A &lt;a href=&#34;https://github.com/Sirupsen/logrus&#34;&gt;logrus&lt;/a&gt; logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;registration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Registration&lt;/h2&gt;
+&lt;h2 id=&#34;creation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creation&lt;/h2&gt;
 
-&lt;p&gt;The next step is to register &lt;code&gt;helloWorld&lt;/code&gt; with Sparta.&lt;/p&gt;
+&lt;p&gt;The next step is to create a Sparta-wrapped version of the &lt;code&gt;helloWorld&lt;/code&gt; function.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaFunctions []*sparta.LambdaAWSInfo
 
@@ -100,7 +100,7 @@ helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
 lambdaFunctions = append(lambdaFunctions, helloWorldFn)&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;p&gt;We first declare an empty slice &lt;code&gt;lambdaFunctions&lt;/code&gt; to which all our service&amp;rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via &lt;code&gt;NewLambda&lt;/code&gt; that registers our golang function with Sparta.  &lt;code&gt;NewLambda&lt;/code&gt; accepts three parameters:&lt;/p&gt;
+&lt;p&gt;We first declare an empty slice &lt;code&gt;lambdaFunctions&lt;/code&gt; to which all our service&amp;rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via &lt;code&gt;NewLambda&lt;/code&gt;.  &lt;code&gt;NewLambda&lt;/code&gt; accepts three parameters:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;string|IAMRoleDefinition&lt;/code&gt; : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, &lt;em&gt;OR&lt;/em&gt; a &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; that will be provisioned as part of this deployment and used as the execution role for the lambda function.
@@ -135,9 +135,11 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;&lt;code&gt;*API&lt;/code&gt; : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
 
 &lt;ul&gt;
-&lt;li&gt;We&amp;rsquo;ll walk through how to do that in a later example, but for now our lambda functions will only be accessible via the AWS SDK or Console.&lt;/li&gt;
+&lt;li&gt;We&amp;rsquo;ll walk through how to do that in a later example, but for now our lambda function will only be accessible via the AWS SDK or Console.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;p&gt;Delegating &lt;code&gt;main()&lt;/code&gt; to &lt;code&gt;Sparta.Main()&lt;/code&gt; transforms the set of lambda functions into a standalone executable with several command line options.  Run &lt;code&gt;go run main.go --help&lt;/code&gt; to see the available options.&lt;/p&gt;
 
 &lt;h2 id=&#34;putting-it-together:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Putting It Together&lt;/h2&gt;
 

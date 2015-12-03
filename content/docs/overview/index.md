@@ -36,9 +36,9 @@ All Sparta lambda functions have the same function signature that is composed of
   * `http.ResponseWriter` : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the `responseWriter` is published back via [context.done()](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html).
   * `logrus.Logger` : A [logrus](https://github.com/Sirupsen/logrus) logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.
 
-## Registration
+## Creation
 
-The next step is to register `helloWorld` with Sparta.  
+The next step is to create a Sparta-wrapped version of the `helloWorld` function.  
 
 {{< highlight go >}}
 
@@ -50,7 +50,7 @@ helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
 lambdaFunctions = append(lambdaFunctions, helloWorldFn)
 {{< /highlight >}}    
 
-We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to create a new lambda function via `NewLambda` that registers our golang function with Sparta.  `NewLambda` accepts three parameters:
+We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to create a new lambda function via `NewLambda`.  `NewLambda` accepts three parameters:
 
   * `string|IAMRoleDefinition` : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` that will be provisioned as part of this deployment and used as the execution role for the lambda function.
     - In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
@@ -75,7 +75,9 @@ sparta.Main("MyHelloWorldStack",
   * `serviceDescription`: An optional string used to describe the stack.
   * `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` to provision
   * `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
-    - We'll walk through how to do that in a later example, but for now our lambda functions will only be accessible via the AWS SDK or Console.
+    - We'll walk through how to do that in a later example, but for now our lambda function will only be accessible via the AWS SDK or Console.
+
+Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options.  Run `go run main.go --help` to see the available options.
 
 ## Putting It Together
 
