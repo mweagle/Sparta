@@ -8,7 +8,16 @@ clean:
 build: clean
 	hugo
 
-reset:
+test:
+	rm -rfv ./tmp
+	mkdir -pv ./tmp
+	# Github replies with a 302 and location header response
+	curl -L -o ./tmp/hugo.tar.gz https://github.com/spf13/hugo/releases/download/v0.15/hugo_0.15_linux_amd64.tar.gz
+	tar -xvf ./tmp/hugo.tar.gz -C ./tmp
+	./tmp/hugo_0.15_linux_amd64/hugo_0.15_linux_amd64
+	rm -rfv ./tmp
+
+reset: clean
 		git reset --hard
 		git clean -f -d
 
