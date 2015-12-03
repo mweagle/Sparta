@@ -2,81 +2,81 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sparta</title>
-    <link>http://mweagle.github.io/Sparta/</link>
+    <link>http://gosparta.io/</link>
     <description>Recent content on Sparta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
     <lastBuildDate>Sun, 29 Nov 2015 06:50:17 +0000</lastBuildDate>
-    <atom:link href="http://mweagle.github.io/Sparta/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/apigateway/</link>
+      <link>http://gosparta.io/docs/apigateway/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/apigateway/</guid>
+      <guid>http://gosparta.io/docs/apigateway/</guid>
       <description>&lt;p&gt;TODO: API Gateway documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/background/</link>
+      <link>http://gosparta.io/docs/background/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/background/</guid>
+      <guid>http://gosparta.io/docs/background/</guid>
       <description>&lt;p&gt;TODO: Background documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/concepts/</link>
+      <link>http://gosparta.io/docs/concepts/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/concepts/</guid>
+      <guid>http://gosparta.io/docs/concepts/</guid>
       <description>&lt;p&gt;TODO: Concepts documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/eventsources/</link>
+      <link>http://gosparta.io/docs/eventsources/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/eventsources/</guid>
+      <guid>http://gosparta.io/docs/eventsources/</guid>
       <description>&lt;p&gt;TODO: Event source documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/</link>
+      <link>http://gosparta.io/docs/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/</guid>
+      <guid>http://gosparta.io/docs/</guid>
       <description>&lt;p&gt;Sparta Introductory Documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>Overview</title>
-      <link>http://mweagle.github.io/Sparta/docs/introduction/</link>
+      <link>http://gosparta.io/docs/introduction/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/docs/introduction/</guid>
+      <guid>http://gosparta.io/docs/introduction/</guid>
       <description>&lt;p&gt;TODO: Introductory documentation&lt;/p&gt;
 </description>
     </item>
     
     <item>
       <title>homepage</title>
-      <link>http://mweagle.github.io/Sparta/</link>
+      <link>http://gosparta.io/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://mweagle.github.io/Sparta/</guid>
+      <guid>http://gosparta.io/</guid>
       <description>&lt;p&gt;TODO: Sparta docs&lt;/p&gt;
 </description>
     </item>

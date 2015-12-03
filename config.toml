@@ -1,5 +1,5 @@
 # hostname (and path) to the root eg. http://spf13.com/
-baseurl = "http://mweagle.github.io/Sparta/"
+baseurl = "http://gosparta.io"
 
 # Site title
 title = "Sparta"

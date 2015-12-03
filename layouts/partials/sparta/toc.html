@@ -4,7 +4,7 @@
   </div>
   <div class="panel-body">
     {{ range $eachPage := .Site.Data.SpartaTOC }}
-      <a href="/docs/{{ .URL }}">{{ .Name }}</a>
+      <a href="/docs{{ .URL }}">{{ .Name }}</a>
       <ul>
       {{ range $childPage := $eachPage.Children }}
         <li>
