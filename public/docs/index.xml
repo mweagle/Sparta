@@ -73,7 +73,9 @@
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/eventsources/dynamodb/</guid>
-      <description>&lt;p&gt;TODO: DynamoDB source documentation&lt;/p&gt;
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: DynamoDB source documentation&lt;/p&gt;
 </description>
     </item>
     
@@ -266,7 +268,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <guid>http://gosparta.io/docs/eventsources/ses/</guid>
       <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
 
-&lt;p&gt;TODO: S3 source documentation&lt;/p&gt;
+&lt;p&gt;TODO: SES source documentation&lt;/p&gt;
 </description>
     </item>
     

@@ -6,4 +6,6 @@ tags = ["sparta"]
 type = "doc"
 +++
 
+<span class="label label-warning">NOT YET IMPLEMENTED</span>
+
 TODO: DynamoDB source documentation
