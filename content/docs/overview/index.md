@@ -119,7 +119,7 @@ func main() {
 
 Next download the Sparta dependencies via `go get ./...` in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command:
 
-```bash
+{{< highlight bash >}}
 
 go run main.go describe --out ./graph.html
 
@@ -139,13 +139,14 @@ INFO[0008] Embedding CustomResource script: sns.js
 INFO[0008] Embedding CustomResource script: golang-constants.json
 INFO[0008] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack737464669
 INFO[0008] Bypassing template upload & creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-edaad4631616d70ff87806dfd1399b0bc2f7994a-cf.json
-```
+{{< /highlight >}}
+
 
 Then open _graph.html_ in your browser (also linked [here](/images/overview/graph.html) ) to see what will be provisioned.
 
 Since everything looks good, we'll provision the stack via `provision` and verify the lambda function.  Note that the `$S3_BUCKET` value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.
 
-```bash
+{{< highlight bash >}}
 go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
@@ -194,7 +195,7 @@ INFO[0052] Stack provisioned: {
   StackStatus: "CREATE_COMPLETE",
   TimeoutInMinutes: 5
 }
-```
+{{< /highlight >}}
 
 Once the stack has been provisioned (`CREATE_COMPLETE`), login to the AWS console and navigate to the Lambda section.
 
@@ -216,7 +217,7 @@ Accept the Input Test Event sample (our Lambda function doesn't consume the even
 
 To prevent unauthorized usage and potential charges, make sure to `delete` your stack before moving on:
 
-```bash
+{{< highlight bash >}}
 go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
@@ -224,8 +225,8 @@ INFO[0000] Stack exists: MyHelloWorldStack
 INFO[0000] Stack delete issued: {
 
 }
+{{< /highlight >}}
 
-```
 
 ## <a href="{{< relref "#conclusion" >}}">Conclusion</a>
 

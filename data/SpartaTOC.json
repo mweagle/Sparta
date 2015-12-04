@@ -19,6 +19,13 @@
     "URL": "/eventsources",
     "Children": [
       {
+        "Name": "S3",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/s3",
+        "Children": []
+      },
+      {
         "Name": "SNS",
         "IconClass": "",
         "Title": "",
@@ -26,10 +33,45 @@
         "Children": []
       },
       {
-        "Name": "S3",
+        "Name": "DynamoDB",
         "IconClass": "",
         "Title": "",
-        "URL": "/eventsources/s3",
+        "URL": "/eventsources/dynamodb",
+        "Children": []
+      },
+      {
+        "Name": "Kinesis",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/kinesis",
+        "Children": []
+      },
+      {
+        "Name": "SES",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/ses",
+        "Children": []
+      },
+      {
+        "Name": "Cognito",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/cognito",
+        "Children": []
+      },
+      {
+        "Name": "CloudWatch Logs",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/cloudwatchlogs",
+        "Children": []
+      },
+      {
+        "Name": "CloudFormation",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/cloudformation",
         "Children": []
       }
     ]

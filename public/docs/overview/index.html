@@ -92,7 +92,7 @@
   <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
 
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: name:cosmo home:Home highlight:vs twitter:mweagle github:https://github.com/mweagle bitbucket: googleplus:]">
+<body class="map[name:cosmo home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -147,6 +147,19 @@
             </a>
           </li>
           
+          <li>
+
+            <a href="https://twitter.com/@mweagle"
+            >
+
+            
+                <i class="fa fa-twitter"></i>
+            
+            
+            mweagle
+            </a>
+          </li>
+          
         </ul>
       </div>
       
@@ -178,11 +191,35 @@
       <ul>
       
         <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
+        <li>
           <small><a href="/docs/eventsources/sns/">SNS</a></small>
         </li>
       
         <li>
-          <small><a href="/docs/eventsources/s3">S3</a></small>
+          <small><a href="/docs/eventsources/dynamodb">DynamoDB</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/kinesis">Kinesis</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/ses">SES</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cognito">Cognito</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudformation">CloudFormation</a></small>
         </li>
       
       </ul>
@@ -330,8 +367,7 @@ func main() {
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
-<pre><code class="language-bash">
-go run main.go describe --out ./graph.html
+<pre><code class="bash">go run main.go describe --out ./graph.html
 
 INFO[0000] Welcome to Sparta                             Option=describe Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -348,14 +384,14 @@ INFO[0008] Embedding CustomResource script: s3.js
 INFO[0008] Embedding CustomResource script: sns.js
 INFO[0008] Embedding CustomResource script: golang-constants.json
 INFO[0008] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack737464669
-INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-edaad4631616d70ff87806dfd1399b0bc2f7994a-cf.json
-</code></pre>
+INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-edaad4631616d70ff87806dfd1399b0bc2f7994a-cf.json</code></pre>
+
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
-<pre><code class="language-bash">go run main.go provision --s3Bucket $S3_BUCKET
+<p><pre><code class="bash">go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -385,25 +421,25 @@ INFO[0052] Stack Outputs:
 INFO[0052] 	Output                                       Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0052] 	Output                                       Description=Sparta Version Key=SpartaVersion Value=0.0.7
 INFO[0052] Stack provisioned: {
-  Capabilities: [&quot;CAPABILITY_IAM&quot;],
-  CreationTime: 2015-12-03 21:36:11.325 +0000 UTC,
-  Description: &quot;Simple Sparta application that demonstrates core functionality&quot;,
+  Capabilities: [&#34;CAPABILITY_IAM&#34;],
+  CreationTime: 2015-12-03 21:36:11.325 &#43;0000 UTC,
+  Description: &#34;Simple Sparta application that demonstrates core functionality&#34;,
   DisableRollback: false,
   Outputs: [{
-      Description: &quot;Sparta Home&quot;,
-      OutputKey: &quot;SpartaHome&quot;,
-      OutputValue: &quot;https://github.com/mweagle/Sparta&quot;
+      Description: &#34;Sparta Home&#34;,
+      OutputKey: &#34;SpartaHome&#34;,
+      OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
     },{
-      Description: &quot;Sparta Version&quot;,
-      OutputKey: &quot;SpartaVersion&quot;,
-      OutputValue: &quot;0.0.7&quot;
+      Description: &#34;Sparta Version&#34;,
+      OutputKey: &#34;SpartaVersion&#34;,
+      OutputValue: &#34;0.0.7&#34;
     }],
-  StackId: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&quot;,
-  StackName: &quot;MyHelloWorldStack&quot;,
-  StackStatus: &quot;CREATE_COMPLETE&quot;,
+  StackId: &#34;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&#34;,
+  StackName: &#34;MyHelloWorldStack&#34;,
+  StackStatus: &#34;CREATE_COMPLETE&#34;,
   TimeoutInMinutes: 5
-}
-</code></pre>
+}</code></pre>
+</p>
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
 
@@ -421,21 +457,20 @@ INFO[0052] Stack provisioned: {
 
 <p><img src="/images/overview/AWS_Lambda_Execution.png" alt="AWS Lambda Execution" /></p>
 
-<h2 id="a-href-hugoshortcode-11-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleaningUp:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h2>
+<h2 id="a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleaningUp:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h2>
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
-<pre><code class="language-bash">go run main.go delete
+<p><pre><code class="bash">go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
 INFO[0000] Stack exists: MyHelloWorldStack
 INFO[0000] Stack delete issued: {
 
-}
+}</code></pre>
+</p>
 
-</code></pre>
-
-<h2 id="a-href-hugoshortcode-12-conclusion-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></h2>
+<h2 id="a-href-hugoshortcode-15-conclusion-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></h2>
 
 <p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.</p>
 

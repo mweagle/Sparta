@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  4 
+    "wordCount":  74 
   }
 </script>
 
@@ -92,7 +92,7 @@
   <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
 
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: name:cosmo home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle]">
+<body class="map[highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: facebook: twitter:mweagle name:cosmo home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -147,6 +147,19 @@
             </a>
           </li>
           
+          <li>
+
+            <a href="https://twitter.com/@mweagle"
+            >
+
+            
+                <i class="fa fa-twitter"></i>
+            
+            
+            mweagle
+            </a>
+          </li>
+          
         </ul>
       </div>
       
@@ -178,11 +191,35 @@
       <ul>
       
         <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
+        <li>
           <small><a href="/docs/eventsources/sns/">SNS</a></small>
         </li>
       
         <li>
-          <small><a href="/docs/eventsources/s3">S3</a></small>
+          <small><a href="/docs/eventsources/dynamodb">DynamoDB</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/kinesis">Kinesis</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/ses">SES</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cognito">Cognito</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudformation">CloudFormation</a></small>
         </li>
       
       </ul>
@@ -208,7 +245,20 @@
 </header>
 
     <div class="container content">
-  <p>TODO: Event source documentation</p>
+  <p>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.</p>
+
+<p>There are several <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> available:</p>
+
+<ul>
+<li><a href="/docs/eventsources/s3">S3</a></li>
+<li><a href="/docs/eventsources/sns">SNS</a></li>
+<li><a href="/docs/eventsources/dynamodb">DynamoDB</a></li>
+<li><a href="/docs/eventsources/kinesis">Kinesis</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/docs/eventsources/ses">SES</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/docs/eventsources/cognito">Cognito</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/docs/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+</ul>
 
 </div>
 

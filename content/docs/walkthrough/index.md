@@ -8,7 +8,7 @@ type = "doc"
 
 The [Overview](/docs/overview) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.
 
-## Provisioning Flow
+### <a href="{{< relref "#provisioningFlow" >}}">Provisioning Flow</a>
 
 The provisioning workflow is defined in [provision.go](https://github.com/mweagle/Sparta/blob/master/provision.go), with a singular goal of encapsulating all AWS mutations into a [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) template.  Where CloudFormation does not support a given service, Sparta injects [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) into the template definition.
 
@@ -70,3 +70,7 @@ Uploads the template to S3 to maximize [template size](http://docs.aws.amazon.co
 ### <a href="{{< relref "#createUpdateStack" >}}">Create/Update Stack</a>
 
 Finally, the provisioning workflow determines whether the Sparta `serviceName` exists and either creates or updates as appropriate.
+
+## Next Steps
+
+Now that we've covered how Sparta handles provisioning your stack, we're ready to expand functionality to leverge more of the AWS ecosystem in the [next section](/docs/eventsources). 

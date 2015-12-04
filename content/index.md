@@ -15,7 +15,7 @@ title = "homepage"
     <p>"No Server Is Easier To Manage Than No Server."</p>
     <footer>Werner Vogels <cite title="Source Title">AWS re:Invent 2015</cite></footer>
   </blockquote>  
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
+  <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
 </div>
 
 Sparta provides a framework to build & deploy *Go* functions in [AWS Lambda](https://aws.amazon.com/lambda/). While *Go* is not _yet_ officially supported by AWS Lambda (see [poll](https://twitter.com/awscloud/status/659795641204260864)), it's possible to bundle & launch arbitrary executables in Lambda.  
@@ -37,6 +37,6 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub. 
 
 ### Other resources
 
-
+  * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
   * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
   * [The Twelve Days of Lambda](https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/)

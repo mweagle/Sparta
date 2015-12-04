@@ -13,3 +13,8 @@
     IconClass = "fa-tags"
     Title = "Show list of tags"
     URL = "/tags"
+
+[twitter]
+    Name = "mweagle"
+    IconClass = "fa-twitter"
+    URL = "https://twitter.com/@mweagle"
