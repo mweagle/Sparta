@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1228 
+    "wordCount":  1230 
   }
 </script>
 
@@ -89,9 +89,10 @@
   <script src="/mermaid/mermaid.min.js"></script>
   <script>mermaid.initialize({startOnLoad:true});</script>
   <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
 
 </head>
-<body class="map[highlight:vs github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: name:cosmo googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle flattr: home:Home]">
+<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: name:cosmo home:Home highlight:vs twitter:mweagle github:https://github.com/mweagle bitbucket: googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -168,11 +169,6 @@
       
       </ul>
     
-      <a href="/docs/concepts">Concepts</a>
-      <ul>
-      
-      </ul>
-    
       <a href="/docs/walkthrough">Walkthrough</a>
       <ul>
       
@@ -181,9 +177,22 @@
       <a href="/docs/eventsources">Event Sources</a>
       <ul>
       
+        <li>
+          <small><a href="/docs/eventsources/sns/">SNS</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/apigateway">API Gateway</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/walkthrough">Miscellaneous</a>
       <ul>
       
       </ul>
@@ -201,15 +210,15 @@
     <div class="container content">
   
 
-<p>Sparta is a framework for developing and deploying <em>Go</em> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all possible error cases for this example to keep things short.</p>
+<p>Sparta is a framework for developing and deploying <em>Go</em> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
 
-<h2 id="preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</h2>
+<h2 id="a-href-hugoshortcode-1-preconditions-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</a></h2>
 
 <p>Sparta uses the <a href="http://aws.amazon.com/sdk-for-go/">AWS SDK for Go</a> to interact with AWS APIs.  Before you get started, ensure that you&rsquo;ve properly configured the <a href="https://github.com/aws/aws-sdk-go/wiki/configuring-sdk">SDK credentials</a>.</p>
 
 <p>Note that you must use an AWS region that supports Lambda.  Consult the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the most up to date release information.</p>
 
-<h2 id="lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</h2>
+<h2 id="a-href-hugoshortcode-2-lambda-definition-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambdaDefinition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</a></h2>
 
 <p>The first place to start is with the lambda function definition.</p>
 
@@ -230,7 +239,7 @@
 <li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
 </ul>
 
-<h2 id="creation:d680e8a854a7cbad6d490c445cba2eba">Creation</h2>
+<h2 id="a-href-hugoshortcode-4-creation-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#creation:d680e8a854a7cbad6d490c445cba2eba">Creation</a></h2>
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
@@ -254,7 +263,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <li><code>*LambdaFunctionOptions</code>: A pointer to any additional execution settings (eg, timeout, memory settings, etc).</li>
 </ul>
 
-<h2 id="delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</h2>
+<h2 id="a-href-hugoshortcode-6-delegation-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</a></h2>
 
 <p>The final step is to define a Sparta service under your applications <code>main</code> package and provide the non-empty slice of lambda functions:</p>
 
@@ -283,7 +292,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>Delegating <code>main()</code> to <code>Sparta.Main()</code> transforms the set of lambda functions into a standalone executable with several command line options.  Run <code>go run main.go --help</code> to see the available options.</p>
 
-<h2 id="putting-it-together:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</h2>
+<h2 id="a-href-hugoshortcode-8-putting-it-together-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#puttingItTogether:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</a></h2>
 
 <p>Putting everything together, and including the necessary imports, we have:</p>
 
@@ -317,7 +326,7 @@ func main() {
 }</code></pre>
 
 
-<h2 id="running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</h2>
+<h2 id="a-href-hugoshortcode-10-running-it-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#runningIt:d680e8a854a7cbad6d490c445cba2eba">Running It</a></h2>
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
@@ -412,7 +421,7 @@ INFO[0052] Stack provisioned: {
 
 <p><img src="/images/overview/AWS_Lambda_Execution.png" alt="AWS Lambda Execution" /></p>
 
-<h2 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h2>
+<h2 id="a-href-hugoshortcode-11-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleaningUp:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h2>
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
@@ -426,9 +435,11 @@ INFO[0000] Stack delete issued: {
 
 </code></pre>
 
-<h2 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h2>
+<h2 id="a-href-hugoshortcode-12-conclusion-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></h2>
 
 <p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.</p>
+
+<p>Next: <a href="/docs/walkthrough">Walkthrough</a></p>
 
 </div>
 

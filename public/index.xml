@@ -23,11 +23,11 @@
     
     <item>
       <title>Overview</title>
-      <link>http://gosparta.io/docs/concepts/</link>
+      <link>http://gosparta.io/docs/contributing/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/concepts/</guid>
-      <description>&lt;p&gt;TODO: Concepts documentation&lt;/p&gt;
+      <guid>http://gosparta.io/docs/contributing/</guid>
+      <description>&lt;p&gt;The &lt;a href=&#34;http://gosparta.io/docs/overview&#34;&gt;Overview&lt;/a&gt; walked through a simple &amp;ldquo;Hello World&amp;rdquo; example.&lt;/p&gt;
 </description>
     </item>
     
@@ -43,11 +43,41 @@
     
     <item>
       <title>Overview</title>
+      <link>http://gosparta.io/docs/eventsources/s3/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/s3/</guid>
+      <description>&lt;p&gt;TODO: S3 source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/eventsources/sns/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/sns/</guid>
+      <description>&lt;p&gt;TODO: SNS source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
       <link>http://gosparta.io/docs/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/</guid>
       <description>&lt;p&gt;Please choose a topic from the left.  The &lt;a href=&#34;./overview&#34;&gt;Overview&lt;/a&gt; section is a good place to start if you just want to get your hands dirty and provision a simple &amp;ldquo;Hello World&amp;rdquo; function.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/miscellaneous/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/miscellaneous/</guid>
+      <description>&lt;p&gt;TODO: Concepts documentation&lt;/p&gt;
 </description>
     </item>
     
@@ -59,15 +89,15 @@
       <guid>http://gosparta.io/docs/overview/</guid>
       <description>
 
-&lt;p&gt;Sparta is a framework for developing and deploying &lt;em&gt;Go&lt;/em&gt; based AWS Lambda functions.  To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS.  Note that we&amp;rsquo;re not going to handle all possible error cases for this example to keep things short.&lt;/p&gt;
+&lt;p&gt;Sparta is a framework for developing and deploying &lt;em&gt;Go&lt;/em&gt; based AWS Lambda functions.  To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS.  Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.&lt;/p&gt;
 
-&lt;h2 id=&#34;preconditions:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Preconditions&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-1-preconditions-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#preconditions:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Preconditions&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Sparta uses the &lt;a href=&#34;http://aws.amazon.com/sdk-for-go/&#34;&gt;AWS SDK for Go&lt;/a&gt; to interact with AWS APIs.  Before you get started, ensure that you&amp;rsquo;ve properly configured the &lt;a href=&#34;https://github.com/aws/aws-sdk-go/wiki/configuring-sdk&#34;&gt;SDK credentials&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Note that you must use an AWS region that supports Lambda.  Consult the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the most up to date release information.&lt;/p&gt;
 
-&lt;h2 id=&#34;lambda-definition:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Lambda Definition&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-2-lambda-definition-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#lambdaDefinition:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Lambda Definition&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;The first place to start is with the lambda function definition.&lt;/p&gt;
 
@@ -88,7 +118,7 @@
 &lt;li&gt;&lt;code&gt;logrus.Logger&lt;/code&gt; : A &lt;a href=&#34;https://github.com/Sirupsen/logrus&#34;&gt;logrus&lt;/a&gt; logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;creation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creation&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-4-creation-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#creation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creation&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;The next step is to create a Sparta-wrapped version of the &lt;code&gt;helloWorld&lt;/code&gt; function.&lt;/p&gt;
 
@@ -112,7 +142,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;&lt;code&gt;*LambdaFunctionOptions&lt;/code&gt;: A pointer to any additional execution settings (eg, timeout, memory settings, etc).&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;delegation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delegation&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-6-delegation-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#delegation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delegation&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;The final step is to define a Sparta service under your applications &lt;code&gt;main&lt;/code&gt; package and provide the non-empty slice of lambda functions:&lt;/p&gt;
 
@@ -141,7 +171,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Delegating &lt;code&gt;main()&lt;/code&gt; to &lt;code&gt;Sparta.Main()&lt;/code&gt; transforms the set of lambda functions into a standalone executable with several command line options.  Run &lt;code&gt;go run main.go --help&lt;/code&gt; to see the available options.&lt;/p&gt;
 
-&lt;h2 id=&#34;putting-it-together:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Putting It Together&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-8-putting-it-together-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#puttingItTogether:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Putting It Together&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Putting everything together, and including the necessary imports, we have:&lt;/p&gt;
 
@@ -175,7 +205,7 @@ func main() {
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h2 id=&#34;running-it:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Running It&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-10-running-it-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#runningIt:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Running It&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Next download the Sparta dependencies via &lt;code&gt;go get ./...&lt;/code&gt; in the directory that you saved &lt;em&gt;main.go&lt;/em&gt;.  Once the packages are downloaded, first get a view of what&amp;rsquo;s going on by the &lt;code&gt;describe&lt;/code&gt; command:&lt;/p&gt;
 
@@ -270,7 +300,7 @@ INFO[0052] Stack provisioned: {
 
 &lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/overview/AWS_Lambda_Execution.png&#34; alt=&#34;AWS Lambda Execution&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;cleaning-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-11-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleaningUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;To prevent unauthorized usage and potential charges, make sure to &lt;code&gt;delete&lt;/code&gt; your stack before moving on:&lt;/p&gt;
 
@@ -284,19 +314,93 @@ INFO[0000] Stack delete issued: {
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;conclusion:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-12-conclusion-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#conclusion:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;Congratulations! You&amp;rsquo;ve just deployed your first &amp;ldquo;serverless&amp;rdquo; service.  The following sections will dive deeper into what&amp;rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.&lt;/p&gt;
+
+&lt;p&gt;Next: &lt;a href=&#34;http://gosparta.io/docs/walkthrough&#34;&gt;Walkthrough&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     
     <item>
-      <title>Overview</title>
+      <title>Walkthrough</title>
       <link>http://gosparta.io/docs/walkthrough/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/walkthrough/</guid>
-      <description>&lt;p&gt;TODO: Walkthrough documentation&lt;/p&gt;
+      <description>
+
+&lt;p&gt;The &lt;a href=&#34;http://gosparta.io/docs/overview&#34;&gt;Overview&lt;/a&gt; walked through a simple &amp;ldquo;Hello World&amp;rdquo; example.  In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages.&lt;/p&gt;
+
+&lt;h2 id=&#34;provisioning-flow:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provisioning Flow&lt;/h2&gt;
+
+&lt;p&gt;The provisioning workflow is defined in &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/provision.go&#34;&gt;provision.go&lt;/a&gt;, with a singular goal of encapsulating all AWS mutations into a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html&#34;&gt;CloudFormation&lt;/a&gt; template.  Where CloudFormation does not support a given service, Sparta injects &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;Lambda-backed Custom Resources&lt;/a&gt; into the template definition.&lt;/p&gt;
+
+&lt;p&gt;At a high level, provisioning uses the flow below.  We&amp;rsquo;ll dive a bit deeper into each stage in the following sections.&lt;/p&gt;
+
+&lt;div class=&#34;mermaid&#34;&gt;
+    
+    graph TD
+      iam[Verify IAM Roles]
+      compile[Compile]
+      package[Package]
+      upload[Upload Archive to S3]
+      generate[Generate CF Template]
+      uploadTemplate[Upload Template to S3]
+      converge[Create/Update Stack]
+
+      iam--&gt;compile
+      compile--&gt;package
+      package--&gt;upload
+      upload--&gt;generate
+      generate--&gt;uploadTemplate
+      uploadTemplate--&gt;converge
+
+&lt;/div&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-2-verify-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Verify IAM Roles&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;NewLambda&lt;/code&gt; function accepts either a &lt;code&gt;string&lt;/code&gt; or a &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns&#34;&gt;IAM Role ARN&lt;/a&gt; is cached to minimize AWS calls during template generation.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-3-compile-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#compile:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Compile&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next step is to cross compile the application to a binary that can be executed on an AWS Lambda instance.  The compile flags are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;TAGS&lt;/strong&gt;:         &lt;code&gt;-tags lambdabinary&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ENVIRONMENT&lt;/strong&gt;:  &lt;code&gt;GOOS=linux GOARCH=amd64 GO15VENDOREXPERIMENT=1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The binary is built in the current directory with a &lt;em&gt;.lambda.amd64&lt;/em&gt; suffix.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-4-package-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#package:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Package&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
+This includes the NodeJS proxy entries that forward AWS Lambda requests to your &lt;em&gt;Go&lt;/em&gt; binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
+API Gateway configuration and S3 push source configuration.  Finally, a known version of the AWS SDK is included (that&amp;rsquo;s the _node&lt;em&gt;modules&lt;/em&gt; copying you&amp;rsquo;ll see if you enable &lt;code&gt;debug&lt;/code&gt; verbosity) that&amp;rsquo;s likely newer than the one included in the &lt;a href=&#34;https://aws.amazon.com/releasenotes/AWS-Lambda&#34;&gt;AWS Lambda runtime&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Over time it&amp;rsquo;s expected that CloudFormation grows to support additional services and capabilities, at which point much of the NodeJS code can be eliminated.&lt;/p&gt;
+
+&lt;p&gt;Everything is ZIP&amp;rsquo;d up and ready for S3 upload.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-5-upload-archive-to-s3-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#uploadArchiveToS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Upload Archive To S3&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Uploads the archive to S3.  There&amp;rsquo;s not much else to see here.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-6-generate-cloudformation-template-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#generateCFTemplate:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Generate CloudFormation Template&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Once the archive is uploaded and the S3 Item key is available, the  CloudFormation template is generated by marshaling the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; objects into CloudFormation JSON representations.&lt;/p&gt;
+
+&lt;p&gt;The AWS Lambda marshaling is automatically handled.  This is also the point at which the optional &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/sparta.go#L192&#34;&gt;TemplateDecorator&lt;/a&gt; functions are called to annotate the automatically generated template with additional resources.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-7-upload-cloudformation-template-to-s3-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#uploadCFTemplate:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Upload CloudFormation Template to S3&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Uploads the template to S3 to maximize &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html&#34;&gt;template size&lt;/a&gt;.  There&amp;rsquo;s not much else to see here.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-8-create-update-stack-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#createUpdateStack:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create/Update Stack&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Finally, the provisioning workflow determines whether the Sparta &lt;code&gt;serviceName&lt;/code&gt; exists and either creates or updates as appropriate.&lt;/p&gt;
 </description>
     </item>
     

@@ -6,13 +6,6 @@
     "Children": []
   },
   {
-    "Name": "Concepts",
-    "IconClass": "",
-    "Title": "",
-    "URL": "/concepts",
-    "Children": []
-  },
-  {
     "Name": "Walkthrough",
     "IconClass": "",
     "Title": "",
@@ -24,13 +17,35 @@
     "IconClass": "",
     "Title": "",
     "URL": "/eventsources",
-    "Children": []
+    "Children": [
+      {
+        "Name": "SNS",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/sns/",
+        "Children": []
+      },
+      {
+        "Name": "S3",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/s3",
+        "Children": []
+      }
+    ]
   },
   {
     "Name": "API Gateway",
     "IconClass": "",
     "Title": "",
     "URL": "/apigateway",
+    "Children": []
+  },
+  {
+    "Name": "Miscellaneous",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/walkthrough",
     "Children": []
   }
 ]

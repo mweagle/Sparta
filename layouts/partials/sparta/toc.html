@@ -8,7 +8,7 @@
       <ul>
       {{ range $childPage := $eachPage.Children }}
         <li>
-          <small><a href="{{ .URL | absURL }}">{{ $childPage.Name }}</a></small>
+          <small><a href="/docs{{ .URL }}">{{ $childPage.Name }}</a></small>
         </li>
       {{ end }}
       </ul>

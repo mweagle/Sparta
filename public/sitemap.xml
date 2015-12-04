@@ -13,7 +13,7 @@
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/concepts/</loc>
+    <loc>http://gosparta.io/docs/contributing/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
@@ -23,7 +23,22 @@
   </url>
   
   <url>
+    <loc>http://gosparta.io/docs/eventsources/s3/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/eventsources/sns/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://gosparta.io/docs/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/miscellaneous/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   

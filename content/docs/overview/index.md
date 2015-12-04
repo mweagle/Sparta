@@ -6,15 +6,16 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-Sparta is a framework for developing and deploying *Go* based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all possible error cases for this example to keep things short.
+Sparta is a framework for developing and deploying *Go* based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
-## Preconditions
+
+## <a href="{{< relref "#preconditions" >}}">Preconditions</a>
 
 Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs.  Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go/wiki/configuring-sdk).  
 
 Note that you must use an AWS region that supports Lambda.  Consult the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the most up to date release information.
 
-## Lambda Definition
+## <a href="{{< relref "#lambdaDefinition" >}}">Lambda Definition</a>
 
 The first place to start is with the lambda function definition.
 
@@ -36,7 +37,7 @@ All Sparta lambda functions have the same function signature that is composed of
   * `http.ResponseWriter` : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the `responseWriter` is published back via [context.done()](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html).
   * `logrus.Logger` : A [logrus](https://github.com/Sirupsen/logrus) logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.
 
-## Creation
+## <a href="{{< relref "#creation" >}}">Creation</a>
 
 The next step is to create a Sparta-wrapped version of the `helloWorld` function.  
 
@@ -57,7 +58,7 @@ We first declare an empty slice `lambdaFunctions` to which all our service's lam
   * `LambdaFunction`: The *Go* function to execute.
   * `*LambdaFunctionOptions`: A pointer to any additional execution settings (eg, timeout, memory settings, etc).
 
-## Delegation
+## <a href="{{< relref "#delegation" >}}">Delegation</a>
 
 The final step is to define a Sparta service under your applications `main` package and provide the non-empty slice of lambda functions:
 
@@ -79,7 +80,7 @@ sparta.Main("MyHelloWorldStack",
 
 Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options.  Run `go run main.go --help` to see the available options.
 
-## Putting It Together
+## <a href="{{< relref "#puttingItTogether" >}}">Putting It Together</a>
 
 Putting everything together, and including the necessary imports, we have:
 
@@ -114,7 +115,7 @@ func main() {
 }
 {{< /highlight >}}      
 
-## Running It
+## <a href="{{< relref "#runningIt" >}}">Running It</a>
 
 Next download the Sparta dependencies via `go get ./...` in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command:
 
@@ -211,7 +212,7 @@ Accept the Input Test Event sample (our Lambda function doesn't consume the even
 
 ![AWS Lambda Execution](/images/overview/AWS_Lambda_Execution.png)
 
-## Cleaning Up
+## <a href="{{< relref "#cleaningUp" >}}">Cleaning Up</a>
 
 To prevent unauthorized usage and potential charges, make sure to `delete` your stack before moving on:
 
@@ -226,6 +227,8 @@ INFO[0000] Stack delete issued: {
 
 ```
 
-## Conclusion
+## <a href="{{< relref "#conclusion" >}}">Conclusion</a>
 
 Congratulations! You've just deployed your first "serverless" service.  The following sections will dive deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.      
+
+Next: [Walkthrough](/docs/walkthrough)
