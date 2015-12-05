@@ -686,6 +686,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 
 		primaryEventSourceMapping := ArbitraryJSONObject{
 			"Type":       "AWS::Lambda::EventSourceMapping",
+			"DependsOn":  dependsOn,
 			"Properties": properties,
 		}
 		hash := sha1.New()
