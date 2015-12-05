@@ -559,11 +559,14 @@ func (roleDefinition *IAMRoleDefinition) rolePolicy(eventSourceMappings []*lambd
 	return iamPolicy
 }
 
-// Returns the stable logical name for this IAMRoleDefinition
+// Returns the stable logical name for this IAMRoleDefinition, which must be unique
+// if the privileges are empty.
 func (roleDefinition *IAMRoleDefinition) logicalName() string {
-	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%s", roleDefinition.Privileges)))
-	return fmt.Sprintf("IAMRole%s", hex.EncodeToString(hash.Sum(nil)))
+	if "" == roleDefinition.cachedLogicalName {
+		// TODO: Name isn't stable across executions, which is a performance penalty across updates if the Permissions are unchanged.
+		roleDefinition.cachedLogicalName = CloudFormationResourceName("IAMRole")
+	}
+	return roleDefinition.cachedLogicalName
 }
 
 //
