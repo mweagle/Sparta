@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle name:cosmo home:Home googleAnalytics:UA-70794971-1 facebook: youtube: flattr: highlight:vs bitbucket: googleplus:]">
+<body class="map[home:Home highlight:vs github:https://github.com/mweagle bitbucket: googleplus: facebook: twitter:mweagle flattr: name:cosmo googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -186,6 +186,11 @@
   <div class="panel-body">
     
       <a href="/docs/overview">Overview</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/commandline">Command Line</a>
       <ul>
       
       </ul>
@@ -375,7 +380,7 @@ func main() {
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
-<pre><code class="bash">go run main.go describe --out ./graph.html
+<pre><code class="nohighlight">go run main.go describe --out ./graph.html
 
 INFO[0000] Welcome to Sparta                             Option=describe Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -399,7 +404,7 @@ INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line
 
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
-<p><pre><code class="bash">go run main.go provision --s3Bucket $S3_BUCKET
+<p><pre><code class="nohighlight">go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -469,7 +474,7 @@ INFO[0052] Stack provisioned: {
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
-<p><pre><code class="bash">go run main.go delete
+<p><pre><code class="nohighlight">go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
 INFO[0000] Stack exists: MyHelloWorldStack

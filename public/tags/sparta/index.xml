@@ -141,6 +141,70 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
     
     <item>
       <title>Overview</title>
+      <link>http://gosparta.io/docs/commandline/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/commandline/</guid>
+      <description>
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-command-line-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#commandLine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Command Line&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your applications &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyStack&amp;#34;,
+  &amp;#34;Simple Sparta application&amp;#34;,
+  myLambdaFunctions,
+  nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --help
+Usage: application [global options] &amp;lt;verb&amp;gt; [verb options]
+
+Global options:
+        -n, --noop     Dry-run behavior only (do not provision stack)
+        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
+        -h, --help     Show this help
+
+Verbs:
+    delete:
+    describe:
+        -o, --out      Output file for HTML description (*)
+    execute:
+        -p, --port     Alternative port for HTTP binding (default=9999)
+        -s, --signal   Process ID to signal with SIGUSR2 once ready
+    explore:
+    provision:
+        -b, --s3Bucket S3 Bucket to use for Lambda source (*)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-4-delete-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-5-describe-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
+
+&lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-6-execute-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
       <link>http://gosparta.io/docs/contributing/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
@@ -479,7 +543,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/miscellaneous/</guid>
-      <description>&lt;p&gt;TODO: Concepts documentation&lt;/p&gt;
+      <description>&lt;p&gt;TODO: Miscellaneous documentation&lt;/p&gt;
 </description>
     </item>
     
@@ -611,7 +675,7 @@ func main() {
 
 &lt;p&gt;Next download the Sparta dependencies via &lt;code&gt;go get ./...&lt;/code&gt; in the directory that you saved &lt;em&gt;main.go&lt;/em&gt;.  Once the packages are downloaded, first get a view of what&amp;rsquo;s going on by the &lt;code&gt;describe&lt;/code&gt; command:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;go run main.go describe --out ./graph.html
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go describe --out ./graph.html
 
 INFO[0000] Welcome to Sparta                             Option=describe Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -635,7 +699,7 @@ INFO[0008] Bypassing template upload &amp;amp; creation due to -n/-noop command 
 
 &lt;p&gt;Since everything looks good, we&amp;rsquo;ll provision the stack via &lt;code&gt;provision&lt;/code&gt; and verify the lambda function.  Note that the &lt;code&gt;$S3_BUCKET&lt;/code&gt; value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;go run main.go provision --s3Bucket $S3_BUCKET
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
 INFO[0000] Verifying IAM Lambda execution roles
@@ -705,7 +769,7 @@ INFO[0052] Stack provisioned: {
 
 &lt;p&gt;To prevent unauthorized usage and potential charges, make sure to &lt;code&gt;delete&lt;/code&gt; your stack before moving on:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;go run main.go delete
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
 INFO[0000] Stack exists: MyHelloWorldStack

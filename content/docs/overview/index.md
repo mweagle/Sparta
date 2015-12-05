@@ -119,7 +119,7 @@ func main() {
 
 Next download the Sparta dependencies via `go get ./...` in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command:
 
-{{< highlight bash >}}
+{{< highlight nohighlight >}}
 
 go run main.go describe --out ./graph.html
 
@@ -146,7 +146,7 @@ Then open _graph.html_ in your browser (also linked [here](/images/overview/grap
 
 Since everything looks good, we'll provision the stack via `provision` and verify the lambda function.  Note that the `$S3_BUCKET` value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.
 
-{{< highlight bash >}}
+{{< highlight nohighlight >}}
 go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
@@ -217,7 +217,7 @@ Accept the Input Test Event sample (our Lambda function doesn't consume the even
 
 To prevent unauthorized usage and potential charges, make sure to `delete` your stack before moving on:
 
-{{< highlight bash >}}
+{{< highlight nohighlight >}}
 go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7

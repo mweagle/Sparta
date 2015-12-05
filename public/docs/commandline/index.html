@@ -19,7 +19,7 @@
 
 <meta property="og:title" content="Overview  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/eventsources/" />
+<meta property="og:url" content="http://gosparta.io/docs/commandline/" />
 <meta property="og:locale" content="en-EN">
 
 
@@ -40,7 +40,7 @@
 <meta name="twitter:creator" content="@" />
 <meta name="twitter:title" content="Overview" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/eventsources/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/commandline/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -55,13 +55,13 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  74 
+    "wordCount":  247 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/eventsources/" />
+<link rel="canonical" href="http://gosparta.io/docs/commandline/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:cosmo googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle youtube: twitter:mweagle flattr: home:Home highlight:vs github:https://github.com/mweagle bitbucket: googleplus: facebook:]">
+<body class="map[youtube: name:cosmo googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle bitbucket: googleplus: facebook: twitter:mweagle flattr: home:Home highlight:vs github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -258,20 +258,61 @@
 </header>
 
     <div class="container content">
-  <p>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.</p>
+  
 
-<p>There are several <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> available:</p>
+<h2 id="a-href-hugoshortcode-1-command-line-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#commandLine:d680e8a854a7cbad6d490c445cba2eba">Command Line</a></h2>
 
-<ul>
-<li><a href="/docs/eventsources/s3">S3</a></li>
-<li><a href="/docs/eventsources/sns">SNS</a></li>
-<li><a href="/docs/eventsources/dynamodb">DynamoDB</a></li>
-<li><a href="/docs/eventsources/kinesis">Kinesis</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/ses">SES</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/cognito">Cognito</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-</ul>
+<p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your applications <code>package main</code> as in:</p>
+
+<pre><code class="go">sparta.Main(&#34;MyStack&#34;,
+  &#34;Simple Sparta application&#34;,
+  myLambdaFunctions,
+  nil)</code></pre>
+
+
+<p>The application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
+
+<pre><code class="nohighlight">go run application.go --help
+Usage: application [global options] &lt;verb&gt; [verb options]
+
+Global options:
+        -n, --noop     Dry-run behavior only (do not provision stack)
+        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
+        -h, --help     Show this help
+
+Verbs:
+    delete:
+    describe:
+        -o, --out      Output file for HTML description (*)
+    execute:
+        -p, --port     Alternative port for HTTP binding (default=9999)
+        -s, --signal   Process ID to signal with SIGUSR2 once ready
+    explore:
+    provision:
+        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
+
+
+<h3 id="a-href-hugoshortcode-4-delete-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></h3>
+
+<p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
+
+<h3 id="a-href-hugoshortcode-5-describe-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></h3>
+
+<p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
+
+<p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
+
+<h3 id="a-href-hugoshortcode-6-execute-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></h3>
+
+<p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
+
+<h3 id="a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></h3>
+
+<p><span class="label label-warning">NOT YET IMPLEMENTED</span></p>
+
+<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+
+<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
 </div>
 
