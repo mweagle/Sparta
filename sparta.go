@@ -515,6 +515,8 @@ type IAMRolePrivilege struct {
 type IAMRoleDefinition struct {
 	// Slice of IAMRolePrivilege entries
 	Privileges []IAMRolePrivilege
+	// Cached logical resource name
+	cachedLogicalName string
 }
 
 // Returns an IAM::Role policy entry for this definition
