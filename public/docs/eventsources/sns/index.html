@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle youtube: name:cosmo highlight:vs github:https://github.com/mweagle bitbucket: googleplus: facebook: twitter:mweagle flattr: home:Home]">
+<body class="map[youtube: flattr: name:cosmo highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle facebook: home:Home bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -260,7 +260,7 @@
     <div class="container content">
   
 
-<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
+<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
 <h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
 
@@ -307,7 +307,7 @@ if err != nil {
 
 <h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
 
-<p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <em>Go</em> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L93">spartaLambdaData</a> source.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
+<p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <em>Go</em> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
 <pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
 

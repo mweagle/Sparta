@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-In this section we'll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
+In this section we'll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) sample code if you'd rather jump to the end result.
 
 ## <a href="{{< relref "#goal" >}}">Goal</a>
 
@@ -60,7 +60,7 @@ That's enough to get the data into CloudWatch Logs.
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-With the core of the `echoSNSEvent` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [spartaLambdaData](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L93) source.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoSNSEvent` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
 lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)

@@ -66,7 +66,7 @@ if err != nil {
 
 &lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L118&#34;&gt;spartaLambdaData&lt;/a&gt; source.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114&#34;&gt;appendDynamoDBLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
@@ -450,7 +450,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <guid>http://gosparta.io/docs/eventsources/sns/</guid>
       <description>
 
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
 
@@ -497,7 +497,7 @@ if err != nil {
 
 &lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L93&#34;&gt;spartaLambdaData&lt;/a&gt; source.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 

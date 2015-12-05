@@ -59,7 +59,7 @@ That's enough to get the data into CloudWatch Logs.
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [spartaLambdaData](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L118) source.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
 lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)
