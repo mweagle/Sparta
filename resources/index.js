@@ -46,7 +46,7 @@ function makeRequest(path, event, context) {
       body += chunk;
     });
     res.on('end', function() {
-      // TODO: Bridge the NodeJS and golang worlds by including the golang
+      // Bridge the NodeJS and golang worlds by including the golang
       // HTTP status text in the error response if appropriate.  This enables
       // the API Gateway integration response to use standard golang StatusText regexp
       // matches to manage HTTP status codes.
