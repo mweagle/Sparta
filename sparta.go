@@ -634,7 +634,10 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 		iamRoleArnName = info.RoleDefinition.logicalName()
 		dependsOn = append(dependsOn, iamRoleArnName)
 	}
-
+	lambdaDescription := info.Options.Description
+	if "" == lambdaDescription {
+		lambdaDescription = info.lambdaFnName
+	}
 	// Create the primary resource
 	primaryResource := ArbitraryJSONObject{
 		"Type": "AWS::Lambda::Function",
@@ -643,7 +646,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 				"S3Bucket": S3Bucket,
 				"S3Key":    S3Key,
 			},
-			"Description": info.Options.Description,
+			"Description": lambdaDescription,
 			"Handler":     fmt.Sprintf("index.%s", info.jsHandlerName()),
 			"MemorySize":  info.Options.MemorySize,
 			"Role":        roleNameMap[iamRoleArnName],
