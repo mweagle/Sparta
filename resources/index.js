@@ -82,6 +82,13 @@ var log = function(obj_or_string)
   if (typeof(obj_or_string) !== 'object')
   {
     obj_or_string = {msg: obj_or_string};
+    try {
+      obj_or_string.msg = JSON.parse(obj_or_string.msg);
+    }
+    catch (e)
+    {
+      //NOP
+    }
   }
   if (obj_or_string.stack)
   {
