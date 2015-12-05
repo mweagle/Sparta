@@ -72,7 +72,7 @@ for _, eachRecord := range lambdaEvent.Records {
 
 The [stampImage](https://github.com/mweagle/SpartaImager/blob/master/application.go#L57) function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple **xformed_** keyname prefix to identify items which have already been stamped & prevents an "event-storm" from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.
 
-## <a href="{{< relref "#gettingStarted" >}}">Sparta Integration</a>
+## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
 With the core of the `transformImage` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [imagerFunctions](https://github.com/mweagle/SpartaImager/blob/master/application.go#L200) source.
 
@@ -136,10 +136,10 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Implement the associated business logic  (`stampImage`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
   * Provide the lambda function & IAMRoleDefinition to `sparta.NewLambda()`
-  * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct.
+  * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct so that the lambda function is triggered.
 
 The [SpartaImager](https://github.com/mweagle/SpartaImager) repo contains the full code, and includes [API Gateway](/docs/apigateway) support that allows you to publicly fetch the stamped image via an expiring S3 URL.
 
 ## <a href="{{< relref "#otherResources" >}}">Other Resources</a>
 
-  * The AWS docs have an excellent [S3 event source](http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html) walkthrough. 
+  * The AWS docs have an excellent [S3 event source](http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html) walkthrough.

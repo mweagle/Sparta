@@ -185,7 +185,7 @@ if err != nil {
 
 &lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L57&#34;&gt;stampImage&lt;/a&gt; function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple &lt;strong&gt;xformed_&lt;/strong&gt; keyname prefix to identify items which have already been stamped &amp;amp; prevents an &amp;ldquo;event-storm&amp;rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.&lt;/p&gt;
 
-&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
 
@@ -247,7 +247,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;Implement the associated business logic  (&lt;code&gt;stampImage&lt;/code&gt;).&lt;/li&gt;
 &lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
 &lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct.&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; repo contains the full code, and includes &lt;a href=&#34;http://gosparta.io/docs/apigateway&#34;&gt;API Gateway&lt;/a&gt; support that allows you to publicly fetch the stamped image via an expiring S3 URL.&lt;/p&gt;
@@ -278,7 +278,92 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/eventsources/sns/</guid>
-      <description>&lt;p&gt;TODO: SNS source documentation&lt;/p&gt;
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume that we have an SNS topic that broadcasts notifications.  We&amp;rsquo;ve been asked to write a lambda function that logs the &lt;em&gt;Subject&lt;/em&gt; and &lt;em&gt;Message&lt;/em&gt; text to CloudWatch logs for later processing.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSNSEvent(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+  }).Info(&amp;#34;Request received&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; is expected to be triggered by SNS notifications, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an SNS-specific event provided by Sparta via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaSNS.Event
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;SNS events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+  logger.WithFields(logrus.Fields{
+    &amp;#34;Subject&amp;#34;: eachRecord.Sns.Subject,
+    &amp;#34;Message&amp;#34;: eachRecord.Sns.Message,
+  }).Info(&amp;#34;SNS Event&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L93&#34;&gt;spartaLambdaData&lt;/a&gt; source.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoSNSEvent&lt;/code&gt; function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: snsTopic,
+  },
+})
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;snsTopic&lt;/code&gt; param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).&lt;/p&gt;
+
+&lt;p&gt;See the &lt;a href=&#34;http://gosparta.io/docs/eventsources/s3/#eventSourceRegistration&#34;&gt;S3 docs&lt;/a&gt; for more information on how the &lt;em&gt;Permissions&lt;/em&gt; data is processed.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SNS-triggered lambda:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoSNSEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TBD&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     

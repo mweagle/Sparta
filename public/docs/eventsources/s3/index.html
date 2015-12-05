@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  711 
+    "wordCount":  718 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:cosmo home:Home github:https://github.com/mweagle googleplus: twitter:mweagle youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[bitbucket: googleplus: flattr: highlight:vs home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:cosmo]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -318,7 +318,7 @@ if err != nil {
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify items which have already been stamped &amp; prevents an &ldquo;event-storm&rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.</p>
 
-<h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
 
 <p>With the core of the <code>transformImage</code> complete, the next step is to integrate the <em>Go</em> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L200">imagerFunctions</a> source.</p>
 
@@ -380,7 +380,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 <li>Implement the associated business logic  (<code>stampImage</code>).</li>
 <li>If needed, create the required <a href="https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition">IAMRoleDefinition</a> with appropriate privileges.</li>
 <li>Provide the lambda function &amp; IAMRoleDefinition to <code>sparta.NewLambda()</code></li>
-<li>Add the necessary <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">Permissions</a> to the <code>LambdaAWSInfo</code> struct.</li>
+<li>Add the necessary <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">Permissions</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is triggered.</li>
 </ul>
 
 <p>The <a href="https://github.com/mweagle/SpartaImager">SpartaImager</a> repo contains the full code, and includes <a href="/docs/apigateway">API Gateway</a> support that allows you to publicly fetch the stamped image via an expiring S3 URL.</p>
