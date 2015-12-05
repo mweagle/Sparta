@@ -13,9 +13,6 @@ var lambda = new AWS.Lambda(awsConfig);
 
 var RE_STATEMENT_ALREADY_EXISTS = /ResourceConflictException.*already exists/;
 
-// TODO - provide function that returns a list of all lambda functions
-// defined in this stack definition
-
 ////////////////////////////////////////////////////////////////////////////////
 // UTILITY FUNCTIONS
 var logResults = function(msgText, e, results) {
