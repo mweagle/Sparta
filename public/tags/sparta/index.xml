@@ -12,6 +12,124 @@
     <atom:link href="http://gosparta.io/tags/sparta/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>DynamoDB</title>
+      <link>http://gosparta.io/docs/eventsources/dynamodb/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/dynamodb/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume that we&amp;rsquo;re given a DynamoDB stream.  See &lt;a href=&#34;http://localhost:1313/docs/eventsources/dynamodb/#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;below&lt;/a&gt; for details on how to create the stream.  We&amp;rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoDynamoDBEvent(event *json.RawMessage,
+                       context *sparta.LambdaContext,
+                       w http.ResponseWriter,
+                      logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+  }).Info(&amp;#34;Request received&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the DynamoDB Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; is expected to be triggered by DynamoDB events, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an DynamoDB-specific event provided by Sparta via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaDynamoDB.Event
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;DynamoDB events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+  logger.WithFields(logrus.Fields{
+    &amp;#34;Keys&amp;#34;:     eachRecord.DynamoDB.Keys,
+    &amp;#34;NewImage&amp;#34;: eachRecord.DynamoDB.NewImage,
+  }).Info(&amp;#34;DynamoDb Event&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L118&#34;&gt;spartaLambdaData&lt;/a&gt; source.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-mappings-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources&#34;&gt;EventSourceMappings&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
+    EventSourceArn:   aws.String(dynamoTestStream),
+    StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
+    BatchSize:        aws.Int64(10),
+    Enabled:          aws.Bool(true),
+  })
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;dynamoTestStream&lt;/code&gt; param is the ARN of the Dynamo stream that that your lambda function will &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;poll&lt;/a&gt; (eg: &lt;em&gt;arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;EventSourceMappings&lt;/code&gt; field is transformed into the appropriate &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html&#34;&gt;CloudFormation Resource&lt;/a&gt; which enables automatic polling of the DynamoDB stream.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all DynamoDB stream based lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoDynamoDBEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput&#34;&gt;EventSourceMappings&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is properly configured.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/blogs/aws/dynamodb-update-triggers-streams-lambda-cross-region-replication-app/&#34;&gt;Using Triggers for Cross Region DynamoDB Replication&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;appendix:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Appendix&lt;/h2&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-13-creating-a-dynamodb-stream-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creating a DynamoDB Stream&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;To create a DynamoDB stream for a given table, follow the steps below:&lt;/p&gt;
+
+&lt;h4 id=&#34;select-table:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Select Table&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_ManageStream.png&#34; alt=&#34;Select Table&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;enable-stream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Enable Stream&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_Enable.png&#34; alt=&#34;Enable Stream&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;copy-arn:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Copy ARN&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_StreamARN.png&#34; alt=&#34;Copy ARN&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;strong&gt;Latest stream ARN&lt;/strong&gt; value is the value that should be provided as the &lt;code&gt;EventSourceArn&lt;/code&gt; in to the &lt;a href=&#34;http://localhost:1313/docs/eventsources/dynamodb/#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Overview</title>
       <link>http://gosparta.io/docs/apigateway/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
@@ -64,18 +182,6 @@
       <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
 
 &lt;p&gt;TODO: Cognito source documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/eventsources/dynamodb/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/dynamodb/</guid>
-      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;TODO: DynamoDB source documentation&lt;/p&gt;
 </description>
     </item>
     

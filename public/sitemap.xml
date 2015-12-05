@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>http://gosparta.io/docs/eventsources/dynamodb/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://gosparta.io/docs/apigateway/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
@@ -29,11 +34,6 @@
   
   <url>
     <loc>http://gosparta.io/docs/eventsources/cognito/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/eventsources/dynamodb/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
