@@ -678,6 +678,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 	}
 
 	// Event Source Mappings
+	// TODO: verify that the event source ARN actually exists.
 	for _, eachEventSourceMapping := range info.EventSourceMappings {
 		properties := ArbitraryJSONObject{
 			"EventSourceArn":   eachEventSourceMapping.EventSourceArn,
