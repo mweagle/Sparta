@@ -110,8 +110,7 @@ curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world
 < X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 <
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{"code":200,"status":"OK","headers":{"date":"Sat, 05 Dec 2015 21:24:44 GMT","content-length":"554","content-type":"text/plain; charset=utf-8"},"results":{"method":"GET","body":{},"headers":{"Accept":"*/*","CloudFront-Forwarded-Proto":"https","CloudFront-Is-Desktop-Viewer":"true","CloudFront-Is-Mobile-Viewer":"false","CloudFront-Is-SmartTV-Viewer":"false","CloudFront-Is-Tablet-Viewer":"false","CloudFront-Viewer-Country":"US","Via":"1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)","X-Amz-Cf-Id":"xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==","X-Forwarded-For":"50.135.43.1, 54.239.137.4","X-Forwarded-Port":"443","X-Forwarded-Proto":"https"},"queryParams":{},"pathParams":{}}}
-{{< /highlight >}}
+{"code":200,"status":"OK","headers":{"date":"Sun, 06 Dec 2015 15:38:11 GMT","content-length":"970","content-type":"text/plain; charset=utf-8"},"results":{"method":"GET)","body":{},"headers":{"Accept":"*/*","CloudFront-Forwarded-Proto":"https","CloudFront-Is-Desktop-Viewer":"true","CloudFront-Is-Mobile-Viewer":"false","CloudFront-Is-SmartTV-Viewer":"false","CloudFront-Is-Tablet-Viewer":"false","CloudFront-Viewer-Country":"US","Via":"1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)","X-Amz-Cf-Id":"0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==","X-Forwarded-For":"50.135.43.1, 54.240.158.109","X-Forwarded-Port":"443","X-Forwarded-Proto":"https"},"queryParams":{},"pathParams":{},"context":{"apiId":"nevml0oa6e","method":"GET","requestId":"5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00","resourceId":"7619tp","resourcePath":"/hello/world/test","stage":"prod","identity":{"accountId":"","apiKey":"","caller":"","cognitoAuthenticationProvider":"","cognitoAuthenticationType":"","cognitoIdentityId":"","cognitoIdentityPoolId":"","sourceIp":"50.135.43.1","user":"","userAgent":"curl/7.43.0","userArn":""}}}}
 
 Pretty-printing the response body to make things more readable:
 
@@ -120,12 +119,12 @@ Pretty-printing the response body to make things more readable:
   "code": 200,
   "status": "OK",
   "headers": {
-    "date": "Sat, 05 Dec 2015 21:24:44 GMT",
-    "content-length": "554",
+    "date": "Sun, 06 Dec 2015 15:38:11 GMT",
+    "content-length": "970",
     "content-type": "text/plain; charset=utf-8"
   },
   "results": {
-    "method": "GET",
+    "method": "GET)",
     "body": {},
     "headers": {
       "Accept": "*/*",
@@ -135,14 +134,35 @@ Pretty-printing the response body to make things more readable:
       "CloudFront-Is-SmartTV-Viewer": "false",
       "CloudFront-Is-Tablet-Viewer": "false",
       "CloudFront-Viewer-Country": "US",
-      "Via": "1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)",
-      "X-Amz-Cf-Id": "xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==",
-      "X-Forwarded-For": "50.135.43.1, 54.239.137.4",
+      "Via": "1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)",
+      "X-Amz-Cf-Id": "0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==",
+      "X-Forwarded-For": "50.135.43.1, 54.240.158.109",
       "X-Forwarded-Port": "443",
       "X-Forwarded-Proto": "https"
     },
     "queryParams": {},
-    "pathParams": {}
+    "pathParams": {},
+    "context": {
+      "apiId": "nevml0oa6e",
+      "method": "GET",
+      "requestId": "5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00",
+      "resourceId": "7619tp",
+      "resourcePath": "/hello/world/test",
+      "stage": "prod",
+      "identity": {
+        "accountId": "",
+        "apiKey": "",
+        "caller": "",
+        "cognitoAuthenticationProvider": "",
+        "cognitoAuthenticationType": "",
+        "cognitoIdentityId": "",
+        "cognitoIdentityPoolId": "",
+        "sourceIp": "50.135.43.1",
+        "user": "",
+        "userAgent": "curl/7.43.0",
+        "userArn": ""
+      }
+    }
   }
 }
 {{< /highlight >}}
@@ -151,9 +171,9 @@ While this demonstrates that our lambda function is publicly accessible, it's no
 
 ### <a href="{{< relref "#example1Mapping" >}}">Mapping Templates</a>
 
-The event data that's actually supplied to `echoS3Event` function is returned in the responses `results` results.  This content is what the API Gateway forwards sends as part of the integration mapping.  The sibling `code`, `status`, and `headers` keys will be explained shortly.
+The event data that's actually supplied to `echoS3Event` is returned in the response's `results` key.  This content is what the API Gateway sends as part of the integration mapping.  We'll look at the sibling `code`, `status`, and `headers` keys below.
 
-When the API Gateway Method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
+When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
 
 Sparta uses a pass-through template that passes all valid data.  The [Apache Velocity](http://velocity.apache.org) template that [Sparta uses](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl) is:
 
@@ -186,6 +206,27 @@ See
     "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
 
     #end
+  },
+  "context" : {
+    "apiId" : "$util.escapeJavaScript($context.apiId)",
+    "method" : "$util.escapeJavaScript($context.httpMethod)",
+    "requestId" : "$util.escapeJavaScript($context.requestId)",
+    "resourceId" : "$util.escapeJavaScript($context.resourceId)",
+    "resourcePath" : "$util.escapeJavaScript($context.resourcePath)",
+    "stage" : "$util.escapeJavaScript($context.stage)",
+    "identity" : {
+      "accountId" : "$util.escapeJavaScript($context.identity.accountId)",
+      "apiKey" : "$util.escapeJavaScript($context.identity.apiKey)",
+      "caller" : "$util.escapeJavaScript($context.identity.caller)",
+      "cognitoAuthenticationProvider" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)",
+      "cognitoAuthenticationType" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationType)",
+      "cognitoIdentityId" : "$util.escapeJavaScript($context.identity.cognitoIdentityId)",
+      "cognitoIdentityPoolId" : "$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)",
+      "sourceIp" : "$util.escapeJavaScript($context.identity.sourceIp)",
+      "user" : "$util.escapeJavaScript($context.identity.user)",
+      "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
+      "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
+    }
   }
 }
 {{< /highlight >}}

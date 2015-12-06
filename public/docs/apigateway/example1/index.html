@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  953 
+    "wordCount":  1069 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: flattr: github:https://github.com/mweagle googleplus: facebook: twitter:mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[home:Home github:https://github.com/mweagle bitbucket: facebook: youtube: flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -324,7 +324,7 @@ sparta.Main(stackName,
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
-<pre><code class="javascript">[{
+<p><pre><code class="javascript">[{
     Description: &#34;Sparta Home&#34;,
     OutputKey: &#34;SpartaHome&#34;,
     OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
@@ -337,7 +337,7 @@ sparta.Main(stackName,
     OutputKey: &#34;URL&#34;,
     OutputValue: &#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod&#34;
 }]</code></pre>
-
+</p>
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
 
@@ -345,7 +345,7 @@ sparta.Main(stackName,
 
 <p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
 
-<pre><code class="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
+<p><pre><code class="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
 *   Trying 54.240.188.223...
 * Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
 * TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
@@ -368,116 +368,154 @@ sparta.Main(stackName,
 &lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 &lt;
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;date&#34;:&#34;Sat, 05 Dec 2015 21:24:44 GMT&#34;,&#34;content-length&#34;:&#34;554&#34;,&#34;content-type&#34;:&#34;text/plain; charset=utf-8&#34;},&#34;results&#34;:{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.239.137.4&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{}}}</code></pre>
+{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;date&#34;:&#34;Sun, 06 Dec 2015 15:38:11 GMT&#34;,&#34;content-length&#34;:&#34;970&#34;,&#34;content-type&#34;:&#34;text/plain; charset=utf-8&#34;},&#34;results&#34;:{&#34;method&#34;:&#34;GET)&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.109&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;nevml0oa6e&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00&#34;,&#34;resourceId&#34;:&#34;7619tp&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}}
 
+Pretty-printing the response body to make things more readable:
 
-<p>Pretty-printing the response body to make things more readable:</p>
-
-<pre><code class="json">{
-  &#34;code&#34;: 200,
-  &#34;status&#34;: &#34;OK&#34;,
-  &#34;headers&#34;: {
-    &#34;date&#34;: &#34;Sat, 05 Dec 2015 21:24:44 GMT&#34;,
-    &#34;content-length&#34;: &#34;554&#34;,
-    &#34;content-type&#34;: &#34;text/plain; charset=utf-8&#34;
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+  &amp;#34;code&amp;#34;: 200,
+  &amp;#34;status&amp;#34;: &amp;#34;OK&amp;#34;,
+  &amp;#34;headers&amp;#34;: {
+    &amp;#34;date&amp;#34;: &amp;#34;Sun, 06 Dec 2015 15:38:11 GMT&amp;#34;,
+    &amp;#34;content-length&amp;#34;: &amp;#34;970&amp;#34;,
+    &amp;#34;content-type&amp;#34;: &amp;#34;text/plain; charset=utf-8&amp;#34;
   },
-  &#34;results&#34;: {
-    &#34;method&#34;: &#34;GET&#34;,
-    &#34;body&#34;: {},
-    &#34;headers&#34;: {
-      &#34;Accept&#34;: &#34;*/*&#34;,
-      &#34;CloudFront-Forwarded-Proto&#34;: &#34;https&#34;,
-      &#34;CloudFront-Is-Desktop-Viewer&#34;: &#34;true&#34;,
-      &#34;CloudFront-Is-Mobile-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-SmartTV-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-Tablet-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Viewer-Country&#34;: &#34;US&#34;,
-      &#34;Via&#34;: &#34;1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)&#34;,
-      &#34;X-Amz-Cf-Id&#34;: &#34;xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==&#34;,
-      &#34;X-Forwarded-For&#34;: &#34;50.135.43.1, 54.239.137.4&#34;,
-      &#34;X-Forwarded-Port&#34;: &#34;443&#34;,
-      &#34;X-Forwarded-Proto&#34;: &#34;https&#34;
+  &amp;#34;results&amp;#34;: {
+    &amp;#34;method&amp;#34;: &amp;#34;GET)&amp;#34;,
+    &amp;#34;body&amp;#34;: {},
+    &amp;#34;headers&amp;#34;: {
+      &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
+      &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
+      &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
+      &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
+      &amp;#34;Via&amp;#34;: &amp;#34;1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)&amp;#34;,
+      &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==&amp;#34;,
+      &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;50.135.43.1, 54.240.158.109&amp;#34;,
+      &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
+      &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
     },
-    &#34;queryParams&#34;: {},
-    &#34;pathParams&#34;: {}
+    &amp;#34;queryParams&amp;#34;: {},
+    &amp;#34;pathParams&amp;#34;: {},
+    &amp;#34;context&amp;#34;: {
+      &amp;#34;apiId&amp;#34;: &amp;#34;nevml0oa6e&amp;#34;,
+      &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+      &amp;#34;requestId&amp;#34;: &amp;#34;5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00&amp;#34;,
+      &amp;#34;resourceId&amp;#34;: &amp;#34;7619tp&amp;#34;,
+      &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello/world/test&amp;#34;,
+      &amp;#34;stage&amp;#34;: &amp;#34;prod&amp;#34;,
+      &amp;#34;identity&amp;#34;: {
+        &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;sourceIp&amp;#34;: &amp;#34;50.135.43.1&amp;#34;,
+        &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.43.0&amp;#34;,
+        &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
+      }
+    }
   }
-}</code></pre>
+}&lt;/code&gt;&lt;/pre&gt;
 
 
-<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
+While this demonstrates that our lambda function is publicly accessible, it&#39;s not immediately obvious where the `*event` data is being populated.
 
-<h3 id="a-href-hugoshortcode-13-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Mapping:d680e8a854a7cbad6d490c445cba2eba">Mapping Templates</a></h3>
+### &lt;a href=&#34;#example1Mapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Mapping Templates&lt;/a&gt;
 
-<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> function is returned in the responses <code>results</code> results.  This content is what the API Gateway forwards sends as part of the integration mapping.  The sibling <code>code</code>, <code>status</code>, and <code>headers</code> keys will be explained shortly.</p>
+The event data that&#39;s actually supplied to `echoS3Event` is returned in the response&#39;s `results` key.  This content is what the API Gateway sends as part of the integration mapping.  We&#39;ll look at the sibling `code`, `status`, and `headers` keys below.
 
-<p>When the API Gateway Method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
+When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&#39;re not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&#39;s possible to transform the API Gateway request data and whitelisted arguments into a format that&#39;s more amenable to the target.
 
-<p>Sparta uses a pass-through template that passes all valid data.  The <a href="http://velocity.apache.org">Apache Velocity</a> template that <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">Sparta uses</a> is:</p>
+Sparta uses a pass-through template that passes all valid data.  The [Apache Velocity](http://velocity.apache.org) template that [Sparta uses](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl) is:
 
-<p><pre><code class="nohighlight">#*
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function
 
 See
-  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;amp;tstart=0
   http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 *#
 {
-  &#34;method&#34;: &#34;$context.httpMethod&#34;,
-  &#34;body&#34; : $input.json(&#39;$&#39;),
-  &#34;headers&#34;: {
+  &amp;#34;method&amp;#34;: &amp;#34;$context.httpMethod&amp;#34;,
+  &amp;#34;body&amp;#34; : $input.json(&amp;#39;$&amp;#39;),
+  &amp;#34;headers&amp;#34;: {
     #foreach($param in $input.params().header.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().header.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().header.get($param))&amp;#34; #if($foreach.hasNext),#end
 
     #end
   },
-  &#34;queryParams&#34;: {
+  &amp;#34;queryParams&amp;#34;: {
     #foreach($param in $input.params().querystring.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().querystring.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().querystring.get($param))&amp;#34; #if($foreach.hasNext),#end
 
     #end
   },
-  &#34;pathParams&#34;: {
+  &amp;#34;pathParams&amp;#34;: {
     #foreach($param in $input.params().path.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().path.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().path.get($param))&amp;#34; #if($foreach.hasNext),#end
 
     #end
+  },
+  &amp;#34;context&amp;#34; : {
+    &amp;#34;apiId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.apiId)&amp;#34;,
+    &amp;#34;method&amp;#34; : &amp;#34;$util.escapeJavaScript($context.httpMethod)&amp;#34;,
+    &amp;#34;requestId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.requestId)&amp;#34;,
+    &amp;#34;resourceId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourceId)&amp;#34;,
+    &amp;#34;resourcePath&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourcePath)&amp;#34;,
+    &amp;#34;stage&amp;#34; : &amp;#34;$util.escapeJavaScript($context.stage)&amp;#34;,
+    &amp;#34;identity&amp;#34; : {
+      &amp;#34;accountId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.accountId)&amp;#34;,
+      &amp;#34;apiKey&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.apiKey)&amp;#34;,
+      &amp;#34;caller&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.caller)&amp;#34;,
+      &amp;#34;cognitoAuthenticationProvider&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&amp;#34;,
+      &amp;#34;cognitoAuthenticationType&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&amp;#34;,
+      &amp;#34;cognitoIdentityId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&amp;#34;,
+      &amp;#34;cognitoIdentityPoolId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&amp;#34;,
+      &amp;#34;sourceIp&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.sourceIp)&amp;#34;,
+      &amp;#34;user&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.user)&amp;#34;,
+      &amp;#34;userAgent&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userAgent)&amp;#34;,
+      &amp;#34;userArn&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userArn)&amp;#34;
+    }
   }
-}</code></pre>
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the `method` field would permit a single function to service multiple HTTP method names.
+
+The next example will show how to unmarshal this data and perform request-specific actions.  
+
+### &lt;a href=&#34;#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Proxying Envelope&lt;/a&gt;
+
+The mapping template explains the content of the `results` property, but not the other fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the *Go* HTTP response to a Lambda compatible result.  
+
+A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you&#39;ll see a list of Regular Expression matches:
+
+![API Gateway](/images/apigateway/IntegrationMapping.png)
+
+The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with *Go*&#39;s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
+
+![API Gateway](/images/apigateway/MethodResponse.png)
+
+These mappings are defaults, and it&#39;s possible to override either one by providing a non-zero length values to either:
+
+  * [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration).  See the [DefaultIntegrationResponses](https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60) for the default values.
+  * [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method).  See the [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) for the default method response mappings.
+
+### &lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;
+
+Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&#39;ll move on to performing a more complex operation, including returning a custom HTTP response body.
+
+## Other Resources
+
+  * [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)</code></pre>
 </p>
-
-<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
-
-<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
-
-<h3 id="a-href-hugoshortcode-15-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba">Proxying Envelope</a></h3>
-
-<p>The mapping template explains the content of the <code>results</code> property, but not the other fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <em>Go</em> HTTP response to a Lambda compatible result.</p>
-
-<p>A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
-
-<p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
-
-<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <em>Go</em>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
-
-<p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
-
-<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
-
-<ul>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
-</ul>
-
-<h3 id="a-href-hugoshortcode-16-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
-
-<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
-
-<h2 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h2>
-
-<ul>
-<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">Mapping Template Reference</a></li>
-</ul>
 
 </div>
 
