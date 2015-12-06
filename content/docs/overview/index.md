@@ -8,13 +8,12 @@ type = "doc"
 
 Sparta is a framework for developing and deploying *Go* based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
-<div class="alert alert-danger" role="alert">
-  <h2>Pricing</h2>
-  <h4>
-Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.  
-</h4>
+<div class="panel panel-danger">
+<div class="panel-heading">Pricing</div>
+ <div class="panel-body">
+   Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.
+ </div>
 </div>
-
 
 ## <a href="{{< relref "#preconditions" >}}">Preconditions</a>
 

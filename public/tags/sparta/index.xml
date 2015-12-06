@@ -800,11 +800,11 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Sparta is a framework for developing and deploying &lt;em&gt;Go&lt;/em&gt; based AWS Lambda functions.  To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS.  Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.&lt;/p&gt;
 
-&lt;div class=&#34;alert alert-danger&#34; role=&#34;alert&#34;&gt;
-  &lt;h2&gt;Pricing&lt;/h2&gt;
-  &lt;h4&gt;
-Please be aware that running Lambda functions may incur &lt;a href=&#34;https://aws.amazon.com/lambda/pricing&#34;&gt;costs&lt;/a&gt;. Be sure to decommission Sparta stacks after you are finished using them (via the &lt;code&gt;delete&lt;/code&gt; command line option) to avoid unwanted charges.  
-&lt;/h4&gt;
+&lt;div class=&#34;panel panel-danger&#34;&gt;
+&lt;div class=&#34;panel-heading&#34;&gt;Pricing&lt;/div&gt;
+ &lt;div class=&#34;panel-body&#34;&gt;
+   Please be aware that running Lambda functions may incur &lt;a href=&#34;https://aws.amazon.com/lambda/pricing&#34;&gt;costs&lt;/a&gt;. Be sure to decommission Sparta stacks after you are finished using them (via the &lt;code&gt;delete&lt;/code&gt; command line option) to avoid unwanted charges.
+ &lt;/div&gt;
 &lt;/div&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-preconditions-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#preconditions:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Preconditions&lt;/a&gt;&lt;/h2&gt;
