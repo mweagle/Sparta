@@ -172,7 +172,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-3-example-1-echo-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleEcho:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example 1 - Echo&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echos back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-4-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
 

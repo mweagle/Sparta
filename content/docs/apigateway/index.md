@@ -34,7 +34,7 @@ With that overview, let's start with a simple example.
 
 ## <a href="{{< relref "#exampleEcho" >}}">Example 1 - Echo</a>
 
-To start, we'll create a HTTPS accessible lambda function that simply echos back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
+To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
 
 ### <a href="{{< relref "#example1API" >}}">Create the API Gateway</a>
 
