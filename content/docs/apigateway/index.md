@@ -36,6 +36,20 @@ With that overview, let's start with a simple example.
 
 To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
 
+For reference, the `echoS3Event` function is below.
+
+{{< highlight go >}}
+func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	logger.WithFields(logrus.Fields{
+		"RequestID": context.AWSRequestID,
+		"Event":     string(*event),
+	}).Info("Request received")
+
+	fmt.Fprintf(w, string(*event))
+}
+{{< /highlight >}}
+
+
 ### <a href="{{< relref "#example1API" >}}">Create the API Gateway</a>
 
 The first requirement is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
@@ -45,18 +59,18 @@ stage := sparta.NewStage("prod")
 apiGateway := sparta.NewAPIGateway("MySpartaAPI", stage)
 {{< /highlight >}}
 
-In the example above, we're also including a [Stage](https://godoc.org/github.com/mweagle/Sparta#Stage) value.  A non-`nil` Stage value will cause the registered API to be deployed.  If the Stage value is nil, a REST API will be created, but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html).
+In the example above, we're also including a [Stage](https://godoc.org/github.com/mweagle/Sparta#Stage) value.  A non-`nil` Stage value will cause the registered API to be deployed.  If the Stage value is `nil`, a REST API will be created, but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html) (and therefore not publicly accessible).
 
 ### <a href="{{< relref "#example1API" >}}">Create a Resource</a>
 
-The next step is to associate a URL path with our `sparta.LambdaAWSInfo` struct:
+The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the *Go* function:
 
 {{< highlight go >}}
 apiGatewayResource, _ := api.NewResource("/hello/world/test", lambdaFn)
 apiGatewayResource.NewMethod("GET")
 {{< /highlight >}}
 
-Our [echoS3Event](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34) only supports `GET`.  
+Our [echoS3Event](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34) only supports `GET`.  We'll see how a single lambda function can support multiple HTTP methods shortly.
 
 ### <a href="{{< relref "#example1API" >}}">Provision</a>
 
@@ -158,15 +172,15 @@ Pretty-printing the response body to make things more readable:
 }
 {{< /highlight >}}
 
-While this demonstrates that our lambda function is publicly accessible, it's not immediately obvious what is generating the data.
+While this demonstrates that our lambda function is publicly accessible, it's not immediately obvious where the `*event` data is being populated.
 
 ### <a href="{{< relref "#example1Mapping" >}}">Mapping Templates</a>
 
-The event data that's actually supplied to `echoS3Event` function is returned in the responses `results` results.  This content is what the API Gateway actually sends as part of the integration mapping.  The sibling `code`, `status`, and `headers` keys will be addressed shortly.
+The event data that's actually supplied to `echoS3Event` function is returned in the responses `results` results.  This content is what the API Gateway forwards sends as part of the integration mapping.  The sibling `code`, `status`, and `headers` keys will be explained shortly.
 
-When the API Gateway method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data into a format that's more amenable to the target.
+When the API Gateway Method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
 
-Sparta uses a pass-through template that passes all defined data.  The [Apache Velocity](http://velocity.apache.org) template that [Sparta uses](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl) is:
+Sparta uses a pass-through template that passes all valid data.  The [Apache Velocity](http://velocity.apache.org) template that [Sparta uses](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl) is:
 
 {{< highlight nohighlight >}}
 #*
@@ -201,17 +215,19 @@ See
 }
 {{< /highlight >}}
 
-This template forwards all whitelisted data & body to the lambda function.  The next example will show how to unmarshal this data and perform request-specific actions.  
+This template forwards all whitelisted data & body to the lambda function.  You can see by switching on the `method` field would permit a single function to service multiple HTTP method names.
+
+The next example will show how to unmarshal this data and perform request-specific actions.  
 
 ### <a href="{{< relref "#example1ProxyingEnvelope" >}}">Proxying Envelope</a>
 
-The mapping template explains the content of the `results` property, but not the other fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the golang HTTP response to a Lambda compatible result.  
+The mapping template explains the content of the `results` property, but not the other fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the *Go* HTTP response to a Lambda compatible result.  
 
 A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
 ![API Gateway](/images/apigateway/IntegrationMapping.png)
 
-The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with Go's [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
+The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with *Go*'s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
 
 ![API Gateway](/images/apigateway/MethodResponse.png)
 
@@ -222,8 +238,7 @@ These mappings are defaults, and it's possible to override either one by providi
 
 ### <a href="{{< relref "#example1WrappingUp" >}}">Wrapping Up</a>
 
-Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we'll move on to performing a more complex operation, including returning a custom response to the caller.
-
+Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we'll move on to performing a more complex operation, including returning a custom HTTP response body.
 
 ## <a href="{{< relref "#exampleS3" >}}">Example 2 - Accepting Input</a>
 

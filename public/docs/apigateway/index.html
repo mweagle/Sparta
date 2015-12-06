@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1071 
+    "wordCount":  1145 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Home highlight:vs googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle name:yeti bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: github:https://github.com/mweagle]">
+<body class="map[googleplus: facebook: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: youtube: flattr: name:yeti home:Home linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -297,7 +297,19 @@
 
 <p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43">SpartaApplication</a>.</p>
 
-<h3 id="a-href-hugoshortcode-4-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+<p>For reference, the <code>echoS3Event</code> function is below.</p>
+
+<pre><code class="go">func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	logger.WithFields(logrus.Fields{
+		&#34;RequestID&#34;: context.AWSRequestID,
+		&#34;Event&#34;:     string(*event),
+	}).Info(&#34;Request received&#34;)
+
+	fmt.Fprintf(w, string(*event))
+}</code></pre>
+
+
+<h3 id="a-href-hugoshortcode-5-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
 
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
@@ -305,19 +317,19 @@
 apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
 
 
-<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is nil, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a>.</p>
+<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
 
-<h3 id="a-href-hugoshortcode-6-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
+<h3 id="a-href-hugoshortcode-7-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
 
-<p>The next step is to associate a URL path with our <code>sparta.LambdaAWSInfo</code> struct:</p>
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <em>Go</em> function:</p>
 
 <pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
 apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
 
 
-<p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.</p>
+<p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
 
-<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h3 id="a-href-hugoshortcode-9-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
 
 <p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
 
@@ -349,7 +361,7 @@ sparta.Main(stackName,
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
 
-<h3 id="a-href-hugoshortcode-11-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
+<h3 id="a-href-hugoshortcode-12-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
 
 <p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
 
@@ -412,15 +424,15 @@ sparta.Main(stackName,
 }</code></pre>
 
 
-<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious what is generating the data.</p>
+<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
 
-<h3 id="a-href-hugoshortcode-14-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Mapping:d680e8a854a7cbad6d490c445cba2eba">Mapping Templates</a></h3>
+<h3 id="a-href-hugoshortcode-15-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Mapping:d680e8a854a7cbad6d490c445cba2eba">Mapping Templates</a></h3>
 
-<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> function is returned in the responses <code>results</code> results.  This content is what the API Gateway actually sends as part of the integration mapping.  The sibling <code>code</code>, <code>status</code>, and <code>headers</code> keys will be addressed shortly.</p>
+<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> function is returned in the responses <code>results</code> results.  This content is what the API Gateway forwards sends as part of the integration mapping.  The sibling <code>code</code>, <code>status</code>, and <code>headers</code> keys will be explained shortly.</p>
 
-<p>When the API Gateway method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data into a format that&rsquo;s more amenable to the target.</p>
+<p>When the API Gateway Method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
 
-<p>Sparta uses a pass-through template that passes all defined data.  The <a href="http://velocity.apache.org">Apache Velocity</a> template that <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">Sparta uses</a> is:</p>
+<p>Sparta uses a pass-through template that passes all valid data.  The <a href="http://velocity.apache.org">Apache Velocity</a> template that <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">Sparta uses</a> is:</p>
 
 <p><pre><code class="nohighlight">#*
 Provide an automatic pass through template that transforms all inputs
@@ -454,17 +466,19 @@ See
 }</code></pre>
 </p>
 
-<p>This template forwards all whitelisted data &amp; body to the lambda function.  The next example will show how to unmarshal this data and perform request-specific actions.</p>
+<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
 
-<h3 id="a-href-hugoshortcode-16-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba">Proxying Envelope</a></h3>
+<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
 
-<p>The mapping template explains the content of the <code>results</code> property, but not the other fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the golang HTTP response to a Lambda compatible result.</p>
+<h3 id="a-href-hugoshortcode-17-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba">Proxying Envelope</a></h3>
+
+<p>The mapping template explains the content of the <code>results</code> property, but not the other fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <em>Go</em> HTTP response to a Lambda compatible result.</p>
 
 <p>A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
 
 <p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
 
-<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with Go&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <em>Go</em>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
 
 <p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
 
@@ -475,11 +489,11 @@ See
 <li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
 </ul>
 
-<h3 id="a-href-hugoshortcode-17-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+<h3 id="a-href-hugoshortcode-18-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
 
-<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom response to the caller.</p>
+<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
 
-<h2 id="a-href-hugoshortcode-18-example-2-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Example 2 - Accepting Input</a></h2>
+<h2 id="a-href-hugoshortcode-19-example-2-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Example 2 - Accepting Input</a></h2>
 
 <p>TODO: Update with docs for <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a>.</p>
 
