@@ -153,16 +153,23 @@
             data = eachDefinition.Properties.API;
           }
     });
+    var apiGatewayNode = $("#apigateway");
     if (data && data.Name)
     {
       $("#apiGatewayContentTitle").text(data.Name + " API Gateway")
       var nodes = {};
       accumulateResources(data.Resources, "", template.Resources, nodes);
       var nodeKeys = Object.keys(nodes);
-      var apiGatewayNode = $("#apigateway");
       nodeKeys.forEach(function (eachPath) {
         nodes[eachPath].appendTo(apiGatewayNode);
       });
+    }
+    else
+    {
+      // Remove the div
+      apiGatewayNode.remove();
+      // And the tab
+      $("#apiGatewayTab").remove();
     }
   };
 
@@ -195,7 +202,7 @@
           <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="#lambda" aria-controls="lambda" role="tab" data-toggle="tab">Lambdas</a></li>
-              <li><a href="#apigateway" aria-controls="apigateway" role="tab" data-toggle="tab">API Gateway</a></li>
+              <li><a href="#apigateway" aria-controls="apigateway" role="tab" data-toggle="tab" id="apiGatewayTab">API Gateway</a></li>
               <li><a href="#cloudformationTemplate" aria-controls="cloudformationTemplate" role="tab" data-toggle="tab">Template</a></li>
             </ul>
             <div id="navbar" class="navbar-collapse collapse">
@@ -219,7 +226,7 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="apigateway">
           <div class="panel-heading">
-            <h2 class="panel-title" id="apiGatewayContentTitle">API Gateway <span class="label label-warning">TODO</span></h2>
+            <h2 class="panel-title" id="apiGatewayContentTitle">API Gateway/h2>
           </div>
         </div>
         <div role="tabpanel" class="tab-pane" id="cloudformationTemplate">

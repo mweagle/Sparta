@@ -5,9 +5,10 @@
     - Added [SNS Event](https://github.com/mweagle/Sparta/blob/master/aws/sns/events.go) types for unmarshalling
     - Added [DynamoDB Event](https://github.com/mweagle/Sparta/blob/master/aws/dynamodb/events.go) types for unmarshalling
     - Fixed latent issue where `IAMRoleDefinition` CloudFormation names would collide if they had the same Permission set.
+    - Remove _API Gateway_ view from `describe` if none is defined.
   - :warning: **BREAKING**
     - N/A
-    
+
 ## v0.0.6
   - Add _.travis.yml_ for CI support.
   - :checkered_flag: **CHANGES**
