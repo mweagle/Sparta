@@ -11,6 +11,75 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+/*
+"context" : {
+  "apiId" : "$util.escapeJavaScript($context.apiId)",
+  "method" : "$util.escapeJavaScript($context.httpMethod)",
+  "requestId" : "$util.escapeJavaScript($context.requestId)",
+  "resourceId" : "$util.escapeJavaScript($context.resourceId)",
+  "resourcePath" : "$util.escapeJavaScript($context.resourcePath)",
+  "stage" : "$util.escapeJavaScript($context.stage)",
+  "identity" : {
+    "accountId" : "$util.escapeJavaScript($context.identity.accountId)",
+    "apiKey" : "$util.escapeJavaScript($context.identity.apiKey)",
+    "caller" : "$util.escapeJavaScript($context.identity.caller)",
+    "cognitoAuthenticationProvider" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)",
+    "cognitoAuthenticationType" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationType)",
+    "cognitoIdentityId" : "$util.escapeJavaScript($context.identity.cognitoIdentityId)",
+    "cognitoIdentityPoolId" : "$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)",
+    "sourceIp" : "$util.escapeJavaScript($context.identity.sourceIp)",
+    "user" : "$util.escapeJavaScript($context.identity.user)",
+    "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
+    "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
+  }
+*/
+
+// APIGatewayIdentity represents the user identity of a request
+// made on behalf of the API Gateway
+type APIGatewayIdentity struct {
+	// Account ID
+	AccountID string `json:"accountId"`
+	// API Key
+	APIKey string `json:"apiKey"`
+	// Caller
+	Caller string `json:"caller"`
+	// Cognito Authentication Provider
+	CognitoAuthenticationProvider string `json:"cognitoAuthenticationProvider"`
+	// Cognito Authentication Type
+	CognitoAuthenticationType string `json:"cognitoAuthenticationType"`
+	// CognitoIdentityId
+	CognitoIdentityID string `json:"cognitoIdentityId"`
+	// CognitoIdentityPoolId
+	CognitoIdentityPoolID string `json:"cognitoIdentityPoolId"`
+	// Source IP
+	SourceIP string `json:"sourceIp"`
+	// User
+	User string `json:"user"`
+	// User Agent
+	UserAgent string `json:"userAgent"`
+	// User ARN
+	UserARN string `json:"userArn"`
+}
+
+// APIGatewayContext represents the context available to an AWS Lambda
+// function that is invoked by an API Gateway integration.
+type APIGatewayContext struct {
+	// API ID
+	APIID string `json:"apiId"`
+	// HTTPMethod
+	Method string `json:"method"`
+	// Request ID
+	RequestID string `json:"requestId"`
+	// Resource ID
+	ResourceID string `json:"resourceId"`
+	// Resource Path
+	ResourcePath string `json:"resourcePath"`
+	// Stage
+	Stage string `json:"stage"`
+	// User identity
+	Identity APIGatewayIdentity `json:"identity"`
+}
+
 // APIGatewayLambdaJSONEvent provides a pass through mapping
 // of all whitelisted Parameters.  The transformation is defined
 // by the resources/gateway/inputmapping_json.vtl template.
@@ -25,6 +94,8 @@ type APIGatewayLambdaJSONEvent struct {
 	QueryParams map[string]string `json:"queryParams"`
 	// Whitelisted path parameters
 	PathParams map[string]string `json:"pathParams"`
+	// Context information - http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
+	Context APIGatewayContext `json:"context"`
 }
 
 // Model proxies the AWS SDK's Model data.  See
