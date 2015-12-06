@@ -8,6 +8,13 @@ type = "doc"
 
 Sparta is a framework for developing and deploying *Go* based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
+<div class="alert alert-danger" role="alert">
+  <h2>Pricing</h2>
+  <h4>
+Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.  
+</h4>
+</div>
+
 
 ## <a href="{{< relref "#preconditions" >}}">Preconditions</a>
 
@@ -60,7 +67,7 @@ We first declare an empty slice `lambdaFunctions` to which all our service's lam
 
 ## <a href="{{< relref "#delegation" >}}">Delegation</a>
 
-The final step is to define a Sparta service under your applications `main` package and provide the non-empty slice of lambda functions:
+The final step is to define a Sparta service under your application's `main` package and provide the non-empty slice of lambda functions:
 
 {{< highlight go >}}
 sparta.Main("MyHelloWorldStack",
@@ -72,11 +79,11 @@ sparta.Main("MyHelloWorldStack",
 `sparta.Main` accepts four parameters:
 
   * `serviceName` : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
-    - The `serviceName` is used as the stable identifier to determine when updates should be applied vs new stacks provisioned.
+    - The `serviceName` is used as the stable identifier to determine when updates should be applied rather than new stacks provisioned, as well as the target of a `delete` command line request.
   * `serviceDescription`: An optional string used to describe the stack.
   * `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` to provision
   * `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
-    - We'll walk through how to do that in a later example, but for now our lambda function will only be accessible via the AWS SDK or Console.
+    - We'll walk through how to do that in [another section](/docs/apigateway), but for now our lambda function will only be accessible via the AWS SDK or Console.
 
 Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options.  Run `go run main.go --help` to see the available options.
 

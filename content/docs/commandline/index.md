@@ -8,7 +8,7 @@ type = "doc"
 
 ## <a href="{{< relref "#commandLine" >}}">Command Line</a>
 
-Sparta provides a [Main](https://godoc.org/github.com/mweagle/Sparta#Main) function that transforms a set of [lambda functions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) into an application.  This function should be called from your applications `package main` as in:
+Sparta provides a [Main](https://godoc.org/github.com/mweagle/Sparta#Main) function that transforms a set of [lambda functions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) into an application.  This function should be called from your application's `package main` as in:
 
 
 {{< highlight go >}}
