@@ -1037,7 +1037,7 @@ INFO[0000] Stack delete issued: {
       <guid>http://gosparta.io/docs/walkthrough/</guid>
       <description>
 
-&lt;p&gt;The &lt;a href=&#34;http://gosparta.io/docs/overview&#34;&gt;Overview&lt;/a&gt; walked through a simple &amp;ldquo;Hello World&amp;rdquo; example.  In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages.&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;http://gosparta.io/docs/overview&#34;&gt;Overview&lt;/a&gt; walked through a simple &amp;ldquo;Hello World&amp;rdquo; example.  In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the &lt;code&gt;provision&lt;/code&gt; command line argument, so this section will outline exactly what that entails.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-1-provisioning-flow-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisioningFlow:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provisioning Flow&lt;/a&gt;&lt;/h3&gt;
 

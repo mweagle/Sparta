@@ -47,35 +47,35 @@
         "Children": []
       },
       {
-        "Name": "Kinesis",
+        "Name": "Kinesis (TBD)",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/kinesis",
         "Children": []
       },
       {
-        "Name": "SES",
+        "Name": "SES (TBD)",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/ses",
         "Children": []
       },
       {
-        "Name": "Cognito",
+        "Name": "Cognito (TBD)",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/cognito",
         "Children": []
       },
       {
-        "Name": "CloudWatch Logs",
+        "Name": "CloudWatch Logs (TBD)",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/cloudwatchlogs",
         "Children": []
       },
       {
-        "Name": "CloudFormation",
+        "Name": "CloudFormation (TBD)",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/cloudformation",

@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-The [Overview](/docs/overview) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.
+The [Overview](/docs/overview) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the `provision` command line argument, so this section will outline exactly what that entails.
 
 ### <a href="{{< relref "#provisioningFlow" >}}">Provisioning Flow</a>
 
@@ -73,4 +73,4 @@ Finally, the provisioning workflow determines whether the Sparta `serviceName` e
 
 ## Next Steps
 
-Now that we've covered how Sparta handles provisioning your stack, we're ready to expand functionality to leverge more of the AWS ecosystem in the [next section](/docs/eventsources). 
+Now that we've covered how Sparta handles provisioning your stack, we're ready to expand functionality to leverge more of the AWS ecosystem in the [next section](/docs/eventsources).
