@@ -130,6 +130,16 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
+      <title>Limitations</title>
+      <link>http://gosparta.io/docs/limitations/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/limitations/</guid>
+      <description>&lt;p&gt;TODO: Sparta/AWS Lambda limitations&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Overview</title>
       <link>http://gosparta.io/docs/apigateway/example1/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
@@ -1099,16 +1109,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
 &lt;li&gt;TBD&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/miscellaneous/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/miscellaneous/</guid>
-      <description>&lt;p&gt;TODO: Miscellaneous documentation&lt;/p&gt;
 </description>
     </item>
     
