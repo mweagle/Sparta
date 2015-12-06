@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1134 
+    "wordCount":  1152 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle name:yeti flattr: highlight:vs youtube: home:Home]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle googleplus: youtube: name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -294,7 +294,7 @@ if err != nil {
 }</code></pre>
 
 
-<p>The <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">sparta.APIGatewayLambdaJSONEvent</a> fields correspond to the Integration Response Mapping template discussed above (also <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">here</a>).</p>
+<p>The <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">sparta.APIGatewayLambdaJSONEvent</a> fields correspond to the Integration Response Mapping template discussed in the <a href="/docs/apigateway/example1">previous example</a> (see the full mapping template <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">here</a>).</p>
 
 <p>Once the event is unmarshaled, we can use it to fetch the S3 item info:</p>
 
@@ -337,7 +337,7 @@ if err != nil {
 
 <h3 id="a-href-hugoshortcode-6-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
 
-<p>The next requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
+<p>The next step is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
 <pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
 apiGateway := sparta.NewAPIGateway(&#34;SpartaImagerAPI&#34;, apiStage)</code></pre>
@@ -364,7 +364,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 
 <ul>
 <li>We&rsquo;re providing a custom <code>LambdaFunctionOptions</code> in case the request to S3 to get item metadata exceeds the default 3 second timeout.</li>
-<li>We also add a custom <code>iamDynamicRole.Privileges</code> entry to the <code>Privileges</code> slice that authorizes the lambda function to <em>only</em> access objects in a single bucket (_resourceArn).
+<li>We also add a custom <code>iamDynamicRole.Privileges</code> entry to the <code>Privileges</code> slice that authorizes the lambda function to <em>only</em> access objects in a single bucket (<em>resourceArn</em>).
 
 <ul>
 <li>This bucket ARN is externally created and the ARN provided to this code.</li>
@@ -561,7 +561,7 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <h3 id="a-href-hugoshortcode-21-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
 
-<p>We&rsquo;ve now been able to successfully provision a lambda function that can process user input and is limited in it&rsquo;s privilege scope.</p>
+<p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.</p>
 
 </div>
 

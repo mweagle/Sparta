@@ -33,7 +33,7 @@ if err != nil {
 }
 {{< /highlight >}}
 
-The [sparta.APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) fields correspond to the Integration Response Mapping template discussed above (also [here](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl)).
+The [sparta.APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) fields correspond to the Integration Response Mapping template discussed in the [previous example](/docs/apigateway/example1) (see the full mapping template [here](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl)).
 
 Once the event is unmarshaled, we can use it to fetch the S3 item info:
 
@@ -79,7 +79,7 @@ if err != nil {
 
 ### <a href="{{< relref "#example2API" >}}">Create the API Gateway</a>
 
-The next requirement is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
+The next step is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
 
 {{< highlight go >}}
 apiStage := sparta.NewStage("v1")
@@ -107,7 +107,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 A few items to note here:
 
   * We're providing a custom `LambdaFunctionOptions` in case the request to S3 to get item metadata exceeds the default 3 second timeout.
-  * We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn).
+  * We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn_).
     * This bucket ARN is externally created and the ARN provided to this code.
     * While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
 
@@ -308,4 +308,4 @@ curl -vs "https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName
 
 ### <a href="{{< relref "#example1WrappingUp" >}}">Wrapping Up</a>
 
-We've now been able to successfully provision a lambda function that can process user input and is limited in it's privilege scope.  
+With this example we've walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.

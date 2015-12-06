@@ -379,7 +379,7 @@ if err != nil {
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;p&gt;The &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;sparta.APIGatewayLambdaJSONEvent&lt;/a&gt; fields correspond to the Integration Response Mapping template discussed above (also &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;sparta.APIGatewayLambdaJSONEvent&lt;/a&gt; fields correspond to the Integration Response Mapping template discussed in the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;previous example&lt;/a&gt; (see the full mapping template &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
 
 &lt;p&gt;Once the event is unmarshaled, we can use it to fetch the S3 item info:&lt;/p&gt;
 
@@ -422,7 +422,7 @@ if err != nil {
 
 &lt;h3 id=&#34;a-href-hugoshortcode-6-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;The next requirement is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The next step is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
 apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaImagerAPI&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
@@ -449,7 +449,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 
 &lt;ul&gt;
 &lt;li&gt;We&amp;rsquo;re providing a custom &lt;code&gt;LambdaFunctionOptions&lt;/code&gt; in case the request to S3 to get item metadata exceeds the default 3 second timeout.&lt;/li&gt;
-&lt;li&gt;We also add a custom &lt;code&gt;iamDynamicRole.Privileges&lt;/code&gt; entry to the &lt;code&gt;Privileges&lt;/code&gt; slice that authorizes the lambda function to &lt;em&gt;only&lt;/em&gt; access objects in a single bucket (_resourceArn).
+&lt;li&gt;We also add a custom &lt;code&gt;iamDynamicRole.Privileges&lt;/code&gt; entry to the &lt;code&gt;Privileges&lt;/code&gt; slice that authorizes the lambda function to &lt;em&gt;only&lt;/em&gt; access objects in a single bucket (&lt;em&gt;resourceArn&lt;/em&gt;).
 
 &lt;ul&gt;
 &lt;li&gt;This bucket ARN is externally created and the ARN provided to this code.&lt;/li&gt;
@@ -646,7 +646,7 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 
 &lt;h3 id=&#34;a-href-hugoshortcode-21-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;We&amp;rsquo;ve now been able to successfully provision a lambda function that can process user input and is limited in it&amp;rsquo;s privilege scope.&lt;/p&gt;
+&lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
 </description>
     </item>
     
