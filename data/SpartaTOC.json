@@ -88,8 +88,21 @@
     "IconClass": "",
     "Title": "",
     "URL": "/apigateway",
-    "Children": []
-  },
+    "Children": [
+      {
+        "Name": "Echo",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/apigateway/example1",
+        "Children": []
+      },
+      {
+        "Name": "User Input",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/apigateway/example2",
+        "Children": []
+      }]},
   {
     "Name": "Miscellaneous",
     "IconClass": "",

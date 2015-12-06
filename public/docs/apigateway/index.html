@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1145 
+    "wordCount":  199 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: flattr: name:yeti home:Home]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle name:yeti googleAnalytics:UA-70794971-1 github:https://github.com/mweagle flattr: home:Home highlight:vs youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -240,6 +240,14 @@
       <a href="/docs/apigateway">API Gateway</a>
       <ul>
       
+        <li>
+          <small><a href="/docs/apigateway/example1">Echo</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example2">User Input</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/miscellaneous">Miscellaneous</a>
@@ -264,9 +272,14 @@
 
 <p>One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the <a href="https://aws.amazon.com/api-gateway/">API Gateway</a>.  In this section we&rsquo;ll start with a simple &ldquo;echo&rdquo; example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.</p>
 
+<ul>
+<li><a href="/docs/apigateway/example1">Example 1 - Echo Event</a></li>
+<li><a href="/docs/apigateway/example2">Example 2 - User Input &amp; JSON Response</a></li>
+</ul>
+
 <h2 id="a-href-hugoshortcode-2-concepts-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#concepts:d680e8a854a7cbad6d490c445cba2eba">Concepts</a></h2>
 
-<p>Before moving on to the example, it&rsquo;s suggested you familiarize yourself with the API Gateway concepts.</p>
+<p>Before moving on to the examples, it&rsquo;s suggested you familiarize yourself with the API Gateway concepts.</p>
 
 <ul>
 <li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html">Gettting Started with Amazon API Gateway</a></li>
@@ -291,211 +304,7 @@
 <li>Deploy the given stage</li>
 </ol>
 
-<p>With that overview, let&rsquo;s start with a simple example.</p>
-
-<h2 id="a-href-hugoshortcode-3-example-1-echo-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleEcho:d680e8a854a7cbad6d490c445cba2eba">Example 1 - Echo</a></h2>
-
-<p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43">SpartaApplication</a>.</p>
-
-<p>For reference, the <code>echoS3Event</code> function is below.</p>
-
-<pre><code class="go">func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	logger.WithFields(logrus.Fields{
-		&#34;RequestID&#34;: context.AWSRequestID,
-		&#34;Event&#34;:     string(*event),
-	}).Info(&#34;Request received&#34;)
-
-	fmt.Fprintf(w, string(*event))
-}</code></pre>
-
-
-<h3 id="a-href-hugoshortcode-5-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
-
-<p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
-
-<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
-
-
-<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
-
-<h3 id="a-href-hugoshortcode-7-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
-
-<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <em>Go</em> function:</p>
-
-<pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
-apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
-
-
-<p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
-
-<h3 id="a-href-hugoshortcode-9-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
-
-<p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
-
-<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)
-stackName := &#34;SpartaApplication&#34;
-sparta.Main(stackName,
-  &#34;Simple Sparta application&#34;,
-  spartaLambdaData(apiGateway),
-  apiGateway)</code></pre>
-
-
-<p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
-
-<pre><code class="javascript">[{
-    Description: &#34;Sparta Home&#34;,
-    OutputKey: &#34;SpartaHome&#34;,
-    OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
-  },{
-    Description: &#34;Sparta Version&#34;,
-    OutputKey: &#34;SpartaVersion&#34;,
-    OutputValue: &#34;0.0.7&#34;
-  },{
-    Description: &#34;API Gateway URL&#34;,
-    OutputKey: &#34;URL&#34;,
-    OutputValue: &#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod&#34;
-}]</code></pre>
-
-
-<p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
-
-<h3 id="a-href-hugoshortcode-12-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
-
-<p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
-
-<pre><code class="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
-*   Trying 54.240.188.223...
-* Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&gt; GET /prod/hello/world/test HTTP/1.1
-&gt; Host: 7ljn63rysd.execute-api.us-west-2.amazonaws.com
-&gt; User-Agent: curl/7.43.0
-&gt; Accept: */*
-&gt;
-&lt; HTTP/1.1 200 OK
-&lt; Content-Type: application/json
-&lt; Content-Length: 708
-&lt; Connection: keep-alive
-&lt; Date: Sat, 05 Dec 2015 21:24:44 GMT
-&lt; x-amzn-RequestId: 99dfd15d-9b96-11e5-9705-fdd3a4d9c8bf
-&lt; X-Cache: Miss from cloudfront
-&lt; Via: 1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)
-&lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
-&lt;
-* Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;date&#34;:&#34;Sat, 05 Dec 2015 21:24:44 GMT&#34;,&#34;content-length&#34;:&#34;554&#34;,&#34;content-type&#34;:&#34;text/plain; charset=utf-8&#34;},&#34;results&#34;:{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.239.137.4&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{}}}</code></pre>
-
-
-<p>Pretty-printing the response body to make things more readable:</p>
-
-<pre><code class="json">{
-  &#34;code&#34;: 200,
-  &#34;status&#34;: &#34;OK&#34;,
-  &#34;headers&#34;: {
-    &#34;date&#34;: &#34;Sat, 05 Dec 2015 21:24:44 GMT&#34;,
-    &#34;content-length&#34;: &#34;554&#34;,
-    &#34;content-type&#34;: &#34;text/plain; charset=utf-8&#34;
-  },
-  &#34;results&#34;: {
-    &#34;method&#34;: &#34;GET&#34;,
-    &#34;body&#34;: {},
-    &#34;headers&#34;: {
-      &#34;Accept&#34;: &#34;*/*&#34;,
-      &#34;CloudFront-Forwarded-Proto&#34;: &#34;https&#34;,
-      &#34;CloudFront-Is-Desktop-Viewer&#34;: &#34;true&#34;,
-      &#34;CloudFront-Is-Mobile-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-SmartTV-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-Tablet-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Viewer-Country&#34;: &#34;US&#34;,
-      &#34;Via&#34;: &#34;1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)&#34;,
-      &#34;X-Amz-Cf-Id&#34;: &#34;xIGP8KHDpP6AEkAt3jdOcUDVojJ_86vFDRhsgfLKgdAsBHHzI7iNVQ==&#34;,
-      &#34;X-Forwarded-For&#34;: &#34;50.135.43.1, 54.239.137.4&#34;,
-      &#34;X-Forwarded-Port&#34;: &#34;443&#34;,
-      &#34;X-Forwarded-Proto&#34;: &#34;https&#34;
-    },
-    &#34;queryParams&#34;: {},
-    &#34;pathParams&#34;: {}
-  }
-}</code></pre>
-
-
-<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
-
-<h3 id="a-href-hugoshortcode-15-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1Mapping:d680e8a854a7cbad6d490c445cba2eba">Mapping Templates</a></h3>
-
-<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> function is returned in the responses <code>results</code> results.  This content is what the API Gateway forwards sends as part of the integration mapping.  The sibling <code>code</code>, <code>status</code>, and <code>headers</code> keys will be explained shortly.</p>
-
-<p>When the API Gateway Method is defined, it specifies the whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
-
-<p>Sparta uses a pass-through template that passes all valid data.  The <a href="http://velocity.apache.org">Apache Velocity</a> template that <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">Sparta uses</a> is:</p>
-
-<p><pre><code class="nohighlight">#*
-Provide an automatic pass through template that transforms all inputs
-into the JSON payload sent to a golang function
-
-See
-  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
-  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
-*#
-{
-  &#34;method&#34;: &#34;$context.httpMethod&#34;,
-  &#34;body&#34; : $input.json(&#39;$&#39;),
-  &#34;headers&#34;: {
-    #foreach($param in $input.params().header.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().header.get($param))&#34; #if($foreach.hasNext),#end
-
-    #end
-  },
-  &#34;queryParams&#34;: {
-    #foreach($param in $input.params().querystring.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().querystring.get($param))&#34; #if($foreach.hasNext),#end
-
-    #end
-  },
-  &#34;pathParams&#34;: {
-    #foreach($param in $input.params().path.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().path.get($param))&#34; #if($foreach.hasNext),#end
-
-    #end
-  }
-}</code></pre>
-</p>
-
-<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
-
-<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
-
-<h3 id="a-href-hugoshortcode-17-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba">Proxying Envelope</a></h3>
-
-<p>The mapping template explains the content of the <code>results</code> property, but not the other fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <em>Go</em> HTTP response to a Lambda compatible result.</p>
-
-<p>A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
-
-<p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
-
-<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <em>Go</em>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
-
-<p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
-
-<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
-
-<ul>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
-</ul>
-
-<h3 id="a-href-hugoshortcode-18-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
-
-<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
-
-<h2 id="a-href-hugoshortcode-19-example-2-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Example 2 - Accepting Input</a></h2>
-
-<p>TODO: Update with docs for <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a>.</p>
+<p>With that overview, let&rsquo;s start with a simple <a href="/docs/apigateway/example1">example</a>.</p>
 
 <h2 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h2>
 

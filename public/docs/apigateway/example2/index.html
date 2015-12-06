@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Overview  &middot; Sparta</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="sparta, ">
+
+
+<meta property="og:title" content="Overview  &middot; Sparta ">
+<meta property="og:site_name" content="Sparta"/>
+<meta property="og:url" content="http://gosparta.io/docs/apigateway/example2/" />
+<meta property="og:locale" content="en-EN">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+
+  
+    
+<meta property="og:article:tag" content="sparta">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Overview" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="http://gosparta.io/docs/apigateway/example2/" />
+<meta name="twitter:domain" content="http://gosparta.io">
+  
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Overview",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2015-11-29",
+    "description": "",
+    "wordCount":  1134 
+  }
+</script>
+
+
+
+<link rel="canonical" href="http://gosparta.io/docs/apigateway/example2/" />
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
+<link href="http://gosparta.io/favicon.png" rel="icon">
+
+<meta name="generator" content="Hugo 0.15" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+
+
+<link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
+<link rel="stylesheet" href="http://gosparta.io/css/style.css">
+
+
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+
+
+  
+  <script src="/mermaid/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-70794971-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle name:yeti flattr: highlight:vs youtube: home:Home]">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          
+          <li>
+
+            <a href="http://gosparta.io/docs"
+            >
+
+            
+                <i class="fa fa-book"></i>
+            
+            
+            Documentation
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://github.com/mweagle/Sparta"
+            >
+
+            
+                <i class="fa fa-github"></i>
+            
+            
+            GitHub
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="http://gosparta.io/tags"
+             title="Show list of tags">
+
+            
+                <i class="fa fa-tags"></i>
+            
+            
+            Tags
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://twitter.com/@mweagle"
+            >
+
+            
+                <i class="fa fa-twitter"></i>
+            
+            
+            mweagle
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </nav>
+
+</header>
+
+
+<div class="container">
+<div class="row">
+  <div class="col-md-2"><div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Contents</h3>
+  </div>
+  <div class="panel-body">
+    
+      <a href="/docs/overview">Overview</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/commandline">Command Line</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/walkthrough">Walkthrough</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/eventsources">Event Sources</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/sns/">SNS</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/dynamodb">DynamoDB</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/kinesis">Kinesis (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/ses">SES (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cognito">Cognito (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudformation">CloudFormation (TBD)</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/apigateway">API Gateway</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/apigateway/example1">Echo</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example2">User Input</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/miscellaneous">Miscellaneous</a>
+      <ul>
+      
+      </ul>
+    
+  </div>
+</div>
+</div>
+  <div class="col-md-8">
+    <header class="container hat">
+  <h1>Overview
+</h1>
+
+</header>
+
+    <div class="container content">
+  
+
+<h2 id="a-href-hugoshortcode-1-example-2-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Example 2 - Accepting Input</a></h2>
+
+<p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43">SpartaApplication</a>.</p>
+
+<h3 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
+
+<p>Our function will accept two params:</p>
+
+<ul>
+<li><code>bucketName</code> : The S3 bucket name storing the asset</li>
+<li><code>keyName</code> : The S3 item key</li>
+</ul>
+
+<p>Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.</p>
+
+<p>Because <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> is expected to be invoked by the API Gateway, we&rsquo;ll start by unmarshalling the event data:</p>
+
+<pre><code class="go">var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
+if err != nil {
+  logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}</code></pre>
+
+
+<p>The <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">sparta.APIGatewayLambdaJSONEvent</a> fields correspond to the Integration Response Mapping template discussed above (also <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">here</a>).</p>
+
+<p>Once the event is unmarshaled, we can use it to fetch the S3 item info:</p>
+
+<pre><code class="go">getObjectInput := &amp;s3.GetObjectInput{
+  Bucket: aws.String(lambdaEvent.QueryParams[&#34;bucketName&#34;]),
+  Key:    aws.String(lambdaEvent.QueryParams[&#34;keyName&#34;]),
+}</code></pre>
+
+
+<p>Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:</p>
+
+<pre><code class="go">awsSession := awsSession(logger)
+svc := s3.New(awsSession)
+result, err := svc.GetObject(getObjectInput)
+if nil != err {
+  logger.Error(&#34;Failed to process event: &#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}
+presignedReq, _ := svc.GetObjectRequest(getObjectInput)
+url, err := presignedReq.Presign(5 * time.Minute)
+if nil != err {
+  logger.Error(&#34;Failed to process event: &#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}
+httpResponse := map[string]interface{}{
+  &#34;S3&#34;:  result,
+  &#34;URL&#34;: url,
+}
+
+responseBody, err := json.Marshal(httpResponse)
+if err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+} else {
+  w.Header().Set(&#34;Content-Type&#34;, &#34;application/json&#34;)
+  fmt.Fprint(w, string(responseBody))
+}</code></pre>
+
+
+<h3 id="a-href-hugoshortcode-6-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+
+<p>The next requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
+
+<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaImagerAPI&#34;, apiStage)</code></pre>
+
+
+<h3 id="a-href-hugoshortcode-8-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
+
+<p>Then we create a URL path with the <code>sparta.LambdaAWSInfo</code> struct that referecnes the <code>s3ItemInfo</code> function:</p>
+
+<pre><code class="go">s3ItemInfoOptions := &amp;sparta.LambdaFunctionOptions{
+  Description: &#34;Get information about an item in S3 via querystring params&#34;,
+  MemorySize:  128,
+  Timeout:     10,
+}
+var iamDynamicRole = sparta.IAMRoleDefinition{}
+iamDynamicRole.Privileges = append(iamDynamicRole.Privileges, sparta.IAMRolePrivilege{
+  Actions:  []string{&#34;s3:GetObject&#34;},
+  Resource: resourceArn,
+})
+s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOptions)</code></pre>
+
+
+<p>A few items to note here:</p>
+
+<ul>
+<li>We&rsquo;re providing a custom <code>LambdaFunctionOptions</code> in case the request to S3 to get item metadata exceeds the default 3 second timeout.</li>
+<li>We also add a custom <code>iamDynamicRole.Privileges</code> entry to the <code>Privileges</code> slice that authorizes the lambda function to <em>only</em> access objects in a single bucket (_resourceArn).
+
+<ul>
+<li>This bucket ARN is externally created and the ARN provided to this code.</li>
+<li>While the API will accept any <em>bucketName</em> value, it is only authorized to access a single bucket.</li>
+</ul></li>
+</ul>
+
+<h3 id="a-href-hugoshortcode-10-create-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Resource</a></h3>
+
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function:</p>
+
+<p><pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/info&#34;, s3ItemInfoLambdaFn)
+method, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
+if err != nil {
+  return nil, err
+}</code></pre>
+</p>
+
+<h3 id="a-href-hugoshortcode-12-whitelist-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</a></h3>
+
+<p>The final step is to add the whitelisted parameters to the Method definition.</p>
+
+<p><pre><code class="go">// Whitelist query string params
+method.Parameters[&#34;method.request.querystring.keyName&#34;] = true
+method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code></pre>
+</p>
+
+<p>Note that the keynames in the <code>method.Parameters</code> map must be of the form: <strong>method.request.{location}.{name}</strong> where location is one of:</p>
+
+<ul>
+<li><code>querystring</code></li>
+<li><code>path</code></li>
+<li><code>header</code></li>
+</ul>
+
+<p>See the <a href="http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters">REST documentation</a> for more information.</p>
+
+<p>With everything configured, let&rsquo;s provision the stack:</p>
+
+<p><pre><code class="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
+</p>
+
+<p>and check the results.</p>
+
+<h3 id="a-href-hugoshortcode-15-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
+
+<p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
+
+<p><pre><code class="nohighlight">Outputs: [{
+    Description: &#34;Sparta Home&#34;,
+    OutputKey: &#34;SpartaHome&#34;,
+    OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
+  },{
+    Description: &#34;Sparta Version&#34;,
+    OutputKey: &#34;SpartaVersion&#34;,
+    OutputValue: &#34;0.0.7&#34;
+  },{
+    Description: &#34;API Gateway URL&#34;,
+    OutputKey: &#34;URL&#34;,
+    OutputValue: &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1&#34;
+  }],</code></pre>
+</p>
+
+<p>Let&rsquo;s fetch an item we know exists:</p>
+
+<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=somebucket-log&#34;
+
+*   Trying 54.192.70.158...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&gt; GET /v1/info?keyName=gopher.png&amp;bucketName=somebucket-log HTTP/1.1
+&gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 1584
+&lt; Connection: keep-alive
+&lt; Date: Sun, 06 Dec 2015 02:35:03 GMT
+&lt; x-amzn-RequestId: f333f4bb-9bc1-11e5-afde-61a428c89049
+&lt; X-Cache: Miss from cloudfront
+&lt; Via: 1.1 2f31d4850470c56c3b326946dc542a6b.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: 6rBpqjmi7DPax7XOHTbxDx8-FfFfvI04m2_K-PxLWfYFor7WtIcdxA==
+&lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 02:35:03 GMT&#34;,&#34;content-length&#34;:&#34;1468&#34;},&#34;results&#34;:{&#34;S3&#34;:{&#34;AcceptRanges&#34;:&#34;bytes&#34;,&#34;Body&#34;:{},&#34;CacheControl&#34;:null,&#34;ContentDisposition&#34;:null,&#34;ContentEncoding&#34;:null,&#34;ContentLanguage&#34;:null,&#34;ContentLength&#34;:70372,&#34;ContentRange&#34;:null,&#34;ContentType&#34;:&#34;image/png&#34;,&#34;DeleteMarker&#34;:null,&#34;ETag&#34;:&#34;\&#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&#34;&#34;,&#34;Expiration&#34;:null,&#34;Expires&#34;:null,&#34;LastModified&#34;:&#34;2015-11-09T15:38:01Z&#34;,&#34;Metadata&#34;:{},&#34;MissingMeta&#34;:null,&#34;ReplicationStatus&#34;:null,&#34;RequestCharged&#34;:null,&#34;Restore&#34;:null,&#34;SSECustomerAlgorithm&#34;:null,&#34;SSECustomerKeyMD5&#34;:null,&#34;SSEKMSKeyId&#34;:null,&#34;ServerSideEncryption&#34;:null,&#34;StorageClass&#34;:null,&#34;VersionId&#34;:null,&#34;WebsiteRedirectLocation&#34;:null},&#34;URL&#34;:&#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;}}</code></pre>
+</p>
+
+<p>Pretty printing the response body:</p>
+
+<p><pre><code class="json">{
+  &#34;code&#34;: 200,
+  &#34;status&#34;: &#34;OK&#34;,
+  &#34;headers&#34;: {
+    &#34;content-type&#34;: &#34;application/json&#34;,
+    &#34;date&#34;: &#34;Sun, 06 Dec 2015 02:35:03 GMT&#34;,
+    &#34;content-length&#34;: &#34;1468&#34;
+  },
+  &#34;results&#34;: {
+    &#34;S3&#34;: {
+      &#34;AcceptRanges&#34;: &#34;bytes&#34;,
+      &#34;Body&#34;: {},
+      &#34;CacheControl&#34;: null,
+      &#34;ContentDisposition&#34;: null,
+      &#34;ContentEncoding&#34;: null,
+      &#34;ContentLanguage&#34;: null,
+      &#34;ContentLength&#34;: 70372,
+      &#34;ContentRange&#34;: null,
+      &#34;ContentType&#34;: &#34;image/png&#34;,
+      &#34;DeleteMarker&#34;: null,
+      &#34;ETag&#34;: &#34;\&#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&#34;&#34;,
+      &#34;Expiration&#34;: null,
+      &#34;Expires&#34;: null,
+      &#34;LastModified&#34;: &#34;2015-11-09T15:38:01Z&#34;,
+      &#34;Metadata&#34;: {},
+      &#34;MissingMeta&#34;: null,
+      &#34;ReplicationStatus&#34;: null,
+      &#34;RequestCharged&#34;: null,
+      &#34;Restore&#34;: null,
+      &#34;SSECustomerAlgorithm&#34;: null,
+      &#34;SSECustomerKeyMD5&#34;: null,
+      &#34;SSEKMSKeyId&#34;: null,
+      &#34;ServerSideEncryption&#34;: null,
+      &#34;StorageClass&#34;: null,
+      &#34;VersionId&#34;: null,
+      &#34;WebsiteRedirectLocation&#34;: null
+    },
+    &#34;URL&#34;: &#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;
+  }
+}</code></pre>
+</p>
+
+<p>What about an item that we know doesn&rsquo;t exist, but is in the bucket our lambda function has privileges to access:</p>
+
+<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
+
+*   Trying 54.230.71.213...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&gt; GET /v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log HTTP/1.1
+&gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 500 Internal Server Error
+&lt; Content-Type: application/json
+&lt; Content-Length: 524
+&lt; Connection: keep-alive
+&lt; Date: Sun, 06 Dec 2015 02:40:14 GMT
+&lt; x-amzn-RequestId: ad5d94eb-9bc2-11e5-8fad-476a6cacabce
+&lt; X-Cache: Error from cloudfront
+&lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: XoVLBjm1dgozZsNAEGk8Vy_a5PXMYNWRD6eKJJBcVTXrtMgMhiLNyQ==
+&lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:40:14 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
+</p>
+
+<p>And finally, what if we try to access a bucket that our lambda function isn&rsquo;t authorized to access:</p>
+
+<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=weagle&#34;
+
+*   Trying 54.192.70.129...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&gt; GET /v1/info?keyName=gopher.png&amp;bucketName=weagle HTTP/1.1
+&gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 500 Internal Server Error
+&lt; Content-Type: application/json
+&lt; Content-Length: 524
+&lt; Connection: keep-alive
+&lt; Date: Sun, 06 Dec 2015 02:42:52 GMT
+&lt; x-amzn-RequestId: 0be0fc4f-9bc3-11e5-b827-81d99c02192f
+&lt; X-Cache: Error from cloudfront
+&lt; Via: 1.1 400bdbea4e851ce61e7df8252da93d3f.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: M_7pB1UsW63xzh_9g37-CqNYDXfXlec0B6DV4bdkq3tbCANCOrTY6Q==
+&lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:42:52 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
+</p>
+
+<h3 id="a-href-hugoshortcode-21-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+
+<p>We&rsquo;ve now been able to successfully provision a lambda function that can process user input and is limited in it&rsquo;s privilege scope.</p>
+
+</div>
+
+
+    
+  </div>
+</div>
+</div>
+      <footer class="footer">
+    <div class="container hidden-print">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="#">back to top</a>
+</div>
+<div class="pull-right">
+  
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+          <small>
+              
+    
+<div class="container footline">
+  
+  <a href="http://www.erlang-embedded.com/why-erlang/">The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.</a>
+
+
+</div>
+
+
+    
+
+
+          </small>
+        </div>
+     </div>
+    </div>
+</footer>
+
+    <script src="http://gosparta.io/js/jquery.min-2.1.4.js"></script>
+<script src="http://gosparta.io/js/bootstrap.min-3.3.5.js"></script>
+
+
+
+<script type="text/javascript">
+  (function() {
+    
+    
+    if (window.location.hostname == "localhost")
+      return;
+
+    var dsq = document.createElement('script'); dsq.async = true; dsq.type = 'text/javascript';
+    dsq.src = '//mweagle.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://gosparta.io/js/highlight.pack.js"></script>
+<script src="http://gosparta.io/js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+</html>
+
