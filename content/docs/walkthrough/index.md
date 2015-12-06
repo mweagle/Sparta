@@ -73,4 +73,4 @@ Finally, the provisioning workflow determines whether the Sparta `serviceName` e
 
 ## Next Steps
 
-Now that we've covered how Sparta handles provisioning your stack, we're ready to expand functionality to leverge more of the AWS ecosystem in the [next section](/docs/eventsources).
+Now that we've covered how Sparta handles provisioning your stack, we're ready to expand functionality to leverge more of the AWS ecosystem in the [next section](/docs/eventsources/).

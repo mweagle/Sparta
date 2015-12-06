@@ -1111,7 +1111,7 @@ API Gateway configuration and S3 push source configuration.  Finally, a known ve
 
 &lt;h2 id=&#34;next-steps:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Next Steps&lt;/h2&gt;
 
-&lt;p&gt;Now that we&amp;rsquo;ve covered how Sparta handles provisioning your stack, we&amp;rsquo;re ready to expand functionality to leverge more of the AWS ecosystem in the &lt;a href=&#34;http://gosparta.io/docs/eventsources&#34;&gt;next section&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Now that we&amp;rsquo;ve covered how Sparta handles provisioning your stack, we&amp;rsquo;re ready to expand functionality to leverge more of the AWS ecosystem in the &lt;a href=&#34;http://gosparta.io/docs/eventsources/&#34;&gt;next section&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
