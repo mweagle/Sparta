@@ -135,7 +135,37 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/limitations/</guid>
-      <description>&lt;p&gt;TODO: Sparta/AWS Lambda limitations&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;sparta-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Limitations&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Go&lt;/em&gt; isn&amp;rsquo;t officially supported by AWS (yet)
+
+&lt;ul&gt;
+&lt;li&gt;But, you can &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;vote&lt;/a&gt; to make &lt;em&gt;golang&lt;/em&gt; officially supported.&lt;/li&gt;
+&lt;li&gt;Because of this, there is a per-container initialization cost of:
+
+&lt;ul&gt;
+&lt;li&gt;Copying the embedded binary to &lt;em&gt;/tmp&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Changing the binary permissions&lt;/li&gt;
+&lt;li&gt;Launching it from the new location&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://forums.aws.amazon.com/message.jspa?messageID=583910&#34;&gt;AWS Forum&lt;/a&gt; for more background&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
+&lt;li&gt;Once &lt;em&gt;Go&lt;/em&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;aws-lambda-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;AWS Lambda Limitations&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Lambda is not yet globally available. Please view the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the latest deployment status.&lt;/li&gt;
+&lt;li&gt;There are &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda Limits&lt;/a&gt; that may affect your development&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s not possible to return a 3XX response with headers &lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;extracted from the response body&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
