@@ -1,6 +1,7 @@
 ## v0.0.7
   - Documentation moved to [gosparta.io](http://gosparta.io)
   - :checkered_flag: **CHANGES**
+    - Add [context](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) struct to APIGatewayLambdaJSONEvent
     - Default description based on *Go* function name for AWS Lambda if none provided
     - Added [SNS Event](https://github.com/mweagle/Sparta/blob/master/aws/sns/events.go) types for unmarshalling
     - Added [DynamoDB Event](https://github.com/mweagle/Sparta/blob/master/aws/dynamodb/events.go) types for unmarshalling
