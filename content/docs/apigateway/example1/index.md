@@ -1,13 +1,13 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "Example 1"
 tags = ["sparta"]
 type = "doc"
 +++
 
 
-## <a href="{{< relref "#exampleEcho" >}}">Example 1 - Echo</a>
+## <a href="{{< relref "#exampleEcho" >}}">Echo</a>
 
 To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
 

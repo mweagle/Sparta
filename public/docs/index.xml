@@ -130,54 +130,14 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
     </item>
     
     <item>
-      <title>Limitations</title>
-      <link>http://gosparta.io/docs/limitations/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/limitations/</guid>
-      <description>
-
-&lt;h2 id=&#34;sparta-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Limitations&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Go&lt;/em&gt; isn&amp;rsquo;t officially supported by AWS (yet)
-
-&lt;ul&gt;
-&lt;li&gt;But, you can &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;vote&lt;/a&gt; to make &lt;em&gt;golang&lt;/em&gt; officially supported.&lt;/li&gt;
-&lt;li&gt;Because of this, there is a per-container initialization cost of:
-
-&lt;ul&gt;
-&lt;li&gt;Copying the embedded binary to &lt;em&gt;/tmp&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Changing the binary permissions&lt;/li&gt;
-&lt;li&gt;Launching it from the new location&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://forums.aws.amazon.com/message.jspa?messageID=583910&#34;&gt;AWS Forum&lt;/a&gt; for more background&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
-&lt;li&gt;Once &lt;em&gt;Go&lt;/em&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;aws-lambda-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;AWS Lambda Limitations&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Lambda is not yet globally available. Please view the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the latest deployment status.&lt;/li&gt;
-&lt;li&gt;There are &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda Limits&lt;/a&gt; that may affect your development&lt;/li&gt;
-&lt;li&gt;It&amp;rsquo;s not possible to return a 3XX response with headers &lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;extracted from the response body&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
+      <title>Example 1</title>
       <link>http://gosparta.io/docs/apigateway/example1/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/apigateway/example1/</guid>
       <description>
 
-&lt;h2 id=&#34;a-href-hugoshortcode-1-example-1-echo-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleEcho:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example 1 - Echo&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-1-echo-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleEcho:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Echo&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
 
@@ -424,14 +384,14 @@ Now that we know what data is actually being sent to our API Gateway-connected L
     </item>
     
     <item>
-      <title>Overview</title>
+      <title>Example 2</title>
       <link>http://gosparta.io/docs/apigateway/example2/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/apigateway/example2/</guid>
       <description>
 
-&lt;h2 id=&#34;a-href-hugoshortcode-1-example-2-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example 2 - Accepting Input&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-1-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Accepting Input&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
 
@@ -725,6 +685,60 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 &lt;h3 id=&#34;a-href-hugoshortcode-21-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Example 3</title>
+      <link>http://gosparta.io/docs/apigateway/example3/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/example3/</guid>
+      <description>
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-geoip-service-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;GeoIP service&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;TODO: Document &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Limitations</title>
+      <link>http://gosparta.io/docs/limitations/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/limitations/</guid>
+      <description>
+
+&lt;h2 id=&#34;sparta-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Limitations&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Go&lt;/em&gt; isn&amp;rsquo;t officially supported by AWS (yet)
+
+&lt;ul&gt;
+&lt;li&gt;But, you can &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;vote&lt;/a&gt; to make &lt;em&gt;golang&lt;/em&gt; officially supported.&lt;/li&gt;
+&lt;li&gt;Because of this, there is a per-container initialization cost of:
+
+&lt;ul&gt;
+&lt;li&gt;Copying the embedded binary to &lt;em&gt;/tmp&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Changing the binary permissions&lt;/li&gt;
+&lt;li&gt;Launching it from the new location&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://forums.aws.amazon.com/message.jspa?messageID=583910&#34;&gt;AWS Forum&lt;/a&gt; for more background&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
+&lt;li&gt;Once &lt;em&gt;Go&lt;/em&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
+&lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;aws-lambda-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;AWS Lambda Limitations&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Lambda is not yet globally available. Please view the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the latest deployment status.&lt;/li&gt;
+&lt;li&gt;There are &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda Limits&lt;/a&gt; that may affect your development&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s not possible to return a 3XX response with headers &lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;extracted from the response body&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
@@ -1082,101 +1096,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
 
 &lt;p&gt;TODO: SES source documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/eventsources/sns/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/sns/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Assume that we have an SNS topic that broadcasts notifications.  We&amp;rsquo;ve been asked to write a lambda function that logs the &lt;em&gt;Subject&lt;/em&gt; and &lt;em&gt;Message&lt;/em&gt; text to CloudWatch logs for later processing.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSNSEvent(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-  }).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; is expected to be triggered by SNS notifications, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an SNS-specific event provided by Sparta via:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaSNS.Event
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;SNS events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    &amp;#34;Subject&amp;#34;: eachRecord.Sns.Subject,
-    &amp;#34;Message&amp;#34;: eachRecord.Sns.Message,
-  }).Info(&amp;#34;SNS Event&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoSNSEvent&lt;/code&gt; function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: snsTopic,
-  },
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;snsTopic&lt;/code&gt; param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).&lt;/p&gt;
-
-&lt;p&gt;See the &lt;a href=&#34;http://gosparta.io/docs/eventsources/s3/#eventSourceRegistration&#34;&gt;S3 docs&lt;/a&gt; for more information on how the &lt;em&gt;Permissions&lt;/em&gt; data is processed.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SNS-triggered lambda:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;echoSNSEvent&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;TBD&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

@@ -102,7 +102,15 @@
         "Title": "",
         "URL": "/apigateway/example2",
         "Children": []
-      }]},
+      },
+      {
+        "Name": "GeoIP Service",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/apigateway/example3",
+        "Children": []
+      }
+      ]},
   {
     "Name": "Miscellaneous",
     "IconClass": "",
