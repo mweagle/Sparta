@@ -39,19 +39,9 @@ in service.
 
 Visit [gosparta.io](http://gosparta.io) for complete documentation.
 
-## Caveats
+## Limitations
 
-  1. _golang_ isn't officially supported by AWS (yet)
-    - But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
-    - Because of this, there is a per-container initialization cost of:
-        - Copying the embedded binary to _/tmp_
-        - Changing the binary permissions
-        - Launching it from the new location
-        - See the [AWS Forum](https://forums.aws.amazon.com/message.jspa?messageID=583910) for more background
-    - Depending on [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/), this initialization penalty (~`700ms`) may prove burdensome.
-    - See the [JAWS](https://github.com/jaws-framework/JAWS) project for a pure NodeJS alternative.
-    - See the [PAWS](https://github.com/braahyan/PAWS) project for a pure Python alternative.
-  1. There are [Lambda Limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that may affect your development
+See the [Limitations](http://gosparta.io/docs/limitations/) page for the most up-to-date information.
 
 ## Outstanding
   - Eliminate NodeJS CustomResources
