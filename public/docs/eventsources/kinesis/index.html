@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Home highlight:vs googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:yeti flattr: googleplus: twitter:mweagle github:https://github.com/mweagle]">
+<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: googleAnalytics:UA-70794971-1 home:Home highlight:vs googleplus: facebook: youtube: name:yeti]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -302,7 +302,7 @@
 	}).Info(&#34;Request received&#34;)</code></pre>
 
 
-<p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta [kinesis event](<a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event</a> and log the id to CloudWatch Logs:</p>
+<p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta <a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">kinesis event</a> and log the id to CloudWatch Logs:</p>
 
 <pre><code class="go">var lambdaEvent spartaKinesis.Event
   err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)

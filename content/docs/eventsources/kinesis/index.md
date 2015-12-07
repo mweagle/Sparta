@@ -29,7 +29,7 @@ func echoKinesisEvent(event *json.RawMessage,
 
 {{< /highlight >}}   
 
-For this sample all we're going to do is unmarshal the Kinesis [event](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually) to a Sparta [kinesis event](https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event and log the id to CloudWatch Logs:
+For this sample all we're going to do is unmarshal the Kinesis [event](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually) to a Sparta [kinesis event](https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event) and log the id to CloudWatch Logs:
 
 {{< highlight go >}}
 

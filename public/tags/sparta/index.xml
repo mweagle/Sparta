@@ -1226,7 +1226,7 @@ Verbs:
 	}).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;p&gt;For this sample all we&amp;rsquo;re going to do is unmarshal the Kinesis &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually&#34;&gt;event&lt;/a&gt; to a Sparta [kinesis event](&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&#34;&gt;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&lt;/a&gt; and log the id to CloudWatch Logs:&lt;/p&gt;
+&lt;p&gt;For this sample all we&amp;rsquo;re going to do is unmarshal the Kinesis &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually&#34;&gt;event&lt;/a&gt; to a Sparta &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&#34;&gt;kinesis event&lt;/a&gt; and log the id to CloudWatch Logs:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaKinesis.Event
   err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
