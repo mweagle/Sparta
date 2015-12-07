@@ -168,7 +168,7 @@ type Integration struct {
 
 func (integration Integration) defaultIntegrationRequestTemplates() map[string]string {
 	return map[string]string{
-		"application/json": escFSMustString(false, "/resources/gateway/inputmapping_json.vtl"),
+		"application/json": _escFSMustString(false, "/resources/gateway/inputmapping_json.vtl"),
 	}
 }
 

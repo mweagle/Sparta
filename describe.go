@@ -53,7 +53,7 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
 		}
 	*/
-	tmpl, err := template.New("description").Parse(escFSMustString(false, "/resources/describe/template.html"))
+	tmpl, err := template.New("description").Parse(_escFSMustString(false, "/resources/describe/template.html"))
 	if err != nil {
 		return errors.New(err.Error())
 	}
@@ -103,13 +103,13 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		serviceName,
 		serviceDescription,
 		cloudFormationTemplate.String(),
-		escFSMustString(false, "/resources/bootstrap/css/bootstrap.min.css"),
-		escFSMustString(false, "/resources/mermaid/mermaid.css"),
-		escFSMustString(false, "/resources/highlights/styles/vs.css"),
-		escFSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
-		escFSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
-		escFSMustString(false, "/resources/mermaid/mermaid.min.js"),
-		escFSMustString(false, "/resources/highlights/highlight.pack.js"),
+		_escFSMustString(false, "/resources/bootstrap/css/bootstrap.min.css"),
+		_escFSMustString(false, "/resources/mermaid/mermaid.css"),
+		_escFSMustString(false, "/resources/highlights/styles/vs.css"),
+		_escFSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
+		_escFSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
+		_escFSMustString(false, "/resources/mermaid/mermaid.min.js"),
+		_escFSMustString(false, "/resources/highlights/highlight.pack.js"),
 		b.String(),
 	}
 

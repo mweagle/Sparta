@@ -242,7 +242,7 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, errors.New("Failed to create ZIP entry: index.js")
 		}
-		nodeJSSource := escFSMustString(false, "/resources/index.js")
+		nodeJSSource := _escFSMustString(false, "/resources/index.js")
 		nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 		for _, eachLambda := range ctx.lambdaAWSInfos {
 			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
@@ -258,7 +258,7 @@ func createPackageStep() workflowStep {
 		// Also embed the custom resource creation scripts
 		for _, eachName := range customResourceScripts {
 			resourceName := fmt.Sprintf("/resources/provision/%s", eachName)
-			resourceContent := escFSMustString(false, resourceName)
+			resourceContent := _escFSMustString(false, resourceName)
 			stringReader := strings.NewReader(resourceContent)
 			embedWriter, err := lambdaArchive.Create(eachName)
 			if nil != err {
@@ -269,7 +269,7 @@ func createPackageStep() workflowStep {
 		}
 
 		// And finally, if there is a node_modules.zip file, then include it.
-		nodeModuleBytes, err := escFSByte(false, "/resources/provision/node_modules.zip")
+		nodeModuleBytes, err := _escFSByte(false, "/resources/provision/node_modules.zip")
 		if nil == err {
 			nodeModuleReader, err := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
 			if err != nil {
