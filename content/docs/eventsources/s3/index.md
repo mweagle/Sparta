@@ -130,7 +130,7 @@ When `Sparta` generates the CloudFormation template, it scans for `Permission` c
 
 ## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all S3-triggered lambda:
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:
 
   * Define the lambda function (`transformImage`).
   * Implement the associated business logic  (`stampImage`).

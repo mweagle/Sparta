@@ -47,7 +47,7 @@
         "Children": []
       },
       {
-        "Name": "Kinesis (TBD)",
+        "Name": "Kinesis",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/kinesis",

@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  7 
+    "wordCount":  337 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[facebook: youtube: home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: name:yeti linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr:]">
+<body class="map[home:Home highlight:vs googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:yeti flattr: googleplus: twitter:mweagle github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -216,7 +216,7 @@
         </li>
       
         <li>
-          <small><a href="/docs/eventsources/kinesis">Kinesis (TBD)</a></small>
+          <small><a href="/docs/eventsources/kinesis">Kinesis</a></small>
         </li>
       
         <li>
@@ -279,9 +279,87 @@
 </header>
 
     <div class="container content">
-  <p><span class="label label-warning">NOT YET IMPLEMENTED</span></p>
+  
 
-<p>TODO: Kinesis source documentation</p>
+<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to <a href="https://aws.amazon.com/kinesis/">Amazon Kinesis</a> streams.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
+
+<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+
+<p>The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.</p>
+
+<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+
+<p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
+
+<pre><code class="go">func echoKinesisEvent(event *json.RawMessage,
+                      context *sparta.LambdaContext,
+                      w http.ResponseWriter,
+                      logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+		&#34;RequestID&#34;: context.AWSRequestID,
+		&#34;Event&#34;:     string(*event),
+	}).Info(&#34;Request received&#34;)</code></pre>
+
+
+<p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta [kinesis event](<a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event</a> and log the id to CloudWatch Logs:</p>
+
+<pre><code class="go">var lambdaEvent spartaKinesis.Event
+  err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
+  if err != nil {
+    logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+  for _, eachRecord := range lambdaEvent.Records {
+    logger.WithFields(logrus.Fields{
+      &#34;EventID&#34;: eachRecord.EventID,
+    }).Info(&#34;Kinesis Event&#34;)
+  }
+}</code></pre>
+
+
+<p>With the function defined let&rsquo;s register it with Sparta.</p>
+
+<h2 id="a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+
+<p>First we wrap the <em>Go</em> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
+
+<pre><code class="go">lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)</code></pre>
+
+
+<p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
+
+<h2 id="a-href-hugoshortcode-7-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></h2>
+
+<p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
+
+<pre><code class="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
+  EventSourceArn:   aws.String(kinesisTestStream),
+  StartingPosition: aws.String(&#34;TRIM_HORIZON&#34;),
+  BatchSize:        aws.Int64(100),
+  Enabled:          aws.Bool(true),
+})</code></pre>
+
+
+<p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
+
+<h2 id="a-href-hugoshortcode-9-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+
+<p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:</p>
+
+<ul>
+<li>Define the lambda function (<code>echoKinesisEvent</code>).</li>
+<li>If needed, create the required <a href="https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition">IAMRoleDefinition</a> with appropriate privileges if the lambda function accesses other AWS services.</li>
+<li>Provide the lambda function &amp; IAMRoleDefinition to <code>sparta.NewLambda()</code></li>
+<li>Add the necessary <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput">EventSourceMappings</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is properly configured.</li>
+</ul>
+
+<h2 id="a-href-hugoshortcode-10-notes-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Notes</a></h2>
+
+<ul>
+<li>The Kinesis stream and the AWS Lambda function must be provisioned in the same region.</li>
+<li>The AWS docs have an excellent <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html">Kinesis EventSource</a> walkthrough.</li>
+</ul>
 
 </div>
 

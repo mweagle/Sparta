@@ -85,7 +85,7 @@ See the [S3 docs](http://gosparta.io/docs/eventsources/s3/#eventSourceRegistrati
 
 ## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
 
-With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all SNS-triggered lambda:
+With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all SNS-triggered lambda function:
 
   * Define the lambda function (`echoSNSEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
