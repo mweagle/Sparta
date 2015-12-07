@@ -8,7 +8,7 @@ type = "doc"
 
 ## <a href="{{< relref "#exampleS3" >}}">Using the Request Context</a>
 
-This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent]() event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaApplication/blob/master/main.go) service will return Geo information based on the inbound request's IP address.
+This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaApplication/blob/master/main.go) service will return Geo information based on the inbound request's IP address.
 
 ### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
 
@@ -248,3 +248,4 @@ go run main.go delete
 ## <a href="{{< relref "#otherNotes" >}}">Notes</a>
 
   * The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
+  * This is a port of Tom Maiaroto's https://github.com/tmaiaroto/go-lambda-geoip implementation.

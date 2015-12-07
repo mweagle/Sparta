@@ -714,7 +714,7 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-using-the-request-context-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Using the Request Context&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the [APIGatewayLambdaJSONEvent]() event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/main.go&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
+&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/main.go&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
 
@@ -945,6 +945,7 @@ func main() {
 
 &lt;ul&gt;
 &lt;li&gt;The &lt;em&gt;GeoLite2-Country.mmdb&lt;/em&gt; content is embedded in the go binary via &lt;a href=&#34;https://github.com/mjibson/esc&#34;&gt;esc&lt;/a&gt; as part of the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27&#34;&gt;go generate&lt;/a&gt; phase.&lt;/li&gt;
+&lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
