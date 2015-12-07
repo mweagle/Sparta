@@ -117,7 +117,7 @@ Outputs: [{
   }],
 {{< /highlight >}}
 
-### <a href="{{< relref "#example3Query" >}}">Query/a>
+### <a href="{{< relref "#example3Query" >}}">Query</a>
 
 With the API Gateway provisioned, let's check the response:
 

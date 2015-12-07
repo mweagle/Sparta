@@ -818,7 +818,7 @@ func main() {
   }],&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h3 id=&#34;a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query/a&amp;gt;&lt;/h3&gt;
+&lt;h3 id=&#34;a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;With the API Gateway provisioned, let&amp;rsquo;s check the response:&lt;/p&gt;
 
