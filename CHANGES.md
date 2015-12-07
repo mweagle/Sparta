@@ -3,8 +3,9 @@
   - :checkered_flag: **CHANGES**
     - Add [context](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) struct to APIGatewayLambdaJSONEvent
     - Default description based on *Go* function name for AWS Lambda if none provided
-    - Added [SNS Event](https://github.com/mweagle/Sparta/blob/master/aws/sns/events.go) types for unmarshalling
-    - Added [DynamoDB Event](https://github.com/mweagle/Sparta/blob/master/aws/dynamodb/events.go) types for unmarshalling
+    - Added [SNS Event](https://github.com/mweagle/Sparta/blob/master/aws/sns/events.go) types for unmarshaling
+    - Added [DynamoDB Event](https://github.com/mweagle/Sparta/blob/master/aws/dynamodb/events.go) types for unmarshaling
+    - Added [Kinesis Event](https://github.com/mweagle/Sparta/blob/master/aws/kinesis/events.go) types for unmarshaling
     - Fixed latent issue where `IAMRoleDefinition` CloudFormation names would collide if they had the same Permission set.
     - Remove _API Gateway_ view from `describe` if none is defined.
   - :warning: **BREAKING**
