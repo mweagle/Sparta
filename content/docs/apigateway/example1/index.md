@@ -112,6 +112,8 @@ curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
 {"code":200,"status":"OK","headers":{"date":"Sun, 06 Dec 2015 15:38:11 GMT","content-length":"970","content-type":"text/plain; charset=utf-8"},"results":{"method":"GET)","body":{},"headers":{"Accept":"*/*","CloudFront-Forwarded-Proto":"https","CloudFront-Is-Desktop-Viewer":"true","CloudFront-Is-Mobile-Viewer":"false","CloudFront-Is-SmartTV-Viewer":"false","CloudFront-Is-Tablet-Viewer":"false","CloudFront-Viewer-Country":"US","Via":"1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)","X-Amz-Cf-Id":"0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==","X-Forwarded-For":"50.135.43.1, 54.240.158.109","X-Forwarded-Port":"443","X-Forwarded-Proto":"https"},"queryParams":{},"pathParams":{},"context":{"apiId":"nevml0oa6e","method":"GET","requestId":"5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00","resourceId":"7619tp","resourcePath":"/hello/world/test","stage":"prod","identity":{"accountId":"","apiKey":"","caller":"","cognitoAuthenticationProvider":"","cognitoAuthenticationType":"","cognitoIdentityId":"","cognitoIdentityPoolId":"","sourceIp":"50.135.43.1","user":"","userAgent":"curl/7.43.0","userArn":""}}}}
 
+{{< /highlight >}}
+
 Pretty-printing the response body to make things more readable:
 
 {{< highlight json >}}
