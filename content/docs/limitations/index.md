@@ -19,10 +19,14 @@ type = "doc"
     * Once *Go* is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance & lower execution costs.
     * See the [JAWS](https://github.com/jaws-framework/JAWS) project for a pure NodeJS alternative.
     * See the [PAWS](https://github.com/braahyan/PAWS) project for a pure Python alternative.
-    
+
 
 ## AWS Lambda Limitations
 
   * Lambda is not yet globally available. Please view the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the latest deployment status.
   * There are [Lambda Limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that may affect your development
-  * It's not possible to return a 3XX response with headers [extracted from the response body](https://forums.aws.amazon.com/thread.jspa?threadID=210826)
+  * It's not possible to dynamically set HTTP response headers based on the Lambda response body:
+    * https://forums.aws.amazon.com/thread.jspa?threadID=203889
+    * https://forums.aws.amazon.com/thread.jspa?threadID=210826
+  * Similarly, it's not possible to set proper error response bodies.
+  

@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  143 
+    "wordCount":  155 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: name:yeti home:Home highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: googleAnalytics:UA-70794971-1 bitbucket: facebook: twitter:mweagle youtube:]">
+<body class="map[name:yeti linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: googleplus: facebook: youtube: home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -252,6 +252,10 @@
           <small><a href="/docs/apigateway/example3">GeoIP Service</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/apigateway/cors">CORS</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/miscellaneous">Miscellaneous</a>
@@ -304,7 +308,13 @@
 <ul>
 <li>Lambda is not yet globally available. Please view the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the latest deployment status.</li>
 <li>There are <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda Limits</a> that may affect your development</li>
-<li>It&rsquo;s not possible to return a 3XX response with headers <a href="https://forums.aws.amazon.com/thread.jspa?threadID=210826">extracted from the response body</a></li>
+<li>It&rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:
+
+<ul>
+<li><a href="https://forums.aws.amazon.com/thread.jspa?threadID=203889">https://forums.aws.amazon.com/thread.jspa?threadID=203889</a></li>
+<li><a href="https://forums.aws.amazon.com/thread.jspa?threadID=210826">https://forums.aws.amazon.com/thread.jspa?threadID=210826</a></li>
+</ul></li>
+<li>Similarly, it&rsquo;s not possible to set proper error response bodies.</li>
 </ul>
 
 </div>

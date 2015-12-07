@@ -989,8 +989,24 @@ func main() {
 &lt;ul&gt;
 &lt;li&gt;Lambda is not yet globally available. Please view the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the latest deployment status.&lt;/li&gt;
 &lt;li&gt;There are &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda Limits&lt;/a&gt; that may affect your development&lt;/li&gt;
-&lt;li&gt;It&amp;rsquo;s not possible to return a 3XX response with headers &lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;extracted from the response body&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=203889&#34;&gt;https://forums.aws.amazon.com/thread.jspa?threadID=203889&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;https://forums.aws.amazon.com/thread.jspa?threadID=210826&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Similarly, it&amp;rsquo;s not possible to set proper error response bodies.&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/apigateway/cors/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/cors/</guid>
+      <description>&lt;p&gt;TODO: Example of configuring &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;CORS&lt;/a&gt;.&lt;/p&gt;
 </description>
     </item>
     
@@ -1336,18 +1352,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
 &lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html&#34;&gt;S3 event source&lt;/a&gt; walkthrough.&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/eventsources/ses/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/ses/</guid>
-      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;TODO: SES source documentation&lt;/p&gt;
 </description>
     </item>
     

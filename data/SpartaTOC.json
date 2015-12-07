@@ -109,6 +109,13 @@
         "Title": "",
         "URL": "/apigateway/example3",
         "Children": []
+      },
+      {
+        "Name": "CORS",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/apigateway/cors",
+        "Children": []
       }
       ]},
   {
