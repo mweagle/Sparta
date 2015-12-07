@@ -12,7 +12,7 @@ type = "doc"
 This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
 
 
-### <a href="{{< relref "#exampleS3" >}}">Define the Lambda Function</a>
+### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
 
 Our function will accept two params:
 
@@ -244,6 +244,8 @@ Pretty printing the response body:
 }
 {{< /highlight >}}
 
+Please see the [first example](/docs/apigateway/example1) for more information on the `code`, `status`, and `headers` keys.
+
 What about an item that we know doesn't exist, but is in the bucket our lambda function has privileges to access:
 
 {{< highlight nohighlight >}}
@@ -304,6 +306,14 @@ curl -vs "https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName
 <
 * Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
 {"errorMessage":"{\"code\":500,\"status\":\"Internal Server Error\",\"headers\":{\"content-type\":\"text/plain; charset=utf-8\",\"x-content-type-options\":\"nosniff\",\"date\":\"Sun, 06 Dec 2015 02:42:52 GMT\",\"content-length\":\"60\"},\"error\":\"AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\"}","errorType":"Error","stackTrace":["IncomingMessage.<anonymous> (/var/task/index.js:68:53)","IncomingMessage.emit (events.js:117:20)","_stream_readable.js:944:16","process._tickCallback (node.js:442:13)"]}
+{{< /highlight >}}
+
+### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+
+Before moving on, remember to decommission the service via:
+
+{{< highlight nohighlight >}}
+go run application.go delete
 {{< /highlight >}}
 
 ### <a href="{{< relref "#example1WrappingUp" >}}">Wrapping Up</a>

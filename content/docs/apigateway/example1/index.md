@@ -252,6 +252,14 @@ These mappings are defaults, and it's possible to override either one by providi
   * [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration).  See the [DefaultIntegrationResponses](https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60) for the default values.
   * [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method).  See the [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) for the default method response mappings.
 
+### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+
+Before moving on, remember to decommission the service via:
+
+{{< highlight nohighlight >}}
+go run application.go delete
+{{< /highlight >}}
+
 ### <a href="{{< relref "#example1WrappingUp" >}}">Wrapping Up</a>
 
 Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we'll move on to performing a more complex operation, including returning a custom HTTP response body.

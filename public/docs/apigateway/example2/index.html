@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1149 
+    "wordCount":  1179 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[facebook: twitter:mweagle youtube: flattr: name:yeti home:Home github:https://github.com/mweagle bitbucket: highlight:vs googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: flattr: name:yeti highlight:vs linkedin:https://www.linkedin.com/in/mweagle googleplus: home:Home googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -281,7 +281,7 @@
 
 <p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43">SpartaApplication</a>.</p>
 
-<h3 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
+<h3 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleDefine:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
 
 <p>Our function will accept two params:</p>
 
@@ -385,12 +385,12 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function:</p>
 
-<p><pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/info&#34;, s3ItemInfoLambdaFn)
+<pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/info&#34;, s3ItemInfoLambdaFn)
 method, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
 if err != nil {
   return nil, err
 }</code></pre>
-</p>
+
 
 <h3 id="a-href-hugoshortcode-12-whitelist-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</a></h3>
 
@@ -510,6 +510,8 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 }</code></pre>
 </p>
 
+<p>Please see the <a href="/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
+
 <p>What about an item that we know doesn&rsquo;t exist, but is in the bucket our lambda function has privileges to access:</p>
 
 <p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
@@ -568,7 +570,14 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:42:52 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-21-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+<h3 id="a-href-hugoshortcode-21-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<p><pre><code class="nohighlight">go run application.go delete</code></pre>
+</p>
+
+<h3 id="a-href-hugoshortcode-23-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
 
 <p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.</p>
 
