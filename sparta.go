@@ -616,7 +616,8 @@ func (info *LambdaAWSInfo) jsHandlerName() string {
 
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
-func (info *LambdaAWSInfo) export(S3Bucket string,
+func (info *LambdaAWSInfo) export(serviceName string,
+	S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]interface{},
 	resources ArbitraryJSONObject,
@@ -636,7 +637,7 @@ func (info *LambdaAWSInfo) export(S3Bucket string,
 	}
 	lambdaDescription := info.Options.Description
 	if "" == lambdaDescription {
-		lambdaDescription = info.lambdaFnName
+		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFnName)
 	}
 	// Create the primary resource
 	primaryResource := ArbitraryJSONObject{

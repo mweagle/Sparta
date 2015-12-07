@@ -490,7 +490,13 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			"Description":              ctx.serviceDescription,
 		}
 		for _, eachEntry := range ctx.lambdaAWSInfos {
-			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+			err := eachEntry.export(ctx.serviceName,
+                              ctx.s3Bucket,
+                              s3Key,
+                              ctx.lambdaIAMRoleNameMap,
+                              ctx.cloudformationResources,
+                              ctx.cloudformationOutputs,
+                              ctx.logger)
 			if nil != err {
 				return nil, err
 			}
