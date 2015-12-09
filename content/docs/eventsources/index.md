@@ -13,7 +13,7 @@ There are several [event sources](http://docs.aws.amazon.com/lambda/latest/dg/in
   * [S3](/docs/eventsources/s3)
   * [SNS](/docs/eventsources/sns)
   * [DynamoDB](/docs/eventsources/dynamodb)
-  * [Kinesis](/docs/eventsources/kinesis) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [Kinesis](/docs/eventsources/kinesis)
   * [SES](/docs/eventsources/ses) <span class="label label-warning">NOT YET IMPLEMENTED</span>
   * [Cognito](/docs/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
   * [CloudWatch Logs](/docs/eventsources/cloudwatchlogs) <span class="label label-warning">NOT YET IMPLEMENTED</span>

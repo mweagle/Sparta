@@ -1188,7 +1188,7 @@ Verbs:
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/s3&#34;&gt;S3&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/sns&#34;&gt;SNS&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/dynamodb&#34;&gt;DynamoDB&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/kinesis&#34;&gt;Kinesis&lt;/a&gt; &lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/kinesis&#34;&gt;Kinesis&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/ses&#34;&gt;SES&lt;/a&gt; &lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/cognito&#34;&gt;Cognito&lt;/a&gt; &lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/eventsources/cloudwatchlogs&#34;&gt;CloudWatch Logs&lt;/a&gt; &lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/li&gt;
