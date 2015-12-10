@@ -875,6 +875,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 			OutputFile string `goptions:"-o,--out, description='Output file for HTML description', obligatory"`
 		} `goptions:"describe"`
 		Explore struct {
+			Port int `goptions:"-p,--port, description='Alternative port for HTTP binding (default=9999)'"`
 		} `goptions:"explore"`
 	}{ // Default values goes here
 		LogLevel: "info",
@@ -902,7 +903,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		err = Delete(serviceName, logger)
 	case "explore":
 		logger.Formatter = new(logrus.TextFormatter)
-		err = Explore(serviceName, logger)
+		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
 	case "describe":
 		logger.Formatter = new(logrus.TextFormatter)
 		fileWriter, err := os.Create(options.Describe.OutputFile)

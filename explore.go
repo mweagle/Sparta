@@ -4,85 +4,33 @@ package sparta
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
 )
-
-type provisionedResources []*cloudformation.StackResourceSummary
-
-func stackLambdaResources(serviceName string, cf *cloudformation.CloudFormation, logger *logrus.Logger) (provisionedResources, error) {
-
-	resources := make(provisionedResources, 0)
-	nextToken := ""
-	for {
-		params := &cloudformation.ListStackResourcesInput{
-			StackName: aws.String(serviceName),
-		}
-		if "" != nextToken {
-			params.NextToken = aws.String(nextToken)
-		}
-		resp, err := cf.ListStackResources(params)
-
-		if err != nil {
-			logger.Error(err.Error())
-			return nil, err
-		}
-		for _, eachSummary := range resp.StackResourceSummaries {
-			if *eachSummary.ResourceType == "AWS::Lambda::Function" {
-				resources = append(resources, eachSummary)
-			}
-		}
-		if nil != resp.NextToken {
-			nextToken = *resp.NextToken
-		} else {
-			break
-		}
-	}
-	return resources, nil
-}
-
-func promptForSelection(lambdaFunctions provisionedResources) *cloudformation.StackResourceSummary {
-	fmt.Printf("Please choose the lambda function to test:\n")
-	for index, eachSummary := range lambdaFunctions {
-		fmt.Printf("  (%d) %s\n", index+1, *eachSummary.PhysicalResourceId)
-	}
-	fmt.Printf("Selection: ")
-	var selection string
-	fmt.Scanln(&selection)
-	selectedIndex, err := strconv.Atoi(selection)
-	if nil != err {
-		return nil
-	} else if selectedIndex > 0 && selectedIndex <= len(lambdaFunctions) {
-		return lambdaFunctions[selectedIndex-1]
-	} else {
-		return nil
-	}
-}
 
 // Explore supports interactive command line invocation of the previously
 // provisioned Sparta service
-func Explore(serviceName string, logger *logrus.Logger) error {
-	session := awsSession(logger)
-	awsCloudFormation := cloudformation.New(session)
+func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) error {
+	if 0 == port {
+		port = 9999
+	}
+	urlHost := fmt.Sprintf("http://localhost:%d", port)
+	logger.Info("The following URLs are available for testing.")
 
-	exists, err := stackExists(serviceName, awsCloudFormation, logger)
-	if nil != err {
-		return err
-	} else if !exists {
-		logger.Info("Stack does not exist: ", serviceName)
-		return nil
-	} else {
-		resources, err := stackLambdaResources(serviceName, awsCloudFormation, logger)
-		if nil != err {
-			return nil
-		}
-		selected := promptForSelection(resources)
-		if nil != selected {
-			logger.Info("TODO: Invoke", selected)
+	msgText := ""
+	for _, eachLambdaInfo := range lambdaAWSInfos {
+		functionPath := fmt.Sprintf("%s/%s", urlHost, eachLambdaInfo.lambdaFnName)
+		logger.WithFields(logrus.Fields{
+			"Path": functionPath,
+		}).Info(eachLambdaInfo.lambdaFnName)
+
+		if msgText == "" {
+			msgText = fmt.Sprintf("\tcurl -vs -X POST -H \"Content-Type: application/json\" --data @testEvent.json %s", functionPath)
 		}
 	}
-	return nil
+	logger.Info("Functions can be invoked via application/json over POST")
+	logger.Info(msgText)
+	logger.Info("Where @testEvent.json is a local file with top level `context` and `event` keys")
+	// Start up the localhost server and publish the info
+	return Execute(lambdaAWSInfos, port, 0, logger)
 }
