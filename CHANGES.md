@@ -1,9 +1,14 @@
+## v0.0.8
+- :checkered_flag: **CHANGES**
+  - Reimplement `explore` command line option.
+    - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
+  - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
+  - :warning: **BREAKING**
+    - N/A
+
 ## v0.0.7
   - Documentation moved to [gosparta.io](http://gosparta.io)
-  - :checkered_flag: **CHANGES**
-    - Reimplement `explore` command line option.
-      - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
-    - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_ compliant value for `go test` integration.
+ compliant value for `go test` integration.
     - Add [context](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) struct to APIGatewayLambdaJSONEvent
     - Default description based on *Go* function name for AWS Lambda if none provided
     - Added [SNS Event](https://github.com/mweagle/Sparta/blob/master/aws/sns/events.go) types for unmarshaling
