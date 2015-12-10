@@ -27,7 +27,7 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 	return errors.New("Describe not supported for this binary")
 }
 
-func Explore(serviceName string, logger *logrus.Logger) error {
+func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) error {
 	logger.Error("Explore() not supported in AWS Lambda binary")
 	return errors.New("Explore not supported for this binary")
 }
