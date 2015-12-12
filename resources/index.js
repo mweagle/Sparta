@@ -14,7 +14,7 @@ var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME);
 var MAXIMUM_RESPAWN_COUNT = 5;
 
-var PROXIED_MODULES = ['s3', 'sns', 'apigateway'];
+var PROXIED_MODULES = ['s3', 'sns', 'apigateway', 's3Site'];
 
 var golangProcess = null;
 var failCount = 0;
