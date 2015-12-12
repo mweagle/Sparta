@@ -31,6 +31,10 @@ var PushSourceConfigurationActions = map[string][]string{
 		"lambda:GetPolicy"},
 }
 
+func nodeJSHandlerName(jsBaseFilename string) string {
+	return fmt.Sprintf("index.%sConfiguration", jsBaseFilename)
+}
+
 func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
@@ -43,7 +47,11 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
 	// TODO - Check sourceArn for equivalence
-	iamResourceName, err := ensureIAMRoleResource(awsPrincipalName, sourceArn, resources, logger)
+	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
+	if !exists {
+		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
+	}
+	iamResourceName, err := ensureIAMRoleResource(principalActions, sourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
@@ -53,7 +61,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	}
 	// Custom handler resource for this service type
 	subscriberHandlerName := fmt.Sprintf("%sSubscriber", awsServiceName)
-	_, exists := resources[subscriberHandlerName]
+	_, exists = resources[subscriberHandlerName]
 	if !exists {
 		logger.Info("Creating Subscription Lambda Resource for AWS service: ", awsServiceName)
 
@@ -62,7 +70,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 		// NOTE: This brittle function name has an analog in ./resources/index.js b/c the
 		// AWS Lamba execution treats the entire ZIP file as a module.  So all module exports
 		// need to be forwarded through the module's index.js file.
-		handlerName := fmt.Sprintf("index.%sConfiguration", configuratorExportName)
+		handlerName := nodeJSHandlerName(configuratorExportName)
 		logger.Debug("Lambda Configuration handler: ", handlerName)
 
 		customResourceHandlerDef := ArbitraryJSONObject{
@@ -83,19 +91,14 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	return subscriberHandlerName, nil
 }
 
-func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
-	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
-	if !exists {
-		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
-	}
-
+func ensureIAMRoleResource(principalActions []string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%s%s", awsPrincipalName, salt)))
+	hash.Write([]byte(fmt.Sprintf("%s%s", sourceArn, salt)))
 	roleName := fmt.Sprintf("ConfigIAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 
 	logger.WithFields(logrus.Fields{
 		"PrincipalActions": principalActions,
-		"Principal":        awsPrincipalName,
+		"SourceArn":        sourceArn,
 	}).Debug("Ensuring IAM Role results")
 
 	existingResource, exists := resources[roleName]
@@ -148,7 +151,7 @@ func ensureIAMRoleResource(awsPrincipalName string, sourceArn string, resources 
 			"AssumeRolePolicyDocument": AssumePolicyDocument,
 			"Policies": []ArbitraryJSONObject{
 				{
-					"PolicyName": fmt.Sprintf("Configurator%s", CloudFormationResourceName(awsPrincipalName)),
+					"PolicyName": CloudFormationResourceName("Config", sourceArn),
 					"PolicyDocument": ArbitraryJSONObject{
 						"Version":   "2012-10-17",
 						"Statement": statements,
