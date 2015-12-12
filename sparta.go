@@ -576,6 +576,9 @@ func (roleDefinition *IAMRoleDefinition) logicalName() string {
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+// Interface type to support multiple lambda runtimes
+
+////////////////////////////////////////////////////////////////////////////////
 // START - LambdaAWSInfo
 //
 
@@ -851,7 +854,7 @@ func NewLogger(level string) (*logrus.Logger, error) {
 // properly configured AWS credentials for the golang SDK.
 // See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
 // for more information.
-func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API) error {
+func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
 
 	// We need to be able to provision an IAM role that has capabilities to
 	// manage the other sources.  That'll give us the role arn to use in the custom
@@ -894,7 +897,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	switch options.Verb {
 	case "provision":
 		logger.Formatter = new(logrus.TextFormatter)
-		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, options.Provision.S3Bucket, nil, logger)
+		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
 	case "execute":
 		logger.Formatter = new(logrus.JSONFormatter)
 		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
@@ -911,7 +914,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
 		}
 		defer fileWriter.Close()
-		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, fileWriter, logger)
+		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, site, fileWriter, logger)
 	default:
 		goptions.PrintHelp()
 		err = fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))

@@ -32,9 +32,9 @@ func describeAPI() string {
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
 // line option.
-func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, outputWriter io.Writer, logger *logrus.Logger) error {
+func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Site *S3Site, outputWriter io.Writer, logger *logrus.Logger) error {
 	var cloudFormationTemplate bytes.Buffer
-	err := Provision(true, serviceName, serviceDescription, lambdaAWSInfos, api, "S3Bucket", &cloudFormationTemplate, logger)
+	err := Provision(true, serviceName, serviceDescription, lambdaAWSInfos, api, s3Site, "S3Bucket", &cloudFormationTemplate, logger)
 	if nil != err {
 		return err
 	}
