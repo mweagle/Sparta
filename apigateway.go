@@ -34,6 +34,13 @@ import (
   }
 */
 
+const (
+	// OutputAPIGatewayURL is the keyname used in the CloudFormation Output
+	// that stores the APIGateway provisioned URL
+	// @enum OutputKey
+	OutputAPIGatewayURL = "APIGatewayURL"
+)
+
 // APIGatewayIdentity represents the user identity of a request
 // made on behalf of the API Gateway
 type APIGatewayIdentity struct {
@@ -470,7 +477,7 @@ func (api *API) export(S3Bucket string,
 		},
 	}
 
-	outputs["URL"] = apiGatewayOutput
+	outputs[OutputAPIGatewayURL] = apiGatewayOutput
 	return nil
 }
 
