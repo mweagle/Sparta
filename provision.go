@@ -206,7 +206,7 @@ func uploadPackage(packagePath string, S3Bucket string, noop bool, logger *logru
 			return "", err
 		}
 		logger.WithFields(logrus.Fields{
-			"Location": result.Location,
+			"URL": result.Location,
 		}).Info("Upload complete")
 	}
 	return keyName, nil
@@ -350,6 +350,7 @@ func createPackageStep() workflowStep {
 		}
 
 		ctx.logger.WithFields(logrus.Fields{
+			"KB": stat.Size() / 1024,
 			"MB": stat.Size() / (1024 * 1024),
 		}).Info("Executable binary size")
 
@@ -671,18 +672,13 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
 	} else if nil != stackInfo.Outputs {
-		delimiter := strings.Repeat("-", 80)
-		ctx.logger.Info(delimiter)
-		ctx.logger.Info("Stack outputs:")
-		ctx.logger.Info(delimiter)
-
 		for _, eachOutput := range stackInfo.Outputs {
 			ctx.logger.WithFields(logrus.Fields{
+				"Key":         *eachOutput.OutputKey,
 				"Value":       *eachOutput.OutputValue,
 				"Description": *eachOutput.Description,
-			}).Info(*eachOutput.OutputKey)
+			}).Info("Stack output")
 		}
-		ctx.logger.Info(delimiter)
 	}
 	return stackInfo, nil
 }
@@ -772,7 +768,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 				return nil, err
 			}
 			ctx.logger.WithFields(logrus.Fields{
-				"Location": templateUploadResult.Location,
+				"URL": templateUploadResult.Location,
 			}).Info("Template uploaded")
 
 			stack, err := convergeStackState(templateUploadResult.Location, ctx)
