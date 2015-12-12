@@ -1,5 +1,6 @@
 ## v0.0.8
 - :checkered_flag: **CHANGES**
+  - Update logging to use structured fields rather than variadic, concatenation
   - Reimplement `explore` command line option.
     - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
   - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
