@@ -1,8 +1,8 @@
 var crypto = require('crypto');
 var util = require('util');
 var response = require('./cfn-response');
-var _ = require('./underscore-min');
-var async = require('./async.min');
+var _ = require('underscore');
+var async = require('async');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 //awsConfig.logger = console;
