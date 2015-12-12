@@ -30,6 +30,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 	"time"
@@ -46,19 +47,20 @@ import (
 const (
 	// OutputSpartaHomeKey is the keyname used in the CloudFormation Output
 	// that stores the Sparta home URL.
+	// @enum OutputKey
 	OutputSpartaHomeKey = "SpartaHome"
 
 	// OutputSpartaVersionKey is the keyname used in the CloudFormation Output
 	// that stores the Sparta version used to provision/update the service.
+	// @enum OutputKey
 	OutputSpartaVersionKey = "SpartaVersion"
 )
 
 var customResourceScripts = []string{"cfn-response.js",
-	"underscore-min.js",
-	"async.min.js",
 	"apigateway.js",
 	"s3.js",
 	"sns.js",
+	"s3Site.js",
 	"golang-constants.json"}
 
 type workflowContext struct {
@@ -67,20 +69,152 @@ type workflowContext struct {
 	serviceDescription      string
 	lambdaAWSInfos          []*LambdaAWSInfo
 	api                     *API
+	site                    *S3Site
 	cloudformationResources ArbitraryJSONObject
 	cloudformationOutputs   ArbitraryJSONObject
 	lambdaIAMRoleNameMap    map[string]interface{}
 	s3Bucket                string
 	s3LambdaZipKey          string
+	s3SiteLambdaZipKey      string
 	awsSession              *session.Session
 	templateWriter          io.Writer
 	logger                  *logrus.Logger
 }
 
-type customResourceManager struct {
+type workflowStep func(ctx *workflowContext) (workflowStep, error)
+
+// Utility method to create archive path in current working directory
+func temporaryFile(name string) (*os.File, error) {
+	workingDir, err := os.Getwd()
+	if nil != err {
+		return nil, err
+	}
+	tmpFile, err := ioutil.TempFile(workingDir, name)
+	if err != nil {
+		return nil, errors.New("Failed to create temporary file")
+	}
+	return tmpFile, nil
 }
 
-type workflowStep func(ctx *workflowContext) (workflowStep, error)
+// Utillity method to add an item to a Zip archive
+func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
+	fullPathSource, err := filepath.Abs(source)
+	if nil != err {
+		return err
+	}
+	appendFile := func(sourceFile string) error {
+		// Get the relative path
+		var name = filepath.Base(sourceFile)
+		if sourceFile != rootSource {
+			name = strings.TrimPrefix(strings.TrimPrefix(sourceFile, rootSource), string(os.PathSeparator))
+		}
+		binaryWriter, err := zipWriter.Create(name)
+		logger.WithFields(logrus.Fields{
+			"Root":    rootSource,
+			"ZipName": name,
+		}).Info("ZipFile")
+
+		if err != nil {
+			return fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(sourceFile))
+		}
+		reader, err := os.Open(sourceFile)
+		if err != nil {
+			return fmt.Errorf("Failed to open file: %s", sourceFile)
+		}
+		defer reader.Close()
+		io.Copy(binaryWriter, reader)
+		return nil
+	}
+
+	appendDirectory := func(sourceDirectory string) error {
+		logger.Info("appendDirectory: ", sourceDirectory)
+
+		var directories []os.FileInfo
+		entries, err := ioutil.ReadDir(sourceDirectory)
+		if nil != err {
+			return err
+		}
+		for _, eachFileInfo := range entries {
+			logger.Info("Checking: ", eachFileInfo.Name())
+
+			switch mode := eachFileInfo.Mode(); {
+			case mode.IsRegular():
+				sourceEntry := path.Join(fullPathSource, eachFileInfo.Name())
+				err = appendFile(sourceEntry)
+				if nil != err {
+					return err
+				}
+			case mode.IsDir():
+				directories = append(directories, eachFileInfo)
+			}
+		}
+		for _, eachDirInfo := range directories {
+			sourceEntry := path.Join(fullPathSource, eachDirInfo.Name())
+			err = addToZip(zipWriter, sourceEntry, rootSource, logger)
+			if nil != err {
+				return err
+			}
+		}
+		return nil
+	}
+
+	fileInfo, err := os.Stat(fullPathSource)
+	if nil != err {
+		return err
+	}
+	switch mode := fileInfo.Mode(); {
+	case mode.IsDir():
+		err = appendDirectory(fullPathSource)
+	case mode.IsRegular():
+		err = appendFile(fullPathSource)
+	default:
+		err = errors.New("Inavlid source type")
+	}
+	zipWriter.Close()
+	return err
+}
+
+// Upload the ZIP archive to S3
+func uploadPackage(packagePath string, S3Bucket string, noop bool, logger *logrus.Logger) (string, error) {
+	reader, err := os.Open(packagePath)
+	if err != nil {
+		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
+	}
+	defer func() {
+		reader.Close()
+		os.Remove(packagePath)
+	}()
+
+	body, err := os.Open(packagePath)
+	if nil != err {
+		return "", err
+	}
+	// Cache it in case there was an error & we need to cleanup
+	keyName := filepath.Base(packagePath)
+
+	uploadInput := &s3manager.UploadInput{
+		Bucket:      &S3Bucket,
+		Key:         &keyName,
+		ContentType: aws.String("application/zip"),
+		Body:        body,
+	}
+
+	if noop {
+		logger.WithFields(logrus.Fields{
+			"Bucket": S3Bucket,
+			"Key":    keyName,
+		}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
+	} else {
+		logger.Info("Uploading ZIP archive to S3")
+		uploader := s3manager.NewUploader(session.New())
+		result, err := uploader.Upload(uploadInput)
+		if nil != err {
+			return "", err
+		}
+		logger.Info("ZIP archive uploaded: ", result.Location)
+	}
+	return keyName, nil
+}
 
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
@@ -202,19 +336,11 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, errors.New("Failed to stat build output")
 		}
-		// Minimum hello world size is 2.3M
-		// Minimum HTTP hello world is 6.3M
 		ctx.logger.Info("Executable binary size (MB): ", stat.Size()/(1024*1024))
-
-		workingDir, err := os.Getwd()
-		if err != nil {
-			return nil, errors.New("Failed to retrieve working directory")
-		}
-		tmpFile, err := ioutil.TempFile(workingDir, sanitizedServiceName)
+		tmpFile, err := temporaryFile(sanitizedServiceName)
 		if err != nil {
 			return nil, errors.New("Failed to create temporary file")
 		}
-
 		defer func() {
 			tmpFile.Close()
 		}()
@@ -274,6 +400,7 @@ func createPackageStep() workflowStep {
 			if err != nil {
 				return nil, err
 			}
+			ctx.logger.Info("Embedding CustomResource node_modules.zip")
 			for _, zipFile := range nodeModuleReader.File {
 				embedWriter, err := lambdaArchive.Create(zipFile.Name)
 				if nil != err {
@@ -296,42 +423,49 @@ func createPackageStep() workflowStep {
 // Upload the ZIP archive to S3
 func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
-		reader, err := os.Open(packagePath)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
-		}
-		defer func() {
-			reader.Close()
-			os.Remove(packagePath)
-		}()
+		// TODO: transform into goroutines
 
-		body, err := os.Open(packagePath)
+		// We always upload the primary code package
+		// First try and upload the primary archive
+		keyName, err := uploadPackage(packagePath, ctx.s3Bucket, ctx.noop, ctx.logger)
+		ctx.s3LambdaZipKey = keyName
 		if nil != err {
 			return nil, err
 		}
-		keyName := filepath.Base(packagePath)
-		// Cache it in case there was an error & we need to cleanup
-		ctx.s3LambdaZipKey = keyName
-		uploadInput := &s3manager.UploadInput{
-			Bucket:      &ctx.s3Bucket,
-			Key:         &keyName,
-			ContentType: aws.String("application/zip"),
-			Body:        body,
-		}
+		// S3 site to upload?
+		if nil != ctx.site {
+			ctx.logger.Info("Creating S3 Site archive")
+			tempName := fmt.Sprintf("%s-S3Site", ctx.serviceName)
+			tmpFile, err := temporaryFile(tempName)
+			if err != nil {
+				return nil, errors.New("Failed to create temporary file")
+			}
+			defer func() {
+				tmpFile.Close()
+			}()
 
-		if ctx.noop {
 			ctx.logger.WithFields(logrus.Fields{
-				"Bucket": ctx.s3Bucket,
-				"Key":    keyName,
-			}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
-		} else {
-			ctx.logger.Info("Uploading ZIP archive to S3")
-			uploader := s3manager.NewUploader(session.New())
-			result, err := uploader.Upload(uploadInput)
+				"S3Key": path.Base(tmpFile.Name()),
+			}).Info("Creating S3Site archive")
+
+			// Add the contents to the Zip file
+			zipArchive := zip.NewWriter(tmpFile)
+			absResourcePath, err := filepath.Abs(ctx.site.resources)
 			if nil != err {
 				return nil, err
 			}
-			ctx.logger.Info("ZIP archive uploaded: ", result.Location)
+			err = addToZip(zipArchive, absResourcePath, absResourcePath, ctx.logger)
+			if nil != err {
+				return nil, err
+			}
+			zipArchive.Close()
+			tmpFile.Close()
+			// Upload it & save the key
+			s3SiteLambdaZipKey, err := uploadPackage(tmpFile.Name(), ctx.s3Bucket, ctx.noop, ctx.logger)
+			ctx.s3SiteLambdaZipKey = s3SiteLambdaZipKey
+			if nil != err {
+				return nil, err
+			}
 		}
 		return ensureCloudFormationStack(keyName), nil
 	}
@@ -359,6 +493,23 @@ func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger
 	return exists, nil
 }
 
+func stackCapabilities(templateResources ArbitraryJSONObject) []*string {
+	// Only require IAM capability if the definition requires it.
+	var capabilities []*string
+	for _, eachResource := range templateResources {
+		if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
+			found := false
+			for _, eachElement := range capabilities {
+				found = (found || (*eachElement == "CAPABILITY_IAM"))
+			}
+			if !found {
+				capabilities = append(capabilities, aws.String("CAPABILITY_IAM"))
+			}
+		}
+	}
+	return capabilities
+}
+
 // TODO: Replace this with the implementation
 // provided by vendor/github.com/aws/aws-sdk-go/service/cloudformation/waiters.go
 func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
@@ -375,7 +526,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		updateStackInput := &cloudformation.UpdateStackInput{
 			StackName:    aws.String(ctx.serviceName),
 			TemplateURL:  aws.String(cfTemplateURL),
-			Capabilities: []*string{aws.String("CAPABILITY_IAM")},
+			Capabilities: stackCapabilities(ctx.cloudformationResources),
 		}
 		updateStackResponse, err := awsCloudFormation.UpdateStack(updateStackInput)
 		if nil != err {
@@ -390,7 +541,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			TemplateURL:      aws.String(cfTemplateURL),
 			TimeoutInMinutes: aws.Int64(5),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
-			Capabilities:     []*string{aws.String("CAPABILITY_IAM")},
+			Capabilities:     stackCapabilities(ctx.cloudformationResources),
 		}
 		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
 		if nil != err {
@@ -490,20 +641,23 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		}
 		for _, eachEntry := range ctx.lambdaAWSInfos {
 			err := eachEntry.export(ctx.serviceName,
-                              ctx.s3Bucket,
-                              s3Key,
-                              ctx.lambdaIAMRoleNameMap,
-                              ctx.cloudformationResources,
-                              ctx.cloudformationOutputs,
-                              ctx.logger)
+				ctx.s3Bucket,
+				s3Key,
+				ctx.lambdaIAMRoleNameMap,
+				ctx.cloudformationResources,
+				ctx.cloudformationOutputs,
+				ctx.logger)
 			if nil != err {
 				return nil, err
 			}
 		}
-		// If there's an API gateway definition, provision custom resources
-		// and IAM role to
+		// If there's an API gateway definition, include the resources that provision it
 		if nil != ctx.api {
 			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+		}
+		// If there's a Site defined, include the resources the provision it
+		if nil != ctx.site {
+			ctx.site.export(ctx.s3Bucket, s3Key, ctx.s3SiteLambdaZipKey, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
 		}
 		// Add Sparta outputs
 		ctx.cloudformationOutputs[OutputSpartaVersionKey] = ArbitraryJSONObject{
@@ -600,9 +754,12 @@ func Provision(noop bool,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api *API,
+	site *S3Site,
 	s3Bucket string,
 	templateWriter io.Writer,
 	logger *logrus.Logger) error {
+
+	startTime := time.Now()
 
 	ctx := &workflowContext{
 		noop:               noop,
@@ -610,6 +767,7 @@ func Provision(noop bool,
 		serviceDescription: serviceDescription,
 		lambdaAWSInfos:     lambdaAWSInfos,
 		api:                api,
+		site:               site,
 		cloudformationResources: make(ArbitraryJSONObject, 0),
 		cloudformationOutputs:   make(ArbitraryJSONObject, 0),
 		s3Bucket:                s3Bucket,
@@ -641,6 +799,8 @@ func Provision(noop bool,
 			return err
 		}
 		if next == nil {
+			elapsed := time.Since(startTime)
+			logger.Info("Elapsed time (seconds): ", fmt.Sprintf("%9.f", elapsed.Seconds()))
 			break
 		} else {
 			step = next
