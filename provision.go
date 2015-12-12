@@ -109,11 +109,6 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 			name = strings.TrimPrefix(strings.TrimPrefix(sourceFile, rootSource), string(os.PathSeparator))
 		}
 		binaryWriter, err := zipWriter.Create(name)
-		logger.WithFields(logrus.Fields{
-			"Root":    rootSource,
-			"ZipName": name,
-		}).Info("ZipFile")
-
 		if err != nil {
 			return fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(sourceFile))
 		}
@@ -127,7 +122,6 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	}
 
 	appendDirectory := func(sourceDirectory string) error {
-		logger.Info("appendDirectory: ", sourceDirectory)
 
 		var directories []os.FileInfo
 		entries, err := ioutil.ReadDir(sourceDirectory)
@@ -135,8 +129,6 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 			return err
 		}
 		for _, eachFileInfo := range entries {
-			logger.Info("Checking: ", eachFileInfo.Name())
-
 			switch mode := eachFileInfo.Mode(); {
 			case mode.IsRegular():
 				sourceEntry := path.Join(fullPathSource, eachFileInfo.Name())
@@ -205,13 +197,17 @@ func uploadPackage(packagePath string, S3Bucket string, noop bool, logger *logru
 			"Key":    keyName,
 		}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
 	} else {
-		logger.Info("Uploading ZIP archive to S3")
+		logger.WithFields(logrus.Fields{
+			"Source": packagePath,
+		}).Info("Uploading ZIP archive")
 		uploader := s3manager.NewUploader(session.New())
 		result, err := uploader.Upload(uploadInput)
 		if nil != err {
 			return "", err
 		}
-		logger.Info("ZIP archive uploaded: ", result.Location)
+		logger.WithFields(logrus.Fields{
+			"Location": result.Location,
+		}).Info("Upload complete")
 	}
 	return keyName, nil
 }
@@ -265,15 +261,20 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 			}
 		}
 	}
-	ctx.logger.Info("IAM roles verified. Count: ", len(ctx.lambdaIAMRoleNameMap))
+	ctx.logger.WithFields(logrus.Fields{
+		"Count": len(ctx.lambdaIAMRoleNameMap),
+	}).Info("IAM roles verified")
+
 	return createPackageStep(), nil
 }
 
 // Return a string representation of a JS function call that can be exposed
 // to AWS Lambda
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
-	// Create an entry of the form:
-	logger.Info("Creating NodeJS proxy entry: " + lambdaInfo.jsHandlerName())
+	logger.WithFields(logrus.Fields{
+		"Handler": lambdaInfo.jsHandlerName(),
+	}).Info("Creating NodeJS proxy entry")
+
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		lambdaInfo.jsHandlerName(),
 		lambdaInfo.lambdaFnName)
@@ -315,10 +316,21 @@ func createPackageStep() workflowStep {
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
 		cmd := exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
-		ctx.logger.Debug("Building application binary: ", cmd.Args)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"Arguments": cmd.Args,
+		}).Debug("Building application binary")
+
 		cmd.Env = os.Environ()
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64", "GO15VENDOREXPERIMENT=1")
-		ctx.logger.Info("Compiling binary: ", executableOutput)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"Name": executableOutput,
+		}).Info("Compiling binary")
+
+		ctx.logger.WithFields(logrus.Fields{
+			"Env": cmd.Env,
+		}).Debug("Compilation environment")
 
 		outputWriter := ctx.logger.Writer()
 		defer outputWriter.Close()
@@ -336,7 +348,11 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, errors.New("Failed to stat build output")
 		}
-		ctx.logger.Info("Executable binary size (MB): ", stat.Size()/(1024*1024))
+
+		ctx.logger.WithFields(logrus.Fields{
+			"MB": stat.Size() / (1024 * 1024),
+		}).Info("Executable binary size")
+
 		tmpFile, err := temporaryFile(sanitizedServiceName)
 		if err != nil {
 			return nil, errors.New("Failed to create temporary file")
@@ -345,7 +361,10 @@ func createPackageStep() workflowStep {
 			tmpFile.Close()
 		}()
 
-		ctx.logger.Info("Creating ZIP archive for upload: ", tmpFile.Name())
+		ctx.logger.WithFields(logrus.Fields{
+			"TempName": tmpFile.Name(),
+		}).Info("Creating ZIP archive for upload")
+
 		lambdaArchive := zip.NewWriter(tmpFile)
 		defer lambdaArchive.Close()
 
@@ -376,7 +395,11 @@ func createPackageStep() workflowStep {
 		// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 		// with the service binary name
 		nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
-		ctx.logger.Debug("Dynamically generated NodeJS adapter:\n", nodeJSSource)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"Entry": nodeJSSource,
+		}).Debug("Dynamically generated NodeJS adapter")
+
 		stringReader := strings.NewReader(nodeJSSource)
 		io.Copy(nodeJSWriter, stringReader)
 
@@ -389,7 +412,10 @@ func createPackageStep() workflowStep {
 			if nil != err {
 				return nil, err
 			}
-			ctx.logger.Info("Embedding CustomResource script: ", eachName)
+			ctx.logger.WithFields(logrus.Fields{
+				"Name": eachName,
+			}).Info("Embedding CustomResource script")
+
 			io.Copy(embedWriter, stringReader)
 		}
 
@@ -400,13 +426,19 @@ func createPackageStep() workflowStep {
 			if err != nil {
 				return nil, err
 			}
-			ctx.logger.Info("Embedding CustomResource node_modules.zip")
+			ctx.logger.WithFields(logrus.Fields{
+				"Name": "/resources/provision/node_modules.zip",
+			}).Info("Embedding CustomResource node_modules.zip")
+
 			for _, zipFile := range nodeModuleReader.File {
 				embedWriter, err := lambdaArchive.Create(zipFile.Name)
 				if nil != err {
 					return nil, err
 				}
-				ctx.logger.Debug("Copying node_module file: ", zipFile.Name)
+				ctx.logger.WithFields(logrus.Fields{
+					"Name": zipFile.Name,
+				}).Debug("Copying embedded node_module file")
+
 				sourceReader, err := zipFile.Open()
 				if err != nil {
 					return nil, err
@@ -434,7 +466,6 @@ func createUploadStep(packagePath string) workflowStep {
 		}
 		// S3 site to upload?
 		if nil != ctx.site {
-			ctx.logger.Info("Creating S3 Site archive")
 			tempName := fmt.Sprintf("%s-S3Site", ctx.serviceName)
 			tmpFile, err := temporaryFile(tempName)
 			if err != nil {
@@ -444,16 +475,18 @@ func createUploadStep(packagePath string) workflowStep {
 				tmpFile.Close()
 			}()
 
-			ctx.logger.WithFields(logrus.Fields{
-				"S3Key": path.Base(tmpFile.Name()),
-			}).Info("Creating S3Site archive")
-
 			// Add the contents to the Zip file
 			zipArchive := zip.NewWriter(tmpFile)
 			absResourcePath, err := filepath.Abs(ctx.site.resources)
 			if nil != err {
 				return nil, err
 			}
+
+			ctx.logger.WithFields(logrus.Fields{
+				"S3Key":  path.Base(tmpFile.Name()),
+				"Source": absResourcePath,
+			}).Info("Creating S3Site archive")
+
 			err = addToZip(zipArchive, absResourcePath, absResourcePath, ctx.logger)
 			if nil != err {
 				return nil, err
@@ -477,10 +510,16 @@ func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger
 		StackName: aws.String(stackNameOrID),
 	}
 	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
-	logger.Debug("DescribeStackOutput: ", describeStacksOutput)
+	logger.WithFields(logrus.Fields{
+		"DescribeStackOutput": describeStacksOutput,
+	}).Debug("DescribeStackOutput results")
+
 	exists := false
 	if err != nil {
-		logger.Info("DescribeStackOutputError: ", err)
+		logger.WithFields(logrus.Fields{
+			"DescribeStackOutputError": err,
+		}).Debug("DescribeStackOutput")
+
 		// If the stack doesn't exist, then no worries
 		if strings.Contains(err.Error(), "does not exist") {
 			exists = false
@@ -532,7 +571,11 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		if nil != err {
 			return nil, err
 		}
-		ctx.logger.Info("Issued update request: ", *updateStackResponse.StackId)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"StackID": *updateStackResponse.StackId,
+		}).Info("Issued stack update request")
+
 		stackID = *updateStackResponse.StackId
 	} else {
 		// Create stack
@@ -547,7 +590,11 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		if nil != err {
 			return nil, err
 		}
-		ctx.logger.Info("Creating stack: ", *createStackResponse.StackId)
+
+		ctx.logger.WithFields(logrus.Fields{
+			"StackID": *createStackResponse.StackId,
+		}).Info("Creating stack")
+
 		stackID = *createStackResponse.StackId
 	}
 
@@ -567,7 +614,11 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		}
 		if len(describeStacksOutput.Stacks) > 0 {
 			stackInfo = describeStacksOutput.Stacks[0]
-			ctx.logger.Info("Current state: ", *stackInfo.StackStatus)
+
+			ctx.logger.WithFields(logrus.Fields{
+				"Status": *stackInfo.StackStatus,
+			}).Info("Stack status")
+
 			switch *stackInfo.StackStatus {
 			case cloudformation.StackStatusCreateInProgress,
 				cloudformation.StackStatusDeleteInProgress,
@@ -602,7 +653,8 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		if nil != err {
 			return nil, err
 		}
-		ctx.logger.Error("Stack provisioning failed.")
+
+		ctx.logger.Error("Stack provisioning error")
 		for _, eachEvent := range events {
 			switch *eachEvent.ResourceStatus {
 			case cloudformation.ResourceStatusCreateFailed,
@@ -619,14 +671,18 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
 	} else if nil != stackInfo.Outputs {
-		ctx.logger.Info("Stack Outputs:")
+		delimiter := strings.Repeat("-", 80)
+		ctx.logger.Info(delimiter)
+		ctx.logger.Info("Stack outputs:")
+		ctx.logger.Info(delimiter)
+
 		for _, eachOutput := range stackInfo.Outputs {
 			ctx.logger.WithFields(logrus.Fields{
-				"Key":         *eachOutput.OutputKey,
 				"Value":       *eachOutput.OutputValue,
 				"Description": *eachOutput.Description,
-			}).Info("\tOutput")
+			}).Info(*eachOutput.OutputKey)
 		}
+		ctx.logger.Info(delimiter)
 	}
 	return stackInfo, nil
 }
@@ -695,7 +751,10 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		if nil != err {
 			return nil, err
 		}
-		ctx.logger.Debug("CloudFormation template body: ", string(formatted))
+		ctx.logger.WithFields(logrus.Fields{
+			"Body": string(formatted),
+		}).Debug("CloudFormation template body")
+
 		if nil != ctx.templateWriter {
 			io.WriteString(ctx.templateWriter, string(formatted))
 		}
@@ -712,12 +771,19 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 			if nil != err {
 				return nil, err
 			}
-			ctx.logger.Info("CloudFormation template uploaded: ", templateUploadResult.Location)
+			ctx.logger.WithFields(logrus.Fields{
+				"Location": templateUploadResult.Location,
+			}).Info("Template uploaded")
+
 			stack, err := convergeStackState(templateUploadResult.Location, ctx)
 			if nil != err {
 				return nil, err
 			}
-			ctx.logger.Info("Stack provisioned: ", stack)
+			ctx.logger.WithFields(logrus.Fields{
+				"StackName":    *stack.StackName,
+				"StackId":      *stack.StackId,
+				"CreationTime": *stack.CreationTime,
+			}).Info("Stack provisioned")
 		}
 		return nil, nil
 	}
@@ -796,11 +862,25 @@ func Provision(noop bool,
 					ctx.logger.Warn("Failed to delete archive")
 				}
 			}
+			if "" != ctx.s3SiteLambdaZipKey {
+				ctx.logger.Info("Attempting to cleanup ZIP archive: ", ctx.s3SiteLambdaZipKey)
+				s3Client := s3.New(ctx.awsSession)
+				params := &s3.DeleteObjectInput{
+					Bucket: aws.String(ctx.s3Bucket),
+					Key:    aws.String(ctx.s3SiteLambdaZipKey),
+				}
+				_, err := s3Client.DeleteObject(params)
+				if nil != err {
+					ctx.logger.Warn("Failed to delete archive")
+				}
+			}
 			return err
 		}
 		if next == nil {
 			elapsed := time.Since(startTime)
-			logger.Info("Elapsed time (seconds): ", fmt.Sprintf("%9.f", elapsed.Seconds()))
+			ctx.logger.WithFields(logrus.Fields{
+				"Seconds": fmt.Sprintf("%.f", elapsed.Seconds()),
+			}).Info("Elapsed time")
 			break
 		} else {
 			step = next

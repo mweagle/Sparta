@@ -18,18 +18,24 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 	if nil != err {
 		return err
 	}
+	logger.WithFields(logrus.Fields{
+		"Exists": exists,
+		"Name":   serviceName,
+	}).Info("Stack existence check")
+
 	if exists {
-		logger.Info("Stack exists: ", serviceName)
+
 		params := &cloudformation.DeleteStackInput{
 			StackName: aws.String(serviceName),
 		}
 		resp, err := awsCloudFormation.DeleteStack(params)
 		if nil != resp {
-			logger.Info("Stack delete issued: ", resp)
+			logger.WithFields(logrus.Fields{
+				"Response": resp,
+			}).Info("Delete request submitted")
 		}
 		return err
 	}
-
-	logger.Info("Stack does not exist: ", serviceName)
+	logger.Info("Stack does not exist")
 	return nil
 }

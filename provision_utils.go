@@ -63,7 +63,10 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	subscriberHandlerName := fmt.Sprintf("%sSubscriber", awsServiceName)
 	_, exists = resources[subscriberHandlerName]
 	if !exists {
-		logger.Info("Creating Subscription Lambda Resource for AWS service: ", awsServiceName)
+
+		logger.WithFields(logrus.Fields{
+			"Service": awsServiceName,
+		}).Info("Creating configuration Lambda for AWS service")
 
 		//////////////////////////////////////////////////////////////////////////////
 		// Custom Resource Lambda Handler
