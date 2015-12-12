@@ -1,18 +1,17 @@
 // +build !lambdabinary
 
-// Install aws-sdk
-//go:generate rm -rf ./node_modules
-//go:generate npm install aws-sdk --prefix ./
+//go:generate rm -rf ./resources/provision/node_modules
+//go:generate npm install ./resources/provision/ --prefix ./resources/provision
 // There's a handful of subdirectories that we don't need at runtime...
-//go:generate rm -rf ./node_modules/aws-sdk/dist/
-//go:generate rm -rf ./node_modules/aws-sdk/dist-tools/
+//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist/
+//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist-tools/
 // Zip up the modules
-//go:generate zip -vr ./resources/provision/node_modules.zip ./node_modules/
-//go:generate rm -rf ./node_modules
+//go:generate bash -c "pushd ./resources/provision; zip -vr ./node_modules.zip ./node_modules/"
+//go:generate rm -rf ./resources/provision/node_modules
 
 // Embed the custom service handlers
 // TODO: Move these into golang
-//go:generate go run ./vendor/github.com/mweagle/esc/main.go -o ./CONSTANTS.go -private -pkg sparta ./resources
+//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -private -pkg sparta ./resources
 
 // cleanup
 //go:generate rm -f ./resources/provision/node_modules.zip
