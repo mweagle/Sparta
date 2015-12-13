@@ -231,11 +231,11 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
           {
             try {
-              log({
-                requestType: event.RequestType,
-                handler: eachConfig,
-                event: event
-              });
+              // log({
+              //   requestType: event.RequestType,
+              //   handler: eachConfig,
+              //   event: event
+              // });
               var svc = require(util.format('./%s', eachConfig));
               svc.handler(event, context);
             } catch (e) {
