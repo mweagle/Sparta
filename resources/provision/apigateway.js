@@ -5,7 +5,7 @@ var _ = require('underscore');
 var async = require('async');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
-//awsConfig.logger = console;
+awsConfig.logger = console;
 
 console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 var apigateway = new AWS.APIGateway(awsConfig);
@@ -37,10 +37,10 @@ var lamdbdaURI = function(lambdaArn) {
 
 var toBoolean = function(value)
 {
-  var bValue = _.isBoolean(value) ?  value : false;
-  if (value && _.isString(value) && ('true' === value.toLowerCase()))
+  var bValue = value;
+  if (_.isString(bValue))
   {
-    bValue = true;
+      bValue = ('true' === bValue.toLowerCase());
   }
   return bValue;
 };
@@ -222,7 +222,8 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
                                     return memo;
                                   },
                                 {});
-    // TODO: Support Model creation
+
+      // TODO: Support Model creation
       var params = methodOpParams({
         authorizationType: methodDef.AuthorizationType || "NONE",
         apiKeyRequired: toBoolean(methodDef.APIKeyRequired),
@@ -232,7 +233,7 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       apigateway.putMethod(params, asyncCB);
     };
 
-    var putMethodResponseTask = function(statusCode, models) {
+    var putMethodResponseTask = function(statusCode, parameters, models) {
       return function(taskCB) {
         var responseModels = _.reduce(models,
                                  function(memo, eachModelDef, eachContentType)
@@ -241,12 +242,17 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
                                    return memo;
                                  },
                                  {});
-
+       var responseParameters = _.reduce(parameters || {},
+                                   function (memo, eachParam, eachKey) {
+                                     memo[eachKey] = toBoolean(eachParam);
+                                     return memo;
+                                   },
+                                 {});
         var params = methodOpParams({
           statusCode: statusCode.toString(),
+          responseParameters: responseParameters,
           responseModels: responseModels
         });
-        //logResults('putMethodResponse', null, params);
         apigateway.putMethodResponse(params, taskCB);
       };
     };
@@ -260,8 +266,9 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       var responses = methodDef.Responses || {};
       _.each(responses, function (eachResponseObject, eachResponseStatus) {
           var models = eachResponseObject.Models || {};
+          var parameters = eachResponseObject.Parameters || {};
           //logResults('Response object', null, {STATUS: eachResponseStatus, MODELS: models});
-          putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, models));
+          putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, parameters, models));
       });
 
       // Run them...
@@ -270,11 +277,12 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
 
     // 3. Create the Method integration
     // Create the method integration
-    var putIntegrationTask = function(statusCode, selectionPattern, templates) {
+    var putIntegrationTask = function(statusCode, selectionPattern, parameters, templates) {
       return function(taskCB) {
         var params = methodOpParams({
           statusCode: statusCode.toString(),
           selectionPattern: selectionPattern || undefined,
+          responseParameters: parameters || {},
           responseTemplates: templates || {}
         });
         apigateway.putIntegrationResponse(params, taskCB);
@@ -284,13 +292,27 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     creationTasks.putIntegration = Object.keys(creationTasks);
     creationTasks.putIntegration.push(function(asyncCB) {
       var integration = methodDef.Integration || {};
-      var params = methodOpParams({
-        type: 'AWS',
-        cacheKeyParameters: [],
-        requestTemplates: integration.RequestTemplates || undefined,
-        uri: lamdbdaURI(lambdaArn),
-        integrationHttpMethod: 'POST'
-      });
+      var opParams = {
+        type: integration.Type || 'AWS'
+      };
+      switch (opParams.type) {
+        case 'AWS':
+          opParams.cacheKeyParameters =  [];
+          opParams.requestTemplates =  integration.RequestTemplates || undefined;
+          opParams.uri =  lamdbdaURI(lambdaArn);
+          opParams.integrationHttpMethod =  'POST';
+          break;
+        case 'MOCK': {
+          opParams.cacheKeyParameters = [];
+          opParams.requestTemplates = integration.RequestTemplates || undefined;
+          opParams.integrationHttpMethod = 'MOCK';
+          break;
+        }
+        default: {
+          console.log('Unsupported API Gateway type: ' + opParams.type);
+        }
+      }
+      var params = methodOpParams(opParams);
       apigateway.putIntegration(params, asyncCB);
     });
 
@@ -303,7 +325,10 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       var putIntegrationResponseTasks = [];
       _.each(responses,
              function(eachResponse, eachStatusCode) {
-              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode, eachResponse.SelectionPattern, eachResponse.Templates));
+              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode,
+                                                                  eachResponse.SelectionPattern,
+                                                                  eachResponse.Parameters,
+                                                                  eachResponse.Templates));
              });
       async.series(putIntegrationResponseTasks, asyncCB);
 
