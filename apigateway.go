@@ -171,6 +171,9 @@ type Integration struct {
 	Credentials        string
 
 	Responses map[int]IntegrationResponse
+
+	// Typically "AWS", but for CORS support is set to "MOCK"
+	integrationType string
 }
 
 func (integration Integration) defaultIntegrationRequestTemplates() map[string]string {
@@ -204,6 +207,7 @@ func (integration Integration) MarshalJSON() ([]byte, error) {
 	integrationJSON := map[string]interface{}{
 		"Responses":        stringResponses,
 		"RequestTemplates": requestTemplates,
+		"Type":             integration.integrationType,
 	}
 	if len(integration.Parameters) > 0 {
 		integrationJSON["Parameters"] = integration.Parameters
@@ -378,9 +382,13 @@ type API struct {
 	// Optional stage. If defined, the API will be deployed
 	stage *Stage
 	// Existing API to CloneFrom
-	CloneFrom   string
+	CloneFrom string
+	// API Description
 	Description string
-	resources   map[string]*Resource
+	// Non-empty map of urlPaths->Resource definitions
+	resources map[string]*Resource
+	// Should CORS be enabled for this API?
+	CORSEnabled bool
 }
 
 type resourceNode struct {
@@ -392,6 +400,89 @@ type resourceNode struct {
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
 func (api API) MarshalJSON() ([]byte, error) {
+
+	// If this API is CORS enabled, then annotate the APIResources with OPTION
+	// entries.  Slight overhead in network I/O due to marshalling data, but simplifies
+	// the CustomResource, which is only a temporary stopgap until cloudformation
+	// properly supports APIGateway
+	if api.CORSEnabled {
+		/*
+			{
+			  "Result": {
+			    "httpMethod": "OPTIONS",
+			    "authorizationType": "NONE",
+			    "apiKeyRequired": false,
+			    "requestParameters": {},
+			    "methodResponses": {
+			      "200": {
+			        "statusCode": "200",
+			        "responseParameters": {
+			          "method.response.header.Access-Control-Allow-Headers": false,
+			          "method.response.header.Access-Control-Allow-Methods": false,
+			          "method.response.header.Access-Control-Allow-Origin": false
+			        },
+			        "responseModels": {
+			          "application/json": "Empty"
+			        }
+			      }
+			    },
+			    "methodIntegration": {
+			      "type": "MOCK",
+			      "requestTemplates": {
+			        "application/json": "{\"statusCode\": 200}"
+			      },
+			      "cacheNamespace": "xuvta4",
+			      "cacheKeyParameters": [],
+			      "integrationResponses": {
+			        "200": {
+			          "statusCode": "200",
+			          "responseParameters": {
+			            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+			            "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
+			            "method.response.header.Access-Control-Allow-Origin": "'*'"
+			          },
+			          "responseTemplates": {
+			            "application/json": null
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+		*/
+		for _, eachResource := range api.resources {
+			method, err := eachResource.NewMethod("OPTIONS")
+			if err != nil {
+				return nil, err
+			}
+			statusOkResponse := defaultResponse()
+			statusOkResponse.Parameters = map[string]bool{
+				"method.response.header.Access-Control-Allow-Headers": true,
+				"method.response.header.Access-Control-Allow-Methods": true,
+				"method.response.header.Access-Control-Allow-Origin":  true,
+			}
+			method.Responses[200] = statusOkResponse
+
+			method.Integration = Integration{
+				Parameters:       make(map[string]string, 0),
+				RequestTemplates: make(map[string]string, 0),
+				Responses:        make(map[int]IntegrationResponse, 0),
+				integrationType:  "MOCK",
+			}
+			method.Integration.RequestTemplates["application/json"] = "{\"statusCode\": 200}"
+			corsIntegrationResponse := IntegrationResponse{
+				Parameters: map[string]string{
+					"method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+					"method.response.header.Access-Control-Allow-Methods": "'*'",
+					"method.response.header.Access-Control-Allow-Origin":  "'*'",
+				},
+				Templates: map[string]string{
+					"application/json": "",
+				},
+			}
+			method.Integration.Responses[200] = corsIntegrationResponse
+		}
+	}
 
 	// Transform the map of resources into a set of hierarchical resourceNodes
 	rootResource := resourceNode{
@@ -435,6 +526,7 @@ func (api API) MarshalJSON() ([]byte, error) {
 }
 
 // export marshals the API data to a CloudFormation compatible representation
+
 func (api *API) export(S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]interface{},
@@ -538,6 +630,7 @@ func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 		Parameters:       make(map[string]string, 0),
 		RequestTemplates: make(map[string]string, 0),
 		Responses:        make(map[int]IntegrationResponse, 0),
+		integrationType:  "AWS", // Type used for Lambda integration
 	}
 
 	method := &Method{
