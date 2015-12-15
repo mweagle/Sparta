@@ -6,7 +6,7 @@
     - If defined, all APIGateway methods will have [CORS Enabled](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html).
   - Update logging to use structured fields rather than variadic, concatenation
   - Reimplement `explore` command line option.
-    - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
+    - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshaling.
   - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
   - :warning: **BREAKING**
     - `sparta.Main()` signature changed to accept optional `S3Site` value
