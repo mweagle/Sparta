@@ -1,11 +1,11 @@
-## v0.0.8
+## v0.1.0
 - :checkered_flag: **CHANGES**
   - Update logging to use structured fields rather than variadic, concatenation
   - Reimplement `explore` command line option.
     - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
   - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
   - :warning: **BREAKING**
-    - N/A
+    - `sparta.Main()` signature changed to accept optional `S3Site` value
 
 ## v0.0.7
   - Documentation moved to [gosparta.io](http://gosparta.io)
