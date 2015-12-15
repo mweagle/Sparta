@@ -10,7 +10,7 @@ type = "doc"
 
 Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.  
 
-The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML/blob/master/main.go) example application.
+The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) example application.
 
 ### <a href="{{< relref "#lambdaFunction" >}}">Create the Lambda function</a>
 
