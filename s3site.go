@@ -14,6 +14,7 @@ const (
 	// @enum OutputKey
 	OutputS3SiteURL = "S3SiteURL"
 )
+
 // Create the resource, which will be part of the stack definition and use a CustomResource
 // to copy the content.  Which means we need PutItem access to the target Bucket.  Use
 // Cloudformation to create a random bucketname:
@@ -41,6 +42,7 @@ type S3Site struct {
 func (s3Site *S3Site) export(S3Bucket string,
 	S3Key string,
 	S3ResourcesKey string,
+	apiGatewayOutputs map[string]interface{},
 	roleNameMap map[string]interface{},
 	resources ArbitraryJSONObject,
 	outputs ArbitraryJSONObject,
@@ -207,6 +209,7 @@ func (s3Site *S3Site) export(S3Bucket string,
 			"TargetBucket": s3SiteBucketResourceValue,
 			"SourceKey":    S3ResourcesKey,
 			"SourceBucket": S3Bucket,
+			"APIGateway":   apiGatewayOutputs,
 		},
 		"DependsOn": []string{lambdaResourceName},
 	}
