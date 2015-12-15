@@ -410,6 +410,8 @@ func createPackageStep() workflowStep {
 		io.Copy(nodeJSWriter, stringReader)
 
 		// Also embed the custom resource creation scripts
+		ctx.logger.Info("Embedding CustomResource scripts")
+
 		for _, eachName := range customResourceScripts {
 			resourceName := fmt.Sprintf("/resources/provision/%s", eachName)
 			resourceContent := _escFSMustString(false, resourceName)
@@ -420,7 +422,7 @@ func createPackageStep() workflowStep {
 			}
 			ctx.logger.WithFields(logrus.Fields{
 				"Name": eachName,
-			}).Info("Embedding CustomResource script")
+			}).Debug("Script name")
 
 			io.Copy(embedWriter, stringReader)
 		}
