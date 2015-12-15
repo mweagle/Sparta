@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1065 
+    "wordCount":  1062 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: facebook: twitter:mweagle highlight:vs home:Home bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: name:yeti]">
+<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: name:yeti home:Home highlight:vs github:https://github.com/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -258,6 +258,11 @@
       
       </ul>
     
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/miscellaneous">Miscellaneous</a>
       <ul>
       
@@ -327,24 +332,15 @@ stackName := &#34;SpartaApplication&#34;
 sparta.Main(stackName,
   &#34;Simple Sparta application&#34;,
   spartaLambdaData(apiGateway),
-  apiGateway)</code></pre>
+  apiGateway,
+  nil)</code></pre>
 
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
-<pre><code class="javascript">[{
-    Description: &#34;Sparta Home&#34;,
-    OutputKey: &#34;SpartaHome&#34;,
-    OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
-  },{
-    Description: &#34;Sparta Version&#34;,
-    OutputKey: &#34;SpartaVersion&#34;,
-    OutputValue: &#34;0.0.7&#34;
-  },{
-    Description: &#34;API Gateway URL&#34;,
-    OutputKey: &#34;URL&#34;,
-    OutputValue: &#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod&#34;
-}]</code></pre>
+<pre><code class="javascript">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>

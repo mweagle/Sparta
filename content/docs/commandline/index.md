@@ -15,6 +15,7 @@ Sparta provides a [Main](https://godoc.org/github.com/mweagle/Sparta#Main) funct
 sparta.Main("MyStack",
   "Simple Sparta application",
   myLambdaFunctions,
+  nil,
   nil)
 {{< /highlight >}}
 
@@ -59,7 +60,9 @@ The `execute` option is typically used when the compiled application is launched
 
 ### <a href="{{< relref "#explore" >}}">Explore</a>
 
-<span class="label label-warning">NOT YET IMPLEMENTED</span>
+The `explore` option creates a _localhost_ server to allow Sparta lambda functions to be tested locally.  
+
+NOTE: API Gateway mapping templates are not currently supported.
 
 ### <a href="{{< relref "#provision" >}}">Provision</a>
 

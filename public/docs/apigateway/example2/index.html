@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1179 
+    "wordCount":  1174 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: facebook: twitter:mweagle highlight:vs home:Home bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: name:yeti]">
+<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: name:yeti home:Home highlight:vs github:https://github.com/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -255,6 +255,11 @@
         <li>
           <small><a href="/docs/apigateway/cors">CORS</a></small>
         </li>
+      
+      </ul>
+    
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
       
       </ul>
     
@@ -426,19 +431,9 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
 
-<p><pre><code class="nohighlight">Outputs: [{
-    Description: &#34;Sparta Home&#34;,
-    OutputKey: &#34;SpartaHome&#34;,
-    OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
-  },{
-    Description: &#34;Sparta Version&#34;,
-    OutputKey: &#34;SpartaVersion&#34;,
-    OutputValue: &#34;0.0.7&#34;
-  },{
-    Description: &#34;API Gateway URL&#34;,
-    OutputKey: &#34;URL&#34;,
-    OutputValue: &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1&#34;
-  }],</code></pre>
+<p><pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 </p>
 
 <p>Let&rsquo;s fetch an item we know exists:</p>

@@ -183,24 +183,15 @@ stackName := &amp;#34;SpartaApplication&amp;#34;
 sparta.Main(stackName,
   &amp;#34;Simple Sparta application&amp;#34;,
   spartaLambdaData(apiGateway),
-  apiGateway)&lt;/code&gt;&lt;/pre&gt;
+  apiGateway,
+  nil)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Once the service is successfully provisioned, the &lt;code&gt;Outputs&lt;/code&gt; key will include the API Gateway Deployed URL (sample):&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;[{
-    Description: &amp;#34;Sparta Home&amp;#34;,
-    OutputKey: &amp;#34;SpartaHome&amp;#34;,
-    OutputValue: &amp;#34;https://github.com/mweagle/Sparta&amp;#34;
-  },{
-    Description: &amp;#34;Sparta Version&amp;#34;,
-    OutputKey: &amp;#34;SpartaVersion&amp;#34;,
-    OutputValue: &amp;#34;0.0.7&amp;#34;
-  },{
-    Description: &amp;#34;API Gateway URL&amp;#34;,
-    OutputKey: &amp;#34;URL&amp;#34;,
-    OutputValue: &amp;#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod&amp;#34;
-}]&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Combining the &lt;em&gt;API Gateway URL&lt;/em&gt; &lt;code&gt;OutputValue&lt;/code&gt; with our resource path (&lt;em&gt;/hello/world/test&lt;/em&gt;), we get the absolute URL to our lambda function: &lt;em&gt;&lt;a href=&#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&#34;&gt;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
@@ -547,19 +538,9 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 
 &lt;p&gt;As this Sparta application includes an API Gateway definition, the stack &lt;code&gt;Outputs&lt;/code&gt; includes the API Gateway URL:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;Outputs: [{
-    Description: &amp;#34;Sparta Home&amp;#34;,
-    OutputKey: &amp;#34;SpartaHome&amp;#34;,
-    OutputValue: &amp;#34;https://github.com/mweagle/Sparta&amp;#34;
-  },{
-    Description: &amp;#34;Sparta Version&amp;#34;,
-    OutputKey: &amp;#34;SpartaVersion&amp;#34;,
-    OutputValue: &amp;#34;0.0.7&amp;#34;
-  },{
-    Description: &amp;#34;API Gateway URL&amp;#34;,
-    OutputKey: &amp;#34;URL&amp;#34;,
-    OutputValue: &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1&amp;#34;
-  }],&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
 &lt;p&gt;Let&amp;rsquo;s fetch an item we know exists:&lt;/p&gt;
@@ -794,7 +775,8 @@ func main() {
 	sparta.Main(stackName,
 		&amp;#34;Sparta app supporting ip-&amp;gt;geo mapping&amp;#34;,
 		lambdaFunctions,
-		apiGateway)
+		apiGateway,
+    nil)
 }&lt;/code&gt;&lt;/pre&gt;
 
 
@@ -807,19 +789,9 @@ func main() {
 
 &lt;p&gt;Assuming all goes well, the log output will include the API Gateway URL as in:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;Outputs: [{
-    Description: &amp;#34;Sparta Home&amp;#34;,
-    OutputKey: &amp;#34;SpartaHome&amp;#34;,
-    OutputValue: &amp;#34;https://github.com/mweagle/Sparta&amp;#34;
-  },{
-    Description: &amp;#34;Sparta Version&amp;#34;,
-    OutputKey: &amp;#34;SpartaVersion&amp;#34;,
-    OutputValue: &amp;#34;0.0.7&amp;#34;
-  },{
-    Description: &amp;#34;API Gateway URL&amp;#34;,
-    OutputKey: &amp;#34;URL&amp;#34;,
-    OutputValue: &amp;#34;https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo&amp;#34;
-  }],&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h3 id=&#34;a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query&lt;/a&gt;&lt;/h3&gt;
@@ -1079,6 +1051,7 @@ func main() {
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyStack&amp;#34;,
   &amp;#34;Simple Sparta application&amp;#34;,
   myLambdaFunctions,
+  nil,
   nil)&lt;/code&gt;&lt;/pre&gt;
 
 
@@ -1120,7 +1093,9 @@ Verbs:
 
 &lt;h3 id=&#34;a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
+
+&lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
 

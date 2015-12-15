@@ -87,7 +87,8 @@ func main() {
 	sparta.Main(stackName,
 		"Sparta app supporting ip->geo mapping",
 		lambdaFunctions,
-		apiGateway)
+		apiGateway,
+    nil)
 }
 {{< /highlight >}}
 
@@ -102,19 +103,9 @@ S3_BUCKET=<MY-S3-BUCKETNAME> make provision
 Assuming all goes well, the log output will include the API Gateway URL as in:
 
 {{< highlight nohighlight >}}
-Outputs: [{
-    Description: "Sparta Home",
-    OutputKey: "SpartaHome",
-    OutputValue: "https://github.com/mweagle/Sparta"
-  },{
-    Description: "Sparta Version",
-    OutputKey: "SpartaVersion",
-    OutputValue: "0.0.7"
-  },{
-    Description: "API Gateway URL",
-    OutputKey: "URL",
-    OutputValue: "https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo"
-  }],
+INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0
 {{< /highlight >}}
 
 ### <a href="{{< relref "#example3Query" >}}">Query</a>

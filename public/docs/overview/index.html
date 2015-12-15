@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1274 
+    "wordCount":  1222 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: name:yeti home:Home github:https://github.com/mweagle googleplus: facebook: twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[youtube: googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle name:yeti home:Home highlight:vs github:https://github.com/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -258,6 +258,11 @@
       
       </ul>
     
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/miscellaneous">Miscellaneous</a>
       <ul>
       
@@ -348,10 +353,11 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <pre><code class="go">sparta.Main(&#34;MyHelloWorldStack&#34;,
             &#34;Simple Sparta application that demonstrates core functionality&#34;,
             lambdaFunctions,
+            nil,
             nil)</code></pre>
 
 
-<p><code>sparta.Main</code> accepts four parameters:</p>
+<p><code>sparta.Main</code> accepts five parameters:</p>
 
 <ul>
 <li><code>serviceName</code> : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
@@ -365,6 +371,11 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <ul>
 <li>We&rsquo;ll walk through how to do that in <a href="/docs/apigateway">another section</a>, but for now our lambda function will only be accessible via the AWS SDK or Console.</li>
+</ul></li>
+<li><code>*S3Site</code> : Optional pointer to data if you would like to provision an <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website on S3</a>, initialized with local resources.
+
+<ul>
+<li>We&rsquo;ll walk through how to do that in <a href="/docs/s3site">another section</a>, but for now our lambda function will only be accessible via the AWS SDK or Console.</li>
 </ul></li>
 </ul>
 
@@ -408,24 +419,20 @@ func main() {
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
-<pre><code class="nohighlight">go run main.go describe --out ./graph.html
+<pre><code class="nohighlight">go run main.go --level info describe --out ./graph.html
 
-INFO[0000] Welcome to Sparta                             Option=describe Version=0.0.7
+INFO[0000] Welcome to Sparta                             Option=describe Version=0.1.0
 INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified. Count: 1
-INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
-INFO[0007] Executable binary size (MB): 10
-INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/HelloWorld/MyHelloWorldStack737464669
-INFO[0008] Creating NodeJS proxy entry: main_helloWorld
-INFO[0008] Embedding CustomResource script: cfn-response.js
-INFO[0008] Embedding CustomResource script: underscore-min.js
-INFO[0008] Embedding CustomResource script: async.min.js
-INFO[0008] Embedding CustomResource script: apigateway.js
-INFO[0008] Embedding CustomResource script: s3.js
-INFO[0008] Embedding CustomResource script: sns.js
-INFO[0008] Embedding CustomResource script: golang-constants.json
-INFO[0008] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack737464669
-INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-edaad4631616d70ff87806dfd1399b0bc2f7994a-cf.json</code></pre>
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Compiling binary                              Name=MyHelloWorldStack.lambda.amd64
+INFO[0007] Executable binary size                        KB=11133 MB=10
+INFO[0007] Creating ZIP archive for upload               TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaHTML/MyHelloWorldStack707027157
+INFO[0008] Creating NodeJS proxy entry                   Handler=main_helloWorld
+INFO[0008] Embedding CustomResource scripts
+INFO[0008] Embedding CustomResource node_modules.zip     Name=/resources/provision/node_modules.zip
+INFO[0008] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack707027157
+INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-f5e54b66693427f20ccd1a317ff785dc60117282-cf.json
+INFO[0008] Elapsed time                                  Seconds=9</code></pre>
 
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
@@ -434,51 +441,27 @@ INFO[0008] Bypassing template upload &amp; creation due to -n/-noop command line
 
 <p><pre><code class="nohighlight">go run main.go provision --s3Bucket $S3_BUCKET
 
-INFO[0000] Welcome to Sparta                             Option=provision Version=0.0.7
+INFO[0000] Welcome to Sparta                             Option=provision Version=0.1.0
 INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified. Count: 1
-INFO[0000] Compiling binary: MyHelloWorldStack.lambda.amd64
-INFO[0007] Executable binary size (MB): 10
-INFO[0007] Creating ZIP archive for upload: /Users/mweagle/Documents/golang/workspace/src/HelloWorld/MyHelloWorldStack650982716
-INFO[0008] Creating NodeJS proxy entry: main_helloWorld
-INFO[0008] Embedding CustomResource script: cfn-response.js
-INFO[0008] Embedding CustomResource script: underscore-min.js
-INFO[0008] Embedding CustomResource script: async.min.js
-INFO[0008] Embedding CustomResource script: apigateway.js
-INFO[0008] Embedding CustomResource script: s3.js
-INFO[0008] Embedding CustomResource script: sns.js
-INFO[0008] Embedding CustomResource script: golang-constants.json
-INFO[0008] Uploading ZIP archive to S3
-INFO[0012] ZIP archive uploaded: https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack650982716
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Compiling binary                              Name=MyHelloWorldStack.lambda.amd64
+INFO[0007] Executable binary size                        KB=11133 MB=10
+INFO[0007] Creating ZIP archive for upload               TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaHTML/MyHelloWorldStack264613046
+INFO[0008] Creating NodeJS proxy entry                   Handler=main_helloWorld
+INFO[0008] Embedding CustomResource scripts
+INFO[0008] Embedding CustomResource node_modules.zip     Name=/resources/provision/node_modules.zip
+INFO[0008] Uploading ZIP archive                         Source=/Users/mweagle/Documents/golang/workspace/src/SpartaHTML/MyHelloWorldStack264613046
+INFO[0012] Upload complete                               URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack264613046
 INFO[0012] Uploading CloudFormation template
-INFO[0012] CloudFormation template uploaded: https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-8ae100efb4eddbed9debb45915a288a179b6592e-cf.json
-INFO[0012] DescribeStackOutputError: ValidationError: Stack with id MyHelloWorldStack does not exist
-	status code: 400, request id: defc0375-9a05-11e5-8ef6-d5823d3e35af
-INFO[0012] Creating stack: arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6
-INFO[0012] Waiting for stack to complete
-INFO[0022] Current state: CREATE_IN_PROGRESS
-INFO[0052] Current state: CREATE_COMPLETE
-INFO[0052] Stack Outputs:
-INFO[0052] 	Output                                       Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0052] 	Output                                       Description=Sparta Version Key=SpartaVersion Value=0.0.7
-INFO[0052] Stack provisioned: {
-  Capabilities: [&#34;CAPABILITY_IAM&#34;],
-  CreationTime: 2015-12-03 21:36:11.325 &#43;0000 UTC,
-  Description: &#34;Simple Sparta application that demonstrates core functionality&#34;,
-  DisableRollback: false,
-  Outputs: [{
-      Description: &#34;Sparta Home&#34;,
-      OutputKey: &#34;SpartaHome&#34;,
-      OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
-    },{
-      Description: &#34;Sparta Version&#34;,
-      OutputKey: &#34;SpartaVersion&#34;,
-      OutputValue: &#34;0.0.7&#34;
-    }],
-  StackId: &#34;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/df0d6860-9a05-11e5-884c-5001230106a6&#34;,
-  StackName: &#34;MyHelloWorldStack&#34;,
-  StackStatus: &#34;CREATE_COMPLETE&#34;,
-  TimeoutInMinutes: 5
+INFO[0012] Template uploaded                             URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-48b6fbba0750138952bf793ce5148610437c3665-cf.json
+INFO[0013] Creating stack                                StackID=arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/922dea00-a34d-11e5-bc51-500160d4da7c
+INFO[0013] Waiting for stack to complete
+INFO[0023] Stack status                                  Status=CREATE_IN_PROGRESS
+INFO[0053] Stack status                                  Status=CREATE_COMPLETE
+INFO[0053] Stack output                                  Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0053] Stack output                                  Description=Sparta Version Key=SpartaVersion Value=0.1.0
+INFO[0053] Stack provisioned                             CreationTime=2015-12-15 17:02:06.664 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/922dea00-a34d-11e5-bc51-500160d4da7c StackName=MyHelloWorldStack
+INFO[0053] Elapsed time                                  Seconds=53
 }</code></pre>
 </p>
 
@@ -504,9 +487,9 @@ INFO[0052] Stack provisioned: {
 
 <p><pre><code class="nohighlight">go run main.go delete
 
-INFO[0000] Welcome to Sparta                             Option=delete Version=0.0.7
-INFO[0000] Stack exists: MyHelloWorldStack
-INFO[0000] Stack delete issued: {
+INFO[0000] Welcome to Sparta                             Option=delete Version=0.1.0
+INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
+INFO[0000] Delete request submitted                      Response={
 
 }</code></pre>
 </p>

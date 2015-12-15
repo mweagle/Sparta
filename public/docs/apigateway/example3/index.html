@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  695 
+    "wordCount":  691 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: name:yeti home:Home github:https://github.com/mweagle googleplus: facebook: twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: googleAnalytics:UA-70794971-1 bitbucket: highlight:vs github:https://github.com/mweagle flattr: name:yeti home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -258,6 +258,11 @@
       
       </ul>
     
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/miscellaneous">Miscellaneous</a>
       <ul>
       
@@ -359,7 +364,8 @@ func main() {
 	sparta.Main(stackName,
 		&#34;Sparta app supporting ip-&gt;geo mapping&#34;,
 		lambdaFunctions,
-		apiGateway)
+		apiGateway,
+    nil)
 }</code></pre>
 
 
@@ -372,19 +378,9 @@ func main() {
 
 <p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
 
-<pre><code class="nohighlight">Outputs: [{
-    Description: &#34;Sparta Home&#34;,
-    OutputKey: &#34;SpartaHome&#34;,
-    OutputValue: &#34;https://github.com/mweagle/Sparta&#34;
-  },{
-    Description: &#34;Sparta Version&#34;,
-    OutputKey: &#34;SpartaVersion&#34;,
-    OutputValue: &#34;0.0.7&#34;
-  },{
-    Description: &#34;API Gateway URL&#34;,
-    OutputKey: &#34;URL&#34;,
-    OutputValue: &#34;https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo&#34;
-  }],</code></pre>
+<pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
 <h3 id="a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3Query:d680e8a854a7cbad6d490c445cba2eba">Query</a></h3>

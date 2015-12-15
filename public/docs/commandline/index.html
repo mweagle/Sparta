@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  247 
+    "wordCount":  270 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: facebook: twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle youtube: flattr: name:yeti home:Home bitbucket:]">
+<body class="map[highlight:vs github:https://github.com/mweagle flattr: name:yeti home:Home linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: googleAnalytics:UA-70794971-1 bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -258,6 +258,11 @@
       
       </ul>
     
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/miscellaneous">Miscellaneous</a>
       <ul>
       
@@ -288,6 +293,7 @@
 <pre><code class="go">sparta.Main(&#34;MyStack&#34;,
   &#34;Simple Sparta application&#34;,
   myLambdaFunctions,
+  nil,
   nil)</code></pre>
 
 
@@ -329,7 +335,9 @@ Verbs:
 
 <h3 id="a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></h3>
 
-<p><span class="label label-warning">NOT YET IMPLEMENTED</span></p>
+<p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
+
+<p>NOTE: API Gateway mapping templates are not currently supported.</p>
 
 <h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
 

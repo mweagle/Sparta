@@ -119,6 +119,13 @@
       }
       ]},
   {
+    "Name": "S3 Website",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/s3site",
+    "Children": []
+  },
+  {
     "Name": "Miscellaneous",
     "IconClass": "",
     "Title": "",

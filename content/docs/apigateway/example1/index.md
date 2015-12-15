@@ -6,7 +6,6 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-
 ## <a href="{{< relref "#exampleEcho" >}}">Echo</a>
 
 To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
@@ -58,25 +57,16 @@ stackName := "SpartaApplication"
 sparta.Main(stackName,
   "Simple Sparta application",
   spartaLambdaData(apiGateway),
-  apiGateway)
+  apiGateway,
+  nil)
 {{< /highlight >}}
 
 Once the service is successfully provisioned, the `Outputs` key will include the API Gateway Deployed URL (sample):
 
 {{< highlight javascript >}}
-[{
-    Description: "Sparta Home",
-    OutputKey: "SpartaHome",
-    OutputValue: "https://github.com/mweagle/Sparta"
-  },{
-    Description: "Sparta Version",
-    OutputKey: "SpartaVersion",
-    OutputValue: "0.0.7"
-  },{
-    Description: "API Gateway URL",
-    OutputKey: "URL",
-    OutputValue: "https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod"
-}]
+INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0
 {{< /highlight >}}
 
 Combining the _API Gateway URL_ `OutputValue` with our resource path (_/hello/world/test_), we get the absolute URL to our lambda function: _https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test_

@@ -154,19 +154,9 @@ and check the results.
 As this Sparta application includes an API Gateway definition, the stack `Outputs` includes the API Gateway URL:
 
 {{< highlight nohighlight >}}
-Outputs: [{
-    Description: "Sparta Home",
-    OutputKey: "SpartaHome",
-    OutputValue: "https://github.com/mweagle/Sparta"
-  },{
-    Description: "Sparta Version",
-    OutputKey: "SpartaVersion",
-    OutputValue: "0.0.7"
-  },{
-    Description: "API Gateway URL",
-    OutputKey: "URL",
-    OutputValue: "https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1"
-  }],
+INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0
 {{< /highlight >}}
 
 Let's fetch an item we know exists:

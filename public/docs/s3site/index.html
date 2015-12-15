@@ -14,12 +14,12 @@
 
 <meta name="description" content="" />
 
-<meta name="keywords" content="">
+<meta name="keywords" content="sparta, ">
 
 
 <meta property="og:title" content="Overview  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/" />
+<meta property="og:url" content="http://gosparta.io/docs/s3site/" />
 <meta property="og:locale" content="en-EN">
 
 
@@ -29,6 +29,10 @@
 <meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
 
   
+    
+<meta property="og:article:tag" content="sparta">
+    
+  
 
   
 <meta name="twitter:card" content="summary" />
@@ -36,7 +40,7 @@
 <meta name="twitter:creator" content="@" />
 <meta name="twitter:title" content="Overview" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/s3site/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -51,13 +55,13 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  32 
+    "wordCount":  509 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/" />
+<link rel="canonical" href="http://gosparta.io/docs/s3site/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -96,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: googleAnalytics:UA-70794971-1 home:Home highlight:vs github:https://github.com/mweagle flattr: name:yeti]">
+<body class="map[name:yeti home:Home highlight:vs github:https://github.com/mweagle flattr: googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -280,7 +284,135 @@
 </header>
 
     <div class="container content">
-  <p>Please choose a topic from the left.  The <a href="./overview">Overview</a> section is a good place to start if you just want to get your hands dirty and provision a simple &ldquo;Hello World&rdquo; function.</p>
+  
+
+<h2 id="provisioning-a-cors-enabled-website:d680e8a854a7cbad6d490c445cba2eba">Provisioning a CORS-enabled Website</h2>
+
+<p>Sparta supports provisioning an S3-backed <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website</a> as part of provisioning.<br />
+We&rsquo;ll walk through provisioning a minimal <a href="http://getbootstrap.com">Bootstrap</a> website that accesses API Gateway lambda functions provisioned by
+a single service in this example.</p>
+
+<p>The source for this is the <a href="https://github.com/mweagle/SpartaHTML/blob/master/main.go">SpartaHTML</a> example application.</p>
+
+<h3 id="a-href-hugoshortcode-1-create-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambdaFunction:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</a></h3>
+
+<p>We&rsquo;ll start by creating a very simple lambda function:</p>
+
+<pre><code class="go">func helloWorld(event *json.RawMessage,
+	context *sparta.LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+	logger.Info(&#34;Hello World: &#34;, string(*event))
+	fmt.Fprint(w, string(*event))
+}</code></pre>
+
+
+<p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
+
+<h3 id="a-href-hugoshortcode-3-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#apiGateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+
+<p>The next step is to create an API Gateway<br />
+on the API:</p>
+
+<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
+
+
+<p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
+
+<pre><code class="go">// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true</code></pre>
+
+
+<p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
+
+<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&#34;/hello&#34;, lambdaFn)
+		_, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
+		if nil != err {
+			panic(&#34;Failed to create /hello resource&#34;)
+		}
+	}
+	return append(lambdaFunctions, lambdaFn)
+}</code></pre>
+
+
+<h3 id="a-href-hugoshortcode-7-define-the-s3-site-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#s3Site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</a></h3>
+
+<p>The next part is to define the S3 site resources via <code>sparta.NewS3Site(localFilePath)</code>.  The <em>localFilePath</em> parameter
+typically points to a directory, which will be:</p>
+
+<ol>
+<li>Recursively ZIP&rsquo;d</li>
+<li>Posted to S3 alongside the Lambda code archive and CloudFormation Templates</li>
+<li>Dynamically unpacked by a CloudFormation CustomResource during <code>provision</code> to a new S3 bucket.</li>
+</ol>
+
+<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+
+<p>Putting it all together, our <code>main()</code> function looks like:</p>
+
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	// Register the function with the API Gateway
+	apiStage := sparta.NewStage(&#34;v1&#34;)
+	apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)
+	// Enable CORS s.t. the S3 site can access the resources
+	apiGateway.CORSEnabled = true
+
+	// Provision a new S3 bucket with the resources in the supplied subdirectory
+	s3Site, _ := sparta.NewS3Site(&#34;./resources&#34;)
+
+	// Deploy it
+	sparta.Main(&#34;SpartaHTML&#34;,
+		fmt.Sprintf(&#34;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&#34;),
+		spartaLambdaFunctions(apiGateway),
+		apiGateway,
+		s3Site)
+}</code></pre>
+
+
+<p>which can be provisioned using the standard <a href="/docs/commandline">command line</a> option.</p>
+
+<p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
+
+<p><pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
+INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
+INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:027159405834:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
+INFO[0114] Elapsed time        Seconds=114</code></pre>
+</p>
+
+<p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
+
+<h3 id="a-href-hugoshortcode-11-discover-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#discover:d680e8a854a7cbad6d490c445cba2eba">Discover</a></h3>
+
+<p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
+
+<p>During S3 site initialization, the CustomResource generates two additional configuration files and writes them to the root
+of the S3 bucket.</p>
+
+<ol>
+<li><strong>sparta_apigateway.js</strong>
+<pre><code class="javascript">(function(){ window.SpartaAPIGateway = JSON.parse(&#39;{&#34;APIGatewayURL&#34;:{&#34;Description&#34;:&#34;API Gateway URL&#34;,&#34;Value&#34;:&#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;}}&#39;)}());</code></pre>
+</li>
+<li><strong>sparta_apigateway.json</strong>
+<pre><code class="json">{
+  &#34;APIGatewayURL&#34;: {
+    &#34;Description&#34;: &#34;API Gateway URL&#34;,
+    &#34;Value&#34;: &#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;
+  }
+}</code></pre>
+</li>
+</ol>
+
+<p>These configuration files supply the static website with the API Gateway address.</p>
 
 </div>
 
