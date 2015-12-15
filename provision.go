@@ -118,36 +118,41 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		}
 		defer reader.Close()
 		io.Copy(binaryWriter, reader)
+		logger.WithFields(logrus.Fields{
+			"Path": sourceFile,
+		}).Debug("Archiving file")
+
 		return nil
 	}
 
-	appendDirectory := func(sourceDirectory string) error {
-
-		var directories []os.FileInfo
-		entries, err := ioutil.ReadDir(sourceDirectory)
-		if nil != err {
+	directoryWalker := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
 			return err
 		}
-		for _, eachFileInfo := range entries {
-			switch mode := eachFileInfo.Mode(); {
-			case mode.IsRegular():
-				sourceEntry := path.Join(fullPathSource, eachFileInfo.Name())
-				err = appendFile(sourceEntry)
-				if nil != err {
-					return err
-				}
-			case mode.IsDir():
-				directories = append(directories, eachFileInfo)
-			}
+		header, err := zip.FileInfoHeader(info)
+		if err != nil {
+			return err
 		}
-		for _, eachDirInfo := range directories {
-			sourceEntry := path.Join(fullPathSource, eachDirInfo.Name())
-			err = addToZip(zipWriter, sourceEntry, rootSource, logger)
-			if nil != err {
-				return err
-			}
+		header.Name = strings.TrimPrefix(strings.TrimPrefix(path, rootSource), string(os.PathSeparator))
+		if info.IsDir() {
+			header.Name += "/"
+		} else {
+			header.Method = zip.Deflate
 		}
-		return nil
+		writer, err := zipWriter.CreateHeader(header)
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = io.Copy(writer, file)
+		return err
 	}
 
 	fileInfo, err := os.Stat(fullPathSource)
@@ -156,7 +161,7 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	}
 	switch mode := fileInfo.Mode(); {
 	case mode.IsDir():
-		err = appendDirectory(fullPathSource)
+		err = filepath.Walk(fullPathSource, directoryWalker)
 	case mode.IsRegular():
 		err = appendFile(fullPathSource)
 	default:
@@ -472,9 +477,6 @@ func createUploadStep(packagePath string) workflowStep {
 			if err != nil {
 				return nil, errors.New("Failed to create temporary file")
 			}
-			defer func() {
-				tmpFile.Close()
-			}()
 
 			// Add the contents to the Zip file
 			zipArchive := zip.NewWriter(tmpFile)
@@ -703,13 +705,28 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 				return nil, err
 			}
 		}
-		// If there's an API gateway definition, include the resources that provision it
+
+		// If there's an API gateway definition, include the resources that provision it. Since this export will likely
+		// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator, pass that to the S3Site
+		// if it's defined, and then merge it with the normal output map.
+		apiExports := make(map[string]interface{}, 0)
 		if nil != ctx.api {
-			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, apiExports, ctx.logger)
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.site {
-			ctx.site.export(ctx.s3Bucket, s3Key, ctx.s3SiteLambdaZipKey, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
+			ctx.site.export(ctx.s3Bucket,
+				s3Key,
+				ctx.s3SiteLambdaZipKey,
+				apiExports,
+				ctx.lambdaIAMRoleNameMap,
+				ctx.cloudformationResources,
+				ctx.cloudformationOutputs,
+				ctx.logger)
+		}
+		// Merge the API Gateway outputs s.t. the Site can find them...
+		for eachKey, eachValue := range apiExports {
+			ctx.cloudformationOutputs[eachKey] = eachValue
 		}
 		// Add Sparta outputs
 		ctx.cloudformationOutputs[OutputSpartaVersionKey] = ArbitraryJSONObject{
