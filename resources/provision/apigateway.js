@@ -5,7 +5,7 @@ var _ = require('underscore');
 var async = require('async');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
-awsConfig.logger = console;
+//awsConfig.logger = console;
 
 console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 var apigateway = new AWS.APIGateway(awsConfig);

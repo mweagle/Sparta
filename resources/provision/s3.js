@@ -4,10 +4,12 @@
 var response = require('cfn-response');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
-awsConfig.logger = console;
-console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
+//awsConfig.logger = console;
+
 var s3 = new AWS.S3(awsConfig);
 var cloudFormation = new AWS.CloudFormation(awsConfig);
+
+console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 
 exports.handler = function(event, context) {
   var data = {};
