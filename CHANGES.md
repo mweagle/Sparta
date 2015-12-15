@@ -1,5 +1,9 @@
 ## v0.1.0
 - :checkered_flag: **CHANGES**
+  - Added `S3Site` type and optional static resource provisioning as part of `provision`
+    - See the [SpartaHTML](https://github.com/mweagle/SpartaHTML) application for a complete example
+  - Added `API.CORSEnabled` option (defaults to _false_).  
+    - If defined, all APIGateway methods will have [CORS Enabled](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html).
   - Update logging to use structured fields rather than variadic, concatenation
   - Reimplement `explore` command line option.
     - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshalling.
