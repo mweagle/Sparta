@@ -259,7 +259,6 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
 
     // 2. Create the Method response, which is a map of status codes to
     // response objects
-    // Create the method responses
     creationTasks.putMethodResponse = Object.keys(creationTasks);
     creationTasks.putMethodResponse.push(function(asyncCB) {
       var putMethodResponseTasks = [];
@@ -267,7 +266,6 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       _.each(responses, function (eachResponseObject, eachResponseStatus) {
           var models = eachResponseObject.Models || {};
           var parameters = eachResponseObject.Parameters || {};
-          //logResults('Response object', null, {STATUS: eachResponseStatus, MODELS: models});
           putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, parameters, models));
       });
 
