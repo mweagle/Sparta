@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  509 
+    "wordCount":  517 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti home:Home highlight:vs github:https://github.com/mweagle flattr: googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube:]">
+<body class="map[facebook: flattr: name:yeti highlight:vs bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -288,9 +288,7 @@
 
 <h2 id="provisioning-a-cors-enabled-website:d680e8a854a7cbad6d490c445cba2eba">Provisioning a CORS-enabled Website</h2>
 
-<p>Sparta supports provisioning an S3-backed <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website</a> as part of provisioning.<br />
-We&rsquo;ll walk through provisioning a minimal <a href="http://getbootstrap.com">Bootstrap</a> website that accesses API Gateway lambda functions provisioned by
-a single service in this example.</p>
+<p>Sparta supports provisioning an S3-backed <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website</a> as part of provisioning.  We&rsquo;ll walk through provisioning a minimal <a href="http://getbootstrap.com">Bootstrap</a> website that accesses API Gateway lambda functions provisioned by a single service in this example.</p>
 
 <p>The source for this is the <a href="https://github.com/mweagle/SpartaHTML/blob/master/main.go">SpartaHTML</a> example application.</p>
 
@@ -311,8 +309,7 @@ a single service in this example.</p>
 
 <h3 id="a-href-hugoshortcode-3-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#apiGateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
 
-<p>The next step is to create an API Gateway<br />
-on the API:</p>
+<p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
 <pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
 apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>

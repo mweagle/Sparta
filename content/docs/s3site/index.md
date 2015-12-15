@@ -8,9 +8,7 @@ type = "doc"
 
 ## Provisioning a CORS-enabled Website
 
-Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  
-We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by
-a single service in this example.  
+Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.  
 
 The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML/blob/master/main.go) example application.
 
@@ -32,8 +30,7 @@ This lambda function simply sends back the content of the inbound event.  See th
 
 ### <a href="{{< relref "#apiGateway" >}}">Create the API Gateway</a>
 
-The next step is to create an API Gateway  
-on the API:
+The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.
 
 {{< highlight go >}}
 apiStage := sparta.NewStage("v1")
