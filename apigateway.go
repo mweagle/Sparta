@@ -118,8 +118,8 @@ type Model struct {
 // Response proxies the AWS SDK's PutMethodResponseInput data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-PutMethodResponseInput
 type Response struct {
-	Parameters map[string]bool  `json:",omitempty"`
-	Models     map[string]Model `json:",omitempty"`
+	Parameters map[string]bool   `json:",omitempty"`
+	Models     map[string]*Model `json:",omitempty"`
 }
 
 // IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
@@ -133,16 +133,20 @@ type IntegrationResponse struct {
 // DefaultIntegrationResponses returns a map of HTTP status codes to
 // integration response RegExps to return customized HTTP status
 // codes to API Gateway clients.  The regexp is triggered by the
-// presence of a golang HTTP status string in the response body.
+// presence of a golang HTTP status string in the error object.
 // https://golang.org/src/net/http/status.go
-func DefaultIntegrationResponses() map[int]IntegrationResponse {
-	responseMap := make(map[int]IntegrationResponse)
+// http://www.jayway.com/2015/11/07/error-handling-in-api-gateway-and-aws-lambda/
+func DefaultIntegrationResponses(defaultHTTPStatusCode int) map[int]*IntegrationResponse {
+	responseMap := make(map[int]*IntegrationResponse)
 
 	for i := 200; i <= 599; i++ {
 		statusText := http.StatusText(i)
 		if "" != statusText {
 			regExp := fmt.Sprintf(".*%s.*", statusText)
-			responseMap[i] = IntegrationResponse{
+			if i == defaultHTTPStatusCode {
+				regExp = ""
+			}
+			responseMap[i] = &IntegrationResponse{
 				SelectionPattern: regExp,
 				Templates: map[string]string{
 					"application/json": "",
@@ -150,13 +154,6 @@ func DefaultIntegrationResponses() map[int]IntegrationResponse {
 				},
 			}
 		}
-	}
-	// Status OK is the default
-	responseMap[http.StatusOK] = IntegrationResponse{
-		Templates: map[string]string{
-			"application/json": "",
-			"text/plain":       "",
-		},
 	}
 	return responseMap
 }
@@ -170,9 +167,9 @@ type Integration struct {
 	CacheNamespace     string
 	Credentials        string
 
-	Responses map[int]IntegrationResponse
+	Responses map[int]*IntegrationResponse
 
-	// Typically "AWS", but for CORS support is set to "MOCK"
+	// Typically "AWS", but for OPTIONS CORS support is set to "MOCK"
 	integrationType string
 }
 
@@ -186,9 +183,6 @@ func (integration Integration) defaultIntegrationRequestTemplates() map[string]s
 // CloudFormation template representation.
 func (integration Integration) MarshalJSON() ([]byte, error) {
 	var responses = integration.Responses
-	if len(responses) <= 0 {
-		responses = DefaultIntegrationResponses()
-	}
 	var requestTemplates = integration.RequestTemplates
 	if len(requestTemplates) <= 0 {
 		requestTemplates = integration.defaultIntegrationRequestTemplates()
@@ -200,7 +194,7 @@ func (integration Integration) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	var stringResponses = make(map[string]IntegrationResponse, 0)
+	var stringResponses = make(map[string]*IntegrationResponse, 0)
 	for eachKey, eachValue := range responses {
 		stringResponses[strconv.Itoa(eachKey)] = eachValue
 	}
@@ -233,10 +227,10 @@ type Method struct {
 
 	// Request data
 	Parameters map[string]bool
-	Models     map[string]Model
+	Models     map[string]*Model
 
 	// Response map
-	Responses map[int]Response
+	Responses map[int]*Response
 
 	// Integration response map
 	Integration Integration
@@ -245,8 +239,8 @@ type Method struct {
 // DefaultMethodResponses returns the default set of Method HTTPStatus->Response
 // pass through responses.  The successfulHTTPStatusCode param is the single
 // 2XX response code to use for the method.
-func DefaultMethodResponses(successfulHTTPStatusCode int) map[int]Response {
-	responses := make(map[int]Response, 0)
+func DefaultMethodResponses(successfulHTTPStatusCode int) map[int]*Response {
+	responses := make(map[int]*Response, 0)
 
 	// Only one 2xx status code response may exist on a Method
 	responses[successfulHTTPStatusCode] = defaultResponse()
@@ -262,9 +256,9 @@ func DefaultMethodResponses(successfulHTTPStatusCode int) map[int]Response {
 }
 
 // Return the default response for the standard response types.
-func defaultResponse() Response {
+func defaultResponse() *Response {
 	contentTypes := []string{"application/json", "text/plain"}
-	models := make(map[string]Model, 0)
+	models := make(map[string]*Model, 0)
 	for _, eachContentType := range contentTypes {
 		description := "Empty model"
 		if eachContentType == "application/json" {
@@ -275,13 +269,13 @@ func defaultResponse() Response {
 				description = fmt.Sprintf("Empty %s model", strings.ToUpper(parts[0]))
 			}
 		}
-		models[eachContentType] = Model{
+		models[eachContentType] = &Model{
 			Description: description,
 			Name:        "Empty",
 			Schema:      "",
 		}
 	}
-	return Response{
+	return &Response{
 		Models: models,
 	}
 }
@@ -290,15 +284,8 @@ func defaultResponse() Response {
 // CloudFormation template representation.  If method.Responses is empty, the
 // DefaultMethodResponses map will be used, where the HTTP Success code is 201 for POST
 // methods and 200 for all other methodnames.
-func (method Method) MarshalJSON() ([]byte, error) {
+func (method *Method) MarshalJSON() ([]byte, error) {
 	responses := method.Responses
-	if len(responses) <= 0 {
-		statusSuccessfulCode := http.StatusOK
-		if method.httpMethod == "POST" {
-			statusSuccessfulCode = http.StatusCreated
-		}
-		responses = DefaultMethodResponses(statusSuccessfulCode)
-	}
 
 	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
@@ -307,7 +294,7 @@ func (method Method) MarshalJSON() ([]byte, error) {
 		}
 	}
 
-	var stringResponses = make(map[string]Response, 0)
+	var stringResponses = make(map[string]*Response, 0)
 	for eachKey, eachValue := range responses {
 		stringResponses[strconv.Itoa(eachKey)] = eachValue
 	}
@@ -333,7 +320,7 @@ type Resource struct {
 
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
-func (resource Resource) MarshalJSON() ([]byte, error) {
+func (resource *Resource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
 		"PathPart": resource.pathPart,
 		"LambdaArn": ArbitraryJSONObject{
@@ -355,7 +342,7 @@ type Stage struct {
 
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
-func (stage Stage) MarshalJSON() ([]byte, error) {
+func (stage *Stage) MarshalJSON() ([]byte, error) {
 	stageJSON := map[string]interface{}{
 		"Name":                stage.name,
 		"CacheClusterEnabled": stage.CacheClusterEnabled,
@@ -399,90 +386,7 @@ type resourceNode struct {
 
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
-func (api API) MarshalJSON() ([]byte, error) {
-
-	// If this API is CORS enabled, then annotate the APIResources with OPTION
-	// entries.  Slight overhead in network I/O due to marshalling data, but simplifies
-	// the CustomResource, which is only a temporary stopgap until cloudformation
-	// properly supports APIGateway
-	if api.CORSEnabled {
-		/*
-			{
-			  "Result": {
-			    "httpMethod": "OPTIONS",
-			    "authorizationType": "NONE",
-			    "apiKeyRequired": false,
-			    "requestParameters": {},
-			    "methodResponses": {
-			      "200": {
-			        "statusCode": "200",
-			        "responseParameters": {
-			          "method.response.header.Access-Control-Allow-Headers": false,
-			          "method.response.header.Access-Control-Allow-Methods": false,
-			          "method.response.header.Access-Control-Allow-Origin": false
-			        },
-			        "responseModels": {
-			          "application/json": "Empty"
-			        }
-			      }
-			    },
-			    "methodIntegration": {
-			      "type": "MOCK",
-			      "requestTemplates": {
-			        "application/json": "{\"statusCode\": 200}"
-			      },
-			      "cacheNamespace": "xuvta4",
-			      "cacheKeyParameters": [],
-			      "integrationResponses": {
-			        "200": {
-			          "statusCode": "200",
-			          "responseParameters": {
-			            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
-			            "method.response.header.Access-Control-Allow-Methods": "'GET,OPTIONS'",
-			            "method.response.header.Access-Control-Allow-Origin": "'*'"
-			          },
-			          "responseTemplates": {
-			            "application/json": null
-			          }
-			        }
-			      }
-			    }
-			  }
-			}
-		*/
-		for _, eachResource := range api.resources {
-			method, err := eachResource.NewMethod("OPTIONS")
-			if err != nil {
-				return nil, err
-			}
-			statusOkResponse := defaultResponse()
-			statusOkResponse.Parameters = map[string]bool{
-				"method.response.header.Access-Control-Allow-Headers": true,
-				"method.response.header.Access-Control-Allow-Methods": true,
-				"method.response.header.Access-Control-Allow-Origin":  true,
-			}
-			method.Responses[200] = statusOkResponse
-
-			method.Integration = Integration{
-				Parameters:       make(map[string]string, 0),
-				RequestTemplates: make(map[string]string, 0),
-				Responses:        make(map[int]IntegrationResponse, 0),
-				integrationType:  "MOCK",
-			}
-			method.Integration.RequestTemplates["application/json"] = "{\"statusCode\": 200}"
-			corsIntegrationResponse := IntegrationResponse{
-				Parameters: map[string]string{
-					"method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
-					"method.response.header.Access-Control-Allow-Methods": "'*'",
-					"method.response.header.Access-Control-Allow-Origin":  "'*'",
-				},
-				Templates: map[string]string{
-					"application/json": "",
-				},
-			}
-			method.Integration.Responses[200] = corsIntegrationResponse
-		}
-	}
+func (api *API) MarshalJSON() ([]byte, error) {
 
 	// Transform the map of resources into a set of hierarchical resourceNodes
 	rootResource := resourceNode{
@@ -520,13 +424,12 @@ func (api API) MarshalJSON() ([]byte, error) {
 		apiJSON["Description"] = api.Description
 	}
 	if nil != api.stage {
-		apiJSON["Stage"] = *api.stage
+		apiJSON["Stage"] = api.stage
 	}
 	return json.Marshal(apiJSON)
 }
 
 // export marshals the API data to a CloudFormation compatible representation
-
 func (api *API) export(S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]interface{},
@@ -545,6 +448,88 @@ func (api *API) export(S3Bucket string,
 		return err
 	}
 
+	// If this API is CORS enabled, then annotate the APIResources with OPTION
+	// entries.  Slight overhead in network I/O due to marshalling data, but simplifies
+	// the CustomResource, which is only a temporary stopgap until cloudformation
+	// properly supports APIGateway
+	responseParameters := map[string]bool{
+		"method.response.header.Access-Control-Allow-Headers": true,
+		"method.response.header.Access-Control-Allow-Methods": true,
+		"method.response.header.Access-Control-Allow-Origin":  true,
+	}
+	integrationResponseParameters := map[string]string{
+		"method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
+		"method.response.header.Access-Control-Allow-Methods": "'*'",
+		"method.response.header.Access-Control-Allow-Origin":  "'*'",
+	}
+
+	// We need to update the default values here, because the individual
+	// methods are deserialized they annotate the prexisting responses with whitelist data.
+	for _, eachResource := range api.resources {
+		if api.CORSEnabled {
+			// Create the OPTIONS entry
+			method, err := eachResource.NewMethod("OPTIONS")
+			if err != nil {
+				return err
+			}
+			statusOkResponse := defaultResponse()
+			statusOkResponse.Parameters = responseParameters
+			method.Responses[200] = statusOkResponse
+
+			method.Integration = Integration{
+				Parameters:       make(map[string]string, 0),
+				RequestTemplates: make(map[string]string, 0),
+				Responses:        make(map[int]*IntegrationResponse, 0),
+				integrationType:  "MOCK",
+			}
+			method.Integration.RequestTemplates["application/json"] = "{\"statusCode\": 200}"
+			corsIntegrationResponse := IntegrationResponse{
+				Parameters: integrationResponseParameters,
+				Templates: map[string]string{
+					"application/json": "",
+				},
+			}
+			method.Integration.Responses[200] = &corsIntegrationResponse
+		}
+
+		for _, eachMethod := range eachResource.Methods {
+			statusSuccessfulCode := http.StatusOK
+			if eachMethod.httpMethod == "POST" {
+				statusSuccessfulCode = http.StatusCreated
+			}
+
+			if len(eachMethod.Responses) <= 0 {
+				eachMethod.Responses = DefaultMethodResponses(statusSuccessfulCode)
+			}
+			if api.CORSEnabled {
+				for _, eachResponse := range eachMethod.Responses {
+					if nil == eachResponse.Parameters {
+						eachResponse.Parameters = make(map[string]bool, 0)
+					}
+					for eachKey, eachBool := range responseParameters {
+						eachResponse.Parameters[eachKey] = eachBool
+					}
+				}
+			}
+			// Update Integration
+			if len(eachMethod.Integration.Responses) <= 0 {
+				eachMethod.Integration.Responses = DefaultIntegrationResponses(statusSuccessfulCode)
+			}
+			if api.CORSEnabled {
+				for eachHTTPStatus, eachIntegrationResponse := range eachMethod.Integration.Responses {
+					if eachHTTPStatus >= 200 && eachHTTPStatus <= 299 {
+						if nil == eachIntegrationResponse.Parameters {
+							eachIntegrationResponse.Parameters = make(map[string]string, 0)
+						}
+						for eachKey, eachValue := range integrationResponseParameters {
+							eachIntegrationResponse.Parameters[eachKey] = eachValue
+						}
+					}
+				}
+			}
+		}
+	}
+
 	// Unmarshal everything to JSON
 	apiGatewayInvoker := ArbitraryJSONObject{
 		"Type":    "AWS::CloudFormation::CustomResource",
@@ -553,7 +538,7 @@ func (api *API) export(S3Bucket string,
 			"ServiceToken": ArbitraryJSONObject{
 				"Fn::GetAtt": []string{lambdaResourceName, "Arn"},
 			},
-			"API": *api,
+			"API": api,
 		},
 		"DependsOn": []string{lambdaResourceName},
 	}
@@ -629,7 +614,7 @@ func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 	integration := Integration{
 		Parameters:       make(map[string]string, 0),
 		RequestTemplates: make(map[string]string, 0),
-		Responses:        make(map[int]IntegrationResponse, 0),
+		Responses:        make(map[int]*IntegrationResponse, 0),
 		integrationType:  "AWS", // Type used for Lambda integration
 	}
 
@@ -637,8 +622,8 @@ func (resource *Resource) NewMethod(httpMethod string) (*Method, error) {
 		authorizationType: authorizationType,
 		httpMethod:        httpMethod,
 		Parameters:        make(map[string]bool, 0),
-		Models:            make(map[string]Model, 0),
-		Responses:         make(map[int]Response, 0),
+		Models:            make(map[string]*Model, 0),
+		Responses:         make(map[int]*Response, 0),
 		Integration:       integration,
 	}
 	resource.Methods[keyname] = method
