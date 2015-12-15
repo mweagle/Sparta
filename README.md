@@ -33,6 +33,7 @@ Given a set of registered _golang_ functions, Sparta will:
   * Optionally:
     * Register with S3 and SNS for push source configuration
     * Provision an [API Gateway](https://aws.amazon.com/api-gateway/) service to make your functions publicly available
+    * Provision an [S3 static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)  
 
 Note that Lambda updates may be performed with [no interruption](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html)
 in service.
