@@ -20,5 +20,5 @@ func ExampleMain_basic() {
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda := NewLambda("PreexistingAWSLambdaRoleName", mainHelloWorld, nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
-	Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions, nil)
+	Main("HelloWorldLambdaService", "Description for Hello World Lambda", lambdaFunctions, nil, nil)
 }

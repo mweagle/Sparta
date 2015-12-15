@@ -38,5 +38,5 @@ func ExampleS3Permission() {
 	})
 
 	lambdaFunctions = append(lambdaFunctions, s3Lambda)
-	Main("S3LambdaApp", "Registers for S3 events", lambdaFunctions, nil)
+	Main("S3LambdaApp", "Registers for S3 events", lambdaFunctions, nil, nil)
 }

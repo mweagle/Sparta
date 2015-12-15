@@ -56,5 +56,5 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	method.Parameters["method.request.querystring.myOtherKey"] = true
 
 	// Start
-	Main("HelloWorldLambdaHTTPSService", "Description for Hello World HTTPS Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway)
+	Main("HelloWorldLambdaHTTPSService", "Description for Hello World HTTPS Lambda", []*LambdaAWSInfo{echoAPIGatewayLambdaFn}, apiGateway, nil)
 }

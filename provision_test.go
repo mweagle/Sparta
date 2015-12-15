@@ -11,7 +11,7 @@ func TestProvision(t *testing.T) {
 
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", testLambdaData(), nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true, "SampleProvision", "", testLambdaData(), nil, nil, "S3Bucket", &templateWriter, logger)
 	if nil != err {
 		t.Fatal(err.Error())
 	}
@@ -48,7 +48,7 @@ func TestDecorateProvision(t *testing.T) {
 
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", lambdas, nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true, "SampleProvision", "", lambdas, nil, nil, "S3Bucket", &templateWriter, logger)
 	if nil != err {
 		t.Fatal(err.Error())
 	}

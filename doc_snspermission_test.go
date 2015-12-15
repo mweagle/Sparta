@@ -26,5 +26,5 @@ func ExampleSNSPermission() {
 		},
 	})
 	lambdaFunctions = append(lambdaFunctions, snsLambda)
-	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil)
+	Main("SNSLambdaApp", "Registers for SNS events", lambdaFunctions, nil, nil)
 }
