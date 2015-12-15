@@ -8,10 +8,11 @@
   - Reimplement `explore` command line option.
     - The `explore` command line option creates a _localhost_ server to which requests can be sent for testing.  The POST request body **MUST** be _application/json_, with top level `event` and `context` keys for proper unmarshaling.
   - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
-  - :warning: **BREAKING**
-    - `sparta.Main()` signature changed to accept optional `S3Site` value
+- :warning: **BREAKING**
+  - `sparta.Main()` signature changed to accept optional `S3Site` pointer
 
 ## v0.0.7
+- :checkered_flag: **CHANGES**
   - Documentation moved to [gosparta.io](http://gosparta.io)
  compliant value for `go test` integration.
     - Add [context](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) struct to APIGatewayLambdaJSONEvent
@@ -21,12 +22,12 @@
     - Added [Kinesis Event](https://github.com/mweagle/Sparta/blob/master/aws/kinesis/events.go) types for unmarshaling
     - Fixed latent issue where `IAMRoleDefinition` CloudFormation names would collide if they had the same Permission set.
     - Remove _API Gateway_ view from `describe` if none is defined.
-  - :warning: **BREAKING**
-    - N/A
+- :warning: **BREAKING**
+  - N/A
 
 ## v0.0.6
-  - Add _.travis.yml_ for CI support.
-  - :checkered_flag: **CHANGES**
+- Add _.travis.yml_ for CI support.
+- :checkered_flag: **CHANGES**
     - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
       - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
     - Improved API Gateway `describe` output.
@@ -37,24 +38,24 @@
       - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map is used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty  (`len(Responses) <= 0`) at provision time.
       - The mapping uses regular expressions based on the standard _golang_ [HTTP StatusText](https://golang.org/src/net/http/status.go) values.
     - Added `SpartaHome` and `SpartaVersion` template [outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
-  - :warning: **BREAKING**
-    - Changed:
-      - `type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)`
-        - **TO**
-      - `type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`
-      - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
+- :warning: **BREAKING**
+  - Changed:
+    - `type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)`
+      - **TO**
+    - `type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`
+    - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
 
 ## v0.0.5
-  - :checkered_flag: **CHANGES**
-    - Preliminary support for API Gateway provisioning
-      - See API type for more information.
-    - `describe` output includes:
-      - Dynamically generated CloudFormation Template
-      - API Gateway json
+- :checkered_flag: **CHANGES**
+  - Preliminary support for API Gateway provisioning
+    - See API type for more information.
+  - `describe` output includes:
+    - Dynamically generated CloudFormation Template
+    - API Gateway json
     - Lambda implementation of `CustomResources` for push source configuration promoted from inline [ZipFile](http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionCode.html) JS code to external JS files that are proxied via _index.js_ exports.
     - [Fixed latent bug](https://github.com/mweagle/Sparta/commit/684b48eb0c2356ba332eee6054f4d57fc48e1419) where remote push source registrations were deleted during stack updates.
-  - :warning: **BREAKING**
-    - Changed `Sparta.Main()` signature to accept API pointer as fourth argument.  Parameter is optional.
+- :warning: **BREAKING**
+  - Changed `Sparta.Main()` signature to accept API pointer as fourth argument.  Parameter is optional.
 
 ## v0.0.3
   - :checkered_flag: **CHANGES**
