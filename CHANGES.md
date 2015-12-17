@@ -9,10 +9,12 @@
   		},
   	})
     ```
-    - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator). 
+    - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator).
+  - Add CloudWatch metrics to help track [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
+    - Metrics are published to **Sparta/<SERVICE_NAME>** namespace.
+    - MetricNames: `ProcessCreated`, `ProcessReused`, `ProcessTerminated`.
 - :warning: **BREAKING**
   - `sparta.Main()` signature changed to accept optional `S3Site` pointer
-
 
 ## v0.1.0
 - :checkered_flag: **CHANGES**

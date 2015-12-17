@@ -401,7 +401,8 @@ func createPackageStep() workflowStep {
 		// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 		// with the service binary name
 		nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
-
+		// And the service name
+		nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", ctx.serviceName)
 		ctx.logger.WithFields(logrus.Fields{
 			"Entry": nodeJSSource,
 		}).Debug("Dynamically generated NodeJS adapter")

@@ -3,21 +3,37 @@ var fs = require('fs');
 var http = require('http');
 var path = require('path');
 var child_process = require('child_process');
+var AWS = require('aws-sdk');
+var awsConfig = new AWS.Config({});
+
 var GOLANG_CONSTANTS = require('./golang-constants.json');
 
 //TODO: See if https://forums.aws.amazon.com/message.jspa?messageID=633802
 // has been updated with new information
 process.env.PATH = process.env.PATH + ':/var/task';
 
-
+// These two names will be dynamically reassigned during archive creation
 var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
+var SPARTA_SERVICE_NAME = 'SpartaService';
+// End dynamic reassignment
+
+// This is where the binary will be extracted
 var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME);
 var MAXIMUM_RESPAWN_COUNT = 5;
 
+// Handlers that are referenced as part of stack creation, via CustomResource
+// references.
 var PROXIED_MODULES = ['s3', 'sns', 'apigateway', 's3Site'];
 
+// Handle to the active golang process.
 var golangProcess = null;
 var failCount = 0;
+
+var METRIC_NAMES = {
+  CREATED : 'ProcessCreated',
+  REUSED: 'ProcessReused',
+  TERMINATED: 'ProcessTerminated'
+};
 
 function makeRequest(path, event, context) {
   var requestBody = {
@@ -104,13 +120,41 @@ var log = function(obj_or_string)
   }
 };
 
+var postMetricCounter = function(metricName, userCallback) {
+  var namespace = util.format('Sparta/%s', SPARTA_SERVICE_NAME);
+
+  var params = {
+    MetricData: [
+      {
+        MetricName: metricName,
+        Unit: 'Count',
+        Value: 1
+      },
+    ],
+    Namespace: namespace
+  };
+  var cloudwatch = new AWS.CloudWatch(awsConfig);
+  var onResult = function(/*e, result */) {
+    // var putResult = {
+    //   PUT_METRIC_DATA: 'PutMetricData',
+    //   PARAMS: params,
+    //   ERROR: e ? e.toString() : undefined,
+    //   RESULT: result || undefined
+    // };
+    // log(putResult);
+    if (userCallback) {
+      userCallback();
+    }
+  };
+  cloudwatch.putMetricData(params, onResult);
+};
+
 // Move the file to /tmp to temporarily work around
 // https://forums.aws.amazon.com/message.jspa?messageID=583910
 var ensureGoLangBinary = function(callback)
 {
     try
     {
-      log('Checking for binary: ' + SPARTA_BINARY_PATH);
       fs.statSync(SPARTA_BINARY_PATH);
       setImmediate(callback, null);
     }
@@ -130,6 +174,7 @@ var ensureGoLangBinary = function(callback)
         else
         {
           log(stdout.toString('utf-8'));
+          // Post the
         }
         callback(err, stdout);
       });
@@ -137,7 +182,7 @@ var ensureGoLangBinary = function(callback)
 };
 
 var createForwarder = function(path) {
-  var forwardToGolangProcess = function(event, context)
+  var forwardToGolangProcess = function(event, context, metricName)
   {
     if (!golangProcess) {
       ensureGoLangBinary(function() {
@@ -152,13 +197,16 @@ var createForwarder = function(path) {
 
         var terminationHandler = function(eventName) {
           return function(value) {
-            console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)));
-            failCount += 1;
-            if (failCount > MAXIMUM_RESPAWN_COUNT) {
-              process.exit(1);
-            }
-            golangProcess = null;
-            forwardToGolangProcess(null, null);
+            var onPosted = function() {
+              console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)));
+              failCount += 1;
+              if (failCount > MAXIMUM_RESPAWN_COUNT) {
+                process.exit(1);
+              }
+              golangProcess = null;
+              forwardToGolangProcess(null, null, METRIC_NAMES.TERMINATED);
+            };
+            postMetricCounter(METRIC_NAMES.TERMINATED, onPosted);
           };
         };
         golangProcess.on('error', terminationHandler('error'));
@@ -170,13 +218,14 @@ var createForwarder = function(path) {
         });
         var golangProcessReadyHandler = function() {
           process.removeListener('SIGUSR2', golangProcessReadyHandler);
-          forwardToGolangProcess(event, context);
+          forwardToGolangProcess(event, context, METRIC_NAMES.CREATED);
         };
         process.on('SIGUSR2', golangProcessReadyHandler);
       });
     }
     else if (event && context)
     {
+      postMetricCounter(metricName || METRIC_NAMES.REUSED);
       makeRequest(path, event, context);
     }
   };
@@ -204,9 +253,6 @@ PROXIED_MODULES.forEach(function (eachConfig) {
   exports[exportName] = function(event, context)
   {
     try {
-      var AWS = require('aws-sdk');
-      var awsConfig = new AWS.Config({});
-
       // If the stack is in update mode, don't delegate
       var proxyTasks = [];
       proxyTasks.push(function (taskCB) {
