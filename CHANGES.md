@@ -1,3 +1,19 @@
+## v0.1.1
+- :checkered_flag: **CHANGES**
+  - Updated `describe` CSS font styles to eliminate clipping
+  - Support `{Ref: 'MyDynamicResource'}` for _SourceArn_ values.  Example:
+    ```javascript
+    lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+  		BasePermission: sparta.BasePermission{
+  			SourceArn: sparta.ArbitraryJSONObject{"Ref": snsTopicName},
+  		},
+  	})
+    ```
+    - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator). 
+- :warning: **BREAKING**
+  - `sparta.Main()` signature changed to accept optional `S3Site` pointer
+
+
 ## v0.1.0
 - :checkered_flag: **CHANGES**
   - Added `S3Site` type and optional static resource provisioning as part of `provision`

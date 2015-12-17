@@ -15,6 +15,7 @@ exports.handler = function(event, context) {
   var data = {};
   var props = event.ResourceProperties;
   var oldProps = event.OldResourceProperties || {};
+  var bucketName = (props.BucketArn || '').split(':').pop();
 
   var onEnd = function(error, returnValue) {
     data.Error = error || undefined;
@@ -55,7 +56,7 @@ exports.handler = function(event, context) {
       };
       console.log('Result: ' + JSON.stringify(logMsg));
       s3.putBucketNotificationConfiguration({
-        Bucket: props.Bucket,
+        Bucket: bucketName,
         NotificationConfiguration: s3Config
       }, onEnd);
     }
@@ -69,7 +70,7 @@ exports.handler = function(event, context) {
         var stackStatus = del.Stacks[0] ? del.Stacks[0].StackStatus : '';
         if (stackStatus !== 'UPDATE_COMPLETE_CLEANUP_IN_PROGRESS') {
           s3.getBucketNotificationConfiguration({
-            Bucket: props.Bucket
+            Bucket: bucketName
           }, onResponse);
         } else {
           onEnd(null, del.Stacks[0]);
@@ -81,7 +82,7 @@ exports.handler = function(event, context) {
     }, onDescribeStacks);
   } else {
     s3.getBucketNotificationConfiguration({
-      Bucket: props.Bucket
+      Bucket: bucketName
     }, onResponse);
   }
 };

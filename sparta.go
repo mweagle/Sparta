@@ -233,11 +233,40 @@ type BasePermission struct {
 	// The AWS account ID (without hyphens) of the source owner
 	SourceAccount string `json:"SourceAccount,omitempty"`
 	// The ARN of a resource that is invoking your function.
-	SourceArn string `json:"SourceArn,omitempty"`
+	SourceArn interface{} `json:"SourceArn,omitempty"`
+}
+
+func (perm *BasePermission) sourceArnExpr(joinParts []interface{}) interface{} {
+	switch perm.SourceArn.(type) {
+	case string:
+		return perm.SourceArn
+	case ArbitraryJSONObject:
+		if nil == joinParts {
+			joinParts = make([]interface{}, 0)
+		}
+		joinParts = append(joinParts, perm.SourceArn)
+		return ArbitraryJSONObject{
+			"Fn::Join": []interface{}{"", joinParts},
+		}
+	default:
+		return "Invalid SourceArn type"
+	}
+}
+
+func (perm *BasePermission) sourceArnString() string {
+	switch arn := perm.SourceArn.(type) {
+	case string:
+		return arn
+	case ArbitraryJSONObject:
+		return fmt.Sprintf("Ref:%s", arn["Ref"])
+	default:
+		return "Invalid SourceArn type"
+	}
 }
 
 func (perm BasePermission) export(principal string,
 	targetLambdaFuncRef interface{},
+	sourceArnExpression interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
@@ -246,27 +275,17 @@ func (perm BasePermission) export(principal string,
 		"Action":       "lambda:InvokeFunction",
 		"FunctionName": targetLambdaFuncRef,
 		"Principal":    principal,
+		"SourceArn":    sourceArnExpression,
 	}
 	if "" != perm.SourceAccount {
 		properties["SourceAccount"] = perm.SourceAccount
 	}
-	if "" != perm.SourceArn {
-		properties["SourceArn"] = perm.SourceArn
-	}
-
 	primaryPermission := ArbitraryJSONObject{
 		"Type":       "AWS::Lambda::Permission",
 		"Properties": properties,
 	}
 	hash := sha1.New()
-	hash.Write([]byte(principal))
-
-	if "" != perm.SourceAccount {
-		hash.Write([]byte(perm.SourceAccount))
-	}
-	if "" != perm.SourceArn {
-		hash.Write([]byte(perm.SourceArn))
-	}
+	hash.Write([]byte(fmt.Sprintf("%v", properties)))
 	resourceName := fmt.Sprintf("LambdaPerm%s", hex.EncodeToString(hash.Sum(nil)))
 	resources[resourceName] = primaryPermission
 	return resourceName, nil
@@ -283,6 +302,11 @@ func (perm BasePermission) descriptionInfo(b *bytes.Buffer, logger *logrus.Logge
 ////////////////////////////////////////////////////////////////////////////////
 // START - LambdaPermission
 //
+var lambdaSourceArnParts = []interface{}{"arn:aws:lambda:",
+	ArbitraryJSONObject{
+		"Ref": "AWS::Region",
+	},
+	":function:"}
 
 // LambdaPermission type that creates a Lambda::Permission entry
 // in the generated template, but does NOT automatically register the lambda
@@ -299,11 +323,20 @@ func (perm LambdaPermission) export(targetLambdaFuncRef interface{},
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
-	return perm.BasePermission.export(perm.Principal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
+
+	// arn:aws:lambda:us-west-2:027159405834:function:myLambdaTest
+
+	return perm.BasePermission.export(perm.Principal,
+		targetLambdaFuncRef,
+		perm.BasePermission.sourceArnExpr(lambdaSourceArnParts),
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
 }
 
 func (perm LambdaPermission) descriptionInfo() (string, string) {
-	return "Source", perm.BasePermission.SourceArn
+	return "Source", perm.sourceArnString()
 }
 
 //
@@ -313,6 +346,8 @@ func (perm LambdaPermission) descriptionInfo() (string, string) {
 ////////////////////////////////////////////////////////////////////////////////
 // START - S3Permission
 //
+
+var s3SourceArnParts = []interface{}{"arn:aws:s3:::"}
 
 // S3Permission struct that imples the S3 BasePermission.SourceArn should be
 // updated (via PutBucketNotificationConfiguration) to automatically push
@@ -330,24 +365,26 @@ type S3Permission struct {
 	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
-func (perm S3Permission) bucketName() string {
-	bucketParts := strings.Split(perm.BasePermission.SourceArn, ":")
-	return bucketParts[len(bucketParts)-1]
-}
-
 func (perm S3Permission) export(targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
+	sourceArnExpression := perm.BasePermission.sourceArnExpr(s3SourceArnParts)
+	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal,
+		targetLambdaFuncRef,
+		sourceArnExpression,
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, perm.SourceArn, resources, S3Bucket, S3Key, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, sourceArnExpression, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
@@ -373,7 +410,7 @@ func (perm S3Permission) export(targetLambdaFuncRef interface{},
 			// Use the LambdaTarget value in the JS custom resoruce
 			// handler to create the ID used to manage S3 notifications
 			"LambdaTarget": targetLambdaFuncRef,
-			"Bucket":       perm.bucketName(),
+			"BucketArn":    sourceArnExpression,
 		},
 		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
 	}
@@ -383,13 +420,13 @@ func (perm S3Permission) export(targetLambdaFuncRef interface{},
 	resourceInvokerName := CloudFormationResourceName("ConfigS3",
 		targetLambdaResourceName,
 		perm.BasePermission.SourceAccount,
-		perm.BasePermission.SourceArn)
+		fmt.Sprintf("%v", sourceArnExpression))
 	resources[resourceInvokerName] = customResourceInvoker
 	return "", nil
 }
 
 func (perm S3Permission) descriptionInfo() (string, string) {
-	return perm.BasePermission.SourceArn, fmt.Sprintf("%s", perm.Events)
+	return perm.sourceArnString(), fmt.Sprintf("%s", perm.Events)
 }
 
 //
@@ -398,6 +435,7 @@ func (perm S3Permission) descriptionInfo() (string, string) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // SNSPermission - START
+var snsSourceArnParts = make([]interface{}, 0)
 
 // SNSPermission struct that imples the S3 BasePermission.SourceArn should be
 // updated (via PutBucketNotificationConfiguration) to automatically push
@@ -408,24 +446,26 @@ type SNSPermission struct {
 	BasePermission
 }
 
-func (perm SNSPermission) topicName() string {
-	topicParts := strings.Split(perm.BasePermission.SourceArn, ":")
-	return topicParts[len(topicParts)-1]
-}
-
 func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
+	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts)
 
-	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal, targetLambdaFuncRef, resources, S3Bucket, S3Key, logger)
+	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal,
+		targetLambdaFuncRef,
+		sourceArnExpression,
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, perm.SourceArn, resources, S3Bucket, S3Key, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, sourceArnExpression, resources, S3Bucket, S3Key, logger)
 	if nil != err {
 		return "", err
 	}
@@ -441,7 +481,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 				"Fn::GetAtt": []string{configuratorResName, "Arn"},
 			},
 			"Mode":     "Subscribe",
-			"TopicArn": perm.BasePermission.SourceArn,
+			"TopicArn": sourceArnExpression,
 			// Use the LambdaTarget value in the JS custom resoruce
 			// handler to create the ID used to manage S3 notifications
 			"LambdaTarget": targetLambdaFuncRef,
@@ -452,7 +492,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 	subscriberResourceName := CloudFormationResourceName("SubscriberSNS",
 		targetLambdaResourceName,
 		perm.BasePermission.SourceAccount,
-		perm.BasePermission.SourceArn)
+		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
 	resources[subscriberResourceName] = customResourceSubscriber
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -468,7 +508,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 			"SubscriptionArn": ArbitraryJSONObject{
 				"Fn::GetAtt": []string{subscriberResourceName, "SubscriptionArn"},
 			},
-			"TopicArn": perm.BasePermission.SourceArn,
+			"TopicArn": sourceArnExpression,
 			// Use the LambdaTarget value in the JS custom resoruce
 			// handler to create the ID used to manage S3 notifications
 			"LambdaTarget": targetLambdaFuncRef,
@@ -483,7 +523,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 }
 
 func (perm SNSPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.SourceArn, ""
+	return perm.BasePermission.sourceArnString(), ""
 }
 
 ////////////////////////////////////////////////////////////////////////////////

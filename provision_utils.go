@@ -39,7 +39,7 @@ func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
-func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string, resources ArbitraryJSONObject, S3Bucket string, S3Key string, logger *logrus.Logger) (string, error) {
+func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn interface{}, resources ArbitraryJSONObject, S3Bucket string, S3Key string, logger *logrus.Logger) (string, error) {
 	// AWS service basename
 	awsServiceName := awsPrincipalToService(awsPrincipalName)
 	configuratorExportName := strings.ToLower(awsServiceName)
@@ -94,9 +94,9 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn string,
 	return subscriberHandlerName, nil
 }
 
-func ensureIAMRoleResource(principalActions []string, sourceArn string, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func ensureIAMRoleResource(principalActions []string, sourceArn interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
 	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%s%s", sourceArn, salt)))
+	hash.Write([]byte(fmt.Sprintf("%v%s", sourceArn, salt)))
 	roleName := fmt.Sprintf("ConfigIAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 
 	logger.WithFields(logrus.Fields{
@@ -154,7 +154,7 @@ func ensureIAMRoleResource(principalActions []string, sourceArn string, resource
 			"AssumeRolePolicyDocument": AssumePolicyDocument,
 			"Policies": []ArbitraryJSONObject{
 				{
-					"PolicyName": CloudFormationResourceName("Config", sourceArn),
+					"PolicyName": CloudFormationResourceName("Config", fmt.Sprintf("%v", sourceArn)),
 					"PolicyDocument": ArbitraryJSONObject{
 						"Version":   "2012-10-17",
 						"Statement": statements,
