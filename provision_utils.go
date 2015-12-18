@@ -3,6 +3,7 @@ package sparta
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -39,31 +40,44 @@ func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
-func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn interface{}, resources ArbitraryJSONObject, S3Bucket string, S3Key string, logger *logrus.Logger) (string, error) {
+func ensureConfiguratorLambdaResource(awsPrincipalName string,
+	sourceArn interface{},
+	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
 	// AWS service basename
 	awsServiceName := awsPrincipalToService(awsPrincipalName)
 	configuratorExportName := strings.ToLower(awsServiceName)
 
+	// Create a unique name that we can use for the configuration info
+	keyName, err := json.Marshal(ArbitraryJSONObject{
+		"Principal": awsPrincipalName,
+		"Arn":       sourceArn,
+	})
+	if err != nil {
+		logger.Error("Failed to create configurator resource name: ", err.Error())
+		return "", err
+	}
+	subscriberHandlerName := CloudFormationResourceName(fmt.Sprintf("%sSubscriber", awsServiceName), string(keyName))
+
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
-	// TODO - Check sourceArn for equivalence
 	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
 	if !exists {
 		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
+	// Create a Role that enables this resource management
 	iamResourceName, err := ensureIAMRoleResource(principalActions, sourceArn, resources, logger)
 	if nil != err {
 		return "", err
 	}
-
 	iamRoleRef := ArbitraryJSONObject{
 		"Fn::GetAtt": []string{iamResourceName, "Arn"},
 	}
-	// Custom handler resource for this service type
-	subscriberHandlerName := fmt.Sprintf("%sSubscriber", awsServiceName)
 	_, exists = resources[subscriberHandlerName]
 	if !exists {
-
 		logger.WithFields(logrus.Fields{
 			"Service": awsServiceName,
 		}).Info("Creating configuration Lambda for AWS service")
@@ -95,16 +109,18 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string, sourceArn interfa
 }
 
 func ensureIAMRoleResource(principalActions []string, sourceArn interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+
+	// Create a new Role
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprintf("%v%s", sourceArn, salt)))
 	roleName := fmt.Sprintf("ConfigIAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 
+	existingResource, exists := resources[roleName]
 	logger.WithFields(logrus.Fields{
 		"PrincipalActions": principalActions,
 		"SourceArn":        sourceArn,
+		"Exists":           exists,
 	}).Debug("Ensuring IAM Role results")
-
-	existingResource, exists := resources[roleName]
 
 	// If it exists, make sure these permissions are enabled on it...
 	if exists {
