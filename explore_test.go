@@ -1,13 +1,14 @@
 package sparta
 
 import (
-	"Sparta/explore"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"./explore"
 
 	"github.com/Sirupsen/logrus"
 )
