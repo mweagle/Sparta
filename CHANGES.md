@@ -10,6 +10,7 @@
 - :checkered_flag: **CHANGES**
   - Updated `describe` CSS font styles to eliminate clipping
   - Support `{Ref: 'MyDynamicResource'}` for _SourceArn_ values.  Example:
+
     ```javascript
     lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
   		BasePermission: sparta.BasePermission{
@@ -17,6 +18,7 @@
   		},
   	})
     ```
+    
     - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator).
   - Add CloudWatch metrics to help track [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
     - Metrics are published to **Sparta/<SERVICE_NAME>** namespace.
