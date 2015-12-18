@@ -45,8 +45,13 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) *LambdaHTTPHandler {
 	lookupMap := make(dispatchMap, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
+		logger.WithFields(logrus.Fields{
+			"Path": eachLambdaInfo.lambdaFnName,
+		}).Debug("Registering lambda URL")
+
 		lookupMap[eachLambdaInfo.lambdaFnName] = eachLambdaInfo
 	}
+
 	return &LambdaHTTPHandler{
 		lambdaDispatchMap: lookupMap,
 		logger:            logger,

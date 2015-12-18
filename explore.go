@@ -18,7 +18,14 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) e
 	logger.Info("The following URLs are available for testing.")
 
 	msgText := ""
+
+	// Get unique paths
+	lambdaPaths := make(map[string]*LambdaAWSInfo, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
+		lambdaPaths[eachLambdaInfo.lambdaFnName] = eachLambdaInfo
+	}
+
+	for _, eachLambdaInfo := range lambdaPaths {
 		functionPath := fmt.Sprintf("%s/%s", urlHost, eachLambdaInfo.lambdaFnName)
 		logger.WithFields(logrus.Fields{
 			"Path": functionPath,

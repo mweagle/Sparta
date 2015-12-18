@@ -1,3 +1,11 @@
+## v0.1.2
+- :checkered_flag: **CHANGES**
+  - Added `explore.NewRequest` to support _localhost_ testing of lambda functions.  
+    - Clients can supply optional **event** data similar to the AWS Console feature.
+    - See [explore_test](https://github.com/mweagle/Sparta/blob/master/explore_test.go) for an example.
+- :warning: **BREAKING**
+  - N/A
+
 ## v0.1.1
 - :checkered_flag: **CHANGES**
   - Updated `describe` CSS font styles to eliminate clipping
