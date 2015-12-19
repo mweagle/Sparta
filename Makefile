@@ -19,8 +19,6 @@ get: clean ensure_vendor
 	rm -rf ./src/main/vendor/github.com/voxelbrain/goptions/.git
 	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
 	rm -rf ./src/main/vendor/github.com/mjibson/esc/.git
-	git clone --depth=1 https://github.com/tdewolff/minify ./vendor/github.com/tdewolff/minify
-	rm -rf ./src/main/vendor/github.com/tdewolff/minify/.git
 	git clone --depth=1 https://github.com/tdewolff/buffer ./vendor/github.com/tdewolff/buffer
 	rm -rf ./src/main/vendor/github.com/tdewolff/buffer/.git
 
