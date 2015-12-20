@@ -1,3 +1,30 @@
+## v0.1.3
+- :checkered_flag: **CHANGES**
+  - Default [integration mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) now defined for:
+    * _application/json_
+    * _text/plain_
+    * _application/x-www-form-urlencoded_
+    * _multipart/form-data_
+    - Depending on the content-type, the **Body** value of the incoming event will either be a `string` or a `json.RawMessage` type.
+  - CloudWatch log files support spawned golang binary JSON formatted logfiles
+  - CloudWatch log output includes environment.  Sample:
+
+    ```JSON
+      {
+          "AWS_SDK": "2.2.25",
+          "NODE_JS": "v0.10.36",
+          "OS": {
+              "PLATFORM": "linux",
+              "RELEASE": "3.14.48-33.39.amzn1.x86_64",
+              "TYPE": "Linux",
+              "UPTIME": 4755.330878024
+          }
+      }
+    ```
+- :warning: **BREAKING**
+  - API Gateway responses are only transformed into a standard format in the case of a go lambda function returning an HTTP status code >= 400
+    - Previously all responses were wrapped which prevented integration with other services.
+
 ## v0.1.2
 - :checkered_flag: **CHANGES**
   - Added `explore.NewRequest` to support _localhost_ testing of lambda functions.  
@@ -18,7 +45,7 @@
   		},
   	})
     ```
-    
+
     - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator).
   - Add CloudWatch metrics to help track [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
     - Metrics are published to **Sparta/<SERVICE_NAME>** namespace.
