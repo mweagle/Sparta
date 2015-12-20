@@ -173,20 +173,13 @@ type Integration struct {
 	integrationType string
 }
 
-func (integration Integration) defaultIntegrationRequestTemplates() map[string]string {
-	return map[string]string{
-		"application/json": _escFSMustString(false, "/resources/gateway/inputmapping_json.vtl"),
-	}
-}
-
 // MarshalJSON customizes the JSON representation used when serializing to the
 // CloudFormation template representation.
 func (integration Integration) MarshalJSON() ([]byte, error) {
 	var responses = integration.Responses
 	var requestTemplates = integration.RequestTemplates
-	if len(requestTemplates) <= 0 {
-		requestTemplates = integration.defaultIntegrationRequestTemplates()
-	}
+	// Default RequestTemplates will be inserted by the apigateway.js CustomResource
+	// at instantiation time.
 	for eachStatusCode := range responses {
 		httpString := http.StatusText(eachStatusCode)
 		if "" == httpString {
