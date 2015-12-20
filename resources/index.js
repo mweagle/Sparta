@@ -135,13 +135,6 @@ var postMetricCounter = function(metricName, userCallback) {
   };
   var cloudwatch = new AWS.CloudWatch(awsConfig);
   var onResult = function(/*e, result */) {
-    // var putResult = {
-    //   PUT_METRIC_DATA: 'PutMetricData',
-    //   PARAMS: params,
-    //   ERROR: e ? e.toString() : undefined,
-    //   RESULT: result || undefined
-    // };
-    // log(putResult);
     if (userCallback) {
       userCallback();
     }
@@ -160,7 +153,6 @@ var ensureGoLangBinary = function(callback)
     }
     catch (e)
     {
-      log('Copying golang binary');
       var command = util.format('cp ./%s %s; chmod +x %s',
                                 SPARTA_BINARY_NAME,
                                 SPARTA_BINARY_PATH,
