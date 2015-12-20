@@ -95,16 +95,19 @@ function makeRequest(path, event, context) {
 
 var log = function(obj_or_string)
 {
-  if (typeof(obj_or_string) !== 'object')
-  {
-    obj_or_string = {msg: obj_or_string};
+  if (_.isString(obj_or_string)) {
     try {
-      obj_or_string.msg = JSON.parse(obj_or_string.msg);
+      // If it's empty, just skip it...
+      if (_.isEmpty(obj_or_string)) {
+        return;
+      }
+      obj_or_string = JSON.parse(obj_or_string);
+    } catch (e) {
+      // NOP
     }
-    catch (e)
-    {
-      //NOP
-    }
+  }
+  if (_.isString(obj_or_string)) {
+    obj_or_string = {msg: obj_or_string};
   }
   if (obj_or_string.stack)
   {
