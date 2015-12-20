@@ -22,6 +22,12 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
 	decoder := json.NewDecoder(req.Body)
 	var request lambdaRequest
+	defer func() {
+		if r := recover(); r != nil {
+			http.Error(w, "Failed to decode request", http.StatusBadRequest)
+		}
+	}()
+
 	err := decoder.Decode(&request)
 	if nil != err {
 		http.Error(w, "Failed to decode request", http.StatusBadRequest)
