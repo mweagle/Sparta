@@ -13,8 +13,6 @@ var async = require('async');
 var mime = require('mime-types');
 //awsConfig.logger = console;
 
-console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
-
 /**
 Three properties in the event:
   SourceBucket

@@ -9,8 +9,6 @@ var awsConfig = new AWS.Config({});
 var s3 = new AWS.S3(awsConfig);
 var cloudFormation = new AWS.CloudFormation(awsConfig);
 
-console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
-
 exports.handler = function(event, context) {
   var data = {};
   var props = event.ResourceProperties;
