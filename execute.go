@@ -29,12 +29,17 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 		logger.Debug("Sending SIGUSR2 to parent process: ", parentProcessPID)
 		syscall.Kill(parentProcessPID, syscall.SIGUSR2)
 	}
-	logger.Debug("Binding to port: ", port)
+	logger.WithFields(logrus.Fields{
+		"URL": fmt.Sprintf("http://localhost:%d", port),
+	}).Info("Starting Sparta server")
+
 	err := server.ListenAndServe()
 	if err != nil {
-		logger.Error("FAILURE: " + err.Error())
+		logger.WithFields(logrus.Fields{
+			"Error": err.Error(),
+		}).Error("Failed to launch server")
 		return err
 	}
-	logger.Debug("Server available at: ", port)
+
 	return nil
 }
