@@ -306,5 +306,18 @@ PROXIED_MODULES.forEach(function (eachConfig) {
   };
 });
 
+// Log the outputs
+var envSettings = {
+    AWS_SDK : AWS.VERSION,
+    NODE_JS: process.version,
+    OS: {
+      PLATFORM: os.platform(),
+      RELEASE: os.release(),
+      TYPE: os.type(),
+      UPTIME: os.uptime()
+    }
+};
+log(envSettings);
+
 exports.main = createForwarder('/');
 // Additional golang handlers to be dynamically appended below
