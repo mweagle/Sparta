@@ -189,10 +189,14 @@ var createForwarder = function(path) {
         golangProcess = child_process.spawn(SPARTA_BINARY_PATH, ['execute', '--signal', process.pid], {});
 
         golangProcess.stdout.on('data', function(buf) {
-          log(buf.toString('utf-8'));
+          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
+            log(eachLine);
+          });
         });
         golangProcess.stderr.on('data', function(buf) {
-          log(buf.toString('utf-8'));
+          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
+            log(eachLine);
+          });
         });
 
         var terminationHandler = function(eventName) {
