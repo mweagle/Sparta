@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var util = require('util');
+var fs = require('fs');
 var response = require('./cfn-response');
 var _ = require('underscore');
 var async = require('async');
@@ -7,11 +8,12 @@ var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 //awsConfig.logger = console;
 
-console.log('NodeJS v.' + process.version + ', AWS SDK v.' + AWS.VERSION);
 var apigateway = new AWS.APIGateway(awsConfig);
 var lambda = new AWS.Lambda(awsConfig);
 
 var RE_STATEMENT_ALREADY_EXISTS = /ResourceConflictException.*already exists/;
+
+var cachedIntegrationDefaultResponseTemplates = null;
 
 ////////////////////////////////////////////////////////////////////////////////
 // UTILITY FUNCTIONS
@@ -233,6 +235,33 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       apigateway.putMethod(params, asyncCB);
     };
 
+
+    // 1b. load the default ResponseTemplates
+    creationTasks.defaultIntegrationResponseTemplates = function(asyncCB) {
+      try {
+        // Load each file and transform that into a content-type to VTL mapping
+        if (!cachedIntegrationDefaultResponseTemplates) {
+            var mappingTemplates = {
+              json: fs.readFileSync('./apigateway/inputmapping_json.vtl', {encoding: 'utf-8'}),
+              default: fs.readFileSync('./apigateway/inputmapping_json.vtl', {encoding: 'utf-8'}),
+            };
+            cachedIntegrationDefaultResponseTemplates = {
+              'application/json' : mappingTemplates.json,
+              'text/plain' : mappingTemplates.default,
+              'application/x-www-form-urlencoded' : mappingTemplates.default,
+              'multipart/form-data' : mappingTemplates.default
+            };
+        }
+        setImmediate(asyncCB, null, cachedIntegrationDefaultResponseTemplates);
+      }
+      catch (e)
+      {
+          setImmediate(asyncCB, e, null);
+      }
+    };
+
+
+
     var putMethodResponseTask = function(statusCode, parameters, models) {
       return function(taskCB) {
         var responseModels = _.reduce(models,
@@ -288,21 +317,25 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     };
 
     creationTasks.putIntegration = Object.keys(creationTasks);
-    creationTasks.putIntegration.push(function(asyncCB) {
+    creationTasks.putIntegration.push(function(asyncCB, context) {
       var integration = methodDef.Integration || {};
       var opParams = {
         type: integration.Type || 'AWS'
       };
+      var requestTemplates = _.isEmpty(integration.RequestTemplates) ?
+                              context.defaultIntegrationResponseTemplates :
+                              integration.RequestTemplates;
+
       switch (opParams.type) {
         case 'AWS':
           opParams.cacheKeyParameters =  [];
-          opParams.requestTemplates =  integration.RequestTemplates || undefined;
+          opParams.requestTemplates =  requestTemplates;
           opParams.uri =  lamdbdaURI(lambdaArn);
           opParams.integrationHttpMethod =  'POST';
           break;
         case 'MOCK': {
           opParams.cacheKeyParameters = [];
-          opParams.requestTemplates = integration.RequestTemplates || undefined;
+          opParams.requestTemplates = requestTemplates;
           opParams.integrationHttpMethod = 'MOCK';
           break;
         }
@@ -361,6 +394,7 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     };
     async.auto(creationTasks, terminus);
   };
+
 
   // Start the iteration, which requires the Lambda ARN
   // Create the HTTP methods for this item.
