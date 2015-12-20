@@ -61,7 +61,9 @@ var customResourceScripts = []string{"cfn-response.js",
 	"s3.js",
 	"sns.js",
 	"s3Site.js",
-	"golang-constants.json"}
+	"golang-constants.json",
+	"apigateway/inputmapping_default.vtl",
+	"apigateway/inputmapping_json.vtl"}
 
 type workflowContext struct {
 	noop                    bool
