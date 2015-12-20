@@ -929,6 +929,13 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		goptions.PrintHelp()
 		os.Exit(1)
 	}
+	// Set the formatter before outputting the info s.t. it's properly
+	// parsed by CloudWatch Logs
+	if "execute" == options.Verb {
+		logger.Formatter = new(logrus.JSONFormatter)
+	} else {
+		logger.Formatter = new(logrus.TextFormatter)
+	}
 	logger.WithFields(logrus.Fields{
 		"Option":  options.Verb,
 		"Version": SpartaVersion,
@@ -936,19 +943,14 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 
 	switch options.Verb {
 	case "provision":
-		logger.Formatter = new(logrus.TextFormatter)
 		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
 	case "execute":
-		logger.Formatter = new(logrus.JSONFormatter)
 		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
 	case "delete":
-		logger.Formatter = new(logrus.TextFormatter)
 		err = Delete(serviceName, logger)
 	case "explore":
-		logger.Formatter = new(logrus.TextFormatter)
 		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
 	case "describe":
-		logger.Formatter = new(logrus.TextFormatter)
 		fileWriter, err := os.Create(options.Describe.OutputFile)
 		if err != nil {
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
