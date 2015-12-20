@@ -2,7 +2,10 @@ var util = require('util');
 var fs = require('fs');
 var http = require('http');
 var path = require('path');
+var os = require('os');
 var child_process = require('child_process');
+var _ = require('underscore');
+
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 
@@ -40,9 +43,20 @@ function makeRequest(path, event, context) {
     event: event,
     context: context
   };
+  // If there is a request.event.body element, try and parse it to make
+  // interacting with API Gateway a bit simpler.  The .body property
+  // corresponds to the data shape set by the *.vtl templates
+  if (requestBody && requestBody.event && requestBody.event.body) {
+    try
+    {
+      requestBody.event.body = JSON.parse(requestBody.event.body);
+    }
+    catch (e)
+    {
 
+    }
+  }
   var stringified = JSON.stringify(requestBody);
-
   var contentLength = Buffer.byteLength(stringified, 'utf-8');
   var options = {
     host: 'localhost',
@@ -66,23 +80,27 @@ function makeRequest(path, event, context) {
       // HTTP status text in the error response if appropriate.  This enables
       // the API Gateway integration response to use standard golang StatusText regexp
       // matches to manage HTTP status codes.
+
+      // TODO - need alternative mapping templates for non application/json content-types
       var responseData = {};
-      responseData.code = res.statusCode;
-      responseData.status = GOLANG_CONSTANTS.HTTP_STATUS_TEXT[res.statusCode.toString()];
-      responseData.headers = res.headers;
-      responseData.error = (res.statusCode >= 400) ? body : undefined;
-      responseData.results = responseData.error ? undefined : body;
-      try {
-        // TODO: Check content-type before parse attempt
-        if (responseData.results)
-        {
-          responseData.results = JSON.parse(responseData.results);
-        }
-      } catch (e) {
-        // NOP
+      var handlerError = (res.statusCode >= 400) ? new Error(body) : undefined;
+      if (handlerError) {
+        responseData.code = res.statusCode;
+        responseData.status = GOLANG_CONSTANTS.HTTP_STATUS_TEXT[res.statusCode.toString()];
+        responseData.headers = res.headers;
+        responseData.error = handlerError.toString();
       }
-      var err = responseData.error ? new Error(JSON.stringify(responseData)) : null;
-      var resp = err ? null : responseData;
+      else {
+        try {
+          // TODO: Check content-type before parse attempt
+          responseData = JSON.parse(body);
+        } catch (e) {
+          console.log('Request body isn not JSON: ' + e.toString());
+          responseData = body;
+        }
+      }
+      var err = handlerError ? new Error(JSON.stringify(responseData)) : null;
+      var resp = handlerError ? null : responseData;
       context.done(err, resp);
     });
   });
