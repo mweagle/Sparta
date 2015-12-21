@@ -68,7 +68,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle flattr:]">
+<body class="map[highlight:vs github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: name:yeti home:Home youtube: flattr: googleAnalytics:UA-70794971-1 twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -164,7 +164,7 @@
 
 <p>Sparta provides a framework to build &amp; deploy <em>Go</em> functions in <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>. While <em>Go</em> is not <em>yet</em> officially supported by AWS Lambda (see <a href="https://twitter.com/awscloud/status/659795641204260864">poll</a>), it&rsquo;s possible to bundle &amp; launch arbitrary executables in Lambda.</p>
 
-<p>Sparta provides a HTTP-based translation layer between the proper <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> environment and your <em>Go</em> binary.  In addition to this translation layer, Sparta is also able to:</p>
+<p>Sparta provides a HTTP-based proxying tier between the proper <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> environment and your <em>Go</em> binary.  In addition to this proxying tier, Sparta is also able to:</p>
 
 <ul>
 <li>Manage S3 and SNS-based <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">event sources</a>.
@@ -173,7 +173,8 @@
 <li>A Lambda function may be invoked in response to S3 or SNS broadcasted events.</li>
 </ul></li>
 <li>Provision an HTTPS <a href="https://aws.amazon.com/api-gateway/details/">API Gateway</a> service that allows Lambda functions to be publicly invoked.</li>
-<li>Produce diagrams of Lambda &amp; event source interactions</li>
+<li>Deploy an <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3 site</a> with dynamic API Gateway discovery.</li>
+<li>Produce diagrams of Lambda &amp; event source dataflow.</li>
 </ul>
 
 <h2 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h2>

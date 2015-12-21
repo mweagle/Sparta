@@ -20,12 +20,13 @@ title = "homepage"
 
 Sparta provides a framework to build & deploy *Go* functions in [AWS Lambda](https://aws.amazon.com/lambda/). While *Go* is not _yet_ officially supported by AWS Lambda (see [poll](https://twitter.com/awscloud/status/659795641204260864)), it's possible to bundle & launch arbitrary executables in Lambda.  
 
-Sparta provides a HTTP-based translation layer between the proper [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html) environment and your *Go* binary.  In addition to this translation layer, Sparta is also able to:
+Sparta provides a HTTP-based proxying tier between the proper [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html) environment and your *Go* binary.  In addition to this proxying tier, Sparta is also able to:
 
   * Manage S3 and SNS-based [event sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources).
       * A Lambda function may be invoked in response to S3 or SNS broadcasted events.
   * Provision an HTTPS [API Gateway](https://aws.amazon.com/api-gateway/details/) service that allows Lambda functions to be publicly invoked.
-  * Produce diagrams of Lambda & event source interactions
+  * Deploy an [S3 site](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) with dynamic API Gateway discovery.
+  * Produce diagrams of Lambda & event source dataflow.
 
 ## Getting Started
 
