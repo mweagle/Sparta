@@ -1,5 +1,6 @@
 ## v0.1.4
-- Reduce deployed binary size by excluding Sparta embedded resources from deployed binary via build tags.
+- :checkered_flag: **CHANGES**
+  - Reduce deployed binary size by excluding Sparta embedded resources from deployed binary via build tags.
 - :warning: **BREAKING**
   - N/A
 
