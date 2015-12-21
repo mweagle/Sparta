@@ -1,3 +1,8 @@
+## v0.1.4
+- Reduce deployed binary size by excluding Sparta embedded resources from deployed binary via build tags.
+- :warning: **BREAKING**
+  - N/A
+
 ## v0.1.3
 - :checkered_flag: **CHANGES**
   - Default [integration mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) now defined for:
