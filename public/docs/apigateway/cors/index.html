@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  5 
+    "wordCount":  95 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: highlight:vs home:Home googleAnalytics:UA-70794971-1 bitbucket: twitter:mweagle youtube: flattr: name:yeti]">
+<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: twitter:mweagle flattr: name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 googleplus: facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -256,6 +256,10 @@
           <small><a href="/docs/apigateway/cors">CORS</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/apigateway/slack">Slack Integration</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/s3site">S3 Website</a>
@@ -284,7 +288,28 @@
 </header>
 
     <div class="container content">
-  <p>TODO: Example of configuring <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">CORS</a>.</p>
+  
+
+<h2 id="a-href-hugoshortcode-1-cors-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#intro:d680e8a854a7cbad6d490c445cba2eba">CORS</a></h2>
+
+<p><a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">Cross Origin Resource Sharing</a> defines a protocol by which resources on different domains may establish whether cross site operations are permissible.</p>
+
+<p>Sparta makes CORS support a single <code>CORSEnabled</code> field of the <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> struct:</p>
+
+<pre><code class="go">// Register the function with the API Gateway
+apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)
+// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true</code></pre>
+
+
+<p>Setting the boolean to <code>true</code> will add the necessary <code>OPTIONS</code> and mock responses to <em>all</em> resources exposed by your API.  See the <a href="/docs/s3site">SpartaHTML</a> sample for a complete example.</p>
+
+<h2 id="references:d680e8a854a7cbad6d490c445cba2eba">References</h2>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">API Gateway Docs</a></li>
+</ul>
 
 </div>
 

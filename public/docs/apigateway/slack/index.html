@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Slack  &middot; Sparta</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="sparta, ">
+
+
+<meta property="og:title" content="Slack  &middot; Sparta ">
+<meta property="og:site_name" content="Sparta"/>
+<meta property="og:url" content="http://gosparta.io/docs/apigateway/slack/" />
+<meta property="og:locale" content="en-EN">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+
+  
+    
+<meta property="og:article:tag" content="sparta">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Slack" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="http://gosparta.io/docs/apigateway/slack/" />
+<meta name="twitter:domain" content="http://gosparta.io">
+  
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Slack",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2015-11-29",
+    "description": "",
+    "wordCount":  851 
+  }
+</script>
+
+
+
+<link rel="canonical" href="http://gosparta.io/docs/apigateway/slack/" />
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
+<link href="http://gosparta.io/favicon.png" rel="icon">
+
+<meta name="generator" content="Hugo 0.15" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+
+
+<link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
+<link rel="stylesheet" href="http://gosparta.io/css/style.css">
+
+
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+
+
+  
+  <script src="/mermaid/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-70794971-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body class="map[name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle flattr: github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube:]">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          
+          <li>
+
+            <a href="http://gosparta.io/docs"
+            >
+
+            
+                <i class="fa fa-book"></i>
+            
+            
+            Documentation
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://github.com/mweagle/Sparta"
+            >
+
+            
+                <i class="fa fa-github"></i>
+            
+            
+            GitHub
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="http://gosparta.io/tags"
+             title="Show list of tags">
+
+            
+                <i class="fa fa-tags"></i>
+            
+            
+            Tags
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://twitter.com/@mweagle"
+            >
+
+            
+                <i class="fa fa-twitter"></i>
+            
+            
+            mweagle
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </nav>
+
+</header>
+
+
+<div class="container">
+<div class="row">
+  <div class="col-md-2"><div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Contents</h3>
+  </div>
+  <div class="panel-body">
+    
+      <a href="/docs/overview">Overview</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/commandline">Command Line</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/walkthrough">Walkthrough</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/eventsources">Event Sources</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/sns/">SNS</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/dynamodb">DynamoDB</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/kinesis">Kinesis</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/ses">SES (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cognito">Cognito (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudformation">CloudFormation (TBD)</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/apigateway">API Gateway</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/apigateway/example1">Echo</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example2">User Input</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example3">GeoIP Service</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/cors">CORS</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/slack">Slack Integration</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/s3site">S3 Website</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/miscellaneous">Miscellaneous</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/limitations">Limitations</a>
+      <ul>
+      
+      </ul>
+    
+  </div>
+</div>
+</div>
+  <div class="col-md-8">
+    <header class="container hat">
+  <h1>Slack
+</h1>
+
+</header>
+
+    <div class="container content">
+  
+
+<h2 id="a-href-hugoshortcode-1-slack-slashcommand-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#intro:d680e8a854a7cbad6d490c445cba2eba">Slack SlashCommand</a></h2>
+
+<p>In this example, we&rsquo;ll walk through creating a <a href="https://api.slack.com/slash-commands">Slack Slash Command</a> service.  The source for this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</a> repo.</p>
+
+<p>Our initial command handler won&rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.</p>
+
+<h2 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambda:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h2>
+
+<p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
+
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloSlackbot(event *json.RawMessage,
+	context *sparta.LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+
+	// 1. Unmarshal the primary event
+	var lambdaEvent slackLambdaJSONEvent
+	err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
+	if err != nil {
+		logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	// 2. Conditionally unmarshal to get the Slack text.  See
+	// https://api.slack.com/slash-commands
+	// for the value name list
+	requestParams := url.Values{}
+	if bodyData, ok := lambdaEvent.Body.(string); ok {
+		requestParams, err = url.ParseQuery(bodyData)
+		if err != nil {
+			logger.Error(&#34;Failed to parse query: &#34;, err.Error())
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		logger.WithFields(logrus.Fields{
+			&#34;Values&#34;: requestParams,
+		}).Info(&#34;Slack slashcommand values&#34;)
+	} else {
+		logger.Info(&#34;Event body empty&#34;)
+	}
+
+	// 3. Create the response
+	// Slack formatting:
+	// https://api.slack.com/docs/formatting
+	responseText := &#34;You talkin to me?&#34;
+	for _, eachLine := range requestParams[&#34;text&#34;] {
+		responseText &#43;= fmt.Sprintf(&#34;\n&gt;&gt;&gt; %s&#34;, eachLine)
+	}
+
+	// 4. Setup the response object:
+	// https://api.slack.com/slash-commands, &#34;Responding to a command&#34;
+	responseData := sparta.ArbitraryJSONObject{
+		&#34;response_type&#34;: &#34;in_channel&#34;,
+		&#34;text&#34;:          responseText,
+	}
+	// 5. Send it off
+	responseBody, err := json.Marshal(responseData)
+	if err != nil {
+		logger.Error(&#34;Failed to marshal response: &#34;, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	fmt.Fprint(w, string(responseBody))
+}</code></pre>
+
+
+<p>There are a couple of things to note in this code:</p>
+
+<ol>
+<li><p><strong>Custom Event Type</strong></p>
+
+<ul>
+<li>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  However, our <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">integration mapping</a> mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw <code>POST</code> body with the mapping envelope (so that we can access <a href="/docs/apigateway/example1">identity information, HTTP headers, etc.</a>), which produces an inbound JSON request that includes a <strong>Body</strong> parameter.  The <strong>Body</strong> string value is the raw inbound <code>POST</code> data.  Since it&rsquo;s <code>application/x-www-form-urlencoded</code>, to get the actual parameters we need to parse it:</li>
+</ul>
+
+<pre><code class="language-javascript">if bodyData, ok := lambdaEvent.Body.(string); ok {
+  requestParams, err = url.ParseQuery(bodyData)
+</code></pre>
+
+<ul>
+<li>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</li>
+</ul>
+
+<pre><code class="language-javascript">responseText := &quot;You talkin to me?&quot;
+for _, eachLine := range requestParams[&quot;text&quot;] {
+  responseText += fmt.Sprintf(&quot;\n&gt;&gt;&gt; %s&quot;, eachLine)
+}
+</code></pre></li>
+
+<li><p><strong>Custom Response</strong></p>
+
+<ul>
+<li>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</li>
+</ul></li>
+</ol>
+
+<pre><code class="language-javascript">  responseData := sparta.ArbitraryJSONObject{
+		&quot;response_type&quot;: &quot;in_channel&quot;,
+		&quot;text&quot;:          responseText,
+	}
+</code></pre>
+
+<h3 id="a-href-hugoshortcode-4-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+
+<p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
+
+<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></pre>
+
+
+<p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
+
+<h3 id="a-href-hugoshortcode-6-create-lambda-binding-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding &amp; Resource</a></h3>
+
+<p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
+
+<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloSlackbot, nil)
+
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&#34;/slack&#34;, lambdaFn)
+		_, err := apiGatewayResource.NewMethod(&#34;POST&#34;)
+		if nil != err {
+			panic(&#34;Failed to create /hello resource&#34;)
+		}
+	}
+	return append(lambdaFunctions, lambdaFn)
+}</code></pre>
+
+
+<p>A few items to note here:</p>
+
+<ul>
+<li>We&rsquo;re using an empty <code>sparta.IAMRoleDefinition{}</code> definition because our go lambda function doesn&rsquo;t access any additional AWS services.</li>
+<li>Our lambda function will be accessible at the <em>/slack</em> child path of the deployed API Gateway instance</li>
+<li>Slack supports both <a href="https://api.slack.com/slash-commands">GET and POST</a> integration types, but we&rsquo;re limiting our lambda function to <code>POST</code> only</li>
+</ul>
+
+<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+
+<p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
+
+<p><pre><code class="go">func main() {
+	// Register the function with the API Gateway
+	apiStage := sparta.NewStage(&#34;v1&#34;)
+	apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)
+
+	// Deploy it
+	sparta.Main(&#34;SpartaSlackbot&#34;,
+		fmt.Sprintf(&#34;Sparta app that responds to Slack commands&#34;),
+		spartaLambdaFunctions(apiGateway),
+		apiGateway,
+		nil)
+}</code></pre>
+</p>
+
+<p>and provision the service:</p>
+
+<p><pre><code class="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
+</p>
+
+<p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
+
+<p><pre><code class="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
+INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
+</p>
+
+<h3 id="a-href-hugoshortcode-12-configure-slack-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#configureSlack:d680e8a854a7cbad6d490c445cba2eba">Configure Slack</a></h3>
+
+<p>At this point our lambda function is deployed and is available through the API Gateway (<em><a href="https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack">https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack</a></em> in the current example).</p>
+
+<p>The next step is to configure Slack with this custom integration:</p>
+
+<ol>
+<li><p>Visit <a href="https://slack.com/apps/build">https://slack.com/apps/build</a> and choose the &ldquo;Custom Integration&rdquo; option:</p>
+
+<p><img src="/images/apigateway/slack/customIntegration.jpg" alt="Custom integration" /></p></li>
+
+<li><p>On the next page, choose &ldquo;Slash Commands&rdquo;:</p>
+
+<p><img src="/images/apigateway/slack/slashCommandMenu.jpg" alt="Slash Commands" /></p></li>
+
+<li><p>The next screen is where you input the command that will trigger your lambda function.  Enter <code>/sparta</code></p>
+
+<p><img src="/images/apigateway/slack/chooseCommand.jpg" alt="Slash Chose Command" /></p>
+
+<ul>
+<li>and click the &ldquo;Add Slash Command Integration&rdquo; button.</li>
+</ul></li>
+
+<li><p>Finally, scroll down the next page to the <strong>Integration Settings</strong> section and provide the API Gateway URL of your lambda function.</p>
+
+<p><img src="/images/apigateway/slack/integrationSettings.jpg" alt="Slash URL" /></p>
+
+<ul>
+<li>Leave the <em>Method</em> field unchanged (it should be <code>POST</code>), to match how we configured the API Gateway entry above.</li>
+</ul></li>
+
+<li><p>Save it</p>
+
+<p><img src="/images/apigateway/slack/saveIntegration.jpg" alt="Save it" /></p></li>
+</ol>
+
+<p>There are additional Slash Command Integration options, but for this example the <strong>URL</strong> option is sufficient to trigger our command.</p>
+
+<h3 id="a-href-hugoshortcode-13-test-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#test:d680e8a854a7cbad6d490c445cba2eba">Test</a></h3>
+
+<p>With everything configured, visit your team&rsquo;s Slack room and verify the integration via <code>/sparta</code> slash command:</p>
+
+<p><img src="/images/apigateway/slack/slackResponse.jpg" alt="Sparta Response" /></p>
+
+</div>
+
+
+    
+  </div>
+</div>
+</div>
+      <footer class="footer">
+    <div class="container hidden-print">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="#">back to top</a>
+</div>
+<div class="pull-right">
+  
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+          <small>
+              
+    
+<div class="container footline">
+  
+  <a href="http://www.erlang-embedded.com/why-erlang/">The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.</a>
+
+
+</div>
+
+
+    
+
+
+          </small>
+        </div>
+     </div>
+    </div>
+</footer>
+
+    <script src="http://gosparta.io/js/jquery.min-2.1.4.js"></script>
+<script src="http://gosparta.io/js/bootstrap.min-3.3.5.js"></script>
+
+
+
+<script type="text/javascript">
+  (function() {
+    
+    
+    if (window.location.hostname == "localhost")
+      return;
+
+    var dsq = document.createElement('script'); dsq.async = true; dsq.type = 'text/javascript';
+    dsq.src = '//mweagle.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://gosparta.io/js/highlight.pack.js"></script>
+<script src="http://gosparta.io/js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+</html>
+

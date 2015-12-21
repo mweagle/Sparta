@@ -116,6 +116,13 @@
         "Title": "",
         "URL": "/apigateway/cors",
         "Children": []
+      },
+      {
+        "Name": "Slack Integration",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/apigateway/slack",
+        "Children": []
       }
       ]},
   {

@@ -8,7 +8,7 @@ type = "doc"
 
 ## <a href="{{< relref "#exampleEcho" >}}">Echo</a>
 
-To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
+To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
 For reference, the `echoS3Event` function is below.
 
@@ -100,7 +100,7 @@ curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world
 < X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 <
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{"code":200,"status":"OK","headers":{"date":"Sun, 06 Dec 2015 15:38:11 GMT","content-length":"970","content-type":"text/plain; charset=utf-8"},"results":{"method":"GET)","body":{},"headers":{"Accept":"*/*","CloudFront-Forwarded-Proto":"https","CloudFront-Is-Desktop-Viewer":"true","CloudFront-Is-Mobile-Viewer":"false","CloudFront-Is-SmartTV-Viewer":"false","CloudFront-Is-Tablet-Viewer":"false","CloudFront-Viewer-Country":"US","Via":"1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)","X-Amz-Cf-Id":"0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==","X-Forwarded-For":"50.135.43.1, 54.240.158.109","X-Forwarded-Port":"443","X-Forwarded-Proto":"https"},"queryParams":{},"pathParams":{},"context":{"apiId":"nevml0oa6e","method":"GET","requestId":"5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00","resourceId":"7619tp","resourcePath":"/hello/world/test","stage":"prod","identity":{"accountId":"","apiKey":"","caller":"","cognitoAuthenticationProvider":"","cognitoAuthenticationType":"","cognitoIdentityId":"","cognitoIdentityPoolId":"","sourceIp":"50.135.43.1","user":"","userAgent":"curl/7.43.0","userArn":""}}}}
+{"method":"GET","body":{},"headers":{"Accept":"*/*","CloudFront-Forwarded-Proto":"https","CloudFront-Is-Desktop-Viewer":"true","CloudFront-Is-Mobile-Viewer":"false","CloudFront-Is-SmartTV-Viewer":"false","CloudFront-Is-Tablet-Viewer":"false","CloudFront-Viewer-Country":"US","Via":"1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)","X-Amz-Cf-Id":"sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==","X-Forwarded-For":"50.135.43.1, 54.240.158.211","X-Forwarded-Port":"443","X-Forwarded-Proto":"https"},"queryParams":{},"pathParams":{},"context":{"apiId":"bmik0opc3l","method":"GET","requestId":"c113fd3b-a76b-11e5-b5e6-4ff04e5da412","resourceId":"mp2mrk","resourcePath":"/hello/world/test","stage":"prod","identity":{"accountId":"","apiKey":"","caller":"","cognitoAuthenticationProvider":"","cognitoAuthenticationType":"","cognitoIdentityId":"","cognitoIdentityPoolId":"","sourceIp":"50.135.43.1","user":"","userAgent":"curl/7.43.0","userArn":""}}}
 
 {{< /highlight >}}
 
@@ -108,52 +108,43 @@ Pretty-printing the response body to make things more readable:
 
 {{< highlight json >}}
 {
-  "code": 200,
-  "status": "OK",
+  "method": "GET",
+  "body": {},
   "headers": {
-    "date": "Sun, 06 Dec 2015 15:38:11 GMT",
-    "content-length": "970",
-    "content-type": "text/plain; charset=utf-8"
+    "Accept": "*/*",
+    "CloudFront-Forwarded-Proto": "https",
+    "CloudFront-Is-Desktop-Viewer": "true",
+    "CloudFront-Is-Mobile-Viewer": "false",
+    "CloudFront-Is-SmartTV-Viewer": "false",
+    "CloudFront-Is-Tablet-Viewer": "false",
+    "CloudFront-Viewer-Country": "US",
+    "Via": "1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)",
+    "X-Amz-Cf-Id": "sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==",
+    "X-Forwarded-For": "50.135.43.1, 54.240.158.211",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
   },
-  "results": {
-    "method": "GET)",
-    "body": {},
-    "headers": {
-      "Accept": "*/*",
-      "CloudFront-Forwarded-Proto": "https",
-      "CloudFront-Is-Desktop-Viewer": "true",
-      "CloudFront-Is-Mobile-Viewer": "false",
-      "CloudFront-Is-SmartTV-Viewer": "false",
-      "CloudFront-Is-Tablet-Viewer": "false",
-      "CloudFront-Viewer-Country": "US",
-      "Via": "1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)",
-      "X-Amz-Cf-Id": "0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==",
-      "X-Forwarded-For": "50.135.43.1, 54.240.158.109",
-      "X-Forwarded-Port": "443",
-      "X-Forwarded-Proto": "https"
-    },
-    "queryParams": {},
-    "pathParams": {},
-    "context": {
-      "apiId": "nevml0oa6e",
-      "method": "GET",
-      "requestId": "5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00",
-      "resourceId": "7619tp",
-      "resourcePath": "/hello/world/test",
-      "stage": "prod",
-      "identity": {
-        "accountId": "",
-        "apiKey": "",
-        "caller": "",
-        "cognitoAuthenticationProvider": "",
-        "cognitoAuthenticationType": "",
-        "cognitoIdentityId": "",
-        "cognitoIdentityPoolId": "",
-        "sourceIp": "50.135.43.1",
-        "user": "",
-        "userAgent": "curl/7.43.0",
-        "userArn": ""
-      }
+  "queryParams": {},
+  "pathParams": {},
+  "context": {
+    "apiId": "bmik0opc3l",
+    "method": "GET",
+    "requestId": "c113fd3b-a76b-11e5-b5e6-4ff04e5da412",
+    "resourceId": "mp2mrk",
+    "resourcePath": "/hello/world/test",
+    "stage": "prod",
+    "identity": {
+      "accountId": "",
+      "apiKey": "",
+      "caller": "",
+      "cognitoAuthenticationProvider": "",
+      "cognitoAuthenticationType": "",
+      "cognitoIdentityId": "",
+      "cognitoIdentityPoolId": "",
+      "sourceIp": "50.135.43.1",
+      "user": "",
+      "userAgent": "curl/7.43.0",
+      "userArn": ""
     }
   }
 }
@@ -163,11 +154,14 @@ While this demonstrates that our lambda function is publicly accessible, it's no
 
 ### <a href="{{< relref "#example1Mapping" >}}">Mapping Templates</a>
 
-The event data that's actually supplied to `echoS3Event` is returned in the response's `results` key.  This content is what the API Gateway sends as part of the integration mapping.  We'll look at the sibling `code`, `status`, and `headers` keys below.
+The event data that's actually supplied to `echoS3Event` is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
 
-When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
+Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
-Sparta uses a pass-through template that passes all valid data.  The [Apache Velocity](http://velocity.apache.org) template that [Sparta uses](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl) is:
+  * [application/json](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl)
+  * [*](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl)
+
+The `application/json` template is copied below:
 
 {{< highlight nohighlight >}}
 #*
@@ -229,9 +223,11 @@ The next example will show how to unmarshal this data and perform request-specif
 
 ### <a href="{{< relref "#example1ProxyingEnvelope" >}}">Proxying Envelope</a>
 
-The mapping template explains the content of the `results` property, but not the other fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the *Go* HTTP response to a Lambda compatible result.  
+Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output.  
 
-A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
+If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the *Go* HTTP response to a Lambda compatible result.  
+
+A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
 ![API Gateway](/images/apigateway/IntegrationMapping.png)
 

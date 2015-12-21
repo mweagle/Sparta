@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1174 
+    "wordCount":  1188 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: flattr: name:yeti home:Home googleAnalytics:UA-70794971-1 bitbucket: twitter:mweagle highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook:]">
+<body class="map[googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle flattr: name:yeti home:Home highlight:vs youtube: github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -256,6 +256,10 @@
           <small><a href="/docs/apigateway/cors">CORS</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/apigateway/slack">Slack Integration</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/s3site">S3 Website</a>
@@ -288,7 +292,7 @@
 
 <h2 id="a-href-hugoshortcode-1-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Accepting Input</a></h2>
 
-<p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43">SpartaApplication</a>.</p>
+<p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a>.</p>
 
 <h3 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleDefine:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
 
@@ -361,9 +365,9 @@ if err != nil {
 apiGateway := sparta.NewAPIGateway(&#34;SpartaImagerAPI&#34;, apiStage)</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-8-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
+<h3 id="a-href-hugoshortcode-8-create-lambda-binding-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</a></h3>
 
-<p>Then we create a URL path with the <code>sparta.LambdaAWSInfo</code> struct that referecnes the <code>s3ItemInfo</code> function:</p>
+<p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
 <pre><code class="go">s3ItemInfoOptions := &amp;sparta.LambdaFunctionOptions{
   Description: &#34;Get information about an item in S3 via querystring params&#34;,
@@ -392,7 +396,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 
 <h3 id="a-href-hugoshortcode-10-create-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Resource</a></h3>
 
-<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function:</p>
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
 
 <pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/info&#34;, s3ItemInfoLambdaFn)
 method, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
@@ -420,6 +424,8 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>See the <a href="http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters">REST documentation</a> for more information.</p>
 
+<h3 id="a-href-hugoshortcode-14-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+
 <p>With everything configured, let&rsquo;s provision the stack:</p>
 
 <p><pre><code class="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
@@ -427,7 +433,7 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>and check the results.</p>
 
-<h3 id="a-href-hugoshortcode-15-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
+<h3 id="a-href-hugoshortcode-16-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
 
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
 
@@ -569,14 +575,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:42:52 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-21-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+<h3 id="a-href-hugoshortcode-22-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
 <p><pre><code class="nohighlight">go run application.go delete</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-23-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+<h3 id="a-href-hugoshortcode-24-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
 
 <p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.</p>
 

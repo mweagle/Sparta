@@ -9,7 +9,7 @@ type = "doc"
 
 ## <a href="{{< relref "#exampleS3" >}}">Accepting Input</a>
 
-This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43).
+This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
 
 ### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
@@ -86,9 +86,9 @@ apiStage := sparta.NewStage("v1")
 apiGateway := sparta.NewAPIGateway("SpartaImagerAPI", apiStage)
 {{< /highlight >}}
 
-### <a href="{{< relref "#example2Resource" >}}">Create a Resource</a>
+### <a href="{{< relref "#example2Resource" >}}">Create Lambda Binding</a>
 
-Then we create a URL path with the `sparta.LambdaAWSInfo` struct that referecnes the `s3ItemInfo` function:
+Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo` function:
 
 {{< highlight go >}}
 s3ItemInfoOptions := &sparta.LambdaFunctionOptions{
@@ -113,7 +113,7 @@ A few items to note here:
 
 ### <a href="{{< relref "#example2Resource" >}}">Create Resource</a>
 
-The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the `s3ItemInfo` function:
+The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the `s3ItemInfo` function. This will be the relative path component used to reference our lambda function via the API Gateway.
 
 {{< highlight go >}}
 apiGatewayResource, _ := api.NewResource("/info", s3ItemInfoLambdaFn)
@@ -140,6 +140,8 @@ Note that the keynames in the `method.Parameters` map must be of the form: **met
   * `header`
 
 See the [REST documentation](http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters) for more information.
+
+### <a href="{{< relref "#provision" >}}">Provision</a>
 
 With everything configured, let's provision the stack:
 

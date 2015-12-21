@@ -8,7 +8,7 @@ type = "doc"
 
 ## <a href="{{< relref "#exampleS3" >}}">Using the Request Context</a>
 
-This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaApplication/blob/master/main.go) service will return Geo information based on the inbound request's IP address.
+This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
 
 ### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
 

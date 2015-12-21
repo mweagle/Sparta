@@ -139,7 +139,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-echo-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleEcho:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Echo&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;For reference, the &lt;code&gt;echoS3Event&lt;/code&gt; function is below.&lt;/p&gt;
 
@@ -223,58 +223,49 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &amp;lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 &amp;lt;
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 15:38:11 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;970&amp;#34;,&amp;#34;content-type&amp;#34;:&amp;#34;text/plain; charset=utf-8&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;method&amp;#34;:&amp;#34;GET)&amp;#34;,&amp;#34;body&amp;#34;:{},&amp;#34;headers&amp;#34;:{&amp;#34;Accept&amp;#34;:&amp;#34;*/*&amp;#34;,&amp;#34;CloudFront-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;,&amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;:&amp;#34;true&amp;#34;,&amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Viewer-Country&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Via&amp;#34;:&amp;#34;1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)&amp;#34;,&amp;#34;X-Amz-Cf-Id&amp;#34;:&amp;#34;0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==&amp;#34;,&amp;#34;X-Forwarded-For&amp;#34;:&amp;#34;50.135.43.1, 54.240.158.109&amp;#34;,&amp;#34;X-Forwarded-Port&amp;#34;:&amp;#34;443&amp;#34;,&amp;#34;X-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;},&amp;#34;queryParams&amp;#34;:{},&amp;#34;pathParams&amp;#34;:{},&amp;#34;context&amp;#34;:{&amp;#34;apiId&amp;#34;:&amp;#34;nevml0oa6e&amp;#34;,&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;requestId&amp;#34;:&amp;#34;5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00&amp;#34;,&amp;#34;resourceId&amp;#34;:&amp;#34;7619tp&amp;#34;,&amp;#34;resourcePath&amp;#34;:&amp;#34;/hello/world/test&amp;#34;,&amp;#34;stage&amp;#34;:&amp;#34;prod&amp;#34;,&amp;#34;identity&amp;#34;:{&amp;#34;accountId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;apiKey&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;caller&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationProvider&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationType&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityPoolId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;sourceIp&amp;#34;:&amp;#34;50.135.43.1&amp;#34;,&amp;#34;user&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;userAgent&amp;#34;:&amp;#34;curl/7.43.0&amp;#34;,&amp;#34;userArn&amp;#34;:&amp;#34;&amp;#34;}}}}&lt;/code&gt;&lt;/pre&gt;
+{&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;body&amp;#34;:{},&amp;#34;headers&amp;#34;:{&amp;#34;Accept&amp;#34;:&amp;#34;*/*&amp;#34;,&amp;#34;CloudFront-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;,&amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;:&amp;#34;true&amp;#34;,&amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Viewer-Country&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Via&amp;#34;:&amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,&amp;#34;X-Amz-Cf-Id&amp;#34;:&amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,&amp;#34;X-Forwarded-For&amp;#34;:&amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,&amp;#34;X-Forwarded-Port&amp;#34;:&amp;#34;443&amp;#34;,&amp;#34;X-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;},&amp;#34;queryParams&amp;#34;:{},&amp;#34;pathParams&amp;#34;:{},&amp;#34;context&amp;#34;:{&amp;#34;apiId&amp;#34;:&amp;#34;bmik0opc3l&amp;#34;,&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;requestId&amp;#34;:&amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,&amp;#34;resourceId&amp;#34;:&amp;#34;mp2mrk&amp;#34;,&amp;#34;resourcePath&amp;#34;:&amp;#34;/hello/world/test&amp;#34;,&amp;#34;stage&amp;#34;:&amp;#34;prod&amp;#34;,&amp;#34;identity&amp;#34;:{&amp;#34;accountId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;apiKey&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;caller&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationProvider&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationType&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityPoolId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;sourceIp&amp;#34;:&amp;#34;50.135.43.1&amp;#34;,&amp;#34;user&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;userAgent&amp;#34;:&amp;#34;curl/7.43.0&amp;#34;,&amp;#34;userArn&amp;#34;:&amp;#34;&amp;#34;}}}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Pretty-printing the response body to make things more readable:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;code&amp;#34;: 200,
-  &amp;#34;status&amp;#34;: &amp;#34;OK&amp;#34;,
+  &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+  &amp;#34;body&amp;#34;: {},
   &amp;#34;headers&amp;#34;: {
-    &amp;#34;date&amp;#34;: &amp;#34;Sun, 06 Dec 2015 15:38:11 GMT&amp;#34;,
-    &amp;#34;content-length&amp;#34;: &amp;#34;970&amp;#34;,
-    &amp;#34;content-type&amp;#34;: &amp;#34;text/plain; charset=utf-8&amp;#34;
+    &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
+    &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
+    &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
+    &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
+    &amp;#34;Via&amp;#34;: &amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,
+    &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,
+    &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,
+    &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
+    &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
   },
-  &amp;#34;results&amp;#34;: {
-    &amp;#34;method&amp;#34;: &amp;#34;GET)&amp;#34;,
-    &amp;#34;body&amp;#34;: {},
-    &amp;#34;headers&amp;#34;: {
-      &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
-      &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
-      &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
-      &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-      &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-      &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-      &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
-      &amp;#34;Via&amp;#34;: &amp;#34;1.1 cbc24cfe0a4f99decef499f7250bdd71.cloudfront.net (CloudFront)&amp;#34;,
-      &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;0pnrYxA7vnOaL6I16a7K8luNQTqnD2BtBNVW4WoR-4pt4Dhku50FJA==&amp;#34;,
-      &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;50.135.43.1, 54.240.158.109&amp;#34;,
-      &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
-      &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
-    },
-    &amp;#34;queryParams&amp;#34;: {},
-    &amp;#34;pathParams&amp;#34;: {},
-    &amp;#34;context&amp;#34;: {
-      &amp;#34;apiId&amp;#34;: &amp;#34;nevml0oa6e&amp;#34;,
-      &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
-      &amp;#34;requestId&amp;#34;: &amp;#34;5a9fb53c-9c2f-11e5-bb04-c9c55aa2aa00&amp;#34;,
-      &amp;#34;resourceId&amp;#34;: &amp;#34;7619tp&amp;#34;,
-      &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello/world/test&amp;#34;,
-      &amp;#34;stage&amp;#34;: &amp;#34;prod&amp;#34;,
-      &amp;#34;identity&amp;#34;: {
-        &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;sourceIp&amp;#34;: &amp;#34;50.135.43.1&amp;#34;,
-        &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
-        &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.43.0&amp;#34;,
-        &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
-      }
+  &amp;#34;queryParams&amp;#34;: {},
+  &amp;#34;pathParams&amp;#34;: {},
+  &amp;#34;context&amp;#34;: {
+    &amp;#34;apiId&amp;#34;: &amp;#34;bmik0opc3l&amp;#34;,
+    &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+    &amp;#34;requestId&amp;#34;: &amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,
+    &amp;#34;resourceId&amp;#34;: &amp;#34;mp2mrk&amp;#34;,
+    &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello/world/test&amp;#34;,
+    &amp;#34;stage&amp;#34;: &amp;#34;prod&amp;#34;,
+    &amp;#34;identity&amp;#34;: {
+      &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;sourceIp&amp;#34;: &amp;#34;50.135.43.1&amp;#34;,
+      &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.43.0&amp;#34;,
+      &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
     }
   }
 }&lt;/code&gt;&lt;/pre&gt;
@@ -284,11 +275,16 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;h3 id=&#34;a-href-hugoshortcode-13-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1Mapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Mapping Templates&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;The event data that&amp;rsquo;s actually supplied to &lt;code&gt;echoS3Event&lt;/code&gt; is returned in the response&amp;rsquo;s &lt;code&gt;results&lt;/code&gt; key.  This content is what the API Gateway sends as part of the integration mapping.  We&amp;rsquo;ll look at the sibling &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys below.&lt;/p&gt;
+&lt;p&gt;The event data that&amp;rsquo;s actually supplied to &lt;code&gt;echoS3Event&lt;/code&gt; is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;rsquo;re not whitelisting any params, so those fields (&lt;code&gt;queryParams&lt;/code&gt;, &lt;code&gt;pathParams&lt;/code&gt;) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;rsquo;s more amenable to the target.&lt;/p&gt;
 
-&lt;p&gt;When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;rsquo;re not whitelisting any params, so those fields (&lt;code&gt;queryParams&lt;/code&gt;, &lt;code&gt;pathParams&lt;/code&gt;) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;rsquo;s more amenable to the target.&lt;/p&gt;
+&lt;p&gt;Sparta uses a pass-through template that passes all valid data, with minor &lt;strong&gt;Body&lt;/strong&gt; differences based on the inbound &lt;em&gt;Content-Type&lt;/em&gt;:&lt;/p&gt;
 
-&lt;p&gt;Sparta uses a pass-through template that passes all valid data.  The &lt;a href=&#34;http://velocity.apache.org&#34;&gt;Apache Velocity&lt;/a&gt; template that &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;Sparta uses&lt;/a&gt; is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl&#34;&gt;application/json&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl&#34;&gt;*&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;code&gt;application/json&lt;/code&gt; template is copied below:&lt;/p&gt;
 
 &lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
 Provide an automatic pass through template that transforms all inputs
@@ -349,9 +345,11 @@ See
 
 &lt;h3 id=&#34;a-href-hugoshortcode-15-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Proxying Envelope&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;The mapping template explains the content of the &lt;code&gt;results&lt;/code&gt; property, but not the other fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;em&gt;Go&lt;/em&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
+&lt;p&gt;Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;rsquo;s output.&lt;/p&gt;
 
-&lt;p&gt;A primary benefit of this envelope is to provide an automatic mapping from Integration Response Regular Expression mappings to Method Response codes.  If you look at the &lt;strong&gt;Integration Response&lt;/strong&gt; section of the &lt;em&gt;/hello/world/test&lt;/em&gt; resource in the Console, you&amp;rsquo;ll see a list of Regular Expression matches:&lt;/p&gt;
+&lt;p&gt;If there were an error, the response would include additional fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;em&gt;Go&lt;/em&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
+
+&lt;p&gt;A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the &lt;strong&gt;Integration Response&lt;/strong&gt; section of the &lt;em&gt;/hello/world/test&lt;/em&gt; resource in the Console, you&amp;rsquo;ll see a list of Regular Expression matches:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/IntegrationMapping.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
 
@@ -395,7 +393,7 @@ See
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Accepting Input&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L43&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
 
@@ -468,9 +466,9 @@ if err != nil {
 apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaImagerAPI&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h3 id=&#34;a-href-hugoshortcode-8-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create a Resource&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;a-href-hugoshortcode-8-create-lambda-binding-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Lambda Binding&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;Then we create a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that referecnes the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
+&lt;p&gt;Next we create an &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that references the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;s3ItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
   Description: &amp;#34;Get information about an item in S3 via querystring params&amp;#34;,
@@ -499,7 +497,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 
 &lt;h3 id=&#34;a-href-hugoshortcode-10-create-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Resource&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
+&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;code&gt;s3ItemInfo&lt;/code&gt; function. This will be the relative path component used to reference our lambda function via the API Gateway.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/info&amp;#34;, s3ItemInfoLambdaFn)
 method, err := apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
@@ -527,6 +525,8 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 
 &lt;p&gt;See the &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters&#34;&gt;REST documentation&lt;/a&gt; for more information.&lt;/p&gt;
 
+&lt;h3 id=&#34;a-href-hugoshortcode-14-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
 &lt;p&gt;With everything configured, let&amp;rsquo;s provision the stack:&lt;/p&gt;
 
 &lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --level debug provision --s3Bucket $S3_BUCKET&lt;/code&gt;&lt;/pre&gt;
@@ -534,7 +534,7 @@ method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = tru
 
 &lt;p&gt;and check the results.&lt;/p&gt;
 
-&lt;h3 id=&#34;a-href-hugoshortcode-15-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;a-href-hugoshortcode-16-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;As this Sparta application includes an API Gateway definition, the stack &lt;code&gt;Outputs&lt;/code&gt; includes the API Gateway URL:&lt;/p&gt;
 
@@ -676,14 +676,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 {&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:42:52 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;h3 id=&#34;a-href-hugoshortcode-21-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;a-href-hugoshortcode-22-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
 
 &lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;h3 id=&#34;a-href-hugoshortcode-23-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;a-href-hugoshortcode-24-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
 </description>
@@ -699,7 +699,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-using-the-request-context-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Using the Request Context&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/main.go&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
+&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
 
 &lt;h3 id=&#34;a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
 
@@ -978,7 +978,28 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/apigateway/cors/</guid>
-      <description>&lt;p&gt;TODO: Example of configuring &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;CORS&lt;/a&gt;.&lt;/p&gt;
+      <description>
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-cors-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#intro:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;CORS&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Cross-origin_resource_sharing&#34;&gt;Cross Origin Resource Sharing&lt;/a&gt; defines a protocol by which resources on different domains may establish whether cross site operations are permissible.&lt;/p&gt;
+
+&lt;p&gt;Sparta makes CORS support a single &lt;code&gt;CORSEnabled&lt;/code&gt; field of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; struct:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Register the function with the API Gateway
+apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
+apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage)
+// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Setting the boolean to &lt;code&gt;true&lt;/code&gt; will add the necessary &lt;code&gt;OPTIONS&lt;/code&gt; and mock responses to &lt;em&gt;all&lt;/em&gt; resources exposed by your API.  See the &lt;a href=&#34;http://gosparta.io/docs/s3site&#34;&gt;SpartaHTML&lt;/a&gt; sample for a complete example.&lt;/p&gt;
+
+&lt;h2 id=&#34;references:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;API Gateway Docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
