@@ -133,6 +133,13 @@
     "Children": []
   },
   {
+    "Name": "Local Testing",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/local_testing",
+    "Children": []
+  },
+  {
     "Name": "Miscellaneous",
     "IconClass": "",
     "Title": "",

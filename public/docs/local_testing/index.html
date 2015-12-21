@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Overview  &middot; Sparta</title>
+  <title>Local Testing  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,9 +17,9 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Overview  &middot; Sparta ">
+<meta property="og:title" content="Local Testing  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/contributing/" />
+<meta property="og:url" content="http://gosparta.io/docs/local_testing/" />
 <meta property="og:locale" content="en-EN">
 
 
@@ -38,9 +38,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Overview" />
+<meta name="twitter:title" content="Local Testing" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/contributing/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/local_testing/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -48,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Overview",
+    "headline": "Local Testing",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  9 
+    "wordCount":  579 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/contributing/" />
+<link rel="canonical" href="http://gosparta.io/docs/local_testing/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle youtube: github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: flattr:]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: flattr: github:https://github.com/mweagle home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle youtube: name:yeti]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -287,13 +287,181 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>Overview
+  <h1>Local Testing
 </h1>
 
 </header>
 
     <div class="container content">
-  <p>The <a href="/docs/overview">Overview</a> walked through a simple &ldquo;Hello World&rdquo; example.</p>
+  
+
+<h2 id="a-href-hugoshortcode-1-local-testing-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#intro:d680e8a854a7cbad6d490c445cba2eba">Local Testing</a></h2>
+
+<p>While developing Sparta lambda functions it may be useful to test them locally without needing to <code>provision</code> each new code change.  Sparta supports localhost testing via the <code>explore</code> command line option.</p>
+
+<h2 id="a-href-hugoshortcode-2-example-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example:d680e8a854a7cbad6d490c445cba2eba">Example</a></h2>
+
+<p>For this example, let&rsquo;s define a simple Sparta application:</p>
+
+<pre><code class="go">package main
+
+import (
+	&#34;encoding/json&#34;
+	&#34;fmt&#34;
+	&#34;net/http&#34;
+
+	&#34;github.com/Sirupsen/logrus&#34;
+	sparta &#34;github.com/mweagle/Sparta&#34;
+)
+
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloWorld(event *json.RawMessage,
+	context *sparta.LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+
+	fmt.Fprint(w, &#34;Hello World&#34;)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	// Deploy it
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	sparta.Main(&#34;SpartaExplore&#34;,
+		fmt.Sprintf(&#34;Test explore command&#34;),
+		lambdaFunctions,
+		nil,
+		nil)
+}</code></pre>
+
+
+<h2 id="a-href-hugoshortcode-4-command-line-testing-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cliTesting:d680e8a854a7cbad6d490c445cba2eba">Command Line Testing</a></h2>
+
+<p>With our application defined, let&rsquo;s run it:</p>
+
+<pre><code class="nohighlight">go run main.go explore
+
+INFO[0000] Welcome to Sparta                             Option=explore Version=0.1.3
+INFO[0000] The following URLs are available for testing.
+INFO[0000] main.helloWorld                               Path=http://localhost:9999/main.helloWorld
+INFO[0000] Functions can be invoked via application/json over POST
+INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
+INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` keys
+INFO[0000] Starting Sparta server                        URL=http://localhost:9999</code></pre>
+
+
+<p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <em>Go</em> binary that is used in the AWS Lambda execution environment.</p>
+
+<p>Per the instructions, let&rsquo;s create a <em>testEvent.json</em> file with the required structure:</p>
+
+<pre><code class="json">{
+  &#34;context&#34; : {},
+  &#34;event&#34; : {}
+}</code></pre>
+
+
+<p>and post it:</p>
+
+<pre><code class="">curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
+
+*   Trying ::1...
+* Connected to localhost (::1) port 9999 (#0)
+&gt; POST /main.helloWorld HTTP/1.1
+&gt; Host: localhost:9999
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt; Content-Type: application/json
+&gt; Content-Length: 33
+&gt;
+* upload completely sent off: 33 out of 33 bytes
+&lt; HTTP/1.1 200 OK
+&lt; Date: Mon, 21 Dec 2015 03:13:33 GMT
+&lt; Content-Length: 11
+&lt; Content-Type: text/plain; charset=utf-8
+&lt;
+* Connection #0 to host localhost left intact
+Hello World</code></pre>
+
+
+<p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
+
+<p>While this approach does work, it&rsquo;s not a scalable approach to writing automated tests.</p>
+
+<h2 id="a-href-hugoshortcode-8-httptest-support-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#httptest:d680e8a854a7cbad6d490c445cba2eba">httptest support</a></h2>
+
+<p>To integrate with the existing <a href="https://golang.org/pkg/testing/">go test</a> command, Sparta includes two functions:</p>
+
+<ol>
+<li><code>NewLambdaHTTPHandler</code> : Creates an <a href="https://golang.org/pkg/net/http/httptest/#NewServer">httptest.NewServer</a>-compliant <code>http.Handler</code> value.</li>
+<li><code>Sparta/explore.NewRequest</code> : Creates a mock JSON object with optional user-defined <em>event</em> data.<br /></li>
+</ol>
+
+<p>To show this in action, let&rsquo;s walk through how Sparta <a href="https://github.com/mweagle/Sparta/blob/master/explore_test.go">does this</a>:</p>
+
+<p><pre><code class="golang">func TestExplore(t *testing.T) {
+	// 1. Create the function(s) we want to test
+	var lambdaFunctions []*LambdaAWSInfo
+	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	// 2. Mock event specific data to send to the lambda function
+	eventData := ArbitraryJSONObject{
+		&#34;key1&#34;: &#34;value1&#34;,
+		&#34;key2&#34;: &#34;value2&#34;,
+		&#34;key3&#34;: &#34;value3&#34;}
+
+	// 3. Make the request and confirm
+	logger, _ := NewLogger(&#34;warning&#34;)
+	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	defer ts.Close()
+	resp, err := explore.NewRequest(lambdaFn.lambdaFnName, eventData, ts.URL)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	t.Log(&#34;Status: &#34;, resp.Status)
+	t.Log(&#34;Headers: &#34;, resp.Header)
+	t.Log(&#34;Body: &#34;, string(body))
+}</code></pre>
+</p>
+
+<p>The test function above has the following features:</p>
+
+<ol>
+<li>Create a slice of one or more Sparta lambda functions to test</li>
+<li>Optionally define <em>event</em> data to use in the test</li>
+<li>Create a new <code>httptest.NewServer</code></li>
+<li>Issue the test case request with <code>Sparta/explore.NewRequest</code></li>
+<li>Validate the test results</li>
+</ol>
+
+<p>These <em>localhost</em> tests will be executed as part of your application&rsquo;s normal <code>go test</code> lifecycle.</p>
+
+<h2 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h2>
+
+<ul>
+<li>API Gateway <a href="https://github.com/mweagle/Sparta/tree/master/resources/provision/apigateway">input mappings</a> are not currently supported.</li>
+<li>Ensure your localhost AWS credentials have sufficient privileges to access any AWS services.
+
+<ul>
+<li>Sparta does not provision <code>IAM::Role</code> resources for local testing.</li>
+</ul></li>
+<li>Localhost testing is not a substitute for CI/CD pipelines.
+
+<ul>
+<li><a href="https://queue.acm.org/detail.cfm?id=1142065">You build it, you run it</a></li>
+<li><a href="https://youtu.be/wyWI3gLpB8o">Velocity &amp; Volume</a></li>
+</ul></li>
+</ul>
 
 </div>
 
