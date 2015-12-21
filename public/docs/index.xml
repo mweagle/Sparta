@@ -982,7 +982,12 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-local-testing-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#intro:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Local Testing&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;While developing Sparta lambda functions it may be useful to test them locally without needing to &lt;code&gt;provision&lt;/code&gt; each new code change.  Sparta supports localhost testing via the &lt;code&gt;explore&lt;/code&gt; command line option.&lt;/p&gt;
+&lt;p&gt;While developing Sparta lambda functions it may be useful to test them locally without needing to &lt;code&gt;provision&lt;/code&gt; each new code change.  Sparta supports &lt;em&gt;localhost&lt;/em&gt; testing in two different ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The &lt;code&gt;explore&lt;/code&gt; command line option&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;httptest.NewServer&lt;/code&gt; for &lt;em&gt;go test&lt;/em&gt; style testing&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-2-example-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example&lt;/a&gt;&lt;/h2&gt;
 

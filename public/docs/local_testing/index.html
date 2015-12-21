@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  579 
+    "wordCount":  588 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: flattr: github:https://github.com/mweagle home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle youtube: name:yeti]">
+<body class="map[home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle flattr: name:yeti bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -297,7 +297,12 @@
 
 <h2 id="a-href-hugoshortcode-1-local-testing-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#intro:d680e8a854a7cbad6d490c445cba2eba">Local Testing</a></h2>
 
-<p>While developing Sparta lambda functions it may be useful to test them locally without needing to <code>provision</code> each new code change.  Sparta supports localhost testing via the <code>explore</code> command line option.</p>
+<p>While developing Sparta lambda functions it may be useful to test them locally without needing to <code>provision</code> each new code change.  Sparta supports <em>localhost</em> testing in two different ways:</p>
+
+<ul>
+<li>The <code>explore</code> command line option</li>
+<li><code>httptest.NewServer</code> for <em>go test</em> style testing</li>
+</ul>
 
 <h2 id="a-href-hugoshortcode-2-example-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example:d680e8a854a7cbad6d490c445cba2eba">Example</a></h2>
 

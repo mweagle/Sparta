@@ -8,7 +8,10 @@ type = "doc"
 
 ## <a href="{{< relref "#intro" >}}">Local Testing</a>
 
-While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  Sparta supports localhost testing via the `explore` command line option.  
+While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  Sparta supports _localhost_ testing in two different ways:
+
+  - The `explore` command line option
+  -  `httptest.NewServer` for _go test_ style testing
 
 ## <a href="{{< relref "#example" >}}">Example</a>
 
