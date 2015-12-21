@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  851 
+    "wordCount":  890 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle flattr: github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube:]">
+<body class="map[github:https://github.com/mweagle bitbucket: youtube: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle flattr: home:Home linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -363,35 +363,33 @@ func helloSlackbot(event *json.RawMessage,
 <li><p><strong>Custom Event Type</strong></p>
 
 <ul>
-<li>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  However, our <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">integration mapping</a> mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw <code>POST</code> body with the mapping envelope (so that we can access <a href="/docs/apigateway/example1">identity information, HTTP headers, etc.</a>), which produces an inbound JSON request that includes a <strong>Body</strong> parameter.  The <strong>Body</strong> string value is the raw inbound <code>POST</code> data.  Since it&rsquo;s <code>application/x-www-form-urlencoded</code>, to get the actual parameters we need to parse it:</li>
-</ul>
+<li><p>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  However, our <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">integration mapping</a> mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw <code>POST</code> body with the mapping envelope (so that we can access <a href="/docs/apigateway/example1">identity information, HTTP headers, etc.</a>), which produces an inbound JSON request that includes a <strong>Body</strong> parameter.  The <strong>Body</strong> string value is the raw inbound <code>POST</code> data.  Since it&rsquo;s <code>application/x-www-form-urlencoded</code>, to get the actual parameters we need to parse it:</p>
 
 <pre><code class="language-javascript">if bodyData, ok := lambdaEvent.Body.(string); ok {
   requestParams, err = url.ParseQuery(bodyData)
-</code></pre>
+</code></pre></li>
 
-<ul>
-<li>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</li>
-</ul>
+<li><p>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</p>
 
 <pre><code class="language-javascript">responseText := &quot;You talkin to me?&quot;
 for _, eachLine := range requestParams[&quot;text&quot;] {
   responseText += fmt.Sprintf(&quot;\n&gt;&gt;&gt; %s&quot;, eachLine)
 }
 </code></pre></li>
+</ul></li>
 
 <li><p><strong>Custom Response</strong></p>
 
 <ul>
-<li>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</li>
+<li><p>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</p>
+
+<pre><code class="language-javascript">responseData := sparta.ArbitraryJSONObject{
+    &quot;response_type&quot;: &quot;in_channel&quot;,
+    &quot;text&quot;:          responseText,
+}
+</code></pre></li>
 </ul></li>
 </ol>
-
-<pre><code class="language-javascript">  responseData := sparta.ArbitraryJSONObject{
-		&quot;response_type&quot;: &quot;in_channel&quot;,
-		&quot;text&quot;:          responseText,
-	}
-</code></pre>
 
 <h3 id="a-href-hugoshortcode-4-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
 
@@ -434,7 +432,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
-<p><pre><code class="go">func main() {
+<pre><code class="go">func main() {
 	// Register the function with the API Gateway
 	apiStage := sparta.NewStage(&#34;v1&#34;)
 	apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)
@@ -446,7 +444,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 		apiGateway,
 		nil)
 }</code></pre>
-</p>
+
 
 <p>and provision the service:</p>
 
@@ -503,6 +501,17 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 <p>With everything configured, visit your team&rsquo;s Slack room and verify the integration via <code>/sparta</code> slash command:</p>
 
 <p><img src="/images/apigateway/slack/slackResponse.jpg" alt="Sparta Response" /></p>
+
+<h3 id="a-href-hugoshortcode-14-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<p><pre><code class="nohighlight">go run slack.go delete</code></pre>
+</p>
+
+<h3 id="a-href-hugoshortcode-16-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+
+<p>This example provides a good overview of Sparta &amp; Slack integration, including how to handle external requests that are not <code>application/json</code> formatted.</p>
 
 </div>
 

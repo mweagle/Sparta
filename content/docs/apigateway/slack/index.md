@@ -80,29 +80,29 @@ There are a couple of things to note in this code:
 1. **Custom Event Type**
   - The inbound Slack `POST` request is `application/x-www-form-urlencoded` data.  However, our [integration mapping](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl) mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw `POST` body with the mapping envelope (so that we can access [identity information, HTTP headers, etc.](/docs/apigateway/example1)), which produces an inbound JSON request that includes a **Body** parameter.  The **Body** string value is the raw inbound `POST` data.  Since it's `application/x-www-form-urlencoded`, to get the actual parameters we need to parse it:
 
-    ```javascript
-    if bodyData, ok := lambdaEvent.Body.(string); ok {
-      requestParams, err = url.ParseQuery(bodyData)
-    ```
+        ```javascript
+        if bodyData, ok := lambdaEvent.Body.(string); ok {
+          requestParams, err = url.ParseQuery(bodyData)
+        ```
 
   - The lambda function extracts all Slack parameters and if defined, sends the `text` back with a bit of [Slack Message Formatting](https://api.slack.com/docs/formatting) (and some attitude, to be honest about it):
 
-    ```javascript
-    responseText := "You talkin to me?"
-    for _, eachLine := range requestParams["text"] {
-      responseText += fmt.Sprintf("\n>>> %s", eachLine)
-    }
-    ```
+        ```javascript
+        responseText := "You talkin to me?"
+        for _, eachLine := range requestParams["text"] {
+          responseText += fmt.Sprintf("\n>>> %s", eachLine)
+        }
+        ```
 
 1. **Custom Response**
   - The Slack API expects a [JSON formatted response](https://api.slack.com/slash-commands), which is created in step 4:
 
-  ```javascript
-  responseData := sparta.ArbitraryJSONObject{
-		"response_type": "in_channel",
-		"text":          responseText,
-	}
-  ```
+        ```javascript
+        responseData := sparta.ArbitraryJSONObject{
+      		"response_type": "in_channel",
+      		"text":          responseText,
+      	}
+        ```
 
 ### <a href="{{< relref "#example2API" >}}">Create the API Gateway</a>
 
@@ -213,4 +213,16 @@ There are additional Slash Command Integration options, but for this example the
 
 With everything configured, visit your team's Slack room and verify the integration via `/sparta` slash command:
 
-![Sparta Response](/images/apigateway/slack/slackResponse.jpg)    
+![Sparta Response](/images/apigateway/slack/slackResponse.jpg)
+
+### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+
+Before moving on, remember to decommission the service via:
+
+{{< highlight nohighlight >}}
+go run slack.go delete
+{{< /highlight >}}
+
+### <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+
+This example provides a good overview of Sparta & Slack integration, including how to handle external requests that are not `application/json` formatted.   
