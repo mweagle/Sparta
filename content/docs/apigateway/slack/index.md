@@ -1,12 +1,13 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Slack"
+title = "Slack SlashCommand"
 tags = ["sparta"]
 type = "doc"
 +++
 
-## <a href="{{< relref "#intro" >}}">Slack SlashCommand</a>
+
+# ![SlashLogo](/images/apigateway/slack/slack_rgb.png)
 
 In this example, we'll walk through creating a [Slack Slash Command](https://api.slack.com/slash-commands) service.  The source for this is the [SpartaSlackbot](https://github.com/mweagle/SpartaSlackbot) repo.
 

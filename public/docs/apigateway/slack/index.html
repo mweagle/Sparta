@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Slack  &middot; Sparta</title>
+  <title>Slack SlashCommand  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,7 +17,7 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Slack  &middot; Sparta ">
+<meta property="og:title" content="Slack SlashCommand  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
 <meta property="og:url" content="http://gosparta.io/docs/apigateway/slack/" />
 <meta property="og:locale" content="en-EN">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Slack" />
+<meta name="twitter:title" content="Slack SlashCommand" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="http://gosparta.io/docs/apigateway/slack/" />
 <meta name="twitter:domain" content="http://gosparta.io">
@@ -48,14 +48,14 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Slack",
+    "headline": "Slack SlashCommand",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  890 
+    "wordCount":  888 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: youtube: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle flattr: home:Home linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[highlight:vs github:https://github.com/mweagle googleplus: facebook: flattr: twitter:mweagle youtube: name:yeti home:Home googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -282,7 +282,7 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>Slack
+  <h1>Slack SlashCommand
 </h1>
 
 </header>
@@ -290,13 +290,13 @@
     <div class="container content">
   
 
-<h2 id="a-href-hugoshortcode-1-slack-slashcommand-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#intro:d680e8a854a7cbad6d490c445cba2eba">Slack SlashCommand</a></h2>
+<h1 id="slashlogo-images-apigateway-slack-slack-rgb-png:d680e8a854a7cbad6d490c445cba2eba"><img src="/images/apigateway/slack/slack_rgb.png" alt="SlashLogo" /></h1>
 
 <p>In this example, we&rsquo;ll walk through creating a <a href="https://api.slack.com/slash-commands">Slack Slash Command</a> service.  The source for this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</a> repo.</p>
 
 <p>Our initial command handler won&rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.</p>
 
-<h2 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambda:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h2>
+<h2 id="a-href-hugoshortcode-1-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambda:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h2>
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
@@ -391,7 +391,7 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 </ul></li>
 </ol>
 
-<h3 id="a-href-hugoshortcode-4-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+<h3 id="a-href-hugoshortcode-3-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
@@ -401,7 +401,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
 
-<h3 id="a-href-hugoshortcode-6-create-lambda-binding-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding &amp; Resource</a></h3>
+<h3 id="a-href-hugoshortcode-5-create-lambda-binding-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding &amp; Resource</a></h3>
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
@@ -428,7 +428,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 <li>Slack supports both <a href="https://api.slack.com/slash-commands">GET and POST</a> integration types, but we&rsquo;re limiting our lambda function to <code>POST</code> only</li>
 </ul>
 
-<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h3 id="a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
@@ -458,7 +458,7 @@ INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://git
 INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-12-configure-slack-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#configureSlack:d680e8a854a7cbad6d490c445cba2eba">Configure Slack</a></h3>
+<h3 id="a-href-hugoshortcode-11-configure-slack-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#configureSlack:d680e8a854a7cbad6d490c445cba2eba">Configure Slack</a></h3>
 
 <p>At this point our lambda function is deployed and is available through the API Gateway (<em><a href="https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack">https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack</a></em> in the current example).</p>
 
@@ -496,20 +496,20 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 <p>There are additional Slash Command Integration options, but for this example the <strong>URL</strong> option is sufficient to trigger our command.</p>
 
-<h3 id="a-href-hugoshortcode-13-test-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#test:d680e8a854a7cbad6d490c445cba2eba">Test</a></h3>
+<h3 id="a-href-hugoshortcode-12-test-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#test:d680e8a854a7cbad6d490c445cba2eba">Test</a></h3>
 
 <p>With everything configured, visit your team&rsquo;s Slack room and verify the integration via <code>/sparta</code> slash command:</p>
 
 <p><img src="/images/apigateway/slack/slackResponse.jpg" alt="Sparta Response" /></p>
 
-<h3 id="a-href-hugoshortcode-14-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+<h3 id="a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
 <p><pre><code class="nohighlight">go run slack.go delete</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-16-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+<h3 id="a-href-hugoshortcode-15-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
 
 <p>This example provides a good overview of Sparta &amp; Slack integration, including how to handle external requests that are not <code>application/json</code> formatted.</p>
 
