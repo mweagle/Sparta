@@ -1,3 +1,9 @@
+## v0.1.5
+- :checkered_flag: **CHANGES**
+  - Add [S3 Object Expiration](http://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-set-lifecycle-configuration-intro.html) warning message if the target bucket doesn't specify one.
+  - Replace internal CloudFormation polling loop with [WaitUntilStackCreateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackCreateComplete) and [WaitUntilStackUpdateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackUpdateComplete)
+- :warning: **BREAKING**
+  - N/A
 ## v0.1.4
 - :checkered_flag: **CHANGES**
   - Reduce deployed binary size by excluding Sparta embedded resources from deployed binary via build tags.
