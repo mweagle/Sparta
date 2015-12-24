@@ -81,7 +81,6 @@ function makeRequest(path, event, context) {
       // the API Gateway integration response to use standard golang StatusText regexp
       // matches to manage HTTP status codes.
 
-      // TODO - need alternative mapping templates for non application/json content-types
       var responseData = {};
       var handlerError = (res.statusCode >= 400) ? new Error(body) : undefined;
       if (handlerError) {
