@@ -180,10 +180,53 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	return err
 }
 
+// Ensure that the S3 bucket we're using for archives has an object expiration policy.  The
+// uploaded archives otherwise will be orphaned in S3 since the template can't manage the
+// associated resources
+func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, logger *logrus.Logger) error {
+	s3Svc := s3.New(awsSession)
+	params := &s3.GetBucketLifecycleConfigurationInput{
+		Bucket: aws.String(S3Bucket), // Required
+	}
+	showWarning := false
+	resp, err := s3Svc.GetBucketLifecycleConfiguration(params)
+	if nil != err {
+		showWarning = strings.Contains(err.Error(), "NoSuchLifecycleConfiguration")
+		if !showWarning {
+			return fmt.Errorf("Failed to fetch S3 Bucket Policy: %s", err.Error())
+		}
+	} else {
+		for _, eachRule := range resp.Rules {
+			if *eachRule.Status == s3.ExpirationStatusEnabled {
+				showWarning = false
+			}
+		}
+	}
+	if showWarning {
+		logger.WithFields(logrus.Fields{
+			"Bucket":    S3Bucket,
+			"Reference": "http://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-set-lifecycle-configuration-intro.html",
+		}).Warning("Bucket should have ObjectExpiration lifecycle enabled.")
+	} else {
+		logger.WithFields(logrus.Fields{
+			"Bucket": S3Bucket,
+			"Rules":  resp.Rules,
+		}).Debug("Bucket lifecycle configuration")
+	}
+	return nil
+}
+
 // Upload the ZIP archive to S3
-func uploadPackage(packagePath string, S3Bucket string, noop bool, logger *logrus.Logger) (string, error) {
+func uploadPackage(packagePath string, awsSession *session.Session, S3Bucket string, noop bool, logger *logrus.Logger) (string, error) {
+	// Query the S3 bucket for the bucket policies.  The bucket _should_ have ObjectExpiration,
+	// otherwise we're just going to orphan our binaries...
+	err := ensureExpirationPolicy(awsSession, S3Bucket, logger)
+	if nil != err {
+		return "", fmt.Errorf("Failed to ensure bucket policies: %s", err.Error())
+	}
+	// Then do the actual work
 	reader, err := os.Open(packagePath)
-	if err != nil {
+	if nil != err {
 		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
 	}
 	defer func() {
@@ -214,7 +257,7 @@ func uploadPackage(packagePath string, S3Bucket string, noop bool, logger *logru
 		logger.WithFields(logrus.Fields{
 			"Source": packagePath,
 		}).Info("Uploading ZIP archive")
-		uploader := s3manager.NewUploader(session.New())
+		uploader := s3manager.NewUploader(awsSession)
 		result, err := uploader.Upload(uploadInput)
 		if nil != err {
 			return "", err
@@ -232,7 +275,6 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	// or a ArbitraryJSONObject{
 	// 	"Fn::GetAtt": []string{iamRoleDefinitionName, "Arn"},
 	// }
-
 	// Don't verify them, just create them...
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
 	ctx.lambdaIAMRoleNameMap = make(map[string]interface{}, 0)
@@ -477,7 +519,7 @@ func createUploadStep(packagePath string) workflowStep {
 
 		// We always upload the primary code package
 		// First try and upload the primary archive
-		keyName, err := uploadPackage(packagePath, ctx.s3Bucket, ctx.noop, ctx.logger)
+		keyName, err := uploadPackage(packagePath, ctx.awsSession, ctx.s3Bucket, ctx.noop, ctx.logger)
 		ctx.s3LambdaZipKey = keyName
 		if nil != err {
 			return nil, err
@@ -509,7 +551,7 @@ func createUploadStep(packagePath string) workflowStep {
 			zipArchive.Close()
 			tmpFile.Close()
 			// Upload it & save the key
-			s3SiteLambdaZipKey, err := uploadPackage(tmpFile.Name(), ctx.s3Bucket, ctx.noop, ctx.logger)
+			s3SiteLambdaZipKey, err := uploadPackage(tmpFile.Name(), ctx.awsSession, ctx.s3Bucket, ctx.noop, ctx.logger)
 			ctx.s3SiteLambdaZipKey = s3SiteLambdaZipKey
 			if nil != err {
 				return nil, err
