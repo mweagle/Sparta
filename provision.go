@@ -659,52 +659,42 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackID),
 	}
-
-	var stackInfo *cloudformation.Stack
-	stackOperationComplete := false
-	ctx.logger.Info("Waiting for stack to complete")
-	for !stackOperationComplete {
-		time.Sleep(10 * time.Second)
-		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
-		if nil != err {
-			return nil, err
-		}
-		if len(describeStacksOutput.Stacks) > 0 {
-			stackInfo = describeStacksOutput.Stacks[0]
-
-			ctx.logger.WithFields(logrus.Fields{
-				"Status": *stackInfo.StackStatus,
-			}).Info("Stack status")
-
-			switch *stackInfo.StackStatus {
-			case cloudformation.StackStatusCreateInProgress,
-				cloudformation.StackStatusDeleteInProgress,
-				cloudformation.StackStatusUpdateInProgress,
-				cloudformation.StackStatusRollbackInProgress,
-				cloudformation.StackStatusUpdateCompleteCleanupInProgress,
-				cloudformation.StackStatusUpdateRollbackCompleteCleanupInProgress,
-				cloudformation.StackStatusUpdateRollbackInProgress:
-				time.Sleep(20 * time.Second)
-			default:
-				stackOperationComplete = true
-				break
+	waitComplete := false
+	go func() {
+		counter := 0
+		for {
+			counter++
+			if waitComplete {
+				return
 			}
-		} else {
-			return nil, fmt.Errorf("More than one stack returned for: %s", stackID)
+			if 0 == (counter % 10) {
+				ctx.logger.Info("Waiting for stack to complete")
+			}
+			time.Sleep(2 * time.Second)
 		}
-	}
-	// What happened?
-	succeed := true
-	switch *stackInfo.StackStatus {
-	case cloudformation.StackStatusDeleteComplete, // Initial create failure
-		cloudformation.StackStatusUpdateRollbackComplete: // Update failure
-		succeed = false
-	default:
-		succeed = true
-	}
+	}()
 
+	if exists {
+		err = awsCloudFormation.WaitUntilStackUpdateComplete(describeStacksInput)
+	} else {
+		err = awsCloudFormation.WaitUntilStackCreateComplete(describeStacksInput)
+	}
+	waitComplete = true
+
+	// What happened?
+	var stackInfo *cloudformation.Stack
+	describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+	if nil != err {
+		return nil, err
+	}
+	if len(describeStacksOutput.Stacks) > 0 {
+		stackInfo = describeStacksOutput.Stacks[0]
+	}
+	if nil == stackInfo {
+		return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
+	}
 	// If it didn't work, then output some failure information
-	if !succeed {
+	if nil != err {
 		// Get the stack events and find the ones that failed.
 		events, err := stackEvents(stackID, awsCloudFormation)
 		if nil != err {
