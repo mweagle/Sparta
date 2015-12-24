@@ -90,7 +90,11 @@ var cfArn = []interface{}{"arn:aws:cloudformation:",
 	ArbitraryJSONObject{
 		"Ref": "AWS::AccountId",
 	},
-	":stack/*/*"}
+	":stack/",
+	ArbitraryJSONObject{
+		"Ref": "AWS::StackName",
+	},
+	"/*"}
 
 // CommonIAMStatements defines common IAM::Role Policy Statement values for different AWS
 // service types.  See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
