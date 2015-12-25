@@ -183,7 +183,13 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 // Ensure that the S3 bucket we're using for archives has an object expiration policy.  The
 // uploaded archives otherwise will be orphaned in S3 since the template can't manage the
 // associated resources
-func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, logger *logrus.Logger) error {
+func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, noop bool, logger *logrus.Logger) error {
+	if noop {
+		logger.WithFields(logrus.Fields{
+			"BucketName": S3Bucket,
+		}).Info("Bypassing bucket expiration policy check due to -n/-noop command line argument")
+		return nil
+	}
 	s3Svc := s3.New(awsSession)
 	params := &s3.GetBucketLifecycleConfigurationInput{
 		Bucket: aws.String(S3Bucket), // Required
@@ -220,7 +226,7 @@ func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, logger
 func uploadPackage(packagePath string, awsSession *session.Session, S3Bucket string, noop bool, logger *logrus.Logger) (string, error) {
 	// Query the S3 bucket for the bucket policies.  The bucket _should_ have ObjectExpiration,
 	// otherwise we're just going to orphan our binaries...
-	err := ensureExpirationPolicy(awsSession, S3Bucket, logger)
+	err := ensureExpirationPolicy(awsSession, S3Bucket, noop, logger)
 	if nil != err {
 		return "", fmt.Errorf("Failed to ensure bucket policies: %s", err.Error())
 	}
