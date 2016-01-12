@@ -722,7 +722,7 @@ func createUploadStep(packagePath string) workflowStep {
 		if len(uploadErrors) > 0 {
 			errorText := "Encountered multiple errors during upload:\n"
 			for _, eachError := range uploadErrors {
-				errorText += fmt.Sprintf("%s%s\n", eachError.Error())
+				errorText += fmt.Sprintf("%s%s\n", errorText, eachError.Error())
 				return nil, errors.New(errorText)
 			}
 		}
