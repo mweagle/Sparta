@@ -155,17 +155,17 @@ func (ctx *workflowContext) rollback() {
 	}).Info("Invoking rollback functions")
 
 	for _, eachCleanup := range ctx.rollbackFunctions {
-		go func(goLogger *logrus.Logger) {
+		go func(cleanupFunc rollbackFunction, goLogger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
 			// Fetch the URL.
-			err := eachCleanup(goLogger)
+			err := cleanupFunc(goLogger)
 			if nil != err {
 				ctx.logger.WithFields(logrus.Fields{
 					"Error": err,
 				}).Warning("Failed to cleanup resource")
 			}
-		}(ctx.logger)
+		}(eachCleanup, ctx.logger)
 	}
 	wg.Wait()
 }
