@@ -188,8 +188,8 @@ func _escFSMustString(useLocal bool, name string) string {
 
 var _escData = map[string]*_escFile{
 
-	"/resources/shims/README.md": {
-		local:   "./resources/shims/README.md",
+	"/resources/awsbinary/README.md": {
+		local:   "./resources/awsbinary/README.md",
 		size:    104,
 		modtime: 1450714234,
 		compressed: `
@@ -208,8 +208,8 @@ fsEhjn4hwfHBHp6+wRDNYE1p+UUKjuHBCj6JuUkpiQopqQU5+ZW5qXklegpcgAAAAP//AOMpDWgAAAA=
 		local: "/resources",
 	},
 
-	"/resources/shims": {
+	"/resources/awsbinary": {
 		isDir: true,
-		local: "/resources/shims",
+		local: "/resources/awsbinary",
 	},
 }
