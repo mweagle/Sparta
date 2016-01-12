@@ -13,12 +13,12 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
-func writenode(writer io.Writer, nodeName string, nodeColor string) {
+func writeNode(writer io.Writer, nodeName string, nodeColor string) {
 	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", nodeName, nodeColor)
 	fmt.Fprintf(writer, "%s[%s]\n", nodeName, nodeName)
 }
 
-func writelink(writer io.Writer, fromNode string, toNode string, label string) {
+func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
 	if "" != label {
 		fmt.Fprintf(writer, "%s-- \"%s\" -->%s\n", fromNode, label, toNode)
 	} else {
@@ -38,21 +38,7 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 	if nil != err {
 		return err
 	}
-	/*
-		// Export the template and insert it into an HTML page.  Let the page do the work...
 
-		for _, eachEntry := range ctx.lambdaAWSInfos {
-			err := eachEntry.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
-			if nil != err {
-				return nil, err
-			}
-		}
-		// If there's an API gateway definition, provision custom resources
-		// and IAM role to
-		if nil != ctx.api {
-			ctx.api.export(ctx.s3Bucket, s3Key, ctx.lambdaIAMRoleNameMap, ctx.cloudformationResources, ctx.cloudformationOutputs, ctx.logger)
-		}
-	*/
 	tmpl, err := template.New("description").Parse(_escFSMustString(false, "/resources/describe/template.html"))
 	if err != nil {
 		return errors.New(err.Error())
@@ -61,12 +47,12 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 	var b bytes.Buffer
 
 	// Setup the root object
-	writenode(&b, serviceName, "2AF1EA")
+	writeNode(&b, serviceName, "2AF1EA")
 
 	for _, eachLambda := range lambdaAWSInfos {
 		// Create the node...
-		writenode(&b, eachLambda.lambdaFnName, "00A49F")
-		writelink(&b, eachLambda.lambdaFnName, serviceName, "")
+		writeNode(&b, eachLambda.lambdaFnName, "00A49F")
+		writeLink(&b, eachLambda.lambdaFnName, serviceName, "")
 
 		// Create permission & event mappings
 		// functions declared in this
@@ -74,14 +60,14 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 			name, link := eachPermission.descriptionInfo()
 
 			// Style it to have the Amazon color
-			writenode(&b, name, "F1702A")
-			writelink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
+			writeNode(&b, name, "F1702A")
+			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
 			nodeName := *eachEventSourceMapping.EventSourceArn
-			writenode(&b, nodeName, "F1702A")
-			writelink(&b, nodeName, eachLambda.lambdaFnName, "")
+			writeNode(&b, nodeName, "F1702A")
+			writeLink(&b, nodeName, eachLambda.lambdaFnName, "")
 		}
 	}
 
