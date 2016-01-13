@@ -36,6 +36,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path"
@@ -72,8 +73,10 @@ const (
 // The basename of the scripts that are embedded into CONSTANTS.go
 // by `esc` during the generate phase.
 var customResourceScripts = []string{"cfn-response.js",
+	"sparta_utils.js",
 	"apigateway.js",
 	"s3.js",
+	"ses.js",
 	"sns.js",
 	"s3Site.js",
 	"golang-constants.json",
@@ -375,11 +378,16 @@ func createS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key st
 				Bucket: aws.String(s3Bucket),
 				Key:    aws.String(s3Key),
 			}
-			result, err := s3Client.DeleteObject(params)
-			if err == nil {
+			_, err := s3Client.DeleteObject(params)
+			if err != nil {
 				logger.WithFields(logrus.Fields{
-					"DeleteResult": result,
-				}).Info("S3 item deleted due to rollback")
+					"Error": err,
+				}).Warn("Failed to delete S3 item during rollback cleanup")
+			} else {
+				logger.WithFields(logrus.Fields{
+					"Bucket": s3Bucket,
+					"Key":    s3Key,
+				}).Debug("Item deleted during rollback cleanup")
 			}
 			return err
 		}
@@ -652,7 +660,6 @@ func createPackageStep() workflowStep {
 func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		var uploadErrors []error
-		var keyName string
 		var wg sync.WaitGroup
 
 		// We always need to upload the primary binary
@@ -665,6 +672,7 @@ func createUploadStep(packagePath string) workflowStep {
 				ctx.noop,
 				ctx.logger)
 			ctx.s3LambdaZipKey = keyName
+
 			if nil != err {
 				uploadErrors = append(uploadErrors, err)
 			} else {
@@ -726,7 +734,7 @@ func createUploadStep(packagePath string) workflowStep {
 				return nil, errors.New(errorText)
 			}
 		}
-		return ensureCloudFormationStack(keyName), nil
+		return ensureCloudFormationStack(), nil
 	}
 }
 
@@ -824,46 +832,50 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		stackID = *createStackResponse.StackId
 	}
 
-	// Poll for the current stackID state
+	// Poll for the current stackID state, and
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackID),
 	}
-	waitComplete := false
-	go func() {
-		counter := 0
-		for {
-			counter++
-			if waitComplete {
-				return
-			}
-			if 0 == (counter % 10) {
-				ctx.logger.Info("Waiting for stack to complete")
-			}
-			time.Sleep(2 * time.Second)
-		}
-	}()
 
-	if exists {
-		err = awsCloudFormation.WaitUntilStackUpdateComplete(describeStacksInput)
-	} else {
-		err = awsCloudFormation.WaitUntilStackCreateComplete(describeStacksInput)
-	}
-	waitComplete = true
-
-	// What happened?
 	var stackInfo *cloudformation.Stack
-	describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
-	if nil != err {
-		return nil, err
-	}
-	if len(describeStacksOutput.Stacks) > 0 {
+	var convegeStackStateSucceeded bool
+	for waitComplete := false; !waitComplete; {
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Millisecond
+		time.Sleep(sleepDuration)
+
+		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+		if nil != err {
+			// TODO - add retry iff we're RateExceeded due to collective access
+			return nil, err
+		}
+		if len(describeStacksOutput.Stacks) <= 0 {
+			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
+		}
 		stackInfo = describeStacksOutput.Stacks[0]
+		switch *stackInfo.StackStatus {
+		case cloudformation.StackStatusCreateComplete,
+			cloudformation.StackStatusUpdateComplete:
+			convegeStackStateSucceeded = true
+			waitComplete = true
+		case
+			// Include DeleteComplete as new provisions will automatically rollback
+			cloudformation.StackStatusDeleteComplete,
+			cloudformation.StackStatusCreateFailed,
+			cloudformation.StackStatusDeleteFailed,
+			cloudformation.StackStatusRollbackFailed:
+			convegeStackStateSucceeded = false
+			waitComplete = true
+		default:
+			if exists {
+				ctx.logger.Info("Waiting for UpdateStack to complete")
+			} else {
+				ctx.logger.Info("Waiting for CreateStack complete")
+			}
+		}
 	}
-	if nil == stackInfo {
-		return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
-	}
+
 	// If it didn't work, then output some failure information
-	if nil != err {
+	if !convegeStackStateSucceeded {
 		// Get the stack events and find the ones that failed.
 		events, err := stackEvents(stackID, awsCloudFormation)
 		if nil != err {
@@ -898,7 +910,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	return stackInfo, nil
 }
 
-func ensureCloudFormationStack(s3Key string) workflowStep {
+func ensureCloudFormationStack() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		// Create a new CloudFormation template that represents the lambda
 		// state and upload it.  Once uploaded, converge the new stack
@@ -910,7 +922,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		for _, eachEntry := range ctx.lambdaAWSInfos {
 			err := eachEntry.export(ctx.serviceName,
 				ctx.s3Bucket,
-				s3Key,
+				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
 				ctx.cloudformationResources,
 				ctx.cloudformationOutputs,
@@ -926,7 +938,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		apiExports := make(map[string]interface{}, 0)
 		if nil != ctx.api {
 			ctx.api.export(ctx.s3Bucket,
-				s3Key,
+				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
 				ctx.cloudformationResources,
 				apiExports,
@@ -935,7 +947,7 @@ func ensureCloudFormationStack(s3Key string) workflowStep {
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.s3SiteContext.s3Site {
 			ctx.s3SiteContext.s3Site.export(ctx.s3Bucket,
-				s3Key,
+				ctx.s3LambdaZipKey,
 				ctx.s3SiteContext.s3SiteLambdaZipKey,
 				apiExports,
 				ctx.lambdaIAMRoleNameMap,
