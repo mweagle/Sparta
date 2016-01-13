@@ -840,7 +840,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	var stackInfo *cloudformation.Stack
 	var convegeStackStateSucceeded bool
 	for waitComplete := false; !waitComplete; {
-		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Millisecond
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
 		time.Sleep(sleepDuration)
 
 		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
