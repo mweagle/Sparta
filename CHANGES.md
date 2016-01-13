@@ -1,3 +1,11 @@
+## v0.1.6
+- :checkered_flag: **CHANGES**
+  - Improved stack provisioning performance
+  - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
+  - Add `SESPermission` type to support triggering Lambda functions in response to inbound email
+    - See _doc_sespermission_test.go_ for an example
+- :warning: **BREAKING**
+  - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode
 ## v0.1.5
 - :checkered_flag: **CHANGES**
   - Add [S3 Object Expiration](http://docs.aws.amazon.com/AmazonS3/latest/dev/how-to-set-lifecycle-configuration-intro.html) warning message if the target bucket doesn't specify one.
