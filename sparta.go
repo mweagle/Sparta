@@ -31,7 +31,7 @@ func init() {
 }
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.1.5"
+const SpartaVersion = "0.1.6"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
@@ -45,11 +45,18 @@ const (
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
 	// @enum AWSPrincipal
+	SESPrincipal = "ses.amazonaws.com"
+	// @enum AWSPrincipal
 	SNSPrincipal = "sns.amazonaws.com"
 	// @enum AWSPrincipal
 	EC2Principal = "ec2.amazonaws.com"
 	// @enum AWSPrincipal
 	LambdaPrincipal = "lambda.amazonaws.com"
+)
+
+const (
+	// WildcardArn that applies to AWS resources which don't use ARNs to scope access (eg, SES)
+	WildcardArn = "*"
 )
 
 // AssumePolicyDocument defines common a IAM::Role PolicyDocument
@@ -113,7 +120,7 @@ var CommonIAMStatements = map[string][]ArbitraryJSONObject{
 		ArbitraryJSONObject{
 			"Action":   []string{"cloudwatch:PutMetricData"},
 			"Effect":   "Allow",
-			"Resource": "*",
+			"Resource": WildcardArn,
 		},
 		ArbitraryJSONObject{
 			"Effect": "Allow",
@@ -218,7 +225,8 @@ type LambdaPermissionExporter interface {
 	// in the provided resources param.  The targetLambdaFuncRef
 	// interface represents the Fn::GetAtt "Arn" JSON value
 	// of the parent Lambda target
-	export(targetLambdaFuncRef interface{},
+	export(serviceName string,
+		targetLambdaFuncRef interface{},
 		resources ArbitraryJSONObject,
 		S3Bucket string,
 		S3Key string,
@@ -279,8 +287,14 @@ func (perm BasePermission) export(principal string,
 		"Action":       "lambda:InvokeFunction",
 		"FunctionName": targetLambdaFuncRef,
 		"Principal":    principal,
-		"SourceArn":    sourceArnExpression,
 	}
+
+	if arnValue, ok := perm.SourceArn.(string); ok {
+		if WildcardArn != arnValue {
+			properties["SourceArn"] = arnValue
+		}
+	}
+
 	if "" != perm.SourceAccount {
 		properties["SourceAccount"] = perm.SourceAccount
 	}
@@ -322,7 +336,8 @@ type LambdaPermission struct {
 	Principal string
 }
 
-func (perm LambdaPermission) export(targetLambdaFuncRef interface{},
+func (perm LambdaPermission) export(serviceName string,
+	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
@@ -369,7 +384,8 @@ type S3Permission struct {
 	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
-func (perm S3Permission) export(targetLambdaFuncRef interface{},
+func (perm S3Permission) export(serviceName string,
+	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
@@ -450,7 +466,8 @@ type SNSPermission struct {
 	BasePermission
 }
 
-func (perm SNSPermission) export(targetLambdaFuncRef interface{},
+func (perm SNSPermission) export(serviceName string,
+	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
@@ -484,6 +501,7 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 			"ServiceToken": ArbitraryJSONObject{
 				"Fn::GetAtt": []string{configuratorResName, "Arn"},
 			},
+
 			"Mode":     "Subscribe",
 			"TopicArn": sourceArnExpression,
 			// Use the LambdaTarget value in the JS custom resoruce
@@ -527,6 +545,156 @@ func (perm SNSPermission) export(targetLambdaFuncRef interface{},
 }
 
 func (perm SNSPermission) descriptionInfo() (string, string) {
+	return perm.BasePermission.sourceArnString(), ""
+}
+
+// ReceiptRule encapsulates data necessary to provision an SES
+// rule.  Note that
+type ReceiptRule struct {
+	Name         string
+	Disabled     bool
+	Recipients   []string
+	ScanDisabled bool
+	TLSPolicy    string
+	TopicArn     string
+}
+
+func newLambdaTargetReceiptRule(receiptRule ReceiptRule,
+	serviceName string,
+	functionArnRef interface{}) ArbitraryJSONObject {
+	ruleAction := ArbitraryJSONObject{
+		"FunctionArn":    functionArnRef,
+		"InvocationType": "Event",
+	}
+	if "" != receiptRule.TopicArn {
+		ruleAction["TopicArn"] = receiptRule.TopicArn
+	}
+	if "" == receiptRule.TLSPolicy {
+		receiptRule.TLSPolicy = "Optional"
+	}
+
+	return ArbitraryJSONObject{
+		"Name":        fmt.Sprintf("%s-%s", receiptRule.Name, serviceName),
+		"Enabled":     !receiptRule.Disabled,
+		"Recipients":  receiptRule.Recipients,
+		"ScanEnabled": !receiptRule.ScanDisabled,
+		"TlsPolicy":   receiptRule.TLSPolicy,
+		"Actions": []ArbitraryJSONObject{
+			{
+				"LambdaAction": ruleAction,
+			},
+		},
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// SESPermission - START
+// SES doesn't use ARNs to scope access
+var sesSourcePartArn = WildcardArn
+
+// SESPermission struct that imples the SES verified domain should be
+// updated (via createReceiptRule) to automatically request or push events
+// to the parent lambda
+// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
+// for more information.
+type SESPermission struct {
+	BasePermission
+	InvocationType string /* RequestResponse, Event */
+	ReceiptRules   []ReceiptRule
+}
+
+func (perm SESPermission) export(serviceName string,
+	targetLambdaFuncRef interface{},
+	resources ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
+	// SES doesn't use ARNs, so make sure that's what the user supplied
+	if perm.BasePermission.SourceArn != WildcardArn {
+		return "", errors.New("SESPermissions only support `SourceArn=*` values")
+	}
+	/*
+		  SES will perform lambda:AddPermission with the following configurations:
+		SourceAccount: 027159405834
+		Principal: ses.amazonaws.com
+		Actions:
+		lambda:InvokeFunction
+	*/
+	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts)
+
+	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
+		targetLambdaFuncRef,
+		sourceArnExpression,
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
+	if nil != err {
+		return "", err
+	}
+
+	// Make sure the custom lambda that manages SNS notifications is provisioned.
+	configuratorResName, err := ensureConfiguratorLambdaResource(SESPrincipal,
+		sourceArnExpression,
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
+
+	if nil != err {
+		return "", err
+	}
+
+	// Add a custom resource invocation for this configuration
+	//////////////////////////////////////////////////////////////////////////////
+	// And the custom resource forwarder
+	invocationType := perm.InvocationType
+	if "" == invocationType {
+		invocationType = "Event"
+	}
+	// If there aren't any, just forward everything
+	receiptRules := perm.ReceiptRules
+	if nil == perm.ReceiptRules {
+		receiptRules = []ReceiptRule{ReceiptRule{
+			Name:         "Default",
+			Disabled:     false,
+			ScanDisabled: false,
+			Recipients:   []string{},
+			TLSPolicy:    "Optional",
+		}}
+	}
+
+	var xformedRules []ArbitraryJSONObject
+	for _, eachReceiptRule := range receiptRules {
+		xformedRules = append(xformedRules,
+			newLambdaTargetReceiptRule(eachReceiptRule,
+				serviceName,
+				targetLambdaFuncRef))
+	}
+
+	customResourceSubscriber := ArbitraryJSONObject{
+		"Type":    "AWS::CloudFormation::CustomResource",
+		"Version": "1.0",
+		"Properties": ArbitraryJSONObject{
+			"ServiceToken": ArbitraryJSONObject{
+				"Fn::GetAtt": []string{configuratorResName, "Arn"},
+			},
+			"Rules": xformedRules,
+		},
+		"DependsOn": []string{targetLambdaResourceName, configuratorResName},
+	}
+	// Save it
+	subscriberResourceName := CloudFormationResourceName("SubscriberSES",
+		targetLambdaResourceName,
+		perm.BasePermission.SourceAccount,
+		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
+	resources[subscriberResourceName] = customResourceSubscriber
+
+	return "", nil
+}
+
+func (perm SESPermission) descriptionInfo() (string, string) {
 	return perm.BasePermission.sourceArnString(), ""
 }
 
@@ -719,7 +887,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	// Permissions
 	for _, eachPermission := range info.Permissions {
-		_, err := eachPermission.export(functionAttr, resources, S3Bucket, S3Key, logger)
+		_, err := eachPermission.export(serviceName, functionAttr, resources, S3Bucket, S3Key, logger)
 		if nil != err {
 			return err
 		}
