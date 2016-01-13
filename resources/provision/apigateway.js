@@ -6,6 +6,8 @@ var _ = require('underscore');
 var async = require('async');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
+var toBoolean = require('./sparta_utils').toBoolean;
+
 //awsConfig.logger = console;
 
 var apigateway = new AWS.APIGateway(awsConfig);
@@ -35,16 +37,6 @@ var lamdbdaURI = function(lambdaArn) {
   return util.format('arn:aws:apigateway:%s:lambda:path/2015-03-31/functions/%s/invocations',
     lambda.config.region,
     lambdaArn);
-};
-
-var toBoolean = function(value)
-{
-  var bValue = value;
-  if (_.isString(bValue))
-  {
-      bValue = ('true' === bValue.toLowerCase());
-  }
-  return bValue;
 };
 
 var accumulatedStackLambdas = function(resourcesRoot, accumulator) {
