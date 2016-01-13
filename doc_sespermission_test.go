@@ -31,7 +31,8 @@ func ExampleSESPermission() {
 		},
 		InvocationType: "Event",
 	}
-	// Add some custom ReceiptRules.  Rules will be inserted in this order
+	// Add some custom ReceiptRules.  Rules will be inserted (evaluated) in their
+	// array rank order.
 	lambdaSESPermission.ReceiptRules = make([]ReceiptRule, 0)
 	lambdaSESPermission.ReceiptRules = append(lambdaSESPermission.ReceiptRules,
 		ReceiptRule{
