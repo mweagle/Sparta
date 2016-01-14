@@ -1,7 +1,8 @@
 var cfnResponse = require('./cfn-response');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
-awsConfig.logger = console;
+//awsConfig.logger = console;
+
 var _ = require('underscore');
 var async = require('async');
 var toBoolean = require('./sparta_utils').toBoolean;

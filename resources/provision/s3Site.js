@@ -3,6 +3,8 @@
 var cfnResponse = require('cfn-response');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
+//awsConfig.logger = console;
+
 var path = require('path');
 var util = require('util');
 var fs = require('fs');
@@ -11,7 +13,6 @@ var os = require('os');
 var AdmZip = require('adm-zip');
 var async = require('async');
 var mime = require('mime-types');
-//awsConfig.logger = console;
 
 /**
 Three properties in the event:
