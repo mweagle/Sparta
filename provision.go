@@ -154,7 +154,7 @@ func (ctx *workflowContext) rollback() {
 	wg.Add(len(ctx.rollbackFunctions))
 
 	ctx.logger.WithFields(logrus.Fields{
-		"RollbackCount": ctx.rollbackFunctions,
+		"RollbackCount": len(ctx.rollbackFunctions),
 	}).Info("Invoking rollback functions")
 
 	for _, eachCleanup := range ctx.rollbackFunctions {
@@ -869,7 +869,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			if exists {
 				ctx.logger.Info("Waiting for UpdateStack to complete")
 			} else {
-				ctx.logger.Info("Waiting for CreateStack complete")
+				ctx.logger.Info("Waiting for CreateStack to complete")
 			}
 		}
 	}
