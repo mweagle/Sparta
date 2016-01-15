@@ -47,6 +47,7 @@ func awsPrincipalToService(awsPrincipalName string) string {
 
 func ensureConfiguratorLambdaResource(awsPrincipalName string,
 	sourceArn interface{},
+	dependsOn []string,
 	resources ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
@@ -60,12 +61,14 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 	keyName, err := json.Marshal(ArbitraryJSONObject{
 		"Principal": awsPrincipalName,
 		"Arn":       sourceArn,
+		"DependsOn": dependsOn,
 	})
 	if err != nil {
 		logger.Error("Failed to create configurator resource name: ", err.Error())
 		return "", err
 	}
-	subscriberHandlerName := CloudFormationResourceName(fmt.Sprintf("%sSubscriber", awsServiceName), string(keyName))
+	subscriberHandlerName := CloudFormationResourceName(fmt.Sprintf("%sSubscriber",
+		awsServiceName), string(keyName))
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
@@ -87,6 +90,9 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 			"Service": awsServiceName,
 		}).Info("Creating configuration Lambda for AWS service")
 
+		configuratorDescription := fmt.Sprintf("Sparta managed Lambda CustomResource to configure %s service",
+			awsServiceName)
+
 		//////////////////////////////////////////////////////////////////////////////
 		// Custom Resource Lambda Handler
 		// NOTE: This brittle function name has an analog in ./resources/index.js b/c the
@@ -102,11 +108,15 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 					"S3Bucket": S3Bucket,
 					"S3Key":    S3Key,
 				},
-				"Role":    iamRoleRef,
-				"Handler": handlerName,
-				"Runtime": "nodejs",
-				"Timeout": "30",
+				"Description": configuratorDescription,
+				"Role":        iamRoleRef,
+				"Handler":     handlerName,
+				"Runtime":     "nodejs",
+				"Timeout":     "30",
 			},
+		}
+		if nil != dependsOn && (len(dependsOn) > 0) {
+			customResourceHandlerDef["DependsOn"] = dependsOn
 		}
 		resources[subscriberHandlerName] = customResourceHandlerDef
 	}

@@ -108,7 +108,7 @@ type APIGatewayLambdaJSONEvent struct {
 // Model proxies the AWS SDK's Model data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Model
 //
-// NOTE: Dynamic Model creation is currently _NOT_ implemented.
+// TODO: Support Dynamic Model creation
 type Model struct {
 	Description string `json:",omitempty"`
 	Name        string `json:",omitempty"`
@@ -432,6 +432,7 @@ func (api *API) export(S3Bucket string,
 
 	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal,
 		"*",
+		[]string{},
 		resources,
 		S3Bucket,
 		S3Key,

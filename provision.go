@@ -45,6 +45,8 @@ import (
 	"sync"
 	"time"
 
+	spartaPrivate "Sparta/private"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -93,7 +95,13 @@ type s3SiteContext struct {
 	s3SiteLambdaZipKey string
 }
 
+// Rollback function called in the event of a stack provisioning failure
 type rollbackFunction func(logger *logrus.Logger) error
+
+// Type of a workflow step.  Each step is responsible
+// for returning the next step or an error if the overall
+// workflow should stop.
+type workflowStep func(ctx *workflowContext) (workflowStep, error)
 
 ////////////////////////////////////////////////////////////////////////////////
 // Workflow context
@@ -146,6 +154,8 @@ func (ctx *workflowContext) registerRollback(userFunction rollbackFunction) {
 	}
 	ctx.rollbackFunctions = append(ctx.rollbackFunctions, userFunction)
 }
+
+// Run any provided rollback functions
 func (ctx *workflowContext) rollback() {
 	// Run each cleanup function concurrently.  If there's an error
 	// all we're going to do is log it as a warning, since at this
@@ -174,13 +184,8 @@ func (ctx *workflowContext) rollback() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// UTILITIES
-////////////////////////////////////////////////////////////////////////////////
-
-// Type of a workflow step.  Each step is responsible
-// for returning the next step or an error if the overall
-// workflow should stop.
-type workflowStep func(ctx *workflowContext) (workflowStep, error)
+// Private - START
+//
 
 // Create a temporary file in the current working directory
 func temporaryFile(name string) (*os.File, error) {
@@ -398,6 +403,9 @@ func createS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key st
 		return nil
 	}
 }
+
+// Private - END
+////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 // Workflow steps
@@ -960,14 +968,15 @@ func ensureCloudFormationStack() workflowStep {
 			ctx.cloudformationOutputs[eachKey] = eachValue
 		}
 		// Add Sparta outputs
-		ctx.cloudformationOutputs[OutputSpartaVersionKey] = ArbitraryJSONObject{
-			"Description": "Sparta Version",
-			"Value":       SpartaVersion,
-		}
-		ctx.cloudformationOutputs[OutputSpartaHomeKey] = ArbitraryJSONObject{
-			"Description": "Sparta Home",
-			"Value":       "https://github.com/mweagle/Sparta",
-		}
+		spartaPrivate.InsertSpartaOutput(OutputSpartaHomeKey,
+			"http://gosparta.io",
+			"Sparta Home",
+			ctx.cloudformationOutputs)
+		spartaPrivate.InsertSpartaOutput(OutputSpartaVersionKey,
+			SpartaVersion,
+			"Sparta Version",
+			ctx.cloudformationOutputs)
+
 		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
 		cloudFormationTemplate["Outputs"] = ctx.cloudformationOutputs
 

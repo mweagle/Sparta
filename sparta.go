@@ -18,6 +18,9 @@ import (
 	"strings"
 	"time"
 
+	spartaCF "Sparta/aws/cloudformation"
+	spartaPrivate "Sparta/private"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -88,7 +91,8 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 	},
 }
 
-// Represents the CloudFormation Arn of this stack.
+// Represents the CloudFormation Arn of this stack, referenced
+// in CommonIAMStatements
 var cfArn = []interface{}{"arn:aws:cloudformation:",
 	ArbitraryJSONObject{
 		"Ref": "AWS::Region",
@@ -200,12 +204,12 @@ type LambdaFunctionOptions struct {
 	Timeout int64
 }
 
-// TemplateDecorator if defined, allows Lambda functions to annotate the CloudFormation
+// TemplateDecorator allows Lambda functions to annotate the CloudFormation
 // template definition.  Both the resources and the outputs params
 // are initialized to an empty ArbitraryJSONObject and should
-// be populated with valid CloudFormation types.  The
+// be populated with valid CloudFormation ArbitraryJSONObject values.  The
 // CloudFormationResourceName() function can be used to generate
-// logical resource names for insertion keys.
+// logical CloudFormation-compatible resource names.
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html and
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for
 // more information.
@@ -228,6 +232,7 @@ type LambdaPermissionExporter interface {
 	export(serviceName string,
 		targetLambdaFuncRef interface{},
 		resources ArbitraryJSONObject,
+		outputs ArbitraryJSONObject,
 		S3Bucket string,
 		S3Key string,
 		logger *logrus.Logger) (string, error)
@@ -339,6 +344,7 @@ type LambdaPermission struct {
 func (perm LambdaPermission) export(serviceName string,
 	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
@@ -387,6 +393,7 @@ type S3Permission struct {
 func (perm S3Permission) export(serviceName string,
 	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
@@ -404,7 +411,13 @@ func (perm S3Permission) export(serviceName string,
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal, sourceArnExpression, resources, S3Bucket, S3Key, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal,
+		sourceArnExpression,
+		[]string{},
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
 	if nil != err {
 		return "", err
 	}
@@ -469,6 +482,7 @@ type SNSPermission struct {
 func (perm SNSPermission) export(serviceName string,
 	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
@@ -486,7 +500,13 @@ func (perm SNSPermission) export(serviceName string,
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal, sourceArnExpression, resources, S3Bucket, S3Key, logger)
+	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal,
+		sourceArnExpression,
+		[]string{},
+		resources,
+		S3Bucket,
+		S3Key,
+		logger)
 	if nil != err {
 		return "", err
 	}
@@ -548,47 +568,199 @@ func (perm SNSPermission) descriptionInfo() (string, string) {
 	return perm.BasePermission.sourceArnString(), ""
 }
 
-// ReceiptRule encapsulates data necessary to provision an SES
-// rule.  Note that
-type ReceiptRule struct {
-	Name         string
-	Disabled     bool
-	Recipients   []string
-	ScanDisabled bool
-	TLSPolicy    string
-	TopicArn     string
+//
+// END - SNSPermission
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// MessageBodyStorageOptions - START
+
+// MessageBodyStorageOptions define additional options for storing SES
+// message body content.  By default, all rules associated with the owning
+// SESPermission object will store message bodies if the MessageBodyStorage
+// field is non-nil.  Message bodies are by default prefixed with
+// `ServiceName/RuleName/`, which can be overriden by specifying a non-empty
+// ObjectKeyPrefix value.  A rule can opt-out of message body storage
+// with the DisableStorage field.  See
+// http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html
+// for additional field documentation.
+// The message body is saved as MIME (https://tools.ietf.org/html/rfc2045)
+type MessageBodyStorageOptions struct {
+	ObjectKeyPrefix string
+	KmsKeyArn       string
+	TopicArn        string
+	DisableStorage  bool
 }
 
-func newLambdaTargetReceiptRule(receiptRule ReceiptRule,
-	serviceName string,
-	functionArnRef interface{}) ArbitraryJSONObject {
+//
+// END - MessageBodyStorageOptions
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// MessageBodyStorage - START
+
+// MessageBodyStorage represents either a new S3 bucket or an existing S3 bucket
+// to which SES message bodies should be stored.
+// NOTE: New MessageBodyStorage create S3 buckets which will be orphaned after your
+// service is deleted.
+type MessageBodyStorage struct {
+	logicalBucketName                  string
+	bucketNameRef                      interface{}
+	cloudFormationS3BucketResourceName string
+}
+
+// BucketArn returns an Arn value that can be used as an
+// lambdaFn.RoleDefinition.Privileges `Resource` value.
+func (storage *MessageBodyStorage) BucketArn() interface{} {
+	return spartaCF.S3ArnForBucket(storage.bucketNameRef)
+}
+
+func (storage *MessageBodyStorage) export(serviceName string,
+	targetLambdaFuncRef interface{},
+	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
+	tags := map[string]string{
+		"sparta:logicalBucketName": storage.logicalBucketName,
+	}
+	if "" != storage.cloudFormationS3BucketResourceName {
+		resources[storage.cloudFormationS3BucketResourceName] = ArbitraryJSONObject{
+			"Type":           "AWS::S3::Bucket",
+			"DeletionPolicy": "Retain",
+			"Properties": ArbitraryJSONObject{
+				"Tags": spartaCF.MapToResourceTags(tags),
+			},
+		}
+		logger.WithFields(logrus.Fields{
+			"LogicalResourceName": storage.cloudFormationS3BucketResourceName,
+		}).Info("Service will orphan S3 Bucket on deletion")
+
+		// Add the created bucket to the outputs?
+		spartaPrivate.InsertSpartaOutput(storage.cloudFormationS3BucketResourceName,
+			storage.BucketArn(),
+			"SES Message Body Bucket",
+			outputs)
+	}
+	// Add the S3 Access policy
+	s3SiteBucketPolicy := ArbitraryJSONObject{
+		"Type": "AWS::S3::BucketPolicy",
+		"Properties": ArbitraryJSONObject{
+			"Bucket": storage.bucketNameRef,
+			"PolicyDocument": ArbitraryJSONObject{
+				"Version": "2012-10-17",
+				"Statement": []ArbitraryJSONObject{
+					{
+						"Sid":    "PermitSESServiceToSaveEmailBody",
+						"Effect": "Allow",
+						"Principal": ArbitraryJSONObject{
+							"Service": "ses.amazonaws.com",
+						},
+						"Action":   []string{"s3:PutObjectAcl", "s3:PutObject"},
+						"Resource": spartaCF.S3AllKeysArnForBucket(storage.bucketNameRef),
+						"Condition": ArbitraryJSONObject{
+							"StringEquals": ArbitraryJSONObject{
+								"aws:Referer": ArbitraryJSONObject{"Ref": "AWS::AccountId"},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	s3BucketPolicyResourceName := CloudFormationResourceName("SESMessageBodyBucketPolicy",
+		fmt.Sprintf("%#v", storage.bucketNameRef))
+	resources[s3BucketPolicyResourceName] = s3SiteBucketPolicy
+
+	// Return the name of the bucket policy s.t. the configurator resource
+	// is properly sequenced.  The configurator will fail iff the Bucket Policies aren't
+	// applied b/c the SES Rule Actions check PutObject access to S3 buckets
+	return s3BucketPolicyResourceName, nil
+}
+
+//
+// END - MessageBodyStorage
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// ReceiptRule - START
+
+// ReceiptRule represents an SES ReceiptRule
+// (http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rules.html)
+// value.  To store message bodies, provide a non-nil MessageBodyStorage value
+// to the owning SESPermission object
+type ReceiptRule struct {
+	Name               string
+	Disabled           bool
+	Recipients         []string
+	ScanDisabled       bool
+	TLSPolicy          string
+	TopicArn           string
+	BodyStorageOptions MessageBodyStorageOptions
+}
+
+func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
+	functionArnRef interface{},
+	messageBodyStorage *MessageBodyStorage) ArbitraryJSONObject {
+
+	var actions []ArbitraryJSONObject
+	// If there is a MessageBodyStorage reference, push that S3Action
+	// to the head of the Actions list
+	if nil != messageBodyStorage && !rule.BodyStorageOptions.DisableStorage {
+		s3Action := ArbitraryJSONObject{
+			"BucketName": messageBodyStorage.bucketNameRef,
+		}
+		if "" != rule.BodyStorageOptions.ObjectKeyPrefix {
+			s3Action["ObjectKeyPrefix"] = rule.BodyStorageOptions.ObjectKeyPrefix
+		} else {
+			s3Action["ObjectKeyPrefix"] = fmt.Sprintf("%s/%s/", serviceName, rule.Name)
+		}
+		if "" != rule.BodyStorageOptions.KmsKeyArn {
+			s3Action["KmsKeyArn"] = rule.BodyStorageOptions.KmsKeyArn
+		}
+		if "" != rule.BodyStorageOptions.TopicArn {
+			s3Action["TopicArn"] = rule.BodyStorageOptions.TopicArn
+		}
+		actions = append(actions, ArbitraryJSONObject{
+			"S3Action": s3Action,
+		})
+	}
+	// Then create the "LambdaAction", which is always present.
 	ruleAction := ArbitraryJSONObject{
 		"FunctionArn":    functionArnRef,
 		"InvocationType": "Event",
 	}
-	if "" != receiptRule.TopicArn {
-		ruleAction["TopicArn"] = receiptRule.TopicArn
+	if "" != rule.TopicArn {
+		ruleAction["TopicArn"] = rule.TopicArn
 	}
-	if "" == receiptRule.TLSPolicy {
-		receiptRule.TLSPolicy = "Optional"
+	if "" == rule.TLSPolicy {
+		rule.TLSPolicy = "Optional"
 	}
+	actions = append(actions, ArbitraryJSONObject{
+		"LambdaAction": ruleAction,
+	})
 
+	// Return it.
 	return ArbitraryJSONObject{
-		"Name":        fmt.Sprintf("%s-%s", receiptRule.Name, serviceName),
-		"Enabled":     !receiptRule.Disabled,
-		"Recipients":  receiptRule.Recipients,
-		"ScanEnabled": !receiptRule.ScanDisabled,
-		"TlsPolicy":   receiptRule.TLSPolicy,
-		"Actions": []ArbitraryJSONObject{
-			{
-				"LambdaAction": ruleAction,
-			},
-		},
+		"Name":        fmt.Sprintf("%s.%s", serviceName, rule.Name),
+		"Enabled":     !rule.Disabled,
+		"Recipients":  rule.Recipients,
+		"ScanEnabled": !rule.ScanDisabled,
+		"TlsPolicy":   rule.TLSPolicy,
+		"Actions":     actions,
 	}
 }
 
+//
+// END - ReceiptRule
+////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////////////////
 // SESPermission - START
+
 // SES doesn't use ARNs to scope access
 var sesSourcePartArn = WildcardArn
 
@@ -596,16 +768,42 @@ var sesSourcePartArn = WildcardArn
 // updated (via createReceiptRule) to automatically request or push events
 // to the parent lambda
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
-// for more information.
+// for more information.  See http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-concepts.html
+// for setting up email receiving.
 type SESPermission struct {
 	BasePermission
-	InvocationType string /* RequestResponse, Event */
-	ReceiptRules   []ReceiptRule
+	InvocationType     string /* RequestResponse, Event */
+	ReceiptRules       []ReceiptRule
+	MessageBodyStorage *MessageBodyStorage
+}
+
+// NewMessageBodyStorageResource provisions a new S3 bucket to store message body
+// content.
+func (perm *SESPermission) NewMessageBodyStorageResource(bucketLogicalName string) (*MessageBodyStorage, error) {
+	if len(bucketLogicalName) <= 0 {
+		return nil, errors.New("NewMessageBodyStorageResource requires a unique, non-empty `bucketLogicalName` parameter ")
+	}
+	store := &MessageBodyStorage{
+		logicalBucketName: bucketLogicalName,
+	}
+	store.cloudFormationS3BucketResourceName = CloudFormationResourceName("SESMessageStoreBucket", bucketLogicalName)
+	store.bucketNameRef = ArbitraryJSONObject{"Ref": store.cloudFormationS3BucketResourceName}
+	return store, nil
+}
+
+// NewMessageBodyStorageReference uses a pre-existing S3 bucket for MessageBody storage.
+// Sparta assumes that prexistingBucketName exists and will add an S3::BucketPolicy
+// to enable SES PutObject access.
+func (perm *SESPermission) NewMessageBodyStorageReference(prexistingBucketName string) (*MessageBodyStorage, error) {
+	store := &MessageBodyStorage{}
+	store.bucketNameRef = prexistingBucketName
+	return store, nil
 }
 
 func (perm SESPermission) export(serviceName string,
 	targetLambdaFuncRef interface{},
 	resources ArbitraryJSONObject,
+	outputs ArbitraryJSONObject,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
@@ -614,13 +812,6 @@ func (perm SESPermission) export(serviceName string,
 	if perm.BasePermission.SourceArn != WildcardArn {
 		return "", errors.New("SESPermissions only support `SourceArn=*` values")
 	}
-	/*
-		  SES will perform lambda:AddPermission with the following configurations:
-		SourceAccount: 027159405834
-		Principal: ses.amazonaws.com
-		Actions:
-		lambda:InvokeFunction
-	*/
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts)
 
 	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
@@ -634,9 +825,28 @@ func (perm SESPermission) export(serviceName string,
 		return "", err
 	}
 
+	// MessageBody storage?
+	var dependsOn []string
+	if nil != perm.MessageBodyStorage {
+		s3Policy, err := perm.MessageBodyStorage.export(serviceName,
+			targetLambdaFuncRef,
+			resources,
+			outputs,
+			S3Bucket,
+			S3Key,
+			logger)
+		if nil != err {
+			return "", err
+		}
+		if "" != s3Policy {
+			dependsOn = append(dependsOn, s3Policy)
+		}
+	}
+
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
 	configuratorResName, err := ensureConfiguratorLambdaResource(SESPrincipal,
 		sourceArnExpression,
+		dependsOn,
 		resources,
 		S3Bucket,
 		S3Key,
@@ -647,8 +857,6 @@ func (perm SESPermission) export(serviceName string,
 	}
 
 	// Add a custom resource invocation for this configuration
-	//////////////////////////////////////////////////////////////////////////////
-	// And the custom resource forwarder
 	invocationType := perm.InvocationType
 	if "" == invocationType {
 		invocationType = "Event"
@@ -668,9 +876,10 @@ func (perm SESPermission) export(serviceName string,
 	var xformedRules []ArbitraryJSONObject
 	for _, eachReceiptRule := range receiptRules {
 		xformedRules = append(xformedRules,
-			newLambdaTargetReceiptRule(eachReceiptRule,
+			eachReceiptRule.lambdaTargetReceiptRule(
 				serviceName,
-				targetLambdaFuncRef))
+				targetLambdaFuncRef,
+				perm.MessageBodyStorage))
 	}
 
 	customResourceSubscriber := ArbitraryJSONObject{
@@ -698,8 +907,12 @@ func (perm SESPermission) descriptionInfo() (string, string) {
 	return perm.BasePermission.sourceArnString(), ""
 }
 
+//
+// END - SESPermission
 ////////////////////////////////////////////////////////////////////////////////
-// START - IAM
+
+////////////////////////////////////////////////////////////////////////////////
+// START - IAMRolePrivilege
 //
 
 // IAMRolePrivilege struct stores data necessary to create an IAM Policy Document
@@ -717,7 +930,7 @@ type IAMRolePrivilege struct {
 	// S3 buckets will you allow the user to perform the ListBucket action on?
 	// Users cannot access any resources that you have not explicitly granted
 	// permissions to.
-	Resource string
+	Resource interface{}
 }
 
 // IAMRoleDefinition stores a slice of IAMRolePrivilege values
@@ -784,7 +997,7 @@ func (roleDefinition *IAMRoleDefinition) logicalName() string {
 }
 
 //
-// END - IAM
+// END - IAMRolePrivilege
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -887,7 +1100,13 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	// Permissions
 	for _, eachPermission := range info.Permissions {
-		_, err := eachPermission.export(serviceName, functionAttr, resources, S3Bucket, S3Key, logger)
+		_, err := eachPermission.export(serviceName,
+			functionAttr,
+			resources,
+			outputs,
+			S3Bucket,
+			S3Key,
+			logger)
 		if nil != err {
 			return err
 		}
@@ -957,7 +1176,12 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 // Returns the stable logical name for this IAMRoleDefinition
 func (info *LambdaAWSInfo) logicalName() string {
-	return CloudFormationResourceName("Lambda", info.lambdaFnName)
+	// Per http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html,
+	// we can only use alphanumeric, so we'll take the sanitized name and
+	// remove all underscores
+	resourceName := strings.Replace(sanitizedName(info.lambdaFnName), "_", "", -1)
+	prefix := fmt.Sprintf("%sLambda", resourceName)
+	return CloudFormationResourceName(prefix, info.lambdaFnName)
 }
 
 //
@@ -1111,18 +1335,23 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	logger.WithFields(logrus.Fields{
 		"Option":  options.Verb,
 		"Version": SpartaVersion,
+		"TS":      (time.Now().UTC().Format(time.RFC3339)),
 	}).Info("Welcome to Sparta")
 
 	switch options.Verb {
 	case "provision":
+		logger.Info(strings.Repeat("-", 80))
 		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
 	case "execute":
 		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
 	case "delete":
+		logger.Info(strings.Repeat("-", 80))
 		err = Delete(serviceName, logger)
 	case "explore":
+		logger.Info(strings.Repeat("-", 80))
 		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
 	case "describe":
+		logger.Info(strings.Repeat("-", 80))
 		fileWriter, err := os.Create(options.Describe.OutputFile)
 		if err != nil {
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
