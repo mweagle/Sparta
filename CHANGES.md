@@ -1,9 +1,12 @@
 ## v0.1.6
 - :checkered_flag: **CHANGES**
+  - Added `TS` (UTC TimeStamp) field to startup message
   - Improved stack provisioning performance
   - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
   - Add `SESPermission` type to support triggering Lambda functions in response to inbound email
     - See _doc_sespermission_test.go_ for an example
+    - Storing the message body to S3 is done by assigning the `MessageBodyStorage` field.
+  - - Add `NewAPIGatewayRequest` to support _localhost_ API Gateway mock requests
 - :warning: **BREAKING**
   - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode
 ## v0.1.5
