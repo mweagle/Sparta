@@ -67,7 +67,7 @@ type EventRecord struct {
 	Sns                  Sns    `json:"Sns"`
 }
 
-// Event event data
+// Event data
 type Event struct {
 	Records []EventRecord
 }

@@ -36,7 +36,7 @@ type EventRecord struct {
 	S3           S3     `json:"s3"`
 }
 
-// Event event data
+// Event data
 type Event struct {
 	Records []EventRecord
 }

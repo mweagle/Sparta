@@ -46,7 +46,7 @@ type EventRecord struct {
 	DynamoDB       DynamoDB `json:"dynamodb"`
 }
 
-// Event event data
+// Event data
 type Event struct {
 	Records []EventRecord
 }

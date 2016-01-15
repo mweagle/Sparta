@@ -42,7 +42,7 @@ type EventRecord struct {
 	Kinesis           Kinesis `json:"kinesis"`
 }
 
-// Event event data
+// Event data
 type Event struct {
 	Records []EventRecord
 }
