@@ -18,8 +18,8 @@ import (
 	"strings"
 	"time"
 
-	spartaCF "Sparta/aws/cloudformation"
-	spartaPrivate "Sparta/private"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaPrivate "github.com/mweagle/Sparta/private"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/request"

@@ -45,7 +45,7 @@ import (
 	"sync"
 	"time"
 
-	spartaPrivate "Sparta/private"
+	spartaPrivate "github.com/mweagle/Sparta/private"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
