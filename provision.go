@@ -978,12 +978,12 @@ func ensureCloudFormationStack() workflowStep {
 			// depended on item...
 			for _, eachDependsKey := range eachResource.DependsOn {
 				dependencyOutputs, _ := outputsForResource(ctx.cfTemplate, eachDependsKey, ctx.logger)
-				ctx.logger.WithFields(logrus.Fields{
-					"Resource":  eachDependsKey,
-					"DependsOn": eachResource.DependsOn,
-					"Outputs":   dependencyOutputs,
-				}).Info("Resource metadata")
 				if nil != dependencyOutputs && len(dependencyOutputs) != 0 {
+					ctx.logger.WithFields(logrus.Fields{
+						"Resource":  eachDependsKey,
+						"DependsOn": eachResource.DependsOn,
+						"Outputs":   dependencyOutputs,
+					}).Debug("Resource metadata")
 					safeMetadataInsert(eachResource, eachDependsKey, dependencyOutputs)
 				}
 			}
