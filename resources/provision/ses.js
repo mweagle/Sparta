@@ -80,13 +80,13 @@ exports.handler = function(event, context) {
 
     // Then delete any of the old rules
     tasks[1] = _.partial(convergeRuleSetStateDelete, sns, oldRules);
+    // And delete any of the new rules
+    tasks[2] = _.partial(convergeRuleSetStateDelete, sns, newRules);
 
-    if (event.RequestType === 'Delete') {
-      tasks[2] = _.partial(convergeRuleSetStateDelete, sns, newRules);
-    } else {
-      tasks[2] = _.partial(convergeRuleSetStateCreate, sns, newRules);
+    // Create any new ones?
+    if (event.RequestType !== 'Delete') {
+      tasks[3] = _.partial(convergeRuleSetStateCreate, sns, newRules);
     }
-
     var onResult = function(e, response) {
       responseData.error = e ? e.toString() : undefined;
       var status = e ? cfnResponse.FAILED : cfnResponse.SUCCESS;
