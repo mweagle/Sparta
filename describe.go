@@ -7,11 +7,19 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"regexp"
 	"strings"
 	"text/template"
 
 	"github.com/Sirupsen/logrus"
 )
+
+// RE for sanitizing golang/JS layer
+var reSanitizeMermaidNodeName = regexp.MustCompile("[\\s\\W]+")
+
+func sanitizedNodeName(sourceName string) string {
+	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "")
+}
 
 func writeNode(writer io.Writer, nodeName string, nodeColor string) {
 	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", nodeName, nodeColor)
@@ -34,7 +42,15 @@ func describeAPI() string {
 // line option.
 func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Site *S3Site, outputWriter io.Writer, logger *logrus.Logger) error {
 	var cloudFormationTemplate bytes.Buffer
-	err := Provision(true, serviceName, serviceDescription, lambdaAWSInfos, api, s3Site, "S3Bucket", &cloudFormationTemplate, logger)
+	err := Provision(true,
+		serviceName,
+		serviceDescription,
+		lambdaAWSInfos,
+		api,
+		s3Site,
+		"S3Bucket",
+		&cloudFormationTemplate,
+		logger)
 	if nil != err {
 		return err
 	}
@@ -59,13 +75,14 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		for _, eachPermission := range eachLambda.Permissions {
 			name, link := eachPermission.descriptionInfo()
 
+			mermaidName := sanitizedNodeName(name)
 			// Style it to have the Amazon color
-			writeNode(&b, name, "F1702A")
-			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
+			writeNode(&b, mermaidName, "F1702A")
+			writeLink(&b, mermaidName, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			nodeName := eachEventSourceMapping.EventSourceArn
+			nodeName := sanitizedNodeName(eachEventSourceMapping.EventSourceArn)
 			writeNode(&b, nodeName, "F1702A")
 			writeLink(&b, nodeName, eachLambda.lambdaFnName, "")
 		}
