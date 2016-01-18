@@ -465,7 +465,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 // to AWS Lambda
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
-		"Handler": lambdaInfo.lambdaFnName,
+		"FunctionName": lambdaInfo.lambdaFnName,
 	}).Info("Registering Sparta function")
 
 	// We do know the CF resource name here - could write this into
