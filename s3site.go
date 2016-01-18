@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -44,95 +46,79 @@ type S3Site struct {
 func (s3Site *S3Site) export(S3Bucket string,
 	S3Key string,
 	S3ResourcesKey string,
-	apiGatewayOutputs map[string]interface{},
-	roleNameMap map[string]interface{},
-	resources ArbitraryJSONObject,
-	outputs ArbitraryJSONObject,
+	apiGatewayOutputs map[string]*gocf.Output,
+	roleNameMap map[string]*gocf.StringExpr,
+	template *gocf.Template,
 	logger *logrus.Logger) error {
 
 	websiteConfig := s3Site.WebsiteConfiguration
 	if nil == websiteConfig {
-		websiteConfig = &s3.WebsiteConfiguration{
-			ErrorDocument: &s3.ErrorDocument{
-				Key: aws.String("error.html"),
-			},
-			IndexDocument: &s3.IndexDocument{
-				Suffix: aws.String("index.html"),
-			},
-		}
+		websiteConfig = &s3.WebsiteConfiguration{}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 1 - Create the S3 bucket.  The "BucketName" property is empty s.t.
 	// AWS will assign a unique one.
-	s3BucketSite := ArbitraryJSONObject{
-		"Type": "AWS::S3::Bucket",
-		// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html
-		"DeletionPolicy": "Delete",
-		"Properties": ArbitraryJSONObject{
-			"AccessControl": "PublicRead",
-			"WebsiteConfiguration": ArbitraryJSONObject{
-				"ErrorDocument": *(websiteConfig.ErrorDocument.Key),
-				"IndexDocument": *(websiteConfig.IndexDocument.Suffix),
-			},
-		},
+	if nil == websiteConfig.ErrorDocument {
+		websiteConfig.ErrorDocument = &s3.ErrorDocument{
+			Key: aws.String("error.html"),
+		}
+	}
+	if nil == websiteConfig.IndexDocument {
+		websiteConfig.IndexDocument = &s3.IndexDocument{
+			Suffix: aws.String("index.html"),
+		}
+	}
+
+	s3WebsiteConfig := &gocf.S3WebsiteConfigurationProperty{
+		ErrorDocument: gocf.String(aws.StringValue(websiteConfig.ErrorDocument.Key)),
+		IndexDocument: gocf.String(aws.StringValue(websiteConfig.IndexDocument.Suffix)),
+	}
+	s3Bucket := &gocf.S3Bucket{
+		AccessControl:        gocf.String("PublicRead"),
+		WebsiteConfiguration: s3WebsiteConfig,
 	}
 	s3BucketResourceName := stableCloudformationResourceName("Site")
-	resources[s3BucketResourceName] = s3BucketSite
+	cfResource := template.AddResource(s3BucketResourceName, s3Bucket)
+	cfResource.DeletionPolicy = "Delete"
 
-	// Include the WebsiteURL in the outputs
-	outputs[OutputS3SiteURL] = ArbitraryJSONObject{
-		"Description": "S3 website URL",
-		"Value": ArbitraryJSONObject{
-			"Fn::GetAtt": []string{s3BucketResourceName, "WebsiteURL"},
-		},
+	template.Outputs[OutputS3SiteURL] = &gocf.Output{
+		Description: "S3 Website URL",
+		Value:       gocf.GetAtt(s3BucketResourceName, "WebsiteURL"),
 	}
 
 	// Represents the S3 ARN that is provisioned
-	s3SiteBucketResourceValue := ArbitraryJSONObject{
-		"Fn::Join": []interface{}{"",
-			[]interface{}{
-				"arn:aws:s3:::",
-				ArbitraryJSONObject{
-					"Ref": s3BucketResourceName,
-				},
-			}}}
-
-	s3SiteBucketAllKeysResourceValue := ArbitraryJSONObject{
-		"Fn::Join": []interface{}{"",
-			[]interface{}{
-				"arn:aws:s3:::",
-				ArbitraryJSONObject{
-					"Ref": s3BucketResourceName,
-				},
-				"/*",
-			}}}
+	s3SiteBucketResourceValue := gocf.Join("",
+		gocf.String("arn:aws:s3:::"),
+		gocf.Ref(s3BucketResourceName))
+	s3SiteBucketAllKeysResourceValue := gocf.Join("",
+		gocf.String("arn:aws:s3:::"),
+		gocf.Ref(s3BucketResourceName),
+		gocf.String("/*"))
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 2 - Add a bucket policy to enable anonymous access, as the PublicRead
 	// canned ACL doesn't seem to do what is implied.
 	// TODO - determine if this is needed or if PublicRead is being misued
-	s3SiteBucketPolicy := ArbitraryJSONObject{
-		"Type": "AWS::S3::BucketPolicy",
-		"Properties": ArbitraryJSONObject{
-			"Bucket": ArbitraryJSONObject{"Ref": s3BucketResourceName},
-			"PolicyDocument": ArbitraryJSONObject{
-				"Statement": []ArbitraryJSONObject{
-					{
-						"Sid":    "PublicReadGetObject",
-						"Effect": "Allow",
-						"Principal": ArbitraryJSONObject{
-							"AWS": "*",
-						},
-						"Action":   "s3:GetObject",
-						"Resource": s3SiteBucketAllKeysResourceValue,
+	s3SiteBucketPolicy := &gocf.S3BucketPolicy{
+		Bucket: gocf.Ref(s3BucketResourceName).String(),
+		PolicyDocument: ArbitraryJSONObject{
+			"Version": "2012-10-17",
+			"Statement": []ArbitraryJSONObject{
+				{
+					"Sid":    "PublicReadGetObject",
+					"Effect": "Allow",
+					"Principal": ArbitraryJSONObject{
+						"AWS": "*",
 					},
+					"Action":   "s3:GetObject",
+					"Resource": s3SiteBucketAllKeysResourceValue,
 				},
 			},
 		},
 	}
 	s3BucketPolicyResourceName := stableCloudformationResourceName("S3SiteBucketPolicy")
-	resources[s3BucketPolicyResourceName] = s3SiteBucketPolicy
+	template.AddResource(s3BucketPolicyResourceName, s3SiteBucketPolicy)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 3 - Create the IAM role for the lambda function
@@ -154,68 +140,62 @@ func (s3Site *S3Site) export(S3Bucket string,
 		"Effect":   "Allow",
 		"Resource": fmt.Sprintf("arn:aws:s3:::%s/%s", S3Bucket, S3ResourcesKey),
 	})
-	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
-		"DependsOn": []string{s3BucketResourceName},
-		"Properties": ArbitraryJSONObject{
-			"AssumeRolePolicyDocument": AssumePolicyDocument,
-			"Policies": []ArbitraryJSONObject{
-				{
-					"PolicyName": "S3SiteMgmnt",
-					"PolicyDocument": ArbitraryJSONObject{
-						"Version":   "2012-10-17",
-						"Statement": statements,
-					},
+
+	iamS3Role := &gocf.IAMRole{
+		AssumeRolePolicyDocument: AssumePolicyDocument,
+		Policies: &gocf.IAMPoliciesList{
+			gocf.IAMPolicies{
+				ArbitraryJSONObject{
+					"Version":   "2012-10-17",
+					"Statement": statements,
 				},
+				gocf.String("S3SiteMgmnt"),
 			},
 		},
 	}
+
 	iamRoleName := stableCloudformationResourceName("S3SiteIAMRole")
-	resources[iamRoleName] = iamPolicy
-	iamRoleRef := ArbitraryJSONObject{
-		"Fn::GetAtt": []string{iamRoleName, "Arn"},
-	}
+	cfResource = template.AddResource(iamRoleName, iamS3Role)
+	cfResource.DependsOn = append(cfResource.DependsOn, s3BucketResourceName)
+	iamRoleRef := gocf.GetAtt(iamRoleName, "Arn")
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 4 - Create the lambda function definition that executes with the
 	// dynamically provisioned IAM policy
-	customResourceHandlerDef := ArbitraryJSONObject{
-		"Type":      "AWS::Lambda::Function",
-		"DependsOn": []string{s3BucketResourceName, iamRoleName},
-		"Properties": ArbitraryJSONObject{
-			"Code": ArbitraryJSONObject{
-				"S3Bucket": S3Bucket,
-				"S3Key":    S3Key,
-			},
-			"Role":    iamRoleRef,
-			"Handler": nodeJSHandlerName("s3Site"),
-			"Runtime": "nodejs",
-			"Timeout": "120",
-			// Default is 128, but we're buffering everything in memory...
-			"MemorySize": 256,
+	customResourceHandlerDef := gocf.LambdaFunction{
+		Code: &gocf.LambdaFunctionCode{
+			S3Bucket: gocf.String(S3Bucket),
+			S3Key:    gocf.String(S3Key),
 		},
+		Description: gocf.String("Manage static S3 site resources"),
+		Handler:     gocf.String(nodeJSHandlerName("s3Site")),
+		Role:        iamRoleRef,
+		Runtime:     gocf.String("nodejs"),
+		Timeout:     gocf.Integer(30),
+		// Default is 128, but we're buffering everything in memory, in NodeJS
+		MemorySize: gocf.Integer(256),
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
-	resources[lambdaResourceName] = customResourceHandlerDef
+	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
+	cfResource.DependsOn = append(cfResource.DependsOn, s3BucketResourceName, iamRoleName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
 	// actually populate the S3 with content
 	customResourceName := stableCloudformationResourceName("S3SiteInvoker")
-	s3SiteCustomResource := ArbitraryJSONObject{
-		"Type":    "AWS::CloudFormation::CustomResource",
-		"Version": "1.0",
-		"Properties": ArbitraryJSONObject{
-			"ServiceToken": ArbitraryJSONObject{
-				"Fn::GetAtt": []string{lambdaResourceName, "Arn"},
-			},
-			"TargetBucket": s3SiteBucketResourceValue,
-			"SourceKey":    S3ResourcesKey,
-			"SourceBucket": S3Bucket,
-			"APIGateway":   apiGatewayOutputs,
-		},
-		"DependsOn": []string{lambdaResourceName},
+	newResource, err := newCloudFormationResource("Custom::SpartaS3SiteManager", logger)
+	if nil != err {
+		return err
 	}
-	resources[customResourceName] = s3SiteCustomResource
+	customResource := newResource.(*cloudformationS3SiteManager)
+	customResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
+	customResource.TargetBucket = s3SiteBucketResourceValue
+	customResource.SourceKey = gocf.String(S3ResourcesKey)
+	customResource.SourceBucket = gocf.String(S3Bucket)
+	customResource.APIGateway = apiGatewayOutputs
+
+	cfResource = template.AddResource(customResourceName, customResource)
+	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName)
 
 	return nil
 }

@@ -59,7 +59,7 @@ func NewRawRequest(lambdaName string, context interface{}, eventData interface{}
 	// envelope will be unnecessary
 	jsonRequestBody, err := json.Marshal(requestBody)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to Marshal request body: ", err.Error())
+		return nil, fmt.Errorf("Failed to Marshal request body: %s", err.Error())
 	}
 	// POST IT...
 	var host = fmt.Sprintf("%s/%s", testingURL, lambdaName)

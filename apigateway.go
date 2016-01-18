@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	gocf "github.com/mweagle/go-cloudformation"
+
 	"github.com/Sirupsen/logrus"
 )
 
@@ -315,11 +317,9 @@ type Resource struct {
 // CloudFormation template representation.
 func (resource *Resource) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
-		"PathPart": resource.pathPart,
-		"LambdaArn": ArbitraryJSONObject{
-			"Fn::GetAtt": []string{resource.parentLambda.logicalName(), "Arn"},
-		},
-		"Methods": resource.Methods,
+		"PathPart":  resource.pathPart,
+		"LambdaArn": gocf.GetAtt(resource.parentLambda.logicalName(), "Arn"),
+		"Methods":   resource.Methods,
 	})
 }
 
@@ -425,15 +425,14 @@ func (api *API) MarshalJSON() ([]byte, error) {
 // export marshals the API data to a CloudFormation compatible representation
 func (api *API) export(S3Bucket string,
 	S3Key string,
-	roleNameMap map[string]interface{},
-	resources ArbitraryJSONObject,
-	outputs ArbitraryJSONObject,
+	roleNameMap map[string]*gocf.StringExpr,
+	template *gocf.Template,
 	logger *logrus.Logger) error {
 
 	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal,
 		"*",
 		[]string{},
-		resources,
+		template,
 		S3Bucket,
 		S3Key,
 		logger)
@@ -523,32 +522,24 @@ func (api *API) export(S3Bucket string,
 			}
 		}
 	}
-
 	// Unmarshal everything to JSON
-	apiGatewayInvoker := ArbitraryJSONObject{
-		"Type":    "AWS::CloudFormation::CustomResource",
-		"Version": "1.0",
-		"Properties": ArbitraryJSONObject{
-			"ServiceToken": ArbitraryJSONObject{
-				"Fn::GetAtt": []string{lambdaResourceName, "Arn"},
-			},
-			"API": api,
-		},
-		"DependsOn": []string{lambdaResourceName},
+	newResource, err := newCloudFormationResource("Custom::SpartaAPIGateway", logger)
+	if nil != err {
+		return err
 	}
+	apiGatewayResource := newResource.(*cloudFormationAPIGatewayResource)
+	apiGatewayResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
+	apiGatewayResource.API = api
 
 	apiGatewayInvokerResName := CloudFormationResourceName("APIGateway", api.name)
-	resources[apiGatewayInvokerResName] = apiGatewayInvoker
+	cfResource := template.AddResource(apiGatewayInvokerResName, apiGatewayResource)
+	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName)
 
-	// Output it...
-	apiGatewayOutput := ArbitraryJSONObject{
-		"Description": "API Gateway URL",
-		"Value": ArbitraryJSONObject{
-			"Fn::GetAtt": []string{apiGatewayInvokerResName, "URL"},
-		},
+	// Save the output
+	template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
+		Description: "API Gateway URL",
+		Value:       gocf.GetAtt(apiGatewayInvokerResName, "URL"),
 	}
-
-	outputs[OutputAPIGatewayURL] = apiGatewayOutput
 	return nil
 }
 

@@ -6,8 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/lambda"
 )
 
 const LambdaExecuteARN = "LambdaExecutor"
@@ -48,10 +46,10 @@ func testLambdaData() []*LambdaAWSInfo {
 		},
 	})
 
-	lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &lambda.CreateEventSourceMappingInput{
-		EventSourceArn:   aws.String(dynamoDBTableArn),
-		StartingPosition: aws.String("TRIM_HORIZON"),
-		BatchSize:        aws.Int64(10),
+	lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &EventSourceMapping{
+		StartingPosition: "TRIM_HORIZON",
+		EventSourceArn:   dynamoDBTableArn,
+		BatchSize:        10,
 	})
 
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)

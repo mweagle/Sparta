@@ -65,7 +65,7 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			nodeName := *eachEventSourceMapping.EventSourceArn
+			nodeName := eachEventSourceMapping.EventSourceArn
 			writeNode(&b, nodeName, "F1702A")
 			writeLink(&b, nodeName, eachLambda.lambdaFnName, "")
 		}

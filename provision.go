@@ -45,8 +45,6 @@ import (
 	"sync"
 	"time"
 
-	spartaPrivate "github.com/mweagle/Sparta/private"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -54,6 +52,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,14 +120,12 @@ type workflowContext struct {
 	api *API
 	// Optional S3 site data to provision together with this service
 	s3SiteContext *s3SiteContext
-	// Accumulated CloudFormation resources that constitute this service
-	cloudformationResources ArbitraryJSONObject
-	// Accumulated CloudFormation outputs that constitute this service
-	cloudformationOutputs ArbitraryJSONObject
+	// CloudFormation Template
+	cfTemplate *gocf.Template
 	// Cached IAM role name map.  Used to support dynamic and static IAM role
 	// names.  Static ARN role names are checked for existence via AWS APIs
 	// prior to CloudFormation provisioning.
-	lambdaIAMRoleNameMap map[string]interface{}
+	lambdaIAMRoleNameMap map[string]*gocf.StringExpr
 	// The user-supplied S3 bucket where service artifacts should be posted.
 	s3Bucket string
 	// The programmatically determined S3 item key for this service's cloudformation
@@ -359,13 +356,14 @@ func uploadLocalFileToS3(packagePath string, awsSession *session.Session, S3Buck
 	} else {
 		logger.WithFields(logrus.Fields{
 			"Source": packagePath,
-		}).Info("Uploading ZIP archive")
+		}).Info("Uploading local file to S3")
 		uploader := s3manager.NewUploader(awsSession)
 		result, err := uploader.Upload(uploadInput)
 		if nil != err {
 			return "", err
 		}
 		logger.WithFields(logrus.Fields{
+
 			"URL": result.Location,
 		}).Info("Upload complete")
 	}
@@ -414,12 +412,10 @@ func createS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key st
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	// The map is either a literal Arn from a pre-existing role name
-	// or a ArbitraryJSONObject{
-	// 	"Fn::GetAtt": []string{iamRoleDefinitionName, "Arn"},
-	// }
+	// or a gocf.RefFunc() value.
 	// Don't verify them, just create them...
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
-	ctx.lambdaIAMRoleNameMap = make(map[string]interface{}, 0)
+	ctx.lambdaIAMRoleNameMap = make(map[string]*gocf.StringExpr, 0)
 	svc := iam.New(ctx.awsSession)
 
 	for _, eachLambda := range ctx.lambdaAWSInfos {
@@ -443,7 +439,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				}
 				// Cache it - we'll need it later when we create the
 				// CloudFormation template which needs the execution Arn (not role)
-				ctx.lambdaIAMRoleNameMap[eachLambda.RoleName] = *resp.Role.Arn
+				ctx.lambdaIAMRoleNameMap[eachLambda.RoleName] = gocf.String(*resp.Role.Arn)
 			}
 		} else {
 			logicalName := eachLambda.RoleDefinition.logicalName()
@@ -451,11 +447,10 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 			if !exists {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
-				ctx.cloudformationResources[logicalName] = eachLambda.RoleDefinition.rolePolicy(eachLambda.EventSourceMappings, ctx.logger)
+				ctx.cfTemplate.AddResource(logicalName,
+					eachLambda.RoleDefinition.toResource(eachLambda.EventSourceMappings, ctx.logger))
 
-				ctx.lambdaIAMRoleNameMap[logicalName] = ArbitraryJSONObject{
-					"Fn::GetAtt": []string{logicalName, "Arn"},
-				}
+				ctx.lambdaIAMRoleNameMap[logicalName] = gocf.GetAtt(logicalName, "Arn")
 			}
 		}
 	}
@@ -470,9 +465,13 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 // to AWS Lambda
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
-		"Handler": lambdaInfo.jsHandlerName(),
-	}).Info("Creating NodeJS proxy entry")
+		"Handler": lambdaInfo.lambdaFnName,
+	}).Info("Registering Sparta function")
 
+	// We do know the CF resource name here - could write this into
+	// index.js and expose a GET localhost:9000/lambdaMetadata
+	// which wraps up DescribeStackResource for the running
+	// lambda function
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		lambdaInfo.jsHandlerName(),
 		lambdaInfo.lambdaFnName)
@@ -607,7 +606,7 @@ func createPackageStep() workflowStep {
 
 		// Next embed the custom resource scripts into the package.
 		// TODO - conditionally include custom NodeJS scripts based on service requirement
-		ctx.logger.Info("Embedding CustomResource scripts")
+		ctx.logger.Debug("Embedding CustomResource scripts")
 
 		for _, eachName := range customResourceScripts {
 			resourceName := fmt.Sprintf("%s/%s", provisioningResourcesRelPath, eachName)
@@ -636,7 +635,7 @@ func createPackageStep() workflowStep {
 			}
 			ctx.logger.WithFields(logrus.Fields{
 				"Name": nodeModulesZipRelName,
-			}).Info("Embedding CustomResource node_modules.zip")
+			}).Debug("Embedding CustomResource node_modules.zip")
 
 			for _, zipFile := range nodeModuleReader.File {
 				embedWriter, err := lambdaArchive.Create(zipFile.Name)
@@ -774,11 +773,11 @@ func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger
 	return exists, nil
 }
 
-func stackCapabilities(templateResources ArbitraryJSONObject) []*string {
+func stackCapabilities(template *gocf.Template) []*string {
 	// Only require IAM capability if the definition requires it.
 	var capabilities []*string
-	for _, eachResource := range templateResources {
-		if eachResource.(ArbitraryJSONObject)["Type"] == "AWS::IAM::Role" {
+	for _, eachResource := range template.Resources {
+		if eachResource.Properties.ResourceType() == "AWS::IAM::Role" {
 			found := false
 			for _, eachElement := range capabilities {
 				found = (found || (*eachElement == "CAPABILITY_IAM"))
@@ -807,7 +806,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		updateStackInput := &cloudformation.UpdateStackInput{
 			StackName:    aws.String(ctx.serviceName),
 			TemplateURL:  aws.String(cfTemplateURL),
-			Capabilities: stackCapabilities(ctx.cloudformationResources),
+			Capabilities: stackCapabilities(ctx.cfTemplate),
 		}
 		updateStackResponse, err := awsCloudFormation.UpdateStack(updateStackInput)
 		if nil != err {
@@ -826,7 +825,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			TemplateURL:      aws.String(cfTemplateURL),
 			TimeoutInMinutes: aws.Int64(5),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
-			Capabilities:     stackCapabilities(ctx.cloudformationResources),
+			Capabilities:     stackCapabilities(ctx.cfTemplate),
 		}
 		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
 		if nil != err {
@@ -870,7 +869,8 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			cloudformation.StackStatusDeleteComplete,
 			cloudformation.StackStatusCreateFailed,
 			cloudformation.StackStatusDeleteFailed,
-			cloudformation.StackStatusRollbackFailed:
+			cloudformation.StackStatusRollbackFailed,
+			cloudformation.StackStatusRollbackComplete:
 			convegeStackStateSucceeded = false
 			waitComplete = true
 		default:
@@ -920,68 +920,77 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 
 func ensureCloudFormationStack() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
-		// Create a new CloudFormation template that represents the lambda
-		// state and upload it.  Once uploaded, converge the new stack
-		// to that state.
-		cloudFormationTemplate := ArbitraryJSONObject{
-			"AWSTemplateFormatVersion": "2010-09-09",
-			"Description":              ctx.serviceDescription,
-		}
 		for _, eachEntry := range ctx.lambdaAWSInfos {
 			err := eachEntry.export(ctx.serviceName,
 				ctx.s3Bucket,
 				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
-				ctx.cloudformationResources,
-				ctx.cloudformationOutputs,
+				ctx.cfTemplate,
 				ctx.logger)
 			if nil != err {
 				return nil, err
 			}
 		}
-
 		// If there's an API gateway definition, include the resources that provision it. Since this export will likely
 		// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator, pass that to the S3Site
 		// if it's defined, and then merge it with the normal output map.
-		apiExports := make(map[string]interface{}, 0)
+		apiGatewayTemplate := gocf.NewTemplate()
+
 		if nil != ctx.api {
-			ctx.api.export(ctx.s3Bucket,
+			err := ctx.api.export(ctx.s3Bucket,
 				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
-				ctx.cloudformationResources,
-				apiExports,
+				apiGatewayTemplate,
 				ctx.logger)
+			if nil == err {
+				err = safeMergeTemplates(apiGatewayTemplate, ctx.cfTemplate, ctx.logger)
+			}
+			if nil != err {
+				return nil, fmt.Errorf("Failed to export APIGateway template resources")
+			}
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.s3SiteContext.s3Site {
 			ctx.s3SiteContext.s3Site.export(ctx.s3Bucket,
 				ctx.s3LambdaZipKey,
 				ctx.s3SiteContext.s3SiteLambdaZipKey,
-				apiExports,
+				apiGatewayTemplate.Outputs,
 				ctx.lambdaIAMRoleNameMap,
-				ctx.cloudformationResources,
-				ctx.cloudformationOutputs,
+				ctx.cfTemplate,
 				ctx.logger)
 		}
-		// Merge the API Gateway outputs s.t. the Site can find them...
-		for eachKey, eachValue := range apiExports {
-			ctx.cloudformationOutputs[eachKey] = eachValue
-		}
-		// Add Sparta outputs
-		spartaPrivate.InsertSpartaOutput(OutputSpartaHomeKey,
-			"http://gosparta.io",
-			"Sparta Home",
-			ctx.cloudformationOutputs)
-		spartaPrivate.InsertSpartaOutput(OutputSpartaVersionKey,
-			SpartaVersion,
-			"Sparta Version",
-			ctx.cloudformationOutputs)
 
-		cloudFormationTemplate["Resources"] = ctx.cloudformationResources
-		cloudFormationTemplate["Outputs"] = ctx.cloudformationOutputs
+		// Save the output
+		ctx.cfTemplate.Outputs[OutputSpartaHomeKey] = &gocf.Output{
+			Description: "Sparta Home",
+			Value:       gocf.String("http://gosparta.io"),
+		}
+		ctx.cfTemplate.Outputs[OutputSpartaVersionKey] = &gocf.Output{
+			Description: "Sparta Version",
+			Value:       gocf.String(SpartaVersion),
+		}
+
+		// Next pass - exchange outputs between dependencies.  How will a lambda function
+		// know its own CF resource id...The lambda function does, how about we just expose
+		// a Discover method on it?
+		for _, eachResource := range ctx.cfTemplate.Resources {
+			// Update the metdata with a reference to the output of each
+			// depended on item...
+			for _, eachDependsKey := range eachResource.DependsOn {
+				dependencyOutputs, _ := outputsForResource(ctx.cfTemplate, eachDependsKey, ctx.logger)
+				ctx.logger.WithFields(logrus.Fields{
+					"Resource":  eachDependsKey,
+					"DependsOn": eachResource.DependsOn,
+					"Outputs":   dependencyOutputs,
+				}).Info("Resource metadata")
+				if nil != dependencyOutputs && len(dependencyOutputs) != 0 {
+					safeMetadataInsert(eachResource, eachDependsKey, dependencyOutputs)
+				}
+			}
+		}
 
 		// Generate a complete CloudFormation template
-		cfTemplate, err := json.Marshal(cloudFormationTemplate)
+		cfTemplate, err := json.Marshal(ctx.cfTemplate)
 		if err != nil {
 			ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
 			return nil, err
@@ -1095,13 +1104,13 @@ func Provision(noop bool,
 		s3SiteContext: &s3SiteContext{
 			s3Site: site,
 		},
-		cloudformationResources: make(ArbitraryJSONObject, 0),
-		cloudformationOutputs:   make(ArbitraryJSONObject, 0),
-		s3Bucket:                s3Bucket,
-		awsSession:              awsSession(logger),
-		templateWriter:          templateWriter,
-		logger:                  logger,
+		cfTemplate:     gocf.NewTemplate(),
+		s3Bucket:       s3Bucket,
+		awsSession:     awsSession(logger),
+		templateWriter: templateWriter,
+		logger:         logger,
 	}
+	ctx.cfTemplate.Description = serviceDescription
 
 	if len(lambdaAWSInfos) <= 0 {
 		return errors.New("No lambda functions provided to Sparta.Provision()")
@@ -1111,7 +1120,6 @@ func Provision(noop bool,
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)
 		if err != nil {
-			ctx.logger.Error(err.Error())
 			ctx.rollback()
 			return err
 		}

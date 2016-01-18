@@ -4,8 +4,11 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
+
+	gocf "github.com/mweagle/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -48,7 +51,7 @@ func awsPrincipalToService(awsPrincipalName string) string {
 func ensureConfiguratorLambdaResource(awsPrincipalName string,
 	sourceArn interface{},
 	dependsOn []string,
-	resources ArbitraryJSONObject,
+	template *gocf.Template,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
@@ -77,18 +80,16 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
 	// Create a Role that enables this resource management
-	iamResourceName, err := ensureIAMRoleResource(principalActions, sourceArn, resources, logger)
+	iamResourceName, err := ensureIAMRoleResource(principalActions, sourceArn, template, logger)
 	if nil != err {
 		return "", err
 	}
-	iamRoleRef := ArbitraryJSONObject{
-		"Fn::GetAtt": []string{iamResourceName, "Arn"},
-	}
-	_, exists = resources[subscriberHandlerName]
+	iamRoleRef := gocf.GetAtt(iamResourceName, "Arn")
+	_, exists = template.Resources[subscriberHandlerName]
 	if !exists {
 		logger.WithFields(logrus.Fields{
 			"Service": awsServiceName,
-		}).Info("Creating configuration Lambda for AWS service")
+		}).Debug("Including Lambda CustomResource for AWS Service")
 
 		configuratorDescription := fmt.Sprintf("Sparta managed Lambda CustomResource to configure %s service",
 			awsServiceName)
@@ -101,36 +102,37 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 		handlerName := nodeJSHandlerName(configuratorExportName)
 		logger.Debug("Lambda Configuration handler: ", handlerName)
 
-		customResourceHandlerDef := ArbitraryJSONObject{
-			"Type": "AWS::Lambda::Function",
-			"Properties": ArbitraryJSONObject{
-				"Code": ArbitraryJSONObject{
-					"S3Bucket": S3Bucket,
-					"S3Key":    S3Key,
-				},
-				"Description": configuratorDescription,
-				"Role":        iamRoleRef,
-				"Handler":     handlerName,
-				"Runtime":     "nodejs",
-				"Timeout":     "30",
+		customResourceHandlerDef := gocf.LambdaFunction{
+			Code: &gocf.LambdaFunctionCode{
+				S3Bucket: gocf.String(S3Bucket),
+				S3Key:    gocf.String(S3Key),
 			},
+			Description: gocf.String(configuratorDescription),
+			Handler:     gocf.String(handlerName),
+			Role:        iamRoleRef,
+			Runtime:     gocf.String("nodejs"),
+			Timeout:     gocf.Integer(30),
 		}
+		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
 		if nil != dependsOn && (len(dependsOn) > 0) {
-			customResourceHandlerDef["DependsOn"] = dependsOn
+			cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
 		}
-		resources[subscriberHandlerName] = customResourceHandlerDef
+
 	}
 	return subscriberHandlerName, nil
 }
 
-func ensureIAMRoleResource(principalActions []string, sourceArn interface{}, resources ArbitraryJSONObject, logger *logrus.Logger) (string, error) {
+func ensureIAMRoleResource(principalActions []string,
+	sourceArn interface{},
+	template *gocf.Template,
+	logger *logrus.Logger) (string, error) {
 
 	// Create a new Role
 	hash := sha1.New()
 	hash.Write([]byte(fmt.Sprintf("%v%s", sourceArn, salt)))
 	roleName := fmt.Sprintf("ConfigIAMRole%s", hex.EncodeToString(hash.Sum(nil)))
 
-	existingResource, exists := resources[roleName]
+	existingResource, exists := template.Resources[roleName]
 	logger.WithFields(logrus.Fields{
 		"PrincipalActions": principalActions,
 		"SourceArn":        sourceArn,
@@ -138,29 +140,43 @@ func ensureIAMRoleResource(principalActions []string, sourceArn interface{}, res
 	}).Debug("Ensuring IAM Role results")
 
 	// If it exists, make sure these permissions are enabled on it...
-	if exists {
+	if nil != existingResource {
 		statementExists := false
-		properties := existingResource.(ArbitraryJSONObject)["Properties"]
-		policies := properties.(ArbitraryJSONObject)["Policies"]
-		for _, eachPolicy := range policies.([]ArbitraryJSONObject) {
-			statements := eachPolicy["PolicyDocument"].(ArbitraryJSONObject)["Statement"]
-			for _, eachStatement := range statements.([]ArbitraryJSONObject) {
-				if eachStatement["Resource"] == sourceArn {
-					statementExists = true
+		iamRole, ok := existingResource.Properties.(*gocf.IAMRole)
+		if !ok {
+			return "", errors.New("Failed to convert to IAM::Role type")
+		}
+		if nil != iamRole.Policies {
+			for _, eachPolicy := range *iamRole.Policies {
+				policyDoc := eachPolicy.PolicyDocument.(ArbitraryJSONObject)
+				statements := policyDoc["Statement"]
+				for _, eachStatement := range statements.([]ArbitraryJSONObject) {
+					if eachStatement["Resource"] == sourceArn {
+						statementExists = true
+					}
 				}
 			}
 		}
+
 		if !statementExists {
-			properties := existingResource.(ArbitraryJSONObject)["Properties"]
-			policies := properties.(ArbitraryJSONObject)["Policies"]
-			rootPolicy := policies.([]ArbitraryJSONObject)[0]
-			policyDocument := rootPolicy["PolicyDocument"].(ArbitraryJSONObject)
-			statements := policyDocument["Statement"].([]ArbitraryJSONObject)
-			policyDocument["Statement"] = append(statements, ArbitraryJSONObject{
-				"Effect":   "Allow",
-				"Action":   principalActions,
-				"Resource": sourceArn,
+			if nil == iamRole.Policies {
+				iamRole.Policies = &gocf.IAMPoliciesList{}
+			}
+			// Just push a new one...
+			// Policies *IAMPoliciesList
+			// IAMPoliciesList []IAMPolicies
+			updatedPolicies := append(*iamRole.Policies, gocf.IAMPolicies{
+				PolicyDocument: ArbitraryJSONObject{
+					"Statement": []ArbitraryJSONObject{
+						{
+							"Effect":   "Allow",
+							"Action":   principalActions,
+							"Resource": sourceArn,
+						},
+					},
+				},
 			})
+			iamRole.Policies = &updatedPolicies
 		}
 		logger.Debug("Using prexisting IAM Role: " + roleName)
 		return roleName, nil
@@ -180,20 +196,18 @@ func ensureIAMRoleResource(principalActions []string, sourceArn interface{}, res
 		"Resource": sourceArn,
 	})
 
-	iamPolicy := ArbitraryJSONObject{"Type": "AWS::IAM::Role",
-		"Properties": ArbitraryJSONObject{
-			"AssumeRolePolicyDocument": AssumePolicyDocument,
-			"Policies": []ArbitraryJSONObject{
-				{
-					"PolicyName": CloudFormationResourceName("Config", fmt.Sprintf("%v", sourceArn)),
-					"PolicyDocument": ArbitraryJSONObject{
-						"Version":   "2012-10-17",
-						"Statement": statements,
-					},
+	iamPolicy := gocf.IAMRole{
+		AssumeRolePolicyDocument: AssumePolicyDocument,
+		Policies: &gocf.IAMPoliciesList{
+			gocf.IAMPolicies{
+				PolicyDocument: ArbitraryJSONObject{
+					"Version":   "2012-10-17",
+					"Statement": statements,
 				},
+				PolicyName: gocf.String(CloudFormationResourceName("Config", fmt.Sprintf("%v", sourceArn))),
 			},
 		},
 	}
-	resources[roleName] = iamPolicy
+	template.AddResource(roleName, iamPolicy)
 	return roleName, nil
 }
