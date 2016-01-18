@@ -692,8 +692,6 @@ func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
 		}
 		if "" != rule.BodyStorageOptions.ObjectKeyPrefix {
 			s3Action["ObjectKeyPrefix"] = rule.BodyStorageOptions.ObjectKeyPrefix
-		} else {
-			s3Action["ObjectKeyPrefix"] = fmt.Sprintf("%s/%s/", serviceName, rule.Name)
 		}
 		if "" != rule.BodyStorageOptions.KmsKeyArn {
 			s3Action["KmsKeyArn"] = rule.BodyStorageOptions.KmsKeyArn
