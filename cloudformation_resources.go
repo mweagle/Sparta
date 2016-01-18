@@ -3,10 +3,15 @@ package sparta
 import (
 	"errors"
 	"fmt"
+	"reflect"
 
 	"github.com/Sirupsen/logrus"
 	gocf "github.com/mweagle/go-cloudformation"
 )
+
+var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
+	"AWS::S3::Bucket": []string{"DomainName", "WebsiteURL"},
+}
 
 // cloudFormationAPIGatewayResource is the CustomResource type used to
 // provision an APIGateway
@@ -96,15 +101,22 @@ func outputsForResource(template *gocf.Template, logicalResourceName string, log
 	}
 
 	outputs := make(map[string]interface{}, 0)
-	switch item.Properties.ResourceType() {
-	case "AWS::S3::Bucket":
-		outputs["Name"] = gocf.Ref(logicalResourceName).String()
-		outputs["DomainName"] = gocf.GetAtt(logicalResourceName, "DomainName")
-		outputs["WebsiteURL"] = gocf.GetAtt(logicalResourceName, "WebsiteURL")
+	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.ResourceType()]
+	if exists {
+		outputs["Ref"] = gocf.Ref(logicalResourceName).String()
 		outputs["Type"] = gocf.String("AWS::S3::Bucket")
+		for _, eachAttr := range attrs {
+			outputs[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
+		}
+
+		// Any tags?
+		r := reflect.ValueOf(item.Properties)
+		tagsField := reflect.Indirect(r).FieldByName("Tags")
+		if tagsField.IsValid() {
+			outputs["Tags"] = tagsField.Interface()
+		}
 	}
 	return outputs, nil
-
 }
 func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
 	if nil == resource.DependsOn {
