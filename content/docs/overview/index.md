@@ -120,7 +120,8 @@ func main() {
 	sparta.Main("MyHelloWorldStack",
 		"Simple Sparta application that demonstrates core functionality",
 		lambdaFunctions,
-		nil)
+		nil,
+    nil)
 }
 {{< /highlight >}}      
 
