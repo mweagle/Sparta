@@ -259,7 +259,7 @@ func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.St
 	return gocf.Join("", parts...)
 }
 
-func (perm *BasePermission) sourceArnString() string {
+func (perm *BasePermission) describeInfoArn() string {
 	switch perm.SourceArn.(type) {
 	case string:
 		return perm.SourceArn.(string)
@@ -342,7 +342,7 @@ func (perm LambdaPermission) export(serviceName string,
 }
 
 func (perm LambdaPermission) descriptionInfo() (string, string) {
-	return "Source", perm.sourceArnString()
+	return "Source", perm.describeInfoArn()
 }
 
 //
@@ -435,7 +435,7 @@ func (perm S3Permission) export(serviceName string,
 }
 
 func (perm S3Permission) descriptionInfo() (string, string) {
-	return perm.sourceArnString(), fmt.Sprintf("%s", perm.Events)
+	return perm.describeInfoArn(), fmt.Sprintf("%s", perm.Events)
 }
 
 //
@@ -524,7 +524,7 @@ func (perm SNSPermission) export(serviceName string,
 }
 
 func (perm SNSPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.sourceArnString(), ""
+	return perm.BasePermission.describeInfoArn(), ""
 }
 
 //
@@ -879,7 +879,7 @@ func (perm SESPermission) export(serviceName string,
 }
 
 func (perm SESPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.sourceArnString(), ""
+	return perm.BasePermission.describeInfoArn(), ""
 }
 
 //
