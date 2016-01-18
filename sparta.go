@@ -576,6 +576,16 @@ func (storage *MessageBodyStorage) BucketArn() *gocf.StringExpr {
 		storage.bucketNameExpr)
 }
 
+// BucketArnAllKeys returns an Arn value that can be used
+// lambdaFn.RoleDefinition.Privileges `Resource` value.  It includes
+// the trailing `/*` wildcard to support item acccess
+func (storage *MessageBodyStorage) BucketArnAllKeys() *gocf.StringExpr {
+	return gocf.Join("",
+		gocf.String("arn:aws:s3:::"),
+		storage.bucketNameExpr,
+		gocf.String("/*"))
+}
+
 func (storage *MessageBodyStorage) export(serviceName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
