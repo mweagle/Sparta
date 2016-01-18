@@ -94,7 +94,6 @@ function makeRequest(path, event, context) {
           // TODO: Check content-type before parse attempt
           responseData = JSON.parse(body);
         } catch (e) {
-          console.log('Request body isn not JSON: ' + e.toString());
           responseData = body;
         }
       }
