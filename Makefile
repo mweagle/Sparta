@@ -33,7 +33,12 @@ format:
 	go fmt .
 
 vet: generate
-	go vet .
+	# Disable composites until https://github.com/golang/go/issues/9171 is resolved.  Currently
+	# failing due to gocf.IAMPoliciesList literal initialization
+	GO15VENDOREXPERIMENT=1 go tool vet -composites=false *.go
+	GO15VENDOREXPERIMENT=1 go tool vet -composites=false ./explore
+	GO15VENDOREXPERIMENT=1 go tool vet -composites=false ./private
+	GO15VENDOREXPERIMENT=1 go tool vet -composites=false ./aws/
 
 build: format generate vet
 	GO15VENDOREXPERIMENT=1 go build .
