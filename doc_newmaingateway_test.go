@@ -18,7 +18,7 @@ func echoAPIGatewayEvent(event *json.RawMessage,
 	logger.WithFields(logrus.Fields{
 		"RequestID": context.AWSRequestID,
 		"Event":     string(*event),
-	}).Info("Request received")
+	}).Debug("Request received")
 
 	fmt.Fprintf(w, "Hello World!")
 }

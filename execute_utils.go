@@ -2,7 +2,9 @@ package sparta
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+
 	"strings"
 
 	"github.com/Sirupsen/logrus"
@@ -24,13 +26,15 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	var request lambdaRequest
 	defer func() {
 		if r := recover(); r != nil {
-			http.Error(w, "Failed to decode request", http.StatusBadRequest)
+			errorString := fmt.Sprintf("Lambda handler panic: %+v", r)
+			http.Error(w, errorString, http.StatusBadRequest)
 		}
 	}()
 
 	err := decoder.Decode(&request)
 	if nil != err {
-		http.Error(w, "Failed to decode request", http.StatusBadRequest)
+		errorString := fmt.Sprintf("Failed to decode proxy request: %s", err.Error())
+		http.Error(w, errorString, http.StatusBadRequest)
 		return
 	}
 	handler.logger.WithFields(logrus.Fields{
