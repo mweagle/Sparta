@@ -3,7 +3,7 @@
   - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode
   - `TemplateDecorator` signature changed to support [go-cloudformation](https://github.com/crewjam/go-cloudformation) representation of the CloudFormation JSON template.
   - Use `sparta.EventSourceMapping` rather than [aws.CreateEventSourceMappingInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput) type for `LambdaAWSInfo.EventSourceMappings` slice
-  - Add dependency on [mweagle/go-cloudformation](https://github.com/mweagle/go-cloudformation) for CloudFormation template creation
+  - Add dependency on [crewjam/go-cloudformation](https://github.com/crewjam/go-cloudformation) for CloudFormation template creation
     - Expect changes to be rolled into origin
     - /ht @crewjam
 - :checkered_flag: **CHANGES**

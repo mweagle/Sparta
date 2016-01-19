@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"strings"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 )

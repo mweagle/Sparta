@@ -6,7 +6,7 @@ import (
 	"reflect"
 
 	"github.com/Sirupsen/logrus"
-	gocf "github.com/mweagle/go-cloudformation"
+	gocf "github.com/crewjam/go-cloudformation"
 )
 
 var cloudformationTypeMapDiscoveryOutputs = map[string][]string{

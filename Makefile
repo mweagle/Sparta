@@ -19,8 +19,8 @@ get: clean ensure_vendor
 	rm -rf ./src/main/vendor/github.com/voxelbrain/goptions/.git
 	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
 	rm -rf ./src/main/vendor/github.com/mjibson/esc/.git
-	git clone --depth=1 https://github.com/mweagle/go-cloudformation ./vendor/github.com/mweagle/go-cloudformation
-	rm -rf ./src/main/vendor/github.com/mweagle/go-cloudformation/.git
+	git clone --depth=1 https://github.com/crewjam/go-cloudformation ./vendor/github.com/crewjam/go-cloudformation
+	rm -rf ./src/main/vendor/github.com/crewjam/go-cloudformation/.git
 
 reset:
 		git reset --hard

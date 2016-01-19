@@ -52,7 +52,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	gocf "github.com/mweagle/go-cloudformation"
+	gocf "github.com/crewjam/go-cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

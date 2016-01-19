@@ -18,7 +18,7 @@ import (
 	"strings"
 	"time"
 
-	gocf "github.com/mweagle/go-cloudformation"
+	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/request"
