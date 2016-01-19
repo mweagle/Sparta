@@ -21,7 +21,7 @@
 
 &lt;div class=&#34;jumbotron&#34;&gt;
   &lt;h1&gt;Sparta &lt;img src=&#34;images/spartanshieldsmall.png&#34; alt=&#34;Sparta shield&#34; height=&#34;80&#34; width=&#34;80&#34;&gt;&lt;/h1&gt;
-  Build &amp; deploy &lt;b&gt;Go&lt;/b&gt; applications in AWS Lambda
+  Build &amp; deploy &lt;b&gt;Go&lt;/b&gt; functions in AWS Lambda
   &lt;hr /&gt;
   &lt;blockquote&gt;
     &lt;p&gt;&#34;No Server Is Easier To Manage Than No Server.&#34;&lt;/p&gt;
