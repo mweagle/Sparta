@@ -149,28 +149,30 @@ In other words, `sparta.Discover()` may return a non-empty map iff:
 
 The returned `map[string]interface{}` will be empty in all other cases.
 
+Here's a sample `configuration` map:
+
 {{< highlight json >}}
 {
-  "CONFIGURATION": {
-    "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
-      "DomainName": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com",
-      "Ref": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4",
-      "Tags": [
-        {
-          "Key": "sparta:logicalBucketName",
-          "Value": "Special"
-        }
-      ],
-      "Type": "AWS::S3::Bucket",
-      "WebsiteURL": "http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com"
-    },
-    "golangFunc": "main.echoSESEvent"
+  "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
+    "DomainName": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com",
+    "Ref": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4",
+    "Tags": [
+      {
+        "Key": "sparta:logicalBucketName",
+        "Value": "Special"
+      }
+    ],
+    "Type": "AWS::S3::Bucket",
+    "WebsiteURL": "http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com"
   },
-  "ERROR": null,
-  "LEVEL": "info",
-  "MSG": "Discovery results",
-  "TIME": "2016-01-19T17:14:47Z"
+  "golangFunc": "main.echoSESEvent"
 }
+{{< /highlight >}}
+
+Note that the _sparta:logicalBucketName_ tag value is `"Special"`, the same value provided in:
+
+{{< highlight golang >}}
+sesPermission.NewMessageBodyStorageResource("Special")
 {{< /highlight >}}
 
 Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:
@@ -190,6 +192,7 @@ if nil != configuration {
   }
 {{< /highlight >}}
 
+TODO: Add configuration types
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
@@ -238,9 +241,9 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
 Additionally, if the SES handler needs to access the raw email message body:
 
-  * Create a new `sesPermission.NewMessageBodyStorageResource("Special")` value
+  * Create a new `sesPermission.NewMessageBodyStorageResource("Special")` value to store the message body
   * Assign the value to the `sesPermission.MessageBodyStorage` field
-  * If needed, add to the `IAMPrivilege` an entry that includes the `sesPermission.MessageBodyStorage.BucketArnAllKeys()` Arn
+  * If your lambda function needs to consume the message body, add an entry to `sesPermission.[]IAMPrivilege` that includes the `sesPermission.MessageBodyStorage.BucketArnAllKeys()` Arn
   * In your **Go** lambda function definition, discover the S3 bucketname via `sparta.Discover()`
 
 ## <a href="{{< relref "#otherResources" >}}">Notes</a>
@@ -248,6 +251,6 @@ Additionally, if the SES handler needs to access the raw email message body:
   * The SES message (including headers) is stored in the [raw format](http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3)
   * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing **Go** function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
   * More on Immutable Infrastructure:
-    * [Subbu](https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker)
-    * [Chad Fowler](http://chadfowler.com/blog/2013/06/23/immutable-deployments/)
+    * [Subbu - Automate Everything](https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift)
+    * [Chad Fowler - Immutable Deployments](http://chadfowler.com/blog/2013/06/23/immutable-deployments/)
     * [The New Stack](http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/)

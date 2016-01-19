@@ -600,28 +600,29 @@ logger.WithFields(logrus.Fields{
 
 &lt;p&gt;The returned &lt;code&gt;map[string]interface{}&lt;/code&gt; will be empty in all other cases.&lt;/p&gt;
 
+&lt;p&gt;Here&amp;rsquo;s a sample &lt;code&gt;configuration&lt;/code&gt; map:&lt;/p&gt;
+
 &lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;CONFIGURATION&amp;#34;: {
-    &amp;#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&amp;#34;: {
-      &amp;#34;DomainName&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&amp;#34;,
-      &amp;#34;Ref&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4&amp;#34;,
-      &amp;#34;Tags&amp;#34;: [
-        {
-          &amp;#34;Key&amp;#34;: &amp;#34;sparta:logicalBucketName&amp;#34;,
-          &amp;#34;Value&amp;#34;: &amp;#34;Special&amp;#34;
-        }
-      ],
-      &amp;#34;Type&amp;#34;: &amp;#34;AWS::S3::Bucket&amp;#34;,
-      &amp;#34;WebsiteURL&amp;#34;: &amp;#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com&amp;#34;
-    },
-    &amp;#34;golangFunc&amp;#34;: &amp;#34;main.echoSESEvent&amp;#34;
+  &amp;#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&amp;#34;: {
+    &amp;#34;DomainName&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&amp;#34;,
+    &amp;#34;Ref&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4&amp;#34;,
+    &amp;#34;Tags&amp;#34;: [
+      {
+        &amp;#34;Key&amp;#34;: &amp;#34;sparta:logicalBucketName&amp;#34;,
+        &amp;#34;Value&amp;#34;: &amp;#34;Special&amp;#34;
+      }
+    ],
+    &amp;#34;Type&amp;#34;: &amp;#34;AWS::S3::Bucket&amp;#34;,
+    &amp;#34;WebsiteURL&amp;#34;: &amp;#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com&amp;#34;
   },
-  &amp;#34;ERROR&amp;#34;: null,
-  &amp;#34;LEVEL&amp;#34;: &amp;#34;info&amp;#34;,
-  &amp;#34;MSG&amp;#34;: &amp;#34;Discovery results&amp;#34;,
-  &amp;#34;TIME&amp;#34;: &amp;#34;2016-01-19T17:14:47Z&amp;#34;
+  &amp;#34;golangFunc&amp;#34;: &amp;#34;main.echoSESEvent&amp;#34;
 }&lt;/code&gt;&lt;/pre&gt;
 
+
+&lt;p&gt;Note that the &lt;em&gt;sparta:logicalBucketName&lt;/em&gt; tag value is &lt;code&gt;&amp;quot;Special&amp;quot;&lt;/code&gt;, the same value provided in:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;sesPermission.NewMessageBodyStorageResource(&amp;#34;Special&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
 
 &lt;p&gt;Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:&lt;/p&gt;
 
@@ -639,7 +640,9 @@ if nil != configuration {
   }&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;h2 id=&#34;a-href-hugoshortcode-16-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;TODO: Add configuration types&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-17-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;The rest of &lt;code&gt;echoSESEvent&lt;/code&gt; satisfies the other requirements, with a bit of help from the SES &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/ses&#34;&gt;event types&lt;/a&gt;:&lt;/p&gt;
 
@@ -674,7 +677,7 @@ if nil != configuration {
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;h2 id=&#34;a-href-hugoshortcode-18-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-19-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SES-triggered lambda function:&lt;/p&gt;
 
@@ -688,13 +691,13 @@ if nil != configuration {
 &lt;p&gt;Additionally, if the SES handler needs to access the raw email message body:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Create a new &lt;code&gt;sesPermission.NewMessageBodyStorageResource(&amp;quot;Special&amp;quot;)&lt;/code&gt; value&lt;/li&gt;
+&lt;li&gt;Create a new &lt;code&gt;sesPermission.NewMessageBodyStorageResource(&amp;quot;Special&amp;quot;)&lt;/code&gt; value to store the message body&lt;/li&gt;
 &lt;li&gt;Assign the value to the &lt;code&gt;sesPermission.MessageBodyStorage&lt;/code&gt; field&lt;/li&gt;
-&lt;li&gt;If needed, add to the &lt;code&gt;IAMPrivilege&lt;/code&gt; an entry that includes the &lt;code&gt;sesPermission.MessageBodyStorage.BucketArnAllKeys()&lt;/code&gt; Arn&lt;/li&gt;
+&lt;li&gt;If your lambda function needs to consume the message body, add an entry to &lt;code&gt;sesPermission.[]IAMPrivilege&lt;/code&gt; that includes the &lt;code&gt;sesPermission.MessageBodyStorage.BucketArnAllKeys()&lt;/code&gt; Arn&lt;/li&gt;
 &lt;li&gt;In your &lt;strong&gt;Go&lt;/strong&gt; lambda function definition, discover the S3 bucketname via &lt;code&gt;sparta.Discover()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;a-href-hugoshortcode-19-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-20-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;The SES message (including headers) is stored in the &lt;a href=&#34;http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3&#34;&gt;raw format&lt;/a&gt;&lt;/li&gt;
@@ -702,8 +705,8 @@ if nil != configuration {
 &lt;li&gt;More on Immutable Infrastructure:
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker&#34;&gt;Subbu&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift&#34;&gt;Subbu - Automate Everything&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler - Immutable Deployments&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/&#34;&gt;The New Stack&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
