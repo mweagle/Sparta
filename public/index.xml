@@ -32,12 +32,12 @@
 
 &lt;p&gt;Sparta defines a framework that deploys a set of &lt;em&gt;Go&lt;/em&gt; HTTP request/response handlers to &lt;a href=&#34;https://aws.amazon.com/lambda/&#34;&gt;AWS Lambda&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;What differentiates Sparta from similar approaches is that it enables you to manage &lt;em&gt;the other AWS resources&lt;/em&gt; associated with your application.   It also exposes the ability to generate, as part of your application, individual &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Policies&lt;/a&gt; under which your &lt;em&gt;Go&lt;/em&gt; functions will execute.  The ability to limit lambda execution privileges helps support &lt;a href=&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;&gt;POLP&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;What differentiates Sparta from similar approaches is that it enables you to create and manage &lt;strong&gt;the other AWS resources&lt;/strong&gt; associated with your application.   It also exposes the ability to generate, as part of your deployment, individual &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Policies&lt;/a&gt; under which your &lt;em&gt;Go&lt;/em&gt; functions will execute.  The ability to limit lambda execution privileges helps support &lt;a href=&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;&gt;POLP&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hashtag/secops&#34;&gt;#SecOps&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;Sparta allows your application to create or reference, in &lt;em&gt;Go&lt;/em&gt;, additional AWS resource relations including:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Event Triggers
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;AWS Lambda Event Sources&lt;/a&gt;
 
 &lt;ul&gt;
 &lt;li&gt;DynamoDB&lt;/li&gt;
@@ -51,7 +51,7 @@
 &lt;ul&gt;
 &lt;li&gt;S3 buckets with dynamic names&lt;/li&gt;
 &lt;li&gt;SNS resources&lt;/li&gt;
-&lt;li&gt;Other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Types&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Type&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html&#34;&gt;API Gateway&lt;/a&gt; resources&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html&#34;&gt;S3 Static Websites&lt;/a&gt;
@@ -462,7 +462,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.&lt;/p&gt;
 
-&lt;p&gt;There is also an additional requirement to support &lt;a href=&#34;http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html&#34;&gt;immutable infrastructure&lt;/a&gt;, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on an external S3 bucket that has been precreated.&lt;/p&gt;
+&lt;p&gt;There is also an additional requirement to support &lt;a href=&#34;http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html&#34;&gt;immutable infrastructure&lt;/a&gt;, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.&lt;/p&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
 
@@ -479,9 +479,13 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
   }).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-ses-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SES Event&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;Before moving on to the event unmarshaling, we need to take a detour into dynamic resources.&lt;/p&gt;
+&lt;p&gt;At this point we would normally continue processing the SES event, using Sparta types if available.&lt;/p&gt;
+
+&lt;p&gt;However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.&lt;/p&gt;
+
+&lt;p&gt;This requirement implies that our service must be self-contained: we can&amp;rsquo;t assume that &amp;ldquo;something else&amp;rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?&lt;/p&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-5-dynamic-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#dynamicResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic Resources&lt;/a&gt;&lt;/h2&gt;
 
@@ -496,9 +500,10 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;Wait for the S3 bucket to be provisioned
 
 &lt;ul&gt;
-&lt;li&gt;As we need a new S3 bucket, we&amp;rsquo;re relying on AWS to generate a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;unique name&lt;/a&gt;.  But this means that our lambda function doesn&amp;rsquo;t know the S3 bucket name at deploy time.&lt;/li&gt;
+&lt;li&gt;As we need a new S3 bucket, we&amp;rsquo;re relying on AWS to generate a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;unique name&lt;/a&gt;.  But this means that our lambda function doesn&amp;rsquo;t know the S3 bucket name during provisioning.&lt;/li&gt;
+&lt;li&gt;In fact, we shouldn&amp;rsquo;t even create an AWS Lambda function if the S3 bucket can&amp;rsquo;t be created.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Include an IAMPrivilege to access the dynamically created bucket&lt;/li&gt;
+&lt;li&gt;Include an IAMPrivilege so that our &lt;em&gt;Go&lt;/em&gt; function can access the dynamically created bucket&lt;/li&gt;
 &lt;li&gt;Discover the S3 Bucket at lambda execution time&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -594,7 +599,7 @@ logger.WithFields(logrus.Fields{
 
 &lt;p&gt;The returned &lt;code&gt;map[string]interface{}&lt;/code&gt; will be empty in all other cases.&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
   &amp;#34;CONFIGURATION&amp;#34;: {
     &amp;#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&amp;#34;: {
       &amp;#34;DomainName&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&amp;#34;,
@@ -615,7 +620,7 @@ logger.WithFields(logrus.Fields{
   &amp;#34;MSG&amp;#34;: &amp;#34;Discovery results&amp;#34;,
   &amp;#34;TIME&amp;#34;: &amp;#34;2016-01-19T17:14:47Z&amp;#34;
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:&lt;/p&gt;
 
@@ -693,6 +698,13 @@ if nil != configuration {
 &lt;ul&gt;
 &lt;li&gt;The SES message (including headers) is stored in the &lt;a href=&#34;http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3&#34;&gt;raw format&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;sparta.Discover()&lt;/code&gt; uses &lt;a href=&#34;https://golang.org/pkg/reflect/&#34;&gt;reflection&lt;/a&gt; to map from the current enclosing &lt;em&gt;Go&lt;/em&gt; function name to the owning &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; CloudFormation. Therefore, calling &lt;code&gt;sparta.Discover()&lt;/code&gt; from non-Sparta lambda functions (application helpers, function literals) will generate an error.&lt;/li&gt;
+&lt;li&gt;More on Immutable Infrastructure:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker&#34;&gt;Subbu&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/&#34;&gt;The New Stack&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

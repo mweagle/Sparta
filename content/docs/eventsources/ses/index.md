@@ -14,14 +14,13 @@ Assume that we have already [verified our email domain](http://docs.aws.amazon.c
 
 We've been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.  
 
-There is also an additional requirement to support [immutable infrastructure](http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html), so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on an external S3 bucket that has been precreated.
+There is also an additional requirement to support [immutable infrastructure](http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html), so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.
 
 ## <a href="{{< relref "#gettingStarted" >}}">Getting Started</a>
 
 We'll start with an empty lambda function and build up the needed functionality.
 
 {{< highlight go >}}
-
 func echoSESEvent(event *json.RawMessage,
   context *sparta.LambdaContext,
   w http.ResponseWriter,
@@ -31,12 +30,15 @@ func echoSESEvent(event *json.RawMessage,
   logger.WithFields(logrus.Fields{
     "RequestID": context.AWSRequestID,
   }).Info("Request received")
-
 {{< /highlight >}}
 
-## <a href="{{< relref "#unmarshalSNSEvent" >}}">Unmarshalling the SNS Event</a>
+## <a href="{{< relref "#unmarshalSNSEvent" >}}">Unmarshalling the SES Event</a>
 
-Before moving on to the event unmarshaling, we need to take a detour into dynamic resources.
+At this point we would normally continue processing the SES event, using Sparta types if available.
+
+However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.  
+
+This requirement implies that our service must be self-contained: we can't assume that "something else" has created an S3 bucket.  How can our locally compiled code access AWS-created resources?
 
 ## <a href="{{< relref "#dynamicResources" >}}">Dynamic Resources</a>
 
@@ -45,8 +47,9 @@ The immutable infrastructure requirement makes this lambda function a bit more c
   * Provision a new S3 bucket for email message body storage
     - SES will not provide the message body in the event data.  It will only store the email body in an S3 bucket, from which your lambda function can later consume it.
   * Wait for the S3 bucket to be provisioned
-    - As we need a new S3 bucket, we're relying on AWS to generate a [unique name](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name).  But this means that our lambda function doesn't know the S3 bucket name at deploy time.
-  * Include an IAMPrivilege to access the dynamically created bucket
+    - As we need a new S3 bucket, we're relying on AWS to generate a [unique name](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name).  But this means that our lambda function doesn't know the S3 bucket name during provisioning.
+    - In fact, we shouldn't even create an AWS Lambda function if the S3 bucket can't be created.
+  * Include an IAMPrivilege so that our *Go* function can access the dynamically created bucket
   * Discover the S3 Bucket at lambda execution time
 
 ### <a href="{{< relref "#provisionBucket" >}}">Provision Message Body Storage Resource</a>
@@ -244,3 +247,7 @@ Additionally, if the SES handler needs to access the raw email message body:
 
   * The SES message (including headers) is stored in the [raw format](http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3)
   * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing *Go* function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
+  * More on Immutable Infrastructure:
+    * [Subbu](https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker)
+    * [Chad Fowler](http://chadfowler.com/blog/2013/06/23/immutable-deployments/)
+    * [The New Stack](http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/)

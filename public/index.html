@@ -68,7 +68,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: facebook: flattr: name:yeti home:Home twitter:mweagle youtube: highlight:vs linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[flattr: home:Home highlight:vs bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:yeti googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -164,12 +164,12 @@
 
 <p>Sparta defines a framework that deploys a set of <em>Go</em> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
 
-<p>What differentiates Sparta from similar approaches is that it enables you to manage <em>the other AWS resources</em> associated with your application.   It also exposes the ability to generate, as part of your application, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <em>Go</em> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a>.</p>
+<p>What differentiates Sparta from similar approaches is that it enables you to create and manage <strong>the other AWS resources</strong> associated with your application.   It also exposes the ability to generate, as part of your deployment, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <em>Go</em> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.</p>
 
 <p>Sparta allows your application to create or reference, in <em>Go</em>, additional AWS resource relations including:</p>
 
 <ul>
-<li>Event Triggers
+<li><a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Lambda Event Sources</a>
 
 <ul>
 <li>DynamoDB</li>
@@ -183,7 +183,7 @@
 <ul>
 <li>S3 buckets with dynamic names</li>
 <li>SNS resources</li>
-<li>Other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types</a></li>
+<li>Any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Type</a></li>
 </ul></li>
 <li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> resources</li>
 <li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3 Static Websites</a>

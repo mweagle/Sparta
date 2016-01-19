@@ -20,11 +20,11 @@ title = "homepage"
 
 Sparta defines a framework that deploys a set of *Go* HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
 
-What differentiates Sparta from similar approaches is that it enables you to manage _the other AWS resources_ associated with your application.   It also exposes the ability to generate, as part of your application, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your *Go* functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP).
+What differentiates Sparta from similar approaches is that it enables you to create and manage **the other AWS resources** associated with your application.   It also exposes the ability to generate, as part of your deployment, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your *Go* functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
 
 Sparta allows your application to create or reference, in *Go*, additional AWS resource relations including:   
 
-  - Event Triggers
+  - [AWS Lambda Event Sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
     - DynamoDB
     - S3
     - Kinesis
@@ -33,7 +33,7 @@ Sparta allows your application to create or reference, in *Go*, additional AWS r
   - Other AWS resources
     - S3 buckets with dynamic names
     - SNS resources
-    - Other [CloudFormation Resource Types](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+    - Any other [CloudFormation Resource Type](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
   - [API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) resources
   - [S3 Static Websites](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
     - Sparta can provision an S3 bucket with your static resources, including [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) support

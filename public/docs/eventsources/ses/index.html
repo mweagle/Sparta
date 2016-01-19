@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1085 
+    "wordCount":  1177 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[highlight:vs linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: flattr: name:yeti home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: facebook:]">
+<body class="map[name:yeti googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle googleplus: facebook: youtube: flattr: home:Home highlight:vs bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,7 +303,7 @@
 
 <p>We&rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.</p>
 
-<p>There is also an additional requirement to support <a href="http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html">immutable infrastructure</a>, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on an external S3 bucket that has been precreated.</p>
+<p>There is also an additional requirement to support <a href="http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html">immutable infrastructure</a>, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.</p>
 
 <h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
 
@@ -320,9 +320,13 @@
   }).Info(&#34;Request received&#34;)</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</a></h2>
+<h2 id="a-href-hugoshortcode-4-unmarshalling-the-ses-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SES Event</a></h2>
 
-<p>Before moving on to the event unmarshaling, we need to take a detour into dynamic resources.</p>
+<p>At this point we would normally continue processing the SES event, using Sparta types if available.</p>
+
+<p>However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.</p>
+
+<p>This requirement implies that our service must be self-contained: we can&rsquo;t assume that &ldquo;something else&rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?</p>
 
 <h2 id="a-href-hugoshortcode-5-dynamic-resources-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#dynamicResources:d680e8a854a7cbad6d490c445cba2eba">Dynamic Resources</a></h2>
 
@@ -337,9 +341,10 @@
 <li>Wait for the S3 bucket to be provisioned
 
 <ul>
-<li>As we need a new S3 bucket, we&rsquo;re relying on AWS to generate a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">unique name</a>.  But this means that our lambda function doesn&rsquo;t know the S3 bucket name at deploy time.</li>
+<li>As we need a new S3 bucket, we&rsquo;re relying on AWS to generate a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">unique name</a>.  But this means that our lambda function doesn&rsquo;t know the S3 bucket name during provisioning.</li>
+<li>In fact, we shouldn&rsquo;t even create an AWS Lambda function if the S3 bucket can&rsquo;t be created.</li>
 </ul></li>
-<li>Include an IAMPrivilege to access the dynamically created bucket</li>
+<li>Include an IAMPrivilege so that our <em>Go</em> function can access the dynamically created bucket</li>
 <li>Discover the S3 Bucket at lambda execution time</li>
 </ul>
 
@@ -435,7 +440,7 @@ logger.WithFields(logrus.Fields{
 
 <p>The returned <code>map[string]interface{}</code> will be empty in all other cases.</p>
 
-<p><pre><code class="json">{
+<pre><code class="json">{
   &#34;CONFIGURATION&#34;: {
     &#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&#34;: {
       &#34;DomainName&#34;: &#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&#34;,
@@ -456,7 +461,7 @@ logger.WithFields(logrus.Fields{
   &#34;MSG&#34;: &#34;Discovery results&#34;,
   &#34;TIME&#34;: &#34;2016-01-19T17:14:47Z&#34;
 }</code></pre>
-</p>
+
 
 <p>Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:</p>
 
@@ -534,6 +539,13 @@ if nil != configuration {
 <ul>
 <li>The SES message (including headers) is stored in the <a href="http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3">raw format</a></li>
 <li><code>sparta.Discover()</code> uses <a href="https://golang.org/pkg/reflect/">reflection</a> to map from the current enclosing <em>Go</em> function name to the owning <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> CloudFormation. Therefore, calling <code>sparta.Discover()</code> from non-Sparta lambda functions (application helpers, function literals) will generate an error.</li>
+<li>More on Immutable Infrastructure:
+
+<ul>
+<li><a href="https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker">Subbu</a></li>
+<li><a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments/">Chad Fowler</a></li>
+<li><a href="http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/">The New Stack</a></li>
+</ul></li>
 </ul>
 
 </div>
