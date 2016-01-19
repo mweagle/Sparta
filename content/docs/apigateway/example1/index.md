@@ -37,7 +37,7 @@ In the example above, we're also including a [Stage](https://godoc.org/github.co
 
 ### <a href="{{< relref "#example1API" >}}">Create a Resource</a>
 
-The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the *Go* function:
+The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the **Go** function:
 
 {{< highlight go >}}
 apiGatewayResource, _ := api.NewResource("/hello/world/test", lambdaFn)
@@ -225,13 +225,13 @@ The next example will show how to unmarshal this data and perform request-specif
 
 Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output.  
 
-If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the *Go* HTTP response to a Lambda compatible result.  
+If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the **Go** HTTP response to a Lambda compatible result.  
 
 A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
 ![API Gateway](/images/apigateway/IntegrationMapping.png)
 
-The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with *Go*'s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
+The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with **Go**'s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
 
 ![API Gateway](/images/apigateway/MethodResponse.png)
 

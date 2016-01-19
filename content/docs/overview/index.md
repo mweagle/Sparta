@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-Sparta is a framework for developing and deploying *Go* based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
+Sparta is a framework for developing and deploying **Go** based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
 <div class="panel panel-danger">
 <div class="panel-heading">Pricing</div>
@@ -39,7 +39,7 @@ func helloWorld(event *json.RawMessage,
 All Sparta lambda functions have the same function signature that is composed of:
 
   * `json.RawMessage` :  The arbitrary `json.RawMessage` event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.
-  * `LambdaContext` : *Go* compatible representation of the AWS Lambda [Context](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html). This struct includes fields such as `AWSRequestID`, CloudWatch's `LogGroupName`, and the provisioned AWS lambda's ARN (`InvokedFunctionARN`).
+  * `LambdaContext` : **Go** compatible representation of the AWS Lambda [Context](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html). This struct includes fields such as `AWSRequestID`, CloudWatch's `LogGroupName`, and the provisioned AWS lambda's ARN (`InvokedFunctionARN`).
   * `http.ResponseWriter` : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the `responseWriter` is published back via [context.done()](http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html).
   * `logrus.Logger` : A [logrus](https://github.com/Sirupsen/logrus) logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.
 
@@ -61,7 +61,7 @@ We first declare an empty slice `lambdaFunctions` to which all our service's lam
 
   * `string|IAMRoleDefinition` : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` that will be provisioned as part of this deployment and used as the execution role for the lambda function.
     - In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
-  * `LambdaFunction`: The *Go* function to execute.
+  * `LambdaFunction`: The **Go** function to execute.
   * `*LambdaFunctionOptions`: A pointer to any additional execution settings (eg, timeout, memory settings, etc).
 
 ## <a href="{{< relref "#delegation" >}}">Delegation</a>

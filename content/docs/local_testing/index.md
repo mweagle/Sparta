@@ -72,7 +72,7 @@ INFO[0000] Where @testEvent.json is a local file with top level `context` and `e
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999
 {{< /highlight >}}
 
-The _localhost_ server mirrors the contract between the NodeJS proxying tier and the *Go* binary that is used in the AWS Lambda execution environment.  
+The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **Go** binary that is used in the AWS Lambda execution environment.  
 
 Per the instructions, let's create a _testEvent.json_ file with the required structure:
 

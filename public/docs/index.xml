@@ -75,7 +75,7 @@ if err != nil {
 
 &lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114&#34;&gt;appendDynamoDBLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114&#34;&gt;appendDynamoDBLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
@@ -187,7 +187,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;First we wrap the &lt;em&gt;Go&lt;/em&gt; function in a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; struct:&lt;/p&gt;
+&lt;p&gt;First we wrap the &lt;strong&gt;Go&lt;/strong&gt; function in a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; struct:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
@@ -301,7 +301,7 @@ if err != nil {
 
 &lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
+&lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
 
 &lt;p&gt;Our lambda function needs to both &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:&lt;/p&gt;
 
@@ -431,7 +431,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;As we need a new S3 bucket, we&amp;rsquo;re relying on AWS to generate a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;unique name&lt;/a&gt;.  But this means that our lambda function doesn&amp;rsquo;t know the S3 bucket name during provisioning.&lt;/li&gt;
 &lt;li&gt;In fact, we shouldn&amp;rsquo;t even create an AWS Lambda function if the S3 bucket can&amp;rsquo;t be created.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Include an IAMPrivilege so that our &lt;em&gt;Go&lt;/em&gt; function can access the dynamically created bucket&lt;/li&gt;
+&lt;li&gt;Include an IAMPrivilege so that our &lt;strong&gt;Go&lt;/strong&gt; function can access the dynamically created bucket&lt;/li&gt;
 &lt;li&gt;Discover the S3 Bucket at lambda execution time&lt;/li&gt;
 &lt;/ul&gt;
 
@@ -618,14 +618,14 @@ if nil != configuration {
 &lt;li&gt;Create a new &lt;code&gt;sesPermission.NewMessageBodyStorageResource(&amp;quot;Special&amp;quot;)&lt;/code&gt; value&lt;/li&gt;
 &lt;li&gt;Assign the value to the &lt;code&gt;sesPermission.MessageBodyStorage&lt;/code&gt; field&lt;/li&gt;
 &lt;li&gt;If needed, add to the &lt;code&gt;IAMPrivilege&lt;/code&gt; an entry that includes the &lt;code&gt;sesPermission.MessageBodyStorage.BucketArnAllKeys()&lt;/code&gt; Arn&lt;/li&gt;
-&lt;li&gt;In your &lt;em&gt;Go&lt;/em&gt; lambda function definition, discover the S3 bucketname via &lt;code&gt;sparta.Discover()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;In your &lt;strong&gt;Go&lt;/strong&gt; lambda function definition, discover the S3 bucketname via &lt;code&gt;sparta.Discover()&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-19-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;The SES message (including headers) is stored in the &lt;a href=&#34;http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3&#34;&gt;raw format&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sparta.Discover()&lt;/code&gt; uses &lt;a href=&#34;https://golang.org/pkg/reflect/&#34;&gt;reflection&lt;/a&gt; to map from the current enclosing &lt;em&gt;Go&lt;/em&gt; function name to the owning &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; CloudFormation. Therefore, calling &lt;code&gt;sparta.Discover()&lt;/code&gt; from non-Sparta lambda functions (application helpers, function literals) will generate an error.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sparta.Discover()&lt;/code&gt; uses &lt;a href=&#34;https://golang.org/pkg/reflect/&#34;&gt;reflection&lt;/a&gt; to map from the current enclosing &lt;strong&gt;Go&lt;/strong&gt; function name to the owning &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; CloudFormation. Therefore, calling &lt;code&gt;sparta.Discover()&lt;/code&gt; from non-Sparta lambda functions (application helpers, function literals) will generate an error.&lt;/li&gt;
 &lt;li&gt;More on Immutable Infrastructure:
 
 &lt;ul&gt;
@@ -692,7 +692,7 @@ if err != nil {
 
 &lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;em&gt;Go&lt;/em&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
@@ -768,7 +768,7 @@ apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)&lt;/cod
 
 &lt;h3 id=&#34;a-href-hugoshortcode-5-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create a Resource&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;em&gt;Go&lt;/em&gt; function:&lt;/p&gt;
+&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;strong&gt;Go&lt;/strong&gt; function:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/hello/world/test&amp;#34;, lambdaFn)
 apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
@@ -950,13 +950,13 @@ See
 
 &lt;p&gt;Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;rsquo;s output.&lt;/p&gt;
 
-&lt;p&gt;If there were an error, the response would include additional fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;em&gt;Go&lt;/em&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
+&lt;p&gt;If there were an error, the response would include additional fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;strong&gt;Go&lt;/strong&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
 
 &lt;p&gt;A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the &lt;strong&gt;Integration Response&lt;/strong&gt; section of the &lt;em&gt;/hello/world/test&lt;/em&gt; resource in the Console, you&amp;rsquo;ll see a list of Regular Expression matches:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/IntegrationMapping.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;The regular expressions are used to translate the integration response, which is just a blob of text provided to &lt;code&gt;context.done()&lt;/code&gt;, into API Gateway Method responses.  Sparta annotates your lambda functions response with &lt;em&gt;Go&lt;/em&gt;&amp;rsquo;s &lt;a href=&#34;https://golang.org/src/net/http/status.go&#34;&gt;HTTP StatusText&lt;/a&gt; values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:&lt;/p&gt;
+&lt;p&gt;The regular expressions are used to translate the integration response, which is just a blob of text provided to &lt;code&gt;context.done()&lt;/code&gt;, into API Gateway Method responses.  Sparta annotates your lambda functions response with &lt;strong&gt;Go&lt;/strong&gt;&amp;rsquo;s &lt;a href=&#34;https://golang.org/src/net/http/status.go&#34;&gt;HTTP StatusText&lt;/a&gt; values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/MethodResponse.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
 
@@ -1549,7 +1549,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;h2 id=&#34;sparta-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Limitations&lt;/h2&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;Go&lt;/em&gt; isn&amp;rsquo;t officially supported by AWS (yet)
+&lt;li&gt;&lt;strong&gt;Go&lt;/strong&gt; isn&amp;rsquo;t officially supported by AWS (yet)
 
 &lt;ul&gt;
 &lt;li&gt;But, you can &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;vote&lt;/a&gt; to make &lt;em&gt;golang&lt;/em&gt; officially supported.&lt;/li&gt;
@@ -1562,7 +1562,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;li&gt;See the &lt;a href=&#34;https://forums.aws.amazon.com/message.jspa?messageID=583910&#34;&gt;AWS Forum&lt;/a&gt; for more background&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
-&lt;li&gt;Once &lt;em&gt;Go&lt;/em&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
+&lt;li&gt;Once &lt;strong&gt;Go&lt;/strong&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
 &lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
 &lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -1658,7 +1658,7 @@ INFO[0000] Where @testEvent.json is a local file with top level `context` and `e
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;p&gt;The &lt;em&gt;localhost&lt;/em&gt; server mirrors the contract between the NodeJS proxying tier and the &lt;em&gt;Go&lt;/em&gt; binary that is used in the AWS Lambda execution environment.&lt;/p&gt;
+&lt;p&gt;The &lt;em&gt;localhost&lt;/em&gt; server mirrors the contract between the NodeJS proxying tier and the &lt;strong&gt;Go&lt;/strong&gt; binary that is used in the AWS Lambda execution environment.&lt;/p&gt;
 
 &lt;p&gt;Per the instructions, let&amp;rsquo;s create a &lt;em&gt;testEvent.json&lt;/em&gt; file with the required structure:&lt;/p&gt;
 

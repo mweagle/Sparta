@@ -68,7 +68,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Home googleplus: twitter:mweagle youtube: bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
+<body class="map[name:yeti home:Home github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -162,11 +162,11 @@
   <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
 </div>
 
-<p>Sparta defines a framework that deploys a set of <em>Go</em> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
+<p>Sparta defines a framework that deploys a set of <strong>Go</strong> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
 
-<p>What differentiates Sparta from similar approaches is that it enables you to create and manage <strong>the other AWS resources</strong> associated with your application.   It also exposes the ability to generate, as part of your deployment, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <em>Go</em> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.</p>
+<p>What differentiates Sparta from similar approaches is that it enables you to create and manage <strong>the other AWS resources</strong> associated with your application.   It also exposes the ability to generate, as part of your deployment, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <strong>Go</strong> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.</p>
 
-<p>Sparta allows your application to create or reference, in <em>Go</em>, additional AWS resource relations including:</p>
+<p>Sparta allows your application to create or reference, in <strong>Go</strong>, additional AWS resource relations including:</p>
 
 <ul>
 <li><a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Lambda Event Sources</a>
@@ -193,7 +193,7 @@
 </ul></li>
 </ul>
 
-<p><img src="images/sparta_overview.png" alt="Sparta Overview" /></p>
+<p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="images/sparta_overview.png" alt="Sparta Overview" />]</a></p>
 
 <p>Sparta leverages <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
 
@@ -211,6 +211,7 @@
 <li><a href="https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf">AWS Serverless Multi-Tier Architectures Whitepaper</a></li>
 <li><a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a></li>
 <li><a href="https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/">The Twelve Days of Lambda</a></li>
+<li><a href="http://cloudcraft.co">CloudCraft</a> is a great tool for AWS architecture diagrams</li>
 </ul>
 
   	</div>

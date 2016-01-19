@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: home:Home googleplus: twitter:mweagle youtube:]">
+<body class="map[facebook: name:yeti home:Home github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -323,7 +323,7 @@ apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
 
 <h3 id="a-href-hugoshortcode-5-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1API:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></h3>
 
-<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <em>Go</em> function:</p>
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <strong>Go</strong> function:</p>
 
 <pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
 apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
@@ -505,13 +505,13 @@ See
 
 <p>Because the integration request returned a successful response, the API Gateway response body contains only our lambda&rsquo;s output.</p>
 
-<p>If there were an error, the response would include additional fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <em>Go</em> HTTP response to a Lambda compatible result.</p>
+<p>If there were an error, the response would include additional fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <strong>Go</strong> HTTP response to a Lambda compatible result.</p>
 
 <p>A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
 
 <p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
 
-<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <em>Go</em>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <strong>Go</strong>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
 
 <p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
 

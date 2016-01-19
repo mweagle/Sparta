@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: home:Home googleplus: twitter:mweagle youtube:]">
+<body class="map[flattr: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle youtube: name:yeti home:Home github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -295,7 +295,7 @@
     <div class="container content">
   
 
-<p>Sparta is a framework for developing and deploying <em>Go</em> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
+<p>Sparta is a framework for developing and deploying <strong>Go</strong> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
 
 <div class="panel panel-danger">
 <div class="panel-heading">Pricing</div>
@@ -326,7 +326,7 @@
 
 <ul>
 <li><code>json.RawMessage</code> :  The arbitrary <code>json.RawMessage</code> event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.</li>
-<li><code>LambdaContext</code> : <em>Go</em> compatible representation of the AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">Context</a>. This struct includes fields such as <code>AWSRequestID</code>, CloudWatch&rsquo;s <code>LogGroupName</code>, and the provisioned AWS lambda&rsquo;s ARN (<code>InvokedFunctionARN</code>).</li>
+<li><code>LambdaContext</code> : <strong>Go</strong> compatible representation of the AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">Context</a>. This struct includes fields such as <code>AWSRequestID</code>, CloudWatch&rsquo;s <code>LogGroupName</code>, and the provisioned AWS lambda&rsquo;s ARN (<code>InvokedFunctionARN</code>).</li>
 <li><code>http.ResponseWriter</code> : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the <code>responseWriter</code> is published back via <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">context.done()</a>.</li>
 <li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
 </ul>
@@ -351,7 +351,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <ul>
 <li>In this example, we&rsquo;re defining a new <code>IAMRoleDefinition</code> as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&rsquo;t access any additional AWS services that&rsquo;s all we need.</li>
 </ul></li>
-<li><code>LambdaFunction</code>: The <em>Go</em> function to execute.</li>
+<li><code>LambdaFunction</code>: The <strong>Go</strong> function to execute.</li>
 <li><code>*LambdaFunctionOptions</code>: A pointer to any additional execution settings (eg, timeout, memory settings, etc).</li>
 </ul>
 

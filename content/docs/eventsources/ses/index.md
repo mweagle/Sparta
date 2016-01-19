@@ -49,7 +49,7 @@ The immutable infrastructure requirement makes this lambda function a bit more c
   * Wait for the S3 bucket to be provisioned
     - As we need a new S3 bucket, we're relying on AWS to generate a [unique name](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name).  But this means that our lambda function doesn't know the S3 bucket name during provisioning.
     - In fact, we shouldn't even create an AWS Lambda function if the S3 bucket can't be created.
-  * Include an IAMPrivilege so that our *Go* function can access the dynamically created bucket
+  * Include an IAMPrivilege so that our **Go** function can access the dynamically created bucket
   * Discover the S3 Bucket at lambda execution time
 
 ### <a href="{{< relref "#provisionBucket" >}}">Provision Message Body Storage Resource</a>
@@ -241,12 +241,12 @@ Additionally, if the SES handler needs to access the raw email message body:
   * Create a new `sesPermission.NewMessageBodyStorageResource("Special")` value
   * Assign the value to the `sesPermission.MessageBodyStorage` field
   * If needed, add to the `IAMPrivilege` an entry that includes the `sesPermission.MessageBodyStorage.BucketArnAllKeys()` Arn
-  * In your *Go* lambda function definition, discover the S3 bucketname via `sparta.Discover()`
+  * In your **Go** lambda function definition, discover the S3 bucketname via `sparta.Discover()`
 
 ## <a href="{{< relref "#otherResources" >}}">Notes</a>
 
   * The SES message (including headers) is stored in the [raw format](http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3)
-  * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing *Go* function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
+  * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing **Go** function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
   * More on Immutable Infrastructure:
     * [Subbu](https://www.subbu.org/blog/2015/08/lessons-from-the-cloud-bunker)
     * [Chad Fowler](http://chadfowler.com/blog/2013/06/23/immutable-deployments/)

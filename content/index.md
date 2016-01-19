@@ -18,11 +18,11 @@ title = "homepage"
   <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
 </div>
 
-Sparta defines a framework that deploys a set of *Go* HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
+Sparta defines a framework that deploys a set of **Go** HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
 
-What differentiates Sparta from similar approaches is that it enables you to create and manage **the other AWS resources** associated with your application.   It also exposes the ability to generate, as part of your deployment, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your *Go* functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
+What differentiates Sparta from similar approaches is that it enables you to create and manage **the other AWS resources** associated with your application.   It also exposes the ability to generate, as part of your deployment, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your **Go** functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
 
-Sparta allows your application to create or reference, in *Go*, additional AWS resource relations including:   
+Sparta allows your application to create or reference, in **Go**, additional AWS resource relations including:   
 
   - [AWS Lambda Event Sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
     - DynamoDB
@@ -38,7 +38,7 @@ Sparta allows your application to create or reference, in *Go*, additional AWS r
   - [S3 Static Websites](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
     - Sparta can provision an S3 bucket with your static resources, including [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) support
 
-![Sparta Overview](images/sparta_overview.png)
+<a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](images/sparta_overview.png)]</a>
 
 Sparta leverages [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
 
@@ -55,3 +55,4 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub. 
   * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
   * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
   * [The Twelve Days of Lambda](https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/)
+  * [CloudCraft](http://cloudcraft.co) is a great tool for AWS architecture diagrams

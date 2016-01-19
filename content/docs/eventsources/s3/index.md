@@ -74,7 +74,7 @@ The [stampImage](https://github.com/mweagle/SpartaImager/blob/master/application
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-With the core of the `transformImage` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [imagerFunctions](https://github.com/mweagle/SpartaImager/blob/master/application.go#L200) source.
+With the core of the `transformImage` complete, the next step is to integrate the **Go** function with Sparta.  This is performed by the [imagerFunctions](https://github.com/mweagle/SpartaImager/blob/master/application.go#L200) source.
 
 Our lambda function needs to both *Get* and *Put* items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:
 

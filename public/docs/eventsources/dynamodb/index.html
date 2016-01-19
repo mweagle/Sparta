@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: home:Home googleplus: twitter:mweagle github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle youtube: flattr: name:yeti home:Home github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -342,7 +342,7 @@ if err != nil {
 
 <h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
 
-<p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <em>Go</em> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
+<p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
 <pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
 

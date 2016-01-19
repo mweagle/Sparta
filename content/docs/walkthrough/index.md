@@ -46,7 +46,7 @@ The binary is built in the current directory with a _.lambda.amd64_ suffix.
 ### <a href="{{< relref "#package" >}}">Package</a>
 
 The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
-This includes the NodeJS proxy entries that forward AWS Lambda requests to your *Go* binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
+This includes the NodeJS proxy entries that forward AWS Lambda requests to your **Go** binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
 API Gateway configuration and S3 push source configuration.  Finally, a known version of the AWS SDK is included (that's the _node_modules_ copying you'll see if you enable `debug` verbosity) that's likely newer than the one included in the [AWS Lambda runtime](https://aws.amazon.com/releasenotes/AWS-Lambda).
 
 Over time it's expected that CloudFormation grows to support additional services and capabilities, at which point much of the NodeJS code can be eliminated.  

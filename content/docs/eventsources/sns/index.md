@@ -60,7 +60,7 @@ That's enough to get the data into CloudWatch Logs.
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-With the core of the `echoSNSEvent` complete, the next step is to integrate the *Go* function with Sparta.  This is performed by the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoSNSEvent` complete, the next step is to integrate the **Go** function with Sparta.  This is performed by the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
 lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)

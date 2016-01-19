@@ -51,7 +51,7 @@ With the function defined let's register it with Sparta.
 
 ## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-First we wrap the *Go* function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
+First we wrap the **Go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
 
 {{< highlight go >}}
 lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)
