@@ -472,16 +472,16 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Our SES handler then adds two &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html&#34;&gt;ReceiptRules&lt;/a&gt;:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sesPermission.ReceiptRules = make([]sparta.ReceiptRule, 0)
-  sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-    Name:       &amp;#34;Special&amp;#34;,
-    Recipients: []string{&amp;#34;sombody_special@gosparta.io&amp;#34;},
-    TLSPolicy:  &amp;#34;Optional&amp;#34;,
-  })
-  sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-    Name:       &amp;#34;Default&amp;#34;,
-    Recipients: []string{},
-    TLSPolicy:  &amp;#34;Optional&amp;#34;,
-    })&lt;/code&gt;&lt;/pre&gt;
+sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
+  Name:       &amp;#34;Special&amp;#34;,
+  Recipients: []string{&amp;#34;sombody_special@gosparta.io&amp;#34;},
+  TLSPolicy:  &amp;#34;Optional&amp;#34;,
+})
+sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
+  Name:       &amp;#34;Default&amp;#34;,
+  Recipients: []string{},
+  TLSPolicy:  &amp;#34;Optional&amp;#34;,
+})&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h3 id=&#34;a-href-hugoshortcode-9-dynamic-iamprivilege-arn-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic IAMPrivilege Arn&lt;/a&gt;&lt;/h3&gt;
@@ -489,17 +489,17 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Our lambda function is required to access the message body in the dynamically created &lt;code&gt;MessageBodyStorage&lt;/code&gt; resource, but the S3 resource Arn is only defined &lt;em&gt;after&lt;/em&gt; the service is provisioned.  The solution to this is to reference the dynamically generated &lt;code&gt;BucketArnAllKeys()&lt;/code&gt; value in the &lt;code&gt;sparta.IAMRolePrivilege&lt;/code&gt; initializer:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Then add the privilege to the Lambda function s.t. we can actually get at the data
-  lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-    sparta.IAMRolePrivilege{
-      Actions:  []string{&amp;#34;s3:GetObject&amp;#34;, &amp;#34;s3:HeadObject&amp;#34;},
-      Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
-    })&lt;/code&gt;&lt;/pre&gt;
+lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{&amp;#34;s3:GetObject&amp;#34;, &amp;#34;s3:HeadObject&amp;#34;},
+    Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
+})&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The last step is to register the &lt;code&gt;SESPermission&lt;/code&gt; with the lambda info:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Finally add the SES permission to the lambda function
-  lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)&lt;/code&gt;&lt;/pre&gt;
+lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;At this point we&amp;rsquo;ve implicitly created an S3 bucket via the &lt;code&gt;MessageBodyStorage&lt;/code&gt; value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.&lt;/p&gt;
