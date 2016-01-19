@@ -68,7 +68,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:yeti home:Home highlight:vs bitbucket: googleplus:]">
+<body class="map[highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: youtube: name:yeti home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -153,7 +153,7 @@
 
 <div class="jumbotron">
   <h1>Sparta <img src="images/spartanshieldsmall.png" alt="Sparta shield" height="80" width="80"></h1>
-  Build & deploy <b>Go</b> functions in AWS Lambda
+  Build & deploy <b>Go</b> applications in AWS Lambda
   <hr />
   <blockquote>
     <p>"No Server Is Easier To Manage Than No Server."</p>
@@ -162,20 +162,40 @@
   <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
 </div>
 
-<p>Sparta provides a framework to build &amp; deploy <em>Go</em> functions in <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>. While <em>Go</em> is not <em>yet</em> officially supported by AWS Lambda (see <a href="https://twitter.com/awscloud/status/659795641204260864">poll</a>), it&rsquo;s possible to bundle &amp; launch arbitrary executables in Lambda.</p>
+<p>Sparta defines a framework that deploys a set of <em>Go</em> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
 
-<p>Sparta provides a HTTP-based proxying tier between the proper <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> environment and your <em>Go</em> binary.  In addition to this proxying tier, Sparta is also able to:</p>
+<p>What differentiates Sparta from similar approaches is that it enables you to manage <em>the other AWS resources</em> associated with your application.   It also exposes the ability to generate, as part of your application, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <em>Go</em> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a>.</p>
+
+<p>Sparta allows your application to create or reference, in <em>Go</em>, additional AWS resource relations including:</p>
 
 <ul>
-<li>Manage S3 and SNS-based <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">event sources</a>.
+<li>Event Triggers
 
 <ul>
-<li>A Lambda function may be invoked in response to S3 or SNS broadcasted events.</li>
+<li>DynamoDB</li>
+<li>S3</li>
+<li>Kinesis</li>
+<li>SNS</li>
+<li>SES</li>
 </ul></li>
-<li>Provision an HTTPS <a href="https://aws.amazon.com/api-gateway/details/">API Gateway</a> service that allows Lambda functions to be publicly invoked.</li>
-<li>Deploy an <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3 site</a> with dynamic API Gateway discovery.</li>
-<li>Produce diagrams of Lambda &amp; event source dataflow.</li>
+<li>Other AWS resources
+
+<ul>
+<li>S3 buckets with dynamic names</li>
+<li>SNS resources</li>
+<li>Other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types</a></li>
+</ul></li>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> resources</li>
+<li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3 Static Websites</a>
+
+<ul>
+<li>Sparta can provision an S3 bucket with your static resources, including <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html">CORS</a> support</li>
+</ul></li>
 </ul>
+
+<p><img src="images/sparta_overview.png" alt="Sparta Overview" /></p>
+
+<p>Sparta leverages <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
 
 <h2 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h2>
 

@@ -1,7 +1,7 @@
 +++
 author = "Matt W."
 comments = true
-date = "2015-11-29T06:50:17"
+date = "2016-01-19T14:58:42Z"
 draft = false
 share = false
 title = "homepage"
@@ -9,7 +9,7 @@ title = "homepage"
 
 <div class="jumbotron">
   <h1>Sparta <img src="images/spartanshieldsmall.png" alt="Sparta shield" height="80" width="80"></h1>
-  Build & deploy <b>Go</b> functions in AWS Lambda
+  Build & deploy <b>Go</b> applications in AWS Lambda
   <hr />
   <blockquote>
     <p>"No Server Is Easier To Manage Than No Server."</p>
@@ -18,15 +18,29 @@ title = "homepage"
   <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
 </div>
 
-Sparta provides a framework to build & deploy *Go* functions in [AWS Lambda](https://aws.amazon.com/lambda/). While *Go* is not _yet_ officially supported by AWS Lambda (see [poll](https://twitter.com/awscloud/status/659795641204260864)), it's possible to bundle & launch arbitrary executables in Lambda.  
+Sparta defines a framework that deploys a set of *Go* HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
 
-Sparta provides a HTTP-based proxying tier between the proper [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html) environment and your *Go* binary.  In addition to this proxying tier, Sparta is also able to:
+What differentiates Sparta from similar approaches is that it enables you to manage _the other AWS resources_ associated with your application.   It also exposes the ability to generate, as part of your application, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your *Go* functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP).
 
-  * Manage S3 and SNS-based [event sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources).
-      * A Lambda function may be invoked in response to S3 or SNS broadcasted events.
-  * Provision an HTTPS [API Gateway](https://aws.amazon.com/api-gateway/details/) service that allows Lambda functions to be publicly invoked.
-  * Deploy an [S3 site](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) with dynamic API Gateway discovery.
-  * Produce diagrams of Lambda & event source dataflow.
+Sparta allows your application to create or reference, in *Go*, additional AWS resource relations including:   
+
+  - Event Triggers
+    - DynamoDB
+    - S3
+    - Kinesis
+    - SNS
+    - SES
+  - Other AWS resources
+    - S3 buckets with dynamic names
+    - SNS resources
+    - Other [CloudFormation Resource Types](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+  - [API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) resources
+  - [S3 Static Websites](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
+    - Sparta can provision an S3 bucket with your static resources, including [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) support
+
+![Sparta Overview](images/sparta_overview.png)
+
+Sparta leverages [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
 
 ## Getting Started
 

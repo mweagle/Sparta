@@ -1,7 +1,7 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "Event Source - Kinesis"
 tags = ["sparta"]
 type = "doc"
 +++

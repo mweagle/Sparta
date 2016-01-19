@@ -20,7 +20,6 @@ type = "doc"
     * See the [JAWS](https://github.com/jaws-framework/JAWS) project for a pure NodeJS alternative.
     * See the [PAWS](https://github.com/braahyan/PAWS) project for a pure Python alternative.
 
-
 ## AWS Lambda Limitations
 
   * Lambda is not yet globally available. Please view the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the latest deployment status.
@@ -29,4 +28,3 @@ type = "doc"
     * https://forums.aws.amazon.com/thread.jspa?threadID=203889
     * https://forums.aws.amazon.com/thread.jspa?threadID=210826
   * Similarly, it's not possible to set proper error response bodies.
-  

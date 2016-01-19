@@ -1,7 +1,7 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "DynamoDB"
+title = "Event Source - DynamoDB"
 tags = ["sparta"]
 type = "doc"
 +++
