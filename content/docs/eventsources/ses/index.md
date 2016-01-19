@@ -241,5 +241,6 @@ Additionally, if the SES handler needs to access the raw email message body:
   * In your *Go* lambda function definition, discover the S3 bucketname via `sparta.Discover()`
 
 ## <a href="{{< relref "#otherResources" >}}">Notes</a>
+
   * The SES message (including headers) is stored in the [raw format](http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3)
   * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing *Go* function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
