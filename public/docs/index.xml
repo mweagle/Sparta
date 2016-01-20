@@ -90,11 +90,11 @@
 &lt;li&gt;&lt;code&gt;ProcessReused&lt;/code&gt;: An existing &lt;strong&gt;Go&lt;/strong&gt; process was used to handle requests.  See also the discussion on AWS Lambda &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&#34;opsfaq4:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I include additional AWS resources as part of my Sparta application?&lt;/h3&gt;
+&lt;h3 id=&#34;opsfaq3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I include additional AWS resources as part of my Sparta application?&lt;/h3&gt;
 
 &lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with additional AWS resources.&lt;/p&gt;
 
-&lt;h3 id=&#34;opsfaq4-1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?&lt;/h3&gt;
+&lt;h3 id=&#34;opsfaq4:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?&lt;/h3&gt;
 
 &lt;p&gt;The list of registered output provider types is defined by &lt;code&gt;cloudformationTypeMapDiscoveryOutputs&lt;/code&gt; in &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go&#34;&gt;cloudformation_resources.go&lt;/a&gt;.  See the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Types Reference&lt;/a&gt; for information on interpreting the values.&lt;/p&gt;
 </description>

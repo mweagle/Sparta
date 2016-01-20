@@ -58,7 +58,7 @@ Sparta publishes two counters:
   * `ProcessSpawned`: A new **Go** process was spawned to handle requests
   * `ProcessReused`: An existing **Go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
 
-### How can I include additional AWS resources as part of my Sparta application?  {#opsfaq4}  
+### How can I include additional AWS resources as part of my Sparta application?  {#opsfaq3}  
 
 Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with additional AWS resources.
 
