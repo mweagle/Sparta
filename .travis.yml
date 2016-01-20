@@ -4,8 +4,8 @@ go:
 - 1.5.3
 - tip
 before_install:
-- nvm install 4.1
-- nvm use 4.1
+- nvm install 4.2.4
+- nvm use 4.2.4
 install: make get
 script: make test
 env:
