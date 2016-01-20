@@ -15,6 +15,7 @@
   - :boom: Add `sparta.Discovery()` function
     - To be called from a **Go** lambda function (Eg, `func echoEvent(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`), it returns the Outputs (both [Fn::Att](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) and [Ref](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html) ) values of dynamically generated CloudFormation resources.
     - Sample output return value:
+
         ```json
         {
           "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
@@ -32,6 +33,7 @@
           "golangFunc": "main.echoSESEvent"
         }
         ```
+
         - See the [SES EventSource docs](http://gosparta.io/docs/eventsources/ses/) for more information.
   - Added `TS` (UTC TimeStamp) field to startup message
   - Improved stack provisioning performance
