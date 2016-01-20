@@ -598,7 +598,7 @@ func createPackageStep() workflowStep {
 		// And the service name
 		nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", ctx.serviceName)
 		ctx.logger.WithFields(logrus.Fields{
-			"Entry": nodeJSSource,
+			"index.js": nodeJSSource,
 		}).Debug("Dynamically generated NodeJS adapter")
 
 		stringReader := strings.NewReader(nodeJSSource)
