@@ -1019,6 +1019,9 @@ type LambdaAWSInfo struct {
 	// Template decorator. If defined, the decorator will be called to insert additional
 	// resources on behalf of this lambda function
 	Decorator TemplateDecorator
+	// Optional array of infrastructure resource logical names, typically
+	// defined by a TemplateDecorator, that this lambda depends on
+	DependsOn []string
 }
 
 // Returns a JavaScript compatible function name for the golang function name.  This
@@ -1038,6 +1041,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	// If we have RoleName, then get the ARN, otherwise get the Ref
 	var dependsOn []string
+	if nil != info.DependsOn {
+		dependsOn = append(dependsOn, info.DependsOn...)
+	}
 
 	iamRoleArnName := info.RoleName
 
