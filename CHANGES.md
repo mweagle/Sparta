@@ -6,6 +6,7 @@
   - Add dependency on [crewjam/go-cloudformation](https://github.com/crewjam/go-cloudformation) for CloudFormation template creation
     - Expect changes to be rolled into origin
     - /ht @crewjam
+  - CloudWatch log output no longer automatically uppercases all first order child key names.
 - :checkered_flag: **CHANGES**
   - Added `TS` (UTC TimeStamp) field to startup message
   - Improved stack provisioning performance
