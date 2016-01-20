@@ -6,18 +6,16 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-
-# FAQ
-
-  * Development
-    * [How can I test locally?]({{< relref "#devfaq1" >}})  
-  * Event Sources
-    * SES
+* Development
+  * [How can I test locally?]({{< relref "#devfaq1" >}})
+* Event Sources
+  * SES
       * [Where does the _SpartaRuleSet_ come from?]({{< relref "#sesfaq1" >}})  
       * [Why does `provision` not enable the _SpartaRuleSet_?]({{< relref "#sesfaq2" >}})  
-  * Operations
-    * [Where can I view my function's `*logger` output?]({{< relref "#opsfaq1" >}})  
-    * [Where can I view Sparta's golang spawn metrics?]({{< relref "#opsfaq2" >}})  
+* Operations
+  * [Where can I view my function's `*logger` output?]({{< relref "#opsfaq1" >}})  
+  * [Where can I view Sparta's golang spawn metrics?]({{< relref "#opsfaq2" >}})  
+  * [How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?]({{< relref "#opsfaq3" >}})
 
 ## Development
 <hr />
@@ -58,3 +56,7 @@ Sparta publishes two counters:
 
   * `ProcessSpawned`: A new **Go** process was spawned to handle requests
   * `ProcessReused`: An existing **Go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
+
+### How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?  {#opsfaq3}  
+
+The list of registered output provider types is defined by `cloudformationTypeMapDiscoveryOutputs` in [cloudformation_resources.go](https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go).  See the [CloudFormation Resource Types Reference](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for information on interpreting the values.

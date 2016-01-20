@@ -8,6 +8,11 @@
   IconClass = "fa-book"
   URL = "/docs"
 
+[faq]
+  Name = "FAQ"
+  IconClass = "fa-question-circle"
+  URL = "/docs/faq"
+
 [tags]
     Name = "Tags"
     IconClass = "fa-tags"
