@@ -131,11 +131,7 @@ var log = function(obj_or_string)
   }
   else
   {
-    var xformed = {};
-    Object.keys(obj_or_string).forEach(function (eachKey) {
-      xformed[eachKey.toUpperCase()] = obj_or_string[eachKey];
-    });
-    console.log(JSON.stringify(xformed));
+    console.log(JSON.stringify(obj_or_string));
   }
 };
 
