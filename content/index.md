@@ -20,9 +20,15 @@ title = "homepage"
 
 Sparta defines a framework that deploys a set of **Go** HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
 
-What differentiates Sparta from similar approaches is that it enables you to create and manage **the other AWS resources** associated with your application.   It also exposes the ability to generate, as part of your deployment, individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your **Go** functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
+What differentiates Sparta from similar solutions (see below), is that is also helps create & discover **the other AWS resources** a service typically requires:
 
-Sparta allows your application to create or reference, in **Go**, additional AWS resource relations including:   
+  -  [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resources that should be created during your service's provisioning.  
+  - Discovery of those dependent resources' CloudFormation outputs (`Ref` && `Fn::Att` values) at Lambda execution time
+    - This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded _Magic ARNs_ from your codebase.
+  - Individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your **Go** functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
+  - Registration of your **Go** function with push-based [AWS Event Sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html).
+
+For instance, your service can express in **Go**:
 
   - [AWS Lambda Event Sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
     - DynamoDB
@@ -31,7 +37,7 @@ Sparta allows your application to create or reference, in **Go**, additional AWS
     - SNS
     - SES
   - Other AWS resources
-    - S3 buckets with dynamic names
+    - S3 buckets with dynamic outputs that your lambda function can [discover at runtime](http://gosparta.io/docs/eventsources/ses/)
     - SNS resources
     - Any other [CloudFormation Resource Type](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
   - [API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) resources
@@ -52,6 +58,14 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub. 
 
 ### Other resources
 
+  * Other libraries & frameworks:
+    * [Serverless](https://github.com/serverless/serverless)
+    * [PAWS](https://github.com/braahyan/PAWS)
+    * [Apex](https://github.com/apex/apex)
+    * [lambda_proc](https://github.com/jasonmoo/lambda_proc)
+    * [go-lambda](https://github.com/xlab/go-lambda)
+    * [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
+  * [Serverless Code Blog](https://serverlesscode.com)
   * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
   * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
   * [The Twelve Days of Lambda](https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/)

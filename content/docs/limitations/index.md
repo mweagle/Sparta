@@ -17,8 +17,6 @@ type = "doc"
         * See the [AWS Forum](https://forums.aws.amazon.com/message.jspa?messageID=583910) for more background
     * Depending on [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/), this initialization penalty (~`700ms`) may prove burdensome.
     * Once **Go** is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance & lower execution costs.
-    * See the [JAWS](https://github.com/jaws-framework/JAWS) project for a pure NodeJS alternative.
-    * See the [PAWS](https://github.com/braahyan/PAWS) project for a pure Python alternative.
 
 ## AWS Lambda Limitations
 

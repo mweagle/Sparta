@@ -68,7 +68,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: home:Home highlight:vs facebook: twitter:mweagle youtube: flattr:]">
+<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: flattr: home:Home highlight:vs googleAnalytics:UA-70794971-1 twitter:mweagle youtube: name:yeti]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -164,9 +164,20 @@
 
 <p>Sparta defines a framework that deploys a set of <strong>Go</strong> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.</p>
 
-<p>What differentiates Sparta from similar approaches is that it enables you to create and manage <strong>the other AWS resources</strong> associated with your application.   It also exposes the ability to generate, as part of your deployment, individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <strong>Go</strong> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.</p>
+<p>What differentiates Sparta from similar solutions (see below), is that is also helps create &amp; discover <strong>the other AWS resources</strong> a service typically requires:</p>
 
-<p>Sparta allows your application to create or reference, in <strong>Go</strong>, additional AWS resource relations including:</p>
+<ul>
+<li><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> resources that should be created during your service&rsquo;s provisioning.<br /></li>
+<li>Discovery of those dependent resources&rsquo; CloudFormation outputs (<code>Ref</code> &amp;&amp; <code>Fn::Att</code> values) at Lambda execution time
+
+<ul>
+<li>This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded <em>Magic ARNs</em> from your codebase.</li>
+</ul></li>
+<li>Individual <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Policies</a> under which your <strong>Go</strong> functions will execute.  The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.</li>
+<li>Registration of your <strong>Go</strong> function with push-based <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Event Sources</a>.</li>
+</ul>
+
+<p>For instance, your service can express in <strong>Go</strong>:</p>
 
 <ul>
 <li><a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Lambda Event Sources</a>
@@ -181,7 +192,7 @@
 <li>Other AWS resources
 
 <ul>
-<li>S3 buckets with dynamic names</li>
+<li>S3 buckets with dynamic outputs that your lambda function can <a href="http://gosparta.io/docs/eventsources/ses/">discover at runtime</a></li>
 <li>SNS resources</li>
 <li>Any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Type</a></li>
 </ul></li>
@@ -208,6 +219,17 @@
 <h3 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other resources</h3>
 
 <ul>
+<li>Other libraries &amp; frameworks:
+
+<ul>
+<li><a href="https://github.com/serverless/serverless">Serverless</a></li>
+<li><a href="https://github.com/braahyan/PAWS">PAWS</a></li>
+<li><a href="https://github.com/apex/apex">Apex</a></li>
+<li><a href="https://github.com/jasonmoo/lambda_proc">lambda_proc</a></li>
+<li><a href="https://github.com/xlab/go-lambda">go-lambda</a></li>
+<li><a href="https://github.com/pilwon/go-lambda">go-lambda (GRPC)</a></li>
+</ul></li>
+<li><a href="https://serverlesscode.com">Serverless Code Blog</a></li>
 <li><a href="https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf">AWS Serverless Multi-Tier Architectures Whitepaper</a></li>
 <li><a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a></li>
 <li><a href="https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/">The Twelve Days of Lambda</a></li>

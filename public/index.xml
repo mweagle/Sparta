@@ -32,9 +32,20 @@
 
 &lt;p&gt;Sparta defines a framework that deploys a set of &lt;strong&gt;Go&lt;/strong&gt; HTTP request/response handlers to &lt;a href=&#34;https://aws.amazon.com/lambda/&#34;&gt;AWS Lambda&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;What differentiates Sparta from similar approaches is that it enables you to create and manage &lt;strong&gt;the other AWS resources&lt;/strong&gt; associated with your application.   It also exposes the ability to generate, as part of your deployment, individual &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Policies&lt;/a&gt; under which your &lt;strong&gt;Go&lt;/strong&gt; functions will execute.  The ability to limit lambda execution privileges helps support &lt;a href=&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;&gt;POLP&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hashtag/secops&#34;&gt;#SecOps&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;What differentiates Sparta from similar solutions (see below), is that is also helps create &amp;amp; discover &lt;strong&gt;the other AWS resources&lt;/strong&gt; a service typically requires:&lt;/p&gt;
 
-&lt;p&gt;Sparta allows your application to create or reference, in &lt;strong&gt;Go&lt;/strong&gt;, additional AWS resource relations including:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; resources that should be created during your service&amp;rsquo;s provisioning.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;Discovery of those dependent resources&amp;rsquo; CloudFormation outputs (&lt;code&gt;Ref&lt;/code&gt; &amp;amp;&amp;amp; &lt;code&gt;Fn::Att&lt;/code&gt; values) at Lambda execution time
+
+&lt;ul&gt;
+&lt;li&gt;This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded &lt;em&gt;Magic ARNs&lt;/em&gt; from your codebase.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Individual &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Policies&lt;/a&gt; under which your &lt;strong&gt;Go&lt;/strong&gt; functions will execute.  The ability to limit lambda execution privileges helps support &lt;a href=&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;&gt;POLP&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hashtag/secops&#34;&gt;#SecOps&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Registration of your &lt;strong&gt;Go&lt;/strong&gt; function with push-based &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;AWS Event Sources&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;For instance, your service can express in &lt;strong&gt;Go&lt;/strong&gt;:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;AWS Lambda Event Sources&lt;/a&gt;
@@ -49,7 +60,7 @@
 &lt;li&gt;Other AWS resources
 
 &lt;ul&gt;
-&lt;li&gt;S3 buckets with dynamic names&lt;/li&gt;
+&lt;li&gt;S3 buckets with dynamic outputs that your lambda function can &lt;a href=&#34;http://gosparta.io/docs/eventsources/ses/&#34;&gt;discover at runtime&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;SNS resources&lt;/li&gt;
 &lt;li&gt;Any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Type&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
@@ -76,6 +87,17 @@
 &lt;h3 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other resources&lt;/h3&gt;
 
 &lt;ul&gt;
+&lt;li&gt;Other libraries &amp;amp; frameworks:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/serverless/serverless&#34;&gt;Serverless&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/apex/apex&#34;&gt;Apex&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/jasonmoo/lambda_proc&#34;&gt;lambda_proc&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/xlab/go-lambda&#34;&gt;go-lambda&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/pilwon/go-lambda&#34;&gt;go-lambda (GRPC)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://serverlesscode.com&#34;&gt;Serverless Code Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf&#34;&gt;AWS Serverless Multi-Tier Architectures Whitepaper&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda limits&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/&#34;&gt;The Twelve Days of Lambda&lt;/a&gt;&lt;/li&gt;
@@ -1639,8 +1661,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
 &lt;li&gt;Once &lt;strong&gt;Go&lt;/strong&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 

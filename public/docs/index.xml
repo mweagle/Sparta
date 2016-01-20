@@ -1566,8 +1566,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
 &lt;li&gt;Once &lt;strong&gt;Go&lt;/strong&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/jaws-framework/JAWS&#34;&gt;JAWS&lt;/a&gt; project for a pure NodeJS alternative.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://github.com/braahyan/PAWS&#34;&gt;PAWS&lt;/a&gt; project for a pure Python alternative.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
