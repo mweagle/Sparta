@@ -11,6 +11,7 @@
   - Added `TS` (UTC TimeStamp) field to startup message
   - Improved stack provisioning performance
   - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
+  - Refactor AWS runtime requirements into `lambdaBinary` build tag scope to support Windows builds.
   - Add `SESPermission` type to support triggering Lambda functions in response to inbound email
     - See _doc_sespermission_test.go_ for an example
     - Storing the message body to S3 is done by assigning the `MessageBodyStorage` field.
