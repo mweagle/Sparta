@@ -8,6 +8,7 @@ package sparta
 import (
 	"errors"
 	"io"
+	"syscall"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -30,4 +31,10 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) error {
 	logger.Error("Explore() not supported in AWS Lambda binary")
 	return errors.New("Explore not supported for this binary")
+}
+
+// Support Windows development, by only requiring `syscall` in the compiled
+// linux binary.
+func platformKill(parentProcessPID int) {
+	syscall.Kill(parentProcessPID, syscall.SIGUSR2)
 }
