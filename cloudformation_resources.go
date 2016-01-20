@@ -94,7 +94,9 @@ func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf
 	return resProps, nil
 }
 
-func outputsForResource(template *gocf.Template, logicalResourceName string, logger *logrus.Logger) (map[string]interface{}, error) {
+func outputsForResource(template *gocf.Template,
+	logicalResourceName string,
+	logger *logrus.Logger) (map[string]interface{}, error) {
 	item, ok := template.Resources[logicalResourceName]
 	if !ok {
 		return nil, nil
@@ -112,10 +114,18 @@ func outputsForResource(template *gocf.Template, logicalResourceName string, log
 		// Any tags?
 		r := reflect.ValueOf(item.Properties)
 		tagsField := reflect.Indirect(r).FieldByName("Tags")
-		if tagsField.IsValid() {
+		if tagsField.IsValid() && !tagsField.IsNil() {
 			outputs["Tags"] = tagsField.Interface()
 		}
 	}
+
+	if len(outputs) != 0 {
+		logger.WithFields(logrus.Fields{
+			"ResourceName": logicalResourceName,
+			"Outputs":      outputs,
+		}).Debug("Resource Outputs")
+	}
+
 	return outputs, nil
 }
 func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
