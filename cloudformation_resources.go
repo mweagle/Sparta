@@ -10,7 +10,12 @@ import (
 )
 
 var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
-	"AWS::S3::Bucket": []string{"DomainName", "WebsiteURL"},
+	"AWS::DynamoDB::Table":    []string{"StreamArn"},
+	"AWS::Kinesis::Stream":    []string{"Arn"},
+	"AWS::Route53::RecordSet": []string{""},
+	"AWS::S3::Bucket":         []string{"DomainName", "WebsiteURL"},
+	"AWS::SNS::Topic":         []string{"TopicName"},
+	"AWS::SQS::Queue":         []string{"Arn", "QueueName"},
 }
 
 // cloudFormationAPIGatewayResource is the CustomResource type used to
