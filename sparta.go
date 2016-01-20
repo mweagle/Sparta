@@ -879,7 +879,9 @@ func (perm SESPermission) export(serviceName string,
 }
 
 func (perm SESPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.describeInfoArn(), ""
+	// SES doesn't use ARNs, but "*" breaks mermaids parser, so
+	// use entity code per: http://knsv.github.io/mermaid/#special-characters-that-break-syntax
+	return "Not Applicable", "All verified domain(s) email"
 }
 
 //

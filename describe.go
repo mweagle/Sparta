@@ -15,32 +15,45 @@ import (
 )
 
 // RE for sanitizing golang/JS layer
-var reSanitizeMermaidNodeName = regexp.MustCompile("[\\s\\W]+")
+var reSanitizeMermaidNodeName = regexp.MustCompile("[\\W\\s]+")
+var reSanitizeMermaidLabelValue = regexp.MustCompile("[\\{\\}\"']+")
 
-func sanitizedNodeName(sourceName string) string {
-	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "")
+func mermaidNodeName(sourceName string) string {
+	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "x")
+}
+
+func mermaidLabelValue(labelText string) string {
+	return reSanitizeMermaidLabelValue.ReplaceAllString(labelText, "")
 }
 
 func writeNode(writer io.Writer, nodeName string, nodeColor string) {
-	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", nodeName, nodeColor)
-	fmt.Fprintf(writer, "%s[%s]\n", nodeName, nodeName)
+	sanitizedName := mermaidNodeName(nodeName)
+	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", sanitizedName, nodeColor)
+	fmt.Fprintf(writer, "%s[%s]\n", sanitizedName, mermaidLabelValue(nodeName))
 }
 
 func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
+	sanitizedFrom := mermaidNodeName(fromNode)
+	sanitizedTo := mermaidNodeName(toNode)
+
 	if "" != label {
-		fmt.Fprintf(writer, "%s-- \"%s\" -->%s\n", fromNode, label, toNode)
+		fmt.Fprintf(writer, "%s-- \"%s\" -->%s\n", sanitizedFrom, mermaidLabelValue(label), sanitizedTo)
 	} else {
-		fmt.Fprintf(writer, "%s-->%s\n", fromNode, toNode)
+		fmt.Fprintf(writer, "%s-->%s\n", sanitizedFrom, sanitizedTo)
 	}
-}
-func describeAPI() string {
-	return ""
 }
 
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
 // automatically called as part of a compiled golang binary via the `describe` command
 // line option.
-func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, s3Site *S3Site, outputWriter io.Writer, logger *logrus.Logger) error {
+func Describe(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	s3Site *S3Site,
+	outputWriter io.Writer,
+	logger *logrus.Logger) error {
+
 	var cloudFormationTemplate bytes.Buffer
 	err := Provision(true,
 		serviceName,
@@ -75,16 +88,14 @@ func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*L
 		for _, eachPermission := range eachLambda.Permissions {
 			name, link := eachPermission.descriptionInfo()
 
-			mermaidName := sanitizedNodeName(name)
 			// Style it to have the Amazon color
-			writeNode(&b, mermaidName, "F1702A")
-			writeLink(&b, mermaidName, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
+			writeNode(&b, name, "F1702A")
+			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, " ", "<br>", -1))
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			nodeName := sanitizedNodeName(eachEventSourceMapping.EventSourceArn)
-			writeNode(&b, nodeName, "F1702A")
-			writeLink(&b, nodeName, eachLambda.lambdaFnName, "")
+			writeNode(&b, eachEventSourceMapping.EventSourceArn, "F1702A")
+			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFnName, "")
 		}
 	}
 
