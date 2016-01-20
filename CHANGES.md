@@ -5,24 +5,16 @@
     - /ht @crewjam for https://github.com/crewjam/go-cloudformation
   - Use `sparta.EventSourceMapping` rather than [aws.CreateEventSourceMappingInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput) type for `LambdaAWSInfo.EventSourceMappings` slice
   - Add dependency on [crewjam/go-cloudformation](https://github.com/crewjam/go-cloudformation) for CloudFormation template creation
-    - Expect changes to be rolled into origin
-    - /ht @crewjam
+    - /ht @crewjam for the great library
   - CloudWatch log output no longer automatically uppercases all first order child key names.
+
 - :checkered_flag: **CHANGES**
-  - Added `TS` (UTC TimeStamp) field to startup message
-  - Improved stack provisioning performance
-  - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
-  - Refactor AWS runtime requirements into `lambdaBinary` build tag scope to support Windows builds.
-  - Add `SESPermission` type to support triggering Lambda functions in response to inbound email
-    - See _doc_sespermission_test.go_ for an example
-    - Storing the message body to S3 is done by assigning the `MessageBodyStorage` field.
-  - Add `NewAPIGatewayRequest` to support _localhost_ API Gateway mock requests
-  - Add `LambdaAWSInfo.DependsOn` slice
-    - Lambda functions can now declare explicit dependencies on resources added via a `TemplateDecorator` function
-  - Add `sparta.Discovery()` function
+  - :boom: Add `LambdaAWSInfo.DependsOn` slice
+    -  Lambda functions can now declare explicit dependencies on resources added via a `TemplateDecorator` function
+    - The `DependsOn` value should be the dependency's logical resource name.  Eg, the value returned from `CloudFormationResourceName(...)`.
+  - :boom: Add `sparta.Discovery()` function
     - To be called from a **Go** lambda function (Eg, `func echoEvent(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`), it returns the Outputs (both [Fn::Att](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) and [Ref](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html) ) values of dynamically generated CloudFormation resources.
     - Sample output return value:
-
         ```json
         {
           "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
@@ -40,7 +32,15 @@
           "golangFunc": "main.echoSESEvent"
         }
         ```
-    - See the [SES EventSource docs](http://gosparta.io/docs/eventsources/ses/) for more information.
+        - See the [SES EventSource docs](http://gosparta.io/docs/eventsources/ses/) for more information.
+  - Added `TS` (UTC TimeStamp) field to startup message
+  - Improved stack provisioning performance
+  - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
+  - Refactor AWS runtime requirements into `lambdaBinary` build tag scope to support Windows builds.
+  - Add `SESPermission` type to support triggering Lambda functions in response to inbound email
+    - See _doc_sespermission_test.go_ for an example
+    - Storing the message body to S3 is done by assigning the `MessageBodyStorage` field.
+  - Add `NewAPIGatewayRequest` to support _localhost_ API Gateway mock requests
 
 ## v0.1.5
 - :warning: **BREAKING**
