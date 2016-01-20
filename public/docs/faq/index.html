@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  306 
+    "wordCount":  344 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: github:https://github.com/mweagle bitbucket: twitter:mweagle googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:yeti home:Home highlight:vs]">
+<body class="map[twitter:mweagle name:yeti highlight:vs github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: flattr: home:Home googleAnalytics:UA-70794971-1 youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -329,7 +329,8 @@
 <ul>
 <li><a href="#opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a><br /></li>
 <li><a href="#opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a><br /></li>
-<li><a href="#opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
+<li><a href="#opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</a></li>
+<li><a href="#opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
 </ul></li>
 </ul>
 
@@ -378,7 +379,11 @@
 <li><code>ProcessReused</code>: An existing <strong>Go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
 </ul>
 
-<h3 id="opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h3>
+<h3 id="opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h3>
+
+<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
+
+<h3 id="opsfaq4-1:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h3>
 
 <p>The list of registered output provider types is defined by <code>cloudformationTypeMapDiscoveryOutputs</code> in <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go">cloudformation_resources.go</a>.  See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types Reference</a> for information on interpreting the values.</p>
 

@@ -15,7 +15,8 @@ type = "doc"
 * Operations
   * [Where can I view my function's `*logger` output?]({{< relref "#opsfaq1" >}})  
   * [Where can I view Sparta's golang spawn metrics?]({{< relref "#opsfaq2" >}})  
-  * [How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?]({{< relref "#opsfaq3" >}})
+  * [How can I include additional AWS resources as part of my Sparta application?]({{< relref "#opsfaq3" >}})
+  * [How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?]({{< relref "#opsfaq4" >}})
 
 ## Development
 <hr />
@@ -57,6 +58,10 @@ Sparta publishes two counters:
   * `ProcessSpawned`: A new **Go** process was spawned to handle requests
   * `ProcessReused`: An existing **Go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
 
-### How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?  {#opsfaq3}  
+### How can I include additional AWS resources as part of my Sparta application?  {#opsfaq4}  
+
+Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with additional AWS resources.
+
+### How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?  {#opsfaq4}  
 
 The list of registered output provider types is defined by `cloudformationTypeMapDiscoveryOutputs` in [cloudformation_resources.go](https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go).  See the [CloudFormation Resource Types Reference](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for information on interpreting the values.
