@@ -3,7 +3,6 @@ package sparta
 import (
 	"fmt"
 	"net/http"
-	"syscall"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -26,8 +25,7 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 		WriteTimeout: 10 * time.Second,
 	}
 	if 0 != parentProcessPID {
-		logger.Debug("Sending SIGUSR2 to parent process: ", parentProcessPID)
-		syscall.Kill(parentProcessPID, syscall.SIGUSR2)
+		platformKill(parentProcessPID)
 	}
 	logger.WithFields(logrus.Fields{
 		"URL": fmt.Sprintf("http://localhost:%d", port),
