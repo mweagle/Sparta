@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://gosparta.io/</loc>
-    <lastmod>2016-01-19T14:58:42+00:00</lastmod>
+    <lastmod>2016-01-20T21:12:27+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/faq/</loc>
+    <lastmod>2016-01-20T21:12:27+00:00</lastmod>
   </url>
   
   <url>
@@ -54,11 +59,6 @@
   
   <url>
     <loc>http://gosparta.io/docs/apigateway/example3/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/faq/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   

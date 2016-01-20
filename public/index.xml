@@ -8,8 +8,89 @@
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
-    <lastBuildDate>Tue, 19 Jan 2016 14:58:42 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 20 Jan 2016 21:12:27 +0000</lastBuildDate>
     <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>FAQ</title>
+      <link>http://gosparta.io/docs/faq/</link>
+      <pubDate>Wed, 20 Jan 2016 21:12:27 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/faq/</guid>
+      <description>
+
+&lt;h1 id=&#34;faq:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;FAQ&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Development
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#devfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I test locally?&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Event Sources
+
+&lt;ul&gt;
+&lt;li&gt;SES
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#sesfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#sesfaq2:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Why does &lt;code&gt;provision&lt;/code&gt; not enable the &lt;em&gt;SpartaRuleSet&lt;/em&gt;?&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Operations
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#opsfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view my function&amp;rsquo;s &lt;code&gt;*logger&lt;/code&gt; output?&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#opsfaq2:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view Sparta&amp;rsquo;s golang spawn metrics?&lt;/a&gt;&lt;br /&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;development:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Development&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;faq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I test locally?&lt;/h3&gt;
+
+&lt;p&gt;Local testing is available via the &lt;a href=&#34;http://gosparta.io/docs/local_testing/&#34;&gt;explore&lt;/a&gt; command.&lt;/p&gt;
+
+&lt;h2 id=&#34;event-sources-ses:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Sources - SES&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;where-does-the-spartaruleset-come-from-sesfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?  {sesfaq1}&lt;/h3&gt;
+
+&lt;p&gt;SES only permits a single &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html&#34;&gt;active receipt rule&lt;/a&gt;.  Additionally, it&amp;rsquo;s possible that multiple Sparta-based services are handing different SES recipients.&lt;/p&gt;
+
+&lt;p&gt;All Sparta-based services share the &lt;em&gt;SpartaRuleSet&lt;/em&gt; SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html&#34;&gt;ReceiptRule&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;sesfaq2:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Why does &lt;code&gt;provision&lt;/code&gt; not always enable the &lt;em&gt;SpartaRuleSet&lt;/em&gt;?&lt;/h3&gt;
+
+&lt;p&gt;Initial &lt;em&gt;SpartaRuleSet&lt;/em&gt; will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&amp;rsquo;t attempt to override the user setting.&lt;/p&gt;
+
+&lt;h2 id=&#34;operations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Operations&lt;/h2&gt;
+
+&lt;hr /&gt;
+
+&lt;h3 id=&#34;opsfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view my function&amp;rsquo;s &lt;code&gt;*logger&lt;/code&gt; output?&lt;/h3&gt;
+
+&lt;p&gt;Each lambda function includes privileges to write to &lt;a href=&#34;https://console.aws.amazon.com/cloudwatch/home&#34;&gt;CloudWatch Logs&lt;/a&gt;.  The &lt;code&gt;*logrus.logger&lt;/code&gt; output is written (with a brief delay) to a lambda-specific log group.&lt;/p&gt;
+
+&lt;p&gt;The CloudWatch log group name includes a sanitized version of your &lt;strong&gt;Go&lt;/strong&gt; function name &amp;amp; owning service name.&lt;/p&gt;
+
+&lt;h3 id=&#34;opsfaq2:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view Sparta&amp;rsquo;s golang spawn metrics?&lt;/h3&gt;
+
+&lt;p&gt;Visit the &lt;a href=&#34;https://aws.amazon.com/cloudwatch/&#34;&gt;CloudWatch Metrics&lt;/a&gt; AWS console page and select the &lt;code&gt;Sparta/{SERVICE_NAME}&lt;/code&gt; namespace:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/faq/CloudWatch_Management_Console.jpg&#34; alt=&#34;CloudWatch&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Sparta publishes two counters:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ProcessSpawned&lt;/code&gt;: A new &lt;strong&gt;Go&lt;/strong&gt; process was spawned to handle requests&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ProcessReused&lt;/code&gt;: An existing &lt;strong&gt;Go&lt;/strong&gt; process was used to handle requests.  See also the discussion on AWS Lambda &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>homepage</title>
@@ -1625,15 +1706,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>FAQ</title>
-      <link>http://gosparta.io/docs/faq/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/faq/</guid>
-      <description></description>
     </item>
     
     <item>
