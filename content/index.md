@@ -8,8 +8,9 @@ title = "homepage"
 +++
 
 <div class="jumbotron">
-  <h1>Sparta <img src="images/spartanshieldsmall.png" alt="Sparta shield" height="80" width="80"></h1>
-  Build & deploy <b>Go</b> functions in AWS Lambda
+<img src="images/spartalogoSmall.png" alt="Sparta shield" height="128">
+<h2>Use <b>Go</b> to write and manage <a href="https://aws.amazon.com/lambda">AWS Lambda</a> services</h2>
+
   <hr />
   <blockquote>
     <p>"No Server Is Easier To Manage Than No Server."</p>

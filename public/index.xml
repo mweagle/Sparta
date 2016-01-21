@@ -109,8 +109,9 @@
       <description>
 
 &lt;div class=&#34;jumbotron&#34;&gt;
-  &lt;h1&gt;Sparta &lt;img src=&#34;images/spartanshieldsmall.png&#34; alt=&#34;Sparta shield&#34; height=&#34;80&#34; width=&#34;80&#34;&gt;&lt;/h1&gt;
-  Build &amp; deploy &lt;b&gt;Go&lt;/b&gt; functions in AWS Lambda
+&lt;img src=&#34;images/spartalogoSmall.png&#34; alt=&#34;Sparta shield&#34; height=&#34;128&#34;&gt;
+&lt;h2&gt;Use &lt;b&gt;Go&lt;/b&gt; to write and manage &lt;a href=&#34;https://aws.amazon.com/lambda&#34;&gt;AWS Lambda&lt;/a&gt; services&lt;/h2&gt;
+
   &lt;hr /&gt;
   &lt;blockquote&gt;
     &lt;p&gt;&#34;No Server Is Easier To Manage Than No Server.&#34;&lt;/p&gt;
