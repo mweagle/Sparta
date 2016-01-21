@@ -7,7 +7,7 @@ share = false
 title = "homepage"
 +++
 
-<br /> 
+<br />
 <div class="jumbotron">
 <img src="images/spartalogoSmall.png" alt="Sparta shield" height="128">
 <h2>Use <b>Go</b> to write and manage <a href="https://aws.amazon.com/lambda">AWS Lambda</a> services</h2>
@@ -22,11 +22,12 @@ title = "homepage"
 
 Sparta defines a framework that deploys a set of **Go** HTTP request/response handlers to [AWS Lambda](https://aws.amazon.com/lambda/).
 
-What differentiates Sparta from similar solutions (see below), is that is also helps create & discover **the other AWS resources** a service typically requires:
+The true power of Sparta is the ability, in **Go**, to fully create and manage the **other AWS resources and security policies** that constitute your service:
 
   -  [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) resources that should be created during your service's provisioning.  
+    - Sparta directly supports supplementary infrastructure provisioning.
   - Discovery of those dependent resources' CloudFormation outputs (`Ref` && `Fn::Att` values) at Lambda execution time
-    - This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded _Magic ARNs_ from your codebase.
+    - This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded _Magic ARNs_ from your codebase & move towards [immutable infrastructure](http://chadfowler.com/blog/2013/06/23/immutable-deployments/).
   - Individual [IAM Policies](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html) under which your **Go** functions will execute.  The ability to limit lambda execution privileges helps support [POLP](http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP) and [#SecOps](https://twitter.com/hashtag/secops).
   - Registration of your **Go** function with push-based [AWS Event Sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html).
 
@@ -42,13 +43,17 @@ For instance, your service can express in **Go**:
     - S3 buckets with dynamic outputs that your lambda function can [discover at runtime](http://gosparta.io/docs/eventsources/ses/)
     - SNS resources
     - Any other [CloudFormation Resource Type](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
-  - [API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) resources
+  - [API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) resources that trigger your lambda functions
+    - Sparta automatically creates [API Gateway Mapping Templates](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) with all request data so that you can focus on your core application logic.
   - [S3 Static Websites](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
     - Sparta can provision an S3 bucket with your static resources, including [CORS](http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) support
 
+Sparta leverages [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
+
+<hr />
 <a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](images/sparta_overview.png)]</a>
 
-Sparta leverages [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
+
 
 ## Getting Started
 
@@ -67,6 +72,7 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub. 
     * [lambda_proc](https://github.com/jasonmoo/lambda_proc)
     * [go-lambda](https://github.com/xlab/go-lambda)
     * [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
+  * Supported AWS Lambda [programming models](http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html
   * [Serverless Code Blog](https://serverlesscode.com)
   * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
   * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)

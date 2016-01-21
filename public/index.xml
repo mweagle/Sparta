@@ -123,14 +123,18 @@
 
 &lt;p&gt;Sparta defines a framework that deploys a set of &lt;strong&gt;Go&lt;/strong&gt; HTTP request/response handlers to &lt;a href=&#34;https://aws.amazon.com/lambda/&#34;&gt;AWS Lambda&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;What differentiates Sparta from similar solutions (see below), is that is also helps create &amp;amp; discover &lt;strong&gt;the other AWS resources&lt;/strong&gt; a service typically requires:&lt;/p&gt;
+&lt;p&gt;The true power of Sparta is the ability, in &lt;strong&gt;Go&lt;/strong&gt;, to fully create and manage the &lt;strong&gt;other AWS resources and security policies&lt;/strong&gt; that constitute your service:&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; resources that should be created during your service&amp;rsquo;s provisioning.&lt;br /&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; resources that should be created during your service&amp;rsquo;s provisioning.&lt;br /&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Sparta directly supports supplementary infrastructure provisioning.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Discovery of those dependent resources&amp;rsquo; CloudFormation outputs (&lt;code&gt;Ref&lt;/code&gt; &amp;amp;&amp;amp; &lt;code&gt;Fn::Att&lt;/code&gt; values) at Lambda execution time
 
 &lt;ul&gt;
-&lt;li&gt;This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded &lt;em&gt;Magic ARNs&lt;/em&gt; from your codebase.&lt;/li&gt;
+&lt;li&gt;This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded &lt;em&gt;Magic ARNs&lt;/em&gt; from your codebase &amp;amp; move towards &lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;immutable infrastructure&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Individual &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Policies&lt;/a&gt; under which your &lt;strong&gt;Go&lt;/strong&gt; functions will execute.  The ability to limit lambda execution privileges helps support &lt;a href=&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;&gt;POLP&lt;/a&gt; and &lt;a href=&#34;https://twitter.com/hashtag/secops&#34;&gt;#SecOps&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;Registration of your &lt;strong&gt;Go&lt;/strong&gt; function with push-based &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;AWS Event Sources&lt;/a&gt;.&lt;/li&gt;
@@ -155,7 +159,11 @@
 &lt;li&gt;SNS resources&lt;/li&gt;
 &lt;li&gt;Any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Type&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html&#34;&gt;API Gateway&lt;/a&gt; resources&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html&#34;&gt;API Gateway&lt;/a&gt; resources that trigger your lambda functions
+
+&lt;ul&gt;
+&lt;li&gt;Sparta automatically creates &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;API Gateway Mapping Templates&lt;/a&gt; with all request data so that you can focus on your core application logic.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html&#34;&gt;S3 Static Websites&lt;/a&gt;
 
 &lt;ul&gt;
@@ -163,9 +171,11 @@
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000&#34; rel=&#34;Sparta Arch&#34;&gt;&lt;img src=&#34;images/sparta_overview.png&#34; alt=&#34;Sparta Overview&#34; /&gt;]&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;Sparta leverages &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html&#34;&gt;CloudFormation&lt;/a&gt; to deploy and update your application.  For resources that CloudFormation does not yet support, it uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;Lambda-backed Custom Resources&lt;/a&gt; so that all application updates support both update and rollback semantics.  CloudFormation resources use stable identifiers whenever possible to preserve &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html&#34;&gt;service availability&lt;/a&gt; during updates.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000&#34; rel=&#34;Sparta Arch&#34;&gt;&lt;img src=&#34;images/sparta_overview.png&#34; alt=&#34;Sparta Overview&#34; /&gt;]&lt;/a&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h2&gt;
 
@@ -188,6 +198,7 @@
 &lt;li&gt;&lt;a href=&#34;https://github.com/xlab/go-lambda&#34;&gt;go-lambda&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/pilwon/go-lambda&#34;&gt;go-lambda (GRPC)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Supported AWS Lambda [programming models](&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html&#34;&gt;http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://serverlesscode.com&#34;&gt;Serverless Code Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf&#34;&gt;AWS Serverless Multi-Tier Architectures Whitepaper&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda limits&lt;/a&gt;&lt;/li&gt;
