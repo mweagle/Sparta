@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  507 
+    "wordCount":  541 
   }
 </script>
 
@@ -100,7 +100,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle youtube:]">
+<body class="map[facebook: youtube: flattr: bitbucket: linkedin:https://www.linkedin.com/in/mweagle highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: twitter:mweagle name:yeti home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -319,25 +319,34 @@
 <div class="mermaid">
     
     graph TD
-      iam[Verify IAM Roles]
-      compile[Compile]
-      package[Package]
+      iam[Verify Static IAM Roles]
+      compile[Cross Compile App for AWS Linux AMI]
+      package[ZIP archive]
       upload[Upload Archive to S3]
-      generate[Generate CF Template]
+      packageAssets[Conditionally ZIP S3 Site Assets]
+      uploadAssets[Upload S3 Assets]
+      generate[Marshal to CloudFormation]
+      decorate[Call User Template Decorators - Dynamic AWS Resources]
       uploadTemplate[Upload Template to S3]
       converge[Create/Update Stack]
+      wait[Wait for Complete/Failure Result]
 
       iam-->compile
       compile-->package
+      compile-->packageAssets
       package-->upload
+      packageAssets-->uploadAssets
+      uploadAssets-->generate
       upload-->generate
-      generate-->uploadTemplate
+      generate-->decorate
+      decorate-->uploadTemplate
       uploadTemplate-->converge
+      converge-->wait
 
 </div>
 
 
-<h3 id="a-href-hugoshortcode-3-verify-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba">Verify IAM Roles</a></h3>
+<h3 id="a-href-hugoshortcode-3-verify-static-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</a></h3>
 
 <p>The <code>NewLambda</code> function accepts either a <code>string</code> or a <code>sparta.IAMRoleDefinition</code> value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns">IAM Role ARN</a> is cached to minimize AWS calls during template generation.</p>
 

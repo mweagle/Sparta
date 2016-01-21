@@ -1622,6 +1622,230 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
     </item>
     
     <item>
+      <title>Introductory Example</title>
+      <link>http://gosparta.io/docs/intro_example/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/intro_example/</guid>
+      <description>
+
+&lt;p&gt;Sparta is a framework for developing and deploying &lt;strong&gt;Go&lt;/strong&gt; based AWS Lambda functions.  To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS.  Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.&lt;/p&gt;
+
+&lt;div class=&#34;panel panel-danger&#34;&gt;
+&lt;div class=&#34;panel-heading&#34;&gt;Pricing&lt;/div&gt;
+ &lt;div class=&#34;panel-body&#34;&gt;
+   Please be aware that running Lambda functions may incur &lt;a href=&#34;https://aws.amazon.com/lambda/pricing&#34;&gt;costs&lt;/a&gt;. Be sure to decommission Sparta stacks after you are finished using them (via the &lt;code&gt;delete&lt;/code&gt; command line option) to avoid unwanted charges.
+ &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-preconditions-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#preconditions:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Preconditions&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Sparta uses the &lt;a href=&#34;http://aws.amazon.com/sdk-for-go/&#34;&gt;AWS SDK for Go&lt;/a&gt; to interact with AWS APIs.  Before you get started, ensure that you&amp;rsquo;ve properly configured the &lt;a href=&#34;https://github.com/aws/aws-sdk-go/wiki/configuring-sdk&#34;&gt;SDK credentials&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Note that you must use an AWS region that supports Lambda.  Consult the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the most up to date release information.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-lambda-definition-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#lambdaDefinition:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Lambda Definition&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The first place to start is with the lambda function definition.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func helloWorld(event *json.RawMessage,
+                context *sparta.LambdaContext,
+                w http.ResponseWriter,
+                logger *logrus.Logger) {
+	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;All Sparta lambda functions have the same function signature that is composed of:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;json.RawMessage&lt;/code&gt; :  The arbitrary &lt;code&gt;json.RawMessage&lt;/code&gt; event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LambdaContext&lt;/code&gt; : &lt;strong&gt;Go&lt;/strong&gt; compatible representation of the AWS Lambda &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html&#34;&gt;Context&lt;/a&gt;. This struct includes fields such as &lt;code&gt;AWSRequestID&lt;/code&gt;, CloudWatch&amp;rsquo;s &lt;code&gt;LogGroupName&lt;/code&gt;, and the provisioned AWS lambda&amp;rsquo;s ARN (&lt;code&gt;InvokedFunctionARN&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;http.ResponseWriter&lt;/code&gt; : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the &lt;code&gt;responseWriter&lt;/code&gt; is published back via &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html&#34;&gt;context.done()&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;logrus.Logger&lt;/code&gt; : A &lt;a href=&#34;https://github.com/Sirupsen/logrus&#34;&gt;logrus&lt;/a&gt; logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-creation-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#creation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creation&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The next step is to create a Sparta-wrapped version of the &lt;code&gt;helloWorld&lt;/code&gt; function.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaFunctions []*sparta.LambdaAWSInfo
+
+helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
+                                helloWorld,
+                                nil)
+lambdaFunctions = append(lambdaFunctions, helloWorldFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;We first declare an empty slice &lt;code&gt;lambdaFunctions&lt;/code&gt; to which all our service&amp;rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via &lt;code&gt;NewLambda&lt;/code&gt;.  &lt;code&gt;NewLambda&lt;/code&gt; accepts three parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;string|IAMRoleDefinition&lt;/code&gt; : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, &lt;em&gt;OR&lt;/em&gt; a &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+
+&lt;ul&gt;
+&lt;li&gt;In this example, we&amp;rsquo;re defining a new &lt;code&gt;IAMRoleDefinition&lt;/code&gt; as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&amp;rsquo;t access any additional AWS services that&amp;rsquo;s all we need.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;LambdaFunction&lt;/code&gt;: The &lt;strong&gt;Go&lt;/strong&gt; function to execute.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*LambdaFunctionOptions&lt;/code&gt;: A pointer to any additional execution settings (eg, timeout, memory settings, etc).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-6-delegation-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#delegation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delegation&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The final step is to define a Sparta service under your application&amp;rsquo;s &lt;code&gt;main&lt;/code&gt; package and provide the non-empty slice of lambda functions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyHelloWorldStack&amp;#34;,
+            &amp;#34;Simple Sparta application that demonstrates core functionality&amp;#34;,
+            lambdaFunctions,
+            nil,
+            nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;&lt;code&gt;sparta.Main&lt;/code&gt; accepts five parameters:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;serviceName&lt;/code&gt; : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
+
+&lt;ul&gt;
+&lt;li&gt;The &lt;code&gt;serviceName&lt;/code&gt; is used as the stable identifier to determine when updates should be applied rather than new stacks provisioned, as well as the target of a &lt;code&gt;delete&lt;/code&gt; command line request.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;serviceDescription&lt;/code&gt;: An optional string used to describe the stack.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[]*LambdaAWSInfo&lt;/code&gt; : Slice of &lt;code&gt;sparta.lambdaAWSInfo&lt;/code&gt; to provision&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*API&lt;/code&gt; : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
+
+&lt;ul&gt;
+&lt;li&gt;We&amp;rsquo;ll walk through how to do that in &lt;a href=&#34;http://gosparta.io/docs/apigateway&#34;&gt;another section&lt;/a&gt;, but for now our lambda function will only be accessible via the AWS SDK or Console.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*S3Site&lt;/code&gt; : Optional pointer to data if you would like to provision an &lt;a href=&#34;http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html&#34;&gt;static website on S3&lt;/a&gt;, initialized with local resources.
+
+&lt;ul&gt;
+&lt;li&gt;We&amp;rsquo;ll walk through how to do that in &lt;a href=&#34;http://gosparta.io/docs/s3site&#34;&gt;another section&lt;/a&gt;, but for now our lambda function will only be accessible via the AWS SDK or Console.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Delegating &lt;code&gt;main()&lt;/code&gt; to &lt;code&gt;Sparta.Main()&lt;/code&gt; transforms the set of lambda functions into a standalone executable with several command line options.  Run &lt;code&gt;go run main.go --help&lt;/code&gt; to see the available options.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-8-putting-it-together-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#puttingItTogether:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Putting It Together&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Putting everything together, and including the necessary imports, we have:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// File: main.go
+package main
+
+import (
+	&amp;#34;encoding/json&amp;#34;
+	&amp;#34;fmt&amp;#34;
+	&amp;#34;net/http&amp;#34;
+
+	&amp;#34;github.com/Sirupsen/logrus&amp;#34;
+	sparta &amp;#34;github.com/mweagle/Sparta&amp;#34;
+)
+
+func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
+}
+
+func main() {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+
+	helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
+		helloWorld,
+		nil)
+	lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+	sparta.Main(&amp;#34;MyHelloWorldStack&amp;#34;,
+		&amp;#34;Simple Sparta application that demonstrates core functionality&amp;#34;,
+		lambdaFunctions,
+		nil,
+    nil)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-10-running-it-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#runningIt:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Running It&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Next download the Sparta dependencies via &lt;code&gt;go get ./...&lt;/code&gt; in the directory that you saved &lt;em&gt;main.go&lt;/em&gt;.  Once the packages are downloaded, first get a view of what&amp;rsquo;s going on by the &lt;code&gt;describe&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go --level info describe --out ./graph.html
+
+INFO[0000] Welcome to Sparta                             Option=describe TS=2016-01-21T14:59:29Z Version=0.2.0
+INFO[0000] --------------------------------------------------------------------------------
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                    Count=1
+INFO[0000] Compiling binary                      Name=MyHelloWorldStack.lambda.amd64
+INFO[0008] Executable binary size                KB=12086 MB=11
+INFO[0008] Creating ZIP archive for upload       TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack251171669
+INFO[0009] Registering Sparta function           FunctionName=main.helloWorld
+INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=S3Bucket
+INFO[0009] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack251171669
+INFO[0009] Bypassing template upload &amp;amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-714035529a63e80d3b2f756bd51e68c58ccd9a5e-cf.json
+INFO[0009] Elapsed time                          Seconds=9&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Then open &lt;em&gt;graph.html&lt;/em&gt; in your browser (also linked &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;here&lt;/a&gt; ) to see what will be provisioned.&lt;/p&gt;
+
+&lt;p&gt;Since everything looks good, we&amp;rsquo;ll provision the stack via &lt;code&gt;provision&lt;/code&gt; and verify the lambda function.  Note that the &lt;code&gt;$S3_BUCKET&lt;/code&gt; value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go provision --s3Bucket $S3_BUCKET
+
+INFO[0000] Welcome to Sparta                      Option=provision TS=2016-01-21T14:57:13Z Version=0.2.0
+INFO[0000] --------------------------------------------------------------------------------
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                     Count=1
+INFO[0000] Compiling binary                       Name=MyHelloWorldStack.lambda.amd64
+INFO[0008] Executable binary size                 KB=12086 MB=11
+INFO[0008] Creating ZIP archive for upload        TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack213158762
+INFO[0009] Registering Sparta function            FunctionName=main.helloWorld
+INFO[0009] Uploading local file to S3             Source=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack213158762
+INFO[0012] Upload complete                        URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack213158762
+INFO[0012] Uploading CloudFormation template
+INFO[0012] Template uploaded                      URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-a020f2be8aa89d3071620c2daf581ec1177ce546-cf.json
+INFO[0013] Creating stack                         StackID=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56
+INFO[0024] Waiting for CreateStack to complete
+INFO[0039] Waiting for CreateStack to complete
+INFO[0058] Stack output                           Description=Sparta Home Key=SpartaHome Value=http://gosparta.io
+INFO[0058] Stack output                           Description=Sparta Version Key=SpartaVersion Value=0.2.0
+INFO[0058] Stack provisioned                      CreationTime=2016-01-21 14:57:26.859 &amp;#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56 StackName=MyHelloWorldStack
+INFO[0058] Elapsed time                           Seconds=58
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Once the stack has been provisioned (&lt;code&gt;CREATE_COMPLETE&lt;/code&gt;), login to the AWS console and navigate to the Lambda section.&lt;/p&gt;
+
+&lt;h2 id=&#34;testing:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Testing&lt;/h2&gt;
+
+&lt;p&gt;Find your Lambda function in the list of AWS Lambda functions and click the hyperlink.  The display name will be prefixed by the name of your stack (&lt;em&gt;MyHelloWorldStack&lt;/em&gt; in our example):&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/overview/AWS_Lambda_List.png&#34; alt=&#34;AWS Lambda List&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;On the Lambda details page, click the &lt;em&gt;Test&lt;/em&gt; button:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/overview/AWS_Lambda_Test.png&#34; alt=&#34;AWS Lambda Test&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Accept the Input Test Event sample (our Lambda function doesn&amp;rsquo;t consume the event data) and click &lt;em&gt;Save and test&lt;/em&gt;.  The execution result pane should display something similar to:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/overview/AWS_Lambda_Execution.png&#34; alt=&#34;AWS Lambda Execution&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleaningUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;To prevent unauthorized usage and potential charges, make sure to &lt;code&gt;delete&lt;/code&gt; your stack before moving on:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete
+
+INFO[0000] Welcome to Sparta                             Option=delete TS=2016-01-21T15:00:40Z Version=0.2.0
+INFO[0000] --------------------------------------------------------------------------------
+INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
+INFO[0000] Delete request submitted                      Response={
+
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-15-conclusion-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#conclusion:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Conclusion&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Congratulations! You&amp;rsquo;ve just deployed your first &amp;ldquo;serverless&amp;rdquo; service.  The following sections will dive deeper into what&amp;rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.&lt;/p&gt;
+
+&lt;p&gt;Next: &lt;a href=&#34;http://gosparta.io/docs/walkthrough&#34;&gt;Walkthrough&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Limitations</title>
       <link>http://gosparta.io/docs/limitations/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
@@ -1930,73 +2154,6 @@ apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html&#34;&gt;Walkthrough: API Gateway and Lambda Functions&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/commandline/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/commandline/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-command-line-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#commandLine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Command Line&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyStack&amp;#34;,
-  &amp;#34;Simple Sparta application&amp;#34;,
-  myLambdaFunctions,
-  nil,
-  nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --help
-Usage: application [global options] &amp;lt;verb&amp;gt; [verb options]
-
-Global options:
-        -n, --noop     Dry-run behavior only (do not provision stack)
-        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
-        -h, --help     Show this help
-
-Verbs:
-    delete:
-    describe:
-        -o, --out      Output file for HTML description (*)
-    execute:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-        -s, --signal   Process ID to signal with SIGUSR2 once ready
-    explore:
-    provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-4-delete-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-5-describe-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
-
-&lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-6-execute-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
-
-&lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
 </description>
     </item>
     

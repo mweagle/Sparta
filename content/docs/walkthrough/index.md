@@ -16,23 +16,33 @@ At a high level, provisioning uses the flow below.  We'll dive a bit deeper into
 
 {{< mermaid >}}
     graph TD
-      iam[Verify IAM Roles]
-      compile[Compile]
-      package[Package]
+      iam[Verify Static IAM Roles]
+      compile[Cross Compile App for AWS Linux AMI]
+      package[ZIP archive]
       upload[Upload Archive to S3]
-      generate[Generate CF Template]
+      packageAssets[Conditionally ZIP S3 Site Assets]
+      uploadAssets[Upload S3 Assets]
+      generate[Marshal to CloudFormation]
+      decorate[Call User Template Decorators - Dynamic AWS Resources]
       uploadTemplate[Upload Template to S3]
       converge[Create/Update Stack]
+      wait[Wait for Complete/Failure Result]
 
       iam-->compile
       compile-->package
+      compile-->packageAssets
       package-->upload
+      packageAssets-->uploadAssets
+      uploadAssets-->generate
       upload-->generate
-      generate-->uploadTemplate
+      generate-->decorate
+      decorate-->uploadTemplate
       uploadTemplate-->converge
+      converge-->wait
 {{< /mermaid >}}
 
-### <a href="{{< relref "#verifyiamroles" >}}">Verify IAM Roles</a>
+
+### <a href="{{< relref "#verifyiamroles" >}}">Verify Static IAM Roles</a>
 The `NewLambda` function accepts either a `string` or a `sparta.IAMRoleDefinition` value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing [IAM Role ARN](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns) is cached to minimize AWS calls during template generation.
 
 ### <a href="{{< relref "#compile" >}}">Compile</a>

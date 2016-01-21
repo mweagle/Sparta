@@ -109,7 +109,7 @@ INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Val
 INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
 INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
-INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:027159405834:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
+INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
 INFO[0114] Elapsed time        Seconds=114
 {{< /highlight >}}
 

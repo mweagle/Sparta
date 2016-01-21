@@ -51,7 +51,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  32 
+    "wordCount":  233 
   }
 </script>
 
@@ -96,7 +96,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: googleplus: facebook: twitter:mweagle youtube: home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: name:yeti highlight:vs]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: googleplus: twitter:mweagle name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -302,7 +302,59 @@
 </header>
 
     <div class="container content">
-  <p>Please choose a topic from the left.  The <a href="./overview">Overview</a> section is a good place to start if you just want to get your hands dirty and provision a simple &ldquo;Hello World&rdquo; function.</p>
+  <p>This is a brief overview of the fundamental concepts behind Sparta.  Additional information regarding specific features is available from the menu.</p>
+
+<p>At a high level, Sparta transforms a single <strong>Go</strong> binary&rsquo;s registered lambda functions into a set of AWS Lambda functions.  A <em>registered lambda function</em> is simply an HTTP-style request/response function with a specific signature:</p>
+
+<pre><code class="go">func mySpartaLambdaFunction(event *json.RawMessage,
+                      context *sparta.LambdaContext,
+                      w http.ResponseWriter,
+                      logger *logrus.Logger) {
+  //
+}</code></pre>
+
+
+<p>These functions are grouped into a <strong>ServiceName</strong>, which is the logical, unique application identifier.  For example, <code>&quot;MyEmailHandlerService-Dev&quot;</code>. Only a single <strong>ServiceInstance</strong> (aka, deployment) may exist within an <code>(awsAccountId, awsRegion)</code> pair at any time.</p>
+
+<p>The <strong>ServiceName</strong> name has a 1:1 relationship to a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation Stack</a> name.  Sparta only uses CloudFormation to deploy and update service state.</p>
+
+<p>The following flowchart illustrates Sparta&rsquo;s flow during a provisioning operation:</p>
+
+<div class="mermaid">
+    
+    graph TD
+      iam[Verify Static IAM Roles]
+      compile[Cross Compile App for AWS Linux AMI]
+      package[ZIP archive]
+      upload[Upload Archive to S3]
+      packageAssets[Conditionally ZIP S3 Site Assets]
+      uploadAssets[Upload S3 Assets]
+      generate[Marshal to CloudFormation]
+      decorate[Call User Template Decorators - Dynamic AWS Resources]
+      uploadTemplate[Upload Template to S3]
+      converge[Create/Update Stack]
+      wait[Wait for Complete/Failure Result]
+
+      iam-->compile
+      compile-->package
+      compile-->packageAssets
+      package-->upload
+      packageAssets-->uploadAssets
+      uploadAssets-->generate
+      upload-->generate
+      generate-->decorate
+      decorate-->uploadTemplate
+      uploadTemplate-->converge
+      converge-->wait
+
+</div>
+
+
+<p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
+
+<p>At runtime, Sparta uses <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> shims to proxy the request to your <strong>Go</strong> handler.</p>
+
+<p>Next up: writing a simple <a href="/docs/intro_example">Sparta Application</a>.</p>
 
 </div>
 
