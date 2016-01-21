@@ -4,7 +4,7 @@
 
 # Sparta <p align="center">
 
-<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/SpartanShieldSmall.png" />
+<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/spartalogoSmall.png" />
 </div>
 
 ## Documentation
