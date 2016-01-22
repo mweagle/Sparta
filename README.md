@@ -2,12 +2,11 @@
 
 [![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta)
 
-# Sparta <p align="center">
 
 <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/SpartaLogoLarge.png" />
 </div>
 
-## Documentation
+# Sparta <p align="center">
 
 Visit [gosparta.io](http://gosparta.io) for complete documentation.
 
