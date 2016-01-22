@@ -9,7 +9,7 @@ title = "homepage"
 
 <br />
 <div class="jumbotron">
-<img src="images/spartalogoSmall.png" alt="Sparta shield" height="128">
+<img src="images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128">
 <h2>Use <b>Go</b> to write and manage <a href="https://aws.amazon.com/lambda">AWS Lambda</a> services</h2>
 
   <hr />
