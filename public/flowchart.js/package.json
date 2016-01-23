@@ -1,0 +1,43 @@
+{
+  "author": "adrai",
+  "name": "flowchart.js",
+  "version": "1.6.0",
+  "main": "./index",
+  "private": false,
+  "engines": {
+    "node": "~v0.4.12"
+  },
+  "dependencies": {
+    "raphael": "git://github.com/DmitryBaranovskiy/raphael.git"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.3",
+    "eslint-config-defaults": "^8.0.2",
+    "express": ">= 0.0.1",
+    "jquery": "^2.2.0",
+    "lodash": ">=0.2.1",
+    "moment": "^2.11.1",
+    "webpack": "^1.12.11",
+    "webpack-dev-middleware": "^1.4.0",
+    "webpack-hot-middleware": "^2.6.0"
+  },
+  "scripts": {
+    "start": "node devserver.js",
+    "lint": "eslint src",
+    "build:unminified": "NODE_ENV=production webpack -d --config webpack.config.js",
+    "build:minified": "NODE_ENV=production MINIFIED=1 webpack -d --config webpack.config.js",
+    "build": "npm run build:unminified && npm run build:minified && cp ./release/flowchart.js ./site/flowchart-latest.js",
+    "test": "npm run lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adrai/flowchart.js.git"
+  },
+  "keywords": [
+    "flowchart",
+    "client",
+    "script"
+  ],
+  "homepage": "http://flowchart.js.org/",
+  "license": "MIT"
+}
