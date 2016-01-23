@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  531 
+    "wordCount":  532 
   }
 </script>
 
@@ -85,11 +85,10 @@
   <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
 
 
-  
-  <script src="/mermaid/mermaid.min.js"></script>
-  <script>mermaid.initialize({startOnLoad:true});</script>
-  <link rel="stylesheet" href="/mermaid/mermaid.css"></link>
-  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+
+  <script src="/raphael/raphael-min.js"></script>
+  <script src="/flowchart.js/release/flowchart.min.js"></script>
+
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -100,7 +99,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[highlight:vs googleplus: facebook: youtube: name:yeti home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr:]">
+<body class="map[facebook: twitter:mweagle name:yeti highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle home:Home googleplus: youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -316,25 +315,19 @@
 
 <p>At a high level, provisioning uses the flow below.  We&rsquo;ll dive a bit deeper into each stage in the following sections.</p>
 
-<ul>
-<li>Verify static IAM Roles</li>
-<li>Cross-compile application for AWS Linux AMI</li>
-<li>ZIP archive</li>
-<li>Upload archive to S3</li>
-<li>Conditionally ZIP S3-backed static site assets</li>
-<li>Upload S3-static site archive</li>
-<li>Marshal to CloudFormation</li>
-<li>Call user <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorators</a> to annotate template</li>
-<li>Upload template to S3 (see <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">CloudFormation limits</a>)</li>
-<li>Create/Update stack state</li>
-<li>Wait for <code>Complete</code>/<code>Failure</code> result</li>
-</ul>
+<div id="summary"></div>
 
-<h3 id="a-href-hugoshortcode-2-verify-static-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</a></h3>
+<script>
+  var diagram = flowchart.parse("\nst=\x3estart: Start\nopIAM=\x3eoperation: Verify static IAM Roles\nopCompile=\x3eoperation: Cross-compile for AWS Linux AMI\nopZipApp=\x3eoperation: Zip application\nopUploadApp=\x3eoperation: Upload archive to S3\ncondS3Site=\x3econdition: S3 Site Included?\nopZipSite=\x3eoperation: Zip S3 static site assets\nopUploadSite=\x3eoperation: Upload S3 static assets\n\nopMarshal=\x3eoperation: Marshal to CloudFormation\nopDecorate=\x3eoperation:  Call TemplateDecorators:\x3ehttps:\/\/godoc.org\/github.com\/mweagle\/Sparta#TemplateDecorator[blank]\nopUploadTemplate=\x3eoperation: Upload template to S3\nopProvision=\x3eoperation: Create\/Update stack state\nopWait=\x3eoperation: Wait for Complete\/Failure result\ne=\x3eend: End\n\nst-\x3eopIAM-\x3eopCompile-\x3eopZipApp-\x3econdS3Site\ncondS3Site(yes)-\x3eopZipSite-\x3eopUploadSite-\x3eopMarshal\ncondS3Site(no)-\x3eopMarshal\nopMarshal-\x3eopDecorate-\x3eopUploadTemplate-\x3eopProvision-\x3eopWait-\x3ee\n");
+  diagram.drawSVG('summary');
+</script>
+
+
+<h3 id="a-href-hugoshortcode-3-verify-static-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</a></h3>
 
 <p>The <code>NewLambda</code> function accepts either a <code>string</code> or a <code>sparta.IAMRoleDefinition</code> value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns">IAM Role ARN</a> is cached to minimize AWS calls during template generation.</p>
 
-<h3 id="a-href-hugoshortcode-3-compile-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#compile:d680e8a854a7cbad6d490c445cba2eba">Compile</a></h3>
+<h3 id="a-href-hugoshortcode-4-compile-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#compile:d680e8a854a7cbad6d490c445cba2eba">Compile</a></h3>
 
 <p>The next step is to cross compile the application to a binary that can be executed on an AWS Lambda instance.  The compile flags are:</p>
 
@@ -345,7 +338,7 @@
 
 <p>The binary is built in the current directory with a <em>.lambda.amd64</em> suffix.</p>
 
-<h3 id="a-href-hugoshortcode-4-package-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#package:d680e8a854a7cbad6d490c445cba2eba">Package</a></h3>
+<h3 id="a-href-hugoshortcode-5-package-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#package:d680e8a854a7cbad6d490c445cba2eba">Package</a></h3>
 
 <p>The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
 This includes the NodeJS proxy entries that forward AWS Lambda requests to your <strong>Go</strong> binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
@@ -355,21 +348,21 @@ API Gateway configuration and S3 push source configuration.  Finally, a known ve
 
 <p>Everything is ZIP&rsquo;d up and ready for S3 upload.</p>
 
-<h3 id="a-href-hugoshortcode-5-upload-archive-to-s3-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#uploadArchiveToS3:d680e8a854a7cbad6d490c445cba2eba">Upload Archive To S3</a></h3>
+<h3 id="a-href-hugoshortcode-6-upload-archive-to-s3-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#uploadArchiveToS3:d680e8a854a7cbad6d490c445cba2eba">Upload Archive To S3</a></h3>
 
 <p>Uploads the archive to S3.  There&rsquo;s not much else to see here.</p>
 
-<h3 id="a-href-hugoshortcode-6-generate-cloudformation-template-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#generateCFTemplate:d680e8a854a7cbad6d490c445cba2eba">Generate CloudFormation Template</a></h3>
+<h3 id="a-href-hugoshortcode-7-generate-cloudformation-template-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#generateCFTemplate:d680e8a854a7cbad6d490c445cba2eba">Generate CloudFormation Template</a></h3>
 
 <p>Once the archive is uploaded and the S3 Item key is available, the  CloudFormation template is generated by marshaling the <code>sparta.LambdaAWSInfo</code> objects into CloudFormation JSON representations.</p>
 
 <p>The AWS Lambda marshaling is automatically handled.  This is also the point at which the optional <a href="https://github.com/mweagle/Sparta/blob/master/sparta.go#L192">TemplateDecorator</a> functions are called to annotate the automatically generated template with additional resources.</p>
 
-<h3 id="a-href-hugoshortcode-7-upload-cloudformation-template-to-s3-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#uploadCFTemplate:d680e8a854a7cbad6d490c445cba2eba">Upload CloudFormation Template to S3</a></h3>
+<h3 id="a-href-hugoshortcode-8-upload-cloudformation-template-to-s3-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#uploadCFTemplate:d680e8a854a7cbad6d490c445cba2eba">Upload CloudFormation Template to S3</a></h3>
 
 <p>Uploads the template to S3 to maximize <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">template size</a>.  There&rsquo;s not much else to see here.</p>
 
-<h3 id="a-href-hugoshortcode-8-create-update-stack-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#createUpdateStack:d680e8a854a7cbad6d490c445cba2eba">Create/Update Stack</a></h3>
+<h3 id="a-href-hugoshortcode-9-create-update-stack-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#createUpdateStack:d680e8a854a7cbad6d490c445cba2eba">Create/Update Stack</a></h3>
 
 <p>Finally, the provisioning workflow determines whether the Sparta <code>serviceName</code> exists and either creates or updates as appropriate.</p>
 

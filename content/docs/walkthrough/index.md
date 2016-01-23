@@ -14,17 +14,28 @@ The provisioning workflow is defined in [provision.go](https://github.com/mweagl
 
 At a high level, provisioning uses the flow below.  We'll dive a bit deeper into each stage in the following sections.
 
-* Verify static IAM Roles
-* Cross-compile application for AWS Linux AMI
-* ZIP archive
-* Upload archive to S3
-* Conditionally ZIP S3-backed static site assets
-* Upload S3-static site archive
-* Marshal to CloudFormation
-* Call user [TemplateDecorators](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) to annotate template
-* Upload template to S3 (see [CloudFormation limits](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html))
-* Create/Update stack state
-* Wait for `Complete`/`Failure` result
+{{< flowchart summary>}}
+st=>start: Start
+opIAM=>operation: Verify static IAM Roles
+opCompile=>operation: Cross-compile for AWS Linux AMI
+opZipApp=>operation: Zip application
+opUploadApp=>operation: Upload archive to S3
+condS3Site=>condition: S3 Site Included?
+opZipSite=>operation: Zip S3 static site assets
+opUploadSite=>operation: Upload S3 static assets
+
+opMarshal=>operation: Marshal to CloudFormation
+opDecorate=>operation:  Call TemplateDecorators:>https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator[blank]
+opUploadTemplate=>operation: Upload template to S3
+opProvision=>operation: Create/Update stack state
+opWait=>operation: Wait for Complete/Failure result
+e=>end: End
+
+st->opIAM->opCompile->opZipApp->condS3Site
+condS3Site(yes)->opZipSite->opUploadSite->opMarshal
+condS3Site(no)->opMarshal
+opMarshal->opDecorate->opUploadTemplate->opProvision->opWait->e
+{{< /flowchart >}}
 
 ### <a href="{{< relref "#verifyiamroles" >}}">Verify Static IAM Roles</a>
 The `NewLambda` function accepts either a `string` or a `sparta.IAMRoleDefinition` value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing [IAM Role ARN](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns) is cached to minimize AWS calls during template generation.

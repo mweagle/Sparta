@@ -1,0 +1,10 @@
+<div id="{{ .Get 0 }}"></div>
+<!--
+CODE:
+
+{{ .Inner }}
+-->
+<script>
+  var diagram = flowchart.parse("{{ .Inner }}");
+  diagram.drawSVG('{{ .Get 0 }}');
+</script>
