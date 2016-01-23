@@ -95,7 +95,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle flattr: name:yeti home:Home github:https://github.com/mweagle]">
+<body class="map[twitter:mweagle youtube: highlight:vs googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: name:yeti home:Home github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,7 +320,6 @@
 <p>When creating or updating a service, Sparta follows this workflow:</p>
 
 <div id="summary"></div>
-
 <script>
   var diagram = flowchart.parse("\nst=\x3estart: Start\nopIAM=\x3eoperation: Verify static IAM Roles\nopCompile=\x3eoperation: Cross-compile for AWS Linux AMI\nopZipApp=\x3eoperation: Zip application\nopUploadApp=\x3eoperation: Upload archive to S3\ncondS3Site=\x3econdition: S3 Site Included?\nopZipSite=\x3eoperation: Zip S3 static site assets\nopUploadSite=\x3eoperation: Upload S3 static assets\n\nopMarshal=\x3eoperation: Marshal to CloudFormation\nopDecorate=\x3eoperation:  Call TemplateDecorators:\x3ehttps:\/\/godoc.org\/github.com\/mweagle\/Sparta#TemplateDecorator[blank]\nopUploadTemplate=\x3eoperation: Upload template to S3:\x3ehttp:\/\/docs.aws.amazon.com\/AWSCloudFormation\/latest\/UserGuide\/cloudformation-limits.html[blank]\nopProvision=\x3eoperation: Create\/Update stack state\nopWait=\x3eoperation: Wait for Complete\/Failure result\ne=\x3eend: End\n\nst-\x3eopIAM-\x3eopCompile-\x3eopZipApp-\x3econdS3Site\ncondS3Site(yes)-\x3eopZipSite-\x3eopUploadSite-\x3eopMarshal\ncondS3Site(no)-\x3eopMarshal\nopMarshal-\x3eopDecorate-\x3eopUploadTemplate-\x3eopProvision-\x3eopWait-\x3ee\n");
   diagram.drawSVG('summary');
