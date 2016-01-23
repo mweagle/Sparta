@@ -14,33 +14,17 @@ The provisioning workflow is defined in [provision.go](https://github.com/mweagl
 
 At a high level, provisioning uses the flow below.  We'll dive a bit deeper into each stage in the following sections.
 
-{{< mermaid >}}
-    graph TD
-      iam[Verify Static IAM Roles]
-      compile[Cross Compile App for AWS Linux AMI]
-      package[ZIP archive]
-      upload[Upload Archive to S3]
-      packageAssets[Conditionally ZIP S3 Site Assets]
-      uploadAssets[Upload S3 Assets]
-      generate[Marshal to CloudFormation]
-      decorate[Call User Template Decorators - Dynamic AWS Resources]
-      uploadTemplate[Upload Template to S3]
-      converge[Create/Update Stack]
-      wait[Wait for Complete/Failure Result]
-
-      iam-->compile
-      compile-->package
-      compile-->packageAssets
-      package-->upload
-      packageAssets-->uploadAssets
-      uploadAssets-->generate
-      upload-->generate
-      generate-->decorate
-      decorate-->uploadTemplate
-      uploadTemplate-->converge
-      converge-->wait
-{{< /mermaid >}}
-
+* Verify static IAM Roles
+* Cross-compile application for AWS Linux AMI
+* ZIP archive
+* Upload archive to S3
+* Conditionally ZIP S3-backed static site assets
+* Upload S3-static site archive
+* Marshal to CloudFormation
+* Call user [TemplateDecorators](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) to annotate template
+* Upload template to S3 (see [CloudFormation limits](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html))
+* Create/Update stack state
+* Wait for `Complete`/`Failure` result
 
 ### <a href="{{< relref "#verifyiamroles" >}}">Verify Static IAM Roles</a>
 The `NewLambda` function accepts either a `string` or a `sparta.IAMRoleDefinition` value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing [IAM Role ARN](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns) is cached to minimize AWS calls during template generation.

@@ -24,34 +24,19 @@ These functions are grouped into a **ServiceName**, which is the logical, unique
 
 The **ServiceName** name has a 1:1 relationship to a [CloudFormation Stack](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) name.  Sparta only uses CloudFormation to deploy and update service state.  
 
-The following flowchart illustrates Sparta's flow during a provisioning operation:
+When creating or updating a service, Sparta follows this workflow:
 
-{{< mermaid >}}
-    graph TD
-      iam[Verify Static IAM Roles]
-      compile[Cross Compile App for AWS Linux AMI]
-      package[ZIP archive]
-      upload[Upload Archive to S3]
-      packageAssets[Conditionally ZIP S3 Site Assets]
-      uploadAssets[Upload S3 Assets]
-      generate[Marshal to CloudFormation]
-      decorate[Call User Template Decorators - Dynamic AWS Resources]
-      uploadTemplate[Upload Template to S3]
-      converge[Create/Update Stack]
-      wait[Wait for Complete/Failure Result]
-
-      iam-->compile
-      compile-->package
-      compile-->packageAssets
-      package-->upload
-      packageAssets-->uploadAssets
-      uploadAssets-->generate
-      upload-->generate
-      generate-->decorate
-      decorate-->uploadTemplate
-      uploadTemplate-->converge
-      converge-->wait
-{{< /mermaid >}}
+  * Verify static IAM Roles
+  * Cross-compile application for AWS Linux AMI
+  * ZIP archive
+  * Upload archive to S3
+  * Conditionally ZIP S3-backed static site assets
+  * Upload S3-static site archive
+  * Marshal to CloudFormation
+  * Call user [TemplateDecorators](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) to annotate template
+  * Upload template to S3 (see [CloudFormation limits](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html))
+  * Create/Update stack state
+  * Wait for `Complete`/`Failure` result
 
 During provisioning, Sparta uses [AWS Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to support operations for which CloudFormation doesn't yet support (eg, [API Gateway](https://aws.amazon.com/api-gateway/) creation).
 

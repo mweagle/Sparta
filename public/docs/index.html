@@ -51,7 +51,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  233 
+    "wordCount":  223 
   }
 </script>
 
@@ -96,7 +96,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti home:Home highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: youtube: bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle flattr:]">
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: name:yeti home:Home highlight:vs googleplus: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -318,37 +318,21 @@
 
 <p>The <strong>ServiceName</strong> name has a 1:1 relationship to a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation Stack</a> name.  Sparta only uses CloudFormation to deploy and update service state.</p>
 
-<p>The following flowchart illustrates Sparta&rsquo;s flow during a provisioning operation:</p>
+<p>When creating or updating a service, Sparta follows this workflow:</p>
 
-<div class="mermaid">
-    
-    graph TD
-      iam[Verify Static IAM Roles]
-      compile[Cross Compile App for AWS Linux AMI]
-      package[ZIP archive]
-      upload[Upload Archive to S3]
-      packageAssets[Conditionally ZIP S3 Site Assets]
-      uploadAssets[Upload S3 Assets]
-      generate[Marshal to CloudFormation]
-      decorate[Call User Template Decorators - Dynamic AWS Resources]
-      uploadTemplate[Upload Template to S3]
-      converge[Create/Update Stack]
-      wait[Wait for Complete/Failure Result]
-
-      iam-->compile
-      compile-->package
-      compile-->packageAssets
-      package-->upload
-      packageAssets-->uploadAssets
-      uploadAssets-->generate
-      upload-->generate
-      generate-->decorate
-      decorate-->uploadTemplate
-      uploadTemplate-->converge
-      converge-->wait
-
-</div>
-
+<ul>
+<li>Verify static IAM Roles</li>
+<li>Cross-compile application for AWS Linux AMI</li>
+<li>ZIP archive</li>
+<li>Upload archive to S3</li>
+<li>Conditionally ZIP S3-backed static site assets</li>
+<li>Upload S3-static site archive</li>
+<li>Marshal to CloudFormation</li>
+<li>Call user <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorators</a> to annotate template</li>
+<li>Upload template to S3 (see <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">CloudFormation limits</a>)</li>
+<li>Create/Update stack state</li>
+<li>Wait for <code>Complete</code>/<code>Failure</code> result</li>
+</ul>
 
 <p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
 
