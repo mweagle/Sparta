@@ -198,7 +198,7 @@
 &lt;li&gt;&lt;a href=&#34;https://github.com/xlab/go-lambda&#34;&gt;go-lambda&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://github.com/pilwon/go-lambda&#34;&gt;go-lambda (GRPC)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Supported AWS Lambda [programming models](&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html&#34;&gt;http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Supported AWS Lambda &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html&#34;&gt;programming models&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://serverlesscode.com&#34;&gt;Serverless Code Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf&#34;&gt;AWS Serverless Multi-Tier Architectures Whitepaper&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda limits&lt;/a&gt;&lt;/li&gt;

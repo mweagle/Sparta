@@ -72,7 +72,7 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub. 
     * [lambda_proc](https://github.com/jasonmoo/lambda_proc)
     * [go-lambda](https://github.com/xlab/go-lambda)
     * [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
-  * Supported AWS Lambda [programming models](http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html
+  * Supported AWS Lambda [programming models](http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html)
   * [Serverless Code Blog](https://serverlesscode.com)
   * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
   * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
