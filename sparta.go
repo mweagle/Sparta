@@ -27,13 +27,12 @@ import (
 	"github.com/voxelbrain/goptions"
 )
 
-///////
 func init() {
 	rand.Seed(time.Now().Unix())
 }
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.2.0"
+const SpartaVersion = "0.2.1"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
@@ -42,7 +41,7 @@ type ArbitraryJSONObject map[string]interface{}
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 const (
-	// @enum APIGatewayPrincipal
+	// @enum AWSPrincipal
 	APIGatewayPrincipal = "apigateway.amazonaws.com"
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
@@ -595,10 +594,11 @@ func (storage *MessageBodyStorage) export(serviceName string,
 
 	if "" != storage.cloudFormationS3BucketResourceName {
 		s3Bucket := &gocf.S3Bucket{
-			Tags: []gocf.ResourceTag{gocf.ResourceTag{
-				Key:   gocf.String("sparta:logicalBucketName"),
-				Value: gocf.String(storage.logicalBucketName),
-			},
+			Tags: []gocf.ResourceTag{
+				gocf.ResourceTag{
+					Key:   gocf.String("sparta:logicalBucketName"),
+					Value: gocf.String(storage.logicalBucketName),
+				},
 			},
 		}
 		cfResource := template.AddResource(storage.cloudFormationS3BucketResourceName, s3Bucket)
