@@ -970,22 +970,28 @@ func ensureCloudFormationStack() workflowStep {
 			Value:       gocf.String(SpartaVersion),
 		}
 
-		// Next pass - exchange outputs between dependencies.  How will a lambda function
-		// know its own CF resource id...The lambda function does, how about we just expose
-		// a Discover method on it?
+		// Next pass - exchange outputs between dependencies.  Lambda functions
 		for _, eachResource := range ctx.cfTemplate.Resources {
-			// Update the metdata with a reference to the output of each
-			// depended on item...
-			for _, eachDependsKey := range eachResource.DependsOn {
-				dependencyOutputs, _ := outputsForResource(ctx.cfTemplate, eachDependsKey, ctx.logger)
-				if nil != dependencyOutputs && len(dependencyOutputs) != 0 {
-					ctx.logger.WithFields(logrus.Fields{
-						"Resource":  eachDependsKey,
-						"DependsOn": eachResource.DependsOn,
-						"Outputs":   dependencyOutputs,
-					}).Debug("Resource metadata")
-					safeMetadataInsert(eachResource, eachDependsKey, dependencyOutputs)
+			// Only apply this to lambda functions
+			if eachResource.Properties.ResourceType() == "AWS::Lambda::Function" {
+				// Update the metdata with a reference to the output of each
+				// depended on item...
+				for _, eachDependsKey := range eachResource.DependsOn {
+					dependencyOutputs, _ := outputsForResource(ctx.cfTemplate, eachDependsKey, ctx.logger)
+					if nil != dependencyOutputs && len(dependencyOutputs) != 0 {
+						ctx.logger.WithFields(logrus.Fields{
+							"Resource":  eachDependsKey,
+							"DependsOn": eachResource.DependsOn,
+							"Outputs":   dependencyOutputs,
+						}).Debug("Resource metadata")
+						safeMetadataInsert(eachResource, eachDependsKey, dependencyOutputs)
+					}
 				}
+				// Also include standard AWS outputs at a resource level if a lambda
+				// needs to self-discover other resources
+				safeMetadataInsert(eachResource, TagStackRegion, gocf.Ref("AWS::Region"))
+				safeMetadataInsert(eachResource, TagStackID, gocf.Ref("AWS::StackId"))
+				safeMetadataInsert(eachResource, TagStackName, gocf.Ref("AWS::StackName"))
 			}
 		}
 
