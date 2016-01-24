@@ -2,6 +2,7 @@ package sparta
 
 import (
 	"encoding/json"
+	"fmt"
 	"runtime"
 
 	"github.com/Sirupsen/logrus"
@@ -17,11 +18,10 @@ var discoveryCache map[string]map[string]interface{}
 // Discover returns metadata information for resources upon which
 // the current golang lambda function depends.
 func Discover() (map[string]interface{}, error) {
-	configuration := make(map[string]interface{}, 0)
-	if nil != discoverImpl {
-		return discoverImpl()
+	if nil == discoverImpl {
+		return nil, fmt.Errorf("Discovery service has not been initialized")
 	}
-	return configuration, nil
+	return discoverImpl()
 }
 
 func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) {
@@ -29,7 +29,11 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 	discoveryCache = make(map[string]map[string]interface{}, 0)
 	discoverImpl = func() (map[string]interface{}, error) {
 		pc := make([]uintptr, 2)
-		runtime.Callers(2, pc)
+		entriesWritten := runtime.Callers(2, pc)
+		if entriesWritten != 2 {
+			return nil, fmt.Errorf("Unsupported call site for sparta.Discover()")
+		}
+
 		// The actual caller is sparta.Discover()
 		f := runtime.FuncForPC(pc[1])
 		golangFuncName := f.Name()
@@ -47,6 +51,9 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			"CFResourceName": lambdaCFResource,
 			"ServiceName":    serviceName,
 		}).Debug("Discovery Info")
+		if "" == lambdaCFResource {
+			return nil, fmt.Errorf("Unsupported call site for sparta.Discover(): %s", golangFuncName)
+		}
 
 		emptyConfiguration := make(map[string]interface{}, 0)
 		if "" != lambdaCFResource {
