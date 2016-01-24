@@ -9,6 +9,16 @@ import (
 	gocf "github.com/crewjam/go-cloudformation"
 )
 
+// See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
+const (
+	// TagStackRegion is the current stack's logical id
+	TagStackRegion = "sparta:cloudformation:region"
+	// TagStackID is the current stack's ID
+	TagStackID = "aws:cloudformation:stack-id"
+	// TagStackName is the current stack name
+	TagStackName = "aws:cloudformation:stack-name"
+)
+
 var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
 	"AWS::DynamoDB::Table":    []string{"StreamArn"},
 	"AWS::Kinesis::Stream":    []string{"Arn"},
