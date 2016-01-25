@@ -1298,22 +1298,21 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		"Version": SpartaVersion,
 		"TS":      (time.Now().UTC().Format(time.RFC3339)),
 	}).Info("Welcome to Sparta")
+	if "execute" != options.Verb {
+		logger.Info(strings.Repeat("-", 80))
+	}
 
 	switch options.Verb {
 	case "provision":
-		logger.Info(strings.Repeat("-", 80))
 		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
 	case "execute":
 		initializeDiscovery(serviceName, lambdaAWSInfos, logger)
 		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
 	case "delete":
-		logger.Info(strings.Repeat("-", 80))
 		err = Delete(serviceName, logger)
 	case "explore":
-		logger.Info(strings.Repeat("-", 80))
 		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
 	case "describe":
-		logger.Info(strings.Repeat("-", 80))
 		fileWriter, err := os.Create(options.Describe.OutputFile)
 		if err != nil {
 			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
