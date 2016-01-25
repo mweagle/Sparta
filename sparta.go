@@ -1030,6 +1030,16 @@ func (info *LambdaAWSInfo) jsHandlerName() string {
 	return sanitizedName(info.lambdaFnName)
 }
 
+// Returns the stable logical name for this LambdaAWSInfo value
+func (info *LambdaAWSInfo) logicalName() string {
+	// Per http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html,
+	// we can only use alphanumeric, so we'll take the sanitized name and
+	// remove all underscores
+	resourceName := strings.Replace(sanitizedName(info.lambdaFnName), "_", "", -1)
+	prefix := fmt.Sprintf("%sLambda", resourceName)
+	return CloudFormationResourceName(prefix, info.lambdaFnName)
+}
+
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
 func (info *LambdaAWSInfo) export(serviceName string,
@@ -1131,16 +1141,6 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		}
 	}
 	return nil
-}
-
-// Returns the stable logical name for this LambdaAWSInfo value
-func (info *LambdaAWSInfo) logicalName() string {
-	// Per http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html,
-	// we can only use alphanumeric, so we'll take the sanitized name and
-	// remove all underscores
-	resourceName := strings.Replace(sanitizedName(info.lambdaFnName), "_", "", -1)
-	prefix := fmt.Sprintf("%sLambda", resourceName)
-	return CloudFormationResourceName(prefix, info.lambdaFnName)
 }
 
 //
