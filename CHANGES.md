@@ -1,3 +1,13 @@
+## v0.3.0
+- :warning: **BREAKING**
+  - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.  
+    - This is done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for resource lookup.
+- :checkered_flag: **CHANGES**
+  - `sparta.Discovery` now returns the following CloudFormation [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html):
+    - StackName
+    - StackID
+    - Region
+    
 ## v0.2.0
 - :warning: **BREAKING**
   - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode

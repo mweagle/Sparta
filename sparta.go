@@ -32,7 +32,7 @@ func init() {
 }
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.2.1"
+const SpartaVersion = "0.3.0"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
@@ -1150,6 +1150,39 @@ func (info *LambdaAWSInfo) export(serviceName string,
 ////////////////////////////////////////////////////////////////////////////////
 // Private
 //
+
+func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) error {
+	var errorText []string
+	collisionMemo := make(map[string]string, 0)
+
+	// 1 - check for duplicate golang function references.
+	for _, eachLambda := range lambdaAWSInfos {
+		testName := eachLambda.lambdaFnName
+		if _, exists := collisionMemo[testName]; !exists {
+			collisionMemo[testName] = testName
+			// We'll always find our own lambda
+			duplicateCount := 0
+			for _, eachCheckLambda := range lambdaAWSInfos {
+				if testName == eachCheckLambda.lambdaFnName {
+					duplicateCount++
+				}
+			}
+			// We'll always find our own lambda
+			if duplicateCount > 1 {
+				logger.WithFields(logrus.Fields{
+					"CollisionCount": duplicateCount,
+					"Name":           testName,
+				}).Error("Detected Sparta lambda function associated with multiple LambdaAWSInfo structs")
+				errorText = append(errorText, fmt.Sprintf("Multiple definitions of lambda: %s", testName))
+			}
+		}
+	}
+	if len(errorText) != 0 {
+		return errors.New(strings.Join(errorText[:], "\n"))
+	}
+	return nil
+}
+
 // Sanitize the provided input by replacing illegal characters with underscores
 func sanitizedName(input string) string {
 	return reSanitize.ReplaceAllString(input, "_")
@@ -1301,7 +1334,10 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	if "execute" != options.Verb {
 		logger.Info(strings.Repeat("-", 80))
 	}
-
+	err = validateSpartaPreconditions(lambdaAWSInfos, logger)
+	if err != nil {
+		return err
+	}
 	switch options.Verb {
 	case "provision":
 		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
