@@ -72,10 +72,13 @@ const (
 )
 
 // The basename of the scripts that are embedded into CONSTANTS.go
-// by `esc` during the generate phase.
+// by `esc` during the generate phase.  In order to export these, there
+// MUST be a corresponding PROXIED_MODULES entry for the base filename
+// in resources/index.js
 var customResourceScripts = []string{"cfn-response.js",
 	"sparta_utils.js",
 	"apigateway.js",
+	"events.js",
 	"s3.js",
 	"ses.js",
 	"sns.js",

@@ -125,20 +125,24 @@ func (s3Site *S3Site) export(S3Bucket string,
 	// The lambda function needs to download the posted resource content, as well
 	// as manage the S3 bucket that hosts the site.
 	statements := CommonIAMStatements["core"]
-	statements = append(statements, ArbitraryJSONObject{
-		"Action":   []string{"s3:ListBucket"},
-		"Effect":   "Allow",
-		"Resource": s3SiteBucketResourceValue,
+	statements = append(statements, iamPolicyStatement{
+		Action:   []string{"s3:ListBucket"},
+		Effect:   "Allow",
+		Resource: s3SiteBucketResourceValue,
 	})
-	statements = append(statements, ArbitraryJSONObject{
-		"Action":   []string{"s3:DeleteObject", "s3:PutObject"},
-		"Effect":   "Allow",
-		"Resource": s3SiteBucketAllKeysResourceValue,
+	statements = append(statements, iamPolicyStatement{
+		Action:   []string{"s3:DeleteObject", "s3:PutObject"},
+		Effect:   "Allow",
+		Resource: s3SiteBucketAllKeysResourceValue,
 	})
-	statements = append(statements, ArbitraryJSONObject{
-		"Action":   []string{"s3:GetObject"},
-		"Effect":   "Allow",
-		"Resource": fmt.Sprintf("arn:aws:s3:::%s/%s", S3Bucket, S3ResourcesKey),
+	statements = append(statements, iamPolicyStatement{
+		Action: []string{"s3:GetObject"},
+		Effect: "Allow",
+		Resource: gocf.Join("",
+			gocf.String("arn:aws:s3:::"),
+			gocf.String(S3Bucket),
+			gocf.String("/"),
+			gocf.String(S3ResourcesKey)),
 	})
 
 	iamS3Role := &gocf.IAMRole{

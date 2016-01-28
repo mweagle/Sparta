@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"bytes"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -23,7 +22,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/voxelbrain/goptions"
 )
 
@@ -43,6 +41,8 @@ type ArbitraryJSONObject map[string]interface{}
 const (
 	// @enum AWSPrincipal
 	APIGatewayPrincipal = "apigateway.amazonaws.com"
+	// @enum CloudWatchEvents
+	CloudWatchEventsPrincipal = "events.amazonaws.com"
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
 	// @enum AWSPrincipal
@@ -86,6 +86,12 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 	},
 }
 
+type iamPolicyStatement struct {
+	Effect   string
+	Action   []string
+	Resource *gocf.StringExpr
+}
+
 // Represents the CloudFormation Arn of this stack, referenced
 // in CommonIAMStatements
 var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudformation:"),
@@ -101,39 +107,40 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
-var CommonIAMStatements = map[string][]ArbitraryJSONObject{
-	"core": []ArbitraryJSONObject{
-		ArbitraryJSONObject{
-			"Action": []string{"logs:CreateLogGroup",
+var CommonIAMStatements = map[string][]iamPolicyStatement{
+	"core": []iamPolicyStatement{
+		iamPolicyStatement{
+			Action: []string{"logs:CreateLogGroup",
 				"logs:CreateLogStream",
 				"logs:PutLogEvents"},
-			"Effect":   "Allow",
-			"Resource": "arn:aws:logs:*:*:*",
+			Effect:   "Allow",
+			Resource: gocf.String("arn:aws:logs:*:*:*"),
 		},
-		ArbitraryJSONObject{
-			"Action":   []string{"cloudwatch:PutMetricData"},
-			"Effect":   "Allow",
-			"Resource": wildcardArn,
+		iamPolicyStatement{
+			Action:   []string{"cloudwatch:PutMetricData"},
+			Effect:   "Allow",
+			Resource: wildcardArn,
 		},
-		ArbitraryJSONObject{
-			"Effect": "Allow",
-			"Action": []string{"cloudformation:DescribeStacks",
+		iamPolicyStatement{
+			Effect: "Allow",
+			Action: []string{"cloudformation:DescribeStacks",
 				"cloudformation:DescribeStackResource"},
-			"Resource": gocf.Join("", cloudFormationThisStackArn...),
+			Resource: gocf.Join("", cloudFormationThisStackArn...),
 		},
 	},
-	"dynamodb": []ArbitraryJSONObject{
-		ArbitraryJSONObject{"Effect": "Allow",
-			"Action": []string{"dynamodb:DescribeStream",
+	"dynamodb": []iamPolicyStatement{
+		iamPolicyStatement{
+			Effect: "Allow",
+			Action: []string{"dynamodb:DescribeStream",
 				"dynamodb:GetRecords",
 				"dynamodb:GetShardIterator",
 				"dynamodb:ListStreams",
 			},
 		}},
-	"kinesis": []ArbitraryJSONObject{
-		ArbitraryJSONObject{
-			"Effect": "Allow",
-			"Action": []string{"kinesis:GetRecords",
+	"kinesis": []iamPolicyStatement{
+		iamPolicyStatement{
+			Effect: "Allow",
+			Action: []string{"kinesis:GetRecords",
 				"kinesis:GetShardIterator",
 				"kinesis:DescribeStream",
 				"kinesis:ListStreams",
@@ -207,688 +214,6 @@ type TemplateDecorator func(lambdaResourceName string,
 	logger *logrus.Logger) error
 
 ////////////////////////////////////////////////////////////////////////////////
-// Types to handle permissions & push source configuration
-
-// LambdaPermissionExporter defines an interface for polymorphic collection of
-// Permission entries that support specialization for additional resource generation.
-type LambdaPermissionExporter interface {
-	// Export the permission object to a set of CloudFormation resources
-	// in the provided resources param.  The targetLambdaFuncRef
-	// interface represents the Fn::GetAtt "Arn" JSON value
-	// of the parent Lambda target
-	export(serviceName string,
-		lambdaLogicalCFResourceName string,
-		template *gocf.Template,
-		S3Bucket string,
-		S3Key string,
-		logger *logrus.Logger) (string, error)
-	// Return a `describe` compatible output for the given permission
-	descriptionInfo() (string, string)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// START - BasePermission
-//
-
-// BasePermission (http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-permission.html)
-// type for common AWS Lambda permission data.
-type BasePermission struct {
-	// The AWS account ID (without hyphens) of the source owner
-	SourceAccount string `json:"SourceAccount,omitempty"`
-	// The ARN of a resource that is invoking your function.
-	SourceArn interface{} `json:"SourceArn,omitempty"`
-}
-
-func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.StringExpr {
-	var parts []gocf.Stringable
-	if nil != joinParts {
-		parts = append(parts, joinParts...)
-	}
-	switch perm.SourceArn.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		parts = []gocf.Stringable{gocf.String(perm.SourceArn.(string))}
-	case *gocf.StringExpr:
-		parts = append(parts, perm.SourceArn.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		parts = append(parts, perm.SourceArn.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", perm.SourceArn))
-	}
-	return gocf.Join("", parts...)
-}
-
-func (perm *BasePermission) describeInfoArn() string {
-	switch perm.SourceArn.(type) {
-	case string:
-		return perm.SourceArn.(string)
-	case *gocf.StringExpr,
-		gocf.RefFunc:
-		data, _ := json.Marshal(perm.SourceArn)
-		return string(data)
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", perm.SourceArn))
-	}
-}
-
-func (perm BasePermission) export(principal string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	lambdaPermission := gocf.LambdaPermission{
-		Action:       gocf.String("lambda:InvokeFunction"),
-		FunctionName: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-		Principal:    gocf.String(principal),
-	}
-	if nil == perm.SourceArn {
-		lambdaPermission.SourceArn = wildcardArn
-	}
-
-	if "" != perm.SourceAccount {
-		lambdaPermission.SourceAccount = gocf.String(perm.SourceAccount)
-	}
-
-	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%v", lambdaPermission)))
-	resourceName := fmt.Sprintf("LambdaPerm%s", hex.EncodeToString(hash.Sum(nil)))
-	template.AddResource(resourceName, lambdaPermission)
-	return resourceName, nil
-}
-
-func (perm BasePermission) descriptionInfo(b *bytes.Buffer, logger *logrus.Logger) error {
-	return errors.New("Describe not implemented")
-}
-
-//
-// END - BasePermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// START - LambdaPermission
-//
-var lambdaSourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:lambda:"),
-	gocf.Ref("AWS::Region"),
-	gocf.String(":function:"),
-}
-
-// LambdaPermission type that creates a Lambda::Permission entry
-// in the generated template, but does NOT automatically register the lambda
-// with the BasePermission.SourceArn.  Typically used to register lambdas with
-// externally managed event producers
-type LambdaPermission struct {
-	BasePermission
-	// The entity for which you are granting permission to invoke the Lambda function
-	Principal string
-}
-
-func (perm LambdaPermission) export(serviceName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	return perm.BasePermission.export(perm.Principal,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-}
-
-func (perm LambdaPermission) descriptionInfo() (string, string) {
-	return "Source", perm.describeInfoArn()
-}
-
-//
-// END - LambdaPermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// START - S3Permission
-//
-var s3SourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:s3:::"),
-}
-
-// S3Permission struct that imples the S3 BasePermission.SourceArn should be
-// updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the owning Lambda.
-// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
-// for more information.
-type S3Permission struct {
-	BasePermission
-	// S3 events to register for (eg: `[]string{"s3:ObjectCreated:*", "s3:ObjectRemoved:*"}`).
-	Events []string `json:"Events,omitempty"`
-	// S3.NotificationConfigurationFilter
-	// to scope event forwarding.  See
-	// 		http://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html
-	// for more information.
-	Filter s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
-}
-
-func (perm S3Permission) export(serviceName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-	if nil != err {
-		return "", err
-	}
-
-	// Make sure the custom lambda that manages s3 notifications is provisioned.
-	sourceArnExpression := perm.BasePermission.sourceArnExpr(s3SourceArnParts...)
-	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal,
-		sourceArnExpression,
-		[]string{},
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-	if nil != err {
-		return "", err
-	}
-	permissionData := ArbitraryJSONObject{
-		"Events": perm.Events,
-	}
-	if nil != perm.Filter.Key {
-		permissionData["Filter"] = perm.Filter
-	}
-
-	// Add a custom resource invocation for this configuration
-	//////////////////////////////////////////////////////////////////////////////
-	// And finally the custom resource forwarder
-	newResource, err := newCloudFormationResource("Custom::SpartaS3Permission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource := newResource.(*cloudFormationS3PermissionResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Permission = permissionData
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	customResource.BucketArn = sourceArnExpression
-
-	// Name?
-	resourceInvokerName := CloudFormationResourceName("ConfigS3",
-		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", sourceArnExpression))
-	// Add it
-	cfResource := template.AddResource(resourceInvokerName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn,
-		targetLambdaResourceName,
-		configuratorResName)
-	return "", nil
-}
-
-func (perm S3Permission) descriptionInfo() (string, string) {
-	return perm.describeInfoArn(), fmt.Sprintf("%s", perm.Events)
-}
-
-//
-// END - S3Permission
-///////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// SNSPermission - START
-var snsSourceArnParts = []gocf.Stringable{}
-
-// SNSPermission struct that imples the S3 BasePermission.SourceArn should be
-// updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the parent Lambda.
-// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
-// for more information.
-type SNSPermission struct {
-	BasePermission
-}
-
-func (perm SNSPermission) export(serviceName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
-
-	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-	if nil != err {
-		return "", err
-	}
-
-	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal,
-		sourceArnExpression,
-		[]string{},
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-	if nil != err {
-		return "", err
-	}
-
-	// Add a custom resource invocation for this configuration
-	//////////////////////////////////////////////////////////////////////////////
-	// And the custom resource forwarder
-
-	newResource, err := newCloudFormationResource("Custom::SpartaSNSPermission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource := newResource.(*cloudFormationSNSPermissionResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Mode = "Subscribe"
-	customResource.TopicArn = sourceArnExpression
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	subscriberResourceName := CloudFormationResourceName("SubscriberSNS",
-		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
-	cfResource := template.AddResource(subscriberResourceName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, targetLambdaResourceName, configuratorResName)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// And the custom resource unsubscriber
-	newResource, err = newCloudFormationResource("Custom::SpartaSNSPermission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource = newResource.(*cloudFormationSNSPermissionResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Mode = "Unsubscribe"
-	customResource.TopicArn = sourceArnExpression
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	unsubscriberResourceName := CloudFormationResourceName("UnsubscriberSNS",
-		targetLambdaResourceName)
-	template.AddResource(unsubscriberResourceName, customResource)
-
-	return "", nil
-}
-
-func (perm SNSPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.describeInfoArn(), ""
-}
-
-//
-// END - SNSPermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// MessageBodyStorageOptions - START
-
-// MessageBodyStorageOptions define additional options for storing SES
-// message body content.  By default, all rules associated with the owning
-// SESPermission object will store message bodies if the MessageBodyStorage
-// field is non-nil.  Message bodies are by default prefixed with
-// `ServiceName/RuleName/`, which can be overriden by specifying a non-empty
-// ObjectKeyPrefix value.  A rule can opt-out of message body storage
-// with the DisableStorage field.  See
-// http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html
-// for additional field documentation.
-// The message body is saved as MIME (https://tools.ietf.org/html/rfc2045)
-type MessageBodyStorageOptions struct {
-	ObjectKeyPrefix string
-	KmsKeyArn       string
-	TopicArn        string
-	DisableStorage  bool
-}
-
-//
-// END - MessageBodyStorageOptions
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// MessageBodyStorage - START
-
-// MessageBodyStorage represents either a new S3 bucket or an existing S3 bucket
-// to which SES message bodies should be stored.
-// NOTE: New MessageBodyStorage create S3 buckets which will be orphaned after your
-// service is deleted.
-type MessageBodyStorage struct {
-	logicalBucketName                  string
-	bucketNameExpr                     *gocf.StringExpr
-	cloudFormationS3BucketResourceName string
-}
-
-// BucketArn returns an Arn value that can be used as an
-// lambdaFn.RoleDefinition.Privileges `Resource` value.
-func (storage *MessageBodyStorage) BucketArn() *gocf.StringExpr {
-	return gocf.Join("",
-		gocf.String("arn:aws:s3:::"),
-		storage.bucketNameExpr)
-}
-
-// BucketArnAllKeys returns an Arn value that can be used
-// lambdaFn.RoleDefinition.Privileges `Resource` value.  It includes
-// the trailing `/*` wildcard to support item acccess
-func (storage *MessageBodyStorage) BucketArnAllKeys() *gocf.StringExpr {
-	return gocf.Join("",
-		gocf.String("arn:aws:s3:::"),
-		storage.bucketNameExpr,
-		gocf.String("/*"))
-}
-
-func (storage *MessageBodyStorage) export(serviceName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	if "" != storage.cloudFormationS3BucketResourceName {
-		s3Bucket := &gocf.S3Bucket{
-			Tags: []gocf.ResourceTag{
-				gocf.ResourceTag{
-					Key:   gocf.String("sparta:logicalBucketName"),
-					Value: gocf.String(storage.logicalBucketName),
-				},
-			},
-		}
-		cfResource := template.AddResource(storage.cloudFormationS3BucketResourceName, s3Bucket)
-		cfResource.DeletionPolicy = "Retain"
-
-		lambdaResource, _ := template.Resources[lambdaLogicalCFResourceName]
-		if nil != lambdaResource {
-			safeAppendDependency(lambdaResource, storage.cloudFormationS3BucketResourceName)
-		}
-
-		logger.WithFields(logrus.Fields{
-			"LogicalResourceName": storage.cloudFormationS3BucketResourceName,
-		}).Info("Service will orphan S3 Bucket on deletion")
-
-		// Save the output
-		template.Outputs[storage.cloudFormationS3BucketResourceName] = &gocf.Output{
-			Description: "SES Message Body Bucket",
-			Value:       gocf.Ref(storage.cloudFormationS3BucketResourceName),
-		}
-	}
-	// Add the S3 Access policy
-	s3BodyStoragePolicy := &gocf.S3BucketPolicy{
-		Bucket: storage.bucketNameExpr,
-		PolicyDocument: ArbitraryJSONObject{
-			"Version": "2012-10-17",
-			"Statement": []ArbitraryJSONObject{
-				{
-					"Sid":    "PermitSESServiceToSaveEmailBody",
-					"Effect": "Allow",
-					"Principal": ArbitraryJSONObject{
-						"Service": "ses.amazonaws.com",
-					},
-					"Action": []string{"s3:PutObjectAcl", "s3:PutObject"},
-					"Resource": gocf.Join("",
-						gocf.String("arn:aws:s3:::"),
-						storage.bucketNameExpr,
-						gocf.String("/*")),
-					"Condition": ArbitraryJSONObject{
-						"StringEquals": ArbitraryJSONObject{
-							"aws:Referer": gocf.Ref("AWS::AccountId"),
-						},
-					},
-				},
-			},
-		},
-	}
-
-	s3BucketPolicyResourceName := CloudFormationResourceName("SESMessageBodyBucketPolicy",
-		fmt.Sprintf("%#v", storage.bucketNameExpr))
-	template.AddResource(s3BucketPolicyResourceName, s3BodyStoragePolicy)
-
-	// Return the name of the bucket policy s.t. the configurator resource
-	// is properly sequenced.  The configurator will fail iff the Bucket Policies aren't
-	// applied b/c the SES Rule Actions check PutObject access to S3 buckets
-	return s3BucketPolicyResourceName, nil
-}
-
-// Return a function that
-
-//
-// END - MessageBodyStorage
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// ReceiptRule - START
-
-// ReceiptRule represents an SES ReceiptRule
-// (http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-receipt-rules.html)
-// value.  To store message bodies, provide a non-nil MessageBodyStorage value
-// to the owning SESPermission object
-type ReceiptRule struct {
-	Name               string
-	Disabled           bool
-	Recipients         []string
-	ScanDisabled       bool
-	TLSPolicy          string
-	TopicArn           string
-	BodyStorageOptions MessageBodyStorageOptions
-}
-
-func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
-	functionArnRef interface{},
-	messageBodyStorage *MessageBodyStorage) ArbitraryJSONObject {
-
-	var actions []ArbitraryJSONObject
-	// If there is a MessageBodyStorage reference, push that S3Action
-	// to the head of the Actions list
-	if nil != messageBodyStorage && !rule.BodyStorageOptions.DisableStorage {
-		s3Action := ArbitraryJSONObject{
-			"BucketName": messageBodyStorage.bucketNameExpr,
-		}
-		if "" != rule.BodyStorageOptions.ObjectKeyPrefix {
-			s3Action["ObjectKeyPrefix"] = rule.BodyStorageOptions.ObjectKeyPrefix
-		}
-		if "" != rule.BodyStorageOptions.KmsKeyArn {
-			s3Action["KmsKeyArn"] = rule.BodyStorageOptions.KmsKeyArn
-		}
-		if "" != rule.BodyStorageOptions.TopicArn {
-			s3Action["TopicArn"] = rule.BodyStorageOptions.TopicArn
-		}
-		actions = append(actions, ArbitraryJSONObject{
-			"S3Action": s3Action,
-		})
-	}
-	// Then create the "LambdaAction", which is always present.
-	ruleAction := ArbitraryJSONObject{
-		"FunctionArn":    functionArnRef,
-		"InvocationType": "Event",
-	}
-	if "" != rule.TopicArn {
-		ruleAction["TopicArn"] = rule.TopicArn
-	}
-	if "" == rule.TLSPolicy {
-		rule.TLSPolicy = "Optional"
-	}
-	actions = append(actions, ArbitraryJSONObject{
-		"LambdaAction": ruleAction,
-	})
-
-	// Return it.
-	return ArbitraryJSONObject{
-		"Name":        fmt.Sprintf("%s.%s", serviceName, rule.Name),
-		"Enabled":     !rule.Disabled,
-		"Recipients":  rule.Recipients,
-		"ScanEnabled": !rule.ScanDisabled,
-		"TlsPolicy":   rule.TLSPolicy,
-		"Actions":     actions,
-	}
-}
-
-//
-// END - ReceiptRule
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// SESPermission - START
-
-// SES doesn't use ARNs to scope access
-var sesSourcePartArn = []gocf.Stringable{wildcardArn}
-
-// SESPermission struct that imples the SES verified domain should be
-// updated (via createReceiptRule) to automatically request or push events
-// to the parent lambda
-// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
-// for more information.  See http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-concepts.html
-// for setting up email receiving.
-type SESPermission struct {
-	BasePermission
-	InvocationType     string /* RequestResponse, Event */
-	ReceiptRules       []ReceiptRule
-	MessageBodyStorage *MessageBodyStorage
-}
-
-// NewMessageBodyStorageResource provisions a new S3 bucket to store message body
-// content.
-func (perm *SESPermission) NewMessageBodyStorageResource(bucketLogicalName string) (*MessageBodyStorage, error) {
-	if len(bucketLogicalName) <= 0 {
-		return nil, errors.New("NewMessageBodyStorageResource requires a unique, non-empty `bucketLogicalName` parameter ")
-	}
-	store := &MessageBodyStorage{
-		logicalBucketName: bucketLogicalName,
-	}
-	store.cloudFormationS3BucketResourceName = CloudFormationResourceName("SESMessageStoreBucket", bucketLogicalName)
-	store.bucketNameExpr = gocf.Ref(store.cloudFormationS3BucketResourceName).String()
-	return store, nil
-}
-
-// NewMessageBodyStorageReference uses a pre-existing S3 bucket for MessageBody storage.
-// Sparta assumes that prexistingBucketName exists and will add an S3::BucketPolicy
-// to enable SES PutObject access.
-func (perm *SESPermission) NewMessageBodyStorageReference(prexistingBucketName string) (*MessageBodyStorage, error) {
-	store := &MessageBodyStorage{}
-	store.bucketNameExpr = gocf.String(prexistingBucketName)
-	return store, nil
-}
-
-//
-
-// TODO - if there is an S3 bucket provisioned, how can we get the provisioned
-// bucketname to the lamdbda function?  It can't be a CustomResource, since the
-// outputs won't be final until the stack is complete...
-// Can stuff it into metadata, but then how to lookup...can also create S3
-// JSON document and write key into index.js...indexed by golang function?
-func (perm SESPermission) export(serviceName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	// SES doesn't use ARNs, so make sure that's what the user supplied
-	// if perm.BasePermission.SourceArn.String() != wildcardArn.String() {
-	// 	return "", errors.New("SESPermissions only support `SourceArn=*` values")
-	// }
-	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
-
-	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-	if nil != err {
-		return "", err
-	}
-
-	// MessageBody storage?
-	var dependsOn []string
-	if nil != perm.MessageBodyStorage {
-		s3Policy, err := perm.MessageBodyStorage.export(serviceName,
-			lambdaLogicalCFResourceName,
-			template,
-			S3Bucket,
-			S3Key,
-			logger)
-		if nil != err {
-			return "", err
-		}
-		if "" != s3Policy {
-			dependsOn = append(dependsOn, s3Policy)
-		}
-	}
-
-	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SESPrincipal,
-		sourceArnExpression,
-		dependsOn,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-
-	if nil != err {
-		return "", err
-	}
-
-	// Add a custom resource invocation for this configuration
-	invocationType := perm.InvocationType
-	if "" == invocationType {
-		invocationType = "Event"
-	}
-	// If there aren't any, just forward everything
-	receiptRules := perm.ReceiptRules
-	if nil == perm.ReceiptRules {
-		receiptRules = []ReceiptRule{ReceiptRule{
-			Name:         "Default",
-			Disabled:     false,
-			ScanDisabled: false,
-			Recipients:   []string{},
-			TLSPolicy:    "Optional",
-		}}
-	}
-
-	var xformedRules []ArbitraryJSONObject
-	for _, eachReceiptRule := range receiptRules {
-		xformedRules = append(xformedRules,
-			eachReceiptRule.lambdaTargetReceiptRule(
-				serviceName,
-				gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-				perm.MessageBodyStorage))
-	}
-
-	newResource, err := newCloudFormationResource("Custom::SpartaSESPermission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource := newResource.(*cloudFormationSESPermissionResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Rules = xformedRules
-
-	subscriberResourceName := CloudFormationResourceName("SubscriberSES",
-		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
-	cfResource := template.AddResource(subscriberResourceName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, targetLambdaResourceName, configuratorResName)
-	return "", nil
-}
-
-func (perm SESPermission) descriptionInfo() (string, string) {
-	// SES doesn't use ARNs, but "*" breaks mermaids parser, so
-	// use entity code per: http://knsv.github.io/mermaid/#special-characters-that-break-syntax
-	return "Not Applicable", "All verified domain(s) email"
-}
-
-//
-// END - SESPermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
 // START - IAMRolePrivilege
 //
 
@@ -910,6 +235,15 @@ type IAMRolePrivilege struct {
 	Resource interface{}
 }
 
+func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {
+	switch rolePrivilege.Resource.(type) {
+	case string:
+		return gocf.String(rolePrivilege.Resource.(string))
+	default:
+		return rolePrivilege.Resource.(*gocf.StringExpr)
+	}
+}
+
 // IAMRoleDefinition stores a slice of IAMRolePrivilege values
 // to "Allow" for the given IAM::Role.
 // Note that the CommonIAMStatements will be automatically included and do
@@ -926,10 +260,10 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 
 	statements := CommonIAMStatements["core"]
 	for _, eachPrivilege := range roleDefinition.Privileges {
-		statements = append(statements, ArbitraryJSONObject{
-			"Effect":   "Allow",
-			"Action":   eachPrivilege.Actions,
-			"Resource": eachPrivilege.Resource,
+		statements = append(statements, iamPolicyStatement{
+			Effect:   "Allow",
+			Action:   eachPrivilege.Actions,
+			Resource: eachPrivilege.resourceExpr(),
 		})
 	}
 
@@ -943,7 +277,7 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			serviceStatements, exists := CommonIAMStatements[awsService]
 			if exists {
 				statements = append(statements, serviceStatements...)
-				statements[len(statements)-1]["Resource"] = eachEventSourceMapping.EventSourceArn
+				statements[len(statements)-1].Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
 			}
 		}
 	}
@@ -1103,7 +437,6 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	}
 
 	// Event Source Mappings
-	// TODO: verify that the event source ARN actually exists.
 	hash := sha1.New()
 	for _, eachEventSourceMapping := range info.EventSourceMappings {
 		eventSourceMappingResource := gocf.LambdaEventSourceMapping{
