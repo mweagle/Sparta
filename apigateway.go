@@ -430,7 +430,7 @@ func (api *API) export(S3Bucket string,
 	logger *logrus.Logger) error {
 
 	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal,
-		"*",
+		gocf.String("*"),
 		[]string{},
 		template,
 		S3Bucket,
