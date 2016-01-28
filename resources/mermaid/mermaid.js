@@ -25402,7 +25402,7 @@ function canonicalize(attrs) {
 
 },{"./acyclic":55,"./add-border-segments":56,"./coordinate-system":57,"./graphlib":60,"./lodash":63,"./nesting-graph":64,"./normalize":65,"./order":70,"./parent-dummy-chains":75,"./position":77,"./rank":79,"./util":82}],63:[function(require,module,exports){
 module.exports=require(51)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":51,"lodash":104}],64:[function(require,module,exports){
+},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],64:[function(require,module,exports){
 var _ = require("./lodash"),
     util = require("./util");
 
@@ -27446,47 +27446,47 @@ module.exports = "0.7.4";
 
 },{}],84:[function(require,module,exports){
 module.exports=require(33)
-},{"./lib":100,"./lib/alg":91,"./lib/json":101,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/index.js":33}],85:[function(require,module,exports){
+},{"./lib":100,"./lib/alg":91,"./lib/json":101,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\index.js":33}],85:[function(require,module,exports){
 module.exports=require(34)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/components.js":34}],86:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\components.js":34}],86:[function(require,module,exports){
 module.exports=require(35)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dfs.js":35}],87:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dfs.js":35}],87:[function(require,module,exports){
 module.exports=require(36)
-},{"../lodash":102,"./dijkstra":88,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra-all.js":36}],88:[function(require,module,exports){
+},{"../lodash":102,"./dijkstra":88,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra-all.js":36}],88:[function(require,module,exports){
 module.exports=require(37)
-},{"../data/priority-queue":98,"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/dijkstra.js":37}],89:[function(require,module,exports){
+},{"../data/priority-queue":98,"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\dijkstra.js":37}],89:[function(require,module,exports){
 module.exports=require(38)
-},{"../lodash":102,"./tarjan":96,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/find-cycles.js":38}],90:[function(require,module,exports){
+},{"../lodash":102,"./tarjan":96,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\find-cycles.js":38}],90:[function(require,module,exports){
 module.exports=require(39)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/floyd-warshall.js":39}],91:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\floyd-warshall.js":39}],91:[function(require,module,exports){
 module.exports=require(40)
-},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/index.js":40}],92:[function(require,module,exports){
+},{"./components":85,"./dijkstra":88,"./dijkstra-all":87,"./find-cycles":89,"./floyd-warshall":90,"./is-acyclic":92,"./postorder":93,"./preorder":94,"./prim":95,"./tarjan":96,"./topsort":97,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\index.js":40}],92:[function(require,module,exports){
 module.exports=require(41)
-},{"./topsort":97,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/is-acyclic.js":41}],93:[function(require,module,exports){
+},{"./topsort":97,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\is-acyclic.js":41}],93:[function(require,module,exports){
 module.exports=require(42)
-},{"./dfs":86,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/postorder.js":42}],94:[function(require,module,exports){
+},{"./dfs":86,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\postorder.js":42}],94:[function(require,module,exports){
 module.exports=require(43)
-},{"./dfs":86,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/preorder.js":43}],95:[function(require,module,exports){
+},{"./dfs":86,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\preorder.js":43}],95:[function(require,module,exports){
 module.exports=require(44)
-},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/prim.js":44}],96:[function(require,module,exports){
+},{"../data/priority-queue":98,"../graph":99,"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\prim.js":44}],96:[function(require,module,exports){
 module.exports=require(45)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/tarjan.js":45}],97:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\tarjan.js":45}],97:[function(require,module,exports){
 module.exports=require(46)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/alg/topsort.js":46}],98:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\alg\\topsort.js":46}],98:[function(require,module,exports){
 module.exports=require(47)
-},{"../lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/data/priority-queue.js":47}],99:[function(require,module,exports){
+},{"../lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\data\\priority-queue.js":47}],99:[function(require,module,exports){
 module.exports=require(48)
-},{"./lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/graph.js":48}],100:[function(require,module,exports){
+},{"./lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\graph.js":48}],100:[function(require,module,exports){
 module.exports=require(49)
-},{"./graph":99,"./version":103,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/index.js":49}],101:[function(require,module,exports){
+},{"./graph":99,"./version":103,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\index.js":49}],101:[function(require,module,exports){
 module.exports=require(50)
-},{"./graph":99,"./lodash":102,"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/json.js":50}],102:[function(require,module,exports){
+},{"./graph":99,"./lodash":102,"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\json.js":50}],102:[function(require,module,exports){
 module.exports=require(51)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/lodash.js":51,"lodash":104}],103:[function(require,module,exports){
+},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\lodash.js":51,"lodash":104}],103:[function(require,module,exports){
 module.exports=require(52)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/graphlib/lib/version.js":52}],104:[function(require,module,exports){
+},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\graphlib\\lib\\version.js":52}],104:[function(require,module,exports){
 module.exports=require(53)
-},{"/Users/knut/Documents/source/mermaid/node_modules/dagre-d3/node_modules/lodash/index.js":53}],105:[function(require,module,exports){
+},{"C:\\Users\\knut\\source\\mermaid\\node_modules\\dagre-d3\\node_modules\\lodash\\index.js":53}],105:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -31018,8 +31018,8 @@ module.exports=require(53)
 },{}],107:[function(require,module,exports){
 module.exports={
   "name": "mermaid",
-  "version": "0.5.5",
-  "description": "Markdownish syntax for generating flowcharts, sequence diagrams and gantt charts.",
+  "version": "0.5.7",
+  "description": "Markdownish syntax for generating flowcharts, sequence diagrams, class diagrams and gantt charts.",
   "main": "src/mermaid.js",
   "keywords": [
     "diagram",
@@ -31035,10 +31035,10 @@ module.exports={
     "live": "live-server ./test/examples",
     "lint": "node node_modules/eslint/bin/eslint.js src",
     "jison": "gulp jison_legacy",
-    "karma": "./node_modules/karma/bin/karma start karma.conf.js --single-run",
+    "karma": "node node_modules/karma/bin/karma start karma.conf.js --single-run",
     "watch": "source  ./scripts/watch.sh",
     "doc": "rm -r build;rm -r dist/www;gulp vartree;cp dist/www/all.html ../mermaid-pages/index.html;cp dist/mermaid.js ../mermaid-pages/javascripts/lib;cp dist/mermaid.forest.css ../mermaid-pages/stylesheets",
-    "tape": "node node_modules/.bin/tape test/cli_test-*.js",
+    "tape": "node node_modules/tape/bin/tape test/cli_test-*.js",
     "jasmine": "npm run jison &&node node_modules/jasmine-es6/bin/jasmine.js",
     "pretest": "npm run jison",
     "test": "npm run dist && npm run karma && npm run tape",
@@ -31046,7 +31046,7 @@ module.exports={
     "dist-slim-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.slim.js -x d3 && cat dist/mermaidAPI.slim.js | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.slim.min.js",
     "dist-mermaid": "node node_modules/browserify/bin/cmd.js src/mermaid.js  -t babelify  -s mermaid    -o dist/mermaid.js         && cat dist/mermaid.js         | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaid.min.js",
     "dist-mermaidAPI": "node node_modules/browserify/bin/cmd.js src/mermaidAPI.js -t babelify -s mermaidAPI -o dist/mermaidAPI.js      && cat dist/mermaidAPI.js      | node node_modules/uglifyjs/bin/uglifyjs -mc > dist/mermaidAPI.min.js",
-    "dist": "npm run dist-slim-mermaid;npm run dist-slim-mermaidAPI; npm run dist-mermaid;npm run dist-mermaidAPI"
+    "dist": "npm run dist-slim-mermaid && npm run dist-slim-mermaidAPI && npm run dist-mermaid && npm run dist-mermaidAPI"
   },
   "repository": {
     "type": "git",
@@ -31115,7 +31115,12 @@ module.exports={
     "jison": "zaach/jison",
     "jsdom": "^7.0.2",
     "jshint-stylish": "^2.0.1",
+    "karma": "^0.13.15",
     "karma-babel-preprocessor": "^6.0.1",
+    "karma-browserify": "^4.4.0",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "live-server": "^0.9.0",
     "map-stream": "0.0.6",
     "marked": "^0.3.2",
     "mock-browser": "^0.91.34",
@@ -31131,7 +31136,7 @@ module.exports={
     "testdom": "^2.0.0",
     "uglifyjs": "^2.4.10",
     "vinyl-source-stream": "^1.1.0",
-    "watchify": "^3.2.2"
+    "watchify": "^3.6.1"
   }
 }
 
@@ -31621,7 +31626,7 @@ classes = {};
 // Functions to be run after graph rendering
 var funs = [];
 /**
- * Function called by parser when a node definition has been found
+ * Function called by parser when a node definition has been found.
  * @param id
  * @param text
  * @param type
@@ -31756,7 +31761,6 @@ var insertMarkers = function insertMarkers(elem) {
 var edgeCount = 0;
 var drawEdge = function drawEdge(elem, path, relation) {
     var getRelationType = function getRelationType(type) {
-        //console.warn(type);
         switch (type) {
             case cDDb.relationType.AGGREGATION:
                 return 'aggregation';
@@ -31797,8 +31801,6 @@ var drawEdge = function drawEdge(elem, path, relation) {
         svgPath.attr('marker-end', 'url(' + url + '#' + getRelationType(relation.relation.type2) + 'End' + ')');
     }
 
-    console.warn(path);
-
     //var bbox = svgPath[0][0].getBBox();
     //var x = Math.floor(bbox.x + bbox.width/2.0);
     //var y = Math.floor(bbox.y + bbox.height/2.0);
@@ -31821,7 +31823,6 @@ var drawEdge = function drawEdge(elem, path, relation) {
 
         window.label = label;
         var bounds = label.node().getBBox();
-        console.log(bounds);
 
         g.insert('rect', ':first-child').attr('class', 'box').attr('x', bounds.x - conf.padding / 2).attr('y', bounds.y - conf.padding / 2).attr('width', bounds.width + 2 * conf.padding / 2).attr('height', bounds.height + 2 * conf.padding / 2);
         //.append('textpath')
@@ -31873,8 +31874,6 @@ var drawClass = function drawClass(elem, classDef) {
     //    isFirst = false;
     //}
 
-    console.warn(JSON.stringify(classDef));
-
     var membersBox = members.node().getBBox();
 
     var methodsLine = g.append('line') // text label for the x axis
@@ -31903,7 +31902,6 @@ var drawClass = function drawClass(elem, classDef) {
     classInfo.width = classBox.width + 2 * conf.padding;
     classInfo.height = classBox.height + conf.padding + 0.5 * conf.dividerMargin;
 
-    console.warn('setting id: ' + id + ' to ' + JSON.stringify(classInfo));
     idCache[id] = classInfo;
     classCnt++;
     return classInfo;
@@ -32881,7 +32879,7 @@ exports.draw = function (txt, id, ver) {
 
     /*
     var box = exports.bounds.getBounds();
-     var height = box.stopy-box.starty+2*conf.diagramMarginY;
+      var height = box.stopy-box.starty+2*conf.diagramMarginY;
     var width  = box.stopx-box.startx+2*conf.diagramMarginX;*/
 
     svg.attr('height', 100);
@@ -33746,7 +33744,7 @@ exports.addEdges = function (edges, g) {
                 var edgeText = edge.text.replace(/<br>/g, '\n');
                 if (typeof edge.style === 'undefined') {
                     if (conf.htmlLabels) {
-                        g.setEdge(edge.start, edge.end, { labelType: 'html', style: style, labelpos: 'c', label: '<span style="background:#e8e8e8">' + edge.text + '</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead }, cnt);
+                        g.setEdge(edge.start, edge.end, { labelType: 'html', style: style, labelpos: 'c', label: '<span class="edgeLabel">' + edge.text + '</span>', arrowheadStyle: 'fill: #333', arrowhead: aHead }, cnt);
                     } else {
                         g.setEdge(edge.start, edge.end, { labelType: 'text', style: 'stroke: #333; stroke-width: 1.5px;fill:none', labelpos: 'c', label: edgeText, arrowheadStyle: 'fill: #333', arrowhead: aHead }, cnt);
                     }
@@ -37839,14 +37837,14 @@ var sequenceDiagram = (function () {
         $V7 = [1, 14],
         $V8 = [1, 16],
         $V9 = [1, 17],
-        $Va = [1, 7, 9, 10, 14, 16, 18, 19, 20, 21, 22, 33],
-        $Vb = [7, 9, 10, 14, 16, 18, 19, 20, 22, 33],
-        $Vc = [1, 51];
+        $Va = [1, 7, 9, 10, 16, 18, 19, 20, 21, 22, 23, 33],
+        $Vb = [7, 9, 10, 16, 18, 19, 20, 21, 23, 33],
+        $Vc = [1, 53];
     var parser = { trace: function trace() {},
         yy: {},
-        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "line": 6, "SPACE": 7, "statement": 8, "NL": 9, "participant": 10, "actor": 11, "signal": 12, "note_statement": 13, "title": 14, "text": 15, "loop": 16, "restOfLine": 17, "end": 18, "opt": 19, "alt": 20, "else": 21, "note": 22, "placement": 23, "text2": 24, "over": 25, "actor_pair": 26, "spaceList": 27, ",": 28, "left_of": 29, "right_of": 30, "signaltype": 31, "actors": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
-        terminals_: { 2: "error", 4: "SD", 7: "SPACE", 9: "NL", 10: "participant", 14: "title", 15: "text", 16: "loop", 17: "restOfLine", 18: "end", 19: "opt", 20: "alt", 21: "else", 22: "note", 25: "over", 28: ",", 29: "left_of", 30: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
-        productions_: [0, [3, 2], [5, 0], [5, 2], [6, 2], [6, 1], [6, 1], [8, 3], [8, 2], [8, 2], [8, 4], [8, 4], [8, 4], [8, 7], [13, 4], [13, 4], [27, 2], [27, 1], [26, 3], [26, 1], [23, 1], [23, 1], [12, 4], [32, 2], [32, 1], [11, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [31, 1], [24, 1]],
+        symbols_: { "error": 2, "start": 3, "SD": 4, "document": 5, "line": 6, "SPACE": 7, "statement": 8, "NL": 9, "participant": 10, "actor": 11, "AS": 12, "restOfLine": 13, "signal": 14, "note_statement": 15, "title": 16, "text": 17, "loop": 18, "end": 19, "opt": 20, "alt": 21, "else": 22, "note": 23, "placement": 24, "text2": 25, "over": 26, "actor_pair": 27, "spaceList": 28, ",": 29, "left_of": 30, "right_of": 31, "signaltype": 32, "ACTOR": 33, "SOLID_OPEN_ARROW": 34, "DOTTED_OPEN_ARROW": 35, "SOLID_ARROW": 36, "DOTTED_ARROW": 37, "SOLID_CROSS": 38, "DOTTED_CROSS": 39, "TXT": 40, "$accept": 0, "$end": 1 },
+        terminals_: { 2: "error", 4: "SD", 7: "SPACE", 9: "NL", 10: "participant", 12: "AS", 13: "restOfLine", 16: "title", 17: "text", 18: "loop", 19: "end", 20: "opt", 21: "alt", 22: "else", 23: "note", 26: "over", 29: ",", 30: "left_of", 31: "right_of", 33: "ACTOR", 34: "SOLID_OPEN_ARROW", 35: "DOTTED_OPEN_ARROW", 36: "SOLID_ARROW", 37: "DOTTED_ARROW", 38: "SOLID_CROSS", 39: "DOTTED_CROSS", 40: "TXT" },
+        productions_: [0, [3, 2], [5, 0], [5, 2], [6, 2], [6, 1], [6, 1], [8, 5], [8, 3], [8, 2], [8, 2], [8, 4], [8, 4], [8, 4], [8, 7], [15, 4], [15, 4], [28, 2], [28, 1], [27, 3], [27, 1], [24, 1], [24, 1], [14, 4], [11, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [32, 1], [25, 1]],
         performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate, /* action[1] */$$, /* vstack */_$ /* lstack */) {
             /* this == yyval */
 
@@ -37868,21 +37866,24 @@ var sequenceDiagram = (function () {
                     this.$ = [];
                     break;
                 case 7:
+                    $$[$0 - 3].description = $$[$0 - 1];this.$ = $$[$0 - 3];
+                    break;
+                case 8:
                     this.$ = $$[$0 - 1];
                     break;
-                case 11:
+                case 12:
 
                     $$[$0 - 1].unshift({ type: 'loopStart', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_START });
                     $$[$0 - 1].push({ type: 'loopEnd', loopText: $$[$0 - 2], signalType: yy.LINETYPE.LOOP_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 12:
+                case 13:
 
                     $$[$0 - 1].unshift({ type: 'optStart', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_START });
                     $$[$0 - 1].push({ type: 'optEnd', optText: $$[$0 - 2], signalType: yy.LINETYPE.OPT_END });
                     this.$ = $$[$0 - 1];
                     break;
-                case 13:
+                case 14:
 
                     // Alt start
                     $$[$0 - 4].unshift({ type: 'altStart', altText: $$[$0 - 5], signalType: yy.LINETYPE.ALT_START });
@@ -37896,11 +37897,11 @@ var sequenceDiagram = (function () {
 
                     this.$ = $$[$0 - 4];
                     break;
-                case 14:
+                case 15:
 
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: $$[$0 - 2], actor: $$[$0 - 1].actor, text: $$[$0] }];
                     break;
-                case 15:
+                case 16:
 
                     // Coerce actor_pair into a [to, from, ...] array
                     $$[$0 - 2] = [].concat($$[$0 - 1], $$[$0 - 1]).slice(0, 2);
@@ -37908,49 +37909,49 @@ var sequenceDiagram = (function () {
                     $$[$0 - 2][1] = $$[$0 - 2][1].actor;
                     this.$ = [$$[$0 - 1], { type: 'addNote', placement: yy.PLACEMENT.OVER, actor: $$[$0 - 2].slice(0, 2), text: $$[$0] }];
                     break;
-                case 18:
+                case 19:
                     this.$ = [$$[$0 - 2], $$[$0]];
                     break;
-                case 19:
+                case 20:
                     this.$ = $$[$0];
                     break;
-                case 20:
+                case 21:
                     this.$ = yy.PLACEMENT.LEFTOF;
                     break;
-                case 21:
+                case 22:
                     this.$ = yy.PLACEMENT.RIGHTOF;
                     break;
-                case 22:
+                case 23:
                     this.$ = [$$[$0 - 3], $$[$0 - 1], { type: 'addMessage', from: $$[$0 - 3].actor, to: $$[$0 - 1].actor, signalType: $$[$0 - 2], msg: $$[$0] }];
                     break;
-                case 25:
+                case 24:
                     this.$ = { type: 'addActor', actor: $$[$0] };
                     break;
-                case 26:
+                case 25:
                     this.$ = yy.LINETYPE.SOLID_OPEN;
                     break;
-                case 27:
+                case 26:
                     this.$ = yy.LINETYPE.DOTTED_OPEN;
                     break;
-                case 28:
+                case 27:
                     this.$ = yy.LINETYPE.SOLID;
                     break;
-                case 29:
+                case 28:
                     this.$ = yy.LINETYPE.DOTTED;
                     break;
-                case 30:
+                case 29:
                     this.$ = yy.LINETYPE.SOLID_CROSS;
                     break;
-                case 31:
+                case 30:
                     this.$ = yy.LINETYPE.DOTTED_CROSS;
                     break;
-                case 32:
+                case 31:
                     this.$ = $$[$0].substring(1).trim().replace(/\\n/gm, "\n");
                     break;
             }
         },
-        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o([1, 7, 9, 10, 14, 16, 19, 20, 22, 33], $V0, { 5: 3 }), { 1: [2, 1], 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 19: $V6, 20: $V7, 22: $V8, 33: $V9 }, o($Va, [2, 3]), { 8: 18, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 19: $V6, 20: $V7, 22: $V8, 33: $V9 }, o($Va, [2, 5]), o($Va, [2, 6]), { 11: 19, 33: $V9 }, { 9: [1, 20] }, { 9: [1, 21] }, { 7: [1, 22] }, { 17: [1, 23] }, { 17: [1, 24] }, { 17: [1, 25] }, { 31: 26, 34: [1, 27], 35: [1, 28], 36: [1, 29], 37: [1, 30], 38: [1, 31], 39: [1, 32] }, { 23: 33, 25: [1, 34], 29: [1, 35], 30: [1, 36] }, o([9, 28, 34, 35, 36, 37, 38, 39, 40], [2, 25]), o($Va, [2, 4]), { 9: [1, 37] }, o($Va, [2, 8]), o($Va, [2, 9]), { 15: [1, 38] }, o($Vb, $V0, { 5: 39 }), o($Vb, $V0, { 5: 40 }), o([7, 9, 10, 14, 16, 19, 20, 21, 22, 33], $V0, { 5: 41 }), { 11: 42, 33: $V9 }, { 33: [2, 26] }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 33: [2, 31] }, { 11: 43, 33: $V9 }, { 11: 45, 26: 44, 33: $V9 }, { 33: [2, 20] }, { 33: [2, 21] }, o($Va, [2, 7]), { 9: [1, 46] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 18: [1, 47], 19: $V6, 20: $V7, 22: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 18: [1, 48], 19: $V6, 20: $V7, 22: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 19: $V6, 20: $V7, 21: [1, 49], 22: $V8, 33: $V9 }, { 24: 50, 40: $Vc }, { 24: 52, 40: $Vc }, { 24: 53, 40: $Vc }, { 28: [1, 54], 40: [2, 19] }, o($Va, [2, 10]), o($Va, [2, 11]), o($Va, [2, 12]), { 17: [1, 55] }, { 9: [2, 22] }, { 9: [2, 32] }, { 9: [2, 14] }, { 9: [2, 15] }, { 11: 56, 33: $V9 }, o($Vb, $V0, { 5: 57 }), { 40: [2, 18] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 12: 9, 13: 10, 14: $V4, 16: $V5, 18: [1, 58], 19: $V6, 20: $V7, 22: $V8, 33: $V9 }, o($Va, [2, 13])],
-        defaultActions: { 27: [2, 26], 28: [2, 27], 29: [2, 28], 30: [2, 29], 31: [2, 30], 32: [2, 31], 35: [2, 20], 36: [2, 21], 50: [2, 22], 51: [2, 32], 52: [2, 14], 53: [2, 15], 56: [2, 18] },
+        table: [{ 3: 1, 4: [1, 2] }, { 1: [3] }, o([1, 7, 9, 10, 16, 18, 20, 21, 23, 33], $V0, { 5: 3 }), { 1: [2, 1], 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 3]), { 8: 18, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 5]), o($Va, [2, 6]), { 11: 19, 33: $V9 }, { 9: [1, 20] }, { 9: [1, 21] }, { 7: [1, 22] }, { 13: [1, 23] }, { 13: [1, 24] }, { 13: [1, 25] }, { 32: 26, 34: [1, 27], 35: [1, 28], 36: [1, 29], 37: [1, 30], 38: [1, 31], 39: [1, 32] }, { 24: 33, 26: [1, 34], 30: [1, 35], 31: [1, 36] }, o([9, 12, 29, 34, 35, 36, 37, 38, 39, 40], [2, 24]), o($Va, [2, 4]), { 9: [1, 38], 12: [1, 37] }, o($Va, [2, 9]), o($Va, [2, 10]), { 17: [1, 39] }, o($Vb, $V0, { 5: 40 }), o($Vb, $V0, { 5: 41 }), o([7, 9, 10, 16, 18, 20, 21, 22, 23, 33], $V0, { 5: 42 }), { 11: 43, 33: $V9 }, { 33: [2, 25] }, { 33: [2, 26] }, { 33: [2, 27] }, { 33: [2, 28] }, { 33: [2, 29] }, { 33: [2, 30] }, { 11: 44, 33: $V9 }, { 11: 46, 27: 45, 33: $V9 }, { 33: [2, 21] }, { 33: [2, 22] }, { 13: [1, 47] }, o($Va, [2, 8]), { 9: [1, 48] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 49], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 50], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 20: $V6, 21: $V7, 22: [1, 51], 23: $V8, 33: $V9 }, { 25: 52, 40: $Vc }, { 25: 54, 40: $Vc }, { 25: 55, 40: $Vc }, { 29: [1, 56], 40: [2, 20] }, { 9: [1, 57] }, o($Va, [2, 11]), o($Va, [2, 12]), o($Va, [2, 13]), { 13: [1, 58] }, { 9: [2, 23] }, { 9: [2, 31] }, { 9: [2, 15] }, { 9: [2, 16] }, { 11: 59, 33: $V9 }, o($Va, [2, 7]), o($Vb, $V0, { 5: 60 }), { 40: [2, 19] }, { 6: 4, 7: $V1, 8: 6, 9: $V2, 10: $V3, 11: 15, 14: 9, 15: 10, 16: $V4, 18: $V5, 19: [1, 61], 20: $V6, 21: $V7, 23: $V8, 33: $V9 }, o($Va, [2, 14])],
+        defaultActions: { 27: [2, 25], 28: [2, 26], 29: [2, 27], 30: [2, 28], 31: [2, 29], 32: [2, 30], 35: [2, 21], 36: [2, 22], 52: [2, 23], 53: [2, 31], 54: [2, 15], 55: [2, 16], 59: [2, 19] },
         parseError: function parseError(str, hash) {
             if (hash.recoverable) {
                 this.trace(str);
@@ -38445,84 +38446,93 @@ var sequenceDiagram = (function () {
                         /* skip comments */
                         break;
                     case 5:
-                        return 10;
+                        this.begin('ID');return 10;
                         break;
                     case 6:
-                        this.begin('LINE');return 16;
+                        this.begin('ALIAS');return 33;
                         break;
                     case 7:
-                        this.begin('LINE');return 19;
+                        this.popState();this.popState();this.begin('LINE');return 12;
                         break;
                     case 8:
-                        this.begin('LINE');return 20;
+                        this.popState();this.popState();return 9;
                         break;
                     case 9:
-                        this.begin('LINE');return 21;
+                        this.begin('LINE');return 18;
                         break;
                     case 10:
-                        this.popState();return 17;
+                        this.begin('LINE');return 20;
                         break;
                     case 11:
-                        return 18;
+                        this.begin('LINE');return 21;
                         break;
                     case 12:
-                        return 29;
+                        this.begin('LINE');return 22;
                         break;
                     case 13:
-                        return 30;
+                        this.popState();return 13;
                         break;
                     case 14:
-                        return 25;
+                        return 19;
                         break;
                     case 15:
-                        return 22;
+                        return 30;
                         break;
                     case 16:
-                        return 14;
+                        return 31;
                         break;
                     case 17:
-                        return 4;
+                        return 26;
                         break;
                     case 18:
-                        return 28;
+                        return 23;
                         break;
                     case 19:
-                        return 9;
+                        return 16;
                         break;
                     case 20:
-                        return 33;
+                        return 4;
                         break;
                     case 21:
-                        return 36;
+                        return 29;
                         break;
                     case 22:
-                        return 37;
-                        break;
-                    case 23:
-                        return 34;
-                        break;
-                    case 24:
-                        return 35;
-                        break;
-                    case 25:
-                        return 38;
-                        break;
-                    case 26:
-                        return 39;
-                        break;
-                    case 27:
-                        return 40;
-                        break;
-                    case 28:
                         return 9;
                         break;
+                    case 23:
+                        return 33;
+                        break;
+                    case 24:
+                        return 36;
+                        break;
+                    case 25:
+                        return 37;
+                        break;
+                    case 26:
+                        return 34;
+                        break;
+                    case 27:
+                        return 35;
+                        break;
+                    case 28:
+                        return 38;
+                        break;
                     case 29:
+                        return 39;
+                        break;
+                    case 30:
+                        return 40;
+                        break;
+                    case 31:
+                        return 9;
+                        break;
+                    case 32:
                         return 'INVALID';
                         break;
                 }
             },
-            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
-            conditions: { "LINE": { "rules": [2, 3, 10], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "inclusive": true } }
+            rules: [/^(?:[\n]+)/i, /^(?:\s+)/i, /^(?:((?!\n)\s)+)/i, /^(?:#[^\n]*)/i, /^(?:%[^\n]*)/i, /^(?:participant\b)/i, /^(?:[^\->:\n,;]+?(?=((?!\n)\s)+as(?!\n)\s|[#\n;]|$))/i, /^(?:as\b)/i, /^(?:(?:))/i, /^(?:loop\b)/i, /^(?:opt\b)/i, /^(?:alt\b)/i, /^(?:else\b)/i, /^(?:[^#\n;]*)/i, /^(?:end\b)/i, /^(?:left of\b)/i, /^(?:right of\b)/i, /^(?:over\b)/i, /^(?:note\b)/i, /^(?:title\b)/i, /^(?:sequenceDiagram\b)/i, /^(?:,)/i, /^(?:;)/i, /^(?:[^\->:\n,;]+)/i, /^(?:->>)/i, /^(?:-->>)/i, /^(?:->)/i, /^(?:-->)/i, /^(?:-[x])/i, /^(?:--[x])/i, /^(?::[^#\n;]+)/i, /^(?:$)/i, /^(?:.)/i],
+            conditions: { "LINE": { "rules": [2, 3, 13], "inclusive": false }, "ALIAS": { "rules": [2, 3, 7, 8], "inclusive": false }, "ID": { "rules": [2, 3, 6], "inclusive": false }, "INITIAL": { "rules": [0, 1, 3, 4, 5, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], "inclusive": true } }
         };
         return lexer;
     })();
@@ -38562,15 +38572,20 @@ if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
 'use strict';
 
 var actors = {};
-var actorKeys = [];
 var messages = [];
 var notes = [];
 var Logger = require('../../logger');
 var log = new Logger.Log();
 
 exports.addActor = function (id, name, description) {
+    // Don't allow description nulling
+    var old = actors[id];
+    if (old && name === old.name && description == null) return;
+
+    // Don't allow null descriptions, either
+    if (description == null) description = name;
+
     actors[id] = { name: name, description: description };
-    actorKeys.push(id);
 };
 
 exports.addMessage = function (idFrom, idTo, message, answer) {
@@ -38655,7 +38670,7 @@ exports.apply = function (param) {
         // log.debug(param);
         switch (param.type) {
             case 'addActor':
-                exports.addActor(param.actor, param.actor, param.actor);
+                exports.addActor(param.actor, param.actor, param.description);
                 break;
             case 'addNote':
                 exports.addNote(param.actor, param.placement, param.text);
@@ -39404,20 +39419,6 @@ exports.Log = Log;
 
 },{}],128:[function(require,module,exports){
 (function (global){
-//(function (root, factory) {
-//    if (typeof exports === 'object') {
-//        // CommonJS
-//        module.exports = factory(require('b'));
-//    } else if (typeof define === 'function' && define.amd) {
-//        // AMD
-//        define(['b'], function (b) {
-//            return (root.returnExportsGlobal = factory(b));
-//        });
-//    } else {
-//        // Global Variables
-//        root.returnExportsGlobal = factory(root.b);
-//    }
-//}(this, function (b) {
 /**
  * Web page integration module for the mermaid framework. It uses the mermaidAPI for mermaid functionality and to render
  * the diagrams to svg code.
@@ -39714,6 +39715,9 @@ var classRenderer = require('./diagrams/classDiagram/classRenderer');
 var classDb = require('./diagrams/classDiagram/classDb');
 var d3 = require('./d3');
 
+SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformToElement || function (toElement) {
+    return toElement.getScreenCTM().inverse().multiply(this.getScreenCTM());
+};
 /**
  * ## Configuration
  * These are the default options which can be overridden with the initialization call as in the example below:
@@ -39912,7 +39916,8 @@ var config = {
             return d.getMonth();
         }]]
     },
-    classDiagram: {}
+    classDiagram: {},
+    info: {}
 };
 
 Logger.setLogLevel(config.logLevel);
@@ -40117,7 +40122,6 @@ var render = function render(id, txt, cb, container) {
     var svgCode = d3.select('#d' + id).node().innerHTML.replace(/url\(#arrowhead/g, 'url(' + url + '#arrowhead', 'g');
 
     svgCode = exports.decodeEntities(svgCode);
-    console.warn('here');
 
     //console.warn('mermaid decode: ');
     //console.warn(svgCode);
@@ -40138,12 +40142,21 @@ var render = function render(id, txt, cb, container) {
 };
 
 exports.render = function (id, text, cb, containerElement) {
-    if (typeof document === 'undefined') {
-        // Todo handle rendering serverside using phantomjs
-    } else {
-            // In browser
-            return render(id, text, cb, containerElement);
+    try {
+        if (arguments.length === 1) {
+            text = id;
+            id = 'mermaidId0';
         }
+
+        if (typeof document === 'undefined') {
+            // Todo handle rendering serverside using phantomjs
+        } else {
+                // In browser
+                return render(id, text, cb, containerElement);
+            }
+    } catch (e) {
+        log.warn(e);
+    }
 };
 
 var setConf = function setConf(cnf) {
@@ -40312,7 +40325,7 @@ var cloneCssStyles = function cloneCssStyles(svg, classes) {
                 }
             } else {
                 if (classes[className].styles instanceof Array) {
-                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect { ' + classes[className].styles.join('; ') + '; }\n';
+                    embeddedStyles += '#' + svg.id.trim() + ' .' + className + '>rect, .' + className + '>polygon, .' + className + '>ellipse { ' + classes[className].styles.join('; ') + '; }\n';
                 }
             }
         }
