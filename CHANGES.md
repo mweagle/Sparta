@@ -6,7 +6,7 @@
 - :checkered_flag: **CHANGES**
   - Added [sparta.CloudWatchEventsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission) type
     - This type can be used to enable [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
-    - See the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go) example app for an example usage.
+    - See the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L381) example app for a sample usage.
   - `sparta.Discovery` now returns the following CloudFormation [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html):
     - _StackName_
     - _StackID_
