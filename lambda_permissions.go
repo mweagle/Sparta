@@ -728,10 +728,37 @@ type CloudWatchEventsRule struct {
 	Description string
 	// ArbitraryJSONObject filter for events as documented at
 	// http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html
-	EventPattern ArbitraryJSONObject `json:"EventPattern,omitempty"`
+	// Rules matches should use the JSON representation (NOT the string form).  Sparta will serialize
+	// the map[string]interface{} to a string form during CloudFormation Template
+	// marshalling.
+	EventPattern map[string]interface{} `json:"EventPattern,omitempty"`
 	// Schedule pattern per http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html
 	ScheduleExpression string
 	RuleTarget         *CloudWatchEventsRuleTarget `json:"RuleTarget,omitempty"`
+}
+
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
+func (rule CloudWatchEventsRule) MarshalJSON() ([]byte, error) {
+	ruleJSON := map[string]interface{}{}
+
+	if "" != rule.Description {
+		ruleJSON["Description"] = rule.Description
+	}
+	if nil != rule.EventPattern {
+		eventPatternString, err := json.Marshal(rule.EventPattern)
+		if nil != err {
+			return nil, err
+		}
+		ruleJSON["EventPattern"] = string(eventPatternString)
+	}
+	if "" != rule.ScheduleExpression {
+		ruleJSON["ScheduleExpression"] = rule.ScheduleExpression
+	}
+	if nil != rule.RuleTarget {
+		ruleJSON["RuleTarget"] = rule.RuleTarget
+	}
+	return json.Marshal(ruleJSON)
 }
 
 //
@@ -863,7 +890,11 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 func (perm CloudWatchEventsPermission) descriptionInfo() (string, string) {
 	var ruleTriggers = " "
 	for eachName, eachRule := range perm.Rules {
-		ruleTriggers = fmt.Sprintf("%s-(%s)\n%s", eachName, eachRule.ScheduleExpression, ruleTriggers)
+		filter := eachRule.ScheduleExpression
+		if "" == filter && nil != eachRule.EventPattern {
+			filter = fmt.Sprintf("%v", eachRule.EventPattern["source"])
+		}
+		ruleTriggers = fmt.Sprintf("%s-(%s)\n%s", eachName, filter, ruleTriggers)
 	}
 	return "CloudWatch Events", fmt.Sprintf("%s", ruleTriggers)
 }
