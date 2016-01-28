@@ -19,3 +19,21 @@ module.exports.toBoolean = function(value) {
   }
   return bValue;
 };
+
+
+module.exports.cfnResponseLocalTesting = function() {
+  console.log('Using local CFN response object');
+  return {
+    FAILED : 'FAILED',
+    SUCCESS: 'SUCCESS',
+    send: function(event, context, status, responseData) {
+        var msg = {
+          event: event,
+          context: context,
+          result: status,
+          responseData: responseData
+        };
+        console.log(JSON.stringify(msg, null, ' '));
+    }
+  };
+};
