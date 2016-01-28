@@ -28,6 +28,7 @@ reset:
 
 generate:
 	go generate -x
+	@echo "Generate complete: `date`"
 
 format:
 	go fmt .
