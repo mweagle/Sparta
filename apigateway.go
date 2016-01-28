@@ -455,16 +455,22 @@ func (api *API) export(S3Bucket string,
 		"method.response.header.Access-Control-Allow-Methods": "'*'",
 		"method.response.header.Access-Control-Allow-Origin":  "'*'",
 	}
-
+	// Keep track of how many resources && methods we're supposed to provision.  If there
+	// aren't any, then throw an error
+	resourceCount := 0
+	methodCount := 0
 	// We need to update the default values here, because the individual
 	// methods are deserialized they annotate the prexisting responses with whitelist data.
 	for _, eachResource := range api.resources {
+		resourceCount++
 		if api.CORSEnabled {
 			// Create the OPTIONS entry
 			method, err := eachResource.NewMethod("OPTIONS")
 			if err != nil {
 				return err
 			}
+			methodCount++
+
 			statusOkResponse := defaultResponse()
 			statusOkResponse.Parameters = responseParameters
 			method.Responses[200] = statusOkResponse
@@ -486,6 +492,7 @@ func (api *API) export(S3Bucket string,
 		}
 
 		for _, eachMethod := range eachResource.Methods {
+			methodCount++
 			statusSuccessfulCode := http.StatusOK
 			if eachMethod.httpMethod == "POST" {
 				statusSuccessfulCode = http.StatusCreated
@@ -522,6 +529,15 @@ func (api *API) export(S3Bucket string,
 			}
 		}
 	}
+
+	if resourceCount <= 0 || methodCount <= 0 {
+		logger.WithFields(logrus.Fields{
+			"ResourceCount": resourceCount,
+			"MethodCount":   methodCount,
+		}).Error("*sparta.API value provided to sparta.Main(), but no resources or methods were defined")
+		return errors.New("Non-nil, empty *sparta.API provided to sparta.Main(). Prefer `nil` value")
+	}
+
 	// Unmarshal everything to JSON
 	newResource, err := newCloudFormationResource("Custom::SpartaAPIGateway", logger)
 	if nil != err {
