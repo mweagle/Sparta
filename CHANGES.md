@@ -1,7 +1,7 @@
 ## v0.3.0
 - :warning: **BREAKING**
   - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.  
-    - This is done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for resource lookup.
+    - This was done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for discovery.
   - Enforce that a non-nil `*sparta.API` value provided to `sparta.Main()` includes a non-empty set of resources and methods
 - :checkered_flag: **CHANGES**
   - Added [sparta.CloudWatchEventsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission) type
