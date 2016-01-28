@@ -67,6 +67,13 @@ type cloudformationS3SiteManager struct {
 	APIGateway   map[string]*gocf.Output
 }
 
+type cloudformationCloudWatchEventsPermissionResource struct {
+	gocf.CloudFormationCustomResource
+	ServiceToken *gocf.StringExpr
+	LambdaTarget *gocf.StringExpr
+	Rules        map[string]CloudWatchEventsRule
+}
+
 func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	switch resourceType {
 	case "Custom::SpartaAPIGateway":
@@ -88,6 +95,10 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	case "Custom::SpartaS3SiteManager":
 		{
 			return &cloudformationS3SiteManager{}
+		}
+	case "Custom::SpartaCloudWatchEventsPermission":
+		{
+			return &cloudformationCloudWatchEventsPermissionResource{}
 		}
 	default:
 		return nil
