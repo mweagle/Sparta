@@ -2,12 +2,16 @@
 - :warning: **BREAKING**
   - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.  
     - This is done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for resource lookup.
+  - Enforce that a non-nil `*sparta.API` value provided to `sparta.Main()` includes a non-empty set of resources and methods 
 - :checkered_flag: **CHANGES**
+  - Added `sparta.CloudWatchEventsPermission` type
+    - This type can be used to enable [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
   - `sparta.Discovery` now returns the following CloudFormation [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html):
-    - StackName
-    - StackID
-    - Region
-    
+    - _StackName_
+    - _StackID_
+    - _Region_
+  - Upgrade to Mermaid [0.5.7](https://github.com/knsv/mermaid/releases/tag/0.5.7) to fix `describe` rendering failure on Chrome.
+
 ## v0.2.0
 - :warning: **BREAKING**
   - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode
