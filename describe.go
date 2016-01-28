@@ -87,11 +87,11 @@ func Describe(serviceName string,
 		// functions declared in this
 		for _, eachPermission := range eachLambda.Permissions {
 			name, link := eachPermission.descriptionInfo()
-			// Trim the link
-			link = strings.Trim(link, "\n")
+			name = strings.TrimSpace(name)
+			link = strings.TrimSpace(link)
 			// Style it to have the Amazon color
 			writeNode(&b, name, "F1702A")
-			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br>", -1))
+			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br><br>", -1))
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
