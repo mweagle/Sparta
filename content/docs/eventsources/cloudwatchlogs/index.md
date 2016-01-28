@@ -1,8 +1,8 @@
 +++
 author = "Matt Weagle"
-date = "2015-11-29T06:50:17"
-title = "Overview"
-tags = ["sparta"]
+date = "2016-01-28T16:36:47Z"
+title = "Event Source - CloudWatch Logs"
+tags = ["sparta", "event_source"]
 type = "doc"
 +++
 

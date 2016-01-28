@@ -1,8 +1,8 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
-tags = ["sparta"]
+title = "Event Source - CloudFormation"
+tags = ["sparta", "event_source"]
 type = "doc"
 +++
 

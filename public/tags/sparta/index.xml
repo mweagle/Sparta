@@ -8,8 +8,20 @@
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
-    <lastBuildDate>Wed, 20 Jan 2016 21:12:27 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Jan 2016 16:36:47 +0000</lastBuildDate>
     <atom:link href="http://gosparta.io/tags/sparta/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Event Source - CloudWatch Logs</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchlogs/</link>
+      <pubDate>Thu, 28 Jan 2016 16:36:47 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchlogs/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: CloudWatch Logs source documentation&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>FAQ</title>
@@ -107,6 +119,40 @@
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/discovery/</guid>
       <description></description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudFormation</title>
+      <link>http://gosparta.io/docs/eventsources/cloudformation/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudformation/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: CloudFormation source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudWatch Events</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchevents/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
+      <description>&lt;p&gt;TODO: CloudWatch Events Documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - Cognito</title>
+      <link>http://gosparta.io/docs/eventsources/cognito/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cognito/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: Cognito source documentation&lt;/p&gt;
+</description>
     </item>
     
     <item>
@@ -1842,318 +1888,6 @@ INFO[0000] Delete request submitted                      Response={
 &lt;p&gt;Congratulations! You&amp;rsquo;ve just deployed your first &amp;ldquo;serverless&amp;rdquo; service.  The following sections will dive deeper into what&amp;rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.&lt;/p&gt;
 
 &lt;p&gt;Next: &lt;a href=&#34;http://gosparta.io/docs/walkthrough&#34;&gt;Walkthrough&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Limitations</title>
-      <link>http://gosparta.io/docs/limitations/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/limitations/</guid>
-      <description>
-
-&lt;h2 id=&#34;sparta-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Limitations&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Go&lt;/strong&gt; isn&amp;rsquo;t officially supported by AWS (yet)
-
-&lt;ul&gt;
-&lt;li&gt;But, you can &lt;a href=&#34;https://twitter.com/awscloud/status/659795641204260864&#34;&gt;vote&lt;/a&gt; to make &lt;em&gt;golang&lt;/em&gt; officially supported.&lt;/li&gt;
-&lt;li&gt;Because of this, there is a per-container initialization cost of:
-
-&lt;ul&gt;
-&lt;li&gt;Copying the embedded binary to &lt;em&gt;/tmp&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Changing the binary permissions&lt;/li&gt;
-&lt;li&gt;Launching it from the new location&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;https://forums.aws.amazon.com/message.jspa?messageID=583910&#34;&gt;AWS Forum&lt;/a&gt; for more background&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Depending on &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;, this initialization penalty (~&lt;code&gt;700ms&lt;/code&gt;) may prove burdensome.&lt;/li&gt;
-&lt;li&gt;Once &lt;strong&gt;Go&lt;/strong&gt; is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;aws-lambda-limitations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;AWS Lambda Limitations&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Lambda is not yet globally available. Please view the &lt;a href=&#34;https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/&#34;&gt;Global Infrastructure&lt;/a&gt; page for the latest deployment status.&lt;/li&gt;
-&lt;li&gt;There are &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda Limits&lt;/a&gt; that may affect your development&lt;/li&gt;
-&lt;li&gt;It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=203889&#34;&gt;https://forums.aws.amazon.com/thread.jspa?threadID=203889&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=210826&#34;&gt;https://forums.aws.amazon.com/thread.jspa?threadID=210826&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Similarly, it&amp;rsquo;s not possible to set proper error response bodies.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Local Testing</title>
-      <link>http://gosparta.io/docs/local_testing/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/local_testing/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-local-testing-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#intro:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Local Testing&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;While developing Sparta lambda functions it may be useful to test them locally without needing to &lt;code&gt;provision&lt;/code&gt; each new code change.  Sparta supports &lt;em&gt;localhost&lt;/em&gt; testing in two different ways:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The &lt;code&gt;explore&lt;/code&gt; command line option&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;httptest.NewServer&lt;/code&gt; for &lt;em&gt;go test&lt;/em&gt; style testing&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-example-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;For this example, let&amp;rsquo;s define a simple Sparta application:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;package main
-
-import (
-	&amp;#34;encoding/json&amp;#34;
-	&amp;#34;fmt&amp;#34;
-	&amp;#34;net/http&amp;#34;
-
-	&amp;#34;github.com/Sirupsen/logrus&amp;#34;
-	sparta &amp;#34;github.com/mweagle/Sparta&amp;#34;
-)
-
-////////////////////////////////////////////////////////////////////////////////
-// Hello world event handler
-//
-func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
-	fmt.Fprint(w, &amp;#34;Hello World&amp;#34;)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	// Deploy it
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	sparta.Main(&amp;#34;SpartaExplore&amp;#34;,
-		fmt.Sprintf(&amp;#34;Test explore command&amp;#34;),
-		lambdaFunctions,
-		nil,
-		nil)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-command-line-testing-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cliTesting:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Command Line Testing&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With our application defined, let&amp;rsquo;s run it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go explore
-
-INFO[0000] Welcome to Sparta                             Option=explore Version=0.1.3
-INFO[0000] The following URLs are available for testing.
-INFO[0000] main.helloWorld                               Path=http://localhost:9999/main.helloWorld
-INFO[0000] Functions can be invoked via application/json over POST
-INFO[0000] 	curl -vs -X POST -H &amp;#34;Content-Type: application/json&amp;#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` keys
-INFO[0000] Starting Sparta server                        URL=http://localhost:9999&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;em&gt;localhost&lt;/em&gt; server mirrors the contract between the NodeJS proxying tier and the &lt;strong&gt;Go&lt;/strong&gt; binary that is used in the AWS Lambda execution environment.&lt;/p&gt;
-
-&lt;p&gt;Per the instructions, let&amp;rsquo;s create a &lt;em&gt;testEvent.json&lt;/em&gt; file with the required structure:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;context&amp;#34; : {},
-  &amp;#34;event&amp;#34; : {}
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;and post it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;&#34;&gt;curl -vs -X POST -H &amp;#34;Content-Type: application/json&amp;#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-
-*   Trying ::1...
-* Connected to localhost (::1) port 9999 (#0)
-&amp;gt; POST /main.helloWorld HTTP/1.1
-&amp;gt; Host: localhost:9999
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt; Content-Type: application/json
-&amp;gt; Content-Length: 33
-&amp;gt;
-* upload completely sent off: 33 out of 33 bytes
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Date: Mon, 21 Dec 2015 03:13:33 GMT
-&amp;lt; Content-Length: 11
-&amp;lt; Content-Type: text/plain; charset=utf-8
-&amp;lt;
-* Connection #0 to host localhost left intact
-Hello World&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.&lt;/p&gt;
-
-&lt;p&gt;While this approach does work, it&amp;rsquo;s not a scalable approach to writing automated tests.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-8-httptest-support-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#httptest:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;httptest support&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;To integrate with the existing &lt;a href=&#34;https://golang.org/pkg/testing/&#34;&gt;go test&lt;/a&gt; command, Sparta includes two functions:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;code&gt;NewLambdaHTTPHandler&lt;/code&gt; : Creates an &lt;a href=&#34;https://golang.org/pkg/net/http/httptest/#NewServer&#34;&gt;httptest.NewServer&lt;/a&gt;-compliant &lt;code&gt;http.Handler&lt;/code&gt; value.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Sparta/explore.NewRequest&lt;/code&gt; : Creates a mock JSON object with optional user-defined &lt;em&gt;event&lt;/em&gt; data.&lt;br /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;To show this in action, let&amp;rsquo;s walk through how Sparta &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/explore_test.go&#34;&gt;does this&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;func TestExplore(t *testing.T) {
-	// 1. Create the function(s) we want to test
-	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	// 2. Mock event specific data to send to the lambda function
-	eventData := ArbitraryJSONObject{
-		&amp;#34;key1&amp;#34;: &amp;#34;value1&amp;#34;,
-		&amp;#34;key2&amp;#34;: &amp;#34;value2&amp;#34;,
-		&amp;#34;key3&amp;#34;: &amp;#34;value3&amp;#34;}
-
-	// 3. Make the request and confirm
-	logger, _ := NewLogger(&amp;#34;warning&amp;#34;)
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
-	defer ts.Close()
-	resp, err := explore.NewRequest(lambdaFn.lambdaFnName, eventData, ts.URL)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	t.Log(&amp;#34;Status: &amp;#34;, resp.Status)
-	t.Log(&amp;#34;Headers: &amp;#34;, resp.Header)
-	t.Log(&amp;#34;Body: &amp;#34;, string(body))
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;The test function above has the following features:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Create a slice of one or more Sparta lambda functions to test&lt;/li&gt;
-&lt;li&gt;Optionally define &lt;em&gt;event&lt;/em&gt; data to use in the test&lt;/li&gt;
-&lt;li&gt;Create a new &lt;code&gt;httptest.NewServer&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Issue the test case request with &lt;code&gt;Sparta/explore.NewRequest&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Validate the test results&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These &lt;em&gt;localhost&lt;/em&gt; tests will be executed as part of your application&amp;rsquo;s normal &lt;code&gt;go test&lt;/code&gt; lifecycle.&lt;/p&gt;
-
-&lt;h2 id=&#34;notes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;API Gateway &lt;a href=&#34;https://github.com/mweagle/Sparta/tree/master/resources/provision/apigateway&#34;&gt;input mappings&lt;/a&gt; are not currently supported.&lt;/li&gt;
-&lt;li&gt;Ensure your localhost AWS credentials have sufficient privileges to access any AWS services.
-
-&lt;ul&gt;
-&lt;li&gt;Sparta does not provision &lt;code&gt;IAM::Role&lt;/code&gt; resources for local testing.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Localhost testing is not a substitute for CI/CD pipelines.
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://queue.acm.org/detail.cfm?id=1142065&#34;&gt;You build it, you run it&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://youtu.be/wyWI3gLpB8o&#34;&gt;Velocity &amp;amp; Volume&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/apigateway/cors/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/cors/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-cors-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#intro:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;CORS&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Cross-origin_resource_sharing&#34;&gt;Cross Origin Resource Sharing&lt;/a&gt; defines a protocol by which resources on different domains may establish whether cross site operations are permissible.&lt;/p&gt;
-
-&lt;p&gt;Sparta makes CORS support a single &lt;code&gt;CORSEnabled&lt;/code&gt; field of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; struct:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Register the function with the API Gateway
-apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage)
-// Enable CORS s.t. the S3 site can access the resources
-apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Setting the boolean to &lt;code&gt;true&lt;/code&gt; will add the necessary &lt;code&gt;OPTIONS&lt;/code&gt; and mock responses to &lt;em&gt;all&lt;/em&gt; resources exposed by your API.  See the &lt;a href=&#34;http://gosparta.io/docs/s3site&#34;&gt;SpartaHTML&lt;/a&gt; sample for a complete example.&lt;/p&gt;
-
-&lt;h2 id=&#34;references:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;API Gateway Docs&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Overview</title>
-      <link>http://gosparta.io/docs/apigateway/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-introduction-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the &lt;a href=&#34;https://aws.amazon.com/api-gateway/&#34;&gt;API Gateway&lt;/a&gt;.  In this section we&amp;rsquo;ll start with a simple &amp;ldquo;echo&amp;rdquo; example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;Example 1 - Echo Event&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example2&#34;&gt;Example 2 - User Input &amp;amp; JSON Response&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-concepts-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#concepts:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Concepts&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Before moving on to the examples, it&amp;rsquo;s suggested you familiarize yourself with the API Gateway concepts.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html&#34;&gt;Gettting Started with Amazon API Gateway&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The API Gateway presents a powerful and complex domain model.  In brief, to integrate with the API Gateway, a service must:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Define one or more AWS Lambda functions&lt;/li&gt;
-&lt;li&gt;Create an API Gateway REST API instance&lt;/li&gt;
-&lt;li&gt;Create one or more resources associated with the REST API&lt;/li&gt;
-&lt;li&gt;Create one or more methods for each resource&lt;/li&gt;
-&lt;li&gt;For each method:
-
-&lt;ol&gt;
-&lt;li&gt;Define the method request params&lt;/li&gt;
-&lt;li&gt;Define the integration request mapping&lt;/li&gt;
-&lt;li&gt;Define the integration response mapping&lt;/li&gt;
-&lt;li&gt;Define the method response mapping&lt;/li&gt;
-&lt;/ol&gt;&lt;/li&gt;
-&lt;li&gt;Create a stage for a REST API&lt;/li&gt;
-&lt;li&gt;Deploy the given stage&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;With that overview, let&amp;rsquo;s start with a simple &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;example&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html&#34;&gt;Walkthrough: API Gateway and Lambda Functions&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

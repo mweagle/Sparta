@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://gosparta.io/</loc>
-    <lastmod>2016-01-20T21:12:27+00:00</lastmod>
+    <lastmod>2016-01-28T16:36:47+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/eventsources/cloudwatchlogs/</loc>
+    <lastmod>2016-01-28T16:36:47+00:00</lastmod>
   </url>
   
   <url>
@@ -19,6 +24,21 @@
   
   <url>
     <loc>http://gosparta.io/docs/discovery/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/eventsources/cloudformation/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/eventsources/cloudwatchevents/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/eventsources/cognito/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
@@ -94,21 +114,6 @@
   
   <url>
     <loc>http://gosparta.io/docs/contributing/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/eventsources/cloudformation/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/eventsources/cloudwatchlogs/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/eventsources/cognito/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   

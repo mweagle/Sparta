@@ -26,17 +26,31 @@
     "URL": "/eventsources",
     "Children": [
       {
-        "Name": "S3",
+        "Name": "CloudFormation (TBD)",
         "IconClass": "",
         "Title": "",
-        "URL": "/eventsources/s3",
+        "URL": "/eventsources/cloudformation",
         "Children": []
       },
       {
-        "Name": "SNS",
+        "Name": "CloudWatch Events",
         "IconClass": "",
         "Title": "",
-        "URL": "/eventsources/sns/",
+        "URL": "/eventsources/cloudwatchevents",
+        "Children": []
+      },
+      {
+        "Name": "CloudWatch Logs (TBD)",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/cloudwatchlogs",
+        "Children": []
+      },
+      {
+        "Name": "Cognito (TBD)",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/cognito",
         "Children": []
       },
       {
@@ -54,6 +68,13 @@
         "Children": []
       },
       {
+        "Name": "S3",
+        "IconClass": "",
+        "Title": "",
+        "URL": "/eventsources/s3",
+        "Children": []
+      },
+      {
         "Name": "SES",
         "IconClass": "",
         "Title": "",
@@ -61,24 +82,10 @@
         "Children": []
       },
       {
-        "Name": "Cognito (TBD)",
+        "Name": "SNS",
         "IconClass": "",
         "Title": "",
-        "URL": "/eventsources/cognito",
-        "Children": []
-      },
-      {
-        "Name": "CloudWatch Logs (TBD)",
-        "IconClass": "",
-        "Title": "",
-        "URL": "/eventsources/cloudwatchlogs",
-        "Children": []
-      },
-      {
-        "Name": "CloudFormation (TBD)",
-        "IconClass": "",
-        "Title": "",
-        "URL": "/eventsources/cloudformation",
+        "URL": "/eventsources/sns/",
         "Children": []
       }
     ]
@@ -126,7 +133,7 @@
       }
       ]},
   {
-    "Name": "S3 Website",
+    "Name": "Static S3 Websites",
     "IconClass": "",
     "Title": "",
     "URL": "/s3site",

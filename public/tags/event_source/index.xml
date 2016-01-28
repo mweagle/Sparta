@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Event_source on Sparta</title>
+    <link>http://gosparta.io/tags/event_source/</link>
+    <description>Recent content in Event_source on Sparta</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-EN</language>
+    <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
+    <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
+    <lastBuildDate>Thu, 28 Jan 2016 16:36:47 +0000</lastBuildDate>
+    <atom:link href="http://gosparta.io/tags/event_source/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Event Source - CloudWatch Logs</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchlogs/</link>
+      <pubDate>Thu, 28 Jan 2016 16:36:47 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchlogs/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: CloudWatch Logs source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudFormation</title>
+      <link>http://gosparta.io/docs/eventsources/cloudformation/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudformation/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: CloudFormation source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudWatch Events</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchevents/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
+      <description>&lt;p&gt;TODO: CloudWatch Events Documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - Cognito</title>
+      <link>http://gosparta.io/docs/eventsources/cognito/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/cognito/</guid>
+      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;TODO: Cognito source documentation&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - DynamoDB</title>
+      <link>http://gosparta.io/docs/eventsources/dynamodb/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/dynamodb/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume that we&amp;rsquo;re given a DynamoDB stream.  See &lt;a href=&#34;http://localhost:1313/docs/eventsources/dynamodb/#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;below&lt;/a&gt; for details on how to create the stream.  We&amp;rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoDynamoDBEvent(event *json.RawMessage,
+                       context *sparta.LambdaContext,
+                       w http.ResponseWriter,
+                      logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+  }).Info(&amp;#34;Request received&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the DynamoDB Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; is expected to be triggered by DynamoDB events, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an DynamoDB-specific event provided by Sparta via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaDynamoDB.Event
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;DynamoDB events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+  logger.WithFields(logrus.Fields{
+    &amp;#34;Keys&amp;#34;:     eachRecord.DynamoDB.Keys,
+    &amp;#34;NewImage&amp;#34;: eachRecord.DynamoDB.NewImage,
+  }).Info(&amp;#34;DynamoDb Event&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114&#34;&gt;appendDynamoDBLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-mappings-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources&#34;&gt;EventSourceMappings&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
+    EventSourceArn:   aws.String(dynamoTestStream),
+    StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
+    BatchSize:        aws.Int64(10),
+    Enabled:          aws.Bool(true),
+  })
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;dynamoTestStream&lt;/code&gt; param is the ARN of the Dynamo stream that that your lambda function will &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;poll&lt;/a&gt; (eg: &lt;em&gt;arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;EventSourceMappings&lt;/code&gt; field is transformed into the appropriate &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html&#34;&gt;CloudFormation Resource&lt;/a&gt; which enables automatic polling of the DynamoDB stream.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all DynamoDB stream based lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoDynamoDBEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput&#34;&gt;EventSourceMappings&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is properly configured.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/blogs/aws/dynamodb-update-triggers-streams-lambda-cross-region-replication-app/&#34;&gt;Using Triggers for Cross Region DynamoDB Replication&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&#34;appendix:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Appendix&lt;/h2&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-13-creating-a-dynamodb-stream-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Creating a DynamoDB Stream&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;To create a DynamoDB stream for a given table, follow the steps below:&lt;/p&gt;
+
+&lt;h4 id=&#34;select-table:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Select Table&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_ManageStream.png&#34; alt=&#34;Select Table&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;enable-stream:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Enable Stream&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_Enable.png&#34; alt=&#34;Enable Stream&#34; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;copy-arn:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Copy ARN&lt;/h4&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_StreamARN.png&#34; alt=&#34;Copy ARN&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;strong&gt;Latest stream ARN&lt;/strong&gt; value is the value that should be provided as the &lt;code&gt;EventSourceArn&lt;/code&gt; in to the &lt;a href=&#34;http://localhost:1313/docs/eventsources/dynamodb/#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - Kinesis</title>
+      <link>http://gosparta.io/docs/eventsources/kinesis/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/kinesis/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to &lt;a href=&#34;https://aws.amazon.com/kinesis/&#34;&gt;Amazon Kinesis&lt;/a&gt; streams.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoKinesisEvent(event *json.RawMessage,
+                      context *sparta.LambdaContext,
+                      w http.ResponseWriter,
+                      logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+		&amp;#34;Event&amp;#34;:     string(*event),
+	}).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;For this sample all we&amp;rsquo;re going to do is unmarshal the Kinesis &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually&#34;&gt;event&lt;/a&gt; to a Sparta &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&#34;&gt;kinesis event&lt;/a&gt; and log the id to CloudWatch Logs:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaKinesis.Event
+  err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+  if err != nil {
+    logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+  for _, eachRecord := range lambdaEvent.Records {
+    logger.WithFields(logrus.Fields{
+      &amp;#34;EventID&amp;#34;: eachRecord.EventID,
+    }).Info(&amp;#34;Kinesis Event&amp;#34;)
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;With the function defined let&amp;rsquo;s register it with Sparta.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;First we wrap the &lt;strong&gt;Go&lt;/strong&gt; function in a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; struct:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Since our lambda function doesn&amp;rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (&lt;code&gt;sparta.IAMRoleDefinition{}&lt;/code&gt;).&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Then last step is to configure our AWS Lambda function with Kinesis as the &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;EventSource&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
+  EventSourceArn:   aws.String(kinesisTestStream),
+  StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
+  BatchSize:        aws.Int64(100),
+  Enabled:          aws.Bool(true),
+})&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;kinesisTestStream&lt;/code&gt; parameter is the Kinesis stream ARN (eg: &lt;em&gt;arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream&lt;/em&gt;) whose events will trigger lambda execution.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoKinesisEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput&#34;&gt;EventSourceMappings&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is properly configured.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-10-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The Kinesis stream and the AWS Lambda function must be provisioned in the same region.&lt;/li&gt;
+&lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html&#34;&gt;Kinesis EventSource&lt;/a&gt; walkthrough.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - S3</title>
+      <link>http://gosparta.io/docs/eventsources/s3/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/s3/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume we have an S3 bucket that stores images.  You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func transformImage(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+		&amp;#34;Event&amp;#34;:     string(*event),
+	}).Info(&amp;#34;Request received&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-s3-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalS3Event:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the S3 Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Since the &lt;code&gt;transformImage&lt;/code&gt; is expected to be triggered by S3 event changes, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an S3-specific event provided by Sparta via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaS3.Event
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;S3 events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+  err = nil
+  switch eachRecord.EventName {
+  case &amp;#34;ObjectCreated:Put&amp;#34;:
+    {
+      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
+    }
+  case &amp;#34;s3:ObjectRemoved:Delete&amp;#34;:
+    {
+      // Delete stamped image
+    }
+  default:
+    {
+      logger.Info(&amp;#34;Unsupported event: &amp;#34;, eachRecord.EventName)
+    }
+  }
+
+  //
+  if err != nil {
+    logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L57&#34;&gt;stampImage&lt;/a&gt; function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple &lt;strong&gt;xformed_&lt;/strong&gt; keyname prefix to identify items which have already been stamped &amp;amp; prevents an &amp;ldquo;event-storm&amp;rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
+
+&lt;p&gt;Our lambda function needs to both &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Provision an IAM::Role as part of this application
+var iamRole = sparta.IAMRoleDefinition{}
+
+// Setup the ARN that includes all child keys
+resourceArn := fmt.Sprintf(&amp;#34;%s/*&amp;#34;, s3EventBroadcasterBucket)
+iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
+  Actions: []string{&amp;#34;s3:GetObject&amp;#34;,
+    &amp;#34;s3:PutObject&amp;#34;,
+  },
+  Resource: resourceArn,
+})&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt; param is the ARN of the S3 bucket that will trigger your lambda function (eg: &lt;em&gt;arn:aws:s3:::MyImagingS3Bucket&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;With the IAM Role defined, we can create the Sparta lambda function for &lt;code&gt;transformImage&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+// transform lambda doesn&amp;#39;t fail early.
+transformOptions := &amp;amp;sparta.LambdaFunctionOptions{
+  Description: &amp;#34;Stamp assets in S3&amp;#34;,
+  MemorySize:  128,
+  Timeout:     30,
+}
+lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the &lt;code&gt;iamRole&lt;/code&gt; we defined earlier.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-10-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;transformImage&lt;/code&gt; function would have the ability to &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; back to the &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt;, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;//////////////////////////////////////////////////////////////////////////////
+// S3 configuration
+//
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: s3EventBroadcasterBucket,
+  },
+  Events: []string{&amp;#34;s3:ObjectCreated:*&amp;#34;, &amp;#34;s3:ObjectRemoved:*&amp;#34;},
+})
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;When &lt;code&gt;Sparta&lt;/code&gt; generates the CloudFormation template, it scans for &lt;code&gt;Permission&lt;/code&gt; configurations.  For &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;push based sources&lt;/a&gt; like S3, Sparta uses that service&amp;rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-12-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;transformImage&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;Implement the associated business logic  (&lt;code&gt;stampImage&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; repo contains the full code, and includes &lt;a href=&#34;http://gosparta.io/docs/apigateway&#34;&gt;API Gateway&lt;/a&gt; support that allows you to publicly fetch the stamped image via an expiring S3 URL.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-13-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html&#34;&gt;S3 event source&lt;/a&gt; walkthrough.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - SES</title>
+      <link>http://gosparta.io/docs/eventsources/ses/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/ses/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to inbound email.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume that we have already &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domains.html&#34;&gt;verified our email domain&lt;/a&gt; with AWS.  This allows our domain&amp;rsquo;s email to be handled by SES.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.&lt;/p&gt;
+
+&lt;p&gt;There is also an additional requirement to support &lt;a href=&#34;http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html&#34;&gt;immutable infrastructure&lt;/a&gt;, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSESEvent(event *json.RawMessage,
+  context *sparta.LambdaContext,
+  w http.ResponseWriter,
+  logger *logrus.Logger) {
+
+{
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+  }).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-ses-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SES Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;At this point we would normally continue processing the SES event, using Sparta types if available.&lt;/p&gt;
+
+&lt;p&gt;However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.&lt;/p&gt;
+
+&lt;p&gt;This requirement implies that our service must be self-contained: we can&amp;rsquo;t assume that &amp;ldquo;something else&amp;rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-5-dynamic-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#dynamicResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The immutable infrastructure requirement makes this lambda function a bit more complex.  Our service needs to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Provision a new S3 bucket for email message body storage
+
+&lt;ul&gt;
+&lt;li&gt;SES will not provide the message body in the event data.  It will only store the email body in an S3 bucket, from which your lambda function can later consume it.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Wait for the S3 bucket to be provisioned
+
+&lt;ul&gt;
+&lt;li&gt;As we need a new S3 bucket, we&amp;rsquo;re relying on AWS to generate a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;unique name&lt;/a&gt;.  But this means that our lambda function doesn&amp;rsquo;t know the S3 bucket name during provisioning.&lt;/li&gt;
+&lt;li&gt;In fact, we shouldn&amp;rsquo;t even create an AWS Lambda function if the S3 bucket can&amp;rsquo;t be created.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Include an IAMPrivilege so that our &lt;strong&gt;Go&lt;/strong&gt; function can access the dynamically created bucket&lt;/li&gt;
+&lt;li&gt;Discover the S3 Bucket at lambda execution time&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-6-provision-message-body-storage-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision Message Body Storage Resource&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s first take a look at how the SES lambda handler provisions a new S3 bucket via the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage&#34;&gt;MessageBodyStorage&lt;/a&gt; type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendSESLambda(api *sparta.API,
+  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+
+  // Setup options s.t. the lambda function has time to consume the message body
+  sesItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
+    Description: &amp;#34;&amp;#34;,
+    MemorySize:  128,
+    Timeout:     10,
+  }
+  // Our lambda function will need to be able to read from the bucket, which
+  // will be handled by the S3MessageBodyBucketDecorator below
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSESEvent, sesItemInfoOptions)
+
+  // Add a Permission s.t. the Lambda function automatically manages SES registration
+  sesPermission := sparta.SESPermission{
+    BasePermission: sparta.BasePermission{
+      // SES only supports wildcard ARNs
+      SourceArn: &amp;#34;*&amp;#34;,
+    },
+    InvocationType: &amp;#34;Event&amp;#34;,
+  }
+  // Store the message body
+  bodyStorage, _ := sesPermission.NewMessageBodyStorageResource(&amp;#34;Special&amp;#34;)
+  sesPermission.MessageBodyStorage = bodyStorage&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;MessageBodyStorage&lt;/code&gt; type (and the related &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions&#34;&gt;MessageBodyStorageOptions&lt;/a&gt; type) cause our SESPermission handler to  add an &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html&#34;&gt;S3 ReceiptRule&lt;/a&gt; at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.&lt;/p&gt;
+
+&lt;p&gt;The single parameter &lt;code&gt;&amp;quot;Special&amp;quot;&lt;/code&gt; is an application-unique literal value that is used to create a stable CloudFormation resource identifier so that new buckets are not created in response to stack update requests.&lt;/p&gt;
+
+&lt;p&gt;Our SES handler then adds two &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html&#34;&gt;ReceiptRules&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sesPermission.ReceiptRules = make([]sparta.ReceiptRule, 0)
+sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
+  Name:       &amp;#34;Special&amp;#34;,
+  Recipients: []string{&amp;#34;sombody_special@gosparta.io&amp;#34;},
+  TLSPolicy:  &amp;#34;Optional&amp;#34;,
+})
+sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
+  Name:       &amp;#34;Default&amp;#34;,
+  Recipients: []string{},
+  TLSPolicy:  &amp;#34;Optional&amp;#34;,
+})&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-9-dynamic-iamprivilege-arn-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic IAMPrivilege Arn&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Our lambda function is required to access the message body in the dynamically created &lt;code&gt;MessageBodyStorage&lt;/code&gt; resource, but the S3 resource Arn is only defined &lt;em&gt;after&lt;/em&gt; the service is provisioned.  The solution to this is to reference the dynamically generated &lt;code&gt;BucketArnAllKeys()&lt;/code&gt; value in the &lt;code&gt;sparta.IAMRolePrivilege&lt;/code&gt; initializer:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Then add the privilege to the Lambda function s.t. we can actually get at the data
+lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{&amp;#34;s3:GetObject&amp;#34;, &amp;#34;s3:HeadObject&amp;#34;},
+    Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
+})&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The last step is to register the &lt;code&gt;SESPermission&lt;/code&gt; with the lambda info:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Finally add the SES permission to the lambda function
+lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;At this point we&amp;rsquo;ve implicitly created an S3 bucket via the &lt;code&gt;MessageBodyStorage&lt;/code&gt; value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-12-dynamic-messagebodystorage-discovery-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic MessageBodyStorage Discovery&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Our &lt;code&gt;echoSESEvent&lt;/code&gt; function needs to determine, at execution time, the &lt;code&gt;MessageBodyStorage&lt;/code&gt; bucketname.  This is done via &lt;code&gt;sparta.Discover()&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;configuration, configErr := sparta.Discover()
+
+logger.WithFields(logrus.Fields{
+  &amp;#34;Error&amp;#34;:         configErr,
+  &amp;#34;Configuration&amp;#34;: configuration,
+}).Debug(&amp;#34;Discovery results&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;sparta.Discover()&lt;/code&gt; function returns the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html&#34;&gt;Metdata&lt;/a&gt; and &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html&#34;&gt;Tags&lt;/a&gt; associated with any immediate dependencies &lt;em&gt;of the current Sparta-compliant Go lambda function scope&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;In other words, &lt;code&gt;sparta.Discover()&lt;/code&gt; may return a non-empty map iff:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;It&amp;rsquo;s called from a &lt;code&gt;Sparta.LambdaFunction&lt;/code&gt; function&lt;/li&gt;
+&lt;li&gt;That function has immediate AWS resource dependencies&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The returned &lt;code&gt;map[string]interface{}&lt;/code&gt; will be empty in all other cases.&lt;/p&gt;
+
+&lt;p&gt;Here&amp;rsquo;s a sample &lt;code&gt;configuration&lt;/code&gt; map:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+  &amp;#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&amp;#34;: {
+    &amp;#34;DomainName&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&amp;#34;,
+    &amp;#34;Ref&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4&amp;#34;,
+    &amp;#34;Tags&amp;#34;: [
+      {
+        &amp;#34;Key&amp;#34;: &amp;#34;sparta:logicalBucketName&amp;#34;,
+        &amp;#34;Value&amp;#34;: &amp;#34;Special&amp;#34;
+      }
+    ],
+    &amp;#34;Type&amp;#34;: &amp;#34;AWS::S3::Bucket&amp;#34;,
+    &amp;#34;WebsiteURL&amp;#34;: &amp;#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com&amp;#34;
+  },
+  &amp;#34;golangFunc&amp;#34;: &amp;#34;main.echoSESEvent&amp;#34;
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Note that the &lt;em&gt;sparta:logicalBucketName&lt;/em&gt; tag value is &lt;code&gt;&amp;quot;Special&amp;quot;&lt;/code&gt;, the same value provided in:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;sesPermission.NewMessageBodyStorageResource(&amp;#34;Special&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;messageBodyInfo := make(map[string]interface{}, 0)
+bucketName := &amp;#34;&amp;#34;
+if nil != configuration {
+  for eachKey, eachValue := range configuration {
+    if strings.HasPrefix(eachKey, &amp;#34;SESMessageStoreBucket&amp;#34;) {
+      messageBodyInfo[&amp;#34;Bucket&amp;#34;] = eachValue
+      bucketInfo, ok := eachValue.(map[string]interface{})
+      if ok {
+        bucketName, _ = bucketInfo[&amp;#34;Ref&amp;#34;].(string)
+      }
+    }
+  }&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;TODO: Add configuration types&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-17-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;The rest of &lt;code&gt;echoSESEvent&lt;/code&gt; satisfies the other requirements, with a bit of help from the SES &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/ses&#34;&gt;event types&lt;/a&gt;:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;var lambdaEvent spartaSES.Event
+  err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+  if err != nil {
+    logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+
+  svc := s3.New(session.New())
+  for _, eachRecord := range lambdaEvent.Records {
+    logger.WithFields(logrus.Fields{
+      &amp;#34;Source&amp;#34;:     eachRecord.SES.Mail.Source,
+      &amp;#34;MessageID&amp;#34;:  eachRecord.SES.Mail.MessageID,
+      &amp;#34;S3BodyInfo&amp;#34;: messageBodyInfo,
+    }).Info(&amp;#34;SES Event&amp;#34;)
+
+    // If we have a bucketname, fetch the S3 metadata about the body
+    if &amp;#34;&amp;#34; != bucketName {
+      params := &amp;amp;s3.HeadObjectInput{
+        Bucket: aws.String(bucketName),
+        Key:    aws.String(eachRecord.SES.Mail.MessageID),
+      }
+      resp, err := svc.HeadObject(params)
+      logger.WithFields(logrus.Fields{
+        &amp;#34;Error&amp;#34;:    err,
+        &amp;#34;Metadata&amp;#34;: resp,
+      }).Info(&amp;#34;SES MessageBody&amp;#34;)
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-19-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SES-triggered lambda function:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoSESEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Additionally, if the SES handler needs to access the raw email message body:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Create a new &lt;code&gt;sesPermission.NewMessageBodyStorageResource(&amp;quot;Special&amp;quot;)&lt;/code&gt; value to store the message body&lt;/li&gt;
+&lt;li&gt;Assign the value to the &lt;code&gt;sesPermission.MessageBodyStorage&lt;/code&gt; field&lt;/li&gt;
+&lt;li&gt;If your lambda function needs to consume the message body, add an entry to &lt;code&gt;sesPermission.[]IAMPrivilege&lt;/code&gt; that includes the &lt;code&gt;sesPermission.MessageBodyStorage.BucketArnAllKeys()&lt;/code&gt; Arn&lt;/li&gt;
+&lt;li&gt;In your &lt;strong&gt;Go&lt;/strong&gt; lambda function definition, discover the S3 bucketname via &lt;code&gt;sparta.Discover()&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-20-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The SES message (including headers) is stored in the &lt;a href=&#34;http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3&#34;&gt;raw format&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sparta.Discover()&lt;/code&gt; uses &lt;a href=&#34;https://golang.org/pkg/reflect/&#34;&gt;reflection&lt;/a&gt; to map from the current enclosing &lt;strong&gt;Go&lt;/strong&gt; function name to the owning &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; CloudFormation. Therefore, calling &lt;code&gt;sparta.Discover()&lt;/code&gt; from non-Sparta lambda functions (application helpers, function literals) will generate an error.&lt;/li&gt;
+&lt;li&gt;More on Immutable Infrastructure:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift&#34;&gt;Subbu - Automate Everything&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler - Immutable Deployments&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/&#34;&gt;The New Stack&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Event Source - SNS</title>
+      <link>http://gosparta.io/docs/eventsources/sns/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/eventsources/sns/</guid>
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Assume that we have an SNS topic that broadcasts notifications.  We&amp;rsquo;ve been asked to write a lambda function that logs the &lt;em&gt;Subject&lt;/em&gt; and &lt;em&gt;Message&lt;/em&gt; text to CloudWatch logs for later processing.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSNSEvent(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger)
+{
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+  }).Info(&amp;#34;Request received&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; is expected to be triggered by SNS notifications, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an SNS-specific event provided by Sparta via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaSNS.Event
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;SNS events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+  logger.WithFields(logrus.Fields{
+    &amp;#34;Subject&amp;#34;: eachRecord.Sns.Subject,
+    &amp;#34;Message&amp;#34;: eachRecord.Sns.Message,
+  }).Info(&amp;#34;SNS Event&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoSNSEvent&lt;/code&gt; function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: snsTopic,
+  },
+})
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;snsTopic&lt;/code&gt; param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).&lt;/p&gt;
+
+&lt;p&gt;See the &lt;a href=&#34;http://gosparta.io/docs/eventsources/s3/#eventSourceRegistration&#34;&gt;S3 docs&lt;/a&gt; for more information on how the &lt;em&gt;Permissions&lt;/em&gt; data is processed.&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SNS-triggered lambda function:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoSNSEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TBD&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
