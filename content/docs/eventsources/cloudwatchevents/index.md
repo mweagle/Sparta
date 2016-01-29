@@ -115,20 +115,20 @@ func appendCloudWatchEventHandler(api *sparta.API,
 
   lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
 
-	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
-	cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
-		ScheduleExpression: "rate(5 minutes)",
-	}
-	cloudWatchEventsPermission.Rules["EC2Activity"] = sparta.CloudWatchEventsRule{
-		EventPattern: map[string]interface{}{
-			"source":      []string{"aws.ec2"},
-			"detail-type": []string{"EC2 Instance State-change Notification"},
-		},
-	}
-	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+  cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
+  cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
+    ScheduleExpression: "rate(5 minutes)",
+  }
+  cloudWatchEventsPermission.Rules["EC2Activity"] = sparta.CloudWatchEventsRule{
+    EventPattern: map[string]interface{}{
+    	"source":      []string{"aws.ec2"},
+    	"detail-type": []string{"EC2 Instance State-change Notification"},
+    },
+  }
+  lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
 
-	return append(lambdaFunctions, lambdaFn)
+  return append(lambdaFunctions, lambdaFn)
 }
 {{< /highlight >}}  
 
