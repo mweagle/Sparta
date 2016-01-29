@@ -11,7 +11,8 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 ## Goal {#goal}  
 
 Assume that we're supposed to write a simple "HelloWorld" CloudWatch event function that has two responsibilities:
-  * Run every *5 minutes* to provide a heartbeat notification to our alerting system via logfiles
+
+  * Run every *5 minutes* to provide a heartbeat notification to our alerting system via a logfile entry
   * Log *EC2-related* events for later processing
 
 ## Getting Started {#gettingStarted}  

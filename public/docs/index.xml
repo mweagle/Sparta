@@ -145,9 +145,12 @@
 
 &lt;h2 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h2&gt;
 
-&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two responsibilities:
-  * Run every &lt;em&gt;5 minutes&lt;/em&gt; to provide a heartbeat notification to our alerting system via logfiles
-  * Log &lt;em&gt;EC2-related&lt;/em&gt; events for later processing&lt;/p&gt;
+&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two responsibilities:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Run every &lt;em&gt;5 minutes&lt;/em&gt; to provide a heartbeat notification to our alerting system via a logfile entry&lt;/li&gt;
+&lt;li&gt;Log &lt;em&gt;EC2-related&lt;/em&gt; events for later processing&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&#34;gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h2&gt;
 
