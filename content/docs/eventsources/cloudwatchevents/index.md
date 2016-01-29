@@ -150,5 +150,6 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 ## <a href="{{< relref "#otherResources" >}}">Other Resources</a>
 
   * Introduction to [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
+  * Tim Bray's [Cloud Eventing](https://www.tbray.org/ongoing/When/201x/2016/01/11/CloudWatch-Events) writeup
   * [Run an AWS Lambda Function on a Schedule Using the AWS CLI](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/RunLambdaSchedule.html)
   * The EC2 event pattern is drawn from the AWS [Events & Event Patterns](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html) documentation

@@ -284,6 +284,7 @@ return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Introduction to &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Events&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Tim Bray&amp;rsquo;s &lt;a href=&#34;https://www.tbray.org/ongoing/When/201x/2016/01/11/CloudWatch-Events&#34;&gt;Cloud Eventing&lt;/a&gt; writeup&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/RunLambdaSchedule.html&#34;&gt;Run an AWS Lambda Function on a Schedule Using the AWS CLI&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;The EC2 event pattern is drawn from the AWS &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html&#34;&gt;Events &amp;amp; Event Patterns&lt;/a&gt; documentation&lt;/li&gt;
 &lt;/ul&gt;
