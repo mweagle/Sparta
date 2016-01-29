@@ -28,7 +28,7 @@ Local testing is available via the [explore](/docs/local_testing/) command.
 ## Event Sources - SES
 <hr />
 
-### Where does the _SpartaRuleSet_ come from?  {sesfaq1}  
+### Where does the _SpartaRuleSet_ come from?  {#sesfaq1}  
 
 SES only permits a single [active receipt rule](http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html).  Additionally, it's possible that multiple Sparta-based services are handing different SES recipients.  
 

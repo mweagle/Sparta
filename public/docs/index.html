@@ -51,7 +51,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  224 
+    "wordCount":  223 
   }
 </script>
 
@@ -82,9 +82,6 @@
 
 
 
-  <script src="/raphael/raphael-min.js"></script>
-  <script src="/flowchart.js/release/flowchart.min.js"></script>
-
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -95,7 +92,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: name:yeti highlight:vs github:https://github.com/mweagle facebook: googleplus: twitter:mweagle flattr: home:Home googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[name:yeti highlight:vs bitbucket: googleplus: facebook: youtube: home:Home googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -119,7 +116,7 @@
             
                 <i class="fa fa-book"></i>
             
-            
+
             Documentation
             </a>
           </li>
@@ -132,7 +129,7 @@
             
                 <i class="fa fa-question-circle"></i>
             
-            
+
             FAQ
             </a>
           </li>
@@ -145,7 +142,7 @@
             
                 <i class="fa fa-github"></i>
             
-            
+
             GitHub
             </a>
           </li>
@@ -158,7 +155,7 @@
             
                 <i class="fa fa-tags"></i>
             
-            
+
             Tags
             </a>
           </li>
@@ -171,7 +168,7 @@
             
                 <i class="fa fa-twitter"></i>
             
-            
+
             mweagle
             </a>
           </li>
@@ -323,12 +320,22 @@
 
 <p>When creating or updating a service, Sparta follows this workflow:</p>
 
-<div id="summary"></div>
-<script>
-  var diagram = flowchart.parse("\nst=\x3estart: Start\nopIAM=\x3eoperation: Verify static IAM Roles\nopCompile=\x3eoperation: Cross-compile for AWS Linux AMI\nopZipApp=\x3eoperation: Zip application\nopUploadApp=\x3eoperation: Upload archive to S3\ncondS3Site=\x3econdition: S3 Site Included?\nopZipSite=\x3eoperation: Zip S3 static site assets\nopUploadSite=\x3eoperation: Upload S3 static assets\n\nopMarshal=\x3eoperation: Marshal to CloudFormation\nopDecorate=\x3eoperation:  Call TemplateDecorators:\x3ehttps:\/\/godoc.org\/github.com\/mweagle\/Sparta#TemplateDecorator[blank]\nopUploadTemplate=\x3eoperation: Upload template to S3:\x3ehttp:\/\/docs.aws.amazon.com\/AWSCloudFormation\/latest\/UserGuide\/cloudformation-limits.html[blank]\nopProvision=\x3eoperation: Create\/Update stack state\nopWait=\x3eoperation: Wait for Complete\/Failure result\ne=\x3eend: End\n\nst-\x3eopIAM-\x3eopCompile-\x3eopZipApp-\x3econdS3Site\ncondS3Site(yes)-\x3eopZipSite-\x3eopUploadSite-\x3eopMarshal\ncondS3Site(no)-\x3eopMarshal\nopMarshal-\x3eopDecorate-\x3eopUploadTemplate-\x3eopProvision-\x3eopWait-\x3ee\n");
-  diagram.drawSVG('summary');
-</script>
+<ul>
+<li>Verify static IAM Roles</li>
+<li>Cross-compile application for AWS Linux AMI</li>
+<li>ZIP archive</li>
+<li>Upload archive to S3
 
+<ul>
+<li>Conditionally ZIP S3-backed static site assets</li>
+<li>Upload S3-static site archive</li>
+</ul></li>
+<li>Marshal to CloudFormation</li>
+<li>Call user <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorators</a> to annotate template</li>
+<li>Upload template to S3 (see <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">CloudFormation limits</a>)</li>
+<li>Create/Update stack state</li>
+<li>Wait for <code>Complete</code>/<code>Failure</code> result</li>
+</ul>
 
 <p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
 

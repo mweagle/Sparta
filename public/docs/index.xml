@@ -69,7 +69,7 @@
 
 &lt;hr /&gt;
 
-&lt;h3 id=&#34;where-does-the-spartaruleset-come-from-sesfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?  {sesfaq1}&lt;/h3&gt;
+&lt;h3 id=&#34;sesfaq1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?&lt;/h3&gt;
 
 &lt;p&gt;SES only permits a single &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html&#34;&gt;active receipt rule&lt;/a&gt;.  Additionally, it&amp;rsquo;s possible that multiple Sparta-based services are handing different SES recipients.&lt;/p&gt;
 
@@ -139,7 +139,151 @@
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
-      <description>&lt;p&gt;TODO: CloudWatch Events Documentation&lt;/p&gt;
+      <description>
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Events&lt;/a&gt;.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h2 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h2&gt;
+
+&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two responsibilities:
+  * Run every &lt;em&gt;5 minutes&lt;/em&gt; to provide a heartbeat notification to our alerting system via logfiles
+  * Log &lt;em&gt;EC2-related&lt;/em&gt; events for later processing&lt;/p&gt;
+
+&lt;h2 id=&#34;gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h2&gt;
+
+&lt;p&gt;Our lambda function is pretty simple:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoCloudWatchEvent(event *json.RawMessage,
+                        context *sparta.LambdaContext,
+                        w http.ResponseWriter,
+                        logger *logrus.Logger) {
+
+	logger.WithFields(logrus.Fields{
+		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+	}).Info(&amp;#34;Request received&amp;#34;)
+
+	config, _ := sparta.Discover()
+	logger.WithFields(logrus.Fields{
+		&amp;#34;RequestID&amp;#34;:     context.AWSRequestID,
+		&amp;#34;Event&amp;#34;:         string(*event),
+		&amp;#34;Configuration&amp;#34;: config,
+	}).Info(&amp;#34;Request received&amp;#34;)
+	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the event other than log it.&lt;/p&gt;
+
+&lt;h2 id=&#34;spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;echoCloudWatchEvent&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchEventHandler&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
+
+&lt;p&gt;Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
+                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The next step is to add a &lt;code&gt;CloudWatchEventsPermission&lt;/code&gt; value that includes the two rule triggers.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our two rules will be inserted into the &lt;code&gt;Rules&lt;/code&gt; map in the next steps.&lt;/p&gt;
+
+&lt;h3 id=&#34;cronExpression:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cron Expression&lt;/h3&gt;
+
+&lt;p&gt;Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
+  ScheduleExpression: &amp;#34;rate(5 minutes)&amp;#34;,
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;ScheduleExpression&lt;/code&gt; value can either be a &lt;em&gt;rate&lt;/em&gt; or a &lt;em&gt;cron&lt;/em&gt; &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html&#34;&gt;expression&lt;/a&gt;.  The map keyname is used when adding the &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property&#34;&gt;rule&lt;/a&gt; during stack provisioning.&lt;/p&gt;
+
+&lt;h3 id=&#34;eventPattern:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Pattern&lt;/h3&gt;
+
+&lt;p&gt;The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&amp;rsquo;ll add a second &lt;code&gt;Rule&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
+  EventPattern: map[string]interface{}{
+    &amp;#34;source&amp;#34;:      []string{&amp;#34;aws.ec2&amp;#34;},
+    &amp;#34;detail-type&amp;#34;: []string{&amp;#34;EC2 Instance State-change Notification&amp;#34;},
+  },
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The EC2 event pattern is the &lt;strong&gt;Go&lt;/strong&gt; JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.&lt;/p&gt;
+
+&lt;div class=&#34;panel panel-warning&#34;&gt;
+  &lt;div class=&#34;panel-heading&#34;&gt;Validity Checks&lt;/div&gt;
+   &lt;div class=&#34;panel-body&#34;&gt;
+    Sparta does &lt;b&gt;NOT&lt;/b&gt; attempt to validate either &lt;code&gt;ScheduleExpression&lt;/code&gt; or &lt;code&gt;EventPattern&lt;/code&gt; values prior to calling CloudFormation.  Syntax errors in either value will be detected during provisioning when the Sparta CloudFormation CustomResource calls &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property&#34;&gt;putRule&lt;/a&gt; to add the lambda target.  This error will cause the CloudFormation operation to fail.  Any API errors will be logged &amp; are viewable in the &lt;a href=&#34;https://blogs.aws.amazon.com/application-management/post/TxPYD8JT4CB5UY/View-CloudFormation-Logs-in-the-Console&#34;&gt;CloudFormation Logs Console&lt;/a&gt;.
+   &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&#34;addPermission:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Add Permission&lt;/h3&gt;
+
+&lt;p&gt;With the two rules configured, the final step is to add the &lt;code&gt;sparta.CloudWatchPermission&lt;/code&gt; to our &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; value:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our entire function is therefore:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
+                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
+
+	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
+	cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
+		ScheduleExpression: &amp;#34;rate(5 minutes)&amp;#34;,
+	}
+	cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
+		EventPattern: map[string]interface{}{
+			&amp;#34;source&amp;#34;:      []string{&amp;#34;aws.ec2&amp;#34;},
+			&amp;#34;detail-type&amp;#34;: []string{&amp;#34;EC2 Instance State-change Notification&amp;#34;},
+		},
+	}
+	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+
+	return append(lambdaFunctions, lambdaFn)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;a-href-hugoshortcode-8-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all CloudWatch Events-triggered lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoCloudWatchEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission&#34;&gt;CloudWatchEventsPermission&lt;/a&gt; value.&lt;/li&gt;
+&lt;li&gt;Add one or more &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsRule&#34;&gt;CloudWatchEventsRules&lt;/a&gt; to the &lt;code&gt;CloudWatchEventsPermission.Rules&lt;/code&gt; map that define your lambda function&amp;rsquo;s trigger condition:
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html&#34;&gt;Scheduled Events&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html&#34;&gt;Event Patterns&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Append the &lt;code&gt;CloudWatchEventsPermission&lt;/code&gt; value to the lambda function&amp;rsquo;s &lt;code&gt;Permissions&lt;/code&gt; slice.&lt;/li&gt;
+&lt;li&gt;Include the reference in the call to &lt;code&gt;sparta.Main()&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-9-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Introduction to &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Events&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/RunLambdaSchedule.html&#34;&gt;Run an AWS Lambda Function on a Schedule Using the AWS CLI&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;The EC2 event pattern is drawn from the AWS &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html&#34;&gt;Events &amp;amp; Event Patterns&lt;/a&gt; documentation&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
@@ -1677,7 +1821,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;Sparta is a framework for developing and deploying &lt;strong&gt;Go&lt;/strong&gt; based AWS Lambda functions.  To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS.  Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.&lt;/p&gt;
 
-&lt;div class=&#34;panel panel-danger&#34;&gt;
+&lt;div class=&#34;panel panel-warning&#34;&gt;
 &lt;div class=&#34;panel-heading&#34;&gt;Pricing&lt;/div&gt;
  &lt;div class=&#34;panel-body&#34;&gt;
    Please be aware that running Lambda functions may incur &lt;a href=&#34;https://aws.amazon.com/lambda/pricing&#34;&gt;costs&lt;/a&gt;. Be sure to decommission Sparta stacks after you are finished using them (via the &lt;code&gt;delete&lt;/code&gt; command line option) to avoid unwanted charges.

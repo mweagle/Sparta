@@ -8,7 +8,7 @@ type = "doc"
 
 Sparta is a framework for developing and deploying **Go** based AWS Lambda functions.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
-<div class="panel panel-danger">
+<div class="panel panel-warning">
 <div class="panel-heading">Pricing</div>
  <div class="panel-body">
    Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.
@@ -17,7 +17,7 @@ Sparta is a framework for developing and deploying **Go** based AWS Lambda funct
 
 ## <a href="{{< relref "#preconditions" >}}">Preconditions</a>
 
-Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs.  Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go/wiki/configuring-sdk).  
+Sparta uses the [AWS SDK for Go](http://aws.amazon.com/sdk-for-go/) to interact with AWS APIs.  Before you get started, ensure that you've properly configured the [SDK credentials](https://github.com/aws/aws-sdk-go/wiki/configuring-sdk).
 
 Note that you must use an AWS region that supports Lambda.  Consult the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the most up to date release information.
 

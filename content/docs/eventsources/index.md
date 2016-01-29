@@ -10,11 +10,12 @@ The true power of the AWS Lambda architecture is the ability to integrate Lambda
 
 There are several [event sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html) available:
 
-  * [S3](/docs/eventsources/s3)
-  * [SNS](/docs/eventsources/sns)
+  * [CloudFormation](/docs/eventsources/cloudformation) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [CloudWatch Events](/docs/eventsources/cloudwatchevents)
+  * [CloudWatch Logs](/docs/eventsources/cloudwatchlogs) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [Cognito](/docs/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
   * [DynamoDB](/docs/eventsources/dynamodb)
   * [Kinesis](/docs/eventsources/kinesis)
+  * [S3](/docs/eventsources/s3)
   * [SES](/docs/eventsources/ses)
-  * [Cognito](/docs/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
-  * [CloudWatch Logs](/docs/eventsources/cloudwatchlogs) <span class="label label-warning">NOT YET IMPLEMENTED</span>
-  * [CloudFormation](/docs/eventsources/cloudformation) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [SNS](/docs/eventsources/sns)
