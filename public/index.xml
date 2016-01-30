@@ -193,9 +193,9 @@
 
 &lt;p&gt;To get started using Sparta, begin with the &lt;a href=&#34;./docs&#34;&gt;Documentation&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;problems:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Problems?&lt;/h2&gt;
+&lt;h2 id=&#34;issues:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Issues&lt;/h2&gt;
 
-&lt;p&gt;Please file an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34;&gt;issue&lt;/a&gt; in GitHub.  Thanks.&lt;/p&gt;
+&lt;p&gt;Please file an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34;&gt;issue&lt;/a&gt; in GitHub.&lt;/p&gt;
 
 &lt;h3 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other resources&lt;/h3&gt;
 
@@ -217,6 +217,71 @@
 &lt;li&gt;&lt;a href=&#34;https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/&#34;&gt;The Twelve Days of Lambda&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://cloudcraft.co&#34;&gt;CloudCraft&lt;/a&gt; is a great tool for AWS architecture diagrams&lt;/li&gt;
 &lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Command Line Options</title>
+      <link>http://gosparta.io/docs/commandline/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/commandline/</guid>
+      <description>
+
+&lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyStack&amp;#34;,
+  &amp;#34;Simple Sparta application&amp;#34;,
+  myLambdaFunctions,
+  nil,
+  nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --help
+Usage: application [global options] &amp;lt;verb&amp;gt; [verb options]
+
+Global options:
+        -n, --noop     Dry-run behavior only (do not provision stack)
+        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
+        -h, --help     Show this help
+
+Verbs:
+    delete:
+    describe:
+        -o, --out      Output file for HTML description (*)
+    execute:
+        -p, --port     Alternative port for HTTP binding (default=9999)
+        -s, --signal   Process ID to signal with SIGUSR2 once ready
+    explore:
+    provision:
+        -b, --s3Bucket S3 Bucket to use for Lambda source (*)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-3-delete-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-4-describe-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
+
+&lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-5-execute-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-6-explore-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
+
+&lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
 </description>
     </item>
     
@@ -1683,243 +1748,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;h3 id=&#34;a-href-hugoshortcode-24-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
 
 &lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Example 3</title>
-      <link>http://gosparta.io/docs/apigateway/example3/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/example3/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-using-the-request-context-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Using the Request Context&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the &lt;a href=&#34;http://dev.maxmind.com/geoip/geoip2/geolite2/&#34;&gt;GeoLite2 Database&lt;/a&gt; and return any information to the client.&lt;/p&gt;
-
-&lt;p&gt;As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func ipGeoLambda(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger) {
-var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-	logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-	return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;We&amp;rsquo;ll then parse the inbound IP address from the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext&#34;&gt;Context&lt;/a&gt; and perform a lookup against the database handle opened in the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19&#34;&gt;init&lt;/a&gt; block:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
-record, err := dbHandle.City(parsedIP)
-if err != nil {
-  logger.Error(&amp;#34;Failed to find city: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Finally, marshal the data or error result and we&amp;rsquo;re done:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Return the Info
-httpResponse := map[string]interface{}{
-  &amp;#34;info&amp;#34;: record,
-}
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
-  fmt.Fprint(w, string(responseBody))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-6-configure-sparta-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Configure Sparta&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The next steps are to:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Create the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; value&lt;/li&gt;
-&lt;li&gt;Create an associated API Gateway&lt;/li&gt;
-&lt;li&gt;Create an API Gateway resource that invokes our lambda function&lt;/li&gt;
-&lt;li&gt;Add a Method name to the resource.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These four steps are managed in the service&amp;rsquo;s &lt;code&gt;main()&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	stage := sparta.NewStage(&amp;#34;ipgeo&amp;#34;)
-	apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaGeoIPService&amp;#34;, stage)
-	stackName := &amp;#34;SpartaGeoIP&amp;#34;
-
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
-	apiGatewayResource, _ := apiGateway.NewResource(&amp;#34;/info&amp;#34;, lambdaFn)
-	apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	sparta.Main(stackName,
-		&amp;#34;Sparta app supporting ip-&amp;gt;geo mapping&amp;#34;,
-		lambdaFunctions,
-		apiGateway,
-    nil)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The next step is to provision the stack:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;S3_BUCKET=&amp;lt;MY-S3-BUCKETNAME&amp;gt; make provision&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Assuming all goes well, the log output will include the API Gateway URL as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;With the API Gateway provisioned, let&amp;rsquo;s check the response:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
-
-*   Trying 54.192.70.206...
-* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /ipgeo/info HTTP/1.1
-&amp;gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 1129
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
-&amp;lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
-&amp;lt; X-Cache: Miss from cloudfront
-&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
-&amp;lt;
-* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 21:50:18 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;984&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;info&amp;#34;:{&amp;#34;City&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;Names&amp;#34;:null},&amp;#34;Continent&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;NA&amp;#34;,&amp;#34;GeoNameID&amp;#34;:6255149,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;Nordamerika&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;North America&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Norteamérica&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;Amérique du Nord&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;北アメリカ&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;América do Norte&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;Северная Америка&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;北美洲&amp;#34;}},&amp;#34;Country&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;Location&amp;#34;:{&amp;#34;Latitude&amp;#34;:0,&amp;#34;Longitude&amp;#34;:0,&amp;#34;MetroCode&amp;#34;:0,&amp;#34;TimeZone&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Postal&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;RegisteredCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;RepresentedCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;IsoCode&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;Names&amp;#34;:null,&amp;#34;Type&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Subdivisions&amp;#34;:null,&amp;#34;Traits&amp;#34;:{&amp;#34;IsAnonymousProxy&amp;#34;:false,&amp;#34;IsSatelliteProvider&amp;#34;:false}}}}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Pretty-printing the response body:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
-  &amp;quot;code&amp;quot;: 200,
-  &amp;quot;status&amp;quot;: &amp;quot;OK&amp;quot;,
-  &amp;quot;headers&amp;quot;: {
-    &amp;quot;content-type&amp;quot;: &amp;quot;application/json&amp;quot;,
-    &amp;quot;date&amp;quot;: &amp;quot;Sun, 06 Dec 2015 17:50:15 GMT&amp;quot;,
-    &amp;quot;content-length&amp;quot;: &amp;quot;984&amp;quot;
-  },
-  &amp;quot;results&amp;quot;: {
-    &amp;quot;info&amp;quot;: {
-      &amp;quot;City&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 0,
-        &amp;quot;Names&amp;quot;: null
-      },
-      &amp;quot;Continent&amp;quot;: {
-        &amp;quot;Code&amp;quot;: &amp;quot;NA&amp;quot;,
-        &amp;quot;GeoNameID&amp;quot;: 6255149,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;Nordamerika&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;North America&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Norteamérica&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;Amérique du Nord&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;北アメリカ&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;América do Norte&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;Северная Америка&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;北美洲&amp;quot;
-        }
-      },
-      &amp;quot;Country&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 6252001,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
-        }
-      },
-      &amp;quot;Location&amp;quot;: {
-        &amp;quot;Latitude&amp;quot;: 0,
-        &amp;quot;Longitude&amp;quot;: 0,
-        &amp;quot;MetroCode&amp;quot;: 0,
-        &amp;quot;TimeZone&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;Postal&amp;quot;: {
-        &amp;quot;Code&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;RegisteredCountry&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 6252001,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
-        }
-      },
-      &amp;quot;RepresentedCountry&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 0,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;&amp;quot;,
-        &amp;quot;Names&amp;quot;: null,
-        &amp;quot;Type&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;Subdivisions&amp;quot;: null,
-      &amp;quot;Traits&amp;quot;: {
-        &amp;quot;IsAnonymousProxy&amp;quot;: false,
-        &amp;quot;IsSatelliteProvider&amp;quot;: false
-      }
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-15-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherNotes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The &lt;em&gt;GeoLite2-Country.mmdb&lt;/em&gt; content is embedded in the go binary via &lt;a href=&#34;https://github.com/mjibson/esc&#34;&gt;esc&lt;/a&gt; as part of the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27&#34;&gt;go generate&lt;/a&gt; phase.&lt;/li&gt;
-&lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

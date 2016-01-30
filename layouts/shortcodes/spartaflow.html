@@ -1,0 +1,28 @@
+<div class="mermaid">
+graph TD
+  iam[Verify Static IAM Roles]
+  compile[Cross Compile for AWS Linux AMI]
+  proxyShims[Create NodeJS-Go HTTP Proxies]
+  package[ZIP archive]
+  upload[Upload Archive to S3]
+  packageAssets[Conditionally ZIP S3 Site Assets]
+  uploadAssets[Upload S3 Assets]
+  generate[Marshal to CloudFormation]
+  decorate[Call User Template Decorators - Dynamic AWS Resources]
+  uploadTemplate[Upload Template to S3]
+  converge[Create/Update Stack]
+  wait[Wait for Complete/Failure Result]
+  
+  iam-->compile
+  compile-->proxyShims
+  proxyShims-->package
+  proxyShims-->packageAssets
+  package-->upload
+  packageAssets-->uploadAssets
+  uploadAssets-->generate
+  upload-->generate
+  generate-->decorate
+  decorate-->uploadTemplate
+  uploadTemplate-->converge
+  converge-->wait
+</div>

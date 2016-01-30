@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Introductory Example  &middot; Sparta</title>
+  <title>Sparta Application  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,7 +17,7 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Introductory Example  &middot; Sparta ">
+<meta property="og:title" content="Sparta Application  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
 <meta property="og:url" content="http://gosparta.io/docs/intro_example/" />
 <meta property="og:locale" content="en-EN">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Introductory Example" />
+<meta name="twitter:title" content="Sparta Application" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="http://gosparta.io/docs/intro_example/" />
 <meta name="twitter:domain" content="http://gosparta.io">
@@ -48,14 +48,14 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Introductory Example",
+    "headline": "Sparta Application",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1225 
+    "wordCount":  1238 
   }
 </script>
 
@@ -86,6 +86,13 @@
 
 
 
+  
+  <script src="/mermaid_dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid_dist/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+
+
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -96,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: home:Home highlight:vs bitbucket: linkedin:https://www.linkedin.com/in/mweagle name:yeti googleAnalytics:UA-70794971-1]">
+<body class="map[twitter:mweagle flattr: name:yeti home:Home highlight:vs bitbucket: facebook: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -194,17 +201,17 @@
   </div>
   <div class="panel-body">
     
-      <a href="/docs/overview">Overview</a>
+      <a href="/docs/">Overview</a>
       <ul>
       
       </ul>
     
-      <a href="/docs/commandline">Command Line</a>
+      <a href="/docs/intro_example">Example</a>
       <ul>
       
       </ul>
     
-      <a href="/docs/walkthrough">Walkthrough</a>
+      <a href="/docs/intro_example_details">Example - Details</a>
       <ul>
       
       </ul>
@@ -280,6 +287,11 @@
       
       </ul>
     
+      <a href="/docs/commandline">Command Line Options</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/local_testing">Local Testing</a>
       <ul>
       
@@ -300,7 +312,7 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>Introductory Example
+  <h1>Sparta Application
 </h1>
 
 </header>
@@ -520,7 +532,9 @@ INFO[0000] Delete request submitted                      Response={
 
 <p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.</p>
 
-<p>Next: <a href="/docs/walkthrough">Walkthrough</a></p>
+<h2 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h2>
+
+<p>Walkthrough what Sparta actually does to deploy your application in the <a href="/docs/intro_example_details">next section</a>.</p>
 
 </div>
 

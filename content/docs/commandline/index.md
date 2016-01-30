@@ -1,12 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "Command Line Options"
 tags = ["sparta"]
 type = "doc"
 +++
-
-## <a href="{{< relref "#commandLine" >}}">Command Line</a>
 
 Sparta provides a [Main](https://godoc.org/github.com/mweagle/Sparta#Main) function that transforms a set of [lambda functions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) into an application.  This function should be called from your application's `package main` as in:
 

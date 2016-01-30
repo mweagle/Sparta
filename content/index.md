@@ -1,5 +1,5 @@
 +++
-author = "Matt W."
+author = "Matt Weagle"
 comments = true
 date = "2016-01-19T14:58:42Z"
 draft = false
@@ -54,14 +54,13 @@ Sparta leverages [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/l
 <a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](images/sparta_overview.png)]</a>
 
 
-
 ## Getting Started
 
 To get started using Sparta, begin with the [Documentation](./docs).
 
-## Problems?
+## Issues
 
-Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.  Thanks.
+Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
 
 ### Other resources
 

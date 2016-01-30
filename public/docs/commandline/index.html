@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Overview  &middot; Sparta</title>
+  <title>Command Line Options  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,7 +17,7 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Overview  &middot; Sparta ">
+<meta property="og:title" content="Command Line Options  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
 <meta property="og:url" content="http://gosparta.io/docs/commandline/" />
 <meta property="og:locale" content="en-EN">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Overview" />
+<meta name="twitter:title" content="Command Line Options" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="http://gosparta.io/docs/commandline/" />
 <meta name="twitter:domain" content="http://gosparta.io">
@@ -48,14 +48,14 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Overview",
+    "headline": "Command Line Options",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  270 
+    "wordCount":  268 
   }
 </script>
 
@@ -86,6 +86,13 @@
 
 
 
+  
+  <script src="/mermaid_dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid_dist/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+
+
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -96,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[highlight:vs github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: home:Home googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle name:yeti]">
+<body class="map[twitter:mweagle flattr: name:yeti home:Home highlight:vs bitbucket: facebook: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -194,17 +201,17 @@
   </div>
   <div class="panel-body">
     
-      <a href="/docs/overview">Overview</a>
+      <a href="/docs/">Overview</a>
       <ul>
       
       </ul>
     
-      <a href="/docs/commandline">Command Line</a>
+      <a href="/docs/intro_example">Example</a>
       <ul>
       
       </ul>
     
-      <a href="/docs/walkthrough">Walkthrough</a>
+      <a href="/docs/intro_example_details">Example - Details</a>
       <ul>
       
       </ul>
@@ -280,6 +287,11 @@
       
       </ul>
     
+      <a href="/docs/commandline">Command Line Options</a>
+      <ul>
+      
+      </ul>
+    
       <a href="/docs/local_testing">Local Testing</a>
       <ul>
       
@@ -300,15 +312,13 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>Overview
+  <h1>Command Line Options
 </h1>
 
 </header>
 
     <div class="container content">
   
-
-<h2 id="a-href-hugoshortcode-1-command-line-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#commandLine:d680e8a854a7cbad6d490c445cba2eba">Command Line</a></h2>
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
@@ -341,27 +351,27 @@ Verbs:
         -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-4-delete-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></h3>
+<h3 id="a-href-hugoshortcode-3-delete-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></h3>
 
 <p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
 
-<h3 id="a-href-hugoshortcode-5-describe-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></h3>
+<h3 id="a-href-hugoshortcode-4-describe-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></h3>
 
 <p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
 
 <p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
 
-<h3 id="a-href-hugoshortcode-6-execute-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></h3>
+<h3 id="a-href-hugoshortcode-5-execute-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></h3>
 
 <p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
 
-<h3 id="a-href-hugoshortcode-7-explore-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></h3>
+<h3 id="a-href-hugoshortcode-6-explore-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></h3>
 
 <p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
 
 <p>NOTE: API Gateway mapping templates are not currently supported.</p>
 
-<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h3 id="a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
 
 <p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 

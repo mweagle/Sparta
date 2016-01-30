@@ -1,7 +1,7 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Introductory Example"
+title = "Sparta Application"
 tags = ["sparta"]
 type = "doc"
 +++
@@ -211,4 +211,6 @@ INFO[0000] Delete request submitted                      Response={
 
 Congratulations! You've just deployed your first "serverless" service.  The following sections will dive deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.      
 
-Next: [Walkthrough](/docs/walkthrough)
+## Next Steps
+
+Walkthrough what Sparta actually does to deploy your application in the [next section](/docs/intro_example_details).

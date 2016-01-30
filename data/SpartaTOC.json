@@ -1,22 +1,23 @@
-[{
+[
+  {
     "Name": "Overview",
     "IconClass": "",
     "Title": "",
-    "URL": "/overview",
+    "URL": "/",
     "Children": []
   },
   {
-    "Name": "Command Line",
+    "Name": "Example",
     "IconClass": "",
     "Title": "",
-    "URL": "/commandline",
+    "URL": "/intro_example",
     "Children": []
   },
   {
-    "Name": "Walkthrough",
+    "Name": "Example - Details",
     "IconClass": "",
     "Title": "",
-    "URL": "/walkthrough",
+    "URL": "/intro_example_details",
     "Children": []
   },
   {
@@ -131,12 +132,20 @@
         "URL": "/apigateway/slack",
         "Children": []
       }
-      ]},
+    ]
+  },
   {
     "Name": "Static S3 Websites",
     "IconClass": "",
     "Title": "",
     "URL": "/s3site",
+    "Children": []
+  },
+  {
+    "Name": "Command Line Options",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/commandline",
     "Children": []
   },
   {
