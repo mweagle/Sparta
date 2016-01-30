@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>FAQ  &middot; Sparta</title>
+  <title>Dynamic Resources  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,16 +17,16 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="FAQ  &middot; Sparta ">
+<meta property="og:title" content="Dynamic Resources  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/faq/" />
+<meta property="og:url" content="http://gosparta.io/docs/dynamic_resources/" />
 <meta property="og:locale" content="en-EN">
 
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2016-01-20T21:12:27Z" />
-<meta property="og:article:modified_time" content="2016-01-20T21:12:27Z" />
+<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
 
   
     
@@ -38,9 +38,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="FAQ" />
+<meta name="twitter:title" content="Dynamic Resources" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/faq/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/dynamic_resources/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -48,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "FAQ",
+    "headline": "Dynamic Resources",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2016-01-20",
+    "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  343 
+    "wordCount":  6 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/faq/" />
+<link rel="canonical" href="http://gosparta.io/docs/dynamic_resources/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle flattr: name:yeti home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube:]">
+<body class="map[highlight:vs github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle name:yeti home:Home googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,92 +322,13 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>FAQ
+  <h1>Dynamic Resources
 </h1>
 
 </header>
 
     <div class="container content">
-  
-
-<ul>
-<li>Development
-
-<ul>
-<li><a href="#devfaq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</a></li>
-</ul></li>
-<li>Event Sources
-
-<ul>
-<li>SES
-
-<ul>
-<li><a href="#sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</a><br /></li>
-<li><a href="#sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not enable the <em>SpartaRuleSet</em>?</a><br /></li>
-</ul></li>
-</ul></li>
-<li>Operations
-
-<ul>
-<li><a href="#opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a><br /></li>
-<li><a href="#opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a><br /></li>
-<li><a href="#opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</a></li>
-<li><a href="#opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
-</ul></li>
-</ul>
-
-<h2 id="development:d680e8a854a7cbad6d490c445cba2eba">Development</h2>
-
-<hr />
-
-<h3 id="faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</h3>
-
-<p>Local testing is available via the <a href="/docs/local_testing/">explore</a> command.</p>
-
-<h2 id="event-sources-ses:d680e8a854a7cbad6d490c445cba2eba">Event Sources - SES</h2>
-
-<hr />
-
-<h3 id="sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</h3>
-
-<p>SES only permits a single <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html">active receipt rule</a>.  Additionally, it&rsquo;s possible that multiple Sparta-based services are handing different SES recipients.</p>
-
-<p>All Sparta-based services share the <em>SpartaRuleSet</em> SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html">ReceiptRule</a>.</p>
-
-<h3 id="sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h3>
-
-<p>Initial <em>SpartaRuleSet</em> will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&rsquo;t attempt to override the user setting.</p>
-
-<h2 id="operations:d680e8a854a7cbad6d490c445cba2eba">Operations</h2>
-
-<hr />
-
-<h3 id="opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
-
-<p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
-
-<p>The CloudWatch log group name includes a sanitized version of your <strong>Go</strong> function name &amp; owning service name.</p>
-
-<h3 id="opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</h3>
-
-<p>Visit the <a href="https://aws.amazon.com/cloudwatch/">CloudWatch Metrics</a> AWS console page and select the <code>Sparta/{SERVICE_NAME}</code> namespace:</p>
-
-<p><img src="/images/faq/CloudWatch_Management_Console.jpg" alt="CloudWatch" /></p>
-
-<p>Sparta publishes two counters:</p>
-
-<ul>
-<li><code>ProcessSpawned</code>: A new <strong>Go</strong> process was spawned to handle requests</li>
-<li><code>ProcessReused</code>: An existing <strong>Go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
-</ul>
-
-<h3 id="opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h3>
-
-<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
-
-<h3 id="opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h3>
-
-<p>The list of registered output provider types is defined by <code>cloudformationTypeMapDiscoveryOutputs</code> in <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go">cloudformation_resources.go</a>.  See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types Reference</a> for information on interpreting the values.</p>
+  <p>TODO: Dynamic Resources documentation. Source <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">link</a>.</p>
 
 </div>
 

@@ -1055,7 +1055,18 @@ Verbs:
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/discovery/</guid>
-      <description></description>
+      <description>&lt;p&gt;TODO: Discovery Service documentation.  Source &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L263&#34;&gt;link&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dynamic Resources</title>
+      <link>http://gosparta.io/docs/dynamic_resources/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/dynamic_resources/</guid>
+      <description>&lt;p&gt;TODO: Dynamic Resources documentation. Source &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;link&lt;/a&gt;.&lt;/p&gt;
+</description>
     </item>
     
     <item>
@@ -1444,152 +1455,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
 &lt;li&gt;The Kinesis stream and the AWS Lambda function must be provisioned in the same region.&lt;/li&gt;
 &lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html&#34;&gt;Kinesis EventSource&lt;/a&gt; walkthrough.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - S3</title>
-      <link>http://gosparta.io/docs/eventsources/s3/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/s3/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Assume we have an S3 bucket that stores images.  You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func transformImage(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-s3-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalS3Event:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the S3 Event&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Since the &lt;code&gt;transformImage&lt;/code&gt; is expected to be triggered by S3 event changes, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an S3-specific event provided by Sparta via:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaS3.Event
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;S3 events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
-  err = nil
-  switch eachRecord.EventName {
-  case &amp;#34;ObjectCreated:Put&amp;#34;:
-    {
-      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
-    }
-  case &amp;#34;s3:ObjectRemoved:Delete&amp;#34;:
-    {
-      // Delete stamped image
-    }
-  default:
-    {
-      logger.Info(&amp;#34;Unsupported event: &amp;#34;, eachRecord.EventName)
-    }
-  }
-
-  //
-  if err != nil {
-    logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L57&#34;&gt;stampImage&lt;/a&gt; function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple &lt;strong&gt;xformed_&lt;/strong&gt; keyname prefix to identify items which have already been stamped &amp;amp; prevents an &amp;ldquo;event-storm&amp;rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
-
-&lt;p&gt;Our lambda function needs to both &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Provision an IAM::Role as part of this application
-var iamRole = sparta.IAMRoleDefinition{}
-
-// Setup the ARN that includes all child keys
-resourceArn := fmt.Sprintf(&amp;#34;%s/*&amp;#34;, s3EventBroadcasterBucket)
-iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
-  Actions: []string{&amp;#34;s3:GetObject&amp;#34;,
-    &amp;#34;s3:PutObject&amp;#34;,
-  },
-  Resource: resourceArn,
-})&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt; param is the ARN of the S3 bucket that will trigger your lambda function (eg: &lt;em&gt;arn:aws:s3:::MyImagingS3Bucket&lt;/em&gt;).&lt;/p&gt;
-
-&lt;p&gt;With the IAM Role defined, we can create the Sparta lambda function for &lt;code&gt;transformImage&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
-// transform lambda doesn&amp;#39;t fail early.
-transformOptions := &amp;amp;sparta.LambdaFunctionOptions{
-  Description: &amp;#34;Stamp assets in S3&amp;#34;,
-  MemorySize:  128,
-  Timeout:     30,
-}
-lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the &lt;code&gt;iamRole&lt;/code&gt; we defined earlier.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-10-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;transformImage&lt;/code&gt; function would have the ability to &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; back to the &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt;, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;//////////////////////////////////////////////////////////////////////////////
-// S3 configuration
-//
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: s3EventBroadcasterBucket,
-  },
-  Events: []string{&amp;#34;s3:ObjectCreated:*&amp;#34;, &amp;#34;s3:ObjectRemoved:*&amp;#34;},
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;When &lt;code&gt;Sparta&lt;/code&gt; generates the CloudFormation template, it scans for &lt;code&gt;Permission&lt;/code&gt; configurations.  For &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;push based sources&lt;/a&gt; like S3, Sparta uses that service&amp;rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-12-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;transformImage&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;Implement the associated business logic  (&lt;code&gt;stampImage&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; repo contains the full code, and includes &lt;a href=&#34;http://gosparta.io/docs/apigateway&#34;&gt;API Gateway&lt;/a&gt; support that allows you to publicly fetch the stamped image via an expiring S3 URL.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-13-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html&#34;&gt;S3 event source&lt;/a&gt; walkthrough.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

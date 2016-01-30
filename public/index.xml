@@ -1163,7 +1163,18 @@ Verbs:
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/discovery/</guid>
-      <description></description>
+      <description>&lt;p&gt;TODO: Discovery Service documentation.  Source &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L263&#34;&gt;link&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dynamic Resources</title>
+      <link>http://gosparta.io/docs/dynamic_resources/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/dynamic_resources/</guid>
+      <description>&lt;p&gt;TODO: Dynamic Resources documentation. Source &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;link&lt;/a&gt;.&lt;/p&gt;
+</description>
     </item>
     
     <item>
@@ -1463,96 +1474,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/eventsources/dynamodb/DynamoDB_StreamARN.png&#34; alt=&#34;Copy ARN&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The &lt;strong&gt;Latest stream ARN&lt;/strong&gt; value is the value that should be provided as the &lt;code&gt;EventSourceArn&lt;/code&gt; in to the &lt;a href=&#34;http://localhost:1313/docs/eventsources/dynamodb/#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - Kinesis</title>
-      <link>http://gosparta.io/docs/eventsources/kinesis/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/kinesis/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to &lt;a href=&#34;https://aws.amazon.com/kinesis/&#34;&gt;Amazon Kinesis&lt;/a&gt; streams.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoKinesisEvent(event *json.RawMessage,
-                      context *sparta.LambdaContext,
-                      w http.ResponseWriter,
-                      logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;For this sample all we&amp;rsquo;re going to do is unmarshal the Kinesis &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually&#34;&gt;event&lt;/a&gt; to a Sparta &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&#34;&gt;kinesis event&lt;/a&gt; and log the id to CloudWatch Logs:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaKinesis.Event
-  err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-  if err != nil {
-    logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-  for _, eachRecord := range lambdaEvent.Records {
-    logger.WithFields(logrus.Fields{
-      &amp;#34;EventID&amp;#34;: eachRecord.EventID,
-    }).Info(&amp;#34;Kinesis Event&amp;#34;)
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;With the function defined let&amp;rsquo;s register it with Sparta.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;First we wrap the &lt;strong&gt;Go&lt;/strong&gt; function in a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; struct:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Since our lambda function doesn&amp;rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (&lt;code&gt;sparta.IAMRoleDefinition{}&lt;/code&gt;).&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-7-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Then last step is to configure our AWS Lambda function with Kinesis as the &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;EventSource&lt;/a&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
-  EventSourceArn:   aws.String(kinesisTestStream),
-  StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
-  BatchSize:        aws.Int64(100),
-  Enabled:          aws.Bool(true),
-})&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;kinesisTestStream&lt;/code&gt; parameter is the Kinesis stream ARN (eg: &lt;em&gt;arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream&lt;/em&gt;) whose events will trigger lambda execution.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-9-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;echoKinesisEvent&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput&#34;&gt;EventSourceMappings&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is properly configured.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-10-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The Kinesis stream and the AWS Lambda function must be provisioned in the same region.&lt;/li&gt;
-&lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html&#34;&gt;Kinesis EventSource&lt;/a&gt; walkthrough.&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     

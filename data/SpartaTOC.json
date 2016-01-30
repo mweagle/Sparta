@@ -142,6 +142,20 @@
     "Children": []
   },
   {
+    "Name": "Dynamic Resources",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/dynamic_resources",
+    "Children": []
+  },
+  {
+    "Name": "Discovery",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/discovery",
+    "Children": []
+  },
+  {
     "Name": "Command Line Options",
     "IconClass": "",
     "Title": "",

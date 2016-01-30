@@ -5,3 +5,5 @@ title = "Discovery Service"
 tags = ["sparta"]
 type = "doc"
 +++
+
+TODO: Discovery Service documentation.  Source [link](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L263).
