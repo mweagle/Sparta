@@ -51,7 +51,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  431 
+    "wordCount":  446 
   }
 </script>
 
@@ -99,7 +99,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: youtube: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle bitbucket: facebook: twitter:mweagle flattr: name:yeti home:Home highlight:vs]">
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle highlight:vs home:Home bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: flattr: name:yeti]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -429,7 +429,7 @@ graph TD
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
-  
+
   iam-->compile
   compile-->proxyShims
   proxyShims-->package
@@ -443,6 +443,8 @@ graph TD
   uploadTemplate-->converge
   converge-->wait
 </div>
+<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
+<hr />
 </p>
 
 <p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>

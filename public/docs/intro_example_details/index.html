@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  545 
+    "wordCount":  560 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: name:yeti home:Home highlight:vs bitbucket: facebook: twitter:mweagle flattr:]">
+<body class="map[github:https://github.com/mweagle twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: flattr: name:yeti home:Home]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -342,7 +342,7 @@ graph TD
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
-  
+
   iam-->compile
   compile-->proxyShims
   proxyShims-->package
@@ -356,6 +356,8 @@ graph TD
   uploadTemplate-->converge
   converge-->wait
 </div>
+<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
+<hr />
 
 
 <h3 id="a-href-hugoshortcode-3-verify-static-iam-roles-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#verifyiamroles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</a></h3>
