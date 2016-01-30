@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-The [Overview](/docs/overview) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the `provision` command line argument, so this section will outline exactly what that entails.
+The [Overview](/docs/intro_example) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the `provision` command line argument, so this section will outline exactly what that entails.
 
 ### <a href="{{< relref "#provisioningFlow" >}}">Provisioning Flow</a>
 

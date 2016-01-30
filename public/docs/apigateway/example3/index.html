@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Example 3  &middot; Sparta</title>
+  <title>API Gateway - Request Context  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,7 +17,7 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Example 3  &middot; Sparta ">
+<meta property="og:title" content="API Gateway - Request Context  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
 <meta property="og:url" content="http://gosparta.io/docs/apigateway/example3/" />
 <meta property="og:locale" content="en-EN">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Example 3" />
+<meta name="twitter:title" content="API Gateway - Request Context" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="http://gosparta.io/docs/apigateway/example3/" />
 <meta name="twitter:domain" content="http://gosparta.io">
@@ -48,14 +48,14 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Example 3",
+    "headline": "API Gateway - Request Context",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  691 
+    "wordCount":  687 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: name:yeti home:Home bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle]">
+<body class="map[googleplus: facebook: youtube: name:yeti home:Home googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: highlight:vs github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -312,7 +312,7 @@
 </div>
   <div class="col-md-8">
     <header class="container hat">
-  <h1>Example 3
+  <h1>API Gateway - Request Context
 </h1>
 
 </header>
@@ -320,11 +320,9 @@
     <div class="container content">
   
 
-<h2 id="a-href-hugoshortcode-1-using-the-request-context-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleS3:d680e8a854a7cbad6d490c445cba2eba">Using the Request Context</a></h2>
-
 <p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">APIGatewayLambdaJSONEvent</a> event.  The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
 
-<h3 id="a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleDefine:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
+<h3 id="a-href-hugoshortcode-1-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleDefine:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
 
 <p>Our function will examine the inbound request, lookup the user&rsquo;s IP address in the <a href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2 Database</a> and return any information to the client.</p>
 
@@ -369,7 +367,7 @@ if err != nil {
 }</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-6-configure-sparta-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3API:d680e8a854a7cbad6d490c445cba2eba">Configure Sparta</a></h3>
+<h3 id="a-href-hugoshortcode-5-configure-sparta-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3API:d680e8a854a7cbad6d490c445cba2eba">Configure Sparta</a></h3>
 
 <p>The next steps are to:</p>
 
@@ -403,7 +401,7 @@ func main() {
 }</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3Provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h3 id="a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3Provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
 
 <p>The next step is to provision the stack:</p>
 
@@ -417,7 +415,7 @@ INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://g
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-11-query-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3Query:d680e8a854a7cbad6d490c445cba2eba">Query</a></h3>
+<h3 id="a-href-hugoshortcode-10-query-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example3Query:d680e8a854a7cbad6d490c445cba2eba">Query</a></h3>
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
@@ -533,14 +531,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Please see the <a href="/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 
-<h3 id="a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+<h3 id="a-href-hugoshortcode-12-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
 <p><pre><code class="nohighlight">go run main.go delete</code></pre>
 </p>
 
-<h2 id="a-href-hugoshortcode-15-notes-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherNotes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></h2>
+<h2 id="a-href-hugoshortcode-14-notes-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherNotes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></h2>
 
 <ul>
 <li>The <em>GeoLite2-Country.mmdb</em> content is embedded in the go binary via <a href="https://github.com/mjibson/esc">esc</a> as part of the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27">go generate</a> phase.</li>

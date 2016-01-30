@@ -1,12 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "S3 Static Site with CORS"
 tags = ["sparta"]
 type = "doc"
 +++
-
-## Provisioning a CORS-enabled Website
 
 Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.  
 

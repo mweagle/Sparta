@@ -1,12 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "API Gateway"
 tags = ["sparta"]
 type = "doc"
 +++
-
-## <a href="{{< relref "#introduction" >}}">Introduction</a>
 
 One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.  
 

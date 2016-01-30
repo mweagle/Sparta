@@ -23,6 +23,31 @@
   </url>
   
   <url>
+    <loc>http://gosparta.io/docs/apigateway/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/apigateway/cors/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/apigateway/example1/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/apigateway/example3/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/apigateway/example2/</loc>
+    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://gosparta.io/docs/commandline/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
@@ -73,42 +98,12 @@
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/example1/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/apigateway/example2/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/apigateway/example3/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://gosparta.io/docs/limitations/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://gosparta.io/docs/local_testing/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/apigateway/cors/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/apigateway/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/contributing/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   

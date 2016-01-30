@@ -1,12 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Overview"
+title = "API Gateway - CORS "
 tags = ["sparta"]
 type = "doc"
 +++
-
-## <a href="{{< relref "#intro" >}}">CORS</a>
 
 [Cross Origin Resource Sharing](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) defines a protocol by which resources on different domains may establish whether cross site operations are permissible.  
 

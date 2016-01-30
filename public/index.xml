@@ -221,6 +221,878 @@
     </item>
     
     <item>
+      <title>API Gateway</title>
+      <link>http://gosparta.io/docs/apigateway/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/</guid>
+      <description>
+
+&lt;p&gt;One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the &lt;a href=&#34;https://aws.amazon.com/api-gateway/&#34;&gt;API Gateway&lt;/a&gt;.  In this section we&amp;rsquo;ll start with a simple &amp;ldquo;echo&amp;rdquo; example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;Example 1 - Echo Event&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example2&#34;&gt;Example 2 - User Input &amp;amp; JSON Response&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-1-concepts-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#concepts:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Concepts&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Before moving on to the examples, it&amp;rsquo;s suggested you familiarize yourself with the API Gateway concepts.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html&#34;&gt;Gettting Started with Amazon API Gateway&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The API Gateway presents a powerful and complex domain model.  In brief, to integrate with the API Gateway, a service must:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Define one or more AWS Lambda functions&lt;/li&gt;
+&lt;li&gt;Create an API Gateway REST API instance&lt;/li&gt;
+&lt;li&gt;Create one or more resources associated with the REST API&lt;/li&gt;
+&lt;li&gt;Create one or more methods for each resource&lt;/li&gt;
+&lt;li&gt;For each method:
+
+&lt;ol&gt;
+&lt;li&gt;Define the method request params&lt;/li&gt;
+&lt;li&gt;Define the integration request mapping&lt;/li&gt;
+&lt;li&gt;Define the integration response mapping&lt;/li&gt;
+&lt;li&gt;Define the method response mapping&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;Create a stage for a REST API&lt;/li&gt;
+&lt;li&gt;Deploy the given stage&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;With that overview, let&amp;rsquo;s start with a simple &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;example&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html&#34;&gt;Walkthrough: API Gateway and Lambda Functions&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - CORS </title>
+      <link>http://gosparta.io/docs/apigateway/cors/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/cors/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Cross-origin_resource_sharing&#34;&gt;Cross Origin Resource Sharing&lt;/a&gt; defines a protocol by which resources on different domains may establish whether cross site operations are permissible.&lt;/p&gt;
+
+&lt;p&gt;Sparta makes CORS support a single &lt;code&gt;CORSEnabled&lt;/code&gt; field of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; struct:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Register the function with the API Gateway
+apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
+apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage)
+// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Setting the boolean to &lt;code&gt;true&lt;/code&gt; will add the necessary &lt;code&gt;OPTIONS&lt;/code&gt; and mock responses to &lt;em&gt;all&lt;/em&gt; resources exposed by your API.  See the &lt;a href=&#34;http://gosparta.io/docs/s3site&#34;&gt;SpartaHTML&lt;/a&gt; sample for a complete example.&lt;/p&gt;
+
+&lt;h2 id=&#34;references:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;API Gateway Docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - Echo</title>
+      <link>http://gosparta.io/docs/apigateway/example1/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/example1/</guid>
+      <description>
+
+&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For reference, the &lt;code&gt;echoS3Event&lt;/code&gt; function is below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+	logger.WithFields(logrus.Fields{
+		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+		&amp;#34;Event&amp;#34;:     string(*event),
+	}).Info(&amp;#34;Request received&amp;#34;)
+
+	fmt.Fprintf(w, string(*event))
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-2-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The first requirement is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;stage := sparta.NewStage(&amp;#34;prod&amp;#34;)
+apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;In the example above, we&amp;rsquo;re also including a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Stage&#34;&gt;Stage&lt;/a&gt; value.  A non-&lt;code&gt;nil&lt;/code&gt; Stage value will cause the registered API to be deployed.  If the Stage value is &lt;code&gt;nil&lt;/code&gt;, a REST API will be created, but it will not be &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html&#34;&gt;deployed&lt;/a&gt; (and therefore not publicly accessible).&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-4-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create a Resource&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;strong&gt;Go&lt;/strong&gt; function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/hello/world/test&amp;#34;, lambdaFn)
+apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34&#34;&gt;echoS3Event&lt;/a&gt; only supports &lt;code&gt;GET&lt;/code&gt;.  We&amp;rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-6-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The final step is to to provide the API instance to &lt;code&gt;Sparta.Main()&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;stage := sparta.NewStage(&amp;#34;prod&amp;#34;)
+apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)
+stackName := &amp;#34;SpartaApplication&amp;#34;
+sparta.Main(stackName,
+  &amp;#34;Simple Sparta application&amp;#34;,
+  spartaLambdaData(apiGateway),
+  apiGateway,
+  nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Once the service is successfully provisioned, the &lt;code&gt;Outputs&lt;/code&gt; key will include the API Gateway Deployed URL (sample):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Combining the &lt;em&gt;API Gateway URL&lt;/em&gt; &lt;code&gt;OutputValue&lt;/code&gt; with our resource path (&lt;em&gt;/hello/world/test&lt;/em&gt;), we get the absolute URL to our lambda function: &lt;em&gt;&lt;a href=&#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&#34;&gt;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-9-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Let&amp;rsquo;s query the lambda function and see what the &lt;code&gt;event&lt;/code&gt; data is at execution time:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
+*   Trying 54.240.188.223...
+* Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&amp;gt; GET /prod/hello/world/test HTTP/1.1
+&amp;gt; Host: 7ljn63rysd.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.43.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 200 OK
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 708
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Sat, 05 Dec 2015 21:24:44 GMT
+&amp;lt; x-amzn-RequestId: 99dfd15d-9b96-11e5-9705-fdd3a4d9c8bf
+&amp;lt; X-Cache: Miss from cloudfront
+&amp;lt; Via: 1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
+&amp;lt;
+* Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
+{&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;body&amp;#34;:{},&amp;#34;headers&amp;#34;:{&amp;#34;Accept&amp;#34;:&amp;#34;*/*&amp;#34;,&amp;#34;CloudFront-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;,&amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;:&amp;#34;true&amp;#34;,&amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Viewer-Country&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Via&amp;#34;:&amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,&amp;#34;X-Amz-Cf-Id&amp;#34;:&amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,&amp;#34;X-Forwarded-For&amp;#34;:&amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,&amp;#34;X-Forwarded-Port&amp;#34;:&amp;#34;443&amp;#34;,&amp;#34;X-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;},&amp;#34;queryParams&amp;#34;:{},&amp;#34;pathParams&amp;#34;:{},&amp;#34;context&amp;#34;:{&amp;#34;apiId&amp;#34;:&amp;#34;bmik0opc3l&amp;#34;,&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;requestId&amp;#34;:&amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,&amp;#34;resourceId&amp;#34;:&amp;#34;mp2mrk&amp;#34;,&amp;#34;resourcePath&amp;#34;:&amp;#34;/hello/world/test&amp;#34;,&amp;#34;stage&amp;#34;:&amp;#34;prod&amp;#34;,&amp;#34;identity&amp;#34;:{&amp;#34;accountId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;apiKey&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;caller&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationProvider&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationType&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityPoolId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;sourceIp&amp;#34;:&amp;#34;50.135.43.1&amp;#34;,&amp;#34;user&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;userAgent&amp;#34;:&amp;#34;curl/7.43.0&amp;#34;,&amp;#34;userArn&amp;#34;:&amp;#34;&amp;#34;}}}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Pretty-printing the response body to make things more readable:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+  &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+  &amp;#34;body&amp;#34;: {},
+  &amp;#34;headers&amp;#34;: {
+    &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
+    &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
+    &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
+    &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+    &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
+    &amp;#34;Via&amp;#34;: &amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,
+    &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,
+    &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,
+    &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
+    &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
+  },
+  &amp;#34;queryParams&amp;#34;: {},
+  &amp;#34;pathParams&amp;#34;: {},
+  &amp;#34;context&amp;#34;: {
+    &amp;#34;apiId&amp;#34;: &amp;#34;bmik0opc3l&amp;#34;,
+    &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+    &amp;#34;requestId&amp;#34;: &amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,
+    &amp;#34;resourceId&amp;#34;: &amp;#34;mp2mrk&amp;#34;,
+    &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello/world/test&amp;#34;,
+    &amp;#34;stage&amp;#34;: &amp;#34;prod&amp;#34;,
+    &amp;#34;identity&amp;#34;: {
+      &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;sourceIp&amp;#34;: &amp;#34;50.135.43.1&amp;#34;,
+      &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.43.0&amp;#34;,
+      &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;While this demonstrates that our lambda function is publicly accessible, it&amp;rsquo;s not immediately obvious where the &lt;code&gt;*event&lt;/code&gt; data is being populated.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-12-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1Mapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Mapping Templates&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The event data that&amp;rsquo;s actually supplied to &lt;code&gt;echoS3Event&lt;/code&gt; is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;rsquo;re not whitelisting any params, so those fields (&lt;code&gt;queryParams&lt;/code&gt;, &lt;code&gt;pathParams&lt;/code&gt;) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;rsquo;s more amenable to the target.&lt;/p&gt;
+
+&lt;p&gt;Sparta uses a pass-through template that passes all valid data, with minor &lt;strong&gt;Body&lt;/strong&gt; differences based on the inbound &lt;em&gt;Content-Type&lt;/em&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl&#34;&gt;application/json&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl&#34;&gt;*&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The &lt;code&gt;application/json&lt;/code&gt; template is copied below:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
+Provide an automatic pass through template that transforms all inputs
+into the JSON payload sent to a golang function
+
+See
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;amp;tstart=0
+  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+*#
+{
+  &amp;#34;method&amp;#34;: &amp;#34;$context.httpMethod&amp;#34;,
+  &amp;#34;body&amp;#34; : $input.json(&amp;#39;$&amp;#39;),
+  &amp;#34;headers&amp;#34;: {
+    #foreach($param in $input.params().header.keySet())
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().header.get($param))&amp;#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &amp;#34;queryParams&amp;#34;: {
+    #foreach($param in $input.params().querystring.keySet())
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().querystring.get($param))&amp;#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &amp;#34;pathParams&amp;#34;: {
+    #foreach($param in $input.params().path.keySet())
+    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().path.get($param))&amp;#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &amp;#34;context&amp;#34; : {
+    &amp;#34;apiId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.apiId)&amp;#34;,
+    &amp;#34;method&amp;#34; : &amp;#34;$util.escapeJavaScript($context.httpMethod)&amp;#34;,
+    &amp;#34;requestId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.requestId)&amp;#34;,
+    &amp;#34;resourceId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourceId)&amp;#34;,
+    &amp;#34;resourcePath&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourcePath)&amp;#34;,
+    &amp;#34;stage&amp;#34; : &amp;#34;$util.escapeJavaScript($context.stage)&amp;#34;,
+    &amp;#34;identity&amp;#34; : {
+      &amp;#34;accountId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.accountId)&amp;#34;,
+      &amp;#34;apiKey&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.apiKey)&amp;#34;,
+      &amp;#34;caller&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.caller)&amp;#34;,
+      &amp;#34;cognitoAuthenticationProvider&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&amp;#34;,
+      &amp;#34;cognitoAuthenticationType&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&amp;#34;,
+      &amp;#34;cognitoIdentityId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&amp;#34;,
+      &amp;#34;cognitoIdentityPoolId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&amp;#34;,
+      &amp;#34;sourceIp&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.sourceIp)&amp;#34;,
+      &amp;#34;user&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.user)&amp;#34;,
+      &amp;#34;userAgent&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userAgent)&amp;#34;,
+      &amp;#34;userArn&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userArn)&amp;#34;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;This template forwards all whitelisted data &amp;amp; body to the lambda function.  You can see by switching on the &lt;code&gt;method&lt;/code&gt; field would permit a single function to service multiple HTTP method names.&lt;/p&gt;
+
+&lt;p&gt;The next example will show how to unmarshal this data and perform request-specific actions.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-14-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Proxying Envelope&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;rsquo;s output.&lt;/p&gt;
+
+&lt;p&gt;If there were an error, the response would include additional fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;strong&gt;Go&lt;/strong&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
+
+&lt;p&gt;A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the &lt;strong&gt;Integration Response&lt;/strong&gt; section of the &lt;em&gt;/hello/world/test&lt;/em&gt; resource in the Console, you&amp;rsquo;ll see a list of Regular Expression matches:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/IntegrationMapping.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The regular expressions are used to translate the integration response, which is just a blob of text provided to &lt;code&gt;context.done()&lt;/code&gt;, into API Gateway Method responses.  Sparta annotates your lambda functions response with &lt;strong&gt;Go&lt;/strong&gt;&amp;rsquo;s &lt;a href=&#34;https://golang.org/src/net/http/status.go&#34;&gt;HTTP StatusText&lt;/a&gt; values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/MethodResponse.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;These mappings are defaults, and it&amp;rsquo;s possible to override either one by providing a non-zero length values to either:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Integration&#34;&gt;Integration.Responses&lt;/a&gt;.  See the &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60&#34;&gt;DefaultIntegrationResponses&lt;/a&gt; for the default values.&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Method&#34;&gt;Method.Responses&lt;/a&gt;.  See the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses&#34;&gt;DefaultMethodResponses&lt;/a&gt; for the default method response mappings.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-15-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-17-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&amp;rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.&lt;/p&gt;
+
+&lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;Mapping Template Reference&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - Request Context</title>
+      <link>http://gosparta.io/docs/apigateway/example3/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/example3/</guid>
+      <description>
+
+&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-1-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the &lt;a href=&#34;http://dev.maxmind.com/geoip/geoip2/geolite2/&#34;&gt;GeoLite2 Database&lt;/a&gt; and return any information to the client.&lt;/p&gt;
+
+&lt;p&gt;As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func ipGeoLambda(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger) {
+var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+	logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+	return
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;We&amp;rsquo;ll then parse the inbound IP address from the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext&#34;&gt;Context&lt;/a&gt; and perform a lookup against the database handle opened in the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19&#34;&gt;init&lt;/a&gt; block:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
+record, err := dbHandle.City(parsedIP)
+if err != nil {
+  logger.Error(&amp;#34;Failed to find city: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Finally, marshal the data or error result and we&amp;rsquo;re done:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Return the Info
+httpResponse := map[string]interface{}{
+  &amp;#34;info&amp;#34;: record,
+}
+responseBody, err := json.Marshal(httpResponse)
+if err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+} else {
+  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
+  fmt.Fprint(w, string(responseBody))
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-5-configure-sparta-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Configure Sparta&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next steps are to:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; value&lt;/li&gt;
+&lt;li&gt;Create an associated API Gateway&lt;/li&gt;
+&lt;li&gt;Create an API Gateway resource that invokes our lambda function&lt;/li&gt;
+&lt;li&gt;Add a Method name to the resource.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;These four steps are managed in the service&amp;rsquo;s &lt;code&gt;main()&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	stage := sparta.NewStage(&amp;#34;ipgeo&amp;#34;)
+	apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaGeoIPService&amp;#34;, stage)
+	stackName := &amp;#34;SpartaGeoIP&amp;#34;
+
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
+	apiGatewayResource, _ := apiGateway.NewResource(&amp;#34;/info&amp;#34;, lambdaFn)
+	apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	sparta.Main(stackName,
+		&amp;#34;Sparta app supporting ip-&amp;gt;geo mapping&amp;#34;,
+		lambdaFunctions,
+		apiGateway,
+    nil)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next step is to provision the stack:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;S3_BUCKET=&amp;lt;MY-S3-BUCKETNAME&amp;gt; make provision&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Assuming all goes well, the log output will include the API Gateway URL as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-10-query-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example3Query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;With the API Gateway provisioned, let&amp;rsquo;s check the response:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+
+*   Trying 54.192.70.206...
+* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&amp;gt; GET /ipgeo/info HTTP/1.1
+&amp;gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.43.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 200 OK
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 1129
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
+&amp;lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
+&amp;lt; X-Cache: Miss from cloudfront
+&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
+&amp;lt;
+* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
+{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 21:50:18 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;984&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;info&amp;#34;:{&amp;#34;City&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;Names&amp;#34;:null},&amp;#34;Continent&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;NA&amp;#34;,&amp;#34;GeoNameID&amp;#34;:6255149,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;Nordamerika&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;North America&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Norteamérica&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;Amérique du Nord&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;北アメリカ&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;América do Norte&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;Северная Америка&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;北美洲&amp;#34;}},&amp;#34;Country&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;Location&amp;#34;:{&amp;#34;Latitude&amp;#34;:0,&amp;#34;Longitude&amp;#34;:0,&amp;#34;MetroCode&amp;#34;:0,&amp;#34;TimeZone&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Postal&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;RegisteredCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;RepresentedCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;IsoCode&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;Names&amp;#34;:null,&amp;#34;Type&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Subdivisions&amp;#34;:null,&amp;#34;Traits&amp;#34;:{&amp;#34;IsAnonymousProxy&amp;#34;:false,&amp;#34;IsSatelliteProvider&amp;#34;:false}}}}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Pretty-printing the response body:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;code&amp;quot;: 200,
+  &amp;quot;status&amp;quot;: &amp;quot;OK&amp;quot;,
+  &amp;quot;headers&amp;quot;: {
+    &amp;quot;content-type&amp;quot;: &amp;quot;application/json&amp;quot;,
+    &amp;quot;date&amp;quot;: &amp;quot;Sun, 06 Dec 2015 17:50:15 GMT&amp;quot;,
+    &amp;quot;content-length&amp;quot;: &amp;quot;984&amp;quot;
+  },
+  &amp;quot;results&amp;quot;: {
+    &amp;quot;info&amp;quot;: {
+      &amp;quot;City&amp;quot;: {
+        &amp;quot;GeoNameID&amp;quot;: 0,
+        &amp;quot;Names&amp;quot;: null
+      },
+      &amp;quot;Continent&amp;quot;: {
+        &amp;quot;Code&amp;quot;: &amp;quot;NA&amp;quot;,
+        &amp;quot;GeoNameID&amp;quot;: 6255149,
+        &amp;quot;Names&amp;quot;: {
+          &amp;quot;de&amp;quot;: &amp;quot;Nordamerika&amp;quot;,
+          &amp;quot;en&amp;quot;: &amp;quot;North America&amp;quot;,
+          &amp;quot;es&amp;quot;: &amp;quot;Norteamérica&amp;quot;,
+          &amp;quot;fr&amp;quot;: &amp;quot;Amérique du Nord&amp;quot;,
+          &amp;quot;ja&amp;quot;: &amp;quot;北アメリカ&amp;quot;,
+          &amp;quot;pt-BR&amp;quot;: &amp;quot;América do Norte&amp;quot;,
+          &amp;quot;ru&amp;quot;: &amp;quot;Северная Америка&amp;quot;,
+          &amp;quot;zh-CN&amp;quot;: &amp;quot;北美洲&amp;quot;
+        }
+      },
+      &amp;quot;Country&amp;quot;: {
+        &amp;quot;GeoNameID&amp;quot;: 6252001,
+        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
+        &amp;quot;Names&amp;quot;: {
+          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
+          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
+          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
+          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
+          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
+          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
+          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
+          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
+        }
+      },
+      &amp;quot;Location&amp;quot;: {
+        &amp;quot;Latitude&amp;quot;: 0,
+        &amp;quot;Longitude&amp;quot;: 0,
+        &amp;quot;MetroCode&amp;quot;: 0,
+        &amp;quot;TimeZone&amp;quot;: &amp;quot;&amp;quot;
+      },
+      &amp;quot;Postal&amp;quot;: {
+        &amp;quot;Code&amp;quot;: &amp;quot;&amp;quot;
+      },
+      &amp;quot;RegisteredCountry&amp;quot;: {
+        &amp;quot;GeoNameID&amp;quot;: 6252001,
+        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
+        &amp;quot;Names&amp;quot;: {
+          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
+          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
+          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
+          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
+          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
+          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
+          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
+          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
+        }
+      },
+      &amp;quot;RepresentedCountry&amp;quot;: {
+        &amp;quot;GeoNameID&amp;quot;: 0,
+        &amp;quot;IsoCode&amp;quot;: &amp;quot;&amp;quot;,
+        &amp;quot;Names&amp;quot;: null,
+        &amp;quot;Type&amp;quot;: &amp;quot;&amp;quot;
+      },
+      &amp;quot;Subdivisions&amp;quot;: null,
+      &amp;quot;Traits&amp;quot;: {
+        &amp;quot;IsAnonymousProxy&amp;quot;: false,
+        &amp;quot;IsSatelliteProvider&amp;quot;: false
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-12-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h2 id=&#34;a-href-hugoshortcode-14-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherNotes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;The &lt;em&gt;GeoLite2-Country.mmdb&lt;/em&gt; content is embedded in the go binary via &lt;a href=&#34;https://github.com/mjibson/esc&#34;&gt;esc&lt;/a&gt; as part of the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27&#34;&gt;go generate&lt;/a&gt; phase.&lt;/li&gt;
+&lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - User Input</title>
+      <link>http://gosparta.io/docs/apigateway/example2/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/apigateway/example2/</guid>
+      <description>
+
+&lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-1-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Our function will accept two params:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;bucketName&lt;/code&gt; : The S3 bucket name storing the asset&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;keyName&lt;/code&gt; : The S3 item key&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.&lt;/p&gt;
+
+&lt;p&gt;Because &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; is expected to be invoked by the API Gateway, we&amp;rsquo;ll start by unmarshalling the event data:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
+if err != nil {
+  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;sparta.APIGatewayLambdaJSONEvent&lt;/a&gt; fields correspond to the Integration Response Mapping template discussed in the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;previous example&lt;/a&gt; (see the full mapping template &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;Once the event is unmarshaled, we can use it to fetch the S3 item info:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;getObjectInput := &amp;amp;s3.GetObjectInput{
+  Bucket: aws.String(lambdaEvent.QueryParams[&amp;#34;bucketName&amp;#34;]),
+  Key:    aws.String(lambdaEvent.QueryParams[&amp;#34;keyName&amp;#34;]),
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;awsSession := awsSession(logger)
+svc := s3.New(awsSession)
+result, err := svc.GetObject(getObjectInput)
+if nil != err {
+  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}
+presignedReq, _ := svc.GetObjectRequest(getObjectInput)
+url, err := presignedReq.Presign(5 * time.Minute)
+if nil != err {
+  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}
+httpResponse := map[string]interface{}{
+  &amp;#34;S3&amp;#34;:  result,
+  &amp;#34;URL&amp;#34;: url,
+}
+
+responseBody, err := json.Marshal(httpResponse)
+if err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+} else {
+  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
+  fmt.Fprint(w, string(responseBody))
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-5-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next step is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
+apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaImagerAPI&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-7-create-lambda-binding-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Lambda Binding&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Next we create an &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that references the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;s3ItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
+  Description: &amp;#34;Get information about an item in S3 via querystring params&amp;#34;,
+  MemorySize:  128,
+  Timeout:     10,
+}
+var iamDynamicRole = sparta.IAMRoleDefinition{}
+iamDynamicRole.Privileges = append(iamDynamicRole.Privileges, sparta.IAMRolePrivilege{
+  Actions:  []string{&amp;#34;s3:GetObject&amp;#34;},
+  Resource: resourceArn,
+})
+s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOptions)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;A few items to note here:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;We&amp;rsquo;re providing a custom &lt;code&gt;LambdaFunctionOptions&lt;/code&gt; in case the request to S3 to get item metadata exceeds the default 3 second timeout.&lt;/li&gt;
+&lt;li&gt;We also add a custom &lt;code&gt;iamDynamicRole.Privileges&lt;/code&gt; entry to the &lt;code&gt;Privileges&lt;/code&gt; slice that authorizes the lambda function to &lt;em&gt;only&lt;/em&gt; access objects in a single bucket (&lt;em&gt;resourceArn&lt;/em&gt;).
+
+&lt;ul&gt;
+&lt;li&gt;This bucket ARN is externally created and the ARN provided to this code.&lt;/li&gt;
+&lt;li&gt;While the API will accept any &lt;em&gt;bucketName&lt;/em&gt; value, it is only authorized to access a single bucket.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-9-create-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Resource&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;code&gt;s3ItemInfo&lt;/code&gt; function. This will be the relative path component used to reference our lambda function via the API Gateway.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/info&amp;#34;, s3ItemInfoLambdaFn)
+method, err := apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
+if err != nil {
+  return nil, err
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h3 id=&#34;a-href-hugoshortcode-11-whitelist-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Whitelist Input&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;The final step is to add the whitelisted parameters to the Method definition.&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Whitelist query string params
+method.Parameters[&amp;#34;method.request.querystring.keyName&amp;#34;] = true
+method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = true&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Note that the keynames in the &lt;code&gt;method.Parameters&lt;/code&gt; map must be of the form: &lt;strong&gt;method.request.{location}.{name}&lt;/strong&gt; where location is one of:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;querystring&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;path&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;header&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;See the &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters&#34;&gt;REST documentation&lt;/a&gt; for more information.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-13-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;With everything configured, let&amp;rsquo;s provision the stack:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --level debug provision --s3Bucket $S3_BUCKET&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;and check the results.&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-15-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;As this Sparta application includes an API Gateway definition, the stack &lt;code&gt;Outputs&lt;/code&gt; includes the API Gateway URL:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s fetch an item we know exists:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log&amp;#34;
+
+*   Trying 54.192.70.158...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log HTTP/1.1
+&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.43.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 200 OK
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 1584
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Sun, 06 Dec 2015 02:35:03 GMT
+&amp;lt; x-amzn-RequestId: f333f4bb-9bc1-11e5-afde-61a428c89049
+&amp;lt; X-Cache: Miss from cloudfront
+&amp;lt; Via: 1.1 2f31d4850470c56c3b326946dc542a6b.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: 6rBpqjmi7DPax7XOHTbxDx8-FfFfvI04m2_K-PxLWfYFor7WtIcdxA==
+&amp;lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;1468&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;S3&amp;#34;:{&amp;#34;AcceptRanges&amp;#34;:&amp;#34;bytes&amp;#34;,&amp;#34;Body&amp;#34;:{},&amp;#34;CacheControl&amp;#34;:null,&amp;#34;ContentDisposition&amp;#34;:null,&amp;#34;ContentEncoding&amp;#34;:null,&amp;#34;ContentLanguage&amp;#34;:null,&amp;#34;ContentLength&amp;#34;:70372,&amp;#34;ContentRange&amp;#34;:null,&amp;#34;ContentType&amp;#34;:&amp;#34;image/png&amp;#34;,&amp;#34;DeleteMarker&amp;#34;:null,&amp;#34;ETag&amp;#34;:&amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,&amp;#34;Expiration&amp;#34;:null,&amp;#34;Expires&amp;#34;:null,&amp;#34;LastModified&amp;#34;:&amp;#34;2015-11-09T15:38:01Z&amp;#34;,&amp;#34;Metadata&amp;#34;:{},&amp;#34;MissingMeta&amp;#34;:null,&amp;#34;ReplicationStatus&amp;#34;:null,&amp;#34;RequestCharged&amp;#34;:null,&amp;#34;Restore&amp;#34;:null,&amp;#34;SSECustomerAlgorithm&amp;#34;:null,&amp;#34;SSECustomerKeyMD5&amp;#34;:null,&amp;#34;SSEKMSKeyId&amp;#34;:null,&amp;#34;ServerSideEncryption&amp;#34;:null,&amp;#34;StorageClass&amp;#34;:null,&amp;#34;VersionId&amp;#34;:null,&amp;#34;WebsiteRedirectLocation&amp;#34;:null},&amp;#34;URL&amp;#34;:&amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;}}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Pretty printing the response body:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
+  &amp;#34;code&amp;#34;: 200,
+  &amp;#34;status&amp;#34;: &amp;#34;OK&amp;#34;,
+  &amp;#34;headers&amp;#34;: {
+    &amp;#34;content-type&amp;#34;: &amp;#34;application/json&amp;#34;,
+    &amp;#34;date&amp;#34;: &amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,
+    &amp;#34;content-length&amp;#34;: &amp;#34;1468&amp;#34;
+  },
+  &amp;#34;results&amp;#34;: {
+    &amp;#34;S3&amp;#34;: {
+      &amp;#34;AcceptRanges&amp;#34;: &amp;#34;bytes&amp;#34;,
+      &amp;#34;Body&amp;#34;: {},
+      &amp;#34;CacheControl&amp;#34;: null,
+      &amp;#34;ContentDisposition&amp;#34;: null,
+      &amp;#34;ContentEncoding&amp;#34;: null,
+      &amp;#34;ContentLanguage&amp;#34;: null,
+      &amp;#34;ContentLength&amp;#34;: 70372,
+      &amp;#34;ContentRange&amp;#34;: null,
+      &amp;#34;ContentType&amp;#34;: &amp;#34;image/png&amp;#34;,
+      &amp;#34;DeleteMarker&amp;#34;: null,
+      &amp;#34;ETag&amp;#34;: &amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,
+      &amp;#34;Expiration&amp;#34;: null,
+      &amp;#34;Expires&amp;#34;: null,
+      &amp;#34;LastModified&amp;#34;: &amp;#34;2015-11-09T15:38:01Z&amp;#34;,
+      &amp;#34;Metadata&amp;#34;: {},
+      &amp;#34;MissingMeta&amp;#34;: null,
+      &amp;#34;ReplicationStatus&amp;#34;: null,
+      &amp;#34;RequestCharged&amp;#34;: null,
+      &amp;#34;Restore&amp;#34;: null,
+      &amp;#34;SSECustomerAlgorithm&amp;#34;: null,
+      &amp;#34;SSECustomerKeyMD5&amp;#34;: null,
+      &amp;#34;SSEKMSKeyId&amp;#34;: null,
+      &amp;#34;ServerSideEncryption&amp;#34;: null,
+      &amp;#34;StorageClass&amp;#34;: null,
+      &amp;#34;VersionId&amp;#34;: null,
+      &amp;#34;WebsiteRedirectLocation&amp;#34;: null
+    },
+    &amp;#34;URL&amp;#34;: &amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
+
+&lt;p&gt;What about an item that we know doesn&amp;rsquo;t exist, but is in the bucket our lambda function has privileges to access:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log&amp;#34;
+
+*   Trying 54.230.71.213...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&amp;gt; GET /v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log HTTP/1.1
+&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.43.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 500 Internal Server Error
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 524
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Sun, 06 Dec 2015 02:40:14 GMT
+&amp;lt; x-amzn-RequestId: ad5d94eb-9bc2-11e5-8fad-476a6cacabce
+&amp;lt; X-Cache: Error from cloudfront
+&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: XoVLBjm1dgozZsNAEGk8Vy_a5PXMYNWRD6eKJJBcVTXrtMgMhiLNyQ==
+&amp;lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:40:14 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;And finally, what if we try to access a bucket that our lambda function isn&amp;rsquo;t authorized to access:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=weagle&amp;#34;
+
+*   Trying 54.192.70.129...
+* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=weagle HTTP/1.1
+&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.43.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 500 Internal Server Error
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 524
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Sun, 06 Dec 2015 02:42:52 GMT
+&amp;lt; x-amzn-RequestId: 0be0fc4f-9bc3-11e5-b827-81d99c02192f
+&amp;lt; X-Cache: Error from cloudfront
+&amp;lt; Via: 1.1 400bdbea4e851ce61e7df8252da93d3f.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: M_7pB1UsW63xzh_9g37-CqNYDXfXlec0B6DV4bdkq3tbCANCOrTY6Q==
+&amp;lt;
+* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
+{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:42:52 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-21-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;h3 id=&#34;a-href-hugoshortcode-23-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Command Line Options</title>
       <link>http://gosparta.io/docs/commandline/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
@@ -681,1073 +1553,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;li&gt;The Kinesis stream and the AWS Lambda function must be provisioned in the same region.&lt;/li&gt;
 &lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html&#34;&gt;Kinesis EventSource&lt;/a&gt; walkthrough.&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - S3</title>
-      <link>http://gosparta.io/docs/eventsources/s3/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/s3/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Assume we have an S3 bucket that stores images.  You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func transformImage(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-s3-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalS3Event:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the S3 Event&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Since the &lt;code&gt;transformImage&lt;/code&gt; is expected to be triggered by S3 event changes, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an S3-specific event provided by Sparta via:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaS3.Event
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;S3 events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
-  err = nil
-  switch eachRecord.EventName {
-  case &amp;#34;ObjectCreated:Put&amp;#34;:
-    {
-      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
-    }
-  case &amp;#34;s3:ObjectRemoved:Delete&amp;#34;:
-    {
-      // Delete stamped image
-    }
-  default:
-    {
-      logger.Info(&amp;#34;Unsupported event: &amp;#34;, eachRecord.EventName)
-    }
-  }
-
-  //
-  if err != nil {
-    logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L57&#34;&gt;stampImage&lt;/a&gt; function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple &lt;strong&gt;xformed_&lt;/strong&gt; keyname prefix to identify items which have already been stamped &amp;amp; prevents an &amp;ldquo;event-storm&amp;rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the core of the &lt;code&gt;transformImage&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L200&#34;&gt;imagerFunctions&lt;/a&gt; source.&lt;/p&gt;
-
-&lt;p&gt;Our lambda function needs to both &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Provision an IAM::Role as part of this application
-var iamRole = sparta.IAMRoleDefinition{}
-
-// Setup the ARN that includes all child keys
-resourceArn := fmt.Sprintf(&amp;#34;%s/*&amp;#34;, s3EventBroadcasterBucket)
-iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
-  Actions: []string{&amp;#34;s3:GetObject&amp;#34;,
-    &amp;#34;s3:PutObject&amp;#34;,
-  },
-  Resource: resourceArn,
-})&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt; param is the ARN of the S3 bucket that will trigger your lambda function (eg: &lt;em&gt;arn:aws:s3:::MyImagingS3Bucket&lt;/em&gt;).&lt;/p&gt;
-
-&lt;p&gt;With the IAM Role defined, we can create the Sparta lambda function for &lt;code&gt;transformImage&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
-// transform lambda doesn&amp;#39;t fail early.
-transformOptions := &amp;amp;sparta.LambdaFunctionOptions{
-  Description: &amp;#34;Stamp assets in S3&amp;#34;,
-  MemorySize:  128,
-  Timeout:     30,
-}
-lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the &lt;code&gt;iamRole&lt;/code&gt; we defined earlier.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-10-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;transformImage&lt;/code&gt; function would have the ability to &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; back to the &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt;, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;//////////////////////////////////////////////////////////////////////////////
-// S3 configuration
-//
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: s3EventBroadcasterBucket,
-  },
-  Events: []string{&amp;#34;s3:ObjectCreated:*&amp;#34;, &amp;#34;s3:ObjectRemoved:*&amp;#34;},
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;When &lt;code&gt;Sparta&lt;/code&gt; generates the CloudFormation template, it scans for &lt;code&gt;Permission&lt;/code&gt; configurations.  For &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;push based sources&lt;/a&gt; like S3, Sparta uses that service&amp;rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-12-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;transformImage&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;Implement the associated business logic  (&lt;code&gt;stampImage&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager&#34;&gt;SpartaImager&lt;/a&gt; repo contains the full code, and includes &lt;a href=&#34;http://gosparta.io/docs/apigateway&#34;&gt;API Gateway&lt;/a&gt; support that allows you to publicly fetch the stamped image via an expiring S3 URL.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-13-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The AWS docs have an excellent &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html&#34;&gt;S3 event source&lt;/a&gt; walkthrough.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - SES</title>
-      <link>http://gosparta.io/docs/eventsources/ses/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/ses/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to inbound email.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Assume that we have already &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domains.html&#34;&gt;verified our email domain&lt;/a&gt; with AWS.  This allows our domain&amp;rsquo;s email to be handled by SES.&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.&lt;/p&gt;
-
-&lt;p&gt;There is also an additional requirement to support &lt;a href=&#34;http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html&#34;&gt;immutable infrastructure&lt;/a&gt;, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSESEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
-
-{
-  logger.WithFields(logrus.Fields{
-    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-  }).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-ses-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SES Event&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;At this point we would normally continue processing the SES event, using Sparta types if available.&lt;/p&gt;
-
-&lt;p&gt;However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.&lt;/p&gt;
-
-&lt;p&gt;This requirement implies that our service must be self-contained: we can&amp;rsquo;t assume that &amp;ldquo;something else&amp;rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-5-dynamic-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#dynamicResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic Resources&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;The immutable infrastructure requirement makes this lambda function a bit more complex.  Our service needs to:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Provision a new S3 bucket for email message body storage
-
-&lt;ul&gt;
-&lt;li&gt;SES will not provide the message body in the event data.  It will only store the email body in an S3 bucket, from which your lambda function can later consume it.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Wait for the S3 bucket to be provisioned
-
-&lt;ul&gt;
-&lt;li&gt;As we need a new S3 bucket, we&amp;rsquo;re relying on AWS to generate a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;unique name&lt;/a&gt;.  But this means that our lambda function doesn&amp;rsquo;t know the S3 bucket name during provisioning.&lt;/li&gt;
-&lt;li&gt;In fact, we shouldn&amp;rsquo;t even create an AWS Lambda function if the S3 bucket can&amp;rsquo;t be created.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Include an IAMPrivilege so that our &lt;strong&gt;Go&lt;/strong&gt; function can access the dynamically created bucket&lt;/li&gt;
-&lt;li&gt;Discover the S3 Bucket at lambda execution time&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-6-provision-message-body-storage-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision Message Body Storage Resource&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s first take a look at how the SES lambda handler provisions a new S3 bucket via the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage&#34;&gt;MessageBodyStorage&lt;/a&gt; type:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendSESLambda(api *sparta.API,
-  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-
-  // Setup options s.t. the lambda function has time to consume the message body
-  sesItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
-    Description: &amp;#34;&amp;#34;,
-    MemorySize:  128,
-    Timeout:     10,
-  }
-  // Our lambda function will need to be able to read from the bucket, which
-  // will be handled by the S3MessageBodyBucketDecorator below
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSESEvent, sesItemInfoOptions)
-
-  // Add a Permission s.t. the Lambda function automatically manages SES registration
-  sesPermission := sparta.SESPermission{
-    BasePermission: sparta.BasePermission{
-      // SES only supports wildcard ARNs
-      SourceArn: &amp;#34;*&amp;#34;,
-    },
-    InvocationType: &amp;#34;Event&amp;#34;,
-  }
-  // Store the message body
-  bodyStorage, _ := sesPermission.NewMessageBodyStorageResource(&amp;#34;Special&amp;#34;)
-  sesPermission.MessageBodyStorage = bodyStorage&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;MessageBodyStorage&lt;/code&gt; type (and the related &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions&#34;&gt;MessageBodyStorageOptions&lt;/a&gt; type) cause our SESPermission handler to  add an &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html&#34;&gt;S3 ReceiptRule&lt;/a&gt; at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.&lt;/p&gt;
-
-&lt;p&gt;The single parameter &lt;code&gt;&amp;quot;Special&amp;quot;&lt;/code&gt; is an application-unique literal value that is used to create a stable CloudFormation resource identifier so that new buckets are not created in response to stack update requests.&lt;/p&gt;
-
-&lt;p&gt;Our SES handler then adds two &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html&#34;&gt;ReceiptRules&lt;/a&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sesPermission.ReceiptRules = make([]sparta.ReceiptRule, 0)
-sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-  Name:       &amp;#34;Special&amp;#34;,
-  Recipients: []string{&amp;#34;sombody_special@gosparta.io&amp;#34;},
-  TLSPolicy:  &amp;#34;Optional&amp;#34;,
-})
-sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-  Name:       &amp;#34;Default&amp;#34;,
-  Recipients: []string{},
-  TLSPolicy:  &amp;#34;Optional&amp;#34;,
-})&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-9-dynamic-iamprivilege-arn-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic IAMPrivilege Arn&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Our lambda function is required to access the message body in the dynamically created &lt;code&gt;MessageBodyStorage&lt;/code&gt; resource, but the S3 resource Arn is only defined &lt;em&gt;after&lt;/em&gt; the service is provisioned.  The solution to this is to reference the dynamically generated &lt;code&gt;BucketArnAllKeys()&lt;/code&gt; value in the &lt;code&gt;sparta.IAMRolePrivilege&lt;/code&gt; initializer:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Then add the privilege to the Lambda function s.t. we can actually get at the data
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&amp;#34;s3:GetObject&amp;#34;, &amp;#34;s3:HeadObject&amp;#34;},
-    Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
-})&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The last step is to register the &lt;code&gt;SESPermission&lt;/code&gt; with the lambda info:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Finally add the SES permission to the lambda function
-lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;At this point we&amp;rsquo;ve implicitly created an S3 bucket via the &lt;code&gt;MessageBodyStorage&lt;/code&gt; value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-12-dynamic-messagebodystorage-discovery-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provisionBucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic MessageBodyStorage Discovery&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Our &lt;code&gt;echoSESEvent&lt;/code&gt; function needs to determine, at execution time, the &lt;code&gt;MessageBodyStorage&lt;/code&gt; bucketname.  This is done via &lt;code&gt;sparta.Discover()&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;configuration, configErr := sparta.Discover()
-
-logger.WithFields(logrus.Fields{
-  &amp;#34;Error&amp;#34;:         configErr,
-  &amp;#34;Configuration&amp;#34;: configuration,
-}).Debug(&amp;#34;Discovery results&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;sparta.Discover()&lt;/code&gt; function returns the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html&#34;&gt;Metdata&lt;/a&gt; and &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html&#34;&gt;Tags&lt;/a&gt; associated with any immediate dependencies &lt;em&gt;of the current Sparta-compliant Go lambda function scope&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;In other words, &lt;code&gt;sparta.Discover()&lt;/code&gt; may return a non-empty map iff:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;It&amp;rsquo;s called from a &lt;code&gt;Sparta.LambdaFunction&lt;/code&gt; function&lt;/li&gt;
-&lt;li&gt;That function has immediate AWS resource dependencies&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The returned &lt;code&gt;map[string]interface{}&lt;/code&gt; will be empty in all other cases.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s a sample &lt;code&gt;configuration&lt;/code&gt; map:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&amp;#34;: {
-    &amp;#34;DomainName&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com&amp;#34;,
-    &amp;#34;Ref&amp;#34;: &amp;#34;spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4&amp;#34;,
-    &amp;#34;Tags&amp;#34;: [
-      {
-        &amp;#34;Key&amp;#34;: &amp;#34;sparta:logicalBucketName&amp;#34;,
-        &amp;#34;Value&amp;#34;: &amp;#34;Special&amp;#34;
-      }
-    ],
-    &amp;#34;Type&amp;#34;: &amp;#34;AWS::S3::Bucket&amp;#34;,
-    &amp;#34;WebsiteURL&amp;#34;: &amp;#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com&amp;#34;
-  },
-  &amp;#34;golangFunc&amp;#34;: &amp;#34;main.echoSESEvent&amp;#34;
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Note that the &lt;em&gt;sparta:logicalBucketName&lt;/em&gt; tag value is &lt;code&gt;&amp;quot;Special&amp;quot;&lt;/code&gt;, the same value provided in:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;sesPermission.NewMessageBodyStorageResource(&amp;#34;Special&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;messageBodyInfo := make(map[string]interface{}, 0)
-bucketName := &amp;#34;&amp;#34;
-if nil != configuration {
-  for eachKey, eachValue := range configuration {
-    if strings.HasPrefix(eachKey, &amp;#34;SESMessageStoreBucket&amp;#34;) {
-      messageBodyInfo[&amp;#34;Bucket&amp;#34;] = eachValue
-      bucketInfo, ok := eachValue.(map[string]interface{})
-      if ok {
-        bucketName, _ = bucketInfo[&amp;#34;Ref&amp;#34;].(string)
-      }
-    }
-  }&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;TODO: Add configuration types&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-17-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;The rest of &lt;code&gt;echoSESEvent&lt;/code&gt; satisfies the other requirements, with a bit of help from the SES &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/ses&#34;&gt;event types&lt;/a&gt;:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;golang&#34;&gt;var lambdaEvent spartaSES.Event
-  err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-  if err != nil {
-    logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-
-  svc := s3.New(session.New())
-  for _, eachRecord := range lambdaEvent.Records {
-    logger.WithFields(logrus.Fields{
-      &amp;#34;Source&amp;#34;:     eachRecord.SES.Mail.Source,
-      &amp;#34;MessageID&amp;#34;:  eachRecord.SES.Mail.MessageID,
-      &amp;#34;S3BodyInfo&amp;#34;: messageBodyInfo,
-    }).Info(&amp;#34;SES Event&amp;#34;)
-
-    // If we have a bucketname, fetch the S3 metadata about the body
-    if &amp;#34;&amp;#34; != bucketName {
-      params := &amp;amp;s3.HeadObjectInput{
-        Bucket: aws.String(bucketName),
-        Key:    aws.String(eachRecord.SES.Mail.MessageID),
-      }
-      resp, err := svc.HeadObject(params)
-      logger.WithFields(logrus.Fields{
-        &amp;#34;Error&amp;#34;:    err,
-        &amp;#34;Metadata&amp;#34;: resp,
-      }).Info(&amp;#34;SES MessageBody&amp;#34;)
-    }
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-19-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SES-triggered lambda function:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;echoSESEvent&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Additionally, if the SES handler needs to access the raw email message body:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Create a new &lt;code&gt;sesPermission.NewMessageBodyStorageResource(&amp;quot;Special&amp;quot;)&lt;/code&gt; value to store the message body&lt;/li&gt;
-&lt;li&gt;Assign the value to the &lt;code&gt;sesPermission.MessageBodyStorage&lt;/code&gt; field&lt;/li&gt;
-&lt;li&gt;If your lambda function needs to consume the message body, add an entry to &lt;code&gt;sesPermission.[]IAMPrivilege&lt;/code&gt; that includes the &lt;code&gt;sesPermission.MessageBodyStorage.BucketArnAllKeys()&lt;/code&gt; Arn&lt;/li&gt;
-&lt;li&gt;In your &lt;strong&gt;Go&lt;/strong&gt; lambda function definition, discover the S3 bucketname via &lt;code&gt;sparta.Discover()&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-20-notes-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The SES message (including headers) is stored in the &lt;a href=&#34;http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3&#34;&gt;raw format&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sparta.Discover()&lt;/code&gt; uses &lt;a href=&#34;https://golang.org/pkg/reflect/&#34;&gt;reflection&lt;/a&gt; to map from the current enclosing &lt;strong&gt;Go&lt;/strong&gt; function name to the owning &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; CloudFormation. Therefore, calling &lt;code&gt;sparta.Discover()&lt;/code&gt; from non-Sparta lambda functions (application helpers, function literals) will generate an error.&lt;/li&gt;
-&lt;li&gt;More on Immutable Infrastructure:
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift&#34;&gt;Subbu - Automate Everything&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler - Immutable Deployments&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/&#34;&gt;The New Stack&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - SNS</title>
-      <link>http://gosparta.io/docs/eventsources/sns/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/sns/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Assume that we have an SNS topic that broadcasts notifications.  We&amp;rsquo;ve been asked to write a lambda function that logs the &lt;em&gt;Subject&lt;/em&gt; and &lt;em&gt;Message&lt;/em&gt; text to CloudWatch logs for later processing.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#gettingStarted:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSNSEvent(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-  }).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; is expected to be triggered by SNS notifications, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an SNS-specific event provided by Sparta via:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaSNS.Event
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;SNS events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    &amp;#34;Subject&amp;#34;: eachRecord.Sns.Subject,
-    &amp;#34;Message&amp;#34;: eachRecord.Sns.Message,
-  }).Info(&amp;#34;SNS Event&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h2 id=&#34;a-href-hugoshortcode-9-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoSNSEvent&lt;/code&gt; function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: snsTopic,
-  },
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;snsTopic&lt;/code&gt; param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).&lt;/p&gt;
-
-&lt;p&gt;See the &lt;a href=&#34;http://gosparta.io/docs/eventsources/s3/#eventSourceRegistration&#34;&gt;S3 docs&lt;/a&gt; for more information on how the &lt;em&gt;Permissions&lt;/em&gt; data is processed.&lt;/p&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#wrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all SNS-triggered lambda function:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;echoSNSEvent&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges if the lambda function accesses other AWS services.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Add the necessary &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;Permissions&lt;/a&gt; to the &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct so that the lambda function is triggered.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#otherResources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/a&gt;&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;TBD&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Example 1</title>
-      <link>http://gosparta.io/docs/apigateway/example1/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/example1/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-echo-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleEcho:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Echo&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;For reference, the &lt;code&gt;echoS3Event&lt;/code&gt; function is below.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)
-
-	fmt.Fprintf(w, string(*event))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-3-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The first requirement is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;stage := sparta.NewStage(&amp;#34;prod&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;In the example above, we&amp;rsquo;re also including a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Stage&#34;&gt;Stage&lt;/a&gt; value.  A non-&lt;code&gt;nil&lt;/code&gt; Stage value will cause the registered API to be deployed.  If the Stage value is &lt;code&gt;nil&lt;/code&gt;, a REST API will be created, but it will not be &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html&#34;&gt;deployed&lt;/a&gt; (and therefore not publicly accessible).&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-5-create-a-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create a Resource&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;strong&gt;Go&lt;/strong&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/hello/world/test&amp;#34;, lambdaFn)
-apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Our &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34&#34;&gt;echoS3Event&lt;/a&gt; only supports &lt;code&gt;GET&lt;/code&gt;.  We&amp;rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The final step is to to provide the API instance to &lt;code&gt;Sparta.Main()&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;stage := sparta.NewStage(&amp;#34;prod&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)
-stackName := &amp;#34;SpartaApplication&amp;#34;
-sparta.Main(stackName,
-  &amp;#34;Simple Sparta application&amp;#34;,
-  spartaLambdaData(apiGateway),
-  apiGateway,
-  nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Once the service is successfully provisioned, the &lt;code&gt;Outputs&lt;/code&gt; key will include the API Gateway Deployed URL (sample):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;javascript&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Combining the &lt;em&gt;API Gateway URL&lt;/em&gt; &lt;code&gt;OutputValue&lt;/code&gt; with our resource path (&lt;em&gt;/hello/world/test&lt;/em&gt;), we get the absolute URL to our lambda function: &lt;em&gt;&lt;a href=&#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&#34;&gt;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-10-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s query the lambda function and see what the &lt;code&gt;event&lt;/code&gt; data is at execution time:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
-*   Trying 54.240.188.223...
-* Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /prod/hello/world/test HTTP/1.1
-&amp;gt; Host: 7ljn63rysd.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 708
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sat, 05 Dec 2015 21:24:44 GMT
-&amp;lt; x-amzn-RequestId: 99dfd15d-9b96-11e5-9705-fdd3a4d9c8bf
-&amp;lt; X-Cache: Miss from cloudfront
-&amp;lt; Via: 1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
-&amp;lt;
-* Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;body&amp;#34;:{},&amp;#34;headers&amp;#34;:{&amp;#34;Accept&amp;#34;:&amp;#34;*/*&amp;#34;,&amp;#34;CloudFront-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;,&amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;:&amp;#34;true&amp;#34;,&amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;:&amp;#34;false&amp;#34;,&amp;#34;CloudFront-Viewer-Country&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Via&amp;#34;:&amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,&amp;#34;X-Amz-Cf-Id&amp;#34;:&amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,&amp;#34;X-Forwarded-For&amp;#34;:&amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,&amp;#34;X-Forwarded-Port&amp;#34;:&amp;#34;443&amp;#34;,&amp;#34;X-Forwarded-Proto&amp;#34;:&amp;#34;https&amp;#34;},&amp;#34;queryParams&amp;#34;:{},&amp;#34;pathParams&amp;#34;:{},&amp;#34;context&amp;#34;:{&amp;#34;apiId&amp;#34;:&amp;#34;bmik0opc3l&amp;#34;,&amp;#34;method&amp;#34;:&amp;#34;GET&amp;#34;,&amp;#34;requestId&amp;#34;:&amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,&amp;#34;resourceId&amp;#34;:&amp;#34;mp2mrk&amp;#34;,&amp;#34;resourcePath&amp;#34;:&amp;#34;/hello/world/test&amp;#34;,&amp;#34;stage&amp;#34;:&amp;#34;prod&amp;#34;,&amp;#34;identity&amp;#34;:{&amp;#34;accountId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;apiKey&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;caller&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationProvider&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoAuthenticationType&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;cognitoIdentityPoolId&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;sourceIp&amp;#34;:&amp;#34;50.135.43.1&amp;#34;,&amp;#34;user&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;userAgent&amp;#34;:&amp;#34;curl/7.43.0&amp;#34;,&amp;#34;userArn&amp;#34;:&amp;#34;&amp;#34;}}}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Pretty-printing the response body to make things more readable:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
-  &amp;#34;body&amp;#34;: {},
-  &amp;#34;headers&amp;#34;: {
-    &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
-    &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
-    &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
-    &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-    &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-    &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
-    &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
-    &amp;#34;Via&amp;#34;: &amp;#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&amp;#34;,
-    &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&amp;#34;,
-    &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;50.135.43.1, 54.240.158.211&amp;#34;,
-    &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
-    &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
-  },
-  &amp;#34;queryParams&amp;#34;: {},
-  &amp;#34;pathParams&amp;#34;: {},
-  &amp;#34;context&amp;#34;: {
-    &amp;#34;apiId&amp;#34;: &amp;#34;bmik0opc3l&amp;#34;,
-    &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
-    &amp;#34;requestId&amp;#34;: &amp;#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&amp;#34;,
-    &amp;#34;resourceId&amp;#34;: &amp;#34;mp2mrk&amp;#34;,
-    &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello/world/test&amp;#34;,
-    &amp;#34;stage&amp;#34;: &amp;#34;prod&amp;#34;,
-    &amp;#34;identity&amp;#34;: {
-      &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;sourceIp&amp;#34;: &amp;#34;50.135.43.1&amp;#34;,
-      &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
-      &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.43.0&amp;#34;,
-      &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
-    }
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;While this demonstrates that our lambda function is publicly accessible, it&amp;rsquo;s not immediately obvious where the &lt;code&gt;*event&lt;/code&gt; data is being populated.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-13-mapping-templates-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1Mapping:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Mapping Templates&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The event data that&amp;rsquo;s actually supplied to &lt;code&gt;echoS3Event&lt;/code&gt; is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;rsquo;re not whitelisting any params, so those fields (&lt;code&gt;queryParams&lt;/code&gt;, &lt;code&gt;pathParams&lt;/code&gt;) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;rsquo;s more amenable to the target.&lt;/p&gt;
-
-&lt;p&gt;Sparta uses a pass-through template that passes all valid data, with minor &lt;strong&gt;Body&lt;/strong&gt; differences based on the inbound &lt;em&gt;Content-Type&lt;/em&gt;:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl&#34;&gt;application/json&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl&#34;&gt;*&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The &lt;code&gt;application/json&lt;/code&gt; template is copied below:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
-Provide an automatic pass through template that transforms all inputs
-into the JSON payload sent to a golang function
-
-See
-  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;amp;tstart=0
-  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
-*#
-{
-  &amp;#34;method&amp;#34;: &amp;#34;$context.httpMethod&amp;#34;,
-  &amp;#34;body&amp;#34; : $input.json(&amp;#39;$&amp;#39;),
-  &amp;#34;headers&amp;#34;: {
-    #foreach($param in $input.params().header.keySet())
-    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().header.get($param))&amp;#34; #if($foreach.hasNext),#end
-
-    #end
-  },
-  &amp;#34;queryParams&amp;#34;: {
-    #foreach($param in $input.params().querystring.keySet())
-    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().querystring.get($param))&amp;#34; #if($foreach.hasNext),#end
-
-    #end
-  },
-  &amp;#34;pathParams&amp;#34;: {
-    #foreach($param in $input.params().path.keySet())
-    &amp;#34;$param&amp;#34;: &amp;#34;$util.escapeJavaScript($input.params().path.get($param))&amp;#34; #if($foreach.hasNext),#end
-
-    #end
-  },
-  &amp;#34;context&amp;#34; : {
-    &amp;#34;apiId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.apiId)&amp;#34;,
-    &amp;#34;method&amp;#34; : &amp;#34;$util.escapeJavaScript($context.httpMethod)&amp;#34;,
-    &amp;#34;requestId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.requestId)&amp;#34;,
-    &amp;#34;resourceId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourceId)&amp;#34;,
-    &amp;#34;resourcePath&amp;#34; : &amp;#34;$util.escapeJavaScript($context.resourcePath)&amp;#34;,
-    &amp;#34;stage&amp;#34; : &amp;#34;$util.escapeJavaScript($context.stage)&amp;#34;,
-    &amp;#34;identity&amp;#34; : {
-      &amp;#34;accountId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.accountId)&amp;#34;,
-      &amp;#34;apiKey&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.apiKey)&amp;#34;,
-      &amp;#34;caller&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.caller)&amp;#34;,
-      &amp;#34;cognitoAuthenticationProvider&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&amp;#34;,
-      &amp;#34;cognitoAuthenticationType&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&amp;#34;,
-      &amp;#34;cognitoIdentityId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&amp;#34;,
-      &amp;#34;cognitoIdentityPoolId&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&amp;#34;,
-      &amp;#34;sourceIp&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.sourceIp)&amp;#34;,
-      &amp;#34;user&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.user)&amp;#34;,
-      &amp;#34;userAgent&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userAgent)&amp;#34;,
-      &amp;#34;userArn&amp;#34; : &amp;#34;$util.escapeJavaScript($context.identity.userArn)&amp;#34;
-    }
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;This template forwards all whitelisted data &amp;amp; body to the lambda function.  You can see by switching on the &lt;code&gt;method&lt;/code&gt; field would permit a single function to service multiple HTTP method names.&lt;/p&gt;
-
-&lt;p&gt;The next example will show how to unmarshal this data and perform request-specific actions.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-15-proxying-envelope-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1ProxyingEnvelope:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Proxying Envelope&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;rsquo;s output.&lt;/p&gt;
-
-&lt;p&gt;If there were an error, the response would include additional fields (&lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, &lt;code&gt;headers&lt;/code&gt;).  Those fields are injected by the NodeJS proxying tier as part of translating the &lt;strong&gt;Go&lt;/strong&gt; HTTP response to a Lambda compatible result.&lt;/p&gt;
-
-&lt;p&gt;A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the &lt;strong&gt;Integration Response&lt;/strong&gt; section of the &lt;em&gt;/hello/world/test&lt;/em&gt; resource in the Console, you&amp;rsquo;ll see a list of Regular Expression matches:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/IntegrationMapping.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;The regular expressions are used to translate the integration response, which is just a blob of text provided to &lt;code&gt;context.done()&lt;/code&gt;, into API Gateway Method responses.  Sparta annotates your lambda functions response with &lt;strong&gt;Go&lt;/strong&gt;&amp;rsquo;s &lt;a href=&#34;https://golang.org/src/net/http/status.go&#34;&gt;HTTP StatusText&lt;/a&gt; values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/MethodResponse.png&#34; alt=&#34;API Gateway&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;These mappings are defaults, and it&amp;rsquo;s possible to override either one by providing a non-zero length values to either:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Integration&#34;&gt;Integration.Responses&lt;/a&gt;.  See the &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60&#34;&gt;DefaultIntegrationResponses&lt;/a&gt; for the default values.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Method&#34;&gt;Method.Responses&lt;/a&gt;.  See the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses&#34;&gt;DefaultMethodResponses&lt;/a&gt; for the default method response mappings.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-16-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-18-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&amp;rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.&lt;/p&gt;
-
-&lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;Mapping Template Reference&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Example 2</title>
-      <link>http://gosparta.io/docs/apigateway/example2/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/example2/</guid>
-      <description>
-
-&lt;h2 id=&#34;a-href-hugoshortcode-1-accepting-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleS3:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Accepting Input&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-2-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#exampleDefine:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Our function will accept two params:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;bucketName&lt;/code&gt; : The S3 bucket name storing the asset&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;keyName&lt;/code&gt; : The S3 item key&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.&lt;/p&gt;
-
-&lt;p&gt;Because &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; is expected to be invoked by the API Gateway, we&amp;rsquo;ll start by unmarshalling the event data:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;sparta.APIGatewayLambdaJSONEvent&lt;/a&gt; fields correspond to the Integration Response Mapping template discussed in the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;previous example&lt;/a&gt; (see the full mapping template &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;Once the event is unmarshaled, we can use it to fetch the S3 item info:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;getObjectInput := &amp;amp;s3.GetObjectInput{
-  Bucket: aws.String(lambdaEvent.QueryParams[&amp;#34;bucketName&amp;#34;]),
-  Key:    aws.String(lambdaEvent.QueryParams[&amp;#34;keyName&amp;#34;]),
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;awsSession := awsSession(logger)
-svc := s3.New(awsSession)
-result, err := svc.GetObject(getObjectInput)
-if nil != err {
-  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}
-presignedReq, _ := svc.GetObjectRequest(getObjectInput)
-url, err := presignedReq.Presign(5 * time.Minute)
-if nil != err {
-  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}
-httpResponse := map[string]interface{}{
-  &amp;#34;S3&amp;#34;:  result,
-  &amp;#34;URL&amp;#34;: url,
-}
-
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
-  fmt.Fprint(w, string(responseBody))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-6-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2API:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The next step is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaImagerAPI&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-8-create-lambda-binding-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Lambda Binding&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Next we create an &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that references the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;s3ItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
-  Description: &amp;#34;Get information about an item in S3 via querystring params&amp;#34;,
-  MemorySize:  128,
-  Timeout:     10,
-}
-var iamDynamicRole = sparta.IAMRoleDefinition{}
-iamDynamicRole.Privileges = append(iamDynamicRole.Privileges, sparta.IAMRolePrivilege{
-  Actions:  []string{&amp;#34;s3:GetObject&amp;#34;},
-  Resource: resourceArn,
-})
-s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOptions)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;A few items to note here:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;We&amp;rsquo;re providing a custom &lt;code&gt;LambdaFunctionOptions&lt;/code&gt; in case the request to S3 to get item metadata exceeds the default 3 second timeout.&lt;/li&gt;
-&lt;li&gt;We also add a custom &lt;code&gt;iamDynamicRole.Privileges&lt;/code&gt; entry to the &lt;code&gt;Privileges&lt;/code&gt; slice that authorizes the lambda function to &lt;em&gt;only&lt;/em&gt; access objects in a single bucket (&lt;em&gt;resourceArn&lt;/em&gt;).
-
-&lt;ul&gt;
-&lt;li&gt;This bucket ARN is externally created and the ARN provided to this code.&lt;/li&gt;
-&lt;li&gt;While the API will accept any &lt;em&gt;bucketName&lt;/em&gt; value, it is only authorized to access a single bucket.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-10-create-resource-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Resource&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;code&gt;s3ItemInfo&lt;/code&gt; function. This will be the relative path component used to reference our lambda function via the API Gateway.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/info&amp;#34;, s3ItemInfoLambdaFn)
-method, err := apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
-if err != nil {
-  return nil, err
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h3 id=&#34;a-href-hugoshortcode-12-whitelist-input-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Whitelist Input&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;The final step is to add the whitelisted parameters to the Method definition.&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Whitelist query string params
-method.Parameters[&amp;#34;method.request.querystring.keyName&amp;#34;] = true
-method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = true&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Note that the keynames in the &lt;code&gt;method.Parameters&lt;/code&gt; map must be of the form: &lt;strong&gt;method.request.{location}.{name}&lt;/strong&gt; where location is one of:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;querystring&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;path&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;header&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;See the &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters&#34;&gt;REST documentation&lt;/a&gt; for more information.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-14-provision-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;With everything configured, let&amp;rsquo;s provision the stack:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --level debug provision --s3Bucket $S3_BUCKET&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;and check the results.&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-16-querying-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example2Querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;As this Sparta application includes an API Gateway definition, the stack &lt;code&gt;Outputs&lt;/code&gt; includes the API Gateway URL:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s fetch an item we know exists:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log&amp;#34;
-
-*   Trying 54.192.70.158...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 1584
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:35:03 GMT
-&amp;lt; x-amzn-RequestId: f333f4bb-9bc1-11e5-afde-61a428c89049
-&amp;lt; X-Cache: Miss from cloudfront
-&amp;lt; Via: 1.1 2f31d4850470c56c3b326946dc542a6b.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: 6rBpqjmi7DPax7XOHTbxDx8-FfFfvI04m2_K-PxLWfYFor7WtIcdxA==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;1468&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;S3&amp;#34;:{&amp;#34;AcceptRanges&amp;#34;:&amp;#34;bytes&amp;#34;,&amp;#34;Body&amp;#34;:{},&amp;#34;CacheControl&amp;#34;:null,&amp;#34;ContentDisposition&amp;#34;:null,&amp;#34;ContentEncoding&amp;#34;:null,&amp;#34;ContentLanguage&amp;#34;:null,&amp;#34;ContentLength&amp;#34;:70372,&amp;#34;ContentRange&amp;#34;:null,&amp;#34;ContentType&amp;#34;:&amp;#34;image/png&amp;#34;,&amp;#34;DeleteMarker&amp;#34;:null,&amp;#34;ETag&amp;#34;:&amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,&amp;#34;Expiration&amp;#34;:null,&amp;#34;Expires&amp;#34;:null,&amp;#34;LastModified&amp;#34;:&amp;#34;2015-11-09T15:38:01Z&amp;#34;,&amp;#34;Metadata&amp;#34;:{},&amp;#34;MissingMeta&amp;#34;:null,&amp;#34;ReplicationStatus&amp;#34;:null,&amp;#34;RequestCharged&amp;#34;:null,&amp;#34;Restore&amp;#34;:null,&amp;#34;SSECustomerAlgorithm&amp;#34;:null,&amp;#34;SSECustomerKeyMD5&amp;#34;:null,&amp;#34;SSEKMSKeyId&amp;#34;:null,&amp;#34;ServerSideEncryption&amp;#34;:null,&amp;#34;StorageClass&amp;#34;:null,&amp;#34;VersionId&amp;#34;:null,&amp;#34;WebsiteRedirectLocation&amp;#34;:null},&amp;#34;URL&amp;#34;:&amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;}}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Pretty printing the response body:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;code&amp;#34;: 200,
-  &amp;#34;status&amp;#34;: &amp;#34;OK&amp;#34;,
-  &amp;#34;headers&amp;#34;: {
-    &amp;#34;content-type&amp;#34;: &amp;#34;application/json&amp;#34;,
-    &amp;#34;date&amp;#34;: &amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,
-    &amp;#34;content-length&amp;#34;: &amp;#34;1468&amp;#34;
-  },
-  &amp;#34;results&amp;#34;: {
-    &amp;#34;S3&amp;#34;: {
-      &amp;#34;AcceptRanges&amp;#34;: &amp;#34;bytes&amp;#34;,
-      &amp;#34;Body&amp;#34;: {},
-      &amp;#34;CacheControl&amp;#34;: null,
-      &amp;#34;ContentDisposition&amp;#34;: null,
-      &amp;#34;ContentEncoding&amp;#34;: null,
-      &amp;#34;ContentLanguage&amp;#34;: null,
-      &amp;#34;ContentLength&amp;#34;: 70372,
-      &amp;#34;ContentRange&amp;#34;: null,
-      &amp;#34;ContentType&amp;#34;: &amp;#34;image/png&amp;#34;,
-      &amp;#34;DeleteMarker&amp;#34;: null,
-      &amp;#34;ETag&amp;#34;: &amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,
-      &amp;#34;Expiration&amp;#34;: null,
-      &amp;#34;Expires&amp;#34;: null,
-      &amp;#34;LastModified&amp;#34;: &amp;#34;2015-11-09T15:38:01Z&amp;#34;,
-      &amp;#34;Metadata&amp;#34;: {},
-      &amp;#34;MissingMeta&amp;#34;: null,
-      &amp;#34;ReplicationStatus&amp;#34;: null,
-      &amp;#34;RequestCharged&amp;#34;: null,
-      &amp;#34;Restore&amp;#34;: null,
-      &amp;#34;SSECustomerAlgorithm&amp;#34;: null,
-      &amp;#34;SSECustomerKeyMD5&amp;#34;: null,
-      &amp;#34;SSEKMSKeyId&amp;#34;: null,
-      &amp;#34;ServerSideEncryption&amp;#34;: null,
-      &amp;#34;StorageClass&amp;#34;: null,
-      &amp;#34;VersionId&amp;#34;: null,
-      &amp;#34;WebsiteRedirectLocation&amp;#34;: null
-    },
-    &amp;#34;URL&amp;#34;: &amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
-
-&lt;p&gt;What about an item that we know doesn&amp;rsquo;t exist, but is in the bucket our lambda function has privileges to access:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log&amp;#34;
-
-*   Trying 54.230.71.213...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 500 Internal Server Error
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 524
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:40:14 GMT
-&amp;lt; x-amzn-RequestId: ad5d94eb-9bc2-11e5-8fad-476a6cacabce
-&amp;lt; X-Cache: Error from cloudfront
-&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: XoVLBjm1dgozZsNAEGk8Vy_a5PXMYNWRD6eKJJBcVTXrtMgMhiLNyQ==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:40:14 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;And finally, what if we try to access a bucket that our lambda function isn&amp;rsquo;t authorized to access:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=weagle&amp;#34;
-
-*   Trying 54.192.70.129...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=weagle HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 500 Internal Server Error
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 524
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:42:52 GMT
-&amp;lt; x-amzn-RequestId: 0be0fc4f-9bc3-11e5-b827-81d99c02192f
-&amp;lt; X-Cache: Error from cloudfront
-&amp;lt; Via: 1.1 400bdbea4e851ce61e7df8252da93d3f.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: M_7pB1UsW63xzh_9g37-CqNYDXfXlec0B6DV4bdkq3tbCANCOrTY6Q==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:42:52 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-22-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#cleanup:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h3 id=&#34;a-href-hugoshortcode-24-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
 </description>
     </item>
     

@@ -6,8 +6,6 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-## Sparta Limitations
-
   * **Go** isn't officially supported by AWS (yet)
     * But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
     * Because of this, there is a per-container initialization cost of:

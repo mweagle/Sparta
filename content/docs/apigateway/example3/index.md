@@ -1,12 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Example 3"
+title = "API Gateway - Request Context"
 tags = ["sparta"]
 type = "doc"
 +++
-
-## <a href="{{< relref "#exampleS3" >}}">Using the Request Context</a>
 
 This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
 

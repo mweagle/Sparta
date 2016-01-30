@@ -1,13 +1,10 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Example 2"
+title = "API Gateway - User Input"
 tags = ["sparta"]
 type = "doc"
 +++
-
-
-## <a href="{{< relref "#exampleS3" >}}">Accepting Input</a>
 
 This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
