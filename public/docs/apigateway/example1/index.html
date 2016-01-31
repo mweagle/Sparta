@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle highlight:vs github:https://github.com/mweagle googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube: flattr: name:yeti home:Home]">
+<body class="map[highlight:vs googleAnalytics:UA-70794971-1 facebook: flattr: twitter:mweagle youtube: name:yeti home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -189,7 +189,6 @@
       
     </div>
   </nav>
-
 </header>
 
 
@@ -320,7 +319,7 @@
   </div>
 </div>
 </div>
-  <div class="col-md-8">
+  <div class="col-md-10">
     <header class="container hat">
   <h1>API Gateway - Echo
 </h1>
@@ -335,12 +334,12 @@
 <p>For reference, the <code>echoS3Event</code> function is below.</p>
 
 <pre><code class="go">func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	logger.WithFields(logrus.Fields{
-		&#34;RequestID&#34;: context.AWSRequestID,
-		&#34;Event&#34;:     string(*event),
-	}).Info(&#34;Request received&#34;)
+  logger.WithFields(logrus.Fields{
+    &#34;RequestID&#34;: context.AWSRequestID,
+    &#34;Event&#34;:     string(*event),
+  }).Info(&#34;Request received&#34;)
 
-	fmt.Fprintf(w, string(*event))
+  fmt.Fprintf(w, string(*event))
 }</code></pre>
 
 
@@ -595,13 +594,6 @@ See
           <small>
               
     
-<div class="container footline">
-  
-  <a href="http://www.erlang-embedded.com/why-erlang/">The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.</a>
-
-
-</div>
-
 
     
 

@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  588 
+    "wordCount":  596 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle highlight:vs github:https://github.com/mweagle googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube: flattr: name:yeti home:Home]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:yeti googleAnalytics:UA-70794971-1 facebook: flattr: highlight:vs]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -189,7 +189,6 @@
       
     </div>
   </nav>
-
 </header>
 
 
@@ -320,7 +319,7 @@
   </div>
 </div>
 </div>
-  <div class="col-md-8">
+  <div class="col-md-10">
     <header class="container hat">
   <h1>Local Testing
 </h1>
@@ -387,12 +386,14 @@ func main() {
 
 <pre><code class="nohighlight">go run main.go explore
 
-INFO[0000] Welcome to Sparta                             Option=explore Version=0.1.3
+INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
+INFO[0000] --------------------------------------------------------------------------------
 INFO[0000] The following URLs are available for testing.
-INFO[0000] main.helloWorld                               Path=http://localhost:9999/main.helloWorld
+INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
 INFO[0000] Functions can be invoked via application/json over POST
 INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` keys
+INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
+INFO[0000] 	{context: {}, event: {}}
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999</code></pre>
 
 
@@ -526,13 +527,6 @@ Hello World</code></pre>
           <small>
               
     
-<div class="container footline">
-  
-  <a href="http://www.erlang-embedded.com/why-erlang/">The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.</a>
-
-
-</div>
-
 
     
 

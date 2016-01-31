@@ -12,12 +12,12 @@ For reference, the `echoS3Event` function is below.
 
 {{< highlight go >}}
 func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	logger.WithFields(logrus.Fields{
-		"RequestID": context.AWSRequestID,
-		"Event":     string(*event),
-	}).Info("Request received")
+  logger.WithFields(logrus.Fields{
+    "RequestID": context.AWSRequestID,
+    "Event":     string(*event),
+  }).Info("Request received")
 
-	fmt.Fprintf(w, string(*event))
+  fmt.Fprintf(w, string(*event))
 }
 {{< /highlight >}}
 

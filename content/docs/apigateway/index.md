@@ -10,7 +10,10 @@ One of the most powerful ways to use AWS Lambda is to make function publicly ava
 
   * [Example 1 - Echo Event](/docs/apigateway/example1)
   * [Example 2 - User Input & JSON Response](/docs/apigateway/example2)
-
+  * [Example 3 - Request Context](/docs/apigateway/example3)
+  * [Example 4 - Slack SlashCommand](/docs/apigateway/slack)
+  * [Example 5 - CORS](/docs/apigateway/cors)
+    
 ## <a href="{{< relref "#concepts" >}}">Concepts</a>
 
 Before moving on to the examples, it's suggested you familiarize yourself with the API Gateway concepts.  

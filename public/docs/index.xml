@@ -125,6 +125,9 @@
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;Example 1 - Echo Event&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example2&#34;&gt;Example 2 - User Input &amp;amp; JSON Response&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/example3&#34;&gt;Example 3 - Request Context&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/slack&#34;&gt;Example 4 - Slack SlashCommand&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/cors&#34;&gt;Example 5 - CORS&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;h2 id=&#34;a-href-hugoshortcode-1-concepts-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#concepts:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Concepts&lt;/a&gt;&lt;/h2&gt;
@@ -206,12 +209,12 @@ apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;For reference, the &lt;code&gt;echoS3Event&lt;/code&gt; function is below.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)
+  logger.WithFields(logrus.Fields{
+    &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
+    &amp;#34;Event&amp;#34;:     string(*event),
+  }).Info(&amp;#34;Request received&amp;#34;)
 
-	fmt.Fprintf(w, string(*event))
+  fmt.Fprintf(w, string(*event))
 }&lt;/code&gt;&lt;/pre&gt;
 
 

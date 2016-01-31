@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube: flattr: name:yeti home:Home linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle highlight:vs github:https://github.com/mweagle]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:yeti googleAnalytics:UA-70794971-1 facebook: flattr: highlight:vs]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -189,7 +189,6 @@
       
     </div>
   </nav>
-
 </header>
 
 
@@ -320,7 +319,7 @@
   </div>
 </div>
 </div>
-  <div class="col-md-8">
+  <div class="col-md-10">
     <header class="container hat">
   <h1>Sparta Application
 </h1>
@@ -353,7 +352,7 @@
                 context *sparta.LambdaContext,
                 w http.ResponseWriter,
                 logger *logrus.Logger) {
-	fmt.Fprintf(w, &#34;Hello World!&#34;)
+  fmt.Fprintf(w, &#34;Hello World!&#34;)
 }</code></pre>
 
 
@@ -433,29 +432,29 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 package main
 
 import (
-	&#34;encoding/json&#34;
-	&#34;fmt&#34;
-	&#34;net/http&#34;
+  &#34;encoding/json&#34;
+  &#34;fmt&#34;
+  &#34;net/http&#34;
 
-	&#34;github.com/Sirupsen/logrus&#34;
-	sparta &#34;github.com/mweagle/Sparta&#34;
+  &#34;github.com/Sirupsen/logrus&#34;
+  sparta &#34;github.com/mweagle/Sparta&#34;
 )
 
 func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
-	fmt.Fprintf(w, &#34;Hello World!&#34;)
+  fmt.Fprintf(w, &#34;Hello World!&#34;)
 }
 
 func main() {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
+  var lambdaFunctions []*sparta.LambdaAWSInfo
 
-	helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
-		helloWorld,
-		nil)
-	lambdaFunctions = append(lambdaFunctions, helloWorldFn)
-	sparta.Main(&#34;MyHelloWorldStack&#34;,
-		&#34;Simple Sparta application that demonstrates core functionality&#34;,
-		lambdaFunctions,
-		nil,
+  helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
+    helloWorld,
+    nil)
+  lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+  sparta.Main(&#34;MyHelloWorldStack&#34;,
+    &#34;Simple Sparta application that demonstrates core functionality&#34;,
+    lambdaFunctions,
+    nil,
     nil)
 }</code></pre>
 
@@ -569,13 +568,6 @@ INFO[0000] Delete request submitted                      Response={
           <small>
               
     
-<div class="container footline">
-  
-  <a href="http://www.erlang-embedded.com/why-erlang/">The world is concurrent. Things in the world don’t share data. Things communicate with messages. Things fail.</a>
-
-
-</div>
-
 
     
 

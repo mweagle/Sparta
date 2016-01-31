@@ -63,12 +63,14 @@ With our application defined, let's run it:
 {{< highlight nohighlight>}}
 go run main.go explore
 
-INFO[0000] Welcome to Sparta                             Option=explore Version=0.1.3
+INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
+INFO[0000] --------------------------------------------------------------------------------
 INFO[0000] The following URLs are available for testing.
-INFO[0000] main.helloWorld                               Path=http://localhost:9999/main.helloWorld
+INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
 INFO[0000] Functions can be invoked via application/json over POST
 INFO[0000] 	curl -vs -X POST -H "Content-Type: application/json" --data @testEvent.json http://localhost:9999/main.helloWorld
-INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` keys
+INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
+INFO[0000] 	{context: {}, event: {}}
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999
 {{< /highlight >}}
 
