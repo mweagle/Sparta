@@ -37,6 +37,7 @@ Verbs:
         -p, --port     Alternative port for HTTP binding (default=9999)
         -s, --signal   Process ID to signal with SIGUSR2 once ready
     explore:
+        -p, --port     Alternative port for HTTP binding (default=9999)
     provision:
         -b, --s3Bucket S3 Bucket to use for Lambda source (*)
 {{< /highlight >}}
