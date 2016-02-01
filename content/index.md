@@ -67,7 +67,7 @@ Please file an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
   * Other libraries & frameworks:
     * [Serverless](https://github.com/serverless/serverless)
     * [PAWS](https://github.com/braahyan/PAWS)
-    * [Apex](https://github.com/apex/apex)
+    * [Apex](http://apex.run)
     * [lambda_proc](https://github.com/jasonmoo/lambda_proc)
     * [go-lambda](https://github.com/xlab/go-lambda)
     * [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
