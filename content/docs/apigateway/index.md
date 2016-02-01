@@ -13,8 +13,8 @@ One of the most powerful ways to use AWS Lambda is to make function publicly ava
   * [Example 3 - Request Context](/docs/apigateway/example3)
   * [Example 4 - Slack SlashCommand](/docs/apigateway/slack)
   * [Example 5 - CORS](/docs/apigateway/cors)
-    
-## <a href="{{< relref "#concepts" >}}">Concepts</a>
+
+# Concepts
 
 Before moving on to the examples, it's suggested you familiarize yourself with the API Gateway concepts.  
 
@@ -36,5 +36,5 @@ The API Gateway presents a powerful and complex domain model.  In brief, to inte
 
 With that overview, let's start with a simple [example](/docs/apigateway/example1).
 
-## Other Resources
+# Other Resources
   * [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)

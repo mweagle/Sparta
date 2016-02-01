@@ -20,5 +20,5 @@ apiGateway.CORSEnabled = true
 
 Setting the boolean to `true` will add the necessary `OPTIONS` and mock responses to _all_ resources exposed by your API.  See the [SpartaHTML](/docs/s3site) sample for a complete example.
 
-## References
+# References
   * [API Gateway Docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)

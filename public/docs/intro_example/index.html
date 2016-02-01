@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle flattr:]">
+<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 googleplus: twitter:mweagle name:yeti home:Sparta]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,11 +320,31 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Sparta Application
 </h1>
 
 </header>
+
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</a></li>
+<li><a href="#lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</a></li>
+<li><a href="#creation:d680e8a854a7cbad6d490c445cba2eba">Creation</a></li>
+<li><a href="#delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</a></li>
+<li><a href="#putting-it-together:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</a></li>
+<li><a href="#running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</a></li>
+<li><a href="#testing:d680e8a854a7cbad6d490c445cba2eba">Testing</a></li>
+<li><a href="#cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></li>
+<li><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></li>
+<li><a href="#next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
 
     <div class="container content">
   
@@ -338,13 +358,13 @@
  </div>
 </div>
 
-<h2 id="a-href-hugoshortcode-1-preconditions-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</a></h2>
+<h1 id="preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</h1>
 
 <p>Sparta uses the <a href="http://aws.amazon.com/sdk-for-go/">AWS SDK for Go</a> to interact with AWS APIs.  Before you get started, ensure that you&rsquo;ve properly configured the <a href="https://github.com/aws/aws-sdk-go/wiki/configuring-sdk">SDK credentials</a>.</p>
 
 <p>Note that you must use an AWS region that supports Lambda.  Consult the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">Global Infrastructure</a> page for the most up to date release information.</p>
 
-<h2 id="a-href-hugoshortcode-2-lambda-definition-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambdaDefinition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</a></h2>
+<h1 id="lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</h1>
 
 <p>The first place to start is with the lambda function definition.</p>
 
@@ -365,7 +385,7 @@
 <li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-4-creation-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#creation:d680e8a854a7cbad6d490c445cba2eba">Creation</a></h2>
+<h1 id="creation:d680e8a854a7cbad6d490c445cba2eba">Creation</h1>
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
@@ -389,7 +409,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 <li><code>*LambdaFunctionOptions</code>: A pointer to any additional execution settings (eg, timeout, memory settings, etc).</li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-6-delegation-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</a></h2>
+<h1 id="delegation:d680e8a854a7cbad6d490c445cba2eba">Delegation</h1>
 
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
 
@@ -424,7 +444,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>Delegating <code>main()</code> to <code>Sparta.Main()</code> transforms the set of lambda functions into a standalone executable with several command line options.  Run <code>go run main.go --help</code> to see the available options.</p>
 
-<h2 id="a-href-hugoshortcode-8-putting-it-together-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#puttingItTogether:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</a></h2>
+<h1 id="putting-it-together:d680e8a854a7cbad6d490c445cba2eba">Putting It Together</h1>
 
 <p>Putting everything together, and including the necessary imports, we have:</p>
 
@@ -459,7 +479,7 @@ func main() {
 }</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-10-running-it-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#runningIt:d680e8a854a7cbad6d490c445cba2eba">Running It</a></h2>
+<h1 id="running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</h1>
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
@@ -509,7 +529,7 @@ INFO[0058] Elapsed time                           Seconds=58
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
 
-<h2 id="testing:d680e8a854a7cbad6d490c445cba2eba">Testing</h2>
+<h1 id="testing:d680e8a854a7cbad6d490c445cba2eba">Testing</h1>
 
 <p>Find your Lambda function in the list of AWS Lambda functions and click the hyperlink.  The display name will be prefixed by the name of your stack (<em>MyHelloWorldStack</em> in our example):</p>
 
@@ -523,7 +543,7 @@ INFO[0058] Elapsed time                           Seconds=58
 
 <p><img src="/images/overview/AWS_Lambda_Execution.png" alt="AWS Lambda Execution" /></p>
 
-<h2 id="a-href-hugoshortcode-13-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleaningUp:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h2>
+<h1 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h1>
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
@@ -537,11 +557,11 @@ INFO[0000] Delete request submitted                      Response={
 }</code></pre>
 </p>
 
-<h2 id="a-href-hugoshortcode-15-conclusion-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></h2>
+<h1 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h1>
 
 <p>Congratulations! You&rsquo;ve just deployed your first &ldquo;serverless&rdquo; service.  The following sections will dive deeper into what&rsquo;s going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.</p>
 
-<h2 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h2>
+<h1 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h1>
 
 <p>Walkthrough what Sparta actually does to deploy your application in the <a href="/docs/intro_example_details">next section</a>.</p>
 

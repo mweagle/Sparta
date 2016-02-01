@@ -1,19 +1,19 @@
 +++
 author = "Matt Weagle"
 date = "2015-11-29T06:50:17"
-title = "Slack SlashCommand"
+title = "API Gateway - Slack SlashCommand"
 tags = ["sparta"]
 type = "doc"
 +++
 
 
-# ![SlashLogo](/images/apigateway/slack/slack_rgb.png)
+![SlashLogo](/images/apigateway/slack/slack_rgb.png)
 
 In this example, we'll walk through creating a [Slack Slash Command](https://api.slack.com/slash-commands) service.  The source for this is the [SpartaSlackbot](https://github.com/mweagle/SpartaSlackbot) repo.
 
 Our initial command handler won't be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.  
 
-## <a href="{{< relref "#lambda" >}}">Define the Lambda Function</a>
+# Define the Lambda Function
 
 This lambda handler is a bit more complicated than the other examples, primarily because of the [Slack Integration](https://api.slack.com/slash-commands) requirements.  The full source is:
 
@@ -105,7 +105,7 @@ There are a couple of things to note in this code:
       	}
         ```
 
-### <a href="{{< relref "#example2API" >}}">Create the API Gateway</a>
+# Create the API Gateway
 
 With our lambda function defined, we need to setup an API Gateway so that it's publicly available:
 
@@ -116,7 +116,7 @@ apiGateway := sparta.NewAPIGateway("SpartaSlackbot", apiStage)
 
 The `apiStage` value implies that we want to deploy this API Gateway Rest API as part of Sparta's `provision` step.  
 
-### <a href="{{< relref "#example2Resource" >}}">Create Lambda Binding & Resource</a>
+# Create Lambda Binding & Resource
 
 Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo` function:
 
@@ -142,7 +142,7 @@ A few items to note here:
   * Our lambda function will be accessible at the _/slack_ child path of the deployed API Gateway instance
   * Slack supports both [GET and POST](https://api.slack.com/slash-commands) integration types, but we're limiting our lambda function to `POST` only
 
-### <a href="{{< relref "#provision" >}}">Provision</a>
+# Provision
 
 With everything configured, we then configure our `main()` function to forward to Sparta:
 
@@ -177,7 +177,7 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 {{< /highlight >}}
 
 
-### <a href="{{< relref "#configureSlack" >}}">Configure Slack</a>
+# Configure Slack
 
 At this point our lambda function is deployed and is available through the API Gateway (_https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack_ in the current example).
 
@@ -210,13 +210,13 @@ The next step is to configure Slack with this custom integration:
 
 There are additional Slash Command Integration options, but for this example the **URL** option is sufficient to trigger our command.
 
-### <a href="{{< relref "#test" >}}">Test</a>
+# Test
 
 With everything configured, visit your team's Slack room and verify the integration via `/sparta` slash command:
 
 ![Sparta Response](/images/apigateway/slack/slackResponse.jpg)
 
-### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+# Cleaning Up
 
 Before moving on, remember to decommission the service via:
 
@@ -224,6 +224,6 @@ Before moving on, remember to decommission the service via:
 go run slack.go delete
 {{< /highlight >}}
 
-### <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 This example provides a good overview of Sparta & Slack integration, including how to handle external requests that are not `application/json` formatted.   

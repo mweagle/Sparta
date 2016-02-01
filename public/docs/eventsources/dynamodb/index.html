@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[twitter:mweagle flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: googleplus: youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[flattr: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:yeti home:Sparta googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,22 +322,48 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Event Source - DynamoDB
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#a-href-hugoshortcode-2-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the DynamoDB Event</a></a></li>
+<li><a href="#a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></a></li>
+<li><a href="#event-source-mappings:d680e8a854a7cbad6d490c445cba2eba">Event Source Mappings</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+<li><a href="#appendix:d680e8a854a7cbad6d490c445cba2eba">Appendix</a>
+<ul>
+<li><a href="#creating-a-dynamodb-stream:d680e8a854a7cbad6d490c445cba2eba">Creating a DynamoDB Stream</a>
+<ul>
+<li><a href="#select-table:d680e8a854a7cbad6d490c445cba2eba">Select Table</a></li>
+<li><a href="#enable-stream:d680e8a854a7cbad6d490c445cba2eba">Enable Stream</a></li>
+<li><a href="#copy-arn:d680e8a854a7cbad6d490c445cba2eba">Copy ARN</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
 <p>Assume that we&rsquo;re given a DynamoDB stream.  See <a href="http://localhost:1313/docs/eventsources/dynamodb/#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba">below</a> for details on how to create the stream.  We&rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.</p>
 
-<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -352,7 +378,7 @@
 }</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-4-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the DynamoDB Event</a></h2>
+<h1 id="a-href-hugoshortcode-2-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the DynamoDB Event</a></h1>
 
 <p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>*json.RawMessage</code> data into an DynamoDB-specific event provided by Sparta via:</p>
 
@@ -376,14 +402,14 @@ if err != nil {
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
 
-<h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h1 id="a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
 <pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-9-event-source-mappings-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#eventSourceMapping:d680e8a854a7cbad6d490c445cba2eba">Event Source Mappings</a></h2>
+<h1 id="event-source-mappings:d680e8a854a7cbad6d490c445cba2eba">Event Source Mappings</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoDynamoDBEvent</code> function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">EventSourceMappings</a>:</p>
 
@@ -400,7 +426,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 <p>The <code>EventSourceMappings</code> field is transformed into the appropriate <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html">CloudFormation Resource</a> which enables automatic polling of the DynamoDB stream.</p>
 
-<h2 id="a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all DynamoDB stream based lambda functions:</p>
 
@@ -411,7 +437,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 <li>Add the necessary <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput">EventSourceMappings</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is properly configured.</li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></h2>
+<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
 
 <ul>
 <li><a href="https://aws.amazon.com/blogs/aws/dynamodb-update-triggers-streams-lambda-cross-region-replication-app/">Using Triggers for Cross Region DynamoDB Replication</a></li>
@@ -419,21 +445,21 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 <hr />
 
-<h2 id="appendix:d680e8a854a7cbad6d490c445cba2eba">Appendix</h2>
+<h1 id="appendix:d680e8a854a7cbad6d490c445cba2eba">Appendix</h1>
 
-<h3 id="a-href-hugoshortcode-13-creating-a-dynamodb-stream-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#creatingDynamoDBStream:d680e8a854a7cbad6d490c445cba2eba">Creating a DynamoDB Stream</a></h3>
+<h2 id="creating-a-dynamodb-stream:d680e8a854a7cbad6d490c445cba2eba">Creating a DynamoDB Stream</h2>
 
 <p>To create a DynamoDB stream for a given table, follow the steps below:</p>
 
-<h4 id="select-table:d680e8a854a7cbad6d490c445cba2eba">Select Table</h4>
+<h3 id="select-table:d680e8a854a7cbad6d490c445cba2eba">Select Table</h3>
 
 <p><img src="/images/eventsources/dynamodb/DynamoDB_ManageStream.png" alt="Select Table" /></p>
 
-<h4 id="enable-stream:d680e8a854a7cbad6d490c445cba2eba">Enable Stream</h4>
+<h3 id="enable-stream:d680e8a854a7cbad6d490c445cba2eba">Enable Stream</h3>
 
 <p><img src="/images/eventsources/dynamodb/DynamoDB_Enable.png" alt="Enable Stream" /></p>
 
-<h4 id="copy-arn:d680e8a854a7cbad6d490c445cba2eba">Copy ARN</h4>
+<h3 id="copy-arn:d680e8a854a7cbad6d490c445cba2eba">Copy ARN</h3>
 
 <p><img src="/images/eventsources/dynamodb/DynamoDB_StreamARN.png" alt="Copy ARN" /></p>
 

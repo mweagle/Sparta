@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[home:Sparta googleplus: twitter:mweagle name:yeti googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,11 +320,26 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>S3 Static Site with CORS
 </h1>
 
 </header>
+
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#create-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</a></li>
+<li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
+<li><a href="#define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</a></li>
+<li><a href="#a-href-hugoshortcode-5-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></a></li>
+<li><a href="#discover:d680e8a854a7cbad6d490c445cba2eba">Discover</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
 
     <div class="container content">
   
@@ -333,7 +348,7 @@
 
 <p>The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a> example application.</p>
 
-<h3 id="a-href-hugoshortcode-1-create-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#lambdaFunction:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</a></h3>
+<h1 id="create-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</h1>
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
@@ -348,7 +363,7 @@
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
 
-<h3 id="a-href-hugoshortcode-3-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#apiGateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+<h1 id="create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</h1>
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
@@ -379,7 +394,7 @@ apiGateway.CORSEnabled = true</code></pre>
 }</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-7-define-the-s3-site-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#s3Site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</a></h3>
+<h1 id="define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</h1>
 
 <p>The next part is to define the S3 site resources via <code>sparta.NewS3Site(localFilePath)</code>.  The <em>localFilePath</em> parameter
 typically points to a directory, which will be:</p>
@@ -390,7 +405,7 @@ typically points to a directory, which will be:</p>
 <li>Dynamically unpacked by a CloudFormation CustomResource during <code>provision</code> to a new S3 bucket.</li>
 </ol>
 
-<h3 id="a-href-hugoshortcode-8-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h1 id="a-href-hugoshortcode-5-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h1>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
@@ -429,7 +444,7 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
 
-<h3 id="a-href-hugoshortcode-11-discover-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#discover:d680e8a854a7cbad6d490c445cba2eba">Discover</a></h3>
+<h1 id="discover:d680e8a854a7cbad6d490c445cba2eba">Discover</h1>
 
 <p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
 

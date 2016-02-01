@@ -8,14 +8,14 @@ type = "doc"
 
 In this section we'll walkthrough how to trigger your lambda function in response to different types of [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/).  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
 
-## Goal {#goal}  
+# Goal
 
 Assume that we're supposed to write a simple "HelloWorld" CloudWatch event function that has two responsibilities:
 
   * Run every *5 minutes* to provide a heartbeat notification to our alerting system via a logfile entry
   * Log *EC2-related* events for later processing
 
-## Getting Started {#gettingStarted}  
+# Getting Started
 
 Our lambda function is pretty simple:
 
@@ -41,7 +41,7 @@ func echoCloudWatchEvent(event *json.RawMessage,
 
 Our lambda function doesn't need to do much with the event other than log it.
 
-## Sparta Integration {#spartaIntegration}  
+# Sparta Integration {#spartaIntegration}  
 
 With the `echoCloudWatchEvent` implemented, the next step is to integrate the **Go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
@@ -64,7 +64,7 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 Our two rules will be inserted into the `Rules` map in the next steps.
 
-### Cron Expression {#cronExpression}
+## Cron Expression
 
 Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:
 
@@ -76,7 +76,7 @@ cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
 
 The `ScheduleExpression` value can either be a _rate_ or a _cron_ [expression](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html).  The map keyname is used when adding the [rule](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property) during stack provisioning.
 
-### Event Pattern {#eventPattern}
+## Event Pattern
 
 The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we'll add a second `Rule`:
 
@@ -98,7 +98,7 @@ The EC2 event pattern is the **Go** JSON-compatible representation of the event 
    </div>
 </div>
 
-### Add Permission {#addPermission}
+# Add Permission
 
 With the two rules configured, the final step is to add the `sparta.CloudWatchPermission` to our `sparta.LambdaAWSInfo` value:
 
@@ -133,7 +133,7 @@ func appendCloudWatchEventHandler(api *sparta.API,
 {{< /highlight >}}  
 
 
-## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all CloudWatch Events-triggered lambda functions:
 
@@ -147,7 +147,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Append the `CloudWatchEventsPermission` value to the lambda function's `Permissions` slice.
   * Include the reference in the call to `sparta.Main()`.
 
-## <a href="{{< relref "#otherResources" >}}">Other Resources</a>
+# Other Resources
 
   * Introduction to [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
   * Tim Bray's [Cloud Eventing](https://www.tbray.org/ongoing/When/201x/2016/01/11/CloudWatch-Events) writeup

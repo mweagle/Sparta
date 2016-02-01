@@ -8,7 +8,7 @@ type = "doc"
 
 In this section we'll walkthrough how to trigger your lambda function in response to inbound email.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go) sample code if you'd rather jump to the end result.
 
-## <a href="{{< relref "#goal" >}}">Goal</a>
+# Goal
 
 Assume that we have already [verified our email domain](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domains.html) with AWS.  This allows our domain's email to be handled by SES.
 
@@ -16,7 +16,7 @@ We've been asked to write a lambda function that logs inbound messages, includin
 
 There is also an additional requirement to support [immutable infrastructure](http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html), so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.
 
-## <a href="{{< relref "#gettingStarted" >}}">Getting Started</a>
+# Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -32,7 +32,7 @@ func echoSESEvent(event *json.RawMessage,
   }).Info("Request received")
 {{< /highlight >}}
 
-## <a href="{{< relref "#unmarshalSNSEvent" >}}">Unmarshalling the SES Event</a>
+# Unmarshalling the SES Event
 
 At this point we would normally continue processing the SES event, using Sparta types if available.
 
@@ -40,7 +40,7 @@ However, before moving on to the event unmarshaling, we need to take a detour in
 
 This requirement implies that our service must be self-contained: we can't assume that "something else" has created an S3 bucket.  How can our locally compiled code access AWS-created resources?
 
-## <a href="{{< relref "#dynamicResources" >}}">Dynamic Resources</a>
+# Dynamic Resources
 
 The immutable infrastructure requirement makes this lambda function a bit more complex.  Our service needs to:
 
@@ -52,7 +52,7 @@ The immutable infrastructure requirement makes this lambda function a bit more c
   * Include an IAMPrivilege so that our **Go** function can access the dynamically created bucket
   * Discover the S3 Bucket at lambda execution time
 
-### <a href="{{< relref "#provisionBucket" >}}">Provision Message Body Storage Resource</a>
+## Provision Message Body Storage Resource
 
 Let's first take a look at how the SES lambda handler provisions a new S3 bucket via the [MessageBodyStorage](https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage) type:
 
@@ -105,7 +105,7 @@ sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRu
 })
 {{< /highlight >}}
 
-### <a href="{{< relref "#provisionBucket" >}}">Dynamic IAMPrivilege Arn</a>
+## Dynamic IAMPrivilege Arn
 
 Our lambda function is required to access the message body in the dynamically created `MessageBodyStorage` resource, but the S3 resource Arn is only defined _after_ the service is provisioned.  The solution to this is to reference the dynamically generated `BucketArnAllKeys()` value in the `sparta.IAMRolePrivilege` initializer:
 
@@ -127,7 +127,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)
 
 At this point we've implicitly created an S3 bucket via the `MessageBodyStorage` value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.
 
-### <a href="{{< relref "#provisionBucket" >}}">Dynamic MessageBodyStorage Discovery</a>
+## Dynamic Message Body Storage Discovery
 
 Our `echoSESEvent` function needs to determine, at execution time, the `MessageBodyStorage` bucketname.  This is done via `sparta.Discover()`:
 
@@ -194,7 +194,7 @@ if nil != configuration {
 
 TODO: Add configuration types
 
-## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
+# Sparta Integration
 
 The rest of `echoSESEvent` satisfies the other requirements, with a bit of help from the SES [event types](https://godoc.org/github.com/mweagle/Sparta/aws/ses):
 
@@ -230,7 +230,7 @@ The rest of `echoSESEvent` satisfies the other requirements, with a bit of help 
 }
 {{< /highlight >}}
 
-## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all SES-triggered lambda function:
 
@@ -246,7 +246,7 @@ Additionally, if the SES handler needs to access the raw email message body:
   * If your lambda function needs to consume the message body, add an entry to `sesPermission.[]IAMPrivilege` that includes the `sesPermission.MessageBodyStorage.BucketArnAllKeys()` Arn
   * In your **Go** lambda function definition, discover the S3 bucketname via `sparta.Discover()`
 
-## <a href="{{< relref "#otherResources" >}}">Notes</a>
+# Notes
 
   * The SES message (including headers) is stored in the [raw format](http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3)
   * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing **Go** function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.

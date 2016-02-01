@@ -6,14 +6,12 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-## <a href="{{< relref "#intro" >}}">Local Testing</a>
-
 While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  Sparta supports _localhost_ testing in two different ways:
 
   - The `explore` command line option
   -  `httptest.NewServer` for _go test_ style testing
 
-## <a href="{{< relref "#example" >}}">Example</a>
+# Example
 
 For this example, let's define a simple Sparta application:
 
@@ -56,7 +54,7 @@ func main() {
 }
 {{< /highlight >}}
 
-## <a href="{{< relref "#cliTesting" >}}">Command Line Testing</a>
+# Command Line Testing
 
 With our application defined, let's run it:
 
@@ -113,7 +111,7 @@ Our lambda function (which at this point is just an HTTP handler) was successful
 
 While this approach does work, it's not a scalable approach to writing automated tests.
 
-## <a href="{{< relref "#httptest" >}}">httptest support</a>
+# <code>httptest</code> support
 
 To integrate with the existing [go test](https://golang.org/pkg/testing/) command, Sparta includes two functions:
 
@@ -164,7 +162,7 @@ The test function above has the following features:
 
 These _localhost_ tests will be executed as part of your application's normal `go test` lifecycle.
 
-## Notes
+# Notes
   * API Gateway [input mappings](https://github.com/mweagle/Sparta/tree/master/resources/provision/apigateway) are not currently supported.
   * Ensure your localhost AWS credentials have sufficient privileges to access any AWS services.
     * Sparta does not provision `IAM::Role` resources for local testing.

@@ -8,11 +8,11 @@ type = "doc"
 
 In this section we'll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the [SpartaImager](https://github.com/mweagle/SpartaImager) sample code if you'd rather jump to the end result.
 
-## <a href="{{< relref "#goal" >}}">Goal</a>
+# Goal
 
 Assume we have an S3 bucket that stores images.  You've been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.    
 
-## <a href="{{< relref "#gettingStarted" >}}">Getting Started</a>
+# Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -29,7 +29,7 @@ func transformImage(event *json.RawMessage,
 }
 {{< /highlight >}}   
 
-## <a href="{{< relref "#unmarshalS3Event" >}}">Unmarshalling the S3 Event</a>
+# Unmarshalling the S3 Event
 
 Since the `transformImage` is expected to be triggered by S3 event changes, we will unmarshal the `*json.RawMessage` data into an S3-specific event provided by Sparta via:
 
@@ -72,7 +72,7 @@ for _, eachRecord := range lambdaEvent.Records {
 
 The [stampImage](https://github.com/mweagle/SpartaImager/blob/master/application.go#L57) function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple **xformed_** keyname prefix to identify items which have already been stamped & prevents an "event-storm" from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.
 
-## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
+# Sparta Integration
 
 With the core of the `transformImage` complete, the next step is to integrate the **Go** function with Sparta.  This is performed by the [imagerFunctions](https://github.com/mweagle/SpartaImager/blob/master/application.go#L200) source.
 
@@ -109,7 +109,7 @@ lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)
 
 It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the `iamRole` we defined earlier.
 
-## <a href="{{< relref "#eventSourceRegistration" >}}">Event Source Registration</a>
+# Event Source Registration
 
 If we were to deploy this Sparta application, the `transformImage` function would have the ability to *Get* and *Put* back to the `s3EventBroadcasterBucket`, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda's [Permissions](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html):
 
@@ -128,7 +128,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 When `Sparta` generates the CloudFormation template, it scans for `Permission` configurations.  For [push based sources](http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html) like S3, Sparta uses that service's APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.
 
-## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:
 
@@ -140,6 +140,6 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
 The [SpartaImager](https://github.com/mweagle/SpartaImager) repo contains the full code, and includes [API Gateway](/docs/apigateway) support that allows you to publicly fetch the stamped image via an expiring S3 URL.
 
-## <a href="{{< relref "#otherResources" >}}">Other Resources</a>
+# Other Resources
 
   * The AWS docs have an excellent [S3 event source](http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html) walkthrough.

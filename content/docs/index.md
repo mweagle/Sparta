@@ -5,9 +5,12 @@ title = "Overview"
 type = "doc"
 +++
 
+# Sparta Terms and Concepts
+
 This is a brief overview of the fundamental concepts behind Sparta.  Additional information regarding specific features is available from the menu.
 
 At a high level, Sparta transforms a single **Go** binary's registered lambda functions into a set of AWS Lambda functions that are independently addressable.  Additional important terms and concepts are listed below.
+
 
 <div class="list-group">
   <!-- Service Name -->
@@ -119,6 +122,6 @@ During provisioning, Sparta uses [AWS Lambda-backed Custom Resources](http://doc
 At runtime, Sparta uses [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html) shims to proxy the request to your **Go** handler.  
 
 
-### Next Steps
+# Next Steps
 
 Writing a simple [Sparta Application](/docs/intro_example).

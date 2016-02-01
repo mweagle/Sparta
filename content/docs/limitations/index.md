@@ -6,6 +6,8 @@ tags = ["sparta"]
 type = "doc"
 +++
 
+# Sparta Limitations
+
   * **Go** isn't officially supported by AWS (yet)
     * But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
     * Because of this, there is a per-container initialization cost of:
@@ -16,7 +18,7 @@ type = "doc"
     * Depending on [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/), this initialization penalty (~`700ms`) may prove burdensome.
     * Once **Go** is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance & lower execution costs.
 
-## AWS Lambda Limitations
+# AWS Lambda Limitations
 
   * Lambda is not yet globally available. Please view the [Global Infrastructure](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/) page for the latest deployment status.
   * There are [Lambda Limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) that may affect your development

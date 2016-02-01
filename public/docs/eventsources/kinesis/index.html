@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[googleplus: twitter:mweagle name:yeti home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,22 +322,38 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Event Source - Kinesis
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
+<li><a href="#event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to <a href="https://aws.amazon.com/kinesis/">Amazon Kinesis</a> streams.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
 <p>The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.</p>
 
-<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -370,7 +386,7 @@
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
 
-<h2 id="a-href-hugoshortcode-5-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
 <p>First we wrap the <strong>Go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
@@ -379,7 +395,7 @@
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
-<h2 id="a-href-hugoshortcode-7-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></h2>
+<h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
@@ -393,7 +409,7 @@
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
 
-<h2 id="a-href-hugoshortcode-9-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:</p>
 
@@ -404,7 +420,7 @@
 <li>Add the necessary <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput">EventSourceMappings</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is properly configured.</li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-10-notes-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Notes</a></h2>
+<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
 
 <ul>
 <li>The Kinesis stream and the AWS Lambda function must be provisioned in the same region.</li>

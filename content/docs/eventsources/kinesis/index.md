@@ -8,11 +8,11 @@ type = "doc"
 
 In this section we'll walkthrough how to trigger your lambda function in response to [Amazon Kinesis](https://aws.amazon.com/kinesis/) streams.  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130) sample code if you'd rather jump to the end result.  
 
-## <a href="{{< relref "#goal" >}}">Goal</a>
+# Goal
 
 The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.
 
-## <a href="{{< relref "#gettingStarted" >}}">Getting Started</a>
+# Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -49,7 +49,7 @@ For this sample all we're going to do is unmarshal the Kinesis [event](http://do
 
 With the function defined let's register it with Sparta.
 
-## <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
+# Sparta Integration
 
 First we wrap the **Go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
 
@@ -59,7 +59,7 @@ lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)
 
 Since our lambda function doesn't access any other AWS Services, we can use an empty IAMRoleDefinition (`sparta.IAMRoleDefinition{}`).
 
-## <a href="{{< relref "#eventSourceRegistration" >}}">Event Source Registration</a>
+# Event Source Registration
 
 Then last step is to configure our AWS Lambda function with Kinesis as the [EventSource](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 
@@ -74,7 +74,7 @@ lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &lambda.Crea
 
 The `kinesisTestStream` parameter is the Kinesis stream ARN (eg: _arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream_) whose events will trigger lambda execution.
 
-## <a href="{{< relref "#wrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:
 
@@ -83,7 +83,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Provide the lambda function & IAMRoleDefinition to `sparta.NewLambda()`
   * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
-## <a href="{{< relref "#otherResources" >}}">Notes</a>
+# Notes
 
   * The Kinesis stream and the AWS Lambda function must be provisioned in the same region.
   * The AWS docs have an excellent [Kinesis EventSource](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser.html) walkthrough.

@@ -43,26 +43,26 @@ Verbs:
 {{< /highlight >}}
 
 
-### <a href="{{< relref "#delete" >}}">Delete</a>
+# Delete
 
 This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.
 
-### <a href="{{< relref "#describe" >}}">Describe</a>
+# Describe
 
 The `describe` command line option produces an HTML summary (see [graph.html](/images/overview/graph.html) for an example) of your Sparta service.  
 
 The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.
 
-### <a href="{{< relref "#execute" >}}">Execute</a>
+# Execute
 
 The `execute` option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.
 
-### <a href="{{< relref "#explore" >}}">Explore</a>
+# Explore
 
 The `explore` option creates a _localhost_ server to allow Sparta lambda functions to be tested locally.  
 
 NOTE: API Gateway mapping templates are not currently supported.
 
-### <a href="{{< relref "#provision" >}}">Provision</a>
+# Provision
 
 The `provision` option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.

@@ -8,7 +8,7 @@ type = "doc"
 
 This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
 
-### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
+# Define the Lambda Function
 
 Our function will examine the inbound request, lookup the user's IP address in the [GeoLite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) and return any information to the client.  
 
@@ -57,7 +57,7 @@ if err != nil {
 }
 {{< /highlight >}}
 
-### <a href="{{< relref "#example3API" >}}">Configure Sparta</a>
+# Sparta Integration
 
 The next steps are to:
 
@@ -90,7 +90,7 @@ func main() {
 }
 {{< /highlight >}}
 
-### <a href="{{< relref "#example3Provision" >}}">Provision</a>
+# Provision
 
 The next step is to provision the stack:
 
@@ -106,7 +106,7 @@ INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://g
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0
 {{< /highlight >}}
 
-### <a href="{{< relref "#example3Query" >}}">Query</a>
+# Query
 
 With the API Gateway provisioned, let's check the response:
 
@@ -226,7 +226,7 @@ Pretty-printing the response body:
 
 Please see the [first example](/docs/apigateway/example1) for more information on the `code`, `status`, and `headers` keys.
 
-### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+# Cleaning Up
 
 Before moving on, remember to decommission the service via:
 
@@ -234,7 +234,7 @@ Before moving on, remember to decommission the service via:
 go run main.go delete
 {{< /highlight >}}
 
-## <a href="{{< relref "#otherNotes" >}}">Notes</a>
+# Notes
 
   * The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
   * This is a port of Tom Maiaroto's https://github.com/tmaiaroto/go-lambda-geoip implementation.

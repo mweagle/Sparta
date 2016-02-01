@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook:]">
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs home:Sparta googleplus: twitter:mweagle name:yeti]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,18 +320,37 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>API Gateway - User Input
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></li>
+<li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
+<li><a href="#create-lambda-binding:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</a></li>
+<li><a href="#create-resources:d680e8a854a7cbad6d490c445cba2eba">Create Resources</a></li>
+<li><a href="#whitelist-input:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</a></li>
+<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
+<li><a href="#querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></li>
+<li><a href="#cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a>.</p>
 
-<h3 id="a-href-hugoshortcode-1-define-the-lambda-function-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#exampleDefine:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></h3>
+<h1 id="define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</h1>
 
 <p>Our function will accept two params:</p>
 
@@ -394,7 +413,7 @@ if err != nil {
 }</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-5-create-the-api-gateway-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2API:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></h3>
+<h1 id="create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</h1>
 
 <p>The next step is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
@@ -402,7 +421,7 @@ if err != nil {
 apiGateway := sparta.NewAPIGateway(&#34;SpartaImagerAPI&#34;, apiStage)</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-7-create-lambda-binding-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</a></h3>
+<h1 id="create-lambda-binding:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</h1>
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
@@ -431,7 +450,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 </ul></li>
 </ul>
 
-<h3 id="a-href-hugoshortcode-9-create-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Create Resource</a></h3>
+<h1 id="create-resources:d680e8a854a7cbad6d490c445cba2eba">Create Resources</h1>
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
 
@@ -442,7 +461,7 @@ if err != nil {
 }</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-11-whitelist-input-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Resource:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</a></h3>
+<h1 id="whitelist-input:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</h1>
 
 <p>The final step is to add the whitelisted parameters to the Method definition.</p>
 
@@ -461,7 +480,7 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>See the <a href="http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters">REST documentation</a> for more information.</p>
 
-<h3 id="a-href-hugoshortcode-13-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
 
 <p>With everything configured, let&rsquo;s provision the stack:</p>
 
@@ -470,7 +489,7 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>and check the results.</p>
 
-<h3 id="a-href-hugoshortcode-15-querying-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example2Querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></h3>
+<h1 id="querying:d680e8a854a7cbad6d490c445cba2eba">Querying</h1>
 
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
 
@@ -612,14 +631,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:42:52 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-21-cleaning-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#cleanup:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></h3>
+<h1 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h1>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
 <p><pre><code class="nohighlight">go run application.go delete</code></pre>
 </p>
 
-<h3 id="a-href-hugoshortcode-23-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#example1WrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h3>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.</p>
 

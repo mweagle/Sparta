@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle flattr:]">
+<body class="map[name:yeti home:Sparta googleplus: twitter:mweagle highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,22 +322,39 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Event Source - S3
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#unmarshalling-the-s3-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the S3 Event</a></li>
+<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
+<li><a href="#event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the <a href="https://github.com/mweagle/SpartaImager">SpartaImager</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
 <p>Assume we have an S3 bucket that stores images.  You&rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</p>
 
-<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -353,7 +370,7 @@
 }</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-4-unmarshalling-the-s3-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalS3Event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the S3 Event</a></h2>
+<h1 id="unmarshalling-the-s3-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the S3 Event</h1>
 
 <p>Since the <code>transformImage</code> is expected to be triggered by S3 event changes, we will unmarshal the <code>*json.RawMessage</code> data into an S3-specific event provided by Sparta via:</p>
 
@@ -394,7 +411,7 @@ if err != nil {
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify items which have already been stamped &amp; prevents an &ldquo;event-storm&rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.</p>
 
-<h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
 <p>With the core of the <code>transformImage</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L200">imagerFunctions</a> source.</p>
 
@@ -429,7 +446,7 @@ lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)</code></
 
 <p>It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the <code>iamRole</code> we defined earlier.</p>
 
-<h2 id="a-href-hugoshortcode-10-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></h2>
+<h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
 
 <p>If we were to deploy this Sparta application, the <code>transformImage</code> function would have the ability to <em>Get</em> and <em>Put</em> back to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
@@ -447,7 +464,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 <p>When <code>Sparta</code> generates the CloudFormation template, it scans for <code>Permission</code> configurations.  For <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">push based sources</a> like S3, Sparta uses that service&rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.</p>
 
-<h2 id="a-href-hugoshortcode-12-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all S3-triggered lambda functions:</p>
 
@@ -461,7 +478,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 <p>The <a href="https://github.com/mweagle/SpartaImager">SpartaImager</a> repo contains the full code, and includes <a href="/docs/apigateway">API Gateway</a> support that allows you to publicly fetch the stamped image via an expiring S3 URL.</p>
 
-<h2 id="a-href-hugoshortcode-13-other-resources-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></h2>
+<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
 
 <ul>
 <li>The AWS docs have an excellent <a href="http://docs.aws.amazon.com/lambda/latest/dg/getting-started-amazons3-events.html">S3 event source</a> walkthrough.</li>

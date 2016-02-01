@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle flattr:]">
+<body class="map[twitter:mweagle name:yeti home:Sparta googleplus: bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,11 +320,26 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Command Line Options
 </h1>
 
 </header>
+
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
+<li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
+<li><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></li>
+<li><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></li>
+<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
 
     <div class="container content">
   
@@ -361,27 +376,27 @@ Verbs:
         -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-3-delete-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></h3>
+<h1 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h1>
 
 <p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
 
-<h3 id="a-href-hugoshortcode-4-describe-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></h3>
+<h1 id="describe:d680e8a854a7cbad6d490c445cba2eba">Describe</h1>
 
 <p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
 
 <p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
 
-<h3 id="a-href-hugoshortcode-5-execute-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></h3>
+<h1 id="execute:d680e8a854a7cbad6d490c445cba2eba">Execute</h1>
 
 <p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
 
-<h3 id="a-href-hugoshortcode-6-explore-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></h3>
+<h1 id="explore:d680e8a854a7cbad6d490c445cba2eba">Explore</h1>
 
 <p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
 
 <p>NOTE: API Gateway mapping templates are not currently supported.</p>
 
-<h3 id="a-href-hugoshortcode-7-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h3>
+<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
 
 <p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 

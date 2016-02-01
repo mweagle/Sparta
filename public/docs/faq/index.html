@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  343 
+    "wordCount":  278 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle]">
+<body class="map[flattr: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:yeti home:Sparta googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -320,74 +320,74 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>FAQ
 </h1>
 
 </header>
 
-    <div class="container content">
-  
-
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
 <ul>
-<li>Development
-
+<li><a href="#development:d680e8a854a7cbad6d490c445cba2eba">Development</a>
 <ul>
-<li><a href="#devfaq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</a></li>
+<li><a href="#faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</a></li>
 </ul></li>
-<li>Event Sources
-
+<li><a href="#event-sources-ses:d680e8a854a7cbad6d490c445cba2eba">Event Sources - SES</a>
 <ul>
-<li>SES
-
-<ul>
-<li><a href="#sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</a><br /></li>
-<li><a href="#sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not enable the <em>SpartaRuleSet</em>?</a><br /></li>
+<li><a href="#sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</a></li>
+<li><a href="#sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</a></li>
 </ul></li>
-</ul></li>
-<li>Operations
-
+<li><a href="#operations:d680e8a854a7cbad6d490c445cba2eba">Operations</a>
 <ul>
-<li><a href="#opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a><br /></li>
-<li><a href="#opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a><br /></li>
+<li><a href="#opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
+<li><a href="#opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
 <li><a href="#opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</a></li>
 <li><a href="#opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
 </ul></li>
 </ul>
+</nav>
+    </div>
+    <hr />
 
-<h2 id="development:d680e8a854a7cbad6d490c445cba2eba">Development</h2>
+    <div class="container content">
+  
+
+<h1 id="development:d680e8a854a7cbad6d490c445cba2eba">Development</h1>
 
 <hr />
 
-<h3 id="faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</h3>
+<h2 id="faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</h2>
 
 <p>Local testing is available via the <a href="/docs/local_testing/">explore</a> command.</p>
 
-<h2 id="event-sources-ses:d680e8a854a7cbad6d490c445cba2eba">Event Sources - SES</h2>
+<h1 id="event-sources-ses:d680e8a854a7cbad6d490c445cba2eba">Event Sources - SES</h1>
 
 <hr />
 
-<h3 id="sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</h3>
+<h2 id="sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</h2>
 
 <p>SES only permits a single <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html">active receipt rule</a>.  Additionally, it&rsquo;s possible that multiple Sparta-based services are handing different SES recipients.</p>
 
 <p>All Sparta-based services share the <em>SpartaRuleSet</em> SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html">ReceiptRule</a>.</p>
 
-<h3 id="sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h3>
+<h2 id="sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h2>
 
 <p>Initial <em>SpartaRuleSet</em> will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&rsquo;t attempt to override the user setting.</p>
 
-<h2 id="operations:d680e8a854a7cbad6d490c445cba2eba">Operations</h2>
+<h1 id="operations:d680e8a854a7cbad6d490c445cba2eba">Operations</h1>
 
 <hr />
 
-<h3 id="opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
+<h2 id="opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</h2>
 
 <p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
 
 <p>The CloudWatch log group name includes a sanitized version of your <strong>Go</strong> function name &amp; owning service name.</p>
 
-<h3 id="opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</h3>
+<h2 id="opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</h2>
 
 <p>Visit the <a href="https://aws.amazon.com/cloudwatch/">CloudWatch Metrics</a> AWS console page and select the <code>Sparta/{SERVICE_NAME}</code> namespace:</p>
 
@@ -400,11 +400,11 @@
 <li><code>ProcessReused</code>: An existing <strong>Go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
 </ul>
 
-<h3 id="opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h3>
+<h2 id="opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h2>
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
 
-<h3 id="opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h3>
+<h2 id="opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h2>
 
 <p>The list of registered output provider types is defined by <code>cloudformationTypeMapDiscoveryOutputs</code> in <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go">cloudformation_resources.go</a>.  See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types Reference</a> for information on interpreting the values.</p>
 

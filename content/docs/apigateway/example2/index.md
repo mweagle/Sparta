@@ -9,7 +9,7 @@ type = "doc"
 This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
 
-### <a href="{{< relref "#exampleDefine" >}}">Define the Lambda Function</a>
+# Define the Lambda Function
 
 Our function will accept two params:
 
@@ -74,7 +74,7 @@ if err != nil {
 }
 {{< /highlight >}}
 
-### <a href="{{< relref "#example2API" >}}">Create the API Gateway</a>
+# Create the API Gateway
 
 The next step is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
 
@@ -83,7 +83,7 @@ apiStage := sparta.NewStage("v1")
 apiGateway := sparta.NewAPIGateway("SpartaImagerAPI", apiStage)
 {{< /highlight >}}
 
-### <a href="{{< relref "#example2Resource" >}}">Create Lambda Binding</a>
+# Create Lambda Binding
 
 Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo` function:
 
@@ -108,7 +108,7 @@ A few items to note here:
     * This bucket ARN is externally created and the ARN provided to this code.
     * While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
 
-### <a href="{{< relref "#example2Resource" >}}">Create Resource</a>
+# Create Resources
 
 The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the `s3ItemInfo` function. This will be the relative path component used to reference our lambda function via the API Gateway.
 
@@ -120,7 +120,7 @@ if err != nil {
 }
 {{< /highlight >}}
 
-### <a href="{{< relref "#example2Resource" >}}">Whitelist Input</a>
+# Whitelist Input
 
 The final step is to add the whitelisted parameters to the Method definition.
 
@@ -138,7 +138,7 @@ Note that the keynames in the `method.Parameters` map must be of the form: **met
 
 See the [REST documentation](http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters) for more information.
 
-### <a href="{{< relref "#provision" >}}">Provision</a>
+# Provision
 
 With everything configured, let's provision the stack:
 
@@ -148,7 +148,7 @@ go run application.go --level debug provision --s3Bucket $S3_BUCKET
 
 and check the results.
 
-### <a href="{{< relref "#example2Querying" >}}">Querying</a>
+# Querying
 
 As this Sparta application includes an API Gateway definition, the stack `Outputs` includes the API Gateway URL:
 
@@ -297,7 +297,7 @@ curl -vs "https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName
 {"errorMessage":"{\"code\":500,\"status\":\"Internal Server Error\",\"headers\":{\"content-type\":\"text/plain; charset=utf-8\",\"x-content-type-options\":\"nosniff\",\"date\":\"Sun, 06 Dec 2015 02:42:52 GMT\",\"content-length\":\"60\"},\"error\":\"AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\"}","errorType":"Error","stackTrace":["IncomingMessage.<anonymous> (/var/task/index.js:68:53)","IncomingMessage.emit (events.js:117:20)","_stream_readable.js:944:16","process._tickCallback (node.js:442:13)"]}
 {{< /highlight >}}
 
-### <a href="{{< relref "#cleanup" >}}">Cleaning Up</a>
+# Cleaning Up
 
 Before moving on, remember to decommission the service via:
 
@@ -305,6 +305,6 @@ Before moving on, remember to decommission the service via:
 go run application.go delete
 {{< /highlight >}}
 
-### <a href="{{< relref "#example1WrappingUp" >}}">Wrapping Up</a>
+# Wrapping Up
 
 With this example we've walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.

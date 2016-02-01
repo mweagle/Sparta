@@ -57,7 +57,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1206 
+    "wordCount":  1208 
   }
 </script>
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook: twitter:mweagle youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:yeti home:Sparta googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,18 +322,40 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Event Source - SES
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#unmarshalling-the-ses-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SES Event</a></li>
+<li><a href="#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba">Dynamic Resources</a>
+<ul>
+<li><a href="#provision-message-body-storage-resource:d680e8a854a7cbad6d490c445cba2eba">Provision Message Body Storage Resource</a></li>
+<li><a href="#dynamic-iamprivilege-arn:d680e8a854a7cbad6d490c445cba2eba">Dynamic IAMPrivilege Arn</a></li>
+<li><a href="#dynamic-message-body-storage-discovery:d680e8a854a7cbad6d490c445cba2eba">Dynamic Message Body Storage Discovery</a></li>
+</ul></li>
+<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to inbound email.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
 <p>Assume that we have already <a href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domains.html">verified our email domain</a> with AWS.  This allows our domain&rsquo;s email to be handled by SES.</p>
 
@@ -341,7 +363,7 @@
 
 <p>There is also an additional requirement to support <a href="http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html">immutable infrastructure</a>, so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.</p>
 
-<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -356,7 +378,7 @@
   }).Info(&#34;Request received&#34;)</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-4-unmarshalling-the-ses-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SES Event</a></h2>
+<h1 id="unmarshalling-the-ses-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SES Event</h1>
 
 <p>At this point we would normally continue processing the SES event, using Sparta types if available.</p>
 
@@ -364,7 +386,7 @@
 
 <p>This requirement implies that our service must be self-contained: we can&rsquo;t assume that &ldquo;something else&rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?</p>
 
-<h2 id="a-href-hugoshortcode-5-dynamic-resources-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#dynamicResources:d680e8a854a7cbad6d490c445cba2eba">Dynamic Resources</a></h2>
+<h1 id="dynamic-resources:d680e8a854a7cbad6d490c445cba2eba">Dynamic Resources</h1>
 
 <p>The immutable infrastructure requirement makes this lambda function a bit more complex.  Our service needs to:</p>
 
@@ -384,7 +406,7 @@
 <li>Discover the S3 Bucket at lambda execution time</li>
 </ul>
 
-<h3 id="a-href-hugoshortcode-6-provision-message-body-storage-resource-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provisionBucket:d680e8a854a7cbad6d490c445cba2eba">Provision Message Body Storage Resource</a></h3>
+<h2 id="provision-message-body-storage-resource:d680e8a854a7cbad6d490c445cba2eba">Provision Message Body Storage Resource</h2>
 
 <p>Let&rsquo;s first take a look at how the SES lambda handler provisions a new S3 bucket via the <a href="https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage">MessageBodyStorage</a> type:</p>
 
@@ -433,7 +455,7 @@ sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRu
 })</code></pre>
 
 
-<h3 id="a-href-hugoshortcode-9-dynamic-iamprivilege-arn-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provisionBucket:d680e8a854a7cbad6d490c445cba2eba">Dynamic IAMPrivilege Arn</a></h3>
+<h2 id="dynamic-iamprivilege-arn:d680e8a854a7cbad6d490c445cba2eba">Dynamic IAMPrivilege Arn</h2>
 
 <p>Our lambda function is required to access the message body in the dynamically created <code>MessageBodyStorage</code> resource, but the S3 resource Arn is only defined <em>after</em> the service is provisioned.  The solution to this is to reference the dynamically generated <code>BucketArnAllKeys()</code> value in the <code>sparta.IAMRolePrivilege</code> initializer:</p>
 
@@ -453,7 +475,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)</code></pre>
 
 <p>At this point we&rsquo;ve implicitly created an S3 bucket via the <code>MessageBodyStorage</code> value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.</p>
 
-<h3 id="a-href-hugoshortcode-12-dynamic-messagebodystorage-discovery-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provisionBucket:d680e8a854a7cbad6d490c445cba2eba">Dynamic MessageBodyStorage Discovery</a></h3>
+<h2 id="dynamic-message-body-storage-discovery:d680e8a854a7cbad6d490c445cba2eba">Dynamic Message Body Storage Discovery</h2>
 
 <p>Our <code>echoSESEvent</code> function needs to determine, at execution time, the <code>MessageBodyStorage</code> bucketname.  This is done via <code>sparta.Discover()</code>:</p>
 
@@ -497,8 +519,8 @@ logger.WithFields(logrus.Fields{
 
 <p>Note that the <em>sparta:logicalBucketName</em> tag value is <code>&quot;Special&quot;</code>, the same value provided in:</p>
 
-<p><pre><code class="golang">sesPermission.NewMessageBodyStorageResource(&#34;Special&#34;)</code></pre>
-</p>
+<pre><code class="golang">sesPermission.NewMessageBodyStorageResource(&#34;Special&#34;)</code></pre>
+
 
 <p>Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:</p>
 
@@ -518,7 +540,7 @@ if nil != configuration {
 
 <p>TODO: Add configuration types</p>
 
-<h2 id="a-href-hugoshortcode-17-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
 <p>The rest of <code>echoSESEvent</code> satisfies the other requirements, with a bit of help from the SES <a href="https://godoc.org/github.com/mweagle/Sparta/aws/ses">event types</a>:</p>
 
@@ -553,7 +575,7 @@ if nil != configuration {
 }</code></pre>
 </p>
 
-<h2 id="a-href-hugoshortcode-19-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all SES-triggered lambda function:</p>
 
@@ -573,7 +595,7 @@ if nil != configuration {
 <li>In your <strong>Go</strong> lambda function definition, discover the S3 bucketname via <code>sparta.Discover()</code></li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-20-notes-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Notes</a></h2>
+<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
 
 <ul>
 <li>The SES message (including headers) is stored in the <a href="http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3">raw format</a></li>

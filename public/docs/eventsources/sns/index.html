@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: youtube: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: name:yeti highlight:vs googleAnalytics:UA-70794971-1 facebook:]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle name:yeti home:Sparta googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -322,22 +322,39 @@
 </div>
 </div>
   <div class="col-md-10">
+
     <header class="container hat">
   <h1>Event Source - SNS
 </h1>
 
 </header>
 
+    <hr />
+    <div id="toc">
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#unmarshalling-the-sns-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</a></li>
+<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
+<li><a href="#event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+</ul>
+</nav>
+    </div>
+    <hr />
+
     <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h2 id="a-href-hugoshortcode-1-goal-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></h2>
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
 <p>Assume that we have an SNS topic that broadcasts notifications.  We&rsquo;ve been asked to write a lambda function that logs the <em>Subject</em> and <em>Message</em> text to CloudWatch logs for later processing.</p>
 
-<h2 id="a-href-hugoshortcode-2-getting-started-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#gettingStarted:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></h2>
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -352,7 +369,7 @@
 }</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-4-unmarshalling-the-sns-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalSNSEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</a></h2>
+<h1 id="unmarshalling-the-sns-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</h1>
 
 <p>Since the <code>echoSNSEvent</code> is expected to be triggered by SNS notifications, we will unmarshal the <code>*json.RawMessage</code> data into an SNS-specific event provided by Sparta via:</p>
 
@@ -376,14 +393,14 @@ if err != nil {
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
 
-<h2 id="a-href-hugoshortcode-7-sparta-integration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></h2>
+<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
 <p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
 <pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
 
 
-<h2 id="a-href-hugoshortcode-9-event-source-registration-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#eventSourceRegistration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></h2>
+<h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoSNSEvent</code> function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
@@ -399,7 +416,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 <p>See the <a href="http://gosparta.io/docs/eventsources/s3/#eventSourceRegistration">S3 docs</a> for more information on how the <em>Permissions</em> data is processed.</p>
 
-<h2 id="a-href-hugoshortcode-11-wrapping-up-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#wrappingUp:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></h2>
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all SNS-triggered lambda function:</p>
 
@@ -410,7 +427,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 <li>Add the necessary <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">Permissions</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is triggered.</li>
 </ul>
 
-<h2 id="a-href-hugoshortcode-12-other-resources-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#otherResources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></h2>
+<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
 
 <ul>
 <li>TBD</li>

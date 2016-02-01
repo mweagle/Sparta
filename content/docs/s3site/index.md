@@ -10,7 +10,7 @@ Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazo
 
 The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) example application.
 
-### <a href="{{< relref "#lambdaFunction" >}}">Create the Lambda function</a>
+# Create the Lambda function
 
 We'll start by creating a very simple lambda function:
 
@@ -26,7 +26,7 @@ func helloWorld(event *json.RawMessage,
 
 This lambda function simply sends back the content of the inbound event.  See the [API Gateway example](/docs/apigateway/example1) for more information on the event contents.
 
-### <a href="{{< relref "#apiGateway" >}}">Create the API Gateway</a>
+# Create the API Gateway
 
 The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.
 
@@ -62,7 +62,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 {{< /highlight >}}
 
 
-### <a href="{{< relref "#s3Site" >}}">Define the S3 Site</a>
+# Define the S3 Site
 
 The next part is to define the S3 site resources via `sparta.NewS3Site(localFilePath)`.  The _localFilePath_ parameter
 typically points to a directory, which will be:
@@ -71,7 +71,7 @@ typically points to a directory, which will be:
   1. Posted to S3 alongside the Lambda code archive and CloudFormation Templates
   1. Dynamically unpacked by a CloudFormation CustomResource during `provision` to a new S3 bucket.
 
-### <a href="{{< relref "#provision" >}}">Provision</a>
+# <a href="{{< relref "#provision" >}}">Provision</a>
 
 Putting it all together, our `main()` function looks like:
 
@@ -113,7 +113,7 @@ INFO[0114] Elapsed time        Seconds=114
 
 Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com_) and view the deployed site.
 
-### <a href="{{< relref "#discover" >}}">Discover</a>
+# Discover
 
 An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.  
 
