@@ -57,7 +57,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1208 
+    "wordCount":  1204 
   }
 </script>
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:yeti highlight:vs facebook: twitter:mweagle]">
+<body class="map[name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle bitbucket: googleplus: facebook: youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -288,7 +288,7 @@
       
       </ul>
     
-      <a href="/docs/dynamic_resources">Dynamic Resources</a>
+      <a href="/docs/dynamic_infrastructure">Dynamic Infrastructure</a>
       <ul>
       
       </ul>
@@ -382,7 +382,7 @@
 
 <p>At this point we would normally continue processing the SES event, using Sparta types if available.</p>
 
-<p>However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.</p>
+<p>However, before moving on to the event unmarshaling, we need to take a detour into <a href="/docs/dynamic_infrastructure/">dynamic infrastructure</a> because of the immutable infrastructure requirement.</p>
 
 <p>This requirement implies that our service must be self-contained: we can&rsquo;t assume that &ldquo;something else&rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?</p>
 
@@ -537,8 +537,6 @@ if nil != configuration {
     }
   }</code></pre>
 </p>
-
-<p>TODO: Add configuration types</p>
 
 <h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 

@@ -596,7 +596,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;At this point we would normally continue processing the SES event, using Sparta types if available.&lt;/p&gt;
 
-&lt;p&gt;However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.&lt;/p&gt;
+&lt;p&gt;However, before moving on to the event unmarshaling, we need to take a detour into &lt;a href=&#34;http://gosparta.io/docs/dynamic_infrastructure/&#34;&gt;dynamic infrastructure&lt;/a&gt; because of the immutable infrastructure requirement.&lt;/p&gt;
 
 &lt;p&gt;This requirement implies that our service must be self-contained: we can&amp;rsquo;t assume that &amp;ldquo;something else&amp;rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?&lt;/p&gt;
 
@@ -751,8 +751,6 @@ if nil != configuration {
     }
   }&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
-
-&lt;p&gt;TODO: Add configuration types&lt;/p&gt;
 
 &lt;h1 id=&#34;sparta-integration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
 

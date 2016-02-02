@@ -36,7 +36,7 @@ func echoSESEvent(event *json.RawMessage,
 
 At this point we would normally continue processing the SES event, using Sparta types if available.
 
-However, before moving on to the event unmarshaling, we need to take a detour into dynamic resources because of the immutable infrastructure requirement.  
+However, before moving on to the event unmarshaling, we need to take a detour into [dynamic infrastructure](/docs/dynamic_infrastructure/) because of the immutable infrastructure requirement.  
 
 This requirement implies that our service must be self-contained: we can't assume that "something else" has created an S3 bucket.  How can our locally compiled code access AWS-created resources?
 
@@ -191,8 +191,6 @@ if nil != configuration {
     }
   }
 {{< /highlight >}}
-
-TODO: Add configuration types
 
 # Sparta Integration
 

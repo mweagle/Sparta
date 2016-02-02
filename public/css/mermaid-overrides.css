@@ -11,3 +11,8 @@
   stroke: #CCCCFF;
   stroke-width: 1px;
 }
+
+.edgeLabel {
+  color: #991B1E;
+  background-color: #CCCCCC;
+}
