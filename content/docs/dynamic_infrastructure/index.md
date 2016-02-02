@@ -13,7 +13,7 @@ In addition to provisioning AWS Lambda functions, Sparta supports the creation o
 For instance, consider the case where two developers are working in the same AWS account.
 
   * Developer 1 is working on analyzing text documents.  
-    - Their lambda code is triggered in response to uploading sample text document to S3.
+    - Their lambda code is triggered in response to uploading sample text documents to S3.
   * Developer 2 is working on image recognition.  
     - Their lambda code is triggered in response to uploading sample images to S3.
 

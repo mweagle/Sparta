@@ -1458,7 +1458,7 @@ Verbs:
 &lt;li&gt;Developer 1 is working on analyzing text documents.&lt;br /&gt;
 
 &lt;ul&gt;
-&lt;li&gt;Their lambda code is triggered in response to uploading sample text document to S3.&lt;/li&gt;
+&lt;li&gt;Their lambda code is triggered in response to uploading sample text documents to S3.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;Developer 2 is working on image recognition.&lt;br /&gt;
 
@@ -1479,7 +1479,9 @@ graph LR
   sharedBucket --&gt; dev2Lambda
 
 &lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
+&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
+  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
+  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
 &lt;hr /&gt;
 
 
@@ -1516,7 +1518,9 @@ graph LR
   dev2S3Bucket --&gt; dev2Lambda
 
 &lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
+&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
+  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
+  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
 &lt;hr /&gt;
 
 
@@ -1542,7 +1546,9 @@ graph LR
   dev2S3VideoBucket --&gt;dev2VideoLambda
 
 &lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
+&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
+  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
+  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
 &lt;hr /&gt;
 
 
