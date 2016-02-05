@@ -2,6 +2,7 @@ package sparta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"runtime"
 
@@ -11,13 +12,125 @@ import (
 )
 
 // Dynamically assigned discover function that is set by Main
-var discoverImpl func() (map[string]interface{}, error)
+var discoverImpl func() (*DiscoveryInfo, error)
 
-var discoveryCache map[string]map[string]interface{}
+var discoveryCache map[string]*DiscoveryInfo
+
+////////////////////////////////////////////////////////////////////////////////
+// START - DiscoveryResource
+//
+
+// DiscoveryResource stores information about a CloudFormation resource
+// that the calling Go function `DependsOn`.
+type DiscoveryResource struct {
+	ResourceID string
+	Properties map[string]string
+	Tags       map[string]string
+}
+
+func newDiscoveryResource(resourceID string, props map[string]interface{}) (DiscoveryResource, error) {
+	resource := DiscoveryResource{}
+	resource.ResourceID = resourceID
+	resource.Properties = make(map[string]string, 0)
+	resource.Tags = make(map[string]string, 0)
+
+	for eachProp, eachValue := range props {
+		if eachProp != "Tags" {
+			assertedValue, assertOK := eachValue.(string)
+			if !assertOK {
+				return resource, fmt.Errorf("Invalid type assertion for newDiscoveryResource factory: %s=>%#v", eachProp, eachValue)
+			}
+			resource.Properties[eachProp] = assertedValue
+		} else {
+			tagArray, ok := eachValue.([]interface{})
+			if !ok {
+				return resource, fmt.Errorf("Failed to type asset Tags")
+			}
+			for _, eachEntry := range tagArray {
+				eachTagMap, ok := eachEntry.(map[string]interface{})
+				if !ok {
+					return resource, fmt.Errorf("Failed to type asset tag pair: %#v", eachTagMap)
+				}
+				tagName, keyOK := eachTagMap["Key"].(string)
+				tagValue, valueOK := eachTagMap["Value"].(string)
+				if !keyOK || !valueOK {
+					return resource, errors.New("Failed to unmarshal tag")
+				}
+				resource.Tags[tagName] = tagValue
+			}
+		}
+	}
+	return resource, nil
+}
+
+//
+// START - DiscoveryResource
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - DiscoveryInfo
+//
+
+// DiscoveryInfo encapsulates information returned by `sparta.Discovery()`
+// to enable a runtime function to discover information about its
+// AWS environment or resources that the function created explicit
+// `DependsOn` relationships
+type DiscoveryInfo struct {
+	// Current AWS region
+	Region string
+	// Current Stack ID
+	StackID string
+	// StackName (eg, Sparta service name)
+	StackName string
+	// Map of resources this Go function has explicit `DependsOn` relationship
+	Resources map[string]DiscoveryResource
+}
+
+// UnmarshalJSON is responsible for transforming the raw discovery data into
+func (discoveryInfo *DiscoveryInfo) UnmarshalJSON(data []byte) error {
+	var discoveryData map[string]interface{}
+	if err := json.Unmarshal(data, &discoveryData); err != nil {
+		return err
+	}
+	discoveryInfo.Resources = make(map[string]DiscoveryResource, 0)
+	for eachKey, eachValue := range discoveryData {
+		typeAssertOk := true
+
+		switch eachKey {
+		case TagStackRegion:
+			discoveryInfo.Region, typeAssertOk = eachValue.(string)
+		case TagStackID:
+			discoveryInfo.StackID, typeAssertOk = eachValue.(string)
+		case TagStackName:
+			discoveryInfo.StackName, typeAssertOk = eachValue.(string)
+		case "golangFunc":
+			// NOP
+		default:
+			assertValue, assertOK := eachValue.(map[string]interface{})
+			if !assertOK {
+				return fmt.Errorf("Failed to type assert entry: %s=>%#v", eachKey, eachValue)
+			}
+			res, err := newDiscoveryResource(eachKey, assertValue)
+			if nil != err {
+				return err
+			}
+			discoveryInfo.Resources[eachKey] = res
+		}
+		if !typeAssertOk {
+			err := fmt.Errorf("Failed to create resource")
+			return err
+		}
+	}
+	return nil
+}
+
+//
+// START - DiscoveryInfo
+////////////////////////////////////////////////////////////////////////////////
 
 // Discover returns metadata information for resources upon which
 // the current golang lambda function depends.
-func Discover() (map[string]interface{}, error) {
+func Discover() (*DiscoveryInfo, error) {
 	if nil == discoverImpl {
 		return nil, fmt.Errorf("Discovery service has not been initialized")
 	}
@@ -26,8 +139,8 @@ func Discover() (map[string]interface{}, error) {
 
 func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) {
 	// Setup the discoveryImpl reference
-	discoveryCache = make(map[string]map[string]interface{}, 0)
-	discoverImpl = func() (map[string]interface{}, error) {
+	discoveryCache = make(map[string]*DiscoveryInfo, 0)
+	discoverImpl = func() (*DiscoveryInfo, error) {
 		pc := make([]uintptr, 2)
 		entriesWritten := runtime.Callers(2, pc)
 		if entriesWritten != 2 {
@@ -55,7 +168,7 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			return nil, fmt.Errorf("Unsupported call site for sparta.Discover(): %s", golangFuncName)
 		}
 
-		emptyConfiguration := make(map[string]interface{}, 0)
+		emptyConfiguration := &DiscoveryInfo{}
 		if "" != lambdaCFResource {
 			cachedConfig, exists := discoveryCache[lambdaCFResource]
 			if exists {
@@ -70,6 +183,7 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			}
 			result, err := awsCloudFormation.DescribeStackResource(params)
 			if nil != err {
+				// TODO - retry/cache expiry
 				discoveryCache[lambdaCFResource] = emptyConfiguration
 				return nil, err
 			}
@@ -77,10 +191,18 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			if nil == metadata {
 				metadata = aws.String("{}")
 			}
-			var discoveryInfo map[string]interface{}
+
+			// Transform this into a map
+			logger.WithFields(logrus.Fields{
+				"Metadata": metadata,
+			}).Debug("DiscoveryInfo Metadata")
+			var discoveryInfo DiscoveryInfo
 			err = json.Unmarshal([]byte(*metadata), &discoveryInfo)
-			discoveryCache[lambdaCFResource] = discoveryInfo
-			return discoveryInfo, err
+			if err != nil {
+				logger.Error("Failed to unmarshal discovery info")
+			}
+			discoveryCache[lambdaCFResource] = &discoveryInfo
+			return &discoveryInfo, err
 		}
 		return emptyConfiguration, nil
 	}
