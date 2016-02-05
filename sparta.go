@@ -30,7 +30,7 @@ func init() {
 }
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.3.0"
+const SpartaVersion = "0.4.0"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
