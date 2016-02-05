@@ -11,6 +11,8 @@ import (
 
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
 const (
+	// TagType is the type of the referred resource type
+	TagResourceType = "sparta:cloudformation:restype"
 	// TagStackRegion is the current stack's logical id
 	TagStackRegion = "sparta:cloudformation:region"
 	// TagStackID is the current stack's ID
@@ -123,6 +125,7 @@ func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf
 func outputsForResource(template *gocf.Template,
 	logicalResourceName string,
 	logger *logrus.Logger) (map[string]interface{}, error) {
+
 	item, ok := template.Resources[logicalResourceName]
 	if !ok {
 		return nil, nil
@@ -132,7 +135,8 @@ func outputsForResource(template *gocf.Template,
 	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.ResourceType()]
 	if exists {
 		outputs["Ref"] = gocf.Ref(logicalResourceName).String()
-		outputs["Type"] = gocf.String("AWS::S3::Bucket")
+		outputs[TagResourceType] = item.Properties.ResourceType()
+
 		for _, eachAttr := range attrs {
 			outputs[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
 		}
