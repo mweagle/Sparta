@@ -1,3 +1,10 @@
+## v0.4.0
+- :warning: **BREAKING**
+  - Change `sparta.Discovery()` return type from `map[string]interface{}` to `sparta.DiscoveryInfo`.
+      - This type provides first class access to service-scoped and `DependsOn`-related resource information
+- :checkered_flag: **CHANGES**
+  - N/A
+
 ## v0.3.0
 - :warning: **BREAKING**
   - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.  
