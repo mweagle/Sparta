@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle facebook: flattr: name:yeti linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: bitbucket:]">
+<body class="map[bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -608,7 +608,8 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 // Add a permission s.t. the lambda function could read from the S3 bucket
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
-    Actions:  []string{&quot;s3:GetObject&quot;, &quot;s3:HeadObject&quot;},
+    Actions:  []string{&quot;s3:GetObject&quot;,
+                       &quot;s3:HeadObject&quot;},
     Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
   })
 
@@ -617,7 +618,8 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   BasePermission: sparta.BasePermission{
     SourceArn: gocf.Ref(s3BucketResourceName),
   },
-  Events: []string{&quot;s3:ObjectCreated:*&quot;, &quot;s3:ObjectRemoved:*&quot;},
+  Events: []string{&quot;s3:ObjectCreated:*&quot;,
+                   &quot;s3:ObjectRemoved:*&quot;},
 })
 
 // Actually add the resource

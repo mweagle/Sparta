@@ -221,7 +221,8 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 // Add a permission s.t. the lambda function could read from the S3 bucket
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
-    Actions:  []string{"s3:GetObject", "s3:HeadObject"},
+    Actions:  []string{"s3:GetObject",
+                       "s3:HeadObject"},
     Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
   })
 
@@ -230,7 +231,8 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   BasePermission: sparta.BasePermission{
     SourceArn: gocf.Ref(s3BucketResourceName),
   },
-  Events: []string{"s3:ObjectCreated:*", "s3:ObjectRemoved:*"},
+  Events: []string{"s3:ObjectCreated:*",
+                   "s3:ObjectRemoved:*"},
 })
 
 // Actually add the resource
