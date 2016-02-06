@@ -20,7 +20,7 @@ There is also an additional requirement to support [immutable infrastructure](ht
 
 We'll start with an empty lambda function and build up the needed functionality.
 
-{{< highlight go >}}
+```go
 func echoSESEvent(event *json.RawMessage,
   context *sparta.LambdaContext,
   w http.ResponseWriter,
@@ -30,7 +30,7 @@ func echoSESEvent(event *json.RawMessage,
   logger.WithFields(logrus.Fields{
     "RequestID": context.AWSRequestID,
   }).Info("Request received")
-{{< /highlight >}}
+```
 
 # Unmarshalling the SES Event
 
@@ -56,7 +56,7 @@ The immutable infrastructure requirement makes this lambda function a bit more c
 
 Let's first take a look at how the SES lambda handler provisions a new S3 bucket via the [MessageBodyStorage](https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage) type:
 
-{{< highlight go >}}
+```go
 
 func appendSESLambda(api *sparta.API,
   lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
@@ -83,7 +83,7 @@ func appendSESLambda(api *sparta.API,
   bodyStorage, _ := sesPermission.NewMessageBodyStorageResource("Special")
   sesPermission.MessageBodyStorage = bodyStorage
 
-{{< /highlight >}}
+```
 
 The `MessageBodyStorage` type (and the related [MessageBodyStorageOptions](https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions) type) cause our SESPermission handler to  add an [S3 ReceiptRule](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html) at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.
 
@@ -91,7 +91,7 @@ The single parameter `"Special"` is an application-unique literal value that is 
 
 Our SES handler then adds two [ReceiptRules](http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html):
 
-{{< highlight go >}}
+```go
 sesPermission.ReceiptRules = make([]sparta.ReceiptRule, 0)
 sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
   Name:       "Special",
@@ -103,130 +103,133 @@ sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRu
   Recipients: []string{},
   TLSPolicy:  "Optional",
 })
-{{< /highlight >}}
+```
 
 ## Dynamic IAMPrivilege Arn
 
 Our lambda function is required to access the message body in the dynamically created `MessageBodyStorage` resource, but the S3 resource Arn is only defined _after_ the service is provisioned.  The solution to this is to reference the dynamically generated `BucketArnAllKeys()` value in the `sparta.IAMRolePrivilege` initializer:
 
-{{< highlight go >}}
+```go
 // Then add the privilege to the Lambda function s.t. we can actually get at the data
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
     Actions:  []string{"s3:GetObject", "s3:HeadObject"},
     Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
 })
-{{< /highlight >}}
+```
 
 The last step is to register the `SESPermission` with the lambda info:
 
-{{< highlight go >}}
+```go
 // Finally add the SES permission to the lambda function
 lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)
-{{< /highlight >}}
+```
 
 At this point we've implicitly created an S3 bucket via the `MessageBodyStorage` value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.
 
 ## Dynamic Message Body Storage Discovery
 
-Our `echoSESEvent` function needs to determine, at execution time, the `MessageBodyStorage` bucketname.  This is done via `sparta.Discover()`:
+Our `echoSESEvent` function needs to determine, at execution time, the `MessageBodyStorage` S3 bucket name.  This is done via `sparta.Discover()`:
 
-{{< highlight go >}}
-  configuration, configErr := sparta.Discover()
+```go
+configuration, configErr := sparta.Discover()
 
 logger.WithFields(logrus.Fields{
   "Error":         configErr,
   "Configuration": configuration,
 }).Debug("Discovery results")
-{{< /highlight >}}
+```
 
-The `sparta.Discover()` function returns the [Metdata](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html) and [Tags](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html) associated with any immediate dependencies _of the current Sparta-compliant Go lambda function scope_.
+The `sparta.Discover()` function returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) structure.  This structure is the unmarshaled CloudFormation [Metadata](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html) of the CloudFormation [Lambda::Function](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) resource.  
 
-In other words, `sparta.Discover()` may return a non-empty map iff:
+The structure includes the stack's [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html) as well information about any _immediate_ resource dependencies.  Eg, those that were explicitly marked as `DependsOn`.  See the [discovery documentation](/docs/discovery/) for more details.
+
+Of note is that `sparta.Discover()` does not accept any parameters and instead uses [reflect](https://golang.org/pkg/reflect/) to determine which [sparta.LamdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) structure to lookup.  Discovery is therefore limited to being called from a *Sparta-compliant Go lambda function* only.
+
+It will return the full set of data iff:
 
   * It's called from a `Sparta.LambdaFunction` function
   * That function has immediate AWS resource dependencies
 
-The returned `map[string]interface{}` will be empty in all other cases.
+A sample `DiscoveryInfo` for SES is below :
 
-Here's a sample `configuration` map:
-
-{{< highlight json >}}
+```json
 {
-  "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
-    "DomainName": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3.amazonaws.com",
-    "Ref": "spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4",
-    "Tags": [
-      {
-        "Key": "sparta:logicalBucketName",
-        "Value": "Special"
-      }
-    ],
-    "Type": "AWS::S3::Bucket",
-    "WebsiteURL": "http://spartaapplication-sesmessagestorebucketa622fdfda5-1rhh9ckj38gt4.s3-website-us-west-2.amazonaws.com"
-  },
-  "golangFunc": "main.echoSESEvent"
-}
-{{< /highlight >}}
-
-Note that the _sparta:logicalBucketName_ tag value is `"Special"`, the same value provided in:
-
-{{< highlight golang >}}
-sesPermission.NewMessageBodyStorageResource("Special")
-{{< /highlight >}}
-
-Our lambda function then roots around the configuration data to discover the dynamic S3 bucket name:
-
-{{< highlight golang >}}
-messageBodyInfo := make(map[string]interface{}, 0)
-bucketName := ""
-if nil != configuration {
-  for eachKey, eachValue := range configuration {
-    if strings.HasPrefix(eachKey, "SESMessageStoreBucket") {
-      messageBodyInfo["Bucket"] = eachValue
-      bucketInfo, ok := eachValue.(map[string]interface{})
-      if ok {
-        bucketName, _ = bucketInfo["Ref"].(string)
+  "Region": "us-west-2",
+  "StackID": "arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/a94e1e70-cc2a-11e5-b38e-50d5ca789e4a",
+  "StackName": "SpartaApplication",
+  "Resources": {
+    "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772": {
+      "ResourceID": "SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772",
+      "Properties": {
+        "DomainName": "spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3.amazonaws.com",
+        "Ref": "spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp",
+        "WebsiteURL": "http://spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3-website-us-west-2.amazonaws.com",
+        "sparta:cloudformation:restype": "AWS::S3::Bucket"
+      },
+      "Tags": {
+        "sparta:logicalBucketName": "Special"
       }
     }
   }
-{{< /highlight >}}
+}
+```
+
+Note that the `Resources` map has an entry for the S3 bucket.  Our code just needs to root around a bit to find the [Ref](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html) property which is the immediate dependencies bucket name output.  If there were multiple resources, we could have disambiguated by also filtering for the _Special_ tag, which is the logical name we provided earlier:
+
+```go
+sesPermission.NewMessageBodyStorageResource("Special")
+```
+
+As we only have a single dependency, our discovery filter is:
+
+```go
+// The message bucket is an explicit `DependsOn` relationship, so it'll be in the
+// resources map.  We'll find it by looking for the dependent resource with the "AWS::S3::Bucket" type
+bucketName := ""
+for _, eachResource := range configuration.Resources {
+  if eachResource.Properties[sparta.TagResourceType] == "AWS::S3::Bucket" {
+    bucketName = eachResource.Properties["Ref"]
+  }
+}
+if "" == bucketName {
+  logger.Error("Failed to discover SES bucket from sparta.Discovery")
+  http.Error(w, "Failed to discovery SES MessageBodyBucket", http.StatusInternalServerError)
+}
+```
 
 # Sparta Integration
 
 The rest of `echoSESEvent` satisfies the other requirements, with a bit of help from the SES [event types](https://godoc.org/github.com/mweagle/Sparta/aws/ses):
 
-{{< highlight golang >}}
-  var lambdaEvent spartaSES.Event
-  err := json.Unmarshal([]byte(*event), &lambdaEvent)
-  if err != nil {
-    logger.Error("Failed to unmarshal event data: ", err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-
-  svc := s3.New(session.New())
-  for _, eachRecord := range lambdaEvent.Records {
-    logger.WithFields(logrus.Fields{
-      "Source":     eachRecord.SES.Mail.Source,
-      "MessageID":  eachRecord.SES.Mail.MessageID,
-      "S3BodyInfo": messageBodyInfo,
-    }).Info("SES Event")
-
-    // If we have a bucketname, fetch the S3 metadata about the body
-    if "" != bucketName {
-      params := &s3.HeadObjectInput{
-        Bucket: aws.String(bucketName),
-        Key:    aws.String(eachRecord.SES.Mail.MessageID),
-      }
-      resp, err := svc.HeadObject(params)
-      logger.WithFields(logrus.Fields{
-        "Error":    err,
-        "Metadata": resp,
-      }).Info("SES MessageBody")
-    }
-  }
+```go
+var lambdaEvent spartaSES.Event
+err := json.Unmarshal([]byte(*event), &lambdaEvent)
+if err != nil {
+  logger.Error("Failed to unmarshal event data: ", err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
 }
-{{< /highlight >}}
+
+// Get the metdata about the item...
+svc := s3.New(session.New())
+for _, eachRecord := range lambdaEvent.Records {
+  logger.WithFields(logrus.Fields{
+    "Source":     eachRecord.SES.Mail.Source,
+    "MessageID":  eachRecord.SES.Mail.MessageID,
+    "BucketName": bucketName,
+  }).Info("SES Event")
+
+  params := &s3.HeadObjectInput{
+    Bucket: aws.String(bucketName),
+    Key:    aws.String(eachRecord.SES.Mail.MessageID),
+  }
+  resp, err := svc.HeadObject(params)
+  logger.WithFields(logrus.Fields{
+    "Error":    err,
+    "Metadata": resp,
+  }).Info("SES MessageBody")
+}
+```
 
 # Wrapping Up
 
