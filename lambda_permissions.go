@@ -14,6 +14,21 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
+/*
+Notes to future self...
+
+TODO - Simplify this as part of: https://trello.com/c/aOULlJcz/14-port-nodejs-customresources-to-go
+
+Adding a new permission type?
+  1. Add the principal name value to sparta.go constants
+  2. Define the new struct and satisfy LambdaPermissionExporter
+  3. Update provision_utils.go's `PushSourceConfigurationActions` map with the new principal's permissions
+  4. Update `PROXIED_MODULES` in resources/index.js to include the first principal component name( eg, 'events')
+  5. Update `customResourceScripts` in provision.go to ensure the embedded JS file is included in the deployed archive.
+  6. Implement the custom type defined in 2
+  7. Implement the service configuration logic referred to in 4.
+*/
+
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
 
@@ -818,7 +833,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		}
 		globallyUniqueRules[uniqueRuleName] = eachDefinition
 	}
-	// Self test - there should only be 1 element since we're only ever configuring
+	// Integrity test - there should only be 1 element since we're only ever configuring
 	// the same AWS principal service.  If we end up with multiple configuration resource names
 	// it means that the stable resource name logic is broken
 	configurationResourceNames := make(map[string]int, 0)
@@ -900,5 +915,108 @@ func (perm CloudWatchEventsPermission) descriptionInfo() (string, string) {
 }
 
 //
-// END - S3Permission
+// END - CloudWatchEventsPermission
+///////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - CloudWatchLogsPermission
+//
+
+// CloudWatchLogsSubscriptionFilter represents the CloudWatchLog filters
+type CloudWatchLogsSubscriptionFilter struct {
+	FilterPattern string
+	LogGroupName  interface{}
+}
+
+var cloudformationLogsSourceArnParts = []gocf.Stringable{}
+
+// CloudWatchLogsPermission struct that imples the S3 BasePermission.SourceArn should be
+// updated (via PutBucketNotificationConfiguration) to automatically push
+// events to the owning Lambda.
+// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
+// for more information.
+type CloudWatchLogsPermission struct {
+	BasePermission
+	// Map of filter names to the CloudWatchLogsSubscriptionFilter settings
+	Filters map[string]CloudWatchLogsSubscriptionFilter
+}
+
+func (perm CloudWatchLogsPermission) export(serviceName string,
+	lambdaLogicalCFResourceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
+	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
+	// this.
+	if nil != perm.BasePermission.SourceArn &&
+		perm.BasePermission.sourceArnExpr(cloudformationLogsSourceArnParts...).String() != wildcardArn.String() {
+		logger.WithFields(logrus.Fields{
+			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
+		}).Warn("CloudWatchLogs do not support literal ARN values")
+	}
+	// First thing we need to do is uniqueify the rule names s.t. we prevent
+	// collisions with other stacks.
+	configurationResourceNames := make(map[string]int, 0)
+
+	globallyUniqueFilters := make(map[string]CloudWatchLogsSubscriptionFilter, len(perm.Filters))
+	for eachFilterName, eachFilter := range perm.Filters {
+		filterPrefix := fmt.Sprintf("%s_%s", serviceName, eachFilterName)
+		uniqueFilterName := CloudFormationResourceName(filterPrefix, lambdaLogicalCFResourceName)
+		globallyUniqueFilters[uniqueFilterName] = eachFilter
+
+		// Ensure the configuration resource exists for this log source.  Cache the returned
+		// logical resource name s.t. we can validate we're reusing the same resource
+		configuratorResName, err := ensureConfiguratorLambdaResource(CloudWatchLogsPrincipal,
+			gocf.String("arn:aws:logs:*:*:*"),
+			[]string{},
+			template,
+			S3Bucket,
+			S3Key,
+			logger)
+		if nil != err {
+			return "", err
+		}
+
+		configurationResourceNames[configuratorResName] = 1
+	}
+	if len(configurationResourceNames) > 1 {
+		return "", fmt.Errorf("Internal integrity check failed. Multiple configurators (%d) provisioned for CloudWatchLogs",
+			len(configurationResourceNames))
+	}
+	logger.Info("WTF 6")
+	// Insert the invocation
+	for eachConfigResource := range configurationResourceNames {
+		//////////////////////////////////////////////////////////////////////////////
+		// And finally the custom resource forwarder
+		newResource, err := newCloudFormationResource("Custom::SpartaCloudWatchLogsPermission", logger)
+		if nil != err {
+			return "", err
+		}
+		customResource := newResource.(*cloudformationCloudWatchLogsPermissionResource)
+		customResource.ServiceToken = gocf.GetAtt(eachConfigResource, "Arn")
+		customResource.Filters = globallyUniqueFilters
+		customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+
+		// Name?
+		resourceInvokerName := CloudFormationResourceName("ConfigCloudWatchLogs",
+			lambdaLogicalCFResourceName,
+			perm.BasePermission.SourceAccount)
+		// Add it
+		cfResource := template.AddResource(resourceInvokerName, customResource)
+
+		cfResource.DependsOn = append(cfResource.DependsOn,
+			lambdaLogicalCFResourceName,
+			eachConfigResource)
+	}
+	return "", nil
+}
+
+func (perm CloudWatchLogsPermission) descriptionInfo() (string, string) {
+	return "CloudWatch Logs", "TBD"
+}
+
+//
+// END - CloudWatchLogsPermission
 ///////////////////////////////////////////////////////////////////////////////////

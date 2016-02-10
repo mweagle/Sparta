@@ -26,7 +26,7 @@ var MAXIMUM_RESPAWN_COUNT = 5;
 
 // Handlers that are referenced as part of stack creation, via CustomResource
 // references.
-var PROXIED_MODULES = ['s3', 'sns', 'ses', 'apigateway', 's3Site', 'events'];
+var PROXIED_MODULES = ['s3', 'sns', 'ses', 'apigateway', 's3Site', 'events', 'logs'];
 
 // Handle to the active golang process.
 var golangProcess = null;

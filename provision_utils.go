@@ -30,6 +30,10 @@ func init() {
 		"events:PutTargets",
 		"events:RemoveTargets"}
 
+	PushSourceConfigurationActions[CloudWatchLogsPrincipal] = []string{"logs:DescribeSubscriptionFilters",
+		"logs:DeleteSubscriptionFilter",
+		"logs:PutSubscriptionFilter"}
+
 	PushSourceConfigurationActions[S3Principal] = []string{"s3:GetBucketLocation",
 		"s3:GetBucketNotification",
 		"s3:PutBucketNotification",
@@ -46,7 +50,6 @@ func init() {
 		"sns:GetTopicAttributes",
 		"sns:Subscribe",
 		"sns:Unsubscribe"}
-
 }
 
 func nodeJSHandlerName(jsBaseFilename string) string {

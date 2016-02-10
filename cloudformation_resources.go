@@ -30,39 +30,39 @@ var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
 	"AWS::SQS::Queue":         []string{"Arn", "QueueName"},
 }
 
+type spartaCloudFormationCustomResource struct {
+	gocf.CloudFormationCustomResource
+	ServiceToken *gocf.StringExpr
+}
+
 // cloudFormationAPIGatewayResource is the CustomResource type used to
 // provision an APIGateway
 type cloudFormationAPIGatewayResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
-	API          interface{}
+	spartaCloudFormationCustomResource
+	API interface{}
 }
 
 type cloudFormationS3PermissionResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
+	spartaCloudFormationCustomResource
 	Permission   interface{}
 	LambdaTarget *gocf.StringExpr
 	BucketArn    *gocf.StringExpr
 }
 
 type cloudFormationSNSPermissionResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
+	spartaCloudFormationCustomResource
 	Mode         string
 	TopicArn     *gocf.StringExpr
 	LambdaTarget *gocf.StringExpr
 }
 
 type cloudFormationSESPermissionResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
-	Rules        interface{}
+	spartaCloudFormationCustomResource
+	Rules interface{}
 }
 
 type cloudformationS3SiteManager struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
+	spartaCloudFormationCustomResource
 	TargetBucket *gocf.StringExpr
 	SourceKey    *gocf.StringExpr
 	SourceBucket *gocf.StringExpr
@@ -70,10 +70,15 @@ type cloudformationS3SiteManager struct {
 }
 
 type cloudformationCloudWatchEventsPermissionResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
+	spartaCloudFormationCustomResource
 	LambdaTarget *gocf.StringExpr
 	Rules        map[string]CloudWatchEventsRule
+}
+
+type cloudformationCloudWatchLogsPermissionResource struct {
+	spartaCloudFormationCustomResource
+	LambdaTarget *gocf.StringExpr
+	Filters      interface{}
 }
 
 func customTypeProvider(resourceType string) gocf.ResourceProperties {
@@ -101,6 +106,10 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	case "Custom::SpartaCloudWatchEventsPermission":
 		{
 			return &cloudformationCloudWatchEventsPermissionResource{}
+		}
+	case "Custom::SpartaCloudWatchLogsPermission":
+		{
+			return &cloudformationCloudWatchLogsPermissionResource{}
 		}
 	default:
 		return nil

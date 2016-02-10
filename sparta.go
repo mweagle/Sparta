@@ -43,6 +43,8 @@ const (
 	APIGatewayPrincipal = "apigateway.amazonaws.com"
 	// @enum CloudWatchEvents
 	CloudWatchEventsPrincipal = "events.amazonaws.com"
+	// @enum CloudWatchLogs
+	CloudWatchLogsPrincipal = "logs.amazonaws.com"
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
 	// @enum AWSPrincipal
