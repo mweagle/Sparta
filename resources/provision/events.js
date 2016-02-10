@@ -98,7 +98,6 @@ exports.handler = function(event, context) {
     tasks[0] = _.partial(convergeRuleSetStateDelete, cloudwatchEvents, oldRules);
 
     // Create any new ones?
-    console.log('REQUEST TYPE: ' + event.RequestType);
     if (event.RequestType !== 'Delete') {
       tasks[1] = _.partial(convergeRuleSetStateCreate, cloudwatchEvents, newRules, newLambdaTarget);
     } else {
@@ -108,7 +107,7 @@ exports.handler = function(event, context) {
       responseData.error = e ? e.toString() : undefined;
       var status = e ? cfnResponse.FAILED : cfnResponse.SUCCESS;
       if (!e && response) {
-        responseData.SESResults = response;
+        responseData.CloudWatchEventsResults = response;
       }
       cfnResponse.send(event, context, status, responseData);
     };
