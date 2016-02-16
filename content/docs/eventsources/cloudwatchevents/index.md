@@ -10,14 +10,14 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 # Goal
 
-Assume that we're supposed to write a simple "HelloWorld" CloudWatch event function that has two responsibilities:
+Assume that we're supposed to write a simple "HelloWorld" CloudWatch event function that has two requirements:
 
   * Run every *5 minutes* to provide a heartbeat notification to our alerting system via a logfile entry
   * Log *EC2-related* events for later processing
 
 # Getting Started
 
-Our lambda function is pretty simple:
+Our lambda function is relatively small:
 
 {{< highlight go >}}
 func echoCloudWatchEvent(event *json.RawMessage,

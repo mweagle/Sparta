@@ -77,14 +77,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen home:Sparta googleAnalytics:UA-70794971-1 twitter:mweagle youtube: flattr: github:https://github.com/mweagle bitbucket: facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -116,7 +116,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -162,19 +162,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -194,9 +181,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -321,17 +308,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Source - S3
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
 <li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
@@ -342,10 +329,10 @@
 <li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to S3 events.  This overview is based on the <a href="https://github.com/mweagle/SpartaImager">SpartaImager</a> sample code if you&rsquo;d rather jump to the end result.</p>
@@ -358,7 +345,8 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">func transformImage(event *json.RawMessage,
+<pre><code class="go">
+func transformImage(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger)
@@ -367,24 +355,26 @@
 		&#34;RequestID&#34;: context.AWSRequestID,
 		&#34;Event&#34;:     string(*event),
 	}).Info(&#34;Request received&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="unmarshalling-the-s3-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the S3 Event</h1>
 
 <p>Since the <code>transformImage</code> is expected to be triggered by S3 event changes, we will unmarshal the <code>*json.RawMessage</code> data into an S3-specific event provided by Sparta via:</p>
 
-<pre><code class="go">var lambdaEvent spartaS3.Event
+<pre><code class="go">
+var lambdaEvent spartaS3.Event
 err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
 if err != nil {
   logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+}</code></pre>
 
 
 <p>S3 events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
+<pre><code class="go">
+for _, eachRecord := range lambdaEvent.Records {
   err = nil
   switch eachRecord.EventName {
   case &#34;ObjectCreated:Put&#34;:
@@ -406,7 +396,7 @@ if err != nil {
     logger.Error(&#34;Failed to process event: &#34;, err.Error())
     http.Error(w, err.Error(), http.StatusInternalServerError)
   }
-}</code></pre>
+}</code></pre>
 
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify items which have already been stamped &amp; prevents an &ldquo;event-storm&rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.</p>
@@ -417,7 +407,8 @@ if err != nil {
 
 <p>Our lambda function needs to both <em>Get</em> and <em>Put</em> items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:</p>
 
-<pre><code class="go">// Provision an IAM::Role as part of this application
+<pre><code class="go">
+// Provision an IAM::Role as part of this application
 var iamRole = sparta.IAMRoleDefinition{}
 
 // Setup the ARN that includes all child keys
@@ -427,21 +418,22 @@ iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
     &#34;s3:PutObject&#34;,
   },
   Resource: resourceArn,
-})</code></pre>
+})</code></pre>
 
 
 <p>The <code>s3EventBroadcasterBucket</code> param is the ARN of the S3 bucket that will trigger your lambda function (eg: <em>arn:aws:s3:::MyImagingS3Bucket</em>).</p>
 
 <p>With the IAM Role defined, we can create the Sparta lambda function for <code>transformImage</code>:</p>
 
-<pre><code class="go">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+<pre><code class="go">
+// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
 // transform lambda doesn&#39;t fail early.
 transformOptions := &amp;sparta.LambdaFunctionOptions{
   Description: &#34;Stamp assets in S3&#34;,
   MemorySize:  128,
   Timeout:     30,
 }
-lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)</code></pre>
+lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)</code></pre>
 
 
 <p>It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the <code>iamRole</code> we defined earlier.</p>
@@ -450,7 +442,8 @@ lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)</code></
 
 <p>If we were to deploy this Sparta application, the <code>transformImage</code> function would have the ability to <em>Get</em> and <em>Put</em> back to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<p><pre><code class="go">//////////////////////////////////////////////////////////////////////////////
+<p><pre><code class="go">
+//////////////////////////////////////////////////////////////////////////////
 // S3 configuration
 //
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
@@ -459,7 +452,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   },
   Events: []string{&#34;s3:ObjectCreated:*&#34;, &#34;s3:ObjectRemoved:*&#34;},
 })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 </p>
 
 <p>When <code>Sparta</code> generates the CloudFormation template, it scans for <code>Permission</code> configurations.  For <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">push based sources</a> like S3, Sparta uses that service&rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.</p>
@@ -487,9 +480,9 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

@@ -23,7 +23,7 @@ The `NewLambda` function accepts either a `string` or a `sparta.IAMRoleDefinitio
 The next step is to cross compile the application to a binary that can be executed on an AWS Lambda instance.  The compile flags are:
 
   * **TAGS**:         `-tags lambdabinary`
-  * **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64 GO15VENDOREXPERIMENT=1`
+  * **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64`
 
 The binary is built in the current directory with a _.lambda.amd64_ suffix.  
 

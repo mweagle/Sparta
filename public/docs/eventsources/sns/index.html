@@ -77,14 +77,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
+<body class="map[github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -116,7 +116,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -162,19 +162,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -194,9 +181,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -321,17 +308,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Source - SNS
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
 <li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
@@ -342,10 +329,10 @@
 <li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to SNS events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
@@ -358,7 +345,9 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">func echoSNSEvent(event *json.RawMessage,
+<pre><code class="go">
+
+func echoSNSEvent(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger)
@@ -366,29 +355,32 @@
   logger.WithFields(logrus.Fields{
     &#34;RequestID&#34;: context.AWSRequestID,
   }).Info(&#34;Request received&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="unmarshalling-the-sns-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</h1>
 
 <p>Since the <code>echoSNSEvent</code> is expected to be triggered by SNS notifications, we will unmarshal the <code>*json.RawMessage</code> data into an SNS-specific event provided by Sparta via:</p>
 
-<pre><code class="go">var lambdaEvent spartaSNS.Event
+<pre><code class="go">
+
+var lambdaEvent spartaSNS.Event
 err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
 if err != nil {
   logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+}</code></pre>
 
 
 <p>SNS events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
+<pre><code class="go">
+for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &#34;Subject&#34;: eachRecord.Sns.Subject,
     &#34;Message&#34;: eachRecord.Sns.Message,
   }).Info(&#34;SNS Event&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
@@ -397,19 +389,21 @@ if err != nil {
 
 <p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
+<pre><code class="go">
+lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
 
 
 <h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoSNSEvent</code> function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<pre><code class="go">lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+<pre><code class="go">
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
   BasePermission: sparta.BasePermission{
     SourceArn: snsTopic,
   },
 })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 
 <p>The <code>snsTopic</code> param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).</p>
@@ -436,9 +430,9 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

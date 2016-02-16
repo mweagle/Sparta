@@ -77,14 +77,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta highlight:vs twitter:mweagle youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook:]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen bitbucket: facebook: twitter:mweagle youtube: flattr: github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -116,7 +116,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -162,19 +162,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -194,9 +181,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -321,17 +308,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Source - DynamoDB
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
 <li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
@@ -351,10 +338,10 @@
 </ul></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
@@ -367,7 +354,9 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">func echoDynamoDBEvent(event *json.RawMessage,
+<pre><code class="go">
+
+func echoDynamoDBEvent(event *json.RawMessage,
                        context *sparta.LambdaContext,
                        w http.ResponseWriter,
                       logger *logrus.Logger)
@@ -375,29 +364,32 @@
   logger.WithFields(logrus.Fields{
     &#34;RequestID&#34;: context.AWSRequestID,
   }).Info(&#34;Request received&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="a-href-hugoshortcode-2-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the DynamoDB Event</a></h1>
 
 <p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>*json.RawMessage</code> data into an DynamoDB-specific event provided by Sparta via:</p>
 
-<pre><code class="go">var lambdaEvent spartaDynamoDB.Event
+<pre><code class="go">
+
+var lambdaEvent spartaDynamoDB.Event
 err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
 if err != nil {
   logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+}</code></pre>
 
 
 <p>DynamoDB events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
+<pre><code class="go">
+for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &#34;Keys&#34;:     eachRecord.DynamoDB.Keys,
     &#34;NewImage&#34;: eachRecord.DynamoDB.NewImage,
   }).Info(&#34;DynamoDb Event&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
@@ -406,20 +398,22 @@ if err != nil {
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
+<pre><code class="go">
+lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
 
 
 <h1 id="event-source-mappings:d680e8a854a7cbad6d490c445cba2eba">Event Source Mappings</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoDynamoDBEvent</code> function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">EventSourceMappings</a>:</p>
 
-<pre><code class="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
+<pre><code class="go">
+  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
     EventSourceArn:   aws.String(dynamoTestStream),
     StartingPosition: aws.String(&#34;TRIM_HORIZON&#34;),
     BatchSize:        aws.Int64(10),
     Enabled:          aws.Bool(true),
   })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 
 <p>The <code>dynamoTestStream</code> param is the ARN of the Dynamo stream that that your lambda function will <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">poll</a> (eg: <em>arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869</em>).</p>
@@ -468,9 +462,9 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

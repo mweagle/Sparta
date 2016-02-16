@@ -35,6 +35,7 @@ push:
 
 edit: clean
 	# Used for localhost editing
+	# Windows must include --renderToDisk
 	hugo server --watch --verbose
 
 publish: build commit push

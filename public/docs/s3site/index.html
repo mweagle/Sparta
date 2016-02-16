@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
+<body class="map[name:lumen home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,17 +306,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>S3 Static Site with CORS
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#create-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</a></li>
 <li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
@@ -338,10 +325,10 @@
 <li><a href="#discover:d680e8a854a7cbad6d490c445cba2eba">Discover</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>Sparta supports provisioning an S3-backed <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website</a> as part of provisioning.  We&rsquo;ll walk through provisioning a minimal <a href="http://getbootstrap.com">Bootstrap</a> website that accesses API Gateway lambda functions provisioned by a single service in this example.</p>
@@ -352,13 +339,14 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<pre><code class="go">func helloWorld(event *json.RawMessage,
+<pre><code class="go">
+func helloWorld(event *json.RawMessage,
 	context *sparta.LambdaContext,
 	w http.ResponseWriter,
 	logger *logrus.Logger) {
 	logger.Info(&#34;Hello World: &#34;, string(*event))
 	fmt.Fprint(w, string(*event))
-}</code></pre>
+}</code></pre>
 
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
@@ -367,19 +355,23 @@
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
-<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
+<pre><code class="go">
+apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
 
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
-<pre><code class="go">// Enable CORS s.t. the S3 site can access the resources
-apiGateway.CORSEnabled = true</code></pre>
+<pre><code class="go">
+// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true</code></pre>
 
 
 <p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
 
-<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+<pre><code class="go">
+
+func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
 
@@ -391,7 +383,7 @@ apiGateway.CORSEnabled = true</code></pre>
 		}
 	}
 	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</h1>
@@ -409,7 +401,9 @@ typically points to a directory, which will be:</p>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
-<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
+<pre><code class="go">
+
+////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
 	// Register the function with the API Gateway
@@ -427,19 +421,20 @@ func main() {
 		spartaLambdaFunctions(apiGateway),
 		apiGateway,
 		s3Site)
-}</code></pre>
+}</code></pre>
 
 
 <p>which can be provisioned using the standard <a href="/docs/commandline">command line</a> option.</p>
 
 <p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
 
-<p><pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+<p><pre><code class="nohighlight">
+INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
 INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
 INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
 INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114</code></pre>
+INFO[0114] Elapsed time        Seconds=114</code></pre>
 </p>
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
@@ -453,15 +448,17 @@ of the S3 bucket.</p>
 
 <ol>
 <li><strong>sparta_apigateway.js</strong>
-<pre><code class="javascript">(function(){ window.SpartaAPIGateway = JSON.parse(&#39;{&#34;APIGatewayURL&#34;:{&#34;Description&#34;:&#34;API Gateway URL&#34;,&#34;Value&#34;:&#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;}}&#39;)}());</code></pre>
+<pre><code class="javascript">
+(function(){ window.SpartaAPIGateway = JSON.parse(&#39;{&#34;APIGatewayURL&#34;:{&#34;Description&#34;:&#34;API Gateway URL&#34;,&#34;Value&#34;:&#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;}}&#39;)}());</code></pre>
 </li>
 <li><strong>sparta_apigateway.json</strong>
-<pre><code class="json">{
+<pre><code class="json">
+{
   &#34;APIGatewayURL&#34;: {
     &#34;Description&#34;: &#34;API Gateway URL&#34;,
     &#34;Value&#34;: &#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;
   }
-}</code></pre>
+}</code></pre>
 </li>
 </ol>
 
@@ -470,9 +467,9 @@ of the S3 bucket.</p>
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

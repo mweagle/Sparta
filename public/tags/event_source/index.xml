@@ -8,18 +8,50 @@
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
-    <lastBuildDate>Thu, 28 Jan 2016 16:36:47 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 16 Feb 2016 06:40:36 +0000</lastBuildDate>
     <atom:link href="http://gosparta.io/tags/event_source/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Event Source - CloudWatch Logs</title>
       <link>http://gosparta.io/docs/eventsources/cloudwatchlogs/</link>
-      <pubDate>Thu, 28 Jan 2016 16:36:47 +0000</pubDate>
+      <pubDate>Tue, 16 Feb 2016 06:40:36 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
       <guid>http://gosparta.io/docs/eventsources/cloudwatchlogs/</guid>
-      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
+      <description>
 
-&lt;p&gt;TODO: CloudWatch Logs source documentation&lt;/p&gt;
+&lt;p&gt;TODO: Finish CloudWatch Logs docs&lt;/p&gt;
+
+&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to  &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Logs&lt;/a&gt;.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
+
+&lt;h1 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h1&gt;
+
+&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued by the other lambda functions in our Sparta-based microservice.&lt;/p&gt;
+
+&lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
+
+&lt;p&gt;Our lambda function is relatively short:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func echoCloudWatchLogs(event *json.RawMessage,
+                        context *sparta.LambdaContext,
+                        w http.ResponseWriter,
+                        logger *logrus.Logger) {
+
+  // Note that we&amp;#39;re not going to log in this lambda function, as
+  // we don&amp;#39;t want to self DDOS
+	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the log message other than log it.&lt;/p&gt;
+
+&lt;h1 id=&#34;spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
+
+&lt;h1 id=&#34;add-permission:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Add Permission&lt;/h1&gt;
+
+&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
+
+&lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
 </description>
     </item>
     
@@ -47,7 +79,7 @@
 
 &lt;h1 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h1&gt;
 
-&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two responsibilities:&lt;/p&gt;
+&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Run every &lt;em&gt;5 minutes&lt;/em&gt; to provide a heartbeat notification to our alerting system via a logfile entry&lt;/li&gt;
@@ -56,9 +88,10 @@
 
 &lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
 
-&lt;p&gt;Our lambda function is pretty simple:&lt;/p&gt;
+&lt;p&gt;Our lambda function is relatively small:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoCloudWatchEvent(event *json.RawMessage,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func echoCloudWatchEvent(event *json.RawMessage,
                         context *sparta.LambdaContext,
                         w http.ResponseWriter,
                         logger *logrus.Logger) {
@@ -74,7 +107,7 @@
 		&amp;#34;Configuration&amp;#34;: config,
 	}).Info(&amp;#34;Request received&amp;#34;)
 	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the event other than log it.&lt;/p&gt;
@@ -85,16 +118,18 @@
 
 &lt;p&gt;Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func appendCloudWatchEventHandler(api *sparta.API,
                                   lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The next step is to add a &lt;code&gt;CloudWatchEventsPermission&lt;/code&gt; value that includes the two rule triggers.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Our two rules will be inserted into the &lt;code&gt;Rules&lt;/code&gt; map in the next steps.&lt;/p&gt;
@@ -103,9 +138,10 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 &lt;p&gt;Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
   ScheduleExpression: &amp;#34;rate(5 minutes)&amp;#34;,
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;code&gt;ScheduleExpression&lt;/code&gt; value can either be a &lt;em&gt;rate&lt;/em&gt; or a &lt;em&gt;cron&lt;/em&gt; &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html&#34;&gt;expression&lt;/a&gt;.  The map keyname is used when adding the &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property&#34;&gt;rule&lt;/a&gt; during stack provisioning.&lt;/p&gt;
@@ -114,12 +150,13 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 &lt;p&gt;The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&amp;rsquo;ll add a second &lt;code&gt;Rule&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
   EventPattern: map[string]interface{}{
     &amp;#34;source&amp;#34;:      []string{&amp;#34;aws.ec2&amp;#34;},
     &amp;#34;detail-type&amp;#34;: []string{&amp;#34;EC2 Instance State-change Notification&amp;#34;},
   },
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The EC2 event pattern is the &lt;strong&gt;Go&lt;/strong&gt; JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.&lt;/p&gt;
@@ -135,13 +172,15 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 &lt;p&gt;With the two rules configured, the final step is to add the &lt;code&gt;sparta.CloudWatchPermission&lt;/code&gt; to our &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; value:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Our entire function is therefore:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func appendCloudWatchEventHandler(api *sparta.API,
                                   lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
   lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
@@ -160,7 +199,7 @@ return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
   lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
 
   return append(lambdaFunctions, lambdaFn)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
@@ -223,7 +262,9 @@ return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoDynamoDBEvent(event *json.RawMessage,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+
+func echoDynamoDBEvent(event *json.RawMessage,
                        context *sparta.LambdaContext,
                        w http.ResponseWriter,
                       logger *logrus.Logger)
@@ -231,29 +272,32 @@ return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
   logger.WithFields(logrus.Fields{
     &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
   }).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;a-href-hugoshortcode-2-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;&lt;a href=&#34;#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the DynamoDB Event&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; is expected to be triggered by DynamoDB events, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an DynamoDB-specific event provided by Sparta via:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaDynamoDB.Event
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+
+var lambdaEvent spartaDynamoDB.Event
 err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
 if err != nil {
   logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;DynamoDB events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &amp;#34;Keys&amp;#34;:     eachRecord.DynamoDB.Keys,
     &amp;#34;NewImage&amp;#34;: eachRecord.DynamoDB.NewImage,
   }).Info(&amp;#34;DynamoDb Event&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
@@ -262,20 +306,22 @@ if err != nil {
 
 &lt;p&gt;With the core of the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114&#34;&gt;appendDynamoDBLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;event-source-mappings:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Mappings&lt;/h1&gt;
 
 &lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoDynamoDBEvent&lt;/code&gt; function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources&#34;&gt;EventSourceMappings&lt;/a&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
     EventSourceArn:   aws.String(dynamoTestStream),
     StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
     BatchSize:        aws.Int64(10),
     Enabled:          aws.Bool(true),
   })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;code&gt;dynamoTestStream&lt;/code&gt; param is the ARN of the Dynamo stream that that your lambda function will &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;poll&lt;/a&gt; (eg: &lt;em&gt;arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869&lt;/em&gt;).&lt;/p&gt;
@@ -341,7 +387,8 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoKinesisEvent(event *json.RawMessage,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func echoKinesisEvent(event *json.RawMessage,
                       context *sparta.LambdaContext,
                       w http.ResponseWriter,
                       logger *logrus.Logger)
@@ -349,12 +396,15 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
   logger.WithFields(logrus.Fields{
 		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
 		&amp;#34;Event&amp;#34;:     string(*event),
-	}).Info(&amp;#34;Request received&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+	}).Info(&amp;#34;Request received&amp;#34;)
+&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;For this sample all we&amp;rsquo;re going to do is unmarshal the Kinesis &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually&#34;&gt;event&lt;/a&gt; to a Sparta &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event&#34;&gt;kinesis event&lt;/a&gt; and log the id to CloudWatch Logs:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaKinesis.Event
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+
+  var lambdaEvent spartaKinesis.Event
   err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
   if err != nil {
     logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
@@ -365,7 +415,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
       &amp;#34;EventID&amp;#34;: eachRecord.EventID,
     }).Info(&amp;#34;Kinesis Event&amp;#34;)
   }
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;With the function defined let&amp;rsquo;s register it with Sparta.&lt;/p&gt;
@@ -374,7 +424,8 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;First we wrap the &lt;strong&gt;Go&lt;/strong&gt; function in a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; struct:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Since our lambda function doesn&amp;rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (&lt;code&gt;sparta.IAMRoleDefinition{}&lt;/code&gt;).&lt;/p&gt;
@@ -383,12 +434,13 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Then last step is to configure our AWS Lambda function with Kinesis as the &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;EventSource&lt;/a&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;amp;lambda.CreateEventSourceMappingInput{
   EventSourceArn:   aws.String(kinesisTestStream),
   StartingPosition: aws.String(&amp;#34;TRIM_HORIZON&amp;#34;),
   BatchSize:        aws.Int64(100),
   Enabled:          aws.Bool(true),
-})&lt;/code&gt;&lt;/pre&gt;
+})&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;code&gt;kinesisTestStream&lt;/code&gt; parameter is the Kinesis stream ARN (eg: &lt;em&gt;arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream&lt;/em&gt;) whose events will trigger lambda execution.&lt;/p&gt;
@@ -431,7 +483,8 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func transformImage(event *json.RawMessage,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func transformImage(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger)
@@ -440,24 +493,26 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
 		&amp;#34;Event&amp;#34;:     string(*event),
 	}).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;unmarshalling-the-s3-event:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the S3 Event&lt;/h1&gt;
 
 &lt;p&gt;Since the &lt;code&gt;transformImage&lt;/code&gt; is expected to be triggered by S3 event changes, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an S3-specific event provided by Sparta via:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaS3.Event
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+var lambdaEvent spartaS3.Event
 err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
 if err != nil {
   logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;S3 events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+for _, eachRecord := range lambdaEvent.Records {
   err = nil
   switch eachRecord.EventName {
   case &amp;#34;ObjectCreated:Put&amp;#34;:
@@ -479,7 +534,7 @@ if err != nil {
     logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
     http.Error(w, err.Error(), http.StatusInternalServerError)
   }
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L57&#34;&gt;stampImage&lt;/a&gt; function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple &lt;strong&gt;xformed_&lt;/strong&gt; keyname prefix to identify items which have already been stamped &amp;amp; prevents an &amp;ldquo;event-storm&amp;rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.&lt;/p&gt;
@@ -490,7 +545,8 @@ if err != nil {
 
 &lt;p&gt;Our lambda function needs to both &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Provision an IAM::Role as part of this application
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+// Provision an IAM::Role as part of this application
 var iamRole = sparta.IAMRoleDefinition{}
 
 // Setup the ARN that includes all child keys
@@ -500,21 +556,22 @@ iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
     &amp;#34;s3:PutObject&amp;#34;,
   },
   Resource: resourceArn,
-})&lt;/code&gt;&lt;/pre&gt;
+})&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt; param is the ARN of the S3 bucket that will trigger your lambda function (eg: &lt;em&gt;arn:aws:s3:::MyImagingS3Bucket&lt;/em&gt;).&lt;/p&gt;
 
 &lt;p&gt;With the IAM Role defined, we can create the Sparta lambda function for &lt;code&gt;transformImage&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
 // transform lambda doesn&amp;#39;t fail early.
 transformOptions := &amp;amp;sparta.LambdaFunctionOptions{
   Description: &amp;#34;Stamp assets in S3&amp;#34;,
   MemorySize:  128,
   Timeout:     30,
 }
-lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code&gt;&lt;/pre&gt;
+lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the &lt;code&gt;iamRole&lt;/code&gt; we defined earlier.&lt;/p&gt;
@@ -523,7 +580,8 @@ lambdaFn := sparta.NewLambda(iamRole, transformImage, transformOptions)&lt;/code
 
 &lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;transformImage&lt;/code&gt; function would have the ability to &lt;em&gt;Get&lt;/em&gt; and &lt;em&gt;Put&lt;/em&gt; back to the &lt;code&gt;s3EventBroadcasterBucket&lt;/code&gt;, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;//////////////////////////////////////////////////////////////////////////////
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+//////////////////////////////////////////////////////////////////////////////
 // S3 configuration
 //
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
@@ -532,7 +590,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   },
   Events: []string{&amp;#34;s3:ObjectCreated:*&amp;#34;, &amp;#34;s3:ObjectRemoved:*&amp;#34;},
 })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
 &lt;p&gt;When &lt;code&gt;Sparta&lt;/code&gt; generates the CloudFormation template, it scans for &lt;code&gt;Permission&lt;/code&gt; configurations.  For &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html&#34;&gt;push based sources&lt;/a&gt; like S3, Sparta uses that service&amp;rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.&lt;/p&gt;
@@ -846,7 +904,9 @@ for _, eachRecord := range lambdaEvent.Records {
 
 &lt;p&gt;We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoSNSEvent(event *json.RawMessage,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+
+func echoSNSEvent(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger)
@@ -854,29 +914,32 @@ for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &amp;#34;RequestID&amp;#34;: context.AWSRequestID,
   }).Info(&amp;#34;Request received&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;unmarshalling-the-sns-event:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unmarshalling the SNS Event&lt;/h1&gt;
 
 &lt;p&gt;Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; is expected to be triggered by SNS notifications, we will unmarshal the &lt;code&gt;*json.RawMessage&lt;/code&gt; data into an SNS-specific event provided by Sparta via:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent spartaSNS.Event
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+
+var lambdaEvent spartaSNS.Event
 err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
 if err != nil {
   logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;SNS events are delivered in batches, via lists of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord&#34;&gt;EventRecords&lt;/a&gt;, so we&amp;rsquo;ll need to process each record.&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;for _, eachRecord := range lambdaEvent.Records {
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &amp;#34;Subject&amp;#34;: eachRecord.Sns.Subject,
     &amp;#34;Message&amp;#34;: eachRecord.Sns.Message,
   }).Info(&amp;#34;SNS Event&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
+}&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;That&amp;rsquo;s enough to get the data into CloudWatch Logs.&lt;/p&gt;
@@ -885,19 +948,21 @@ if err != nil {
 
 &lt;p&gt;With the core of the &lt;code&gt;echoSNSEvent&lt;/code&gt; complete, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is performed by the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79&#34;&gt;appendSNSLambda&lt;/a&gt; function.  Since the &lt;code&gt;echoSNSEvent&lt;/code&gt; function doesn&amp;rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;h1 id=&#34;event-source-registration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Source Registration&lt;/h1&gt;
 
 &lt;p&gt;If we were to deploy this Sparta application, the &lt;code&gt;echoSNSEvent&lt;/code&gt; function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html&#34;&gt;Permissions&lt;/a&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
   BasePermission: sparta.BasePermission{
     SourceArn: snsTopic,
   },
 })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
+lambdaFunctions = append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;The &lt;code&gt;snsTopic&lt;/code&gt; param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).&lt;/p&gt;

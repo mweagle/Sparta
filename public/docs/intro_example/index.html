@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1238 
+    "wordCount":  1262 
   }
 </script>
 
@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[facebook: twitter:mweagle youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus: highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta]">
+<body class="map[twitter:mweagle youtube: flattr: github:https://github.com/mweagle bitbucket: facebook: linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen home:Sparta googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,17 +306,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Sparta Application
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#preconditions:d680e8a854a7cbad6d490c445cba2eba">Preconditions</a></li>
 <li><a href="#lambda-definition:d680e8a854a7cbad6d490c445cba2eba">Lambda Definition</a></li>
@@ -343,18 +330,18 @@
 <li><a href="#next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
-<p>Sparta is a framework for developing and deploying <strong>Go</strong> based AWS Lambda functions.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
+<p>Sparta is a framework for developing and deploying <strong>Go</strong> based AWS Lambda-backed microservices.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
 
 <div class="panel panel-warning">
 <div class="panel-heading">Pricing</div>
  <div class="panel-body">
-   Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.
+   Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.  It's likely that you'll be well under the free tier, but secondary AWS resources provisioned during development (eg, Kinesis streams) are not pay-per-invocation.
  </div>
 </div>
 
@@ -368,12 +355,15 @@
 
 <p>The first place to start is with the lambda function definition.</p>
 
-<pre><code class="go">func helloWorld(event *json.RawMessage,
+<pre><code class="go">
+
+func helloWorld(event *json.RawMessage,
                 context *sparta.LambdaContext,
                 w http.ResponseWriter,
                 logger *logrus.Logger) {
   fmt.Fprintf(w, &#34;Hello World!&#34;)
-}</code></pre>
+}
+</code></pre>
 
 
 <p>All Sparta lambda functions have the same function signature that is composed of:</p>
@@ -389,18 +379,20 @@
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
-<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
+<pre><code class="go">
+
+var lambdaFunctions []*sparta.LambdaAWSInfo
 
 helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
                                 helloWorld,
                                 nil)
-lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 
 <p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code>.  <code>NewLambda</code> accepts three parameters:</p>
 
 <ul>
-<li><code>string|IAMRoleDefinition</code> : Either a string literal that refers to a pre-existing IAM role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+<li><code>string|IAMRoleDefinition</code> : <em>Either</em> a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
 
 <ul>
 <li>In this example, we&rsquo;re defining a new <code>IAMRoleDefinition</code> as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&rsquo;t access any additional AWS services that&rsquo;s all we need.</li>
@@ -413,11 +405,12 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
 
-<pre><code class="go">sparta.Main(&#34;MyHelloWorldStack&#34;,
+<pre><code class="go">
+sparta.Main(&#34;MyHelloWorldStack&#34;,
             &#34;Simple Sparta application that demonstrates core functionality&#34;,
             lambdaFunctions,
             nil,
-            nil)</code></pre>
+            nil)</code></pre>
 
 
 <p><code>sparta.Main</code> accepts five parameters:</p>
@@ -448,7 +441,8 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>Putting everything together, and including the necessary imports, we have:</p>
 
-<pre><code class="go">// File: main.go
+<pre><code class="go">
+// File: main.go
 package main
 
 import (
@@ -476,14 +470,15 @@ func main() {
     lambdaFunctions,
     nil,
     nil)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</h1>
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
-<pre><code class="nohighlight">go run main.go --level info describe --out ./graph.html
+<pre><code class="nohighlight">
+go run main.go --level info describe --out ./graph.html
 
 INFO[0000] Welcome to Sparta                             Option=describe TS=2016-01-21T14:59:29Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
@@ -496,14 +491,15 @@ INFO[0009] Registering Sparta function           FunctionName=main.helloWorld
 INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=S3Bucket
 INFO[0009] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack251171669
 INFO[0009] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-714035529a63e80d3b2f756bd51e68c58ccd9a5e-cf.json
-INFO[0009] Elapsed time                          Seconds=9</code></pre>
+INFO[0009] Elapsed time                          Seconds=9</code></pre>
 
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
-<p><pre><code class="nohighlight">go run main.go provision --s3Bucket $S3_BUCKET
+<p><pre><code class="nohighlight">
+go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                      Option=provision TS=2016-01-21T14:57:13Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
@@ -524,7 +520,7 @@ INFO[0058] Stack output                           Description=Sparta Home Key=Sp
 INFO[0058] Stack output                           Description=Sparta Version Key=SpartaVersion Value=0.2.0
 INFO[0058] Stack provisioned                      CreationTime=2016-01-21 14:57:26.859 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56 StackName=MyHelloWorldStack
 INFO[0058] Elapsed time                           Seconds=58
-}</code></pre>
+}</code></pre>
 </p>
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
@@ -547,14 +543,15 @@ INFO[0058] Elapsed time                           Seconds=58
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
-<p><pre><code class="nohighlight">go run main.go delete
+<p><pre><code class="nohighlight">
+go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete TS=2016-01-21T15:00:40Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
 INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
 INFO[0000] Delete request submitted                      Response={
 
-}</code></pre>
+}</code></pre>
 </p>
 
 <h1 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h1>
@@ -568,9 +565,9 @@ INFO[0000] Delete request submitted                      Response={
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

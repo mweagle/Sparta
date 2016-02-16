@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube:]">
+<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen home:Sparta facebook: twitter:mweagle youtube: flattr: github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,17 +306,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>API Gateway - Slack SlashCommand
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></li>
 <li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
@@ -341,10 +328,10 @@
 <li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p><img src="/images/apigateway/slack/slack_rgb.png" alt="SlashLogo" /></p>
@@ -357,7 +344,9 @@
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
-<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
+<pre><code class="go">
+
+////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
 func helloSlackbot(event *json.RawMessage,
@@ -411,7 +400,7 @@ func helloSlackbot(event *json.RawMessage,
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	fmt.Fprint(w, string(responseBody))
-}</code></pre>
+}</code></pre>
 
 
 <p>There are a couple of things to note in this code:</p>
@@ -452,8 +441,9 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
-<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></pre>
+<pre><code class="go">
+apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></pre>
 
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
@@ -462,7 +452,8 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
-<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+<pre><code class="go">
+func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloSlackbot, nil)
 
@@ -474,7 +465,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 		}
 	}
 	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <p>A few items to note here:</p>
@@ -489,7 +480,8 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
-<pre><code class="go">func main() {
+<pre><code class="go">
+func main() {
 	// Register the function with the API Gateway
 	apiStage := sparta.NewStage(&#34;v1&#34;)
 	apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)
@@ -500,19 +492,22 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 		spartaLambdaFunctions(apiGateway),
 		apiGateway,
 		nil)
-}</code></pre>
+}
+</code></pre>
 
 
 <p>and provision the service:</p>
 
-<p><pre><code class="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
+<p><pre><code class="nohighlight">
+S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
 </p>
 
 <p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
 
-<p><pre><code class="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
+<p><pre><code class="nohighlight">
+INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
 INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
+INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
 </p>
 
 <h1 id="configure-slack:d680e8a854a7cbad6d490c445cba2eba">Configure Slack</h1>
@@ -563,7 +558,8 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">go run slack.go delete</code></pre>
+<p><pre><code class="nohighlight">
+go run slack.go delete</code></pre>
 </p>
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
@@ -573,9 +569,9 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

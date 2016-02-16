@@ -25,8 +25,8 @@
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
-<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:published_time" content="2016-02-16T05:36:20Z" />
+<meta property="og:article:modified_time" content="2016-02-16T05:36:20Z" />
 
   
     
@@ -53,9 +53,9 @@
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2015-11-29",
+    "datePublished": "2016-02-16",
     "description": "",
-    "wordCount":  70 
+    "wordCount":  118 
   }
 </script>
 
@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,43 +306,51 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Sources - Overview
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    
-    </div>
-    <hr />
+      <hr />
+      <div id="toc">
+      
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   <p>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.</p>
 
-<p>There are several <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> available:</p>
+<p>There are several <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> available.  They are grouped into Pull and Push types.  Pull based models use <code>sparta.EventSourceMapping</code> values, as the trigger configuration is stored in the AWS Lambda service.  Push based types use service specific <code>sparta.*Permission</code> types to denote the fact that the trigger logic is configured in the remote service.</p>
+
+<ul>
+<li>Pull Based
+
+<ul>
+<li><a href="/docs/eventsources/dynamodb">DynamoDB</a></li>
+<li><a href="/docs/eventsources/kinesis">Kinesis</a></li>
+</ul></li>
+<li>Pushed Based
 
 <ul>
 <li><a href="/docs/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
 <li><a href="/docs/eventsources/cloudwatchevents">CloudWatch Events</a></li>
-<li><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></li>
 <li><a href="/docs/eventsources/cognito">Cognito</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/dynamodb">DynamoDB</a></li>
-<li><a href="/docs/eventsources/kinesis">Kinesis</a></li>
 <li><a href="/docs/eventsources/s3">S3</a></li>
 <li><a href="/docs/eventsources/ses">SES</a></li>
 <li><a href="/docs/eventsources/sns">SNS</a></li>
+</ul></li>
 </ul>
 
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

@@ -1,19 +1,19 @@
 {{ partial "head" . }}
-<div class="container">
-<div class="row">
-  <div class="col-md-2">{{ partial "sparta/toc.html" . }}</div>
-  <div class="col-md-10">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2">{{ partial "sparta/toc.html" . }}</div>
+    <div class="col-md-10">
 
-    {{ .Render "single.hat" }}
-    <hr />
-    <div id="toc">
-    {{ .TableOfContents }}
+      {{ .Render "single.hat" }}
+      <hr />
+      <div id="toc">
+      {{ .TableOfContents }}
+      </div>
+      <hr />
+
+      {{ .Render "single.content" }}
+      {{ .Render "single.boot" }}
     </div>
-    <hr />
-
-    {{ .Render "single.content" }}
-    {{ .Render "single.boot" }}
   </div>
-</div>
 </div>
 {{ partial "foot" . }}

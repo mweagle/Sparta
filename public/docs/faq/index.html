@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  278 
+    "wordCount":  349 
   }
 </script>
 
@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta facebook: twitter:mweagle youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen bitbucket: facebook: twitter:mweagle youtube: flattr: github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,47 +306,58 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>FAQ
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#development:d680e8a854a7cbad6d490c445cba2eba">Development</a>
 <ul>
-<li><a href="#faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</a></li>
+<li><a href="#what-flags-are-defined-during-aws-ami-compilation:d680e8a854a7cbad6d490c445cba2eba">What flags are defined during AWS AMI compilation:</a></li>
+<li><a href="#how-can-i-test-locally:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</a></li>
 </ul></li>
 <li><a href="#event-sources-ses:d680e8a854a7cbad6d490c445cba2eba">Event Sources - SES</a>
 <ul>
-<li><a href="#sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</a></li>
-<li><a href="#sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</a></li>
+<li><a href="#where-does-the-spartaruleset-come-from:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</a></li>
+<li><a href="#why-does-provision-not-always-enable-the-spartaruleset:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</a></li>
 </ul></li>
 <li><a href="#operations:d680e8a854a7cbad6d490c445cba2eba">Operations</a>
 <ul>
-<li><a href="#opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
-<li><a href="#opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
-<li><a href="#opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</a></li>
-<li><a href="#opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
+<li><a href="#where-can-i-view-my-function-s-logger-output:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
+<li><a href="#where-can-i-view-sparta-s-golang-spawn-metrics:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
+<li><a href="#how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</a></li>
+<li><a href="#how-do-i-forward-additional-metrics:d680e8a854a7cbad6d490c445cba2eba">How do I forward additional metrics?</a></li>
+<li><a href="#how-do-i-setup-alerts-on-additional-metrics:d680e8a854a7cbad6d490c445cba2eba">How do I setup alerts on additional metrics?</a></li>
+<li><a href="#how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
 </ul></li>
+<li><a href="#future:d680e8a854a7cbad6d490c445cba2eba">Future</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <h1 id="development:d680e8a854a7cbad6d490c445cba2eba">Development</h1>
 
 <hr />
 
-<h2 id="faq1:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</h2>
+<h2 id="what-flags-are-defined-during-aws-ami-compilation:d680e8a854a7cbad6d490c445cba2eba">What flags are defined during AWS AMI compilation:</h2>
+
+<ul>
+<li><strong>TAGS</strong>:         <code>-tags lambdabinary</code></li>
+<li><strong>ENVIRONMENT</strong>:  <code>GOOS=linux GOARCH=amd64</code></li>
+</ul>
+
+<h2 id="how-can-i-test-locally:d680e8a854a7cbad6d490c445cba2eba">How can I test locally?</h2>
 
 <p>Local testing is available via the <a href="/docs/local_testing/">explore</a> command.</p>
 
@@ -367,13 +365,13 @@
 
 <hr />
 
-<h2 id="sesfaq1:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</h2>
+<h2 id="where-does-the-spartaruleset-come-from:d680e8a854a7cbad6d490c445cba2eba">Where does the <em>SpartaRuleSet</em> come from?</h2>
 
 <p>SES only permits a single <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html">active receipt rule</a>.  Additionally, it&rsquo;s possible that multiple Sparta-based services are handing different SES recipients.</p>
 
 <p>All Sparta-based services share the <em>SpartaRuleSet</em> SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html">ReceiptRule</a>.</p>
 
-<h2 id="sesfaq2:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h2>
+<h2 id="why-does-provision-not-always-enable-the-spartaruleset:d680e8a854a7cbad6d490c445cba2eba">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h2>
 
 <p>Initial <em>SpartaRuleSet</em> will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&rsquo;t attempt to override the user setting.</p>
 
@@ -381,13 +379,13 @@
 
 <hr />
 
-<h2 id="opsfaq1:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</h2>
+<h2 id="where-can-i-view-my-function-s-logger-output:d680e8a854a7cbad6d490c445cba2eba">Where can I view my function&rsquo;s <code>*logger</code> output?</h2>
 
 <p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
 
 <p>The CloudWatch log group name includes a sanitized version of your <strong>Go</strong> function name &amp; owning service name.</p>
 
-<h2 id="opsfaq2:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</h2>
+<h2 id="where-can-i-view-sparta-s-golang-spawn-metrics:d680e8a854a7cbad6d490c445cba2eba">Where can I view Sparta&rsquo;s golang spawn metrics?</h2>
 
 <p>Visit the <a href="https://aws.amazon.com/cloudwatch/">CloudWatch Metrics</a> AWS console page and select the <code>Sparta/{SERVICE_NAME}</code> namespace:</p>
 
@@ -400,20 +398,30 @@
 <li><code>ProcessReused</code>: An existing <strong>Go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
 </ul>
 
-<h2 id="opsfaq3:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h2>
+<h2 id="how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application:d680e8a854a7cbad6d490c445cba2eba">How can I include additional AWS resources as part of my Sparta application?</h2>
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
 
-<h2 id="opsfaq4:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h2>
+<h2 id="how-do-i-forward-additional-metrics:d680e8a854a7cbad6d490c445cba2eba">How do I forward additional metrics?</h2>
+
+<p>Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics <code>putMetric</code> privileges.  Your lambda code can call <code>putMetric</code> with application-specific data.</p>
+
+<h2 id="how-do-i-setup-alerts-on-additional-metrics:d680e8a854a7cbad6d490c445cba2eba">How do I setup alerts on additional metrics?</h2>
+
+<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with the needed <a href="https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm">AWS::CloudWatch::Alarm</a> values.  Use <a href="https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName">CloudFormationResourceName(prefix, &hellip;parts)</a> to help generate unique resource names.</p>
+
+<h2 id="how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources:d680e8a854a7cbad6d490c445cba2eba">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h2>
 
 <p>The list of registered output provider types is defined by <code>cloudformationTypeMapDiscoveryOutputs</code> in <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go">cloudformation_resources.go</a>.  See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types Reference</a> for information on interpreting the values.</p>
 
+<h1 id="future:d680e8a854a7cbad6d490c445cba2eba">Future</h1>
+
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

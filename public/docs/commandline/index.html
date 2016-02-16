@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen home:Sparta googleAnalytics:UA-70794971-1 twitter:mweagle youtube: flattr: github:https://github.com/mweagle bitbucket: facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,17 +306,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Command Line Options
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
 <li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
@@ -338,24 +325,26 @@
 <li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<pre><code class="go">sparta.Main(&#34;MyStack&#34;,
+<pre><code class="go">
+sparta.Main(&#34;MyStack&#34;,
   &#34;Simple Sparta application&#34;,
   myLambdaFunctions,
   nil,
-  nil)</code></pre>
+  nil)</code></pre>
 
 
 <p>The application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<pre><code class="nohighlight">go run application.go --help
+<pre><code class="nohighlight">
+go run application.go --help
 Usage: application [global options] &lt;verb&gt; [verb options]
 
 Global options:
@@ -373,7 +362,7 @@ Verbs:
     explore:
         -p, --port     Alternative port for HTTP binding (default=9999)
     provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
+        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
 
 
 <h1 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h1>
@@ -403,9 +392,9 @@ Verbs:
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

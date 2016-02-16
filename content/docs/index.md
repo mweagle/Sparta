@@ -1,22 +1,23 @@
 +++
 author = "Matt Weagle"
-date = "2015-11-29T06:50:17"
+date = "2016-02-16T05:36:20Z"
 title = "Overview"
 type = "doc"
 +++
 
-# Sparta Terms and Concepts
+This is a brief overview of Sparta's core concepts.  Additional information regarding specific features is available from the menu.
 
-This is a brief overview of the fundamental concepts behind Sparta.  Additional information regarding specific features is available from the menu.
+# Terms and Concepts
 
-At a high level, Sparta transforms a single **Go** binary's registered lambda functions into a set of AWS Lambda functions that are independently addressable.  Additional important terms and concepts are listed below.
+At a high level, Sparta transforms a single **Go** binary's registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).
 
+The table below summarizes some of the primary Sparta terminology.
 
 <div class="list-group">
   <!-- Service Name -->
   <div class="list-group-item">
     <h3 class="list-group-item-heading">Service Name</h3>
-    <h5 class="list-group-item-text large">Sparta applications are deployed as a single unit, using <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application's <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a> .</h5>
+    <h5 class="list-group-item-text large">Sparta applications are deployed as a single unit, using the <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application's <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a> .</h5>
     <p />
     {{< highlight go >}}
 stackName := "MyUniqueServiceName"
@@ -31,7 +32,7 @@ sparta.Main(stackName,
   <!-- Lambda Functions -->
   <div class="list-group-item">
     <h3 class="list-group-item-heading">Sparta Lambda Function</h3>
-    <h5 class="list-group-item-text large">A Sparta-compatible lambda is a <b>Go</b> function with a specific signature: </h5>
+    <h5 class="list-group-item-text large">A Sparta-compatible lambda is a <b>Go</b> function with a specific signature. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
     <p />
     {{< highlight go >}}
 func mySpartaLambdaFunction(event *json.RawMessage,
@@ -47,7 +48,7 @@ func mySpartaLambdaFunction(event *json.RawMessage,
   <!-- Privileges -->
   <div class="list-group-item">
     <h3 class="list-group-item-heading">Privileges</h3>
-    <h5 class="list-group-item-text">Sparta applications can define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> via <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges for a given lambda execution.</h5>
+    <h5 class="list-group-item-text">To support accessing other AWS resources in your <b>Go</b> function, Sparta users may define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  A `Privilege'` _Resource_ value may also be an expression representing a CloudFormation dynamically provisioned entity.</h5>
     <p />
     {{< highlight go >}}
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
@@ -112,7 +113,7 @@ func echoS3DynamicBucketEvent(event *json.RawMessage,
 </div>
 
 
-Given a set of Sparta lambda functions, the framework follows this workflow:
+Given a set of Sparta lambda functions, during a `provision` build Sparta follows this workflow:
 
 {{< spartaflow >}}
 

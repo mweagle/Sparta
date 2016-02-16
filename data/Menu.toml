@@ -13,11 +13,11 @@
   IconClass = "fa-question-circle"
   URL = "/docs/faq"
 
-[tags]
-    Name = "Tags"
-    IconClass = "fa-tags"
-    Title = "Show list of tags"
-    URL = "/tags"
+# [tags]
+#     Name = "Tags"
+#     IconClass = "fa-tags"
+#     Title = "Show list of tags"
+#     URL = "/tags"
 
 [twitter]
     Name = "mweagle"

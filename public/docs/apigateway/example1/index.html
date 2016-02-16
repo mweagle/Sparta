@@ -75,14 +75,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube:]">
+<body class="map[github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -114,7 +114,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -160,19 +160,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -192,9 +179,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -319,17 +306,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>API Gateway - Echo
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
 <li><a href="#create-a-resource:d680e8a854a7cbad6d490c445cba2eba">Create a Resource</a></li>
@@ -342,17 +329,18 @@
 <li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a>.</p>
 
 <p>For reference, the <code>echoS3Event</code> function is below.</p>
 
-<pre><code class="go">func echoS3Event(event *json.RawMessage,
+<pre><code class="go">
+func echoS3Event(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger) {
@@ -363,15 +351,16 @@
   }).Info(&#34;Request received&#34;)
 
   fmt.Fprintf(w, string(*event))
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</h1>
 
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
-<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
+<pre><code class="go">
+stage := sparta.NewStage(&#34;prod&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
 
 
 <p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
@@ -380,8 +369,9 @@ apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <strong>Go</strong> function:</p>
 
-<pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
-apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
+<pre><code class="go">
+apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
+apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
 
 
 <p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
@@ -390,21 +380,23 @@ apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
 
 <p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
 
-<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
+<pre><code class="go">
+stage := sparta.NewStage(&#34;prod&#34;)
 apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)
 stackName := &#34;SpartaApplication&#34;
 sparta.Main(stackName,
   &#34;Simple Sparta application&#34;,
   spartaLambdaData(apiGateway),
   apiGateway,
-  nil)</code></pre>
+  nil)</code></pre>
 
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
-<pre><code class="javascript">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+<pre><code class="javascript">
+INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
 INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
@@ -413,7 +405,9 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
 
-<pre><code class="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
+<pre><code class="nohighlight">
+
+curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
 *   Trying 54.240.188.223...
 * Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
 * TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
@@ -436,12 +430,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 &lt;
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.211&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;bmik0opc3l&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,&#34;resourceId&#34;:&#34;mp2mrk&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}</code></pre>
+{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.211&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;bmik0opc3l&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,&#34;resourceId&#34;:&#34;mp2mrk&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}
+</code></pre>
 
 
 <p>Pretty-printing the response body to make things more readable:</p>
 
-<pre><code class="json">{
+<pre><code class="json">
+{
   &#34;method&#34;: &#34;GET&#34;,
   &#34;body&#34;: {},
   &#34;headers&#34;: {
@@ -481,7 +477,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
       &#34;userArn&#34;: &#34;&#34;
     }
   }
-}</code></pre>
+}</code></pre>
 
 
 <p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
@@ -499,7 +495,8 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>The <code>application/json</code> template is copied below:</p>
 
-<p><pre><code class="nohighlight">#*
+<p><pre><code class="nohighlight">
+#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function
 
@@ -549,7 +546,7 @@ See
       &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
     }
   }
-}</code></pre>
+}</code></pre>
 </p>
 
 <p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
@@ -581,7 +578,8 @@ See
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">go run application.go delete</code></pre>
+<p><pre><code class="nohighlight">
+go run application.go delete</code></pre>
 </p>
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
@@ -597,9 +595,9 @@ See
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

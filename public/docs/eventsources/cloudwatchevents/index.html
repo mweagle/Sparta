@@ -77,14 +77,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle github:https://github.com/mweagle bitbucket: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1]">
+<body class="map[twitter:mweagle youtube: flattr: github:https://github.com/mweagle bitbucket: facebook: linkedin:https://www.linkedin.com/in/mweagle googleplus: name:lumen home:Sparta googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -116,7 +116,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -162,19 +162,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -194,9 +181,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -321,17 +308,17 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Source - CloudWatch Events
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    <nav id="TableOfContents">
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
 <ul>
 <li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
 <li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
@@ -345,17 +332,17 @@
 <li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
 </ul>
 </nav>
-    </div>
-    <hr />
+      </div>
+      <hr />
 
-    <div class="container content">
+      <div class="container content">
   
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to different types of <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Events</a>.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
 <h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
-<p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch event function that has two responsibilities:</p>
+<p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch event function that has two requirements:</p>
 
 <ul>
 <li>Run every <em>5 minutes</em> to provide a heartbeat notification to our alerting system via a logfile entry</li>
@@ -364,9 +351,10 @@
 
 <h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
-<p>Our lambda function is pretty simple:</p>
+<p>Our lambda function is relatively small:</p>
 
-<pre><code class="go">func echoCloudWatchEvent(event *json.RawMessage,
+<pre><code class="go">
+func echoCloudWatchEvent(event *json.RawMessage,
                         context *sparta.LambdaContext,
                         w http.ResponseWriter,
                         logger *logrus.Logger) {
@@ -382,7 +370,7 @@
 		&#34;Configuration&#34;: config,
 	}).Info(&#34;Request received&#34;)
 	fmt.Fprintf(w, &#34;Hello World!&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>Our lambda function doesn&rsquo;t need to do much with the event other than log it.</p>
@@ -393,16 +381,18 @@
 
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
 
-<pre><code class="go">func appendCloudWatchEventHandler(api *sparta.API,
+<pre><code class="go">
+func appendCloudWatchEventHandler(api *sparta.API,
                                   lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)</code></pre>
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)</code></pre>
 
 
 <p>The next step is to add a <code>CloudWatchEventsPermission</code> value that includes the two rule triggers.</p>
 
-<pre><code class="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)</code></pre>
+<pre><code class="go">
+  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)</code></pre>
 
 
 <p>Our two rules will be inserted into the <code>Rules</code> map in the next steps.</p>
@@ -411,9 +401,10 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 <p>Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:</p>
 
-<pre><code class="go">cloudWatchEventsPermission.Rules[&#34;Rate5Mins&#34;] = sparta.CloudWatchEventsRule{
+<pre><code class="go">
+cloudWatchEventsPermission.Rules[&#34;Rate5Mins&#34;] = sparta.CloudWatchEventsRule{
   ScheduleExpression: &#34;rate(5 minutes)&#34;,
-}</code></pre>
+}</code></pre>
 
 
 <p>The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em>cron</em> <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html">expression</a>.  The map keyname is used when adding the <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">rule</a> during stack provisioning.</p>
@@ -422,12 +413,13 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 <p>The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&rsquo;ll add a second <code>Rule</code>:</p>
 
-<pre><code class="go">cloudWatchEventsPermission.Rules[&#34;EC2Activity&#34;] = sparta.CloudWatchEventsRule{
+<pre><code class="go">
+cloudWatchEventsPermission.Rules[&#34;EC2Activity&#34;] = sparta.CloudWatchEventsRule{
   EventPattern: map[string]interface{}{
     &#34;source&#34;:      []string{&#34;aws.ec2&#34;},
     &#34;detail-type&#34;: []string{&#34;EC2 Instance State-change Notification&#34;},
   },
-}</code></pre>
+}</code></pre>
 
 
 <p>The EC2 event pattern is the <strong>Go</strong> JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.</p>
@@ -443,13 +435,15 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 <p>With the two rules configured, the final step is to add the <code>sparta.CloudWatchPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
-<pre><code class="go">lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-return append(lambdaFunctions, lambdaFn)</code></pre>
+<pre><code class="go">
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+return append(lambdaFunctions, lambdaFn)</code></pre>
 
 
 <p>Our entire function is therefore:</p>
 
-<pre><code class="go">func appendCloudWatchEventHandler(api *sparta.API,
+<pre><code class="go">
+func appendCloudWatchEventHandler(api *sparta.API,
                                   lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
   lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
@@ -468,7 +462,7 @@ return append(lambdaFunctions, lambdaFn)</code></pre>
   lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
 
   return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
@@ -502,9 +496,9 @@ return append(lambdaFunctions, lambdaFn)</code></pre>
 </div>
 
 
-    
+      
+    </div>
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

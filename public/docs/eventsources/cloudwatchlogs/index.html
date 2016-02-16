@@ -25,8 +25,8 @@
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2016-01-28T16:36:47Z" />
-<meta property="og:article:modified_time" content="2016-01-28T16:36:47Z" />
+<meta property="og:article:published_time" content="2016-02-16T06:40:36Z" />
+<meta property="og:article:modified_time" content="2016-02-16T06:40:36Z" />
 
   
     
@@ -55,9 +55,9 @@
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2016-01-28",
+    "datePublished": "2016-02-16",
     "description": "",
-    "wordCount":  8 
+    "wordCount":  137 
   }
 </script>
 
@@ -77,14 +77,14 @@
 
 
 
-    <link rel="stylesheet" href="http://gosparta.io/css/theme/yeti.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
 
 
 <link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/default.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:yeti home:Sparta highlight:vs googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket:]">
+<body class="map[name:lumen home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle googleplus: flattr: github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -116,7 +116,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="http://gosparta.io">Sparta</a>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
       </div>
       <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
@@ -162,19 +162,6 @@
           
           <li>
 
-            <a href="http://gosparta.io/tags"
-             title="Show list of tags">
-
-            
-                <i class="fa fa-tags"></i>
-            
-
-            Tags
-            </a>
-          </li>
-          
-          <li>
-
             <a href="https://twitter.com/@mweagle"
             >
 
@@ -194,9 +181,9 @@
 </header>
 
 
-<div class="container">
-<div class="row">
-  <div class="col-md-2"><div class="panel panel-default">
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">Contents</h3>
   </div>
@@ -321,31 +308,72 @@
   </div>
 </div>
 </div>
-  <div class="col-md-10">
+    <div class="col-md-10">
 
-    <header class="container hat">
+      <header class="container hat">
   <h1>Event Source - CloudWatch Logs
 </h1>
 
 </header>
 
-    <hr />
-    <div id="toc">
-    
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
+<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
+<li><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
+<li><a href="#add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</a></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+</ul>
+</nav>
+      </div>
+      <hr />
+
+      <div class="container content">
+  
+
+<p>TODO: Finish CloudWatch Logs docs</p>
+
+<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to  <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Logs</a>.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
+
+<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
+
+<p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch Logs function that should be triggered in response to any log message issued by the other lambda functions in our Sparta-based microservice.</p>
+
+<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
+
+<p>Our lambda function is relatively short:</p>
+
+<pre><code class="go">
+func echoCloudWatchLogs(event *json.RawMessage,
+                        context *sparta.LambdaContext,
+                        w http.ResponseWriter,
+                        logger *logrus.Logger) {
+
+  // Note that we&#39;re not going to log in this lambda function, as
+  // we don&#39;t want to self DDOS
+	fmt.Fprintf(w, &#34;Hello World!&#34;)
+}</code></pre>
+
+
+<p>Our lambda function doesn&rsquo;t need to do much with the log message other than log it.</p>
+
+<h1 id="spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+
+<h1 id="add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</h1>
+
+<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+
+<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
+
+</div>
+
+
+      
     </div>
-    <hr />
-
-    <div class="container content">
-  <p><span class="label label-warning">NOT YET IMPLEMENTED</span></p>
-
-<p>TODO: CloudWatch Logs source documentation</p>
-
-</div>
-
-
-    
   </div>
-</div>
 </div>
       <footer class="footer">
     <div class="container hidden-print">

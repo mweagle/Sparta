@@ -41,19 +41,19 @@ disqusShortname = "mweagle"
 [params]
     # You can use markdown here.
     brand = "Sparta"
-    topline = "Run golang functions in AWS Lambda"
+    topline = "A **Go** Framework for AWS Lambda"
     footline = ""
-
-    [params.theme]
-    name = "yeti"
-
-    # Text for the top menu link, which goes the root URL for the site.
-    # Default (if omitted) is "Home".
-    home = "Sparta"
 
     # Select a syntax highight.
     # Check the static/css/highlight directory for options.
     highlight = "vs"
+
+    [params.theme]
+    name = "lumen"
+
+    # Text for the top menu link, which goes the root URL for the site.
+    # Default (if omitted) is "Home".
+    home = "Sparta"
 
     # Google Analytics.
     googleAnalytics = "UA-70794971-1"
