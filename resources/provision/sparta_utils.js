@@ -20,7 +20,16 @@ module.exports.toBoolean = function(value) {
   return bValue;
 };
 
-
+module.exports.idempotentDeleteHandler = function(successString, cb) {
+  return function(e, results) {
+    if (e) {
+      if (e.toString().indexOf(successString) >= 0) {
+        e = null;
+      }
+    }
+    cb(e, results || true);
+  }
+};
 module.exports.cfnResponseLocalTesting = function() {
   console.log('Using local CFN response object');
   return {
