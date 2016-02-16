@@ -1,11 +1,12 @@
 ## v0.5.0
 - :warning: **BREAKING**
-
+  - N/A
 - :checkered_flag: **CHANGES**
   - Added [sparta.CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission)  type to support lambda invocation in response to log events.
   - Fixed latent bug on Windows where temporary archives weren't properly deleted
   - The `GO15VENDOREXPERIMENT=1` environmnent variable for cross compilation is now inherited from the current session.
     - Sparta previously always added it to the environment variables during compilation.
+
 ## v0.4.0
 - :warning: **BREAKING**
   - Change `sparta.Discovery()` return type from `map[string]interface{}` to `sparta.DiscoveryInfo`.
