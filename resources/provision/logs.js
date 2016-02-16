@@ -1,13 +1,12 @@
-// Manages an S3 buckets notification sources:
-// http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketNotificationConfiguration-property
-// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
+// Manages a CloudWatch Logs event source:
+//
+//
 var _ = require('underscore');
 var async = require('async');
 var cfnResponse = require('./cfn-response');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 //awsConfig.logger = console;
-
 
 var convergeLogFiltersDelete = function(cloudWatchLogs, filtersMap, callback) {
   var filterIterator = function(filterDef, filterName, iterCB) {
