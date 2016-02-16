@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
@@ -17,7 +16,7 @@ import (
 /*
 Notes to future self...
 
-TODO - Simplify this as part of: https://trello.com/c/aOULlJcz/14-port-nodejs-customresources-to-go
+TODO - Simplify this as part of https://trello.com/c/aOULlJcz/14-port-nodejs-customresources-to-go
 
 Adding a new permission type?
   1. Add the principal name value to sparta.go constants
@@ -31,6 +30,11 @@ Adding a new permission type?
 
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
+type descriptionNode struct {
+	Name     string
+	Relation string
+	Color    string
+}
 
 // LambdaPermissionExporter defines an interface for polymorphic collection of
 // Permission entries that support specialization for additional resource generation.
@@ -40,13 +44,15 @@ type LambdaPermissionExporter interface {
 	// interface represents the Fn::GetAtt "Arn" JSON value
 	// of the parent Lambda target
 	export(serviceName string,
+		lambdaFunctionDisplayName string,
 		lambdaLogicalCFResourceName string,
 		template *gocf.Template,
 		S3Bucket string,
 		S3Key string,
 		logger *logrus.Logger) (string, error)
-	// Return a `describe` compatible output for the given permission
-	descriptionInfo() (string, string)
+	// Return a `describe` compatible output for the given permission.  Return
+	// value is a list of tuples for node, edgeLabel
+	descriptionInfo() ([]descriptionNode, error)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,21 +87,22 @@ func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.St
 	return gocf.Join("", parts...)
 }
 
-func (perm *BasePermission) describeInfoArn() string {
-	switch perm.SourceArn.(type) {
+func describeInfoArn(arnExpression interface{}) string {
+	switch arnExpression.(type) {
 	case string:
-		return perm.SourceArn.(string)
+		return arnExpression.(string)
 	case *gocf.StringExpr,
 		gocf.RefFunc:
-		data, _ := json.Marshal(perm.SourceArn)
+		data, _ := json.Marshal(arnExpression)
 		return string(data)
 	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", perm.SourceArn))
+		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", arnExpression))
 	}
 }
 
 func (perm BasePermission) export(principal string,
 	arnPrefixParts []gocf.Stringable,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -131,10 +138,6 @@ func (perm BasePermission) export(principal string,
 	return resourceName, nil
 }
 
-func (perm BasePermission) descriptionInfo(b *bytes.Buffer, logger *logrus.Logger) error {
-	return errors.New("Describe not implemented")
-}
-
 //
 // END - BasePermission
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,6 +162,7 @@ type LambdaPermission struct {
 }
 
 func (perm LambdaPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -167,6 +171,7 @@ func (perm LambdaPermission) export(serviceName string,
 
 	return perm.BasePermission.export(perm.Principal,
 		lambdaSourceArnParts,
+		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
 		S3Bucket,
@@ -174,8 +179,14 @@ func (perm LambdaPermission) export(serviceName string,
 		logger)
 }
 
-func (perm LambdaPermission) descriptionInfo() (string, string) {
-	return "Source", perm.describeInfoArn()
+func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
+	nodes := []descriptionNode{
+		descriptionNode{
+			Name:     "Source",
+			Relation: describeInfoArn(perm.SourceArn),
+		},
+	}
+	return nodes, nil
 }
 
 //
@@ -189,7 +200,7 @@ var s3SourceArnParts = []gocf.Stringable{
 	gocf.String("arn:aws:s3:::"),
 }
 
-// S3Permission struct that imples the S3 BasePermission.SourceArn should be
+// S3Permission struct implies that the S3 BasePermission.SourceArn should be
 // updated (via PutBucketNotificationConfiguration) to automatically push
 // events to the owning Lambda.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
@@ -206,6 +217,7 @@ type S3Permission struct {
 }
 
 func (perm S3Permission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -214,6 +226,7 @@ func (perm S3Permission) export(serviceName string,
 
 	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal,
 		s3SourceArnParts,
+		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
 		S3Bucket,
@@ -268,15 +281,21 @@ func (perm S3Permission) export(serviceName string,
 	return "", nil
 }
 
-func (perm S3Permission) descriptionInfo() (string, string) {
+func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 	s3Events := ""
 	for _, eachEvent := range perm.Events {
 		s3Events = fmt.Sprintf("%s\n%s", eachEvent, s3Events)
 	}
-	return perm.describeInfoArn(), s3Events
+
+	nodes := []descriptionNode{
+		descriptionNode{
+			Name:     describeInfoArn(perm.SourceArn),
+			Relation: s3Events,
+		},
+	}
+	return nodes, nil
 }
 
-//
 // END - S3Permission
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -284,9 +303,8 @@ func (perm S3Permission) descriptionInfo() (string, string) {
 // SNSPermission - START
 var snsSourceArnParts = []gocf.Stringable{}
 
-// SNSPermission struct that imples the S3 BasePermission.SourceArn should be
-// updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the parent Lambda.
+// SNSPermission struct implies that the BasePermisison.SourceArn should be
+// configured for subscriptions as part of this stacks provisioning.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
 // for more information.
 type SNSPermission struct {
@@ -294,6 +312,7 @@ type SNSPermission struct {
 }
 
 func (perm SNSPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -303,6 +322,7 @@ func (perm SNSPermission) export(serviceName string,
 
 	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal,
 		snsSourceArnParts,
+		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
 		S3Bucket,
@@ -362,8 +382,14 @@ func (perm SNSPermission) export(serviceName string,
 	return "", nil
 }
 
-func (perm SNSPermission) descriptionInfo() (string, string) {
-	return perm.BasePermission.describeInfoArn(), ""
+func (perm SNSPermission) descriptionInfo() ([]descriptionNode, error) {
+	nodes := []descriptionNode{
+		descriptionNode{
+			Name:     describeInfoArn(perm.SourceArn),
+			Relation: "",
+		},
+	}
+	return nodes, nil
 }
 
 //
@@ -426,6 +452,7 @@ func (storage *MessageBodyStorage) BucketArnAllKeys() *gocf.StringExpr {
 }
 
 func (storage *MessageBodyStorage) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -579,7 +606,7 @@ func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
 // SES doesn't use ARNs to scope access
 var sesSourcePartArn = []gocf.Stringable{wildcardArn}
 
-// SESPermission struct that imples the SES verified domain should be
+// SESPermission struct implies that the SES verified domain should be
 // updated (via createReceiptRule) to automatically request or push events
 // to the parent lambda
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
@@ -616,6 +643,7 @@ func (perm *SESPermission) NewMessageBodyStorageReference(prexistingBucketName s
 }
 
 func (perm SESPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
@@ -626,6 +654,7 @@ func (perm SESPermission) export(serviceName string,
 
 	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
 		sesSourcePartArn,
+		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
 		template,
 		S3Bucket,
@@ -639,6 +668,7 @@ func (perm SESPermission) export(serviceName string,
 	var dependsOn []string
 	if nil != perm.MessageBodyStorage {
 		s3Policy, err := perm.MessageBodyStorage.export(serviceName,
+			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
 			template,
 			S3Bucket,
@@ -708,10 +738,14 @@ func (perm SESPermission) export(serviceName string,
 	return "", nil
 }
 
-func (perm SESPermission) descriptionInfo() (string, string) {
-	// SES doesn't use ARNs, but "*" breaks mermaids parser, so
-	// use entity code per: http://knsv.github.io/mermaid/#special-characters-that-break-syntax
-	return "SimpleEmailService", "All verified domain(s) email"
+func (perm SESPermission) descriptionInfo() ([]descriptionNode, error) {
+	nodes := []descriptionNode{
+		descriptionNode{
+			Name:     "SimpleEmailService",
+			Relation: "All verified domain(s) email",
+		},
+	}
+	return nodes, nil
 }
 
 //
@@ -785,9 +819,11 @@ func (rule CloudWatchEventsRule) MarshalJSON() ([]byte, error) {
 //
 var cloudformationEventsSourceArnParts = []gocf.Stringable{}
 
-// CloudWatchEventsPermission struct that imples the S3 BasePermission.SourceArn should be
-// updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the owning Lambda.
+// CloudWatchEventsPermission struct implies that the CloudWatchEvent sources
+// should be configured as part of provisioning.  The BasePermission.SourceArn
+// isn't considered for this configuration. Each CloudWatchEventsRule struct
+// in the Rules map is used to register for push based event notifications via
+// `putRule` and `deleteRule`.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
 // for more information.
 type CloudWatchEventsPermission struct {
@@ -797,11 +833,17 @@ type CloudWatchEventsPermission struct {
 }
 
 func (perm CloudWatchEventsPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
+
+	// If there aren't any expressions to register with?
+	if len(perm.Rules) <= 0 {
+		return "", fmt.Errorf("CloudWatchEventsPermission for function %s does not specify any expressions", lambdaFunctionDisplayName)
+	}
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
 	// this.
@@ -844,6 +886,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		}
 		dependOn, err := basePerm.export(CloudWatchEventsPrincipal,
 			cloudformationEventsSourceArnParts,
+			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
 			template,
 			S3Bucket,
@@ -902,7 +945,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	return "", nil
 }
 
-func (perm CloudWatchEventsPermission) descriptionInfo() (string, string) {
+func (perm CloudWatchEventsPermission) descriptionInfo() ([]descriptionNode, error) {
 	var ruleTriggers = " "
 	for eachName, eachRule := range perm.Rules {
 		filter := eachRule.ScheduleExpression
@@ -911,7 +954,13 @@ func (perm CloudWatchEventsPermission) descriptionInfo() (string, string) {
 		}
 		ruleTriggers = fmt.Sprintf("%s-(%s)\n%s", eachName, filter, ruleTriggers)
 	}
-	return "CloudWatch Events", fmt.Sprintf("%s", ruleTriggers)
+	nodes := []descriptionNode{
+		descriptionNode{
+			Name:     "CloudWatch Events",
+			Relation: ruleTriggers,
+		},
+	}
+	return nodes, nil
 }
 
 //
@@ -922,17 +971,53 @@ func (perm CloudWatchEventsPermission) descriptionInfo() (string, string) {
 // START - CloudWatchLogsPermission
 //
 
-// CloudWatchLogsSubscriptionFilter represents the CloudWatchLog filters
+// CloudWatchLogsSubscriptionFilter represents the CloudWatch Log filter
+// information
 type CloudWatchLogsSubscriptionFilter struct {
 	FilterPattern string
-	LogGroupName  interface{}
+	LogGroupName  *gocf.StringExpr
+}
+
+// NewCloudWatchSubscriptionFilterForGroup returns new CloudWatchPermission struct
+// whose LogGroupName field is initialized with a CloudFormation Logs groupname
+// in this accounts region.
+func NewCloudWatchSubscriptionFilterForGroup(groupName string, filterPattern string) CloudWatchLogsSubscriptionFilter {
+	return CloudWatchLogsSubscriptionFilter{
+		FilterPattern: filterPattern,
+		LogGroupName: gocf.Join("",
+			gocf.String("arn:aws:logs:"),
+			gocf.Ref("AWS::Region"),
+			gocf.String(":"),
+			gocf.Ref("AWS::AccountId"),
+			gocf.String(":log-group/"),
+			gocf.String(groupName)),
+	}
+}
+
+// NewCloudWatchSubscriptionFilterForServiceLambdas returns a CloudWatchLogsSubscriptionFilter
+// value that represents the current services lambda logfiles.
+func NewCloudWatchSubscriptionFilterForServiceLambdas(filterPattern string) CloudWatchLogsSubscriptionFilter {
+	return CloudWatchLogsSubscriptionFilter{
+		FilterPattern: filterPattern,
+		LogGroupName: gocf.Join("",
+			gocf.String("arn:aws:logs:"),
+			gocf.Ref("AWS::Region"),
+			gocf.String(":"),
+			gocf.Ref("AWS::AccountId"),
+			gocf.String(":/aws/lambda/"),
+			gocf.Ref("AWS::StackName"),
+			gocf.String("*"),
+		),
+	}
 }
 
 var cloudformationLogsSourceArnParts = []gocf.Stringable{}
 
-// CloudWatchLogsPermission struct that imples the S3 BasePermission.SourceArn should be
-// updated (via PutBucketNotificationConfiguration) to automatically push
-// events to the owning Lambda.
+// CloudWatchLogsPermission struct implies that the corresponding
+// CloudWatchyLogsSubscriptionFilter definitions should be configured during
+// stack provisioning.  The BasePermission.SourceArn isn't considered for
+// this configuration operation.  Configuration of the remote push source
+// is done via `putSubscriptionFilter` and `deleteSubscriptionFilter`.
 // See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
 // for more information.
 type CloudWatchLogsPermission struct {
@@ -942,11 +1027,17 @@ type CloudWatchLogsPermission struct {
 }
 
 func (perm CloudWatchLogsPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
 	S3Bucket string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
+
+	// If there aren't any expressions to register with?
+	if len(perm.Filters) <= 0 {
+		return "", fmt.Errorf("CloudWatchLogsPermission for function %s does not specify any filters", lambdaFunctionDisplayName)
+	}
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
 	// this.
@@ -966,10 +1057,11 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		uniqueFilterName := CloudFormationResourceName(filterPrefix, lambdaLogicalCFResourceName)
 		globallyUniqueFilters[uniqueFilterName] = eachFilter
 
+		// Given the log group name, prepend the ARN syntax s.t. the
 		// Ensure the configuration resource exists for this log source.  Cache the returned
 		// logical resource name s.t. we can validate we're reusing the same resource
 		configuratorResName, err := ensureConfiguratorLambdaResource(CloudWatchLogsPrincipal,
-			gocf.String("arn:aws:logs:*:*:*"),
+			eachFilter.LogGroupName,
 			[]string{},
 			template,
 			S3Bucket,
@@ -985,7 +1077,6 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		return "", fmt.Errorf("Internal integrity check failed. Multiple configurators (%d) provisioned for CloudWatchLogs",
 			len(configurationResourceNames))
 	}
-	logger.Info("WTF 6")
 	// Insert the invocation
 	for eachConfigResource := range configurationResourceNames {
 		//////////////////////////////////////////////////////////////////////////////
@@ -1013,8 +1104,15 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	return "", nil
 }
 
-func (perm CloudWatchLogsPermission) descriptionInfo() (string, string) {
-	return "CloudWatch Logs", "TBD"
+func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error) {
+	var nodes []descriptionNode
+	for eachFilterName, eachFilterDef := range perm.Filters {
+		nodes = append(nodes, descriptionNode{
+			Name:     describeInfoArn(eachFilterDef.LogGroupName),
+			Relation: fmt.Sprintf("%s (%s)", eachFilterName, eachFilterDef.FilterPattern),
+		})
+	}
+	return nodes, nil
 }
 
 //

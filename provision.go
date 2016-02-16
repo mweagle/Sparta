@@ -335,13 +335,15 @@ func uploadLocalFileToS3(packagePath string, awsSession *session.Session, S3Buck
 	}
 	defer func() {
 		reader.Close()
-		os.Remove(packagePath)
+		err = os.Remove(packagePath)
+		if nil != err {
+			logger.WithFields(logrus.Fields{
+				"Path":  packagePath,
+				"Error": err,
+			}).Warn("Failed to delete local file")
+		}
 	}()
 
-	body, err := os.Open(packagePath)
-	if nil != err {
-		return "", err
-	}
 	// Cache it in case there was an error & we need to cleanup
 	keyName := filepath.Base(packagePath)
 
@@ -349,7 +351,7 @@ func uploadLocalFileToS3(packagePath string, awsSession *session.Session, S3Buck
 		Bucket:      &S3Bucket,
 		Key:         &keyName,
 		ContentType: aws.String("application/zip"),
-		Body:        body,
+		Body:        reader,
 	}
 
 	if noop {
@@ -523,8 +525,7 @@ func createPackageStep() workflowStep {
 		}).Debug("Building application binary")
 
 		cmd.Env = os.Environ()
-		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64", "GO15VENDOREXPERIMENT=1")
-
+		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 		ctx.logger.WithFields(logrus.Fields{
 			"Name": executableOutput,
 		}).Info("Compiling binary")
@@ -542,7 +543,15 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, err
 		}
-		defer os.Remove(executableOutput)
+		defer func() {
+			err := os.Remove(executableOutput)
+			if nil != err {
+				ctx.logger.WithFields(logrus.Fields{
+					"File":  executableOutput,
+					"Error": err,
+				}).Warn("Failed to delete binary")
+			}
+		}()
 
 		// Binary size
 		stat, err := os.Stat(executableOutput)

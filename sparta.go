@@ -433,6 +433,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Permissions
 	for _, eachPermission := range info.Permissions {
 		_, err := eachPermission.export(serviceName,
+			info.lambdaFnName,
 			info.logicalName(),
 			template,
 			S3Bucket,
@@ -695,6 +696,9 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		}
 		defer fileWriter.Close()
 		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, site, fileWriter, logger)
+		if err != nil {
+			err = fileWriter.Sync()
+		}
 	default:
 		goptions.PrintHelp()
 		err = fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))

@@ -60,8 +60,6 @@ func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
-// TODO - Refactor ensure Lambdaconfigurator, then finish
-// implementing the CloudWatchEvents Principal type.
 func ensureConfiguratorLambdaResource(awsPrincipalName string,
 	sourceArn *gocf.StringExpr,
 	dependsOn []string,

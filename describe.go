@@ -16,7 +16,7 @@ import (
 
 // RE for sanitizing golang/JS layer
 var reSanitizeMermaidNodeName = regexp.MustCompile("[\\W\\s]+")
-var reSanitizeMermaidLabelValue = regexp.MustCompile("[\\{\\}\"']+")
+var reSanitizeMermaidLabelValue = regexp.MustCompile("[\\{\\}\"\\[\\]']+")
 
 func mermaidNodeName(sourceName string) string {
 	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "x")
@@ -86,12 +86,22 @@ func Describe(serviceName string,
 		// Create permission & event mappings
 		// functions declared in this
 		for _, eachPermission := range eachLambda.Permissions {
-			name, link := eachPermission.descriptionInfo()
-			name = strings.TrimSpace(name)
-			link = strings.TrimSpace(link)
-			// Style it to have the Amazon color
-			writeNode(&b, name, "F1702A")
-			writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br><br>", -1))
+			nodes, err := eachPermission.descriptionInfo()
+			if nil != err {
+				return err
+			}
+
+			for _, eachNode := range nodes {
+				name := strings.TrimSpace(eachNode.Name)
+				link := strings.TrimSpace(eachNode.Relation)
+				// Style it to have the Amazon color
+				nodeColor := eachNode.Color
+				if "" == nodeColor {
+					nodeColor = "F1702A"
+				}
+				writeNode(&b, name, nodeColor)
+				writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br><br>", -1))
+			}
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
