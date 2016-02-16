@@ -4,7 +4,7 @@
 var _ = require('underscore');
 var async = require('async');
 var cfnResponse = require('./cfn-response');
-
+var spartaUtils = require('./sparta_utils.js');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 awsConfig.logger = console;
@@ -20,16 +20,8 @@ var convergeRuleSetStateDelete = function(cwEvents, rules, callback) {
         Ids: [ruleName],
         Rule: ruleName
       };
-      var idempotentDelete = function(e, results) {
-        if (e) {
-          if (e.toString().indexOf('ResourceNotFoundException: Rule') >= 0) {
-            console.log('Target parent rule does not exist, ignoring error');
-            e = null;
-          }
-        }
-        seriesCB(e, results);
-      };
-      cwEvents.removeTargets(params, idempotentDelete);
+      var deleteHandler = spartaUtils.idempotentDeleteHandler('ResourceNotFoundException: Rule', seriesCB);
+      cwEvents.removeTargets(params, deleteHandler);
     };
     ruleTasks[1] = function(seriesCB) {
       var deleteParams = {
@@ -37,8 +29,6 @@ var convergeRuleSetStateDelete = function(cwEvents, rules, callback) {
       };
       cwEvents.deleteRule(deleteParams, seriesCB);
     };
-
-
     async.series(ruleTasks, iterCB);
   };
   async.forEachOf(rules || {}, ruleIterator, callback);
