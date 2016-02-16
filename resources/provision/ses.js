@@ -5,7 +5,8 @@ var awsConfig = new AWS.Config({});
 
 var _ = require('underscore');
 var async = require('async');
-var toBoolean = require('./sparta_utils').toBoolean;
+var spartaUtils = require('./sparta_utils.js');
+var toBoolean = spartaUtils.toBoolean;
 
 var SPARTA_RULE_SET_NAME = 'SpartaRuleSet';
 
