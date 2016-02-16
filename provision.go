@@ -655,9 +655,6 @@ func createPackageStep() workflowStep {
 				if nil != err {
 					return nil, err
 				}
-				ctx.logger.WithFields(logrus.Fields{
-					"Name": zipFile.Name,
-				}).Debug("Copying embedded node_module file")
 
 				sourceReader, err := zipFile.Open()
 				if err != nil {
