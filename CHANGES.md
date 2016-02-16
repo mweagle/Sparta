@@ -1,3 +1,11 @@
+## v0.5.0
+- :warning: **BREAKING**
+
+- :checkered_flag: **CHANGES**
+  - Added [sparta.CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission)  type to support lambda invocation in response to log events.
+  - Fixed latent bug on Windows where temporary archives weren't properly deleted
+  - The `GO15VENDOREXPERIMENT=1` environmnent variable for cross compilation is now inherited from the current session.
+    - Sparta previously always added it to the environment variables during compilation.
 ## v0.4.0
 - :warning: **BREAKING**
   - Change `sparta.Discovery()` return type from `map[string]interface{}` to `sparta.DiscoveryInfo`.
@@ -11,7 +19,7 @@
     - This was done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for discovery.
   - Enforce that a non-nil `*sparta.API` value provided to `sparta.Main()` includes a non-empty set of resources and methods
 - :checkered_flag: **CHANGES**
-  - Added [sparta.CloudWatchEventsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission) type
+ type
     - This type can be used to enable [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
     - See the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L381) example app for a sample usage.
   - `sparta.Discovery` now returns the following CloudFormation [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html):
