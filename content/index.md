@@ -66,7 +66,7 @@ To get started using Sparta, begin with the [Documentation](./docs).
 
 # Administration
   - Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
-  - See [Trello]()
+  - See [Trello](https://trello.com/b/WslDce70/sparta) for the Sparta backlog.
 
 ## Other resources
 
