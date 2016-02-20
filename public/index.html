@@ -71,7 +71,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: flattr: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: twitter:mweagle]">
+<body class="map[home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -168,70 +168,77 @@
 
 <h1 id="overview:d680e8a854a7cbad6d490c445cba2eba">Overview</h1>
 
-<p>Sparta provides a framework that enables you to deploy a set of <strong>Go</strong> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.  Sparta is more than a deployment tool though, as it offers the ability, in <strong>Go</strong>, to fully define and manage the <strong>other AWS resources and security policies</strong> that constitute your service:</p>
+<hr />
 
-<ul>
-<li><a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> resources that should be created during your service&rsquo;s provisioning.<br />
+<p>Sparta provides a framework that enables you to deploy a set of <strong>Go</strong> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.  More than a CLI deployment tool, Sparta helps you define and manage the <strong>other AWS resources and security policies</strong> in a single codebase.</p>
 
-<ul>
-<li>Sparta directly supports supplementary infrastructure provisioning by providing hooks to annotate the CloudFormation Template.</li>
-</ul></li>
-<li>Discovery of those dependent resources&rsquo; CloudFormation outputs (<code>Ref</code> &amp;&amp; <code>Fn::Att</code> values) at AWS Lambda execution time
+<h1 id="features:d680e8a854a7cbad6d490c445cba2eba">Features</h1>
 
-<ul>
-<li>This enables a service to close over its AWS infrastructure requirements.  Eliminate hardcoded <em>Magic ARNs</em> from your codebase &amp; move towards <a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments/">immutable infrastructure</a>.</li>
-</ul></li>
-<li>Dedicated <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> under which your <strong>Go</strong> functions will execute.<br />
+<hr />
 
-<ul>
-<li>The ability to limit lambda execution privileges helps support <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a>.<br /></li>
-<li>The IAM Policy entries can reference dynamically assigned AWS ARN values.</li>
-</ul></li>
-<li>Optional registration of your <strong>Go</strong> function with push-based <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Event Sources</a>.
+<!-- Row 1 -->
 
-<ul>
-<li>Sparta handles the remote configuration of other AWS services as part of your service&rsquo;s deployment.</li>
-</ul></li>
-</ul>
+<div class="row">
+  <div class="col-lg-6">
+     <h2>Unified Language</h2>
+     <p>Use <b>Go</b> to define your service's:
+     <ul>
+      <li>Application logic</li>
+      <li>AWS Infrastructure</li>
+      <li>Metric data</li>
+      <li>Alert conditions</li>
+      <li>Security Policies</li>
+     </ul>
+     </p>
+  </div>
+  <div class="col-lg-6">
+     <h2>Complete AWS Ecosystem</h2>
+     <p>Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> such as:
+       <ul>
+         <li>DynamoDB</li>
+         <li>S3</li>
+         <li>Kinesis</li>
+         <li>SNS</li>
+         <li>SES</li>
+         <li>CloudWatch Events</li>
+         <li>CloudWatch Logs</li>
+       </ul>
+       Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource.
+      </p>
+  </div>
+ </div>
 
-<p>For instance, your service can express in <strong>Go</strong>:</p>
+<p><!-- Row 2 -->
+ <div class="row">
+  <div class="col-lg-6">
+    <h2>Security</h2>
+    <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service&rsquo;s attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
+    </p>
+  </div>
+  <div class="col-lg-6">
+      <h2>Discovery</h2>
+      <p>A service may provision dynamic AWS infrastructure, and <a href="http://gosparta.io/docs/eventsources">discover</a>, at lambda execution time, the dependent resources&rsquo; AWS-assigned outputs (<code>Ref</code> &amp; <code>Fn::Att</code>).  Eliminate hardcoded <i>Magic ARNs</i> from your codebase and move towards <a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments">immutable infrastructure</a></p>
+  </div>
+</div></p>
 
-<ul>
-<li><a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">AWS Lambda Event Sources</a>
+<!-- Row 3 -->
 
-<ul>
-<li>DynamoDB</li>
-<li>S3</li>
-<li>Kinesis</li>
-<li>SNS</li>
-<li>SES</li>
-<li>CloudWatch Events</li>
-<li>CloudWatch Logs</li>
-</ul></li>
-<li>Other AWS resources
-
-<ul>
-<li>S3 buckets with dynamic outputs that your lambda function can <a href="http://gosparta.io/docs/eventsources/ses/">discover at runtime</a></li>
-<li>SNS resources</li>
-<li>Any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Type</a></li>
-</ul></li>
-<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> resources that trigger your lambda functions
-
-<ul>
-<li>Sparta automatically creates <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">API Gateway Mapping Templates</a> with all request data, including user-defined whitelisted parameters, so that you can focus on your core application logic.</li>
-</ul></li>
-<li><a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3 Static Websites</a>
-
-<ul>
-<li>Sparta can provision an S3 bucket with your static resources, including <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html">CORS</a> support</li>
-</ul></li>
-</ul>
-
-<p>Sparta exclusively relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs  whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
+<div class="row">
+  <div class="col-lg-6">
+    <h2>API Gateway</h2>
+    <p>Make your service HTTPS accessible by binding it to an <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> REST API during provisioning.  As part of API Gateway creation, Sparta includes <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">API Gateway Mapping Templates</a> with all request data, including user-defined whitelisted parameters, so that you can focus on your core application logic.</p>
+ </div>
+ <div class="col-lg-6">
+    <h2>Static Sites</h2>
+    <p>Include a <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html">CORS-enabled</a> <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3-backed site</a> with your service.  S3-backed sites include API Gateway discovery information for turnkey deployment.</p>
+ </div>
+</div>
 
 <hr />
 
 <p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="images/sparta_overview.png" alt="Sparta Overview" />]</a></p>
+
+<p>Sparta exclusively relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
 
 <h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
@@ -284,6 +291,13 @@
           <small>
               
     
+<div class="container footline">
+  
+  <a href="https://en.wikipedia.org/wiki/Eddie_Aikau" target="_blank">Eddie would go</a>
+
+
+</div>
+
 
     
 
