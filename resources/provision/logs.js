@@ -9,6 +9,7 @@ var awsConfig = new AWS.Config({});
 //awsConfig.logger = console;
 
 var convergeLogFiltersDelete = function(cloudWatchLogs, filtersMap, callback) {
+
   var filterIterator = function(filterDef, filterName, iterCB) {
     var idempotentDelete = function(e, results) {
       if (e) {
@@ -31,6 +32,7 @@ var convergeLogFiltersDelete = function(cloudWatchLogs, filtersMap, callback) {
 
 
 var convergeLogFiltersCreate = function(cloudWatchLogs, filtersMap, lambdaTargetArn, callback) {
+
   var filterIterator = function(filterDef, filterName, iterCB) {
     var params = {
       destinationArn: lambdaTargetArn,
@@ -46,7 +48,7 @@ var convergeLogFiltersCreate = function(cloudWatchLogs, filtersMap, lambdaTarget
 exports.handler = function(event, context) {
   var responseData = {};
   try {
-    var cloudWatchLogs = new new AWS.CloudWatchLogs(awsConfig);
+    var cloudWatchLogs = new AWS.CloudWatchLogs(awsConfig);
     var oldProps = event.OldResourceProperties || {};
     var oldFilters = oldProps.Filters || {};
 
