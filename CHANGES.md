@@ -2,12 +2,13 @@
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
-  - Added [sparta.CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission)  type to support lambda invocation in response to log events.
+  - Added [sparta.CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission) type to support lambda invocation in response to log events.
   - Fixed latent bug on Windows where temporary archives weren't properly deleted
   - The `GO15VENDOREXPERIMENT=1` environment variable for cross compilation is now inherited from the current session.
     - Sparta previously always added it to the environment variables during compilation.
-  - Hooked AWS SDK logger so that `debug` log level includes AWS SDK status
-    - Also include `debug` level message listing AWS SDK version for debugging
+  - Hooked AWS SDK logger so that Sparta `--level debug` log level includes AWS SDK status
+    - Also include `debug` level message listing AWS SDK version for diagnostic info
+  - Log output includes lambda deployment [package size](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 
 ## v0.4.0
 - :warning: **BREAKING**
