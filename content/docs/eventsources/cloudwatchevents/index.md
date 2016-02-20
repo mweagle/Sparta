@@ -43,7 +43,7 @@ Our lambda function doesn't need to do much with the event other than log it.
 
 # Sparta Integration {#spartaIntegration}  
 
-With the `echoCloudWatchEvent` implemented, the next step is to integrate the **Go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
+With `echoCloudWatchEvent()` implemented, the next step is to integrate the **Go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
 Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty `sparta.IAMRoleDefinition` value:
 

@@ -25,31 +25,90 @@
 
 &lt;h1 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h1&gt;
 
-&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued by the other lambda functions in our Sparta-based microservice.&lt;/p&gt;
+&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.&lt;/p&gt;
 
 &lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
 
 &lt;p&gt;Our lambda function is relatively short:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
-func echoCloudWatchLogs(event *json.RawMessage,
+func echoCloudWatchLogsEvent(event *json.RawMessage,
                         context *sparta.LambdaContext,
                         w http.ResponseWriter,
                         logger *logrus.Logger) {
 
   // Note that we&amp;#39;re not going to log in this lambda function, as
   // we don&amp;#39;t want to self DDOS
-	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
+  fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
 }&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the log message other than log it.&lt;/p&gt;
 
-&lt;h1 id=&#34;spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
+&lt;h1 id=&#34;sparta-integration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
 
-&lt;h1 id=&#34;add-permission:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Add Permission&lt;/h1&gt;
+&lt;p&gt;With &lt;code&gt;echoCloudWatchLogsEvent()&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchLogsLambda&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
+
+&lt;p&gt;Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func appendCloudWatchLogsLambda(api *sparta.API,
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
+&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The next step is to add a &lt;code&gt;CloudWatchLogsSubscriptionFilter&lt;/code&gt; value that represents the &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/Subscriptions.html#LambdaFunctionExample&#34;&gt;CloudWatch Lambda&lt;/a&gt; subscription &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CreateSubscriptionFilter.html&#34;&gt;filter information&lt;/a&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
+cloudWatchLogsPermission.Filters[&amp;#34;MyFilter&amp;#34;] = sparta.CloudWatchLogsSubscriptionFilter{
+  LogGroupName: &amp;#34;/aws/lambda/versions&amp;#34;,
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;The &lt;code&gt;sparta.CloudWatchLogsPermission&lt;/code&gt; struct provides fields for both the LogGroupName and optional Filter expression (not shown here) to use when calling &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#putSubscriptionFilter-property&#34;&gt;putSubscriptionFilter&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;# Add Permission&lt;/p&gt;
+
+&lt;p&gt;With the subscription information configured, the final step is to add the &lt;code&gt;sparta.CloudWatchLogsPermission&lt;/code&gt; to our &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; value:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;Our entire function is therefore:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;
+func appendCloudWatchLogsLambda(api *sparta.API,
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+    
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
+
+	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+	cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
+	cloudWatchLogsPermission.Filters[&amp;#34;MyFilter&amp;#34;] = sparta.CloudWatchLogsSubscriptionFilter{
+		LogGroupName: &amp;#34;/aws/lambda/versions&amp;#34;,
+	}
+	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
+	return append(lambdaFunctions, lambdaFn)
+}&lt;/code&gt;&lt;/pre&gt;
+
 
 &lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
+
+&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Define the lambda function (&lt;code&gt;echoCloudWatchLogsEvent&lt;/code&gt;).&lt;/li&gt;
+&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
+&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission&#34;&gt;CloudWatchLogsPermission&lt;/a&gt; value.&lt;/li&gt;
+&lt;li&gt;Add one or more &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter&#34;&gt;CloudWatchLogsSubscriptionFilter&lt;/a&gt; to the &lt;code&gt;CloudWatchLogsPermission.Filters&lt;/code&gt; map that defines your lambda function&amp;rsquo;s logfile subscription information.&lt;/li&gt;
+&lt;li&gt;Append the &lt;code&gt;CloudWatchLogsPermission&lt;/code&gt; value to the lambda function&amp;rsquo;s &lt;code&gt;Permissions&lt;/code&gt; slice.&lt;/li&gt;
+&lt;li&gt;Include the reference in the call to &lt;code&gt;sparta.Main()&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
 </description>
@@ -1886,7 +1945,7 @@ func echoCloudWatchEvent(event *json.RawMessage,
 
 &lt;h1 id=&#34;spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
 
-&lt;p&gt;With the &lt;code&gt;echoCloudWatchEvent&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchEventHandler&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
+&lt;p&gt;With &lt;code&gt;echoCloudWatchEvent()&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchEventHandler&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
 
 &lt;p&gt;Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value:&lt;/p&gt;
 

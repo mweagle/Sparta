@@ -57,7 +57,7 @@
     },
     "datePublished": "2016-02-16",
     "description": "",
-    "wordCount":  137 
+    "wordCount":  390 
   }
 </script>
 
@@ -84,7 +84,7 @@
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/xcode.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: flattr:]">
+<body class="map[googleplus: youtube: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: facebook: twitter:mweagle flattr: name:lumen github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -216,7 +216,7 @@
         </li>
       
         <li>
-          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs (TBD)</a></small>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></small>
         </li>
       
         <li>
@@ -322,8 +322,7 @@
 <ul>
 <li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
 <li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
-<li><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
-<li><a href="#add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</a></li>
+<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
 <li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
 <li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
 </ul>
@@ -340,31 +339,90 @@
 
 <h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
 
-<p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch Logs function that should be triggered in response to any log message issued by the other lambda functions in our Sparta-based microservice.</p>
+<p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.</p>
 
 <h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>Our lambda function is relatively short:</p>
 
 <pre><code class="go">
-func echoCloudWatchLogs(event *json.RawMessage,
+func echoCloudWatchLogsEvent(event *json.RawMessage,
                         context *sparta.LambdaContext,
                         w http.ResponseWriter,
                         logger *logrus.Logger) {
 
   // Note that we&#39;re not going to log in this lambda function, as
   // we don&#39;t want to self DDOS
-	fmt.Fprintf(w, &#34;Hello World!&#34;)
+  fmt.Fprintf(w, &#34;Hello World!&#34;)
 }</code></pre>
 
 
 <p>Our lambda function doesn&rsquo;t need to do much with the log message other than log it.</p>
 
-<h1 id="spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
-<h1 id="add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</h1>
+<p>With <code>echoCloudWatchLogsEvent()</code> implemented, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is done by the <code>appendCloudWatchLogsLambda</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
+
+<p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
+
+<pre><code class="go">
+func appendCloudWatchLogsLambda(api *sparta.API,
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
+</code></pre>
+
+
+<p>The next step is to add a <code>CloudWatchLogsSubscriptionFilter</code> value that represents the <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/Subscriptions.html#LambdaFunctionExample">CloudWatch Lambda</a> subscription <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CreateSubscriptionFilter.html">filter information</a>.</p>
+
+<pre><code class="go">
+cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
+cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubscriptionFilter{
+  LogGroupName: &#34;/aws/lambda/versions&#34;,
+}</code></pre>
+
+
+<p>The <code>sparta.CloudWatchLogsPermission</code> struct provides fields for both the LogGroupName and optional Filter expression (not shown here) to use when calling <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#putSubscriptionFilter-property">putSubscriptionFilter</a>.</p>
+
+<p># Add Permission</p>
+
+<p>With the subscription information configured, the final step is to add the <code>sparta.CloudWatchLogsPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
+
+<pre><code class="go">
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)</code></pre>
+
+
+<p>Our entire function is therefore:</p>
+
+<pre><code class="go">
+func appendCloudWatchLogsLambda(api *sparta.API,
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+    
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
+
+	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+	cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
+	cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubscriptionFilter{
+		LogGroupName: &#34;/aws/lambda/versions&#34;,
+	}
+	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
+	return append(lambdaFunctions, lambdaFn)
+}</code></pre>
+
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+
+<p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:</p>
+
+<ul>
+<li>Define the lambda function (<code>echoCloudWatchLogsEvent</code>).</li>
+<li>If needed, create the required <a href="https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition">IAMRoleDefinition</a> with appropriate privileges.</li>
+<li>Provide the lambda function &amp; IAMRoleDefinition to <code>sparta.NewLambda()</code></li>
+<li>Create a <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission">CloudWatchLogsPermission</a> value.</li>
+<li>Add one or more <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter">CloudWatchLogsSubscriptionFilter</a> to the <code>CloudWatchLogsPermission.Filters</code> map that defines your lambda function&rsquo;s logfile subscription information.</li>
+<li>Append the <code>CloudWatchLogsPermission</code> value to the lambda function&rsquo;s <code>Permissions</code> slice.</li>
+<li>Include the reference in the call to <code>sparta.Main()</code>.</li>
+</ul>
 
 <h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
 

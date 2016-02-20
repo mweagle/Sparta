@@ -57,7 +57,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  634 
+    "wordCount":  633 
   }
 </script>
 
@@ -84,7 +84,7 @@
 <link rel="stylesheet" href="http://gosparta.io/css/style.css">
 
 
-  <link rel="stylesheet" href="http://gosparta.io/css/highlight/vs.css">
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/xcode.css">
 
 
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: flattr: name:lumen]">
+<body class="map[name:lumen github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -216,7 +216,7 @@
         </li>
       
         <li>
-          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs (TBD)</a></small>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></small>
         </li>
       
         <li>
@@ -377,7 +377,7 @@ func echoCloudWatchEvent(event *json.RawMessage,
 
 <h1 id="spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
 
-<p>With the <code>echoCloudWatchEvent</code> implemented, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is done by the <code>appendCloudWatchEventHandler</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
+<p>With <code>echoCloudWatchEvent()</code> implemented, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is done by the <code>appendCloudWatchEventHandler</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
 
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
 

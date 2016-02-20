@@ -41,7 +41,7 @@
         "Children": []
       },
       {
-        "Name": "CloudWatch Logs (TBD)",
+        "Name": "CloudWatch Logs",
         "IconClass": "",
         "Title": "",
         "URL": "/eventsources/cloudwatchlogs",
