@@ -1,13 +1,15 @@
 // +build !lambdabinary
 
-//go:generate rm -rf ./resources/provision/node_modules
-//go:generate npm install ./resources/provision/ --prefix ./resources/provision
+// TODO: make the node zip process work on windows
+
+//	go:generate rm -rf ./resources/provision/node_modules
+//	go:generate npm install ./resources/provision/ --prefix ./resources/provision
 // There's a handful of subdirectories that we don't need at runtime...
-//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist/
-//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist-tools/
+//	go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist/
+//	go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist-tools/
 // Zip up the modules
-//go:generate bash -c "pushd ./resources/provision; zip -vr ./node_modules.zip ./node_modules/"
-//go:generate rm -rf ./resources/provision/node_modules
+//		go:generate bash -c "pushd ./resources/provision; zip -vr ./node_modules.zip ./node_modules/"
+//		go:generate rm -rf ./resources/provision/node_modules
 
 // Embed the custom service handlers
 // TODO: Once AWS lambda supports golang as first class, move the
@@ -22,7 +24,7 @@
 //go:generate go run ./resources/awsbinary/insertTags.go ./CONSTANTS_AWSBINARY lambdabinary
 
 // cleanup
-//go:generate rm -f ./resources/provision/node_modules.zip
+//	go:generate rm -f ./resources/provision/node_modules.zip
 
 package sparta
 
