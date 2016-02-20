@@ -513,6 +513,17 @@ func stackEvents(stackID string, cfService *cloudformation.CloudFormation) ([]*c
 	return events, nil
 }
 
+func logFilesize(message string, filePath string, logger *logrus.Logger) {
+	// Binary size
+	stat, err := os.Stat(filePath)
+	if err == nil {
+		logger.WithFields(logrus.Fields{
+			"KB": stat.Size() / 1024,
+			"MB": stat.Size() / (1024 * 1024),
+		}).Info(message)
+	}
+}
+
 // Build and package the application
 func createPackageStep() workflowStep {
 
@@ -556,15 +567,7 @@ func createPackageStep() workflowStep {
 		}()
 
 		// Binary size
-		stat, err := os.Stat(executableOutput)
-		if err != nil {
-			return nil, errors.New("Failed to stat build output")
-		}
-
-		ctx.logger.WithFields(logrus.Fields{
-			"KB": stat.Size() / 1024,
-			"MB": stat.Size() / (1024 * 1024),
-		}).Info("Executable binary size")
+		logFilesize("Executable binary size", executableOutput, ctx.logger)
 
 		tmpFile, err := temporaryFile(sanitizedServiceName)
 		if err != nil {
@@ -685,6 +688,8 @@ func createUploadStep(packagePath string) workflowStep {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			logFilesize("Lambda function deployment package size", packagePath, ctx.logger)
+
 			keyName, err := uploadLocalFileToS3(packagePath,
 				ctx.awsSession,
 				ctx.s3Bucket,
