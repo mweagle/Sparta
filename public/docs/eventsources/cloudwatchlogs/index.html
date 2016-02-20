@@ -57,7 +57,7 @@
     },
     "datePublished": "2016-02-16",
     "description": "",
-    "wordCount":  390 
+    "wordCount":  385 
   }
 </script>
 
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen linkedin:https://www.linkedin.com/in/mweagle facebook: github:https://github.com/mweagle]">
+<body class="map[github:https://github.com/mweagle twitter:mweagle youtube: flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: name:lumen]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -333,8 +333,6 @@
       <div class="container content">
   
 
-<p>TODO: Finish CloudWatch Logs docs</p>
-
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to  <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Logs</a>.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
 <h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
@@ -397,7 +395,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)</
 <pre><code class="go">
 func appendCloudWatchLogsLambda(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-    
+
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
 
 	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}

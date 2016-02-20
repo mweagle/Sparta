@@ -6,9 +6,6 @@ tags = ["sparta", "event_source"]
 type = "doc"
 +++
 
-TODO: Finish CloudWatch Logs docs
-
-
 In this section we'll walkthrough how to trigger your lambda function in response to  [CloudWatch Logs](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/).  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
 
 # Goal
@@ -71,7 +68,7 @@ Our entire function is therefore:
 {{< highlight go >}}
 func appendCloudWatchLogsLambda(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-    
+
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
 
 	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
