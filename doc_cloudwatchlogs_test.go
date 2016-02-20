@@ -21,8 +21,9 @@ func ExampleCloudWatchLogsPermission() {
 
 	cloudWatchLogsPermission := CloudWatchLogsPermission{}
 	cloudWatchLogsPermission.Filters = make(map[string]CloudWatchLogsSubscriptionFilter, 1)
-	cloudWatchLogsPermission.Filters["MyFilter"] = NewCloudWatchSubscriptionFilterForGroup("MyGroup", "")
-	cloudWatchLogsPermission.Filters["ServiceLogs"] = NewCloudWatchSubscriptionFilterForServiceLambdas("")
+	cloudWatchLogsPermission.Filters["MyFilter"] = CloudWatchLogsSubscriptionFilter{
+		LogGroupName: "/aws/lambda/*",
+	}
 	cloudWatchLogsLambda.Permissions = append(cloudWatchLogsLambda.Permissions, cloudWatchLogsPermission)
 
 	lambdaFunctions = append(lambdaFunctions, cloudWatchLogsLambda)
