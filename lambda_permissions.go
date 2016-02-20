@@ -975,43 +975,12 @@ func (perm CloudWatchEventsPermission) descriptionInfo() ([]descriptionNode, err
 // information
 type CloudWatchLogsSubscriptionFilter struct {
 	FilterPattern string
-	LogGroupName  *gocf.StringExpr
+	LogGroupName  string
 }
 
-// NewCloudWatchSubscriptionFilterForGroup returns new CloudWatchPermission struct
-// whose LogGroupName field is initialized with a CloudFormation Logs groupname
-// in this accounts region.
-func NewCloudWatchSubscriptionFilterForGroup(groupName string, filterPattern string) CloudWatchLogsSubscriptionFilter {
-	return CloudWatchLogsSubscriptionFilter{
-		FilterPattern: filterPattern,
-		LogGroupName: gocf.Join("",
-			gocf.String("arn:aws:logs:"),
-			gocf.Ref("AWS::Region"),
-			gocf.String(":"),
-			gocf.Ref("AWS::AccountId"),
-			gocf.String(":log-group/"),
-			gocf.String(groupName)),
-	}
+var cloudformationLogsSourceArnParts = []gocf.Stringable{
+	gocf.String("arn:aws:logs:"),
 }
-
-// NewCloudWatchSubscriptionFilterForServiceLambdas returns a CloudWatchLogsSubscriptionFilter
-// value that represents the current services lambda logfiles.
-func NewCloudWatchSubscriptionFilterForServiceLambdas(filterPattern string) CloudWatchLogsSubscriptionFilter {
-	return CloudWatchLogsSubscriptionFilter{
-		FilterPattern: filterPattern,
-		LogGroupName: gocf.Join("",
-			gocf.String("arn:aws:logs:"),
-			gocf.Ref("AWS::Region"),
-			gocf.String(":"),
-			gocf.Ref("AWS::AccountId"),
-			gocf.String(":/aws/lambda/"),
-			gocf.Ref("AWS::StackName"),
-			gocf.String("*"),
-		),
-	}
-}
-
-var cloudformationLogsSourceArnParts = []gocf.Stringable{}
 
 // CloudWatchLogsPermission struct implies that the corresponding
 // CloudWatchyLogsSubscriptionFilter definitions should be configured during
@@ -1039,6 +1008,10 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		return "", fmt.Errorf("CloudWatchLogsPermission for function %s does not specify any filters", lambdaFunctionDisplayName)
 	}
 
+	// CloudWatch logs principal is region specific
+	regionalPrincipal := fmt.Sprintf("logs.%s.amazonaws.com",
+		*(awsSession(logger).Config.Region))
+
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
 	// this.
 	if nil != perm.BasePermission.SourceArn &&
@@ -1047,7 +1020,21 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
 		}).Warn("CloudWatchLogs do not support literal ARN values")
 	}
-	// First thing we need to do is uniqueify the rule names s.t. we prevent
+
+	// Make sure we grant InvokeFunction privileges to CloudWatchLogs
+	lambdaInvokePermission, err := perm.BasePermission.export(regionalPrincipal,
+		cloudformationLogsSourceArnParts,
+		lambdaFunctionDisplayName,
+		lambdaLogicalCFResourceName,
+		template,
+		S3Bucket,
+		S3Key,
+		logger)
+	if nil != err {
+		return "", err
+	}
+
+	// Then we need to uniqueify the rule names s.t. we prevent
 	// collisions with other stacks.
 	configurationResourceNames := make(map[string]int, 0)
 
@@ -1057,11 +1044,21 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		uniqueFilterName := CloudFormationResourceName(filterPrefix, lambdaLogicalCFResourceName)
 		globallyUniqueFilters[uniqueFilterName] = eachFilter
 
+		// The ARN we supply to IAM is built up using the user supplied groupname
+		cloudWatchLogsArn := gocf.Join("",
+			gocf.String("arn:aws:logs:"),
+			gocf.Ref("AWS::Region"),
+			gocf.String(":"),
+			gocf.Ref("AWS::AccountId"),
+			gocf.String(":log-group:"),
+			gocf.String(eachFilter.LogGroupName),
+			gocf.String(":log-stream:*"))
+
 		// Given the log group name, prepend the ARN syntax s.t. the
 		// Ensure the configuration resource exists for this log source.  Cache the returned
 		// logical resource name s.t. we can validate we're reusing the same resource
-		configuratorResName, err := ensureConfiguratorLambdaResource(CloudWatchLogsPrincipal,
-			eachFilter.LogGroupName,
+		configuratorResName, err := ensureConfiguratorLambdaResource(regionalPrincipal,
+			cloudWatchLogsArn,
 			[]string{},
 			template,
 			S3Bucket,
@@ -1098,6 +1095,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		cfResource := template.AddResource(resourceInvokerName, customResource)
 
 		cfResource.DependsOn = append(cfResource.DependsOn,
+			lambdaInvokePermission,
 			lambdaLogicalCFResourceName,
 			eachConfigResource)
 	}

@@ -39,13 +39,16 @@ const SpartaVersion = "0.5.0"
 type ArbitraryJSONObject map[string]interface{}
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
+// See also
+// http://docs.aws.amazon.com/general/latest/gr/rande.html
+// for region specific principal names
 const (
 	// @enum AWSPrincipal
 	APIGatewayPrincipal = "apigateway.amazonaws.com"
 	// @enum CloudWatchEvents
 	CloudWatchEventsPrincipal = "events.amazonaws.com"
 	// @enum CloudWatchLogs
-	CloudWatchLogsPrincipal = "logs.amazonaws.com"
+	// CloudWatchLogsPrincipal principal is region specific
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
 	// @enum AWSPrincipal

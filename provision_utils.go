@@ -30,9 +30,23 @@ func init() {
 		"events:PutTargets",
 		"events:RemoveTargets"}
 
-	PushSourceConfigurationActions[CloudWatchLogsPrincipal] = []string{"logs:DescribeSubscriptionFilters",
-		"logs:DeleteSubscriptionFilter",
-		"logs:PutSubscriptionFilter"}
+	cloudWatchLogsRegions := []string{
+		"us-east-1",
+		"us-west-2",
+		"us-west-1",
+		"eu-west-1",
+		"eu-central-1",
+		"ap-southeast-1",
+		"ap-northeast-1",
+		"ap-southeast-2",
+		"ap-northeast-2",
+	}
+	for _, eachCloudWatchLogsRegion := range cloudWatchLogsRegions {
+		regionalPrincipal := fmt.Sprintf("logs.%s.amazonaws.com", eachCloudWatchLogsRegion)
+		PushSourceConfigurationActions[regionalPrincipal] = []string{"logs:DescribeSubscriptionFilters",
+			"logs:DeleteSubscriptionFilter",
+			"logs:PutSubscriptionFilter"}
+	}
 
 	PushSourceConfigurationActions[S3Principal] = []string{"s3:GetBucketLocation",
 		"s3:GetBucketNotification",
