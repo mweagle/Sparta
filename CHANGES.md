@@ -1,3 +1,12 @@
+## v0.5.1
+- :warning: **BREAKING**
+  - N/A
+- :checkered_flag: **CHANGES**
+  - Added `LambdaAWSInfo.URLPath` to enable _localhost_ testing
+    - See <i>explore_test.go</i> for example
+- :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/8
+
 ## v0.5.0
 - :warning: **BREAKING**
   - N/A
