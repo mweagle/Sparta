@@ -39,7 +39,7 @@ func TestExploreAPIGateway(t *testing.T) {
 	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
 	defer ts.Close()
 	var emptyWhitelist map[string]string
-	resp, err := explore.NewAPIGatewayRequest(lambdaFn.lambdaFnName,
+	resp, err := explore.NewAPIGatewayRequest(lambdaFn.URLPath(),
 		"GET",
 		emptyWhitelist,
 		eventData,
@@ -72,7 +72,7 @@ func TestExplore(t *testing.T) {
 	logger, _ := NewLogger("warning")
 	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
 	defer ts.Close()
-	resp, err := explore.NewLambdaRequest(lambdaFn.lambdaFnName, eventData, ts.URL)
+	resp, err := explore.NewLambdaRequest(lambdaFn.URLPath(), eventData, ts.URL)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

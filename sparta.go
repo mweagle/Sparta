@@ -374,6 +374,12 @@ type LambdaAWSInfo struct {
 	DependsOn []string
 }
 
+// URLPath returns the URL path that can be used as an argument
+// to NewLambdaRequest or NewAPIGatewayRequest
+func (info *LambdaAWSInfo) URLPath() string {
+	return info.lambdaFnName
+}
+
 // Returns a JavaScript compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
 func (info *LambdaAWSInfo) jsHandlerName() string {
