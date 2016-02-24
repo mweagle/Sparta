@@ -26,12 +26,12 @@ import (
 	"github.com/voxelbrain/goptions"
 )
 
+// SpartaVersion defines the current Sparta release
+const SpartaVersion = "0.5.1"
+
 func init() {
 	rand.Seed(time.Now().Unix())
 }
-
-// SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.5.0"
 
 // ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
@@ -162,6 +162,11 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 
 // RE for sanitizing golang/JS layer
 var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
+
+// RE to ensure CloudFormation compatible resource names
+// Issue: https://github.com/mweagle/Sparta/issues/8
+// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+var reCloudFormationInvalidChars = regexp.MustCompile("[^A-Za-z0-9]+")
 
 // LambdaContext defines the AWS Lambda Context object provided by the AWS Lambda runtime.
 // See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
@@ -589,7 +594,10 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 			hash.Write([]byte(eachPart))
 		}
 	}
-	return fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
+	resourceName := fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
+
+	// Ensure that any non alphanumeric characters are replaced with ""
+	return reCloudFormationInvalidChars.ReplaceAllString(resourceName, "x")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
