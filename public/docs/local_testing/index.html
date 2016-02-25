@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle twitter:mweagle youtube: flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: name:lumen]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: googleAnalytics:UA-70794971-1 home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -466,7 +466,7 @@ func TestExplore(t *testing.T) {
 	logger, _ := NewLogger(&#34;warning&#34;)
 	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
 	defer ts.Close()
-	resp, err := explore.NewRequest(lambdaFn.lambdaFnName, eventData, ts.URL)
+	resp, err := explore.NewRequest(lambdaFn.URLPath(), eventData, ts.URL)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

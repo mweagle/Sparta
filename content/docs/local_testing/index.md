@@ -138,7 +138,7 @@ func TestExplore(t *testing.T) {
 	logger, _ := NewLogger("warning")
 	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
 	defer ts.Close()
-	resp, err := explore.NewRequest(lambdaFn.lambdaFnName, eventData, ts.URL)
+	resp, err := explore.NewRequest(lambdaFn.URLPath(), eventData, ts.URL)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
