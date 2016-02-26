@@ -1,3 +1,9 @@
+## v0.5.2
+- :warning: **BREAKING**
+  - N/A
+- :checkered_flag: **CHANGES**
+  - Added [cloudwatchlogs.Event](https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatchlogs#Event) to support unmarshaling CloudWatchLogs data
+
 ## v0.5.1
 - :warning: **BREAKING**
   - N/A
