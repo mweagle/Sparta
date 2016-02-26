@@ -508,31 +508,33 @@ func (info *LambdaAWSInfo) export(serviceName string,
 //
 
 func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) error {
+
 	var errorText []string
-	collisionMemo := make(map[string]string, 0)
+	collisionMemo := make(map[string]int, 0)
 
 	// 1 - check for duplicate golang function references.
 	for _, eachLambda := range lambdaAWSInfos {
 		testName := eachLambda.lambdaFnName
-		if _, exists := collisionMemo[testName]; !exists {
-			collisionMemo[testName] = testName
-			// We'll always find our own lambda
-			duplicateCount := 0
-			for _, eachCheckLambda := range lambdaAWSInfos {
-				if testName == eachCheckLambda.lambdaFnName {
-					duplicateCount++
-				}
-			}
-			// We'll always find our own lambda
-			if duplicateCount > 1 {
-				logger.WithFields(logrus.Fields{
-					"CollisionCount": duplicateCount,
-					"Name":           testName,
-				}).Error("Detected Sparta lambda function associated with multiple LambdaAWSInfo structs")
-				errorText = append(errorText, fmt.Sprintf("Multiple definitions of lambda: %s", testName))
-			}
+		_, exists := collisionMemo[testName]
+		if !exists {
+			collisionMemo[testName] = 1
+		} else {
+			collisionMemo[testName] = collisionMemo[testName] + 1
 		}
 	}
+	// Duplicates?
+	for eachLambdaName, eachCount := range collisionMemo {
+		if eachCount > 1 {
+			logger.WithFields(logrus.Fields{
+				"CollisionCount": eachCount,
+				"Name":           eachLambdaName,
+			}).Error("Detected logically equivalent function associated with multiple LambdaAWSInfo structs")
+			errorText = append(errorText, fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
+		}
+	}
+	logger.WithFields(logrus.Fields{
+		"CollisionMap": collisionMemo,
+	}).Debug("Lambda collision map")
 	if len(errorText) != 0 {
 		return errors.New(strings.Join(errorText[:], "\n"))
 	}
