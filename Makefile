@@ -52,6 +52,7 @@ docs:
 
 test: build
 	GO15VENDOREXPERIMENT=1 go test -v .
+	GO15VENDOREXPERIMENT=1 go test -v ./aws/...
 
 run: build
 	./sparta
