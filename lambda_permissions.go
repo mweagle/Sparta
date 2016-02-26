@@ -983,7 +983,7 @@ var cloudformationLogsSourceArnParts = []gocf.Stringable{
 }
 
 // CloudWatchLogsPermission struct implies that the corresponding
-// CloudWatchyLogsSubscriptionFilter definitions should be configured during
+// CloudWatchLogsSubscriptionFilter definitions should be configured during
 // stack provisioning.  The BasePermission.SourceArn isn't considered for
 // this configuration operation.  Configuration of the remote push source
 // is done via `putSubscriptionFilter` and `deleteSubscriptionFilter`.
