@@ -1116,6 +1116,11 @@ func Provision(noop bool,
 	templateWriter io.Writer,
 	logger *logrus.Logger) error {
 
+	err := validateSpartaPreconditions(lambdaAWSInfos, logger)
+	if nil != err {
+		return err
+	}
+
 	startTime := time.Now()
 
 	ctx := &workflowContext{
