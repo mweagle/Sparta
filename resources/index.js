@@ -5,7 +5,7 @@ var path = require('path');
 var os = require('os');
 var child_process = require('child_process');
 var _ = require('underscore');
-
+var sparta_utils = require('./sparta_utils');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 
@@ -107,32 +107,6 @@ function makeRequest(path, event, context) {
   });
   req.write(stringified);
   req.end();
-}
-
-var log = function(obj_or_string)
-{
-  if (_.isString(obj_or_string)) {
-    try {
-      // If it's empty, just skip it...
-      if (_.isEmpty(obj_or_string)) {
-        return;
-      }
-      obj_or_string = JSON.parse(obj_or_string);
-    } catch (e) {
-      // NOP
-    }
-  }
-  if (_.isString(obj_or_string)) {
-    obj_or_string = {msg: obj_or_string};
-  }
-  if (obj_or_string.stack)
-  {
-    console.error();
-  }
-  else
-  {
-    console.log(JSON.stringify(obj_or_string));
-  }
 };
 
 var postMetricCounter = function(metricName, userCallback) {
@@ -180,7 +154,7 @@ var ensureGoLangBinary = function(callback)
         }
         else
         {
-          log(stdout.toString('utf-8'));
+          sparta_utils.log(stdout.toString('utf-8'));
           // Post the
         }
         callback(err, stdout);
@@ -197,12 +171,12 @@ var createForwarder = function(path) {
 
         golangProcess.stdout.on('data', function(buf) {
           buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            log(eachLine);
+            sparta_utils.log(eachLine);
           });
         });
         golangProcess.stderr.on('data', function(buf) {
           buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            log(eachLine);
+            sparta_utils.log(eachLine);
           });
         });
 
@@ -254,7 +228,7 @@ var sendResponse = function(event, context, e, results)
     response.send(event, context, e ? response.FAILED : response.SUCCESS, data);
   }
   catch (eResponse) {
-    log('ERROR sending response: ' + eResponse.toString());
+    sparta_utils.log('ERROR sending response: ' + eResponse.toString());
   }
 };
 
@@ -288,7 +262,7 @@ PROXIED_MODULES.forEach(function (eachConfig) {
           if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
           {
             try {
-              // log({
+              // sparta_utils.log({
               //   requestType: event.RequestType,
               //   handler: eachConfig,
               //   event: event
@@ -299,7 +273,7 @@ PROXIED_MODULES.forEach(function (eachConfig) {
               sendResponse(event, context, e, null);
             }
           } else {
-            log('Bypassing configurator execution due to status: ' + stackStatus);
+            sparta_utils.log('Bypassing configurator execution due to status: ' + stackStatus);
             sendResponse(event, context, e, "NOP");
           }
         }
@@ -328,7 +302,7 @@ var envSettings = {
       UPTIME: os.uptime()
     }
 };
-log(envSettings);
+sparta_utils.log(envSettings);
 
 exports.main = createForwarder('/');
 // Additional golang handlers to be dynamically appended below

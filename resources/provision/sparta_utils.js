@@ -46,3 +46,28 @@ module.exports.cfnResponseLocalTesting = function() {
     }
   };
 };
+
+module.exports.log = function(obj_or_string) {
+  if (_.isString(obj_or_string)) {
+    try {
+      // If it's empty, just skip it...
+      if (_.isEmpty(obj_or_string)) {
+        return;
+      }
+      obj_or_string = JSON.parse(obj_or_string);
+    } catch (e) {
+      // NOP
+    }
+  }
+  if (_.isString(obj_or_string)) {
+    obj_or_string = {msg: obj_or_string};
+  }
+  if (obj_or_string.stack)
+  {
+    console.error();
+  }
+  else
+  {
+    console.log(JSON.stringify(obj_or_string));
+  }
+};
