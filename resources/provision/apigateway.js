@@ -8,9 +8,8 @@ var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
 //awsConfig.logger = console;
 
-var toBoolean = require('./sparta_utils').toBoolean;
-
-
+var sparta_utils = require('./sparta_utils');
+var toBoolean = sparta_utils.toBoolean;
 var apigateway = new AWS.APIGateway(awsConfig);
 var lambda = new AWS.Lambda(awsConfig);
 
@@ -23,9 +22,10 @@ var cachedIntegrationDefaultResponseTemplates = null;
 var logResults = function(msgText, e, results) {
   var msg = {
     ERROR: e || undefined,
-    RESULTS: results || undefined
+    RESULTS: results || undefined,
+    MESSAGE: msgText
   };
-  console.log(util.format('%s =>\n%s', msgText, JSON.stringify(msg, null, ' ')));
+  sparta_utils.log(msg);
 };
 
 var statementID = function(lambdaArn) {
@@ -61,24 +61,22 @@ var accumulatedStackLambdas = function(resourcesRoot, accumulator) {
 // BEGIN - DELETE API FUNCTIONS
 var ensureLambdaPermissionsDeleted = function(lambdaFunctionArns, callback) {
   var cleanupIterator = function(eachArn, iterCB) {
-    var onCleanup = function(  e, result  ) {
-      logResults('removePermission result', null, {
-        ERROR: e,
-        RESULTS: result,
-        ARM: eachArn
-      });
-      iterCB(null, null);
+    var onCleanup = function(e, result) {
+      // logResults('removePermission result', null, {
+      //   ERROR: e,
+      //   RESULTS: result,
+      //   ARN: eachArn
+      // });
+      // If there's an error
+      sparta_utils.idempotentDeleteHandler("ResourceNotFoundException", iterCB)(e, result);
     };
-    try
-    {
+    try {
       var params = {
         FunctionName: eachArn,
         StatementId: statementID(eachArn)
       };
       lambda.removePermission(params, onCleanup);
-    }
-    catch (e)
-    {
+    } catch (e) {
       logResults('Failed to remove permission', e, null);
       setImmediate(onCleanup, e, {});
     }
@@ -86,64 +84,170 @@ var ensureLambdaPermissionsDeleted = function(lambdaFunctionArns, callback) {
   async.eachSeries(lambdaFunctionArns, cleanupIterator, callback);
 };
 
-var ensureAPIDeletedTask = function(resourceProperties /*, resultData */) {
-
-  return function task(callback /*, results*/ ) {
-    var waterfall = [];
-    var apiProps = resourceProperties.API || {};
-
-    // Get all the APIs
-    waterfall.push(function(cb) {
-      apigateway.getRestApis({}, cb);
-    });
-
-    waterfall.push(function(restAPIs, cb) {
-      var matchingAPI = _.find(restAPIs.items || [], function(eachRestAPI) {
-        return eachRestAPI.name === apiProps.Name;
-      });
-
-      // After the API is deleted, give a best effort attempt to
-      // cleanup the permissions
-      var onAPIDeleted = function(e, results) {
-        if (!e) {
-          var lambdaArns = accumulatedStackLambdas(apiProps.Resources || []);
-          ensureLambdaPermissionsDeleted(lambdaArns, cb);
-        } else {
-          cb(e, results);
-        }
-      };
-      // If the API exists, find it by name and delete it
-      if (matchingAPI) {
-        logResults('Deleting API', null, matchingAPI);
-        var params = {
-          restApiId: matchingAPI.id
-        };
-        apigateway.deleteRestApi(params, onAPIDeleted);
-      } else {
-        setImmediate(onAPIDeleted, null, true);
-      }
-    });
-    var terminus = function( /* e, results */ ) {
-      callback(null, true);
-    };
-    async.waterfall(waterfall, terminus);
-  };
+var cleanupLambdaPermissions = function(apiResources, callback) {
+  var lambdaArns = accumulatedStackLambdas(apiResources || []);
+  ensureLambdaPermissionsDeleted(lambdaArns, function() {
+    // Ignore the results - best effort
+    callback(null, true);
+  });
 };
+
+var deleteResource = function(restAPIInfo, resourceInfo, callback) {
+  var onDelete = function(e, results) {
+    if (e) {
+      callback(e, null);
+    }
+    else
+    {
+      var params = {
+        resourceId: resourceInfo.id,
+        restApiId: restAPIInfo.id
+      };
+      var idempotentDelete = sparta_utils.idempotentDeleteHandler("NotFoundException", callback);
+      apigateway.deleteResource(params, idempotentDelete);
+    }
+  };
+
+  if (resourceInfo && !_.isEmpty(resourceInfo.resourceMethods)) {
+    var iterDeleteMethod = function(value, methodName, iterCB) {
+      var params = {
+        httpMethod: methodName,
+        resourceId: resourceInfo.id,
+        restApiId: restAPIInfo.id
+      };
+
+      // Need to describe the method to get the resource entry
+      apigateway.deleteMethod(params, iterCB);
+    };
+    async.forEachOfSeries(resourceInfo.resourceMethods,
+                          iterDeleteMethod,
+                          onDelete);
+  } else {
+    setImmediate(onDelete, null, true);
+  }
+};
+
+var ensureResourcesDeleted = function(restAPIInfo, apiResources, callback) {
+  // Describe the rest API, for each resource, remove all methods
+  // then remove the resource
+  var waterfallTasks = [];
+
+  if (_.isObject(restAPIInfo) && !_.isEmpty(restAPIInfo.id)) {
+    waterfallTasks[0] = function(waterfallCB) {
+      var params = {
+        restApiId: restAPIInfo.id
+      };
+      apigateway.getResources(params, waterfallCB);
+    };
+
+    waterfallTasks[1] = function(restAPIResources, waterfallCB) {
+      var iterDelete = function(resourceInfo, cb) {
+
+        // logResults('delete resource state', null, {
+        //   REST_INFO: restAPIInfo,
+        //   RESOURCE_INFO: resourceInfo
+        // });
+        deleteResource(restAPIInfo, resourceInfo, cb);
+      }
+      /**
+      "items": [
+                {
+                 "id": "xc8qp9f7ig",
+                 "path": "/"
+                },
+                {
+                 "id": "xuvta4",
+                 "parentId": "xc8qp9f7ig",
+                 "pathPart": "versions",
+                 "path": "/versions",
+                 "resourceMethods": {
+                  "GET": {},
+                  "OPTIONS": {}
+                 }
+                }
+      */
+      // logResults('API Gateway resources', null, {
+      //   RESOURCES: restAPIResources
+      // });
+      // Filter the resources so that we only need to delete the
+      // top level children, excluding the root path
+      var itemsToDelete = _.filter(restAPIResources.items,
+                                  function (eachItem) {
+                                    var slashCount = (eachItem.path.match(/\//g) || []).length;
+                                    return (slashCount==1 && eachItem.path !== '/');
+                                  });
+      async.eachSeries(itemsToDelete, iterDelete, waterfallCB);
+    };
+    var terminus = function(e, results) {
+      if (e) {
+        callback(e, null);
+      } else {
+        // Best effort permissions cleanup
+        cleanupLambdaPermissions(apiResources, callback);
+      }
+    };
+    async.waterfall(waterfallTasks, terminus);
+  } else {
+    setImmediate(callback, null, true);
+  }
+};
+
+var ensureAPIDeleted = function(restAPIInfo, apiResources, callback) {
+  // After the API is deleted, give a best effort attempt to
+  // cleanup the permissions
+  var onAPIDeleted = function(e, results) {
+    if (e) {
+      terminus(e, results);
+    } else {
+      cleanupLambdaPermissions(apiResources, callback);
+    }
+  };
+
+  // If the API exists, cleanup leaves to root
+  var params = {
+    restApiId: restAPIInfo.id
+  };
+  apigateway.deleteRestApi(params, onAPIDeleted);
+};
+
 // END - DELETE API FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 // BEGIN - CREATE API FUNCTIONS
-var ensureAPICreatedTask = function(resourceProperties /*, returnData */) {
-  return function task(callback /*, results */ ) {
-    var apiProps = resourceProperties.API || {};
-    var params = {
-      name: apiProps.Name,
-      cloneFrom: apiProps.CloneFrom || undefined,
-      description: apiProps.Description || undefined
-    };
-    apigateway.createRestApi(params, callback);
+
+var ensureRestAPI = function(resourceProperties, callback) {
+  var waterfall = [];
+  var apiProps = resourceProperties.API || {};
+
+  // Get all the APIs
+  waterfall.push(function(cb) {
+    apigateway.getRestApis({}, cb);
+  });
+
+  waterfall.push(function(restAPIs, cb) {
+    var matchingAPI = _.find(restAPIs.items || [], function(eachRestAPI) {
+      return eachRestAPI.name === apiProps.Name;
+    });
+    cb(null, matchingAPI);
+  });
+
+  // If we didn't find one, create it...
+  var terminus = function(e, matchingAPI) {
+    if (e || matchingAPI) {
+      callback(e, e ? null : matchingAPI);
+    } else {
+      var apiProps = resourceProperties.API || {};
+      var params = {
+        name: apiProps.Name,
+        cloneFrom: apiProps.CloneFrom || undefined,
+        description: apiProps.Description || undefined
+      };
+
+      apigateway.createRestApi(params, callback);
+    }
   };
+  async.waterfall(waterfall, terminus);
 };
 
 var ensureLambdaPermissionCreated = function(lambdaArn, resourceMethodDefinition, rolePolicyCache, callback) {
@@ -183,7 +287,10 @@ var ensureLambdaPermissionCreated = function(lambdaArn, resourceMethodDefinition
       if (!e && results.cache) {
         try {
           rolePolicyCache[lambdaArn] = JSON.parse(results.cache.Policy);
-          logResults('Cached IAM Role', null, {ARN: lambdaArn, POLICY: rolePolicyCache[lambdaArn]});
+          logResults('Cached IAM Role', null, {
+            ARN: lambdaArn,
+            POLICY: rolePolicyCache[lambdaArn]
+          });
         } catch (eParse) {
           e = eParse;
         }
@@ -212,18 +319,18 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     creationTasks.putMethod = function(asyncCB) {
       // Ensure the request params are booleans
       var requestParams = _.reduce(methodDef.Parameters || {},
-                                  function (memo, eachParam, eachKey) {
-                                    memo[eachKey] = toBoolean(eachParam);
-                                    return memo;
-                                  },
-                                {});
+        function(memo, eachParam, eachKey) {
+          memo[eachKey] = toBoolean(eachParam);
+          return memo;
+        }, {});
 
       // TODO: Support Model creation
       var params = methodOpParams({
         authorizationType: methodDef.AuthorizationType || "NONE",
         apiKeyRequired: toBoolean(methodDef.APIKeyRequired),
-        requestParameters: requestParams /*,
-        requestModels: methodDef.RequestModels || {},*/
+        requestParameters: requestParams
+          /*,
+                 requestModels: methodDef.RequestModels || {},*/
       });
       apigateway.putMethod(params, asyncCB);
     };
@@ -234,42 +341,39 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       try {
         // Load each file and transform that into a content-type to VTL mapping
         if (!cachedIntegrationDefaultResponseTemplates) {
-            var mappingTemplates = {
-              json: fs.readFileSync('./apigateway/inputmapping_json.vtl', {encoding: 'utf-8'}),
-              default: fs.readFileSync('./apigateway/inputmapping_json.vtl', {encoding: 'utf-8'}),
-            };
-            cachedIntegrationDefaultResponseTemplates = {
-              'application/json' : mappingTemplates.json,
-              'text/plain' : mappingTemplates.default,
-              'application/x-www-form-urlencoded' : mappingTemplates.default,
-              'multipart/form-data' : mappingTemplates.default
-            };
+          var mappingTemplates = {
+            json: fs.readFileSync('./apigateway/inputmapping_json.vtl', {
+              encoding: 'utf-8'
+            }),
+            default: fs.readFileSync('./apigateway/inputmapping_json.vtl', {
+              encoding: 'utf-8'
+            }),
+          };
+          cachedIntegrationDefaultResponseTemplates = {
+            'application/json': mappingTemplates.json,
+            'text/plain': mappingTemplates.default,
+            'application/x-www-form-urlencoded': mappingTemplates.default,
+            'multipart/form-data': mappingTemplates.default
+          };
         }
         setImmediate(asyncCB, null, cachedIntegrationDefaultResponseTemplates);
-      }
-      catch (e)
-      {
-          setImmediate(asyncCB, e, null);
+      } catch (e) {
+        setImmediate(asyncCB, e, null);
       }
     };
-
-
 
     var putMethodResponseTask = function(statusCode, parameters, models) {
       return function(taskCB) {
         var responseModels = _.reduce(models,
-                                 function(memo, eachModelDef, eachContentType)
-                                 {
-                                   memo[eachContentType] = eachModelDef.Name;
-                                   return memo;
-                                 },
-                                 {});
-       var responseParameters = _.reduce(parameters || {},
-                                   function (memo, eachParam, eachKey) {
-                                     memo[eachKey] = toBoolean(eachParam);
-                                     return memo;
-                                   },
-                                 {});
+          function(memo, eachModelDef, eachContentType) {
+            memo[eachContentType] = eachModelDef.Name;
+            return memo;
+          }, {});
+        var responseParameters = _.reduce(parameters || {},
+          function(memo, eachParam, eachKey) {
+            memo[eachKey] = toBoolean(eachParam);
+            return memo;
+          }, {});
         var params = methodOpParams({
           statusCode: statusCode.toString(),
           responseParameters: responseParameters,
@@ -285,10 +389,10 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     creationTasks.putMethodResponse.push(function(asyncCB) {
       var putMethodResponseTasks = [];
       var responses = methodDef.Responses || {};
-      _.each(responses, function (eachResponseObject, eachResponseStatus) {
-          var models = eachResponseObject.Models || {};
-          var parameters = eachResponseObject.Parameters || {};
-          putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, parameters, models));
+      _.each(responses, function(eachResponseObject, eachResponseStatus) {
+        var models = eachResponseObject.Models || {};
+        var parameters = eachResponseObject.Parameters || {};
+        putMethodResponseTasks.push(putMethodResponseTask(eachResponseStatus, parameters, models));
       });
 
       // Run them...
@@ -316,25 +420,27 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
         type: integration.Type || 'AWS'
       };
       var requestTemplates = _.isEmpty(integration.RequestTemplates) ?
-                              context.defaultIntegrationResponseTemplates :
-                              integration.RequestTemplates;
+        context.defaultIntegrationResponseTemplates :
+        integration.RequestTemplates;
 
       switch (opParams.type) {
         case 'AWS':
-          opParams.cacheKeyParameters =  [];
-          opParams.requestTemplates =  requestTemplates;
-          opParams.uri =  lamdbdaURI(lambdaArn);
-          opParams.integrationHttpMethod =  'POST';
-          break;
-        case 'MOCK': {
           opParams.cacheKeyParameters = [];
           opParams.requestTemplates = requestTemplates;
-          opParams.integrationHttpMethod = 'MOCK';
+          opParams.uri = lamdbdaURI(lambdaArn);
+          opParams.integrationHttpMethod = 'POST';
           break;
-        }
-        default: {
-          console.log('Unsupported API Gateway type: ' + opParams.type);
-        }
+        case 'MOCK':
+          {
+            opParams.cacheKeyParameters = [];
+            opParams.requestTemplates = requestTemplates;
+            opParams.integrationHttpMethod = 'MOCK';
+            break;
+          }
+        default:
+          {
+            logResults('Unsupported API Gateway type: ' + opParams.type);
+          }
       }
       var params = methodOpParams(opParams);
       apigateway.putIntegration(params, asyncCB);
@@ -348,12 +454,12 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
       var responses = integration.Responses || {};
       var putIntegrationResponseTasks = [];
       _.each(responses,
-             function(eachResponse, eachStatusCode) {
-              putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode,
-                                                                  eachResponse.SelectionPattern,
-                                                                  eachResponse.Parameters,
-                                                                  eachResponse.Templates));
-             });
+        function(eachResponse, eachStatusCode) {
+          putIntegrationResponseTasks.push(putIntegrationTask(eachStatusCode,
+            eachResponse.SelectionPattern,
+            eachResponse.Parameters,
+            eachResponse.Templates));
+        });
       async.series(putIntegrationResponseTasks, asyncCB);
 
     });
@@ -362,18 +468,14 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     // Related: https://forums.aws.amazon.com/message.jspa?messageID=678324
     creationTasks.addPermission = Object.keys(creationTasks);
     creationTasks.addPermission.push(function(asyncCB /*, context */ ) {
-      try
-      {
+      try {
         ensureLambdaPermissionCreated(lambdaArn, methodDef, rolePolicyCache, asyncCB);
-      }
-      catch (e)
-      {
+      } catch (e) {
         logResults('Failed to addPermission', e, methodDef);
         setImmediate(asyncCB, e, null);
       }
     });
 
-    // TODO: remove logging code
     // When we're done, describe everything to see what it looks like
     creationTasks.methodDescription = Object.keys(creationTasks);
     creationTasks.methodDescription.push(function(asyncCB) {
@@ -388,7 +490,6 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
     async.auto(creationTasks, terminus);
   };
 
-
   // Start the iteration, which requires the Lambda ARN
   // Create the HTTP methods for this item.
   var lambdaArn = APIDefinition.LambdaArn;
@@ -398,239 +499,250 @@ var ensureAPIResourceMethodsCreated = function(restApiId, awsResourceId, APIDefi
   }, createdCB);
 };
 
-var ensureResourcesCreatedTask = function(restAPIKeyName, resourceProperties /*, returnData */ ) {
-  return function task(callback, results) {
-    var apiCreatedResults = results[restAPIKeyName] || {};
-    var restApiId = apiCreatedResults.id || "";
+var ensureResourcesCreated = function(restAPIInfo, resourceProperties, callback ) {
+  var restApiId = restAPIInfo.id || "";
 
-    var tasks = [];
-    // Get the current resources
-    tasks.push(function(cb) {
+  var tasks = [];
+  // Get the current resources
+  tasks.push(function(cb) {
+    var params = {
+      restApiId: restApiId,
+      limit: "100",
+    };
+    apigateway.getResources(params, cb);
+  });
+
+  // Turn them into a {path, resourceID} map
+  tasks.push(function(getResults, cb) {
+    var resourceIndex = {};
+    if (getResults && getResults.items) {
+      resourceIndex = _.reduce(getResults.items,
+        function(memo, eachItem) {
+          memo[eachItem.path] = eachItem.id;
+          return memo;
+        }, {});
+    }
+    setImmediate(cb, null, resourceIndex);
+  });
+
+  // Create all the resources in the custom data
+  tasks.push(function(resourceIndex, taskCB) {
+    var lambdaRolePolicyCache = {};
+
+    var workerError = null;
+
+    //////////////////////////////////////////////////////////////////////////
+    // The queue worker for resources visited as the
+    // visitor descends the "API" property
+    var processResourceEntry = function(taskData, processCB) {
+      var rootObject = taskData.definition;
+      var parentResourceId = taskData.parentId;
+
+      ////////////////////////////////////////////////////////////////////////
+      var onProcessComplete = function(e, processTaskResults) {
+        workerError = e;
+        if (e) {
+          logResults('Failed to create resource', e);
+        }
+        if (!workerError) {
+          // Push the parent ID into the child
+          var children = rootObject.Children || {};
+          var childKeys = Object.keys(children);
+          childKeys.forEach(function(eachKey) {
+            var task = {
+              definition: children[eachKey],
+              parentId: processTaskResults.createResource.id
+            };
+            workerQueue.push(task);
+          });
+        }
+        processCB(workerError);
+      };
+
+      ////////////////////////////////////////////////////////////////////////
+      // Make sure the PathComponent is already in the resourceIndex
+      var processTasks = {};
+      processTasks.createResource = function(asyncCB) {
+        // If there is a parentId, then create the child resource
+        // for this path
+        if (parentResourceId) {
+          // Create the resource...
+          var params = {
+            parentId: parentResourceId,
+            pathPart: rootObject.PathComponent,
+            restApiId: restApiId
+          };
+          apigateway.createResource(params, asyncCB);
+        } else {
+          // No need to create a child resource for "/" path
+          setImmediate(asyncCB, null, {
+            id: resourceIndex["/"]
+          });
+        }
+      };
+
+      ////////////////////////////////////////////////////////////////////////
+      // Create the Methods
+      processTasks.createMethods = ['createResource'];
+      processTasks.createMethods.push(function(asyncCB, context) {
+        var createResourceResponse = context.createResource || {};
+        logResults('createResource response', null, createResourceResponse);
+
+        // The API resources will be created a of the root resource
+        // or the previously created resource id subpath component
+        var resourceId = createResourceResponse.id || resourceIndex["/"];
+        var apiResources = rootObject.APIResources || {};
+        var apiKeys = Object.keys(apiResources);
+        var onAPIResourcesComplete = function(e /*, results */ ) {
+          asyncCB(e, e ? null : resourceId);
+        };
+        async.eachSeries(apiKeys, function(eachKey, itorCB) {
+          ensureAPIResourceMethodsCreated(restApiId, resourceId, apiResources[eachKey], lambdaRolePolicyCache, itorCB);
+        }, onAPIResourcesComplete);
+      });
+      async.auto(processTasks, onProcessComplete);
+    };
+
+    // Setup the queue to descend
+    var workerQueue = async.queue(processResourceEntry, 1);
+    workerQueue.drain = function() {
+      taskCB(workerError, true);
+    };
+    var apiDefinition = resourceProperties.API || {};
+    var rootResourceDefinition = apiDefinition.Resources || {};
+    workerQueue.push({
+      definition: rootResourceDefinition,
+      parentId: null
+    });
+  });
+  async.waterfall(tasks, callback);
+};
+
+var ensureDeployment = function(restAPIInfo, resourceProperties, callback) {
+
+  var restApiId = restAPIInfo.id || "";
+
+  var apiDefinition = resourceProperties.API || {};
+  var stageDefinition = apiDefinition.Stage || {};
+  if (stageDefinition.Name) {
+    var deployTasks = [];
+    deployTasks.push(function(taskCB) {
       var params = {
         restApiId: restApiId,
-        limit: "100",
+        stageName: stageDefinition.Name,
+        cacheClusterEnabled: ("true" === stageDefinition.CacheClusterEnabled),
+        cacheClusterSize: _.isEmpty(stageDefinition.CacheClusterSize) ? undefined : stageDefinition.CacheClusterSize,
+        stageDescription: stageDefinition.Description || '',
+        variables: stageDefinition.Variables || {}
       };
-      apigateway.getResources(params, cb);
-    });
-
-    // Turn them into a {path, resourceID} map
-    tasks.push(function(getResults, cb) {
-      var resourceIndex = {};
-      if (getResults && getResults.items) {
-        resourceIndex = _.reduce(getResults.items,
-          function(memo, eachItem) {
-            memo[eachItem.path] = eachItem.id;
-            return memo;
-          }, {});
-      }
-      setImmediate(cb, null, resourceIndex);
-    });
-
-    // Create all the resources in the custom data
-    tasks.push(function(resourceIndex, taskCB) {
-      //logResults('Resource Index', null, resourceIndex);
-      var lambdaRolePolicyCache = {};
-
-      var workerError = null;
-
-      //////////////////////////////////////////////////////////////////////////
-      // The queue worker for resources visited as the
-      // visitor descends the "API" property
-      var processResourceEntry = function(taskData, processCB) {
-        var rootObject = taskData.definition;
-        var parentResourceId = taskData.parentId;
-
-        ////////////////////////////////////////////////////////////////////////
-        var onProcessComplete = function(e, processTaskResults) {
-          workerError = e;
-          if (e) {
-            console.log('ERROR: ' + e.toString());
-          }
-          if (!workerError) {
-            // Push the parent ID into the child
-            var children = rootObject.Children || {};
-            var childKeys = Object.keys(children);
-            childKeys.forEach(function(eachKey) {
-              var task = {
-                definition: children[eachKey],
-                parentId: processTaskResults.createResource.id
-              };
-              workerQueue.push(task);
-            });
-          }
-          processCB(workerError);
-        };
-
-        ////////////////////////////////////////////////////////////////////////
-        // Make sure the PathComponent is already in the resourceIndex
-        var processTasks = {};
-        processTasks.createResource = function(asyncCB) {
-          // If there is a parentId, then create the child resource
-          // for this path
-          if (parentResourceId) {
-            // Create the resource...
-            var params = {
-              parentId: parentResourceId,
-              pathPart: rootObject.PathComponent,
-              restApiId: restApiId
-            };
-            apigateway.createResource(params, asyncCB);
-          } else {
-            // logResults('Resource already exists', null, {
-            //   PATH: rootObject.PathComponent
-            // });
-            // No need to create a child resource for "/" path
-            setImmediate(asyncCB, null, {
-              id: resourceIndex["/"]
-            });
-          }
-        };
-
-        ////////////////////////////////////////////////////////////////////////
-        // Create the Methods
-        processTasks.createMethods = ['createResource'];
-        processTasks.createMethods.push(function(asyncCB, context) {
-          var createResourceResponse = context.createResource || {};
-          logResults('createResource response', null, createResourceResponse);
-
-          // The API resources will be created a of the root resource
-          // or the previously created resource id subpath component
-          var resourceId = createResourceResponse.id || resourceIndex["/"];
-          var apiResources = rootObject.APIResources || {};
-          var apiKeys = Object.keys(apiResources);
-          var onAPIResourcesComplete = function(e /*, results */ ) {
-            asyncCB(e, e ? null : resourceId);
-          };
-          async.eachSeries(apiKeys, function(eachKey, itorCB) {
-            ensureAPIResourceMethodsCreated(restApiId, resourceId, apiResources[eachKey], lambdaRolePolicyCache, itorCB);
-          }, onAPIResourcesComplete);
-        });
-        async.auto(processTasks, onProcessComplete);
+      logResults('Creating deployment', null, params);
+      var terminus = function(e, results) {
+        if (!e && results) {
+          results.URL = util.format('https://%s.execute-api.%s.amazonaws.com/%s',
+            restApiId,
+            lambda.config.region,
+            stageDefinition.Name);
+        }
+        taskCB(e, results);
       };
-
-      // Setup the queue to descend
-      var workerQueue = async.queue(processResourceEntry, 1);
-      workerQueue.drain = function() {
-        taskCB(workerError, true);
-      };
-      var apiDefinition = resourceProperties.API || {};
-      var rootResourceDefinition = apiDefinition.Resources || {};
-      workerQueue.push({
-        definition: rootResourceDefinition,
-        parentId: null
-      });
+      apigateway.createDeployment(params, terminus);
     });
-    async.waterfall(tasks, callback);
-  };
-};
-
-var ensureDeploymentTask = function(restAPIKeyName, resourceProperties /*, returnData */ ) {
-  return function task(callback, context) {
-   var apiCreatedResults = context[restAPIKeyName] || {};
-   var restApiId = apiCreatedResults.id || "";
-
-   var apiDefinition = resourceProperties.API || {};
-   var stageDefinition = apiDefinition.Stage || {};
-   if (stageDefinition.Name)
-   {
-     var deployTasks = [];
-     deployTasks.push(function (taskCB) {
-       var params = {
-         restApiId: restApiId,
-         stageName: stageDefinition.Name,
-         cacheClusterEnabled: ("true" === stageDefinition.CacheClusterEnabled),
-         cacheClusterSize: _.isEmpty(stageDefinition.CacheClusterSize) ? undefined : stageDefinition.CacheClusterSize,
-         stageDescription: stageDefinition.Description || '',
-         variables: stageDefinition.Variables || {}
-       };
-       logResults('Creating deployment', null, params);
-       var terminus = function(e, results)
-       {
-         if (!e && results) {
-           results.URL = util.format('https://%s.execute-api.%s.amazonaws.com/%s',
-                                      restApiId,
-                                      lambda.config.region,
-                                      stageDefinition.Name);
-         }
-         taskCB(e, results);
-       };
-       apigateway.createDeployment(params, terminus);
-     });
     async.waterfall(deployTasks, callback);
-   }
-   else
-   {
-     // No stage requested
-     logResults('Stage not requested', null, restApiId);
-     setImmediate(callback, null, restApiId);
-   }
-  };
+  } else {
+    // No stage requested
+    logResults('Stage not requested', null, restApiId);
+    setImmediate(callback, null, restApiId);
+  }
 };
-
 exports.handler = function(event, context) {
+  console.log('Request type: ' + event.RequestType);
+
   var data = {};
 
   var onComplete = function(error, returnValue) {
+    sparta_utils.log({
+      ERROR: error || undefined,
+      RESULTS: returnValue || undefined,
+      MESSAGE: 'API Gateway JS results'
+    });
 
     data.Error = error || undefined;
     data.Result = returnValue || undefined;
     data.URL = (data.Result && data.Result.ensureDeployment) ? data.Result.ensureDeployment.URL : "";
 
-    try
-    {
+    try {
       response.send(event, context, data.Error ? response.FAILED : response.SUCCESS, data);
-    }
-    catch (e)
-    {
+    } catch (e) {
       logResults('ALL DONE', error, returnValue);
     }
   };
+
   if (event.ResourceProperties) {
+
+    var resourceProps = event.ResourceProperties || {};
+    var apiProps = resourceProps.API || {};
+
+    var oldResourceProps = event.OldResourceProperties || {};
+    var oldAPIProps = oldResourceProps.API || {};
+
     var tasks = {};
-    tasks.ensureDeleted = ensureAPIDeletedTask(event.ResourceProperties, data);
 
-    if (event.RequestType !== 'Delete') {
+    // Issue https://github.com/mweagle/Sparta/issues/6
+    // Given the API name, find the RestAPI that owns the
+    // APIGateway and try to reuse it s.t. AWS assigned domain
+    // name is stable
 
-      var resourceProps = event.ResourceProperties || {};
-      var apiProps = resourceProps.API || {};
+    tasks.ensureRestAPI = _.partial(ensureRestAPI, resourceProps);
 
-      var oldResourceProps = event.OldResourceProperties || {};
-      var oldAPIProps = oldResourceProps.API || {};
+    // // If this is an update and the name has changed, delete the old one
+    // if (!_.isEmpty(oldAPIProps) && (oldAPIProps.Name !== apiProps.Name)) {
+    //   tasks.ensureOldRestAPI = ['ensureRestAPI',
+    //     _.partial(ensureRestAPI, oldResourceProps)
+    //   ];
+    //
+    //   tasks.ensureOldAPIDeleted = ['ensureOldRestAPI',
+    //     function(taskCB, context) {
+    //       ensureAPIDeleted(context.ensureOldRestAPI, oldAPIProps.Resources, taskCB);
+    //     }
+    //   ];
+    // }
+    //
+    switch (event.RequestType) {
+      case 'Delete':
+        {
+          tasks.ensureDeleted = ['ensureRestAPI',
+            function(taskCB, context) {
+              ensureAPIDeleted(context.ensureRestAPI, apiProps.Resources, taskCB);
+            }
+          ];
+          break;
+        }
+      default:
+        {
+          // Delete the legacy resources for this API
+          tasks.deleteResources = ['ensureRestAPI',
+            function(taskCB, context) {
+              ensureResourcesDeleted(context.ensureRestAPI, apiProps.Resources, taskCB);
+            }
+          ];
 
-      if (!_.isEmpty(oldAPIProps) && (oldAPIProps.Name !== apiProps.Name)) {
-        tasks.ensureOldDeleted= ['ensureDeleted',
-          ensureAPIDeletedTask(event.OldResourceProperties, data)
-        ];
-      }
+          // Create the new resources
+          tasks.ensureResources = ['deleteResources',
+            function(taskCB, context) {
+              ensureResourcesCreated(context.ensureRestAPI, resourceProps, taskCB);
+            }
+          ];
 
-      tasks.ensureAPICreated = ['ensureDeleted',
-        ensureAPICreatedTask(event.ResourceProperties, data)
-      ];
-
-      tasks.ensureResources = ['ensureAPICreated',
-        ensureResourcesCreatedTask('ensureAPICreated',
-          event.ResourceProperties,
-          data)
-      ];
-
-      tasks.ensureDeployment = ['ensureResources',
-        ensureDeploymentTask('ensureAPICreated',
-          event.ResourceProperties,
-          data)
-      ];
-    } else {
-      // TODO: Delete the old API if the name has changed
+          tasks.ensureDeployment = ['ensureResources',
+            function(taskCB, context) {
+              ensureDeployment(context.ensureRestAPI, resourceProps, taskCB);
+            }
+          ];
+        }
     }
     async.auto(tasks, onComplete);
   } else {
-    console.log('Resource properties not found');
+    logResults('Resource properties not found');
     response.send(event, context, response.SUCCESS, data);
   }
 };
-//
-// var apiData = require('./APIProperties.json');
-// var event = {
-//   RequestType: 'Create',
-//   ResourceProperties: apiData
-// };
-// module.exports.handler(event, {});
