@@ -1,3 +1,11 @@
+## v0.5.3
+- :warning: **BREAKING**
+  - N/A
+- :checkered_flag: **CHANGES**
+  - N/A
+- :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/6
+
 ## v0.5.2
 - :warning: **BREAKING**
   - N/A
