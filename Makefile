@@ -3,9 +3,10 @@
 
 clean:
 	go clean .
+	go env
 
 get: clean
-	go get -u ./...
+	go get -u -v ./...
 
 reset:
 		git reset --hard
