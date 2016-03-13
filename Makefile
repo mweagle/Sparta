@@ -7,6 +7,8 @@ clean:
 
 get: clean
 	go get -u -v ./...
+	ls -laR $GOPATH
+	go env
 
 reset:
 		git reset --hard
