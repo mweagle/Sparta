@@ -12,7 +12,8 @@ get: clean
 	go get -t github.com/voxelbrain/goptions
 	go get -t github.com/mjibson/esc
 	go get -t github.com/crewjam/go-cloudformation
-
+	ls -laR $(GOPATH)/src
+	
 reset:
 		git reset --hard
 		git clean -f -d
