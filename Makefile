@@ -12,6 +12,7 @@ get: clean
 	go get github.com/Sirupsen/logrus
 	go get github.com/voxelbrain/goptions
 	go get github.com/mjibson/esc
+	go get github.com/crewjam/go-cloudformation
 
 reset:
 		git reset --hard
