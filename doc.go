@@ -6,7 +6,7 @@
 //go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist/
 //go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist-xtools/
 // Zip up the modules
-//go:generate bash -c "pushd ./resources/provision; zip -r ./node_modules.zip ./node_modules/"
+//go:generate bash -c "pushd ./resources/provision; zip -qr ./node_modules.zip ./node_modules/"
 //go:generate rm -rf ./resources/provision/node_modules
 
 // Embed the custom service handlers
