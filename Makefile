@@ -5,7 +5,7 @@ clean:
 	go clean .
 
 get: clean
-	go get -u ./...
+	go get -u -v ./...
 
 reset:
 		git reset --hard
