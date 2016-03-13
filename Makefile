@@ -43,8 +43,8 @@ docs:
 	godoc -v -http=:8090 -index=true
 
 test: build
-	GO15VENDOREXPERIMENT=0 go test -v .
-	GO15VENDOREXPERIMENT=0 go test -v ./aws/...
+	go test -v .
+	go test -v ./aws/...
 
 run: build
 	./sparta
