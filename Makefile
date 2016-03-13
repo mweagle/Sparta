@@ -1,18 +1,29 @@
 .DEFAULT_GOAL=build
 .PHONY: build test get run tags clean reset
 
+
+ensure_vendor:
+	mkdir -pv vendor
+
 clean:
 	go clean .
 	go env
 
-get: clean
-	go get -t github.com/aws/aws-sdk-go
-	go get -t github.com/go-ini/ini
-	go get -t github.com/jmespath/go-jmespath
-	go get -t github.com/Sirupsen/logrus
-	go get -t github.com/voxelbrain/goptions
-	go get -t github.com/mjibson/esc
-	go get -t github.com/crewjam/go-cloudformation
+get: clean ensure_vendor
+	git clone --depth=1 https://github.com/aws/aws-sdk-go ./vendor/github.com/aws/aws-sdk-go
+	rm -rf ./src/main/vendor/github.com/aws/aws-sdk-go/.git
+	git clone --depth=1 https://github.com/go-ini/ini ./vendor/github.com/go-ini/ini
+	rm -rf ./src/main/vendor/github.com/go-ini/ini/.git
+	git clone --depth=1 https://github.com/jmespath/go-jmespath ./vendor/github.com/jmespath/go-jmespath
+	rm -rf ./src/main/vendor/github.com/jmespath/go-jmespath/.git
+	git clone --depth=1 https://github.com/Sirupsen/logrus ./vendor/github.com/Sirupsen/logrus
+	rm -rf ./src/main/vendor/github.com/Sirupsen/logrus/.git
+	git clone --depth=1 https://github.com/voxelbrain/goptions ./vendor/github.com/voxelbrain/goptions
+	rm -rf ./src/main/vendor/github.com/voxelbrain/goptions/.git
+	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
+	rm -rf ./src/main/vendor/github.com/mjibson/esc/.git
+	git clone --depth=1 https://github.com/crewjam/go-cloudformation ./vendor/github.com/crewjam/go-cloudformation
+	rm -rf ./src/main/vendor/github.com/crewjam/go-cloudformation/.git
 
 reset:
 		git reset --hard
@@ -33,7 +44,7 @@ vet: generate
 	go tool vet -composites=false ./aws/
 
 build: format generate vet
-	GO15VENDOREXPERIMENT=0 go build .
+	go build .
 	@echo "Build complete"
 
 docs:
