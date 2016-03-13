@@ -6,8 +6,8 @@ clean:
 	go env
 
 get: clean
-	go get -u -v ./...
-	ls -laR $(GOPATH)
+	go get -t -u ./...
+	go get github.com/mjibson/esc
 	go env
 
 reset:
