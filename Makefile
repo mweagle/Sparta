@@ -7,7 +7,7 @@ clean:
 
 get: clean
 	go get -t github.com/aws/aws-sdk-go
-	go get -t github.com/vaughan0/go-ini
+	go get -t github.com/go-ini/ini
 	go get -t github.com/Sirupsen/logrus
 	go get -t github.com/voxelbrain/goptions
 	go get -t github.com/mjibson/esc
