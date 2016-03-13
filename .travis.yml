@@ -5,6 +5,8 @@ go:
 before_install:
 - nvm install 4.2.4
 - nvm use 4.2.4
+- go get -u -v ./...
+- go env
 install: make get
 script: make test
 env:
