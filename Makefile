@@ -5,10 +5,13 @@ clean:
 	go clean .
 	go env
 
+
 get: clean
-	go get -t -u ./...
+	go get github.com/aws/aws-sdk-go
+	go get github.com/vaughan0/go-ini
+	go get github.com/Sirupsen/logrus
+	go get github.com/voxelbrain/goptions
 	go get github.com/mjibson/esc
-	go env
 
 reset:
 		git reset --hard
