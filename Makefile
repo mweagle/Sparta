@@ -12,8 +12,7 @@ get: clean
 	go get -t github.com/voxelbrain/goptions
 	go get -t github.com/mjibson/esc
 	go get -t github.com/crewjam/go-cloudformation
-	ls -laR $(GOPATH)/src
-	
+
 reset:
 		git reset --hard
 		git clean -f -d
@@ -33,7 +32,7 @@ vet: generate
 	go tool vet -composites=false ./aws/
 
 build: format generate vet
-	go build .
+	GO15VENDOREXPERIMENT="" go build .
 	@echo "Build complete"
 
 docs:
@@ -43,8 +42,8 @@ docs:
 	godoc -v -http=:8090 -index=true
 
 test: build
-	go test -v .
-	go test -v ./aws/...
+	GO15VENDOREXPERIMENT="" go test -v .
+	GO15VENDOREXPERIMENT="" go test -v ./aws/...
 
 run: build
 	./sparta
