@@ -1,6 +1,6 @@
 // TODO: make `go generate` work on windows
 
-//go:generate bash -c "ls -laR $GOPATH"
+//go:generate go get github.com/mjibson/esc
 
 //go:generate rm -rf ./resources/provision/node_modules
 //go:generate npm install ./resources/provision/ --prefix ./resources/provision --silent
