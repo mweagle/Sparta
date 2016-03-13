@@ -32,7 +32,7 @@ vet: generate
 	go tool vet -composites=false ./aws/
 
 build: format generate vet
-	GO15VENDOREXPERIMENT="" go build .
+	GO15VENDOREXPERIMENT=0 go build .
 	@echo "Build complete"
 
 docs:
@@ -42,8 +42,8 @@ docs:
 	godoc -v -http=:8090 -index=true
 
 test: build
-	GO15VENDOREXPERIMENT="" go test -v .
-	GO15VENDOREXPERIMENT="" go test -v ./aws/...
+	GO15VENDOREXPERIMENT=0 go test -v .
+	GO15VENDOREXPERIMENT=0 go test -v ./aws/...
 
 run: build
 	./sparta
