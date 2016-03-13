@@ -7,7 +7,7 @@ clean:
 
 get: clean
 	go get -u -v ./...
-	ls -laR $GOPATH
+	ls -laR $(GOPATH)
 	go env
 
 reset:
