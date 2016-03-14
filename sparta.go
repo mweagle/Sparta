@@ -27,7 +27,7 @@ import (
 )
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.5.3"
+const SpartaVersion = "0.5.4"
 
 func init() {
 	rand.Seed(time.Now().Unix())

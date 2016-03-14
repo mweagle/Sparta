@@ -1,3 +1,11 @@
+## v0.5.4
+- :warning: **BREAKING**
+  - N/A
+- :checkered_flag: **CHANGES**
+  - Run `go generate` as part of the _provision_ step
+- :bug: **FIXED**
+  - N/A
+
 ## v0.5.3
 - :warning: **BREAKING**
   - N/A

@@ -177,6 +177,20 @@ func temporaryFile(name string) (*os.File, error) {
 	return tmpFile, nil
 }
 
+func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
+	logger.WithFields(logrus.Fields{
+		"Arguments": cmd.Args,
+		"Dir":       cmd.Dir,
+		"Path":      cmd.Path,
+		"Env":       cmd.Env,
+	}).Debug("Running Command")
+	outputWriter := logger.Writer()
+	defer outputWriter.Close()
+	cmd.Stdout = outputWriter
+	cmd.Stderr = outputWriter
+	return cmd.Run()
+}
+
 // Create a source object (either a file, or a directory that will be recursively
 // added) to a previously opened zip.Writer.
 func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
@@ -502,31 +516,25 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 func createPackageStep() workflowStep {
 
 	return func(ctx *workflowContext) (workflowStep, error) {
-		// Compile the source to linux...
+		// Go generate
+		cmd := exec.Command("go", "generate")
+		cmd.Env = os.Environ()
+		ctx.logger.Info("Running `go generate`")
+		err := runOSCommand(cmd, ctx.logger)
+		if err != nil {
+			return nil, err
+		}
+
+		// Compilation
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		cmd := exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
-
-		ctx.logger.WithFields(logrus.Fields{
-			"Arguments": cmd.Args,
-		}).Debug("Building application binary")
-
+		cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
 		cmd.Env = os.Environ()
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 		ctx.logger.WithFields(logrus.Fields{
 			"Name": executableOutput,
 		}).Info("Compiling binary")
-
-		ctx.logger.WithFields(logrus.Fields{
-			"Env": cmd.Env,
-		}).Debug("Compilation environment")
-
-		outputWriter := ctx.logger.Writer()
-		defer outputWriter.Close()
-		cmd.Stdout = outputWriter
-		cmd.Stderr = outputWriter
-
-		err := cmd.Run()
+		err = runOSCommand(cmd, ctx.logger)
 		if err != nil {
 			return nil, err
 		}
