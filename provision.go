@@ -203,13 +203,17 @@ func addToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		var name = filepath.Base(sourceFile)
 		if sourceFile != rootSource {
 			name = strings.TrimPrefix(strings.TrimPrefix(sourceFile, rootSource), string(os.PathSeparator))
+
+			// Normalize the name s.t. path delimiters are AWS Linux friendly when
+			// unpacking the archive.
+			name = strings.Replace(name, "\\", "/", -1)
 		}
-		binaryWriter, err := zipWriter.Create(name)
-		if err != nil {
+		binaryWriter, errCreate := zipWriter.Create(name)
+		if errCreate != nil {
 			return fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(sourceFile))
 		}
-		reader, err := os.Open(sourceFile)
-		if err != nil {
+		reader, errOpen := os.Open(sourceFile)
+		if errOpen != nil {
 			return fmt.Errorf("Failed to open file: %s", sourceFile)
 		}
 		defer reader.Close()
@@ -539,11 +543,11 @@ func createPackageStep() workflowStep {
 			return nil, err
 		}
 		defer func() {
-			err := os.Remove(executableOutput)
-			if nil != err {
+			errRemove := os.Remove(executableOutput)
+			if nil != errRemove {
 				ctx.logger.WithFields(logrus.Fields{
 					"File":  executableOutput,
-					"Error": err,
+					"Error": errRemove,
 				}).Warn("Failed to delete binary")
 			}
 		}()
@@ -612,9 +616,9 @@ func createPackageStep() workflowStep {
 			resourceName := fmt.Sprintf("%s/%s", provisioningResourcesRelPath, eachName)
 			resourceContent := _escFSMustString(false, resourceName)
 			stringReader := strings.NewReader(resourceContent)
-			embedWriter, err := lambdaArchive.Create(eachName)
-			if nil != err {
-				return nil, err
+			embedWriter, errCreate := lambdaArchive.Create(eachName)
+			if nil != errCreate {
+				return nil, errCreate
 			}
 			ctx.logger.WithFields(logrus.Fields{
 				"Name": eachName,
@@ -629,23 +633,23 @@ func createPackageStep() workflowStep {
 		nodeModulesZipRelName := fmt.Sprintf("%s/node_modules.zip", provisioningResourcesRelPath)
 		nodeModuleBytes, err := _escFSByte(false, nodeModulesZipRelName)
 		if nil == err {
-			nodeModuleReader, err := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
-			if err != nil {
-				return nil, err
+			nodeModuleReader, errReader := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
+			if errReader != nil {
+				return nil, errReader
 			}
 			ctx.logger.WithFields(logrus.Fields{
 				"Name": nodeModulesZipRelName,
 			}).Debug("Embedding CustomResource node_modules.zip")
 
 			for _, zipFile := range nodeModuleReader.File {
-				embedWriter, err := lambdaArchive.Create(zipFile.Name)
-				if nil != err {
-					return nil, err
+				embedWriter, errCreate := lambdaArchive.Create(zipFile.Name)
+				if nil != errCreate {
+					return nil, errCreate
 				}
 
-				sourceReader, err := zipFile.Open()
-				if err != nil {
-					return nil, err
+				sourceReader, errOpen := zipFile.Open()
+				if errOpen != nil {
+					return nil, errOpen
 				}
 				io.Copy(embedWriter, sourceReader)
 			}
