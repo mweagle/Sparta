@@ -27,7 +27,20 @@ import (
 )
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.5.4"
+const SpartaVersion = "0.5.5"
+
+const (
+	// @enum cliOptionExecute
+	cliOptionExecute = "execute"
+	// @enum cliOptionDescribe
+	cliOptionDescribe = "describe"
+	// @enum cliOptionExplore
+	cliOptionExplore = "explore"
+	// @enum cliOptionProvision
+	cliOptionProvision = "provision"
+	// @enum cliOptionDelete
+	cliOptionDelete = "delete"
+)
 
 func init() {
 	rand.Seed(time.Now().Unix())
@@ -45,9 +58,9 @@ type ArbitraryJSONObject map[string]interface{}
 const (
 	// @enum AWSPrincipal
 	APIGatewayPrincipal = "apigateway.amazonaws.com"
-	// @enum CloudWatchEvents
+	// @enum AWSPrincipal
 	CloudWatchEventsPrincipal = "events.amazonaws.com"
-	// @enum CloudWatchLogs
+	// @enum AWSPrincipal
 	// CloudWatchLogsPrincipal principal is region specific
 	// @enum AWSPrincipal
 	S3Principal = "s3.amazonaws.com"
@@ -213,6 +226,8 @@ type LambdaFunctionOptions struct {
 	MemorySize int64
 	// Timeout (seconds)
 	Timeout int64
+	// VPC Settings
+	VpcConfig *gocf.LambdaFunctionVPCConfig
 }
 
 // TemplateDecorator allows Lambda functions to annotate the CloudFormation
@@ -437,7 +452,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Role:        roleNameMap[iamRoleArnName],
 		Runtime:     gocf.String("nodejs"),
 		Timeout:     gocf.Integer(info.Options.Timeout),
+		VpcConfig:   info.Options.VpcConfig,
 	}
+
 	cfResource := template.AddResource(info.logicalName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
 	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFnName)
@@ -619,7 +636,7 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	fn LambdaFunction,
 	lambdaOptions *LambdaFunctionOptions) *LambdaAWSInfo {
 	if nil == lambdaOptions {
-		lambdaOptions = &LambdaFunctionOptions{"", 128, 3}
+		lambdaOptions = &LambdaFunctionOptions{"", 128, 3, nil}
 	}
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(fn).Pointer())
 	lambda := &LambdaAWSInfo{
@@ -705,7 +722,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	}
 	// Set the formatter before outputting the info s.t. it's properly
 	// parsed by CloudWatch Logs
-	if "execute" == options.Verb {
+	if cliOptionExecute == options.Verb {
 		logger.Formatter = new(logrus.JSONFormatter)
 	} else {
 		logger.Formatter = new(logrus.TextFormatter)
@@ -715,7 +732,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		"Version": SpartaVersion,
 		"TS":      (time.Now().UTC().Format(time.RFC3339)),
 	}).Info("Welcome to Sparta")
-	if "execute" != options.Verb {
+	if cliOptionExecute != options.Verb {
 		logger.Info(strings.Repeat("-", 80))
 	}
 	err = validateSpartaPreconditions(lambdaAWSInfos, logger)
@@ -723,19 +740,19 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		return err
 	}
 	switch options.Verb {
-	case "provision":
+	case cliOptionProvision:
 		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
-	case "execute":
+	case cliOptionExecute:
 		initializeDiscovery(serviceName, lambdaAWSInfos, logger)
 		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
-	case "delete":
+	case cliOptionDelete:
 		err = Delete(serviceName, logger)
-	case "explore":
+	case cliOptionExplore:
 		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
-	case "describe":
-		fileWriter, err := os.Create(options.Describe.OutputFile)
-		if err != nil {
-			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, err)
+	case cliOptionDescribe:
+		fileWriter, errCreate := os.Create(options.Describe.OutputFile)
+		if errCreate != nil {
+			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, errCreate)
 		}
 		defer fileWriter.Close()
 		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, site, fileWriter, logger)

@@ -1,3 +1,12 @@
+## v0.5.5
+- :warning: **BREAKING**
+  - N/A
+- :checkered_flag: **CHANGES**
+  - VPC support! Added [LambdaFunctionVPCConfig](https://godoc.org/github.com/crewjam/go-cloudformation#LambdaFunctionVPCConfig) to [LambdaFunctionsOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions) struct.
+- :bug: **FIXED**
+  - N/A
+
+
 ## v0.5.4
 - :warning: **BREAKING**
   - N/A
