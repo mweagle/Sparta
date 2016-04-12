@@ -543,6 +543,7 @@ type ReceiptRule struct {
 	ScanDisabled       bool
 	TLSPolicy          string
 	TopicArn           string
+	InvocationType     string
 	BodyStorageOptions MessageBodyStorageOptions
 }
 
@@ -573,7 +574,7 @@ func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
 	// Then create the "LambdaAction", which is always present.
 	ruleAction := ArbitraryJSONObject{
 		"FunctionArn":    functionArnRef,
-		"InvocationType": "Event",
+		"InvocationType": rule.InvocationType,
 	}
 	if "" != rule.TopicArn {
 		ruleAction["TopicArn"] = rule.TopicArn
@@ -704,11 +705,12 @@ func (perm SESPermission) export(serviceName string,
 	receiptRules := perm.ReceiptRules
 	if nil == perm.ReceiptRules {
 		receiptRules = []ReceiptRule{ReceiptRule{
-			Name:         "Default",
-			Disabled:     false,
-			ScanDisabled: false,
-			Recipients:   []string{},
-			TLSPolicy:    "Optional",
+			Name:           "Default",
+			Disabled:       false,
+			ScanDisabled:   false,
+			InvocationType: invocationType,
+			Recipients:     []string{},
+			TLSPolicy:      "Optional",
 		}}
 	}
 
