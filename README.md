@@ -49,8 +49,6 @@ See the [Limitations](http://gosparta.io/docs/limitations/) page for the most up
 
 ## Outstanding
   - Eliminate NodeJS CustomResources
-  - Support API Gateway updates
-    - Currently API reprovisioning is done by `delete` => `create`
   - Implement APIGateway graph
   - Support APIGateway inline Model definition
   - Support custom domains
