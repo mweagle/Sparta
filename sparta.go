@@ -328,12 +328,13 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 	}
 }
 
-// Returns the stable logical name for this IAMRoleDefinition, which must be unique
-// if the privileges are empty.
-func (roleDefinition *IAMRoleDefinition) logicalName() string {
+// Returns the stable logical name for this IAMRoleDefinition, which depends on the serviceName
+// and owning targetLambdaFnName.  This potentially creates semantically equivalent IAM::Role entries
+// from the same struct pointer, so:
+// TODO: Create a canonical IAMRoleDefinition serialization that can be used as the digest source
+func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetLambdaFnName string) string {
 	if "" == roleDefinition.cachedLogicalName {
-		// TODO: Name isn't stable across executions, which is a performance penalty across updates if the Permissions are unchanged.
-		roleDefinition.cachedLogicalName = CloudFormationResourceName("IAMRole")
+		roleDefinition.cachedLogicalName = CloudFormationResourceName("IAMRole", serviceName, targetLambdaFnName)
 	}
 	return roleDefinition.cachedLogicalName
 }
@@ -433,8 +434,8 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// IAMRoleDefinition name has been created and this resource needs to
 	// depend on that being created.
 	if iamRoleArnName == "" && info.RoleDefinition != nil {
-		iamRoleArnName = info.RoleDefinition.logicalName()
-		dependsOn = append(dependsOn, info.RoleDefinition.logicalName())
+		iamRoleArnName = info.RoleDefinition.logicalName(serviceName, info.lambdaFnName)
+		dependsOn = append(dependsOn, info.RoleDefinition.logicalName(serviceName, info.lambdaFnName))
 	}
 	lambdaDescription := info.Options.Description
 	if "" == lambdaDescription {

@@ -442,7 +442,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				ctx.lambdaIAMRoleNameMap[eachLambda.RoleName] = gocf.String(*resp.Role.Arn)
 			}
 		} else {
-			logicalName := eachLambda.RoleDefinition.logicalName()
+			logicalName := eachLambda.RoleDefinition.logicalName(ctx.serviceName, eachLambda.lambdaFnName)
 			_, exists := ctx.lambdaIAMRoleNameMap[logicalName]
 			if !exists {
 				// Insert it into the resource creation map and add
