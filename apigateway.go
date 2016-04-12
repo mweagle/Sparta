@@ -465,9 +465,9 @@ func (api *API) export(S3Bucket string,
 		resourceCount++
 		if api.CORSEnabled {
 			// Create the OPTIONS entry
-			method, err := eachResource.NewMethod("OPTIONS")
-			if err != nil {
-				return err
+			method, methodErr := eachResource.NewMethod("OPTIONS")
+			if methodErr != nil {
+				return methodErr
 			}
 			methodCount++
 
