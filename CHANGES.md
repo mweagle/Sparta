@@ -3,9 +3,10 @@
   - N/A
 - :checkered_flag: **CHANGES**
   - VPC support! Added [LambdaFunctionVPCConfig](https://godoc.org/github.com/crewjam/go-cloudformation#LambdaFunctionVPCConfig) to [LambdaFunctionsOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions) struct.
+  - Updated runtime to [nodejs4.3](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html)
+  - CloudFormation updates are done using [Change Sets](https://aws.amazon.com/blogs/aws/new-change-sets-for-aws-cloudformation/), rather than [UpdateStack](http://docs.aws.amazon.com/sdk-for-go/api/service/cloudformation/CloudFormation.html#UpdateStack-instance_method).
 - :bug: **FIXED**
-  - N/A
-
+  - Fixed latent issue where `IAM::Role` resources didn't use stable CloudFormation resource names 
 
 ## v0.5.4
 - :warning: **BREAKING**
