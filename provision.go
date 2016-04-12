@@ -522,8 +522,12 @@ func createPackageStep() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		// Go generate
 		cmd := exec.Command("go", "generate")
+		if ctx.logger.Level == logrus.DebugLevel {
+			cmd = exec.Command("go", "generate", "-v", "-x")
+		}
 		cmd.Env = os.Environ()
-		ctx.logger.Info("Running `go generate`")
+		commandString := fmt.Sprintf("%s", cmd.Args)
+		ctx.logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
 		err := runOSCommand(cmd, ctx.logger)
 		if err != nil {
 			return nil, err
