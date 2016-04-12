@@ -667,15 +667,15 @@ func (perm SESPermission) export(serviceName string,
 	// MessageBody storage?
 	var dependsOn []string
 	if nil != perm.MessageBodyStorage {
-		s3Policy, err := perm.MessageBodyStorage.export(serviceName,
+		s3Policy, s3PolicyErr := perm.MessageBodyStorage.export(serviceName,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
 			template,
 			S3Bucket,
 			S3Key,
 			logger)
-		if nil != err {
-			return "", err
+		if nil != s3PolicyErr {
+			return "", s3PolicyErr
 		}
 		if "" != s3Policy {
 			dependsOn = append(dependsOn, s3Policy)
