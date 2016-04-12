@@ -793,6 +793,72 @@ func stackCapabilities(template *gocf.Template) []*string {
 	return capabilities
 }
 
+func updateStackViaChangeSet(serviceName string,
+	cfTemplateURL string,
+	capabilities []*string,
+	awsCloudFormation *cloudformation.CloudFormation,
+	logger *logrus.Logger) error {
+
+	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
+
+	changeSetInput := &cloudformation.CreateChangeSetInput{
+		Capabilities:  capabilities,
+		ChangeSetName: aws.String(changeSetRequestName),
+		ClientToken:   aws.String(changeSetRequestName),
+		Description:   aws.String(fmt.Sprintf("Change set for service: %s (Sparta v. %s)", serviceName, SpartaVersion)),
+		StackName:     aws.String(serviceName),
+		TemplateURL:   aws.String(cfTemplateURL),
+	}
+
+	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
+	if nil != changeSetError {
+		return changeSetError
+	}
+	logger.WithFields(logrus.Fields{
+		"StackName": serviceName,
+	}).Info("Issued CreateChangeSet request")
+
+	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(serviceName),
+	}
+
+	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
+	for waitComplete := false; !waitComplete; {
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
+		time.Sleep(sleepDuration)
+
+		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
+
+		if nil != describeChangeSetError {
+			return describeChangeSetError
+		}
+		describeChangeSetOutput = changeSetOutput
+		waitComplete = (nil != describeChangeSetOutput)
+	}
+	logger.WithFields(logrus.Fields{
+		"DescribeChangeSetOutput": describeChangeSetOutput,
+	}).Debug("DescribeChangeSet result")
+
+	// Apply the change
+	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(serviceName),
+	}
+	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
+
+	logger.WithFields(logrus.Fields{
+		"ExecuteChangeSetOutput": executeChangeSetOutput,
+	}).Debug("ExecuteChangeSet result")
+
+	if nil == executeChangeSetError {
+		logger.WithFields(logrus.Fields{
+			"StackName": serviceName,
+		}).Info("Issued ExecuteChangeSet request")
+	}
+	return executeChangeSetError
+}
+
 // Converge the stack to the new state, taking into account whether
 // it was previously provisioned.
 func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
@@ -805,22 +871,17 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 	}
 	stackID := ""
 	if exists {
-		// Update stack
-		updateStackInput := &cloudformation.UpdateStackInput{
-			StackName:    aws.String(ctx.serviceName),
-			TemplateURL:  aws.String(cfTemplateURL),
-			Capabilities: stackCapabilities(ctx.cfTemplate),
-		}
-		updateStackResponse, err := awsCloudFormation.UpdateStack(updateStackInput)
+
+		err = updateStackViaChangeSet(ctx.serviceName,
+			cfTemplateURL,
+			stackCapabilities(ctx.cfTemplate),
+			awsCloudFormation,
+			ctx.logger)
+
 		if nil != err {
 			return nil, err
 		}
-
-		ctx.logger.WithFields(logrus.Fields{
-			"StackID": *updateStackResponse.StackId,
-		}).Info("Issued stack update request")
-
-		stackID = *updateStackResponse.StackId
+		stackID = ctx.serviceName
 	} else {
 		// Create stack
 		createStackInput := &cloudformation.CreateStackInput{
@@ -878,7 +939,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			waitComplete = true
 		default:
 			if exists {
-				ctx.logger.Info("Waiting for UpdateStack to complete")
+				ctx.logger.Info("Waiting for ExecuteChangeSet to complete")
 			} else {
 				ctx.logger.Info("Waiting for CreateStack to complete")
 			}
