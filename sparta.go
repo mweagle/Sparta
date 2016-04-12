@@ -218,7 +218,8 @@ type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, 
 // LambdaFunctionOptions defines additional AWS Lambda execution params.  See the
 // AWS Lambda FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 // docs for more information. Note that the "Runtime" field will be automatically set
-// to "nodejs" (at least until golang is officially supported)
+// to "nodejs4.3" (at least until golang is officially supported). See
+// http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html
 type LambdaFunctionOptions struct {
 	// Additional function description
 	Description string
@@ -450,7 +451,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Handler:     gocf.String(fmt.Sprintf("index.%s", info.jsHandlerName())),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String("nodejs"),
+		Runtime:     gocf.String("nodejs4.3"),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
 	}
