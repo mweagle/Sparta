@@ -38,7 +38,7 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) e
 	logger.Info("Functions can be invoked via application/json over POST")
 	logger.Info(msgText)
 	logger.Info("Where @testEvent.json is a local file with top level `context` and `event` properties:")
-	logger.Info("\t{context: {}, event: {}}")
+	logger.Info("\t{\"context\": {}, \"event\": {}}")
 	// Start up the localhost server and publish the info
 	return Execute(lambdaAWSInfos, port, 0, logger)
 }
