@@ -1,4 +1,5 @@
 ## v0.5.5
+This release includes a major internal refactoring to move the current set of NodeJS [Lambda-backed CloudFormation CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to Sparta Go functions. This release **only** migrates the S3 event source configuration function using   [cloudformationresources](https://github.com/mweagle/cloudformationresources). There are no changes to the calling code and there should be no functional change. 
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -6,7 +7,7 @@
   - Updated runtime to [nodejs4.3](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html)
   - CloudFormation updates are done using [Change Sets](https://aws.amazon.com/blogs/aws/new-change-sets-for-aws-cloudformation/), rather than [UpdateStack](http://docs.aws.amazon.com/sdk-for-go/api/service/cloudformation/CloudFormation.html#UpdateStack-instance_method).
 - :bug: **FIXED**
-  - Fixed latent issue where `IAM::Role` resources didn't use stable CloudFormation resource names 
+  - Fixed latent issue where `IAM::Role` resources didn't use stable CloudFormation resource names
 
 ## v0.5.4
 - :warning: **BREAKING**
