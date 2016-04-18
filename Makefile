@@ -1,34 +1,40 @@
 .DEFAULT_GOAL=build
 .PHONY: build test get run tags clean reset
 
-ensure_vendor:
-	mkdir -pv vendor
-
 clean:
 	go clean .
 	go env
 
-get: clean ensure_vendor
-	git clone --depth=1 https://github.com/aws/aws-sdk-go ./vendor/github.com/aws/aws-sdk-go
-	rm -rf ./vendor/github.com/aws/aws-sdk-go/.git
-	git clone --depth=1 https://github.com/go-ini/ini ./vendor/github.com/go-ini/ini
-	rm -rf ./vendor/github.com/go-ini/ini/.git
-	git clone --depth=1 https://github.com/jmespath/go-jmespath ./vendor/github.com/jmespath/go-jmespath
-	rm -rf ./vendor/github.com/jmespath/go-jmespath/.git
-	git clone --depth=1 https://github.com/Sirupsen/logrus ./vendor/github.com/Sirupsen/logrus
-	rm -rf ./vendor/github.com/Sirupsen/logrus/.git
-	git clone --depth=1 https://github.com/voxelbrain/goptions ./vendor/github.com/voxelbrain/goptions
-	rm -rf ./vendor/github.com/voxelbrain/goptions/.git
-	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
-	rm -rf ./vendor/github.com/mjibson/esc/.git
-	git clone --depth=1 https://github.com/crewjam/go-cloudformation ./vendor/github.com/crewjam/go-cloudformation
-	rm -rf ./vendor/github.com/crewjam/go-cloudformation/.git
+get: clean
+	rm -rf $(GOPATH)/src/github.com/aws/aws-sdk-go
+	git clone --depth=1 https://github.com/aws/aws-sdk-go $(GOPATH)/src/github.com/aws/aws-sdk-go
+
+	rm -rf $(GOPATH)/src/github.com/go-ini/ini
+	git clone --depth=1 https://github.com/go-ini/ini $(GOPATH)/src/github.com/go-ini/ini
+
+	rm -rf $(GOPATH)/src/github.com/jmespath/go-jmespath
+	git clone --depth=1 https://github.com/jmespath/go-jmespath $(GOPATH)/src/github.com/jmespath/go-jmespath
+
+	rm -rf $(GOPATH)/src/github.com/Sirupsen/logrus
+	git clone --depth=1 https://github.com/Sirupsen/logrus $(GOPATH)/src/github.com/Sirupsen/logrus
+
+	rm -rf $(GOPATH)/src/github.com/voxelbrain/goptions
+	git clone --depth=1 https://github.com/voxelbrain/goptions $(GOPATH)/src/github.com/voxelbrain/goptions
+
+	rm -rf $(GOPATH)/src/github.com/mjibson/esc
+	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
+
+	rm -rf $(GOPATH)/src/github.com/crewjam/go-cloudformation
+	git clone --depth=1 https://github.com/crewjam/go-cloudformation $(GOPATH)/src/github.com/crewjam/go-cloudformation
+
+	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources
+	git clone --depth=1 https://github.com/mweagle/cloudformationresources $(GOPATH)/src/github.com/mweagle/cloudformationresources
 
 reset:
 		git reset --hard
 		git clean -f -d
 
-generate:
+generate: get
 	go generate -x
 	@echo "Generate complete: `date`"
 

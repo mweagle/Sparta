@@ -21,6 +21,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/mweagle/cloudformationresources"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -56,13 +58,16 @@ var customResourceScripts = []string{"cfn-response.js",
 	"apigateway.js",
 	"events.js",
 	"logs.js",
-	"s3.js",
 	"ses.js",
 	"sns.js",
 	"s3Site.js",
 	"golang-constants.json",
 	"apigateway/inputmapping_default.vtl",
 	"apigateway/inputmapping_json.vtl"}
+
+var golangCustomResourceTypes = []string{
+	cloudformationresources.S3LambdaEventSource,
+}
 
 // The relative path of the custom scripts that is used
 // to create the filename relative path when creating the custom archive
@@ -478,6 +483,21 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 	return primaryEntry
 }
 
+func createNewSpartaCustomResourceEntry(resourceName string, logger *logrus.Logger) string {
+	// The resource name is a :: delimited one, so let's sanitize that
+	// to make it a valid JS identifier
+	jsName := javascriptExportNameForResourceType(resourceName)
+	logger.WithFields(logrus.Fields{
+		"Resource":           resourceName,
+		"NodeJSFunctionName": jsName,
+	}).Info("Registering Sparta CustomResource function")
+
+	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
+		jsName,
+		resourceName)
+	return primaryEntry
+}
+
 // Return the StackEvents for the given StackName/StackID
 func stackEvents(stackID string, cfService *cloudformation.CloudFormation) ([]*cloudformation.StackEvent, error) {
 	var events []*cloudformation.StackEvent
@@ -599,6 +619,11 @@ func createPackageStep() workflowStep {
 		for _, eachLambda := range ctx.lambdaAWSInfos {
 			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
 		}
+		// SPARTA CUSTOM RESOURCES
+		for _, eachCustomResourceName := range golangCustomResourceTypes {
+			nodeJSSource += createNewSpartaCustomResourceEntry(eachCustomResourceName, ctx.logger)
+		}
+
 		// Finally, replace
 		// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 		// with the service binary name

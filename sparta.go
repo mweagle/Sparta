@@ -61,10 +61,6 @@ const (
 	// @enum AWSPrincipal
 	CloudWatchEventsPrincipal = "events.amazonaws.com"
 	// @enum AWSPrincipal
-	// CloudWatchLogsPrincipal principal is region specific
-	// @enum AWSPrincipal
-	S3Principal = "s3.amazonaws.com"
-	// @enum AWSPrincipal
 	SESPrincipal = "ses.amazonaws.com"
 	// @enum AWSPrincipal
 	SNSPrincipal = "sns.amazonaws.com"
@@ -174,7 +170,7 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 }
 
 // RE for sanitizing golang/JS layer
-var reSanitize = regexp.MustCompile("[\\.\\-\\s]+")
+var reSanitize = regexp.MustCompile("[:\\.\\-\\s]+")
 
 // RE to ensure CloudFormation compatible resource names
 // Issue: https://github.com/mweagle/Sparta/issues/8

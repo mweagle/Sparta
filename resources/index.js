@@ -26,7 +26,7 @@ var MAXIMUM_RESPAWN_COUNT = 5;
 
 // Handlers that are referenced as part of stack creation, via CustomResource
 // references.
-var PROXIED_MODULES = ['s3', 'sns', 'ses', 'apigateway', 's3Site', 'events', 'logs'];
+var PROXIED_MODULES = ['sns', 'ses', 'apigateway', 's3Site', 'events', 'logs'];
 
 // Handle to the active golang process.
 var golangProcess = null;
@@ -232,6 +232,7 @@ var sendResponse = function(event, context, e, results)
   }
 };
 
+
 // CustomResource Configuration exports
 PROXIED_MODULES.forEach(function (eachConfig) {
   var exportName = util.format('%sConfiguration', eachConfig);
@@ -305,4 +306,5 @@ var envSettings = {
 sparta_utils.log(envSettings);
 
 exports.main = createForwarder('/');
+
 // Additional golang handlers to be dynamically appended below

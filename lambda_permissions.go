@@ -1,11 +1,11 @@
 package sparta
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	"github.com/mweagle/cloudformationresources"
 
 	gocf "github.com/crewjam/go-cloudformation"
 
@@ -131,9 +131,10 @@ func (perm BasePermission) export(principal string,
 		lambdaPermission.SourceAccount = gocf.String(perm.SourceAccount)
 	}
 
-	hash := sha1.New()
-	hash.Write([]byte(fmt.Sprintf("%v", lambdaPermission)))
-	resourceName := fmt.Sprintf("LambdaPerm%s", hex.EncodeToString(hash.Sum(nil)))
+	resourceName := CloudFormationResourceName("LambdaPerm%s",
+		principal,
+		lambdaPermission.SourceArn.Literal,
+		lambdaLogicalCFResourceName)
 	template.AddResource(resourceName, lambdaPermission)
 	return resourceName, nil
 }
@@ -224,7 +225,7 @@ func (perm S3Permission) export(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export(S3Principal,
+	targetLambdaResourceName, err := perm.BasePermission.export("s3.amazonaws.com",
 		s3SourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -232,47 +233,45 @@ func (perm S3Permission) export(serviceName string,
 		S3Bucket,
 		S3Key,
 		logger)
+
 	if nil != err {
 		return "", err
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(s3SourceArnParts...)
-	configuratorResName, err := ensureConfiguratorLambdaResource(S3Principal,
+	configuratorResName, err := ensureCustomResourceHandler(cloudformationresources.S3LambdaEventSource,
 		sourceArnExpression,
 		[]string{},
 		template,
 		S3Bucket,
 		S3Key,
 		logger)
+
 	if nil != err {
 		return "", err
-	}
-	permissionData := ArbitraryJSONObject{
-		"Events": perm.Events,
-	}
-	if nil != perm.Filter.Key {
-		permissionData["Filter"] = perm.Filter
 	}
 
 	// Add a custom resource invocation for this configuration
 	//////////////////////////////////////////////////////////////////////////////
-	// And finally the custom resource forwarder
-	newResource, err := newCloudFormationResource("Custom::SpartaS3Permission", logger)
-	if nil != err {
-		return "", err
+	newResource, newResourceError := newCloudFormationResource(cloudformationresources.S3LambdaEventSource, logger)
+	if nil != newResourceError {
+		return "", newResourceError
 	}
-	customResource := newResource.(*cloudFormationS3PermissionResource)
+	customResource := newResource.(*cloudformationresources.S3LambdaEventSourceResource)
 	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Permission = permissionData
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
 	customResource.BucketArn = sourceArnExpression
+	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.Events = perm.Events
+	if nil != perm.Filter.Key {
+		customResource.Filter = &perm.Filter
+	}
 
 	// Name?
 	resourceInvokerName := CloudFormationResourceName("ConfigS3",
-		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", sourceArnExpression))
+		lambdaLogicalCFResourceName,
+		perm.BasePermission.SourceAccount)
+
 	// Add it
 	cfResource := template.AddResource(resourceInvokerName, customResource)
 	cfResource.DependsOn = append(cfResource.DependsOn,
@@ -347,7 +346,6 @@ func (perm SNSPermission) export(serviceName string,
 	// Add a custom resource invocation for this configuration
 	//////////////////////////////////////////////////////////////////////////////
 	// And the custom resource forwarder
-
 	newResource, err := newCloudFormationResource("Custom::SpartaSNSPermission", logger)
 	if nil != err {
 		return "", err

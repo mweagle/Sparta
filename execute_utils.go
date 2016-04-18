@@ -26,7 +26,11 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	var request lambdaRequest
 	defer func() {
 		if r := recover(); r != nil {
-			errorString := fmt.Sprintf("Lambda handler panic: %+v", r)
+			err, ok := r.(error)
+			if !ok {
+				err = fmt.Errorf("%v", r)
+			}
+			errorString := fmt.Sprintf("Lambda handler panic: %#v", err)
 			http.Error(w, errorString, http.StatusBadRequest)
 		}
 	}()
@@ -38,15 +42,26 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 		return
 	}
 	handler.logger.WithFields(logrus.Fields{
-		"Request": request,
+		"Request":    request,
+		"LookupName": lambdaFunc,
 	}).Debug("Dispatching")
 
 	lambdaAWSInfo := handler.lambdaDispatchMap[lambdaFunc]
-	if nil == lambdaAWSInfo {
+	var lambdaFn LambdaFunction
+	if nil != lambdaAWSInfo {
+		lambdaFn = lambdaAWSInfo.lambdaFn
+	} else if strings.Contains(lambdaFunc, "::") {
+		// Not the most exhaustive guard, but the CloudFormation custom resources
+		// all have "::" delimiters in their type field.  Even if there is a false
+		// positive, the customResourceForwarder will simply error out.
+		lambdaFn = customResourceForwarder
+	}
+
+	if nil == lambdaFn {
 		http.Error(w, "Unsupported path: "+lambdaFunc, http.StatusBadRequest)
 		return
 	}
-	lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
+	lambdaFn(&request.Event, &request.Context, w, handler.logger)
 }
 
 // NewLambdaHTTPHandler returns an initialized LambdaHTTPHandler instance.  The returned value
