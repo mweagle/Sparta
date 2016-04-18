@@ -1163,12 +1163,16 @@ func ensureCloudFormationStack() workflowStep {
 	}
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+
 // Provision compiles, packages, and provisions (either via create or update) a Sparta application.
 // The serviceName is the service's logical
 // identify and is used to determine create vs update operations.  The compilation options/flags are:
 //
 // 	TAGS:         -tags lambdabinary
-// 	ENVIRONMENT:  GOOS=linux GOARCH=amd64 GO15VENDOREXPERIMENT=1
+// 	ENVIRONMENT:  GOOS=linux GOARCH=amd64
 //
 // The compiled binary is packaged with a NodeJS proxy shim to manage AWS Lambda setup & invocation per
 // http://docs.aws.amazon.com/lambda/latest/dg/authoring-function-in-nodejs.html
@@ -1203,7 +1207,6 @@ func Provision(noop bool,
 	if nil != err {
 		return err
 	}
-
 	startTime := time.Now()
 
 	ctx := &workflowContext{
