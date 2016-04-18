@@ -12,13 +12,13 @@
 // Embed the custom service handlers
 // TODO: Once AWS lambda supports golang as first class, move the
 // NodeJS custom action helpers into golang
-//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS.go -private -pkg sparta ./resources
+//go:generate go run ../github.com/mjibson/esc/main.go -o ./CONSTANTS.go -private -pkg sparta ./resources
 //go:generate go run ./resources/awsbinary/insertTags.go ./CONSTANTS !lambdabinary
 
 // Create a secondary CONSTANTS_AWSBINARY.go file with empty content.  The next step will insert the
 // build tags at the head of each file so that they are mutually exclusive, similar to the
 // lambdabinaryshims.go file
-//go:generate go run ./vendor/github.com/mjibson/esc/main.go -o ./CONSTANTS_AWSBINARY.go -private -pkg sparta ./resources/awsbinary/README.md
+//go:generate go run ../github.com/mjibson/esc/main.go -o ./CONSTANTS_AWSBINARY.go -private -pkg sparta ./resources/awsbinary/README.md
 //go:generate go run ./resources/awsbinary/insertTags.go ./CONSTANTS_AWSBINARY lambdabinary
 
 // cleanup
