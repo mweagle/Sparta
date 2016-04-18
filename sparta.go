@@ -29,6 +29,9 @@ import (
 // SpartaVersion defines the current Sparta release
 const SpartaVersion = "0.5.5"
 
+// NodeJSVersion is the Node JS runtime used for the shim layer
+const NodeJSVersion = "nodejs4.3"
+
 const (
 	// @enum cliOptionExecute
 	cliOptionExecute = "execute"
@@ -448,7 +451,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Handler:     gocf.String(fmt.Sprintf("index.%s", info.jsHandlerName())),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String("nodejs4.3"),
+		Runtime:     gocf.String(NodeJSVersion),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
 	}
@@ -728,7 +731,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 	logger.WithFields(logrus.Fields{
 		"Option":  options.Verb,
 		"Version": SpartaVersion,
-		"TS":      (time.Now().UTC().Format(time.RFC3339)),
+		"UTC":     (time.Now().UTC().Format(time.RFC3339)),
 	}).Info("Welcome to Sparta")
 	if cliOptionExecute != options.Verb {
 		logger.Info(strings.Repeat("-", 80))
