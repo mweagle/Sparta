@@ -556,6 +556,8 @@ func createPackageStep() workflowStep {
 		// Compilation
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
+		// TODO: Smaller binaries via linker flags
+		// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
 		cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
 		cmd.Env = os.Environ()
 		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
