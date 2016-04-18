@@ -320,7 +320,12 @@ func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, noop b
 
 // Upload a local file to S3.  Returns the s3 keyname of the
 // uploaded item, or an error
-func uploadLocalFileToS3(packagePath string, awsSession *session.Session, S3Bucket string, noop bool, logger *logrus.Logger) (string, error) {
+func uploadLocalFileToS3(packagePath string,
+	awsSession *session.Session,
+	S3Bucket string,
+	noop bool,
+	logger *logrus.Logger) (string, error) {
+
 	// Query the S3 bucket for the bucket policies.  The bucket _should_ have ObjectExpiration,
 	// otherwise we're just going to orphan our binaries...
 	err := ensureExpirationPolicy(awsSession, S3Bucket, noop, logger)
