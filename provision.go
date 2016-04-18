@@ -495,7 +495,7 @@ func createNewSpartaCustomResourceEntry(resourceName string, logger *logrus.Logg
 	logger.WithFields(logrus.Fields{
 		"Resource":           resourceName,
 		"NodeJSFunctionName": jsName,
-	}).Info("Registering Sparta CustomResource function")
+	}).Debug("Registering Sparta CustomResource function")
 
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		jsName,
