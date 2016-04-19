@@ -131,9 +131,13 @@ func (perm BasePermission) export(principal string,
 		lambdaPermission.SourceAccount = gocf.String(perm.SourceAccount)
 	}
 
+	arnLiteral, arnLiteralErr := json.Marshal(lambdaPermission.SourceArn)
+	if nil != arnLiteralErr {
+		return "", arnLiteralErr
+	}
 	resourceName := CloudFormationResourceName("LambdaPerm%s",
 		principal,
-		lambdaPermission.SourceArn.Literal,
+		string(arnLiteral),
 		lambdaLogicalCFResourceName)
 	template.AddResource(resourceName, lambdaPermission)
 	return resourceName, nil
@@ -840,7 +844,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	// If there aren't any expressions to register with?
+	// There needs to be at least one rule to apply
 	if len(perm.Rules) <= 0 {
 		return "", fmt.Errorf("CloudWatchEventsPermission for function %s does not specify any expressions", lambdaFunctionDisplayName)
 	}
@@ -864,27 +868,18 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			gocf.String(ruleName))
 	}
 
-	// First thing we need to do is uniqueify the rule names s.t. we prevent
-	// collisions with other stacks.
-	globallyUniqueRules := make(map[string]CloudWatchEventsRule, len(perm.Rules))
-	for eachRuleName, eachDefinition := range perm.Rules {
+	// Add the permission to invoke the lambda function
+	uniqueRuleNameMap := make(map[string]int, 0)
+	for eachRuleName, eachRuleDefinition := range perm.Rules {
 		uniqueRuleName := CloudFormationResourceName(eachRuleName, lambdaLogicalCFResourceName, serviceName)
-		// Trim it...
-		if len(eachDefinition.Description) <= 0 {
-			eachDefinition.Description = fmt.Sprintf("%s CloudWatch Events rule for service: %s", eachRuleName, serviceName)
-		}
-		globallyUniqueRules[uniqueRuleName] = eachDefinition
-	}
-	// Integrity test - there should only be 1 element since we're only ever configuring
-	// the same AWS principal service.  If we end up with multiple configuration resource names
-	// it means that the stable resource name logic is broken
-	configurationResourceNames := make(map[string]int, 0)
-	var dependsOn []string
-	for eachRuleName := range globallyUniqueRules {
+		// Check for collisions after the loop
+		uniqueRuleNameMap[uniqueRuleName]++
+
+		// Add the permission
 		basePerm := BasePermission{
-			SourceArn: arnPermissionForRuleName(eachRuleName),
+			SourceArn: arnPermissionForRuleName(uniqueRuleName),
 		}
-		dependOn, err := basePerm.export(CloudWatchEventsPrincipal,
+		_, exportErr := basePerm.export(CloudWatchEventsPrincipal,
 			cloudformationEventsSourceArnParts,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
@@ -892,55 +887,37 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			S3Bucket,
 			S3Key,
 			logger)
-		if nil != err {
-			return "", err
+		if nil != exportErr {
+			return "", exportErr
 		}
-		dependsOn = append(dependsOn, dependOn)
-
-		// Ensure the configurator for this ARNs
-		sourceArnExpression := basePerm.sourceArnExpr(cloudformationEventsSourceArnParts...)
-
-		// Make sure the custom lambda that manages CloudWatch Events is provisioned.
-		configuratorResName, err := ensureConfiguratorLambdaResource(CloudWatchEventsPrincipal,
-			sourceArnExpression,
-			[]string{},
-			template,
-			S3Bucket,
-			S3Key,
-			logger)
-		if nil != err {
-			return "", err
+		// Add the rule
+		eventsRule := &gocf.EventsRule{
+			Description: gocf.String(eachRuleDefinition.Description),
+			Targets: &gocf.CloudWatchEventsRuleTargetList{
+				gocf.CloudWatchEventsRuleTarget{
+					Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+					Id:  gocf.String(uniqueRuleName),
+				},
+			},
 		}
-		configurationResourceNames[configuratorResName] = 1
-	}
-	// Although we ensured multiple configuration resources, they were all for the
-	// same AWS principal.  We're only supposed to get a single name back.
-	if len(configurationResourceNames) > 1 {
-		return "", fmt.Errorf("Multiple configuration resources detected: %#v", configurationResourceNames)
-	} else if len(configurationResourceNames) == 0 {
-		return "", fmt.Errorf("CloudWatchEvent configuration provider failed")
-	}
-
-	// Insert the invocation
-	for eachConfigResource := range configurationResourceNames {
-		//////////////////////////////////////////////////////////////////////////////
-		// And finally the custom resource forwarder
-		newResource, err := newCloudFormationResource("Custom::SpartaCloudWatchEventsPermission", logger)
-		if nil != err {
-			return "", err
+		if nil != eachRuleDefinition.EventPattern && "" != eachRuleDefinition.ScheduleExpression {
+			return "", fmt.Errorf("CloudWatchEvents rule %s specifies both EventPattern and ScheduleExpression", eachRuleName)
 		}
-		customResource := newResource.(*cloudformationCloudWatchEventsPermissionResource)
-		customResource.ServiceToken = gocf.GetAtt(eachConfigResource, "Arn")
-		customResource.Rules = globallyUniqueRules
-		customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-
-		// Name?
-		resourceInvokerName := CloudFormationResourceName("ConfigCloudWatchEvents",
+		if nil != eachRuleDefinition.EventPattern {
+			eventsRule.EventPattern = eachRuleDefinition.EventPattern
+		} else if "" != eachRuleDefinition.ScheduleExpression {
+			eventsRule.ScheduleExpression = eachRuleDefinition.ScheduleExpression
+		}
+		cloudWatchLogsEventResName := CloudFormationResourceName(fmt.Sprintf("%s-Rule", eachRuleName),
 			lambdaLogicalCFResourceName,
-			perm.BasePermission.SourceAccount)
-		// Add it
-		cfResource := template.AddResource(resourceInvokerName, customResource)
-		cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
+			lambdaFunctionDisplayName)
+		template.AddResource(cloudWatchLogsEventResName, eventsRule)
+	}
+	// Validate it
+	for _, eachCount := range uniqueRuleNameMap {
+		if eachCount != 1 {
+			return "", fmt.Errorf("Integrity violation for CloudWatchEvent Rulenames: %#v", uniqueRuleNameMap)
+		}
 	}
 	return "", nil
 }

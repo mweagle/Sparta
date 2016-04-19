@@ -33,11 +33,6 @@ func init() {
 		"lambda:RemovePermission",
 		"lambda:GetPolicy"}
 
-	PushSourceConfigurationActions[CloudWatchEventsPrincipal] = []string{"events:DeleteRule",
-		"events:PutRule",
-		"events:PutTargets",
-		"events:RemoveTargets"}
-
 	cloudWatchLogsRegions := []string{
 		"us-east-1",
 		"us-west-2",

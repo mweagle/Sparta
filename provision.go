@@ -56,7 +56,6 @@ const (
 var customResourceScripts = []string{"cfn-response.js",
 	"sparta_utils.js",
 	"apigateway.js",
-	"events.js",
 	"logs.js",
 	"ses.js",
 	"sns.js",
