@@ -1041,6 +1041,7 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
 				apiGatewayTemplate,
+				ctx.noop,
 				ctx.logger)
 			if nil == err {
 				err = safeMergeTemplates(apiGatewayTemplate, ctx.cfTemplate, ctx.logger)
@@ -1051,7 +1052,8 @@ func ensureCloudFormationStack() workflowStep {
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.s3SiteContext.s3Site {
-			ctx.s3SiteContext.s3Site.export(ctx.s3Bucket,
+			ctx.s3SiteContext.s3Site.export(ctx.serviceName,
+				ctx.s3Bucket,
 				ctx.s3LambdaZipKey,
 				ctx.s3SiteContext.s3SiteLambdaZipKey,
 				apiGatewayTemplate.Outputs,

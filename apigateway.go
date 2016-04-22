@@ -345,15 +345,21 @@ func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringa
 	return corsMethod
 }
 
-func apiStageInfo(apiName string, stageName string, session *session.Session, logger *logrus.Logger) (*apigateway.Stage, error) {
-	svc := apigateway.New(session)
-	restApisInput := &apigateway.GetRestApisInput{
-		Limit: aws.Int64(500),
-	}
+func apiStageInfo(apiName string, stageName string, session *session.Session, noop bool, logger *logrus.Logger) (*apigateway.Stage, error) {
 	logger.WithFields(logrus.Fields{
 		"APIName":   apiName,
 		"StageName": stageName,
 	}).Info("Checking current APIGateway stage status")
+
+	if noop {
+		logger.Info("Bypassing APIGateway check to -n/-noop command line argument")
+		return nil, nil
+	}
+
+	svc := apigateway.New(session)
+	restApisInput := &apigateway.GetRestApisInput{
+		Limit: aws.Int64(500),
+	}
 
 	restApisOutput, restApisOutputErr := svc.GetRestApis(restApisInput)
 	if nil != restApisOutputErr {
@@ -391,9 +397,15 @@ func apiStageInfo(apiName string, stageName string, session *session.Session, lo
 			matchingStageOutput = eachStage
 		}
 	}
-	logger.WithFields(logrus.Fields{
-		"Stage": matchingStageOutput,
-	}).Info("APIGateway state status")
+	if nil != matchingStageOutput {
+		logger.WithFields(logrus.Fields{
+			"DeploymentId": *matchingStageOutput.DeploymentId,
+			"LastUpdated":  matchingStageOutput.LastUpdatedDate,
+			"CreatedDate":  matchingStageOutput.CreatedDate,
+		}).Info("Checking current APIGateway stage status")
+	} else {
+		logger.Info("APIGateway stage has not been deployed")
+	}
 
 	return matchingStageOutput, nil
 }
@@ -405,6 +417,7 @@ func (api *API) export(serviceName string,
 	S3Key string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
+	noop bool,
 	logger *logrus.Logger) error {
 
 	apiGatewayResourceNameForPath := func(fullPath string) string {
@@ -521,7 +534,7 @@ func (api *API) export(serviceName string,
 	if nil != api.stage {
 		// Is the stack already deployed?
 		stageName := api.stage.name
-		stageInfo, stageInfoErr := apiStageInfo(api.name, stageName, session, logger)
+		stageInfo, stageInfoErr := apiStageInfo(api.name, stageName, session, noop, logger)
 		if nil != stageInfoErr {
 			return stageInfoErr
 		}
