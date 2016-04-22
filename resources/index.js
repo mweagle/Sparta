@@ -4,7 +4,6 @@ var http = require('http');
 var path = require('path');
 var os = require('os');
 var child_process = require('child_process');
-var _ = require('underscore');
 var sparta_utils = require('./sparta_utils');
 var AWS = require('aws-sdk');
 var awsConfig = new AWS.Config({});
@@ -26,7 +25,7 @@ var MAXIMUM_RESPAWN_COUNT = 5;
 
 // Handlers that are referenced as part of stack creation, via CustomResource
 // references.
-var PROXIED_MODULES = ['sns', 'ses', 'apigateway', 's3Site', 'logs'];
+var PROXIED_MODULES = ['sns', 'ses', 'logs'];
 
 // Handle to the active golang process.
 var golangProcess = null;
@@ -107,7 +106,7 @@ function makeRequest(path, event, context) {
   });
   req.write(stringified);
   req.end();
-};
+}
 
 var postMetricCounter = function(metricName, userCallback) {
   var namespace = util.format('Sparta/%s', SPARTA_SERVICE_NAME);
