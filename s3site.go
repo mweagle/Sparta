@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/mweagle/cloudformationresources"
+
 	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
@@ -126,12 +128,16 @@ func (s3Site *S3Site) export(S3Bucket string,
 	// as manage the S3 bucket that hosts the site.
 	statements := CommonIAMStatements["core"]
 	statements = append(statements, iamPolicyStatement{
-		Action:   []string{"s3:ListBucket"},
+		Action: []string{"s3:ListBucket",
+			"s3:ListObjectsPages"},
 		Effect:   "Allow",
 		Resource: s3SiteBucketResourceValue,
 	})
 	statements = append(statements, iamPolicyStatement{
-		Action:   []string{"s3:DeleteObject", "s3:PutObject"},
+		Action: []string{"s3:DeleteObject",
+			"s3:PutObject",
+			"s3:DeleteObjects",
+			"s3:DeleteObjects"},
 		Effect:   "Allow",
 		Resource: s3SiteBucketAllKeysResourceValue,
 	})
@@ -149,11 +155,11 @@ func (s3Site *S3Site) export(S3Bucket string,
 		AssumeRolePolicyDocument: AssumePolicyDocument,
 		Policies: &gocf.IAMPoliciesList{
 			gocf.IAMPolicies{
-				ArbitraryJSONObject{
+				PolicyDocument: ArbitraryJSONObject{
 					"Version":   "2012-10-17",
 					"Statement": statements,
 				},
-				gocf.String("S3SiteMgmnt"),
+				PolicyName: gocf.String("S3SiteMgmnt"),
 			},
 		},
 	}
@@ -163,21 +169,30 @@ func (s3Site *S3Site) export(S3Bucket string,
 	cfResource.DependsOn = append(cfResource.DependsOn, s3BucketResourceName)
 	iamRoleRef := gocf.GetAtt(iamRoleName, "Arn")
 
+	// Create the IAM role and CustomAction handler to do the work
+
 	//////////////////////////////////////////////////////////////////////////////
 	// 4 - Create the lambda function definition that executes with the
-	// dynamically provisioned IAM policy
+	// dynamically provisioned IAM policy.  This is similar to what happens in
+	// ensureCustomResourceHandler, but due to the more complex IAM rules
+	// there's a bit of duplication
+	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
+	logger.WithFields(logrus.Fields{
+		"CustomResourceType": cloudformationresources.ZipToS3Bucket,
+		"NodeJSExport":       handlerName,
+	}).Debug("Sparta CloudFormation custom resource handler info")
+
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
 			S3Key:    gocf.String(S3Key),
 		},
-		Description: gocf.String("Manage static S3 site resources"),
-		Handler:     gocf.String(nodeJSHandlerName("s3Site")),
+		Description: gocf.String("Custom resource to manage a static S3 site resources"),
+		Handler:     gocf.String(handlerName),
 		Role:        iamRoleRef,
-		Runtime:     gocf.String("nodejs"),
-		Timeout:     gocf.Integer(30),
-		// Default is 128, but we're buffering everything in memory, in NodeJS
-		MemorySize: gocf.Integer(256),
+		Runtime:     gocf.String(NodeJSVersion),
+		MemorySize:  gocf.Integer(256),
+		Timeout:     gocf.Integer(180),
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
@@ -186,20 +201,28 @@ func (s3Site *S3Site) export(S3Bucket string,
 	//////////////////////////////////////////////////////////////////////////////
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
 	// actually populate the S3 with content
-	customResourceName := stableCloudformationResourceName("S3SiteInvoker")
-	newResource, err := newCloudFormationResource("Custom::SpartaS3SiteManager", logger)
+	customResourceName := stableCloudformationResourceName("S3SiteBuilder")
+	newResource, err := newCloudFormationResource(cloudformationresources.ZipToS3Bucket, logger)
 	if nil != err {
 		return err
 	}
-	customResource := newResource.(*cloudformationS3SiteManager)
-	customResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
-	customResource.TargetBucket = s3SiteBucketResourceValue
-	customResource.SourceKey = gocf.String(S3ResourcesKey)
-	customResource.SourceBucket = gocf.String(S3Bucket)
-	customResource.APIGateway = apiGatewayOutputs
+	zipResource := newResource.(*cloudformationresources.ZipToS3BucketResource)
+	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
+	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)
+	zipResource.SrcBucket = gocf.String(S3Bucket)
+	zipResource.DestBucket = gocf.Ref(s3BucketResourceName).String()
 
-	cfResource = template.AddResource(customResourceName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName)
+	// Build the manifest data with any output info...
+	manifestData := make(map[string]interface{}, 0)
+	for eachKey, eachOutput := range apiGatewayOutputs {
+		manifestData[eachKey] = map[string]interface{}{
+			"Description": eachOutput.Description,
+			"Value":       eachOutput.Value,
+		}
+	}
+	zipResource.Manifest = manifestData
+	cfResource = template.AddResource(customResourceName, zipResource)
+	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName, s3BucketResourceName)
 
 	return nil
 }

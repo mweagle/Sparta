@@ -55,17 +55,14 @@ const (
 // in resources/index.js
 var customResourceScripts = []string{"cfn-response.js",
 	"sparta_utils.js",
-	"apigateway.js",
 	"logs.js",
 	"ses.js",
 	"sns.js",
-	"s3Site.js",
-	"golang-constants.json",
-	"apigateway/inputmapping_default.vtl",
-	"apigateway/inputmapping_json.vtl"}
+	"golang-constants.json"}
 
 var golangCustomResourceTypes = []string{
 	cloudformationresources.S3LambdaEventSource,
+	cloudformationresources.ZipToS3Bucket,
 }
 
 // The relative path of the custom scripts that is used
@@ -490,7 +487,7 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 func createNewSpartaCustomResourceEntry(resourceName string, logger *logrus.Logger) string {
 	// The resource name is a :: delimited one, so let's sanitize that
 	// to make it a valid JS identifier
-	jsName := javascriptExportNameForResourceType(resourceName)
+	jsName := javascriptExportNameForCustomResourceType(resourceName)
 	logger.WithFields(logrus.Fields{
 		"Resource":           resourceName,
 		"NodeJSFunctionName": jsName,
@@ -1037,7 +1034,10 @@ func ensureCloudFormationStack() workflowStep {
 		apiGatewayTemplate := gocf.NewTemplate()
 
 		if nil != ctx.api {
-			err := ctx.api.export(ctx.s3Bucket,
+			err := ctx.api.export(
+				ctx.serviceName,
+				ctx.awsSession,
+				ctx.s3Bucket,
 				ctx.s3LambdaZipKey,
 				ctx.lambdaIAMRoleNameMap,
 				apiGatewayTemplate,

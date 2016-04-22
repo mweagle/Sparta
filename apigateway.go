@@ -8,9 +8,11 @@ import (
 	"strconv"
 	"strings"
 
-	gocf "github.com/crewjam/go-cloudformation"
-
 	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/apigateway"
+	gocf "github.com/crewjam/go-cloudformation"
 )
 
 /*
@@ -41,6 +43,12 @@ const (
 	// that stores the APIGateway provisioned URL
 	// @enum OutputKey
 	OutputAPIGatewayURL = "APIGatewayURL"
+
+	// boolTrue is the string representation that CF needs
+	boolTrue = "true"
+
+	// boolTrue is the string representation that CF needs
+	boolFalse = "false"
 )
 
 // APIGatewayIdentity represents the user identity of a request
@@ -132,34 +140,6 @@ type IntegrationResponse struct {
 	Templates        map[string]string `json:",omitempty"`
 }
 
-// DefaultIntegrationResponses returns a map of HTTP status codes to
-// integration response RegExps to return customized HTTP status
-// codes to API Gateway clients.  The regexp is triggered by the
-// presence of a golang HTTP status string in the error object.
-// https://golang.org/src/net/http/status.go
-// http://www.jayway.com/2015/11/07/error-handling-in-api-gateway-and-aws-lambda/
-func DefaultIntegrationResponses(defaultHTTPStatusCode int) map[int]*IntegrationResponse {
-	responseMap := make(map[int]*IntegrationResponse)
-
-	for i := 200; i <= 599; i++ {
-		statusText := http.StatusText(i)
-		if "" != statusText {
-			regExp := fmt.Sprintf(".*%s.*", statusText)
-			if i == defaultHTTPStatusCode {
-				regExp = ""
-			}
-			responseMap[i] = &IntegrationResponse{
-				SelectionPattern: regExp,
-				Templates: map[string]string{
-					"application/json": "",
-					"text/plain":       "",
-				},
-			}
-		}
-	}
-	return responseMap
-}
-
 // Integration proxies the AWS SDK's Integration data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Integration
 type Integration struct {
@@ -173,44 +153,6 @@ type Integration struct {
 
 	// Typically "AWS", but for OPTIONS CORS support is set to "MOCK"
 	integrationType string
-}
-
-// MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.
-func (integration Integration) MarshalJSON() ([]byte, error) {
-	var responses = integration.Responses
-	var requestTemplates = integration.RequestTemplates
-	// Default RequestTemplates will be inserted by the apigateway.js CustomResource
-	// at instantiation time.
-	for eachStatusCode := range responses {
-		httpString := http.StatusText(eachStatusCode)
-		if "" == httpString {
-			return nil, fmt.Errorf("Invalid HTTP status code in Integration Response: %d", eachStatusCode)
-		}
-	}
-
-	var stringResponses = make(map[string]*IntegrationResponse, 0)
-	for eachKey, eachValue := range responses {
-		stringResponses[strconv.Itoa(eachKey)] = eachValue
-	}
-	integrationJSON := map[string]interface{}{
-		"Responses":        stringResponses,
-		"RequestTemplates": requestTemplates,
-		"Type":             integration.integrationType,
-	}
-	if len(integration.Parameters) > 0 {
-		integrationJSON["Parameters"] = integration.Parameters
-	}
-	if len(integration.CacheNamespace) > 0 {
-		integrationJSON["CacheNamespace"] = integration.CacheNamespace
-	}
-	if len(integration.Credentials) > 0 {
-		integrationJSON["Credentials"] = integration.Credentials
-	}
-	if len(integration.CacheKeyParameters) > 0 {
-		integrationJSON["CacheKeyParameters"] = integration.CacheKeyParameters
-	}
-	return json.Marshal(integrationJSON)
 }
 
 // Method proxies the AWS SDK's Method data.  See
@@ -231,96 +173,12 @@ type Method struct {
 	Integration Integration
 }
 
-// DefaultMethodResponses returns the default set of Method HTTPStatus->Response
-// pass through responses.  The successfulHTTPStatusCode param is the single
-// 2XX response code to use for the method.
-func DefaultMethodResponses(successfulHTTPStatusCode int) map[int]*Response {
-	responses := make(map[int]*Response, 0)
-
-	// Only one 2xx status code response may exist on a Method
-	responses[successfulHTTPStatusCode] = defaultResponse()
-
-	// Add mappings for the other return codes
-	for i := 300; i <= 599; i++ {
-		statusText := http.StatusText(i)
-		if "" != statusText {
-			responses[i] = defaultResponse()
-		}
-	}
-	return responses
-}
-
-// Return the default response for the standard response types.
-func defaultResponse() *Response {
-	contentTypes := []string{"application/json", "text/plain"}
-	models := make(map[string]*Model, 0)
-	for _, eachContentType := range contentTypes {
-		description := "Empty model"
-		if eachContentType == "application/json" {
-			description = "Empty JSON model"
-		} else {
-			parts := strings.Split(eachContentType, "/")
-			if len(parts) == 2 {
-				description = fmt.Sprintf("Empty %s model", strings.ToUpper(parts[0]))
-			}
-		}
-		models[eachContentType] = &Model{
-			Description: description,
-			Name:        "Empty",
-			Schema:      "",
-		}
-	}
-	return &Response{
-		Models: models,
-	}
-}
-
-// MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.  If method.Responses is empty, the
-// DefaultMethodResponses map will be used, where the HTTP Success code is 201 for POST
-// methods and 200 for all other methodnames.
-func (method *Method) MarshalJSON() ([]byte, error) {
-	responses := method.Responses
-
-	for eachStatusCode := range responses {
-		httpString := http.StatusText(eachStatusCode)
-		if "" == httpString {
-			return nil, fmt.Errorf("Invalid HTTP status code in Method Response: %d", eachStatusCode)
-		}
-	}
-
-	var stringResponses = make(map[string]*Response, 0)
-	for eachKey, eachValue := range responses {
-		stringResponses[strconv.Itoa(eachKey)] = eachValue
-	}
-
-	return json.Marshal(map[string]interface{}{
-		"AuthorizationType": method.authorizationType,
-		"HTTPMethod":        method.httpMethod,
-		"APIKeyRequired":    method.APIKeyRequired,
-		"Parameters":        method.Parameters,
-		"Models":            method.Models,
-		"Responses":         stringResponses,
-		"Integration":       method.Integration,
-	})
-}
-
 // Resource proxies the AWS SDK's Resource data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Resource
 type Resource struct {
 	pathPart     string
 	parentLambda *LambdaAWSInfo
 	Methods      map[string]*Method
-}
-
-// MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.
-func (resource *Resource) MarshalJSON() ([]byte, error) {
-	return json.Marshal(map[string]interface{}{
-		"PathPart":  resource.pathPart,
-		"LambdaArn": gocf.GetAtt(resource.parentLambda.logicalName(), "Arn"),
-		"Methods":   resource.Methods,
-	})
 }
 
 // Stage proxies the AWS SDK's Stage data.  See
@@ -331,25 +189,6 @@ type Stage struct {
 	CacheClusterSize    string
 	Description         string
 	Variables           map[string]string
-}
-
-// MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.
-func (stage *Stage) MarshalJSON() ([]byte, error) {
-	stageJSON := map[string]interface{}{
-		"Name":                stage.name,
-		"CacheClusterEnabled": stage.CacheClusterEnabled,
-	}
-	if len(stage.CacheClusterSize) > 0 {
-		stageJSON["CacheClusterSize"] = stage.CacheClusterSize
-	}
-	if len(stage.Description) > 0 {
-		stageJSON["Description"] = stage.Description
-	}
-	if len(stage.Variables) > 0 {
-		stageJSON["Variables"] = stage.Variables
-	}
-	return json.Marshal(stageJSON)
 }
 
 // API represents the AWS API Gateway data associated with a given Sparta app.  Proxies
@@ -371,196 +210,369 @@ type API struct {
 	CORSEnabled bool
 }
 
-type resourceNode struct {
-	PathComponent string
-	Children      map[string]*resourceNode
-	APIResources  map[string]*Resource
+func corsMethodResponseParams() map[string]string {
+	responseParams := make(map[string]string, 0)
+	responseParams["method.response.header.Access-Control-Allow-Headers"] = boolTrue
+	responseParams["method.response.header.Access-Control-Allow-Methods"] = boolTrue
+	responseParams["method.response.header.Access-Control-Allow-Origin"] = boolTrue
+	return responseParams
 }
 
-// MarshalJSON customizes the JSON representation used when serializing to the
-// CloudFormation template representation.
-func (api *API) MarshalJSON() ([]byte, error) {
+// DefaultMethodResponses returns the default set of Method HTTPStatus->Response
+// pass through responses.  The successfulHTTPStatusCode param is the single
+// 2XX response code to use for the method.
+func methodResponses(successfulHTTPStatusCode int,
+	userResponses map[int]*Response,
+	corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
 
-	// Transform the map of resources into a set of hierarchical resourceNodes
-	rootResource := resourceNode{
-		PathComponent: "/",
-		Children:      make(map[string]*resourceNode, 0),
-		APIResources:  make(map[string]*Resource, 0),
-	}
-	for eachPath, eachResource := range api.resources {
-		ctxNode := &rootResource
-		pathParts := strings.Split(eachPath, "/")[1:]
-		// Start at the root and descend
-		for _, eachPathPart := range pathParts {
-			_, exists := ctxNode.Children[eachPathPart]
-			if !exists {
-				childNode := &resourceNode{
-					PathComponent: eachPathPart,
-					Children:      make(map[string]*resourceNode, 0),
-					APIResources:  make(map[string]*Resource, 0),
-				}
-				ctxNode.Children[eachPathPart] = childNode
+	var responses gocf.APIGatewayMethodMethodResponseList
+	if len(userResponses) != 0 {
+		for eachStatusCode := range userResponses {
+			methodResponse := gocf.APIGatewayMethodMethodResponse{
+				StatusCode: gocf.String(strconv.Itoa(eachStatusCode)),
 			}
-			ctxNode = ctxNode.Children[eachPathPart]
+			if corsEnabled {
+				methodResponse.ResponseParameters = corsMethodResponseParams()
+			}
+			responses = append(responses, methodResponse)
 		}
-		ctxNode.APIResources[eachResource.parentLambda.logicalName()] = eachResource
+	} else {
+		// Add the single successful response
+		methodResponse := gocf.APIGatewayMethodMethodResponse{
+			StatusCode: gocf.String(strconv.Itoa(successfulHTTPStatusCode)),
+		}
+		if corsEnabled {
+			methodResponse.ResponseParameters = corsMethodResponseParams()
+		}
+		responses = append(responses, methodResponse)
+
+		for i := 300; i <= 599; i++ {
+			statusText := http.StatusText(i)
+			if "" != statusText {
+
+				methodResponse := gocf.APIGatewayMethodMethodResponse{
+					StatusCode: gocf.String(strconv.Itoa(i)),
+				}
+				// TODO - handle user defined params
+				if corsEnabled {
+					methodResponse.ResponseParameters = corsMethodResponseParams()
+				}
+				responses = append(responses, methodResponse)
+			}
+		}
+	}
+	return &responses
+}
+
+func corsIntegrationResponseParams() map[string]string {
+	responseParams := make(map[string]string, 0)
+	responseParams["method.response.header.Access-Control-Allow-Headers"] = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+	responseParams["method.response.header.Access-Control-Allow-Methods"] = "'*'"
+	responseParams["method.response.header.Access-Control-Allow-Origin"] = "'*'"
+	return responseParams
+}
+
+func integrationResponses(successfulHTTPStatusCode int,
+	userResponses map[int]*IntegrationResponse,
+	corsEnabled bool) *gocf.APIGatewayMethodIntegrationIntegrationResponseList {
+
+	// TODO - userResponses
+	var integrationResponses gocf.APIGatewayMethodIntegrationIntegrationResponseList
+	for i := 200; i <= 599; i++ {
+		statusText := http.StatusText(i)
+		if "" != statusText {
+			regExp := fmt.Sprintf(".*%s.*", statusText)
+			if i == successfulHTTPStatusCode {
+				regExp = ""
+			}
+			integrationResponse := gocf.APIGatewayMethodIntegrationIntegrationResponse{
+				ResponseTemplates: map[string]string{
+					"application/json": "",
+					"text/*":           "",
+				},
+				SelectionPattern: gocf.String(regExp),
+				StatusCode:       gocf.String(strconv.Itoa(i)),
+			}
+			// TODO - handle user defined params
+			if corsEnabled {
+				integrationResponse.ResponseParameters = corsIntegrationResponseParams()
+			}
+			integrationResponses = append(integrationResponses, integrationResponse)
+		}
+	}
+	return &integrationResponses
+}
+
+func defaultRequestTemplates() map[string]string {
+	return map[string]string{
+		"application/json":                  _escFSMustString(false, "/resources/provision/apigateway/inputmapping_json.vtl"),
+		"text/plain":                        _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
+		"application/x-www-form-urlencoded": _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
+		"multipart/form-data":               _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
+	}
+}
+
+func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.ApiGatewayMethod {
+	methodResponse := gocf.APIGatewayMethodMethodResponse{
+		StatusCode:         gocf.String("200"),
+		ResponseParameters: corsMethodResponseParams(),
 	}
 
-	apiJSON := map[string]interface{}{
-		"Name":      api.name,
-		"Resources": rootResource,
+	integrationResponse := gocf.APIGatewayMethodIntegrationIntegrationResponse{
+		ResponseTemplates: map[string]string{
+			"application/*": "",
+			"text/*":        "",
+		},
+		StatusCode:         gocf.String("200"),
+		ResponseParameters: corsIntegrationResponseParams(),
 	}
-	if len(api.CloneFrom) > 0 {
-		apiJSON["CloneFrom"] = api.CloneFrom
+
+	corsMethod := &gocf.ApiGatewayMethod{
+		HttpMethod:        gocf.String("OPTIONS"),
+		AuthorizationType: gocf.String("NONE"),
+		RestApiId:         restAPIID.String(),
+		ResourceId:        resourceID.String(),
+		Integration: &gocf.APIGatewayMethodIntegration{
+			Type: gocf.String("MOCK"),
+			RequestTemplates: map[string]string{
+				"application/json": "{\"statusCode\": 200}",
+				"text/plain":       "statusCode: 200",
+			},
+			IntegrationResponses: &gocf.APIGatewayMethodIntegrationIntegrationResponseList{integrationResponse},
+		},
+		MethodResponses: &gocf.APIGatewayMethodMethodResponseList{methodResponse},
 	}
-	if len(api.Description) > 0 {
-		apiJSON["Description"] = api.Description
+	return corsMethod
+}
+
+func apiStageInfo(apiName string, stageName string, session *session.Session, logger *logrus.Logger) (*apigateway.Stage, error) {
+	svc := apigateway.New(session)
+	restApisInput := &apigateway.GetRestApisInput{
+		Limit: aws.Int64(500),
 	}
-	if nil != api.stage {
-		apiJSON["Stage"] = api.stage
+	logger.WithFields(logrus.Fields{
+		"APIName":   apiName,
+		"StageName": stageName,
+	}).Info("Checking current APIGateway stage status")
+
+	restApisOutput, restApisOutputErr := svc.GetRestApis(restApisInput)
+	if nil != restApisOutputErr {
+		return nil, restApisOutputErr
 	}
-	return json.Marshal(apiJSON)
+	// Find the entry that has this name
+	restAPIID := ""
+	for _, eachRestAPI := range restApisOutput.Items {
+		if *eachRestAPI.Name == apiName {
+			if restAPIID != "" {
+				return nil, fmt.Errorf("Multiple RestAPI matches for API Name: %s", apiName)
+			}
+			restAPIID = *eachRestAPI.Id
+		}
+	}
+	if "" == restAPIID {
+		return nil, nil
+	}
+	// API exists...does the stage name exist?
+	stagesInput := &apigateway.GetStagesInput{
+		RestApiId: aws.String(restAPIID),
+	}
+	stagesOutput, stagesOutputErr := svc.GetStages(stagesInput)
+	if nil != stagesOutputErr {
+		return nil, stagesOutputErr
+	}
+
+	// Find this stage name...
+	var matchingStageOutput *apigateway.Stage
+	for _, eachStage := range stagesOutput.Item {
+		if *eachStage.StageName == stageName {
+			if nil != matchingStageOutput {
+				return nil, fmt.Errorf("Multiple stage matches for name: %s", stageName)
+			}
+			matchingStageOutput = eachStage
+		}
+	}
+	logger.WithFields(logrus.Fields{
+		"Stage": matchingStageOutput,
+	}).Info("APIGateway state status")
+
+	return matchingStageOutput, nil
 }
 
 // export marshals the API data to a CloudFormation compatible representation
-func (api *API) export(S3Bucket string,
+func (api *API) export(serviceName string,
+	session *session.Session,
+	S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 
-	lambdaResourceName, err := ensureConfiguratorLambdaResource(APIGatewayPrincipal,
-		gocf.String("*"),
-		[]string{},
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
+	apiGatewayResourceNameForPath := func(fullPath string) string {
+		pathParts := strings.Split(fullPath, "/")
+		return CloudFormationResourceName("%sResource", pathParts[0], fullPath)
+	}
+	apiGatewayResName := CloudFormationResourceName("APIGateway", api.name)
 
-	if nil != err {
-		return err
+	// Create an API gateway entry
+	apiGatewayRes := &gocf.ApiGatewayRestApi{
+		Description:    gocf.String(api.Description),
+		FailOnWarnings: gocf.Bool(false),
+		Name:           gocf.String(api.name),
+	}
+	if "" != api.CloneFrom {
+		apiGatewayRes.CloneFrom = gocf.String(api.CloneFrom)
+	}
+	if "" == api.Description {
+		apiGatewayRes.Description = gocf.String(fmt.Sprintf("%s RestApi", serviceName))
+	} else {
+		apiGatewayRes.Description = gocf.String(api.Description)
 	}
 
-	// If this API is CORS enabled, then annotate the APIResources with OPTION
-	// entries.  Slight overhead in network I/O due to marshalling data, but simplifies
-	// the CustomResource, which is only a temporary stopgap until cloudformation
-	// properly supports APIGateway
-	responseParameters := map[string]bool{
-		"method.response.header.Access-Control-Allow-Headers": true,
-		"method.response.header.Access-Control-Allow-Methods": true,
-		"method.response.header.Access-Control-Allow-Origin":  true,
-	}
-	integrationResponseParameters := map[string]string{
-		"method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'",
-		"method.response.header.Access-Control-Allow-Methods": "'*'",
-		"method.response.header.Access-Control-Allow-Origin":  "'*'",
-	}
-	// Keep track of how many resources && methods we're supposed to provision.  If there
-	// aren't any, then throw an error
-	resourceCount := 0
-	methodCount := 0
-	// We need to update the default values here, because the individual
-	// methods are deserialized they annotate the prexisting responses with whitelist data.
-	for _, eachResource := range api.resources {
-		resourceCount++
-		if api.CORSEnabled {
-			// Create the OPTIONS entry
-			method, methodErr := eachResource.NewMethod("OPTIONS")
-			if methodErr != nil {
-				return methodErr
-			}
-			methodCount++
+	template.AddResource(apiGatewayResName, apiGatewayRes)
+	apiGatewayRestAPIID := gocf.Ref(apiGatewayResName)
 
-			statusOkResponse := defaultResponse()
-			statusOkResponse.Parameters = responseParameters
-			method.Responses[200] = statusOkResponse
-
-			method.Integration = Integration{
-				Parameters:       make(map[string]string, 0),
-				RequestTemplates: make(map[string]string, 0),
-				Responses:        make(map[int]*IntegrationResponse, 0),
-				integrationType:  "MOCK",
+	// List of all the method resources we're creating s.t. the
+	// deployment can DependOn them
+	var apiMethodCloudFormationResources []string
+	for eachResourcePath, eachResourceDef := range api.resources {
+		// First walk all the user resources and create intermediate paths
+		// to repreesent all the resources
+		var parentResource *gocf.StringExpr
+		pathParts := strings.Split(strings.TrimLeft(eachResourceDef.pathPart, "/"), "/")
+		pathAccumulator := []string{"/"}
+		for index, eachPathPart := range pathParts {
+			pathAccumulator = append(pathAccumulator, eachPathPart)
+			resourcePathName := apiGatewayResourceNameForPath(strings.Join(pathAccumulator, "/"))
+			if _, exists := template.Resources[resourcePathName]; !exists {
+				cfResource := &gocf.ApiGatewayResource{
+					RestApiId: apiGatewayRestAPIID.String(),
+					PathPart:  gocf.String(eachPathPart),
+				}
+				if index <= 0 {
+					cfResource.ParentId = gocf.GetAtt(apiGatewayResName, "RootResourceId")
+				} else {
+					cfResource.ParentId = parentResource
+				}
+				template.AddResource(resourcePathName, cfResource)
 			}
-			method.Integration.RequestTemplates["application/json"] = "{\"statusCode\": 200}"
-			corsIntegrationResponse := IntegrationResponse{
-				Parameters: integrationResponseParameters,
-				Templates: map[string]string{
-					"application/json": "",
-				},
-			}
-			method.Integration.Responses[200] = &corsIntegrationResponse
+			parentResource = gocf.Ref(resourcePathName).String()
 		}
 
-		for _, eachMethod := range eachResource.Methods {
-			methodCount++
+		// Add the lambda permission
+		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm", eachResourcePath)
+		lambdaInvokePermission := &gocf.LambdaPermission{
+			Action:       gocf.String("lambda:InvokeFunction"),
+			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
+			Principal:    gocf.String(APIGatewayPrincipal),
+		}
+		template.AddResource(apiGatewayPermissionResourceName, lambdaInvokePermission)
+
+		// BEGIN CORS - OPTIONS verb
+		// Then if the api is CORS enabled, setup the options method
+		if api.CORSEnabled {
+			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS", eachResourcePath), eachResourcePath)
+			template.AddResource(methodResourceName,
+				corsOptionsGatewayMethod(apiGatewayRestAPIID, parentResource))
+
+			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
+		}
+		// END CORS - OPTIONS verb
+
+		// BEGIN - user defined verbs
+		for eachMethodName, eachMethodDef := range eachResourceDef.Methods {
 			statusSuccessfulCode := http.StatusOK
-			if eachMethod.httpMethod == "POST" {
+			if eachMethodDef.httpMethod == "POST" {
 				statusSuccessfulCode = http.StatusCreated
 			}
 
-			if len(eachMethod.Responses) <= 0 {
-				eachMethod.Responses = DefaultMethodResponses(statusSuccessfulCode)
+			apiGatewayMethod := &gocf.ApiGatewayMethod{
+				HttpMethod:        gocf.String(eachMethodName),
+				AuthorizationType: gocf.String("NONE"),
+				ResourceId:        parentResource.String(),
+				RestApiId:         apiGatewayRestAPIID.String(),
+				Integration: &gocf.APIGatewayMethodIntegration{
+					IntegrationHttpMethod: gocf.String("POST"),
+					Type:             gocf.String("AWS"),
+					RequestTemplates: defaultRequestTemplates(),
+					Uri: gocf.Join("",
+						gocf.String("arn:aws:apigateway:"),
+						gocf.Ref("AWS::Region"),
+						gocf.String(":lambda:path/2015-03-31/functions/"),
+						gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
+						gocf.String("/invocations")),
+				},
 			}
-			if api.CORSEnabled {
-				for _, eachResponse := range eachMethod.Responses {
-					if nil == eachResponse.Parameters {
-						eachResponse.Parameters = make(map[string]bool, 0)
-					}
-					for eachKey, eachBool := range responseParameters {
-						eachResponse.Parameters[eachKey] = eachBool
-					}
-				}
-			}
-			// Update Integration
-			if len(eachMethod.Integration.Responses) <= 0 {
-				eachMethod.Integration.Responses = DefaultIntegrationResponses(statusSuccessfulCode)
-			}
-			if api.CORSEnabled {
-				for eachHTTPStatus, eachIntegrationResponse := range eachMethod.Integration.Responses {
-					if eachHTTPStatus >= 200 && eachHTTPStatus <= 299 {
-						if nil == eachIntegrationResponse.Parameters {
-							eachIntegrationResponse.Parameters = make(map[string]string, 0)
-						}
-						for eachKey, eachValue := range integrationResponseParameters {
-							eachIntegrationResponse.Parameters[eachKey] = eachValue
-						}
-					}
-				}
-			}
+
+			// Add the integration response RegExps
+			apiGatewayMethod.Integration.IntegrationResponses = integrationResponses(statusSuccessfulCode, eachMethodDef.Integration.Responses, api.CORSEnabled)
+
+			// Add outbound method responses
+			apiGatewayMethod.MethodResponses = methodResponses(statusSuccessfulCode, eachMethodDef.Responses, api.CORSEnabled)
+
+			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourcePath)
+			methodResourceName := CloudFormationResourceName(prefix, eachResourcePath, serviceName)
+			res := template.AddResource(methodResourceName, apiGatewayMethod)
+			res.DependsOn = append(res.DependsOn, apiGatewayPermissionResourceName)
+			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
 		}
 	}
+	// END
 
-	if resourceCount <= 0 || methodCount <= 0 {
-		logger.WithFields(logrus.Fields{
-			"ResourceCount": resourceCount,
-			"MethodCount":   methodCount,
-		}).Error("*sparta.API value provided to sparta.Main(), but no resources or methods were defined")
-		return errors.New("Non-nil, empty *sparta.API provided to sparta.Main(). Prefer `nil` value")
-	}
+	if nil != api.stage {
+		// Is the stack already deployed?
+		stageName := api.stage.name
+		stageInfo, stageInfoErr := apiStageInfo(api.name, stageName, session, logger)
+		if nil != stageInfoErr {
+			return stageInfoErr
+		}
+		if nil == stageInfo {
+			// Use a stable identifier so that we can update the existing deployment
+			apiDeploymentResName := CloudFormationResourceName("APIGatewayDeployment", serviceName)
+			apiDeployment := &gocf.ApiGatewayDeployment{
+				Description: gocf.String(api.stage.Description),
+				RestApiId:   apiGatewayRestAPIID.String(),
+				StageName:   gocf.String(stageName),
+				StageDescription: &gocf.APIGatewayDeploymentStageDescription{
+					StageName:   gocf.String(api.stage.name),
+					Description: gocf.String(api.stage.Description),
+					Variables:   api.stage.Variables,
+				},
+			}
+			if api.stage.CacheClusterEnabled {
+				apiDeployment.StageDescription.CacheClusterEnabled = gocf.Bool(api.stage.CacheClusterEnabled)
+			}
+			if api.stage.CacheClusterSize != "" {
+				apiDeployment.StageDescription.CacheClusterSize = gocf.String(api.stage.CacheClusterSize)
+			}
+			deployment := template.AddResource(apiDeploymentResName, apiDeployment)
+			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
+			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
+		} else {
+			newDeployment := &gocf.ApiGatewayDeployment{
+				Description: gocf.String("Sparta deploy"),
+				RestApiId:   apiGatewayRestAPIID.String(),
+				StageName:   gocf.String(stageName),
+			}
+			// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this
+			// is going to work with deletes...
+			deploymentResName := CloudFormationResourceName("APIGatewayDeployment")
+			deployment := template.AddResource(deploymentResName, newDeployment)
+			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
+			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
+		}
 
-	// Unmarshal everything to JSON
-	newResource, err := newCloudFormationResource("Custom::SpartaAPIGateway", logger)
-	if nil != err {
-		return err
-	}
-	apiGatewayResource := newResource.(*cloudFormationAPIGatewayResource)
-	apiGatewayResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
-	apiGatewayResource.API = api
-
-	apiGatewayInvokerResName := CloudFormationResourceName("APIGateway", api.name)
-	cfResource := template.AddResource(apiGatewayInvokerResName, apiGatewayResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName)
-
-	// Save the output
-	template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
-		Description: "API Gateway URL",
-		Value:       gocf.GetAtt(apiGatewayInvokerResName, "URL"),
+		template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
+			Description: "API Gateway URL",
+			Value: gocf.Join("",
+				gocf.String("https://"),
+				apiGatewayRestAPIID,
+				gocf.String(".execute-api."),
+				gocf.Ref("AWS::Region"),
+				gocf.String(".amazonaws.com/"),
+				gocf.String(stageName)),
+		}
 	}
 	return nil
-}
-
-func (api *API) logicalName() string {
-	return CloudFormationResourceName("APIGateway", api.name, api.stage.name)
 }
 
 // NewAPIGateway returns a new API Gateway structure.  If stage is defined, the API Gateway

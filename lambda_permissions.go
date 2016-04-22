@@ -244,7 +244,8 @@ func (perm S3Permission) export(serviceName string,
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(s3SourceArnParts...)
-	configuratorResName, err := ensureCustomResourceHandler(cloudformationresources.S3LambdaEventSource,
+	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		cloudformationresources.S3LambdaEventSource,
 		sourceArnExpression,
 		[]string{},
 		template,
@@ -336,7 +337,8 @@ func (perm SNSPermission) export(serviceName string,
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SNSPrincipal,
+	configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
+		SNSPrincipal,
 		sourceArnExpression,
 		[]string{},
 		template,
@@ -574,9 +576,13 @@ func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
 		})
 	}
 	// Then create the "LambdaAction", which is always present.
+	invocationType := rule.InvocationType
+	if "" == invocationType {
+		invocationType = "Event"
+	}
 	ruleAction := ArbitraryJSONObject{
 		"FunctionArn":    functionArnRef,
-		"InvocationType": rule.InvocationType,
+		"InvocationType": invocationType,
 	}
 	if "" != rule.TopicArn {
 		ruleAction["TopicArn"] = rule.TopicArn
@@ -686,7 +692,8 @@ func (perm SESPermission) export(serviceName string,
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(SESPrincipal,
+	configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
+		SESPrincipal,
 		sourceArnExpression,
 		dependsOn,
 		template,
@@ -849,8 +856,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		return "", fmt.Errorf("CloudWatchEventsPermission for function %s does not specify any expressions", lambdaFunctionDisplayName)
 	}
 
-	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
-	// this.
+	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
 	if nil != perm.BasePermission.SourceArn &&
 		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
 		logger.WithFields(logrus.Fields{
@@ -871,8 +877,9 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	// Add the permission to invoke the lambda function
 	uniqueRuleNameMap := make(map[string]int, 0)
 	for eachRuleName, eachRuleDefinition := range perm.Rules {
-		uniqueRuleName := CloudFormationResourceName(eachRuleName, lambdaLogicalCFResourceName, serviceName)
-		// Check for collisions after the loop
+
+		// We need a stable unique name s.t. the permission is properly configured...
+		uniqueRuleName := fmt.Sprintf("%s-%s-%s", serviceName, lambdaFunctionDisplayName, eachRuleName)
 		uniqueRuleNameMap[uniqueRuleName]++
 
 		// Add the permission
@@ -887,11 +894,13 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			S3Bucket,
 			S3Key,
 			logger)
+
 		if nil != exportErr {
 			return "", exportErr
 		}
 		// Add the rule
 		eventsRule := &gocf.EventsRule{
+			Name:        gocf.String(uniqueRuleName),
 			Description: gocf.String(eachRuleDefinition.Description),
 			Targets: &gocf.CloudWatchEventsRuleTargetList{
 				gocf.CloudWatchEventsRuleTarget{
@@ -908,7 +917,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		} else if "" != eachRuleDefinition.ScheduleExpression {
 			eventsRule.ScheduleExpression = eachRuleDefinition.ScheduleExpression
 		}
-		cloudWatchLogsEventResName := CloudFormationResourceName(fmt.Sprintf("%s-Rule", eachRuleName),
+		cloudWatchLogsEventResName := CloudFormationResourceName(fmt.Sprintf("%s-CloudWatchEventsRule", eachRuleName),
 			lambdaLogicalCFResourceName,
 			lambdaFunctionDisplayName)
 		template.AddResource(cloudWatchLogsEventResName, eventsRule)
@@ -1034,7 +1043,8 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		// Given the log group name, prepend the ARN syntax s.t. the
 		// Ensure the configuration resource exists for this log source.  Cache the returned
 		// logical resource name s.t. we can validate we're reusing the same resource
-		configuratorResName, err := ensureConfiguratorLambdaResource(regionalPrincipal,
+		configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
+			regionalPrincipal,
 			cloudWatchLogsArn,
 			[]string{},
 			template,

@@ -28,11 +28,6 @@ func init() {
 		"s3:GetBucketNotificationConfiguration",
 		"s3:PutBucketNotificationConfiguration"}
 
-	PushSourceConfigurationActions[APIGatewayPrincipal] = []string{"apigateway:*",
-		"lambda:AddPermission",
-		"lambda:RemovePermission",
-		"lambda:GetPolicy"}
-
 	cloudWatchLogsRegions := []string{
 		"us-east-1",
 		"us-west-2",
@@ -71,7 +66,8 @@ func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
-func ensureCustomResourceHandler(customResourceTypeName string,
+func ensureCustomResourceHandler(serviceName string,
+	customResourceTypeName string,
 	sourceArn *gocf.StringExpr,
 	dependsOn []string,
 	template *gocf.Template,
@@ -106,19 +102,17 @@ func ensureCustomResourceHandler(customResourceTypeName string,
 	_, exists := template.Resources[subscriberHandlerName]
 	if !exists {
 		logger.WithFields(logrus.Fields{
-			"Service": awsServiceName,
+			"Service": customResourceTypeName,
 		}).Debug("Including Lambda CustomResource for AWS Service")
 
-		configuratorDescription := fmt.Sprintf("Sparta created Lambda CustomResource to configure %s service",
-			awsServiceName)
+		configuratorDescription := customResourceDescription(serviceName, customResourceTypeName)
 
 		//////////////////////////////////////////////////////////////////////////////
 		// Custom Resource Lambda Handler
 		// The export name MUST correspond to the createForwarder entry that is dynamically
 		// written into the index.js file during compile in createNewSpartaCustomResourceEntry
 
-		handlerName := fmt.Sprintf("index.%s", javascriptExportNameForResourceType(customResourceTypeName))
-
+		handlerName := lambdaExportNameForCustomResourceType(customResourceTypeName)
 		logger.WithFields(logrus.Fields{
 			"CustomResourceType": customResourceTypeName,
 			"NodeJSExport":       handlerName,
@@ -144,7 +138,8 @@ func ensureCustomResourceHandler(customResourceTypeName string,
 	return subscriberHandlerName, nil
 }
 
-func ensureConfiguratorLambdaResource(awsPrincipalName string,
+func ensureConfiguratorLambdaResource(serviceName string,
+	awsPrincipalName string,
 	sourceArn *gocf.StringExpr,
 	dependsOn []string,
 	template *gocf.Template,
@@ -188,8 +183,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 			"Service": awsServiceName,
 		}).Debug("Including Lambda CustomResource for AWS Service")
 
-		configuratorDescription := fmt.Sprintf("Sparta created Lambda CustomResource to configure %s service",
-			awsServiceName)
+		configuratorDescription := customResourceDescription(serviceName, awsPrincipalName)
 
 		//////////////////////////////////////////////////////////////////////////////
 		// Custom Resource Lambda Handler
@@ -207,7 +201,7 @@ func ensureConfiguratorLambdaResource(awsPrincipalName string,
 			Description: gocf.String(configuratorDescription),
 			Handler:     gocf.String(handlerName),
 			Role:        iamRoleRef,
-			Runtime:     gocf.String("nodejs"),
+			Runtime:     gocf.String(NodeJSVersion),
 			Timeout:     gocf.Integer(30),
 		}
 

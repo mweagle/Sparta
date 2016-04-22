@@ -1,16 +1,26 @@
 package sparta
 
 import (
-	"CloudFormationResources"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/mweagle/cloudformationresources"
+
 	"github.com/Sirupsen/logrus"
 )
 
-func javascriptExportNameForResourceType(resourceType string) string {
-	return sanitizedName(resourceType)
+func javascriptExportNameForCustomResourceType(customResourceTypeName string) string {
+	return sanitizedName(customResourceTypeName)
+}
+func lambdaExportNameForCustomResourceType(customResourceTypeName string) string {
+	return fmt.Sprintf("index.%s", javascriptExportNameForCustomResourceType(customResourceTypeName))
+}
+
+func customResourceDescription(serviceName string, targetType string) string {
+	return fmt.Sprintf("%s: CloudFormation CustomResource to configure %s",
+		serviceName,
+		targetType)
 }
 
 // Extract the fields and forward the event to the resource
