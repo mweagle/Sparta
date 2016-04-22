@@ -1,6 +1,7 @@
 #*
 Provide an automatic pass through template that transforms all inputs
-into the JSON payload sent to a golang function
+into the JSON payload sent to a golang function. The JSON behavior attempts to parse
+the incoming HTTP body as JSON assign it to the `body` field.
 
 See
   https://forums.aws.amazon.com/thread.jspa?threadID=220274&tstart=0
