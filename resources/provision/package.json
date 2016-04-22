@@ -9,10 +9,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "adm-zip": "0.4.7",
     "async": "1.5.2",
     "aws-sdk": "2.3.3",
-    "mime-types": "2.1.10",
     "underscore": "1.8.3"
   }
 }
