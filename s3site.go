@@ -45,7 +45,8 @@ type S3Site struct {
 }
 
 // export marshals the API data to a CloudFormation compatible representation
-func (s3Site *S3Site) export(S3Bucket string,
+func (s3Site *S3Site) export(serviceName string,
+	S3Bucket string,
 	S3Key string,
 	S3ResourcesKey string,
 	apiGatewayOutputs map[string]*gocf.Output,
@@ -187,7 +188,7 @@ func (s3Site *S3Site) export(S3Bucket string,
 			S3Bucket: gocf.String(S3Bucket),
 			S3Key:    gocf.String(S3Key),
 		},
-		Description: gocf.String("Custom resource to manage a static S3 site resources"),
+		Description: gocf.String(customResourceDescription(serviceName, "S3 static site")),
 		Handler:     gocf.String(handlerName),
 		Role:        iamRoleRef,
 		Runtime:     gocf.String(NodeJSVersion),
