@@ -1,18 +1,22 @@
 ## v0.5.5
 This release includes a major internal refactoring to move the current set of NodeJS [Lambda-backed CloudFormation CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to Sparta Go functions. The two migrated CustomActions are:
+
 * The S3 event source configuration
 * Provisioning an S3-static site
-  Both are implemented using [cloudformationresources](https://github.com/mweagle/cloudformationresources). There are no changes to the calling code and no regressions are expected.
+
+Both are implemented using [cloudformationresources](https://github.com/mweagle/cloudformationresources). There are no changes to the calling code and no regressions are expected.
 
 - :warning: **BREAKING**
   - APIGateway provisioning now only creates a single discovery file: _MANIFEST.json_ at the site root.
 - :checkered_flag: **CHANGES**
   - VPC support! Added [LambdaFunctionVPCConfig](https://godoc.org/github.com/crewjam/go-cloudformation#LambdaFunctionVPCConfig) to [LambdaFunctionsOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions) struct.
-  - Updated runtime to [nodejs4.3](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html)
+  - Updated NodeJS runtime to [nodejs4.3](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html)
   - CloudFormation updates are now done via [Change Sets](https://aws.amazon.com/blogs/aws/new-change-sets-for-aws-cloudformation/), rather than [UpdateStack](http://docs.aws.amazon.com/sdk-for-go/api/service/cloudformation/CloudFormation.html#UpdateStack-instance_method).
-  - APIGateway and CloudWatchEvents are now configured using [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/ReleaseHistory.html). They were previously implemented using CustomResources.
+  - APIGateway and CloudWatchEvents are now configured using [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/ReleaseHistory.html). They were previously implemented using NodeJS CustomResources.
 - :bug: **FIXED**
   - Fixed latent issue where `IAM::Role` resources didn't use stable CloudFormation resource names
+  - Fixed latent issue where names & descriptions of Lambda functions weren't consistent
+  - https://github.com/mweagle/SpartaApplication/issues/1
 
 ## v0.5.4
 - :warning: **BREAKING**
