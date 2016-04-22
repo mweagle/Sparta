@@ -969,7 +969,8 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			cloudformation.StackStatusCreateFailed,
 			cloudformation.StackStatusDeleteFailed,
 			cloudformation.StackStatusRollbackFailed,
-			cloudformation.StackStatusRollbackComplete:
+			cloudformation.StackStatusRollbackComplete,
+			cloudformation.StackStatusUpdateRollbackComplete:
 			convegeStackStateSucceeded = false
 			waitComplete = true
 		default:
