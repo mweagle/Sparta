@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle bitbucket: googleplus:]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -355,15 +355,12 @@
 
 <p>The first place to start is with the lambda function definition.</p>
 
-<pre><code class="go">
-
-func helloWorld(event *json.RawMessage,
+<pre><code class="go">func helloWorld(event *json.RawMessage,
                 context *sparta.LambdaContext,
                 w http.ResponseWriter,
                 logger *logrus.Logger) {
   fmt.Fprintf(w, &#34;Hello World!&#34;)
-}
-</code></pre>
+}</code></pre>
 
 
 <p>All Sparta lambda functions have the same function signature that is composed of:</p>
@@ -379,14 +376,12 @@ func helloWorld(event *json.RawMessage,
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
-<pre><code class="go">
-
-var lambdaFunctions []*sparta.LambdaAWSInfo
+<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
 
 helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
                                 helloWorld,
                                 nil)
-lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 
 <p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code>.  <code>NewLambda</code> accepts three parameters:</p>
@@ -405,12 +400,11 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
 
-<pre><code class="go">
-sparta.Main(&#34;MyHelloWorldStack&#34;,
+<pre><code class="go">sparta.Main(&#34;MyHelloWorldStack&#34;,
             &#34;Simple Sparta application that demonstrates core functionality&#34;,
             lambdaFunctions,
             nil,
-            nil)</code></pre>
+            nil)</code></pre>
 
 
 <p><code>sparta.Main</code> accepts five parameters:</p>
@@ -441,8 +435,7 @@ sparta.Main(&#34;MyHelloWorldStack&#34;,
 
 <p>Putting everything together, and including the necessary imports, we have:</p>
 
-<pre><code class="go">
-// File: main.go
+<pre><code class="go">// File: main.go
 package main
 
 import (
@@ -470,15 +463,14 @@ func main() {
     lambdaFunctions,
     nil,
     nil)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="running-it:d680e8a854a7cbad6d490c445cba2eba">Running It</h1>
 
 <p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
 
-<pre><code class="nohighlight">
-go run main.go --level info describe --out ./graph.html
+<pre><code class="nohighlight">go run main.go --level info describe --out ./graph.html
 
 INFO[0000] Welcome to Sparta                             Option=describe TS=2016-01-21T14:59:29Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
@@ -491,15 +483,14 @@ INFO[0009] Registering Sparta function           FunctionName=main.helloWorld
 INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=S3Bucket
 INFO[0009] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack251171669
 INFO[0009] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-714035529a63e80d3b2f756bd51e68c58ccd9a5e-cf.json
-INFO[0009] Elapsed time                          Seconds=9</code></pre>
+INFO[0009] Elapsed time                          Seconds=9</code></pre>
 
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
-<p><pre><code class="nohighlight">
-go run main.go provision --s3Bucket $S3_BUCKET
+<p><pre><code class="nohighlight">go run main.go provision --s3Bucket $S3_BUCKET
 
 INFO[0000] Welcome to Sparta                      Option=provision TS=2016-01-21T14:57:13Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
@@ -520,7 +511,7 @@ INFO[0058] Stack output                           Description=Sparta Home Key=Sp
 INFO[0058] Stack output                           Description=Sparta Version Key=SpartaVersion Value=0.2.0
 INFO[0058] Stack provisioned                      CreationTime=2016-01-21 14:57:26.859 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56 StackName=MyHelloWorldStack
 INFO[0058] Elapsed time                           Seconds=58
-}</code></pre>
+}</code></pre>
 </p>
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
@@ -543,15 +534,14 @@ INFO[0058] Elapsed time                           Seconds=58
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
-<p><pre><code class="nohighlight">
-go run main.go delete
+<p><pre><code class="nohighlight">go run main.go delete
 
 INFO[0000] Welcome to Sparta                             Option=delete TS=2016-01-21T15:00:40Z Version=0.2.0
 INFO[0000] --------------------------------------------------------------------------------
 INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
 INFO[0000] Delete request submitted                      Response={
 
-}</code></pre>
+}</code></pre>
 </p>
 
 <h1 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h1>

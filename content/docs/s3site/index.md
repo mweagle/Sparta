@@ -117,21 +117,14 @@ Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-site09b75dfd6
 
 An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.  
 
-During S3 site initialization, the CustomResource generates two additional configuration files and writes them to the root
-of the S3 bucket.  
+As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a _MANIFEST.json_ discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:
 
-  1. **sparta_apigateway.js**
-{{< highlight javascript >}}
-(function(){ window.SpartaAPIGateway = JSON.parse('{"APIGatewayURL":{"Description":"API Gateway URL","Value":"https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1"}}')}());
-{{< /highlight >}}
-  1. **sparta_apigateway.json**
+  1. **MANIFEST.json**
 {{< highlight json >}}
 {
-  "APIGatewayURL": {
-    "Description": "API Gateway URL",
-    "Value": "https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1"
-  }
+ "APIGatewayURL": {
+  "Description": "API Gateway URL",
+  "Value": "https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1"
+ }
 }
 {{< /highlight >}}
-
-These configuration files supply the static website with the API Gateway address.

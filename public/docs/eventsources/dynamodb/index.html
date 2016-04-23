@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -354,9 +354,7 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">
-
-func echoDynamoDBEvent(event *json.RawMessage,
+<pre><code class="go">func echoDynamoDBEvent(event *json.RawMessage,
                        context *sparta.LambdaContext,
                        w http.ResponseWriter,
                       logger *logrus.Logger)
@@ -364,32 +362,29 @@ func echoDynamoDBEvent(event *json.RawMessage,
   logger.WithFields(logrus.Fields{
     &#34;RequestID&#34;: context.AWSRequestID,
   }).Info(&#34;Request received&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="a-href-hugoshortcode-2-unmarshalling-the-dynamodb-event-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#unmarshalDynamoDBEvent:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the DynamoDB Event</a></h1>
 
 <p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>*json.RawMessage</code> data into an DynamoDB-specific event provided by Sparta via:</p>
 
-<pre><code class="go">
-
-var lambdaEvent spartaDynamoDB.Event
+<pre><code class="go">var lambdaEvent spartaDynamoDB.Event
 err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
 if err != nil {
   logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+}</code></pre>
 
 
 <p>DynamoDB events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">
-for _, eachRecord := range lambdaEvent.Records {
+<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &#34;Keys&#34;:     eachRecord.DynamoDB.Keys,
     &#34;NewImage&#34;: eachRecord.DynamoDB.NewImage,
   }).Info(&#34;DynamoDb Event&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
@@ -398,22 +393,20 @@ for _, eachRecord := range lambdaEvent.Records {
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<pre><code class="go">
-lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
+<pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)</code></pre>
 
 
 <h1 id="event-source-mappings:d680e8a854a7cbad6d490c445cba2eba">Event Source Mappings</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoDynamoDBEvent</code> function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">EventSourceMappings</a>:</p>
 
-<pre><code class="go">
-  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
+<pre><code class="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
     EventSourceArn:   aws.String(dynamoTestStream),
     StartingPosition: aws.String(&#34;TRIM_HORIZON&#34;),
     BatchSize:        aws.Int64(10),
     Enabled:          aws.Bool(true),
   })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 
 <p>The <code>dynamoTestStream</code> param is the ARN of the Dynamo stream that that your lambda function will <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">poll</a> (eg: <em>arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869</em>).</p>

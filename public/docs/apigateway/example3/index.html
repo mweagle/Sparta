@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle bitbucket: googleplus:]">
+<body class="map[facebook: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 googleplus: linkedin:https://www.linkedin.com/in/mweagle flattr: home:Sparta github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -340,8 +340,7 @@
 
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
 
-<pre><code class="go">
-func ipGeoLambda(event *json.RawMessage,
+<pre><code class="go">func ipGeoLambda(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger) {
@@ -351,25 +350,23 @@ if err != nil {
 	logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
 	http.Error(w, err.Error(), http.StatusInternalServerError)
 	return
-}</code></pre>
+}</code></pre>
 
 
 <p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
 
-<pre><code class="go">
-parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
+<pre><code class="go">parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
 record, err := dbHandle.City(parsedIP)
 if err != nil {
   logger.Error(&#34;Failed to find city: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
   return
-}</code></pre>
+}</code></pre>
 
 
 <p>Finally, marshal the data or error result and we&rsquo;re done:</p>
 
-<pre><code class="go">
-// Return the Info
+<pre><code class="go">// Return the Info
 httpResponse := map[string]interface{}{
   &#34;info&#34;: record,
 }
@@ -379,7 +376,7 @@ if err != nil {
 } else {
   w.Header().Set(&#34;Content-Type&#34;, &#34;application/json&#34;)
   fmt.Fprint(w, string(responseBody))
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
@@ -395,8 +392,7 @@ if err != nil {
 
 <p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
 
-<pre><code class="go">
-////////////////////////////////////////////////////////////////////////////////
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
 	stage := sparta.NewStage(&#34;ipgeo&#34;)
@@ -414,31 +410,28 @@ func main() {
 		lambdaFunctions,
 		apiGateway,
     nil)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
 
 <p>The next step is to provision the stack:</p>
 
-<pre><code class="nohighlight">
-S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre>
+<pre><code class="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre>
 
 
 <p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
 
-<pre><code class="nohighlight">
-INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+<pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
 INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
 <h1 id="query:d680e8a854a7cbad6d490c445cba2eba">Query</h1>
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
-<pre><code class="nohighlight">
-curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+<pre><code class="nohighlight">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 
 *   Trying 54.192.70.206...
 * Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
@@ -462,8 +455,7 @@ curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 &lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
 &lt;
 * Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}
-</code></pre>
+{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}</code></pre>
 
 
 <p>Pretty-printing the response body:</p>
@@ -555,8 +547,7 @@ curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">
-go run main.go delete</code></pre>
+<p><pre><code class="nohighlight">go run main.go delete</code></pre>
 </p>
 
 <h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>

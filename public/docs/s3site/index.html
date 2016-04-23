@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen linkedin:https://www.linkedin.com/in/mweagle facebook: googleAnalytics:UA-70794971-1]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -339,14 +339,13 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<pre><code class="go">
-func helloWorld(event *json.RawMessage,
+<pre><code class="go">func helloWorld(event *json.RawMessage,
 	context *sparta.LambdaContext,
 	w http.ResponseWriter,
 	logger *logrus.Logger) {
 	logger.Info(&#34;Hello World: &#34;, string(*event))
 	fmt.Fprint(w, string(*event))
-}</code></pre>
+}</code></pre>
 
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
@@ -355,23 +354,19 @@ func helloWorld(event *json.RawMessage,
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
-<pre><code class="go">
-apiStage := sparta.NewStage(&#34;v1&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
+<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
 
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
-<pre><code class="go">
-// Enable CORS s.t. the S3 site can access the resources
-apiGateway.CORSEnabled = true</code></pre>
+<pre><code class="go">// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true</code></pre>
 
 
 <p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
 
-<pre><code class="go">
-
-func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
 
@@ -383,7 +378,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 		}
 	}
 	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</h1>
@@ -401,9 +396,7 @@ typically points to a directory, which will be:</p>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
-<pre><code class="go">
-
-////////////////////////////////////////////////////////////////////////////////
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
 	// Register the function with the API Gateway
@@ -421,20 +414,19 @@ func main() {
 		spartaLambdaFunctions(apiGateway),
 		apiGateway,
 		s3Site)
-}</code></pre>
+}</code></pre>
 
 
 <p>which can be provisioned using the standard <a href="/docs/commandline">command line</a> option.</p>
 
 <p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
 
-<p><pre><code class="nohighlight">
-INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+<p><pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
 INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
 INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
 INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114</code></pre>
+INFO[0114] Elapsed time        Seconds=114</code></pre>
 </p>
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
@@ -443,26 +435,18 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
 
 <p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
 
-<p>During S3 site initialization, the CustomResource generates two additional configuration files and writes them to the root
-of the S3 bucket.</p>
+<p>As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a <em>MANIFEST.json</em> discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:</p>
 
 <ol>
-<li><strong>sparta_apigateway.js</strong>
-<pre><code class="javascript">
-(function(){ window.SpartaAPIGateway = JSON.parse(&#39;{&#34;APIGatewayURL&#34;:{&#34;Description&#34;:&#34;API Gateway URL&#34;,&#34;Value&#34;:&#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;}}&#39;)}());</code></pre>
-</li>
-<li><strong>sparta_apigateway.json</strong>
-<pre><code class="json">
-{
-  &#34;APIGatewayURL&#34;: {
-    &#34;Description&#34;: &#34;API Gateway URL&#34;,
-    &#34;Value&#34;: &#34;https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1&#34;
-  }
-}</code></pre>
+<li><strong>MANIFEST.json</strong>
+<pre><code class="json">{
+ &#34;APIGatewayURL&#34;: {
+  &#34;Description&#34;: &#34;API Gateway URL&#34;,
+  &#34;Value&#34;: &#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;
+ }
+}</code></pre>
 </li>
 </ol>
-
-<p>These configuration files supply the static website with the API Gateway address.</p>
 
 </div>
 

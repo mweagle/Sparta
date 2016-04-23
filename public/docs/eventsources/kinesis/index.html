@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube: name:lumen github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: home:Sparta]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -344,8 +344,7 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">
-func echoKinesisEvent(event *json.RawMessage,
+<pre><code class="go">func echoKinesisEvent(event *json.RawMessage,
                       context *sparta.LambdaContext,
                       w http.ResponseWriter,
                       logger *logrus.Logger)
@@ -353,15 +352,12 @@ func echoKinesisEvent(event *json.RawMessage,
   logger.WithFields(logrus.Fields{
 		&#34;RequestID&#34;: context.AWSRequestID,
 		&#34;Event&#34;:     string(*event),
-	}).Info(&#34;Request received&#34;)
-</code></pre>
+	}).Info(&#34;Request received&#34;)</code></pre>
 
 
 <p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta <a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">kinesis event</a> and log the id to CloudWatch Logs:</p>
 
-<pre><code class="go">
-
-  var lambdaEvent spartaKinesis.Event
+<pre><code class="go">var lambdaEvent spartaKinesis.Event
   err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
   if err != nil {
     logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
@@ -372,7 +368,7 @@ func echoKinesisEvent(event *json.RawMessage,
       &#34;EventID&#34;: eachRecord.EventID,
     }).Info(&#34;Kinesis Event&#34;)
   }
-}</code></pre>
+}</code></pre>
 
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
@@ -381,8 +377,7 @@ func echoKinesisEvent(event *json.RawMessage,
 
 <p>First we wrap the <strong>Go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
-<pre><code class="go">
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)</code></pre>
+<pre><code class="go">lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)</code></pre>
 
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
@@ -391,13 +386,12 @@ lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
-<pre><code class="go">
-lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
+<pre><code class="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &amp;lambda.CreateEventSourceMappingInput{
   EventSourceArn:   aws.String(kinesisTestStream),
   StartingPosition: aws.String(&#34;TRIM_HORIZON&#34;),
   BatchSize:        aws.Int64(100),
   Enabled:          aws.Bool(true),
-})</code></pre>
+})</code></pre>
 
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>

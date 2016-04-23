@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: googleAnalytics:UA-70794971-1 home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: home:Sparta github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -343,8 +343,7 @@
 
 <p>Our lambda function is relatively short:</p>
 
-<pre><code class="go">
-func echoCloudWatchLogsEvent(event *json.RawMessage,
+<pre><code class="go">func echoCloudWatchLogsEvent(event *json.RawMessage,
                         context *sparta.LambdaContext,
                         w http.ResponseWriter,
                         logger *logrus.Logger) {
@@ -352,7 +351,7 @@ func echoCloudWatchLogsEvent(event *json.RawMessage,
   // Note that we&#39;re not going to log in this lambda function, as
   // we don&#39;t want to self DDOS
   fmt.Fprintf(w, &#34;Hello World!&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>Our lambda function doesn&rsquo;t need to do much with the log message other than log it.</p>
@@ -363,21 +362,18 @@ func echoCloudWatchLogsEvent(event *json.RawMessage,
 
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
 
-<pre><code class="go">
-func appendCloudWatchLogsLambda(api *sparta.API,
+<pre><code class="go">func appendCloudWatchLogsLambda(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
-</code></pre>
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)</code></pre>
 
 
 <p>The next step is to add a <code>CloudWatchLogsSubscriptionFilter</code> value that represents the <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/Subscriptions.html#LambdaFunctionExample">CloudWatch Lambda</a> subscription <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CreateSubscriptionFilter.html">filter information</a>.</p>
 
-<pre><code class="go">
-cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+<pre><code class="go">cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
 cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
 cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubscriptionFilter{
   LogGroupName: &#34;/aws/lambda/versions&#34;,
-}</code></pre>
+}</code></pre>
 
 
 <p>The <code>sparta.CloudWatchLogsPermission</code> struct provides fields for both the LogGroupName and optional Filter expression (not shown here) to use when calling <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#putSubscriptionFilter-property">putSubscriptionFilter</a>.</p>
@@ -386,14 +382,12 @@ cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubs
 
 <p>With the subscription information configured, the final step is to add the <code>sparta.CloudWatchLogsPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
-<pre><code class="go">
-lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)</code></pre>
+<pre><code class="go">lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)</code></pre>
 
 
 <p>Our entire function is therefore:</p>
 
-<pre><code class="go">
-func appendCloudWatchLogsLambda(api *sparta.API,
+<pre><code class="go">func appendCloudWatchLogsLambda(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
@@ -405,7 +399,7 @@ func appendCloudWatchLogsLambda(api *sparta.API,
 	}
 	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
 	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>

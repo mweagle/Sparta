@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[flattr: home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -331,12 +331,11 @@
 
 <p>Sparta makes CORS support a single <code>CORSEnabled</code> field of the <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> struct:</p>
 
-<pre><code class="go">
-// Register the function with the API Gateway
+<pre><code class="go">// Register the function with the API Gateway
 apiStage := sparta.NewStage(&#34;v1&#34;)
 apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)
 // Enable CORS s.t. the S3 site can access the resources
-apiGateway.CORSEnabled = true</code></pre>
+apiGateway.CORSEnabled = true</code></pre>
 
 
 <p>Setting the boolean to <code>true</code> will add the necessary <code>OPTIONS</code> and mock responses to <em>all</em> resources exposed by your API.  See the <a href="/docs/s3site">SpartaHTML</a> sample for a complete example.</p>

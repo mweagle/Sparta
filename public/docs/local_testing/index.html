@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: googleAnalytics:UA-70794971-1 home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube: flattr: name:lumen]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: home:Sparta github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -341,8 +341,7 @@
 
 <p>For this example, let&rsquo;s define a simple Sparta application:</p>
 
-<pre><code class="go">
-package main
+<pre><code class="go">package main
 
 import (
 	&#34;encoding/json&#34;
@@ -377,15 +376,14 @@ func main() {
 		lambdaFunctions,
 		nil,
 		nil)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="command-line-testing:d680e8a854a7cbad6d490c445cba2eba">Command Line Testing</h1>
 
 <p>With our application defined, let&rsquo;s run it:</p>
 
-<pre><code class="nohighlight">
-go run main.go explore
+<pre><code class="nohighlight">go run main.go explore
 
 INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
 INFO[0000] --------------------------------------------------------------------------------
@@ -395,24 +393,22 @@ INFO[0000] Functions can be invoked via application/json over POST
 INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
 INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
 INFO[0000] 	{context: {}, event: {}}
-INFO[0000] Starting Sparta server                        URL=http://localhost:9999</code></pre>
+INFO[0000] Starting Sparta server                        URL=http://localhost:9999</code></pre>
 
 
 <p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>Go</strong> binary that is used in the AWS Lambda execution environment.</p>
 
 <p>Per the instructions, let&rsquo;s create a <em>testEvent.json</em> file with the required structure:</p>
 
-<pre><code class="json">
-{
+<pre><code class="json">{
   &#34;context&#34; : {},
   &#34;event&#34; : {}
-}</code></pre>
+}</code></pre>
 
 
 <p>and post it:</p>
 
-<pre><code class="">
-curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
+<pre><code class="">curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
 
 *   Trying ::1...
 * Connected to localhost (::1) port 9999 (#0)
@@ -430,7 +426,7 @@ curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.j
 &lt; Content-Type: text/plain; charset=utf-8
 &lt;
 * Connection #0 to host localhost left intact
-Hello World</code></pre>
+Hello World</code></pre>
 
 
 <p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
@@ -448,9 +444,7 @@ Hello World</code></pre>
 
 <p>To show this in action, let&rsquo;s walk through how Sparta <a href="https://github.com/mweagle/Sparta/blob/master/explore_test.go">does this</a>:</p>
 
-<p><pre><code class="golang">
-
-func TestExplore(t *testing.T) {
+<p><pre><code class="golang">func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
@@ -477,7 +471,7 @@ func TestExplore(t *testing.T) {
 	t.Log(&#34;Status: &#34;, resp.Status)
 	t.Log(&#34;Headers: &#34;, resp.Header)
 	t.Log(&#34;Body: &#34;, string(body))
-}</code></pre>
+}</code></pre>
 </p>
 
 <p>The test function above has the following features:</p>

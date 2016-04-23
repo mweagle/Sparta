@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: googleplus: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle bitbucket:]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -345,9 +345,7 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">
-
-func echoSNSEvent(event *json.RawMessage,
+<pre><code class="go">func echoSNSEvent(event *json.RawMessage,
                   context *sparta.LambdaContext,
                   w http.ResponseWriter,
                   logger *logrus.Logger)
@@ -355,32 +353,29 @@ func echoSNSEvent(event *json.RawMessage,
   logger.WithFields(logrus.Fields{
     &#34;RequestID&#34;: context.AWSRequestID,
   }).Info(&#34;Request received&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <h1 id="unmarshalling-the-sns-event:d680e8a854a7cbad6d490c445cba2eba">Unmarshalling the SNS Event</h1>
 
 <p>Since the <code>echoSNSEvent</code> is expected to be triggered by SNS notifications, we will unmarshal the <code>*json.RawMessage</code> data into an SNS-specific event provided by Sparta via:</p>
 
-<pre><code class="go">
-
-var lambdaEvent spartaSNS.Event
+<pre><code class="go">var lambdaEvent spartaSNS.Event
 err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
 if err != nil {
   logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+}</code></pre>
 
 
 <p>SNS events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">
-for _, eachRecord := range lambdaEvent.Records {
+<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     &#34;Subject&#34;: eachRecord.Sns.Subject,
     &#34;Message&#34;: eachRecord.Sns.Message,
   }).Info(&#34;SNS Event&#34;)
-}</code></pre>
+}</code></pre>
 
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
@@ -389,21 +384,19 @@ for _, eachRecord := range lambdaEvent.Records {
 
 <p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<pre><code class="go">
-lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
+<pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
 
 
 <h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoSNSEvent</code> function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<pre><code class="go">
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+<pre><code class="go">lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
   BasePermission: sparta.BasePermission{
     SourceArn: snsTopic,
   },
 })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 
 
 <p>The <code>snsTopic</code> param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).</p>

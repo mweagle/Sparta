@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: twitter:mweagle youtube: flattr: name:lumen home:Sparta github:https://github.com/mweagle bitbucket: googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: home:Sparta github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -344,9 +344,7 @@
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
-<pre><code class="go">
-
-////////////////////////////////////////////////////////////////////////////////
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
 func helloSlackbot(event *json.RawMessage,
@@ -400,7 +398,7 @@ func helloSlackbot(event *json.RawMessage,
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	fmt.Fprint(w, string(responseBody))
-}</code></pre>
+}</code></pre>
 
 
 <p>There are a couple of things to note in this code:</p>
@@ -441,9 +439,8 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
-<pre><code class="go">
-apiStage := sparta.NewStage(&#34;v1&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></pre>
+<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></pre>
 
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
@@ -452,8 +449,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
-<pre><code class="go">
-func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloSlackbot, nil)
 
@@ -465,7 +461,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 		}
 	}
 	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
+}</code></pre>
 
 
 <p>A few items to note here:</p>
@@ -480,8 +476,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
-<pre><code class="go">
-func main() {
+<pre><code class="go">func main() {
 	// Register the function with the API Gateway
 	apiStage := sparta.NewStage(&#34;v1&#34;)
 	apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)
@@ -492,22 +487,19 @@ func main() {
 		spartaLambdaFunctions(apiGateway),
 		apiGateway,
 		nil)
-}
-</code></pre>
+}</code></pre>
 
 
 <p>and provision the service:</p>
 
-<p><pre><code class="nohighlight">
-S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
+<p><pre><code class="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
 </p>
 
 <p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
 
-<p><pre><code class="nohighlight">
-INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
+<p><pre><code class="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
 INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
+INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
 </p>
 
 <h1 id="configure-slack:d680e8a854a7cbad6d490c445cba2eba">Configure Slack</h1>
@@ -558,8 +550,7 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">
-go run slack.go delete</code></pre>
+<p><pre><code class="nohighlight">go run slack.go delete</code></pre>
 </p>
 
 <h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>

@@ -99,7 +99,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: name:lumen home:Sparta github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube: flattr:]">
+<body class="map[home:Sparta github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -338,13 +338,12 @@
     <h3 class="list-group-item-heading">Service Name</h3>
     <h5 class="list-group-item-text large">Sparta applications are deployed as a single unit, using the <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application's <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a> .</h5>
     <p />
-    <pre><code class="go">
-stackName := &#34;MyUniqueServiceName&#34;
+    <pre><code class="go">stackName := &#34;MyUniqueServiceName&#34;
 sparta.Main(stackName,
   &#34;Simple Sparta application,
   myLambdaFunctions,
   nil,
-  nil)</code></pre>
+  nil)</code></pre>
 
     </p>
   </div>
@@ -353,14 +352,13 @@ sparta.Main(stackName,
     <h3 class="list-group-item-heading">Sparta Lambda Function</h3>
     <h5 class="list-group-item-text large">A Sparta-compatible lambda is a <b>Go</b> function with a specific signature. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
     <p />
-    <pre><code class="go">
-func mySpartaLambdaFunction(event *json.RawMessage,
+    <pre><code class="go">func mySpartaLambdaFunction(event *json.RawMessage,
                       context *sparta.LambdaContext,
                       w http.ResponseWriter,
                       logger *logrus.Logger) {
 
   // Lambda code
-}</code></pre>
+}</code></pre>
 
     </p>
   </div>
@@ -369,12 +367,11 @@ func mySpartaLambdaFunction(event *json.RawMessage,
     <h3 class="list-group-item-heading">Privileges</h3>
     <h5 class="list-group-item-text">To support accessing other AWS resources in your <b>Go</b> function, Sparta users may define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
     <p />
-    <pre><code class="go">
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+    <pre><code class="go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
   	Actions:  []string{&#34;s3:GetObject&#34;, &#34;s3:HeadObject&#34;},
   	Resource: &#34;arn:aws:s3:::MyS3Bucket&#34;,
-})</code></pre>
+})</code></pre>
 
     </p>
   </div>
@@ -383,13 +380,12 @@ lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
     <h3 class="list-group-item-heading">Permissions</h3>
     <h5 class="list-group-item-text">To configure AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">Event Sources</a>, Sparta provides both <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaPermission"><code>sparta.LambdaPermission</code></a> and service-specific <i>Permission</i> types; eg: <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission"><code>sparta.CloudWatchEventsPermission</code></a>. The service-specific <i>Permission</i> types automatically register your lambda function with the remote AWS service, using each service's specific API.</h5>
     <p />
-    <pre><code class="go">
-cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+    <pre><code class="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
 cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
 cloudWatchEventsPermission.Rules[&#34;Rate5Mins&#34;] = sparta.CloudWatchEventsRule{
   ScheduleExpression: &#34;rate(5 minutes)&#34;,
 }
-lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)</code></pre>
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)</code></pre>
 
     </p>
   </div>
@@ -398,8 +394,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
     <h3 class="list-group-item-heading">Dynamic Resources</h3>
     <h5 class="list-group-item-text">Sparta applications can specify other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">AWS Resources</a> (eg, <i>SNS Topics</i>) as part of their application. The dynamic resource outputs can be referenced by Sparta lambda functions via <code>gocf.Ref</code> and <code>gocf.GetAtt</code> functions.</h5>
     <p />
-    <pre><code class="go">
-snsTopicName := sparta.CloudFormationResourceName(&#34;SNSDynamicTopic&#34;)
+    <pre><code class="go">snsTopicName := sparta.CloudFormationResourceName(&#34;SNSDynamicTopic&#34;)
 snsTopic := &amp;gocf.SNSTopic{
   DisplayName: gocf.String(&#34;Sparta Application SNS topic&#34;),
 })  
@@ -408,7 +403,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 	BasePermission: sparta.BasePermission{
 		SourceArn: gocf.Ref(snsTopicName),
 	},
-})</code></pre>
+})</code></pre>
 
     </p>
   </div>
@@ -417,15 +412,14 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
     <h3 class="list-group-item-heading">Discovery</h3>
     <h5 class="list-group-item-text">To support Sparta lambda functions discovering dynamically assigned AWS values (eg, <i>S3 Bucket Names</i>), Sparta provides <code>sparta.Discover</code>. </h5>
     <p />
-    <pre><code class="go">
-func echoS3DynamicBucketEvent(event *json.RawMessage,
+    <pre><code class="go">func echoS3DynamicBucketEvent(event *json.RawMessage,
   context *sparta.LambdaContext,
   w http.ResponseWriter,
   logger *logrus.Logger) {
 
   config, _ := sparta.Discover()
   // Use config to determine the bucket name to which RawMessage should be stored
-}</code></pre>
+}</code></pre>
 
     </p>
   </div>
