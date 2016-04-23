@@ -42,4 +42,6 @@ publish: build commit push
 	# Publish locally committed content to gh-pages
 	# http://stevenclontz.com/blog/2014/05/08/git-subtree-push-for-deployment/
 	# git push origin `git subtree split --prefix public docs`:gh-pages --force
+	# If you run into "Local behind remote, can't fast forward":
+	# git push origin `git subtree split --prefix public gh-pages`:gh-pages --force
 	git subtree push --prefix public origin gh-pages
