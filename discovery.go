@@ -137,6 +137,7 @@ func Discover() (*DiscoveryInfo, error) {
 	return discoverImpl()
 }
 
+// TODO cache the data somewhere other than querying CF
 func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) {
 	// Setup the discoveryImpl reference
 	discoveryCache = make(map[string]*DiscoveryInfo, 0)
