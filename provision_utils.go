@@ -22,40 +22,27 @@ var PushSourceConfigurationActions = map[string][]string{}
 
 func init() {
 
+	PushSourceConfigurationActions[cloudformationresources.SNSLambdaEventSource] = []string{"sns:ConfirmSubscription",
+		"sns:GetTopicAttributes",
+		"sns:ListSubscriptionsByTopic",
+		"sns:Subscribe",
+		"sns:Unsubscribe"}
+
 	PushSourceConfigurationActions[cloudformationresources.S3LambdaEventSource] = []string{"s3:GetBucketLocation",
 		"s3:GetBucketNotification",
 		"s3:PutBucketNotification",
 		"s3:GetBucketNotificationConfiguration",
 		"s3:PutBucketNotificationConfiguration"}
 
-	cloudWatchLogsRegions := []string{
-		"us-east-1",
-		"us-west-2",
-		"us-west-1",
-		"eu-west-1",
-		"eu-central-1",
-		"ap-southeast-1",
-		"ap-northeast-1",
-		"ap-southeast-2",
-		"ap-northeast-2",
-	}
-	for _, eachCloudWatchLogsRegion := range cloudWatchLogsRegions {
-		regionalPrincipal := fmt.Sprintf("logs.%s.amazonaws.com", eachCloudWatchLogsRegion)
-		PushSourceConfigurationActions[regionalPrincipal] = []string{"logs:DescribeSubscriptionFilters",
-			"logs:DeleteSubscriptionFilter",
-			"logs:PutSubscriptionFilter"}
-	}
-
-	PushSourceConfigurationActions[SESPrincipal] = []string{"ses:CreateReceiptRuleSet",
+	PushSourceConfigurationActions[cloudformationresources.SESLambdaEventSource] = []string{"ses:CreateReceiptRuleSet",
 		"ses:CreateReceiptRule",
 		"ses:DeleteReceiptRule",
 		"ses:DeleteReceiptRuleSet",
 		"ses:DescribeReceiptRuleSet"}
 
-	PushSourceConfigurationActions[SNSPrincipal] = []string{"sns:ConfirmSubscription",
-		"sns:GetTopicAttributes",
-		"sns:Subscribe",
-		"sns:Unsubscribe"}
+	PushSourceConfigurationActions[cloudformationresources.CloudWatchLogsLambdaEventSource] = []string{"logs:DescribeSubscriptionFilters",
+		"logs:DeleteSubscriptionFilter",
+		"logs:PutSubscriptionFilter"}
 }
 
 func nodeJSHandlerName(jsBaseFilename string) string {
@@ -117,81 +104,6 @@ func ensureCustomResourceHandler(serviceName string,
 			"CustomResourceType": customResourceTypeName,
 			"NodeJSExport":       handlerName,
 		}).Debug("Sparta CloudFormation custom resource handler info")
-
-		customResourceHandlerDef := gocf.LambdaFunction{
-			Code: &gocf.LambdaFunctionCode{
-				S3Bucket: gocf.String(S3Bucket),
-				S3Key:    gocf.String(S3Key),
-			},
-			Description: gocf.String(configuratorDescription),
-			Handler:     gocf.String(handlerName),
-			Role:        iamRoleRef,
-			Runtime:     gocf.String(NodeJSVersion),
-			Timeout:     gocf.Integer(30),
-		}
-
-		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
-		if nil != dependsOn && (len(dependsOn) > 0) {
-			cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
-		}
-	}
-	return subscriberHandlerName, nil
-}
-
-func ensureConfiguratorLambdaResource(serviceName string,
-	awsPrincipalName string,
-	sourceArn *gocf.StringExpr,
-	dependsOn []string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	// AWS service basename
-	awsServiceName := awsPrincipalToService(awsPrincipalName)
-	configuratorExportName := strings.ToLower(awsServiceName)
-
-	logger.WithFields(logrus.Fields{
-		"ServiceName":      awsServiceName,
-		"NodeJSExportName": configuratorExportName,
-	}).Debug("Ensuring AWS push service configurator CustomResource")
-
-	// Use a stable resource CloudFormation resource name to represent
-	// the single CustomResource that can configure the different
-	// PushSource's for the given principal.
-	keyName, err := json.Marshal(ArbitraryJSONObject{
-		"Principal":   awsPrincipalName,
-		"ServiceName": awsServiceName,
-	})
-	if err != nil {
-		logger.Error("Failed to create configurator resource name: ", err.Error())
-		return "", err
-	}
-	subscriberHandlerName := CloudFormationResourceName(fmt.Sprintf("%sCustomResource", awsServiceName),
-		string(keyName))
-
-	//////////////////////////////////////////////////////////////////////////////
-	// IAM Role definition
-	iamResourceName, err := ensureIAMRoleForCustomResource(awsPrincipalName, sourceArn, template, logger)
-	if nil != err {
-		return "", err
-	}
-	iamRoleRef := gocf.GetAtt(iamResourceName, "Arn")
-	_, exists := template.Resources[subscriberHandlerName]
-	if !exists {
-		logger.WithFields(logrus.Fields{
-			"Service": awsServiceName,
-		}).Debug("Including Lambda CustomResource for AWS Service")
-
-		configuratorDescription := customResourceDescription(serviceName, awsPrincipalName)
-
-		//////////////////////////////////////////////////////////////////////////////
-		// Custom Resource Lambda Handler
-		// NOTE: This brittle function name has an analog in ./resources/index.js b/c the
-		// AWS Lamba execution treats the entire ZIP file as a module.  So all module exports
-		// need to be forwarded through the module's index.js file.
-		handlerName := nodeJSHandlerName(configuratorExportName)
-		logger.Debug("Lambda Configuration handler: ", handlerName)
 
 		customResourceHandlerDef := gocf.LambdaFunction{
 			Code: &gocf.LambdaFunctionCode{

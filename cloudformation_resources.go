@@ -5,6 +5,11 @@ import (
 	"fmt"
 	"reflect"
 
+	// Also included in lambda_permissions.go, but doubly included
+	// here as the package's init() function handles registering
+	// the resources we look up in this package.
+	_ "github.com/mweagle/cloudformationresources"
+
 	"github.com/Sirupsen/logrus"
 	gocf "github.com/crewjam/go-cloudformation"
 )
@@ -28,96 +33,6 @@ var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
 	"AWS::S3::Bucket":         []string{"DomainName", "WebsiteURL"},
 	"AWS::SNS::Topic":         []string{"TopicName"},
 	"AWS::SQS::Queue":         []string{"Arn", "QueueName"},
-}
-
-type spartaCloudFormationCustomResource struct {
-	gocf.CloudFormationCustomResource
-	ServiceToken *gocf.StringExpr
-}
-
-// cloudFormationAPIGatewayResource is the CustomResource type used to
-// provision an APIGateway
-type cloudFormationAPIGatewayResource struct {
-	spartaCloudFormationCustomResource
-	API interface{}
-}
-
-type cloudFormationS3PermissionResource struct {
-	spartaCloudFormationCustomResource
-	Permission   interface{}
-	LambdaTarget *gocf.StringExpr
-	BucketArn    *gocf.StringExpr
-}
-
-type cloudFormationSNSPermissionResource struct {
-	spartaCloudFormationCustomResource
-	Mode         string
-	TopicArn     *gocf.StringExpr
-	LambdaTarget *gocf.StringExpr
-}
-
-type cloudFormationSESPermissionResource struct {
-	spartaCloudFormationCustomResource
-	Rules interface{}
-}
-
-type cloudformationS3SiteManager struct {
-	spartaCloudFormationCustomResource
-	TargetBucket *gocf.StringExpr
-	SourceKey    *gocf.StringExpr
-	SourceBucket *gocf.StringExpr
-	APIGateway   map[string]*gocf.Output
-}
-
-type cloudformationCloudWatchEventsPermissionResource struct {
-	spartaCloudFormationCustomResource
-	LambdaTarget *gocf.StringExpr
-	Rules        map[string]CloudWatchEventsRule
-}
-
-type cloudformationCloudWatchLogsPermissionResource struct {
-	spartaCloudFormationCustomResource
-	LambdaTarget *gocf.StringExpr
-	Filters      interface{}
-}
-
-func customTypeProvider(resourceType string) gocf.ResourceProperties {
-	switch resourceType {
-	case "Custom::SpartaAPIGateway":
-		{
-			return &cloudFormationAPIGatewayResource{}
-		}
-	case "Custom::SpartaS3Permission":
-		{
-			return &cloudFormationS3PermissionResource{}
-		}
-	case "Custom::SpartaSNSPermission":
-		{
-			return &cloudFormationSNSPermissionResource{}
-		}
-	case "Custom::SpartaSESPermission":
-		{
-			return &cloudFormationSESPermissionResource{}
-		}
-	case "Custom::SpartaS3SiteManager":
-		{
-			return &cloudformationS3SiteManager{}
-		}
-	case "Custom::SpartaCloudWatchEventsPermission":
-		{
-			return &cloudformationCloudWatchEventsPermissionResource{}
-		}
-	case "Custom::SpartaCloudWatchLogsPermission":
-		{
-			return &cloudformationCloudWatchLogsPermissionResource{}
-		}
-	default:
-		return nil
-	}
-}
-
-func init() {
-	gocf.RegisterCustomResourceProvider(customTypeProvider)
 }
 
 func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf.ResourceProperties, error) {

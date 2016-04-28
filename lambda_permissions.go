@@ -100,7 +100,7 @@ func describeInfoArn(arnExpression interface{}) string {
 	}
 }
 
-func (perm BasePermission) export(principal string,
+func (perm BasePermission) export(principal *gocf.StringExpr,
 	arnPrefixParts []gocf.Stringable,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
@@ -112,7 +112,7 @@ func (perm BasePermission) export(principal string,
 	lambdaPermission := gocf.LambdaPermission{
 		Action:       gocf.String("lambda:InvokeFunction"),
 		FunctionName: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-		Principal:    gocf.String(principal),
+		Principal:    principal,
 	}
 	// If the Arn isn't the wildcard value, then include it.
 	if nil != perm.SourceArn {
@@ -136,7 +136,7 @@ func (perm BasePermission) export(principal string,
 		return "", arnLiteralErr
 	}
 	resourceName := CloudFormationResourceName("LambdaPerm%s",
-		principal,
+		principal.Literal,
 		string(arnLiteral),
 		lambdaLogicalCFResourceName)
 	template.AddResource(resourceName, lambdaPermission)
@@ -174,7 +174,7 @@ func (perm LambdaPermission) export(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	return perm.BasePermission.export(perm.Principal,
+	return perm.BasePermission.export(gocf.String(perm.Principal),
 		lambdaSourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -229,7 +229,7 @@ func (perm S3Permission) export(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	targetLambdaResourceName, err := perm.BasePermission.export("s3.amazonaws.com",
+	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String("s3.amazonaws.com"),
 		s3SourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -324,7 +324,7 @@ func (perm SNSPermission) export(serviceName string,
 	logger *logrus.Logger) (string, error) {
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
-	targetLambdaResourceName, err := perm.BasePermission.export(SNSPrincipal,
+	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String(SNSPrincipal),
 		snsSourceArnParts,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -336,53 +336,41 @@ func (perm SNSPermission) export(serviceName string,
 		return "", err
 	}
 
-	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
-		SNSPrincipal,
+	// Make sure the custom lambda that manages s3 notifications is provisioned.
+	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		cloudformationresources.SNSLambdaEventSource,
 		sourceArnExpression,
 		[]string{},
 		template,
 		S3Bucket,
 		S3Key,
 		logger)
+
 	if nil != err {
 		return "", err
 	}
 
 	// Add a custom resource invocation for this configuration
 	//////////////////////////////////////////////////////////////////////////////
-	// And the custom resource forwarder
-	newResource, err := newCloudFormationResource("Custom::SpartaSNSPermission", logger)
-	if nil != err {
-		return "", err
+	newResource, newResourceError := newCloudFormationResource(cloudformationresources.SNSLambdaEventSource, logger)
+	if nil != newResourceError {
+		return "", newResourceError
 	}
-	customResource := newResource.(*cloudFormationSNSPermissionResource)
+	customResource := newResource.(*cloudformationresources.SNSLambdaEventSourceResource)
 	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Mode = "Subscribe"
-	customResource.TopicArn = sourceArnExpression
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	subscriberResourceName := CloudFormationResourceName("SubscriberSNS",
+	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.SNSTopicArn = sourceArnExpression
+
+	// Name?
+	resourceInvokerName := CloudFormationResourceName("ConfigSNS",
+		lambdaLogicalCFResourceName,
+		perm.BasePermission.SourceAccount)
+
+	// Add it
+	cfResource := template.AddResource(resourceInvokerName, customResource)
+	cfResource.DependsOn = append(cfResource.DependsOn,
 		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
-	cfResource := template.AddResource(subscriberResourceName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, targetLambdaResourceName, configuratorResName)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// And the custom resource unsubscriber
-	newResource, err = newCloudFormationResource("Custom::SpartaSNSPermission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource = newResource.(*cloudFormationSNSPermissionResource)
-	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Mode = "Unsubscribe"
-	customResource.TopicArn = sourceArnExpression
-	customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
-	unsubscriberResourceName := CloudFormationResourceName("UnsubscriberSNS",
-		targetLambdaResourceName)
-	template.AddResource(unsubscriberResourceName, customResource)
-
+		configuratorResName)
 	return "", nil
 }
 
@@ -551,58 +539,60 @@ type ReceiptRule struct {
 	BodyStorageOptions MessageBodyStorageOptions
 }
 
-func (rule *ReceiptRule) lambdaTargetReceiptRule(serviceName string,
+func (rule *ReceiptRule) toResourceRule(serviceName string,
 	functionArnRef interface{},
-	messageBodyStorage *MessageBodyStorage) ArbitraryJSONObject {
+	messageBodyStorage *MessageBodyStorage) *cloudformationresources.SESLambdaEventSourceResourceRule {
 
-	var actions []ArbitraryJSONObject
+	resourceRule := &cloudformationresources.SESLambdaEventSourceResourceRule{
+		Name:        gocf.String(rule.Name),
+		ScanEnabled: gocf.Bool(!rule.ScanDisabled),
+		Enabled:     gocf.Bool(!rule.Disabled),
+		Actions:     make([]*cloudformationresources.SESLambdaEventSourceResourceAction, 0),
+		Recipients:  make([]*gocf.StringExpr, 0),
+	}
+	for _, eachRecipient := range rule.Recipients {
+		resourceRule.Recipients = append(resourceRule.Recipients, gocf.String(eachRecipient))
+	}
+	if "" != rule.TLSPolicy {
+		resourceRule.TLSPolicy = gocf.String(rule.TLSPolicy)
+	}
+
 	// If there is a MessageBodyStorage reference, push that S3Action
 	// to the head of the Actions list
 	if nil != messageBodyStorage && !rule.BodyStorageOptions.DisableStorage {
-		s3Action := ArbitraryJSONObject{
-			"BucketName": messageBodyStorage.bucketNameExpr,
+		s3Action := &cloudformationresources.SESLambdaEventSourceResourceAction{
+			ActionType: gocf.String("S3Action"),
+			ActionProperties: map[string]interface{}{
+				"BucketName": messageBodyStorage.bucketNameExpr,
+			},
 		}
 		if "" != rule.BodyStorageOptions.ObjectKeyPrefix {
-			s3Action["ObjectKeyPrefix"] = rule.BodyStorageOptions.ObjectKeyPrefix
+			s3Action.ActionProperties["ObjectKeyPrefix"] = rule.BodyStorageOptions.ObjectKeyPrefix
 		}
 		if "" != rule.BodyStorageOptions.KmsKeyArn {
-			s3Action["KmsKeyArn"] = rule.BodyStorageOptions.KmsKeyArn
+			s3Action.ActionProperties["KmsKeyArn"] = rule.BodyStorageOptions.KmsKeyArn
 		}
 		if "" != rule.BodyStorageOptions.TopicArn {
-			s3Action["TopicArn"] = rule.BodyStorageOptions.TopicArn
+			s3Action.ActionProperties["TopicArn"] = rule.BodyStorageOptions.TopicArn
 		}
-		actions = append(actions, ArbitraryJSONObject{
-			"S3Action": s3Action,
-		})
+		resourceRule.Actions = append(resourceRule.Actions, s3Action)
 	}
-	// Then create the "LambdaAction", which is always present.
-	invocationType := rule.InvocationType
-	if "" == invocationType {
-		invocationType = "Event"
+	// There's always a lambda action
+	lambdaAction := &cloudformationresources.SESLambdaEventSourceResourceAction{
+		ActionType: gocf.String("LambdaAction"),
+		ActionProperties: map[string]interface{}{
+			"FunctionArn": functionArnRef,
+		},
 	}
-	ruleAction := ArbitraryJSONObject{
-		"FunctionArn":    functionArnRef,
-		"InvocationType": invocationType,
+	lambdaAction.ActionProperties["InvocationType"] = rule.InvocationType
+	if "" == rule.InvocationType {
+		lambdaAction.ActionProperties["InvocationType"] = "Event"
 	}
 	if "" != rule.TopicArn {
-		ruleAction["TopicArn"] = rule.TopicArn
+		lambdaAction.ActionProperties["TopicArn"] = rule.TopicArn
 	}
-	if "" == rule.TLSPolicy {
-		rule.TLSPolicy = "Optional"
-	}
-	actions = append(actions, ArbitraryJSONObject{
-		"LambdaAction": ruleAction,
-	})
-
-	// Return it.
-	return ArbitraryJSONObject{
-		"Name":        fmt.Sprintf("%s.%s", serviceName, rule.Name),
-		"Enabled":     !rule.Disabled,
-		"Recipients":  rule.Recipients,
-		"ScanEnabled": !rule.ScanDisabled,
-		"TlsPolicy":   rule.TLSPolicy,
-		"Actions":     actions,
-	}
+	resourceRule.Actions = append(resourceRule.Actions, lambdaAction)
+	return resourceRule
 }
 
 //
@@ -661,7 +651,7 @@ func (perm SESPermission) export(serviceName string,
 
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(snsSourceArnParts...)
 
-	targetLambdaResourceName, err := perm.BasePermission.export(SESPrincipal,
+	targetLambdaResourceName, err := perm.BasePermission.export(gocf.String(SESPrincipal),
 		sesSourcePartArn,
 		lambdaFunctionDisplayName,
 		lambdaLogicalCFResourceName,
@@ -692,8 +682,8 @@ func (perm SESPermission) export(serviceName string,
 	}
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
-	configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
-		SESPrincipal,
+	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		cloudformationresources.SESLambdaEventSource,
 		sourceArnExpression,
 		dependsOn,
 		template,
@@ -706,46 +696,49 @@ func (perm SESPermission) export(serviceName string,
 	}
 
 	// Add a custom resource invocation for this configuration
-	invocationType := perm.InvocationType
-	if "" == invocationType {
-		invocationType = "Event"
+	//////////////////////////////////////////////////////////////////////////////
+	newResource, newResourceError := newCloudFormationResource(cloudformationresources.SESLambdaEventSource, logger)
+	if nil != newResourceError {
+		return "", newResourceError
 	}
-	// If there aren't any, just forward everything
-	receiptRules := perm.ReceiptRules
-	if nil == perm.ReceiptRules {
-		receiptRules = []ReceiptRule{ReceiptRule{
-			Name:           "Default",
-			Disabled:       false,
-			ScanDisabled:   false,
-			InvocationType: invocationType,
-			Recipients:     []string{},
-			TLSPolicy:      "Optional",
-		}}
-	}
-
-	var xformedRules []ArbitraryJSONObject
-	for _, eachReceiptRule := range receiptRules {
-		xformedRules = append(xformedRules,
-			eachReceiptRule.lambdaTargetReceiptRule(
-				serviceName,
-				gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-				perm.MessageBodyStorage))
-	}
-
-	newResource, err := newCloudFormationResource("Custom::SpartaSESPermission", logger)
-	if nil != err {
-		return "", err
-	}
-	customResource := newResource.(*cloudFormationSESPermissionResource)
+	customResource := newResource.(*cloudformationresources.SESLambdaEventSourceResource)
 	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
-	customResource.Rules = xformedRules
+	// The shared ruleset name used by all Sparta applications
+	customResource.RuleSetName = gocf.String("SpartaRuleSet")
 
-	subscriberResourceName := CloudFormationResourceName("SubscriberSES",
+	///////////////////
+	// Build up the Rules
+	// If there aren't any rules, make one that forwards everything...
+	var sesRules []*cloudformationresources.SESLambdaEventSourceResourceRule
+	if nil == perm.ReceiptRules {
+		sesRules = append(sesRules,
+			&cloudformationresources.SESLambdaEventSourceResourceRule{
+				Name:        gocf.String("Default"),
+				Actions:     make([]*cloudformationresources.SESLambdaEventSourceResourceAction, 0),
+				ScanEnabled: gocf.Bool(false),
+				Enabled:     gocf.Bool(true),
+				Recipients:  []*gocf.StringExpr{},
+				TLSPolicy:   gocf.String("Optional"),
+			})
+	}
+	// Append all the user defined ones
+	for _, eachReceiptRule := range perm.ReceiptRules {
+		sesRules = append(sesRules, eachReceiptRule.toResourceRule(
+			serviceName,
+			gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+			perm.MessageBodyStorage))
+	}
+	customResource.Rules = sesRules
+	// Name?
+	resourceInvokerName := CloudFormationResourceName("ConfigSNS",
+		lambdaLogicalCFResourceName,
+		perm.BasePermission.SourceAccount)
+
+	// Add it
+	cfResource := template.AddResource(resourceInvokerName, customResource)
+	cfResource.DependsOn = append(cfResource.DependsOn,
 		targetLambdaResourceName,
-		perm.BasePermission.SourceAccount,
-		fmt.Sprintf("%v", perm.BasePermission.SourceArn))
-	cfResource := template.AddResource(subscriberResourceName, customResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, targetLambdaResourceName, configuratorResName)
+		configuratorResName)
 	return "", nil
 }
 
@@ -886,7 +879,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		basePerm := BasePermission{
 			SourceArn: arnPermissionForRuleName(uniqueRuleName),
 		}
-		_, exportErr := basePerm.export(CloudWatchEventsPrincipal,
+		_, exportErr := basePerm.export(gocf.String(CloudWatchEventsPrincipal),
 			cloudformationEventsSourceArnParts,
 			lambdaFunctionDisplayName,
 			lambdaLogicalCFResourceName,
@@ -994,9 +987,11 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		return "", fmt.Errorf("CloudWatchLogsPermission for function %s does not specify any filters", lambdaFunctionDisplayName)
 	}
 
-	// CloudWatch logs principal is region specific
-	regionalPrincipal := fmt.Sprintf("logs.%s.amazonaws.com",
-		*(awsSession(logger).Config.Region))
+	// The principal is region specific, so build that up...
+	regionalPrincipal := gocf.Join(".",
+		gocf.String("logs"),
+		gocf.Ref("AWS::Region"),
+		gocf.String("amazonaws.com"))
 
 	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for
 	// this.
@@ -1023,7 +1018,10 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 	// Then we need to uniqueify the rule names s.t. we prevent
 	// collisions with other stacks.
 	configurationResourceNames := make(map[string]int, 0)
-
+	// Store the last name.  We'll do a uniqueness check when exiting the loop,
+	// and if that passes, the last name will also be the unique one.
+	var configurationResourceName string
+	// Create the CustomResource entries
 	globallyUniqueFilters := make(map[string]CloudWatchLogsSubscriptionFilter, len(perm.Filters))
 	for eachFilterName, eachFilter := range perm.Filters {
 		filterPrefix := fmt.Sprintf("%s_%s", serviceName, eachFilterName)
@@ -1040,52 +1038,59 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			gocf.String(eachFilter.LogGroupName),
 			gocf.String(":log-stream:*"))
 
-		// Given the log group name, prepend the ARN syntax s.t. the
-		// Ensure the configuration resource exists for this log source.  Cache the returned
-		// logical resource name s.t. we can validate we're reusing the same resource
-		configuratorResName, err := ensureConfiguratorLambdaResource(serviceName,
-			regionalPrincipal,
+		lastConfigurationResourceName, ensureCustomHandlerError := ensureCustomResourceHandler(serviceName,
+			cloudformationresources.CloudWatchLogsLambdaEventSource,
 			cloudWatchLogsArn,
 			[]string{},
 			template,
 			S3Bucket,
 			S3Key,
 			logger)
-		if nil != err {
+		if nil != ensureCustomHandlerError {
 			return "", err
 		}
-
-		configurationResourceNames[configuratorResName] = 1
+		configurationResourceNames[configurationResourceName] = 1
+		configurationResourceName = lastConfigurationResourceName
 	}
 	if len(configurationResourceNames) > 1 {
 		return "", fmt.Errorf("Internal integrity check failed. Multiple configurators (%d) provisioned for CloudWatchLogs",
 			len(configurationResourceNames))
 	}
-	// Insert the invocation
-	for eachConfigResource := range configurationResourceNames {
-		//////////////////////////////////////////////////////////////////////////////
-		// And finally the custom resource forwarder
-		newResource, err := newCloudFormationResource("Custom::SpartaCloudWatchLogsPermission", logger)
-		if nil != err {
-			return "", err
-		}
-		customResource := newResource.(*cloudformationCloudWatchLogsPermissionResource)
-		customResource.ServiceToken = gocf.GetAtt(eachConfigResource, "Arn")
-		customResource.Filters = globallyUniqueFilters
-		customResource.LambdaTarget = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
 
-		// Name?
-		resourceInvokerName := CloudFormationResourceName("ConfigCloudWatchLogs",
-			lambdaLogicalCFResourceName,
-			perm.BasePermission.SourceAccount)
-		// Add it
-		cfResource := template.AddResource(resourceInvokerName, customResource)
+	// Get the single configurator name from the
 
-		cfResource.DependsOn = append(cfResource.DependsOn,
-			lambdaInvokePermission,
-			lambdaLogicalCFResourceName,
-			eachConfigResource)
+	// Add the custom resource that uses this...
+	//////////////////////////////////////////////////////////////////////////////
+
+	newResource, newResourceError := newCloudFormationResource(cloudformationresources.CloudWatchLogsLambdaEventSource, logger)
+	if nil != newResourceError {
+		return "", newResourceError
 	}
+	customResource := newResource.(*cloudformationresources.CloudWatchLogsLambdaEventSourceResource)
+	customResource.ServiceToken = gocf.GetAtt(configurationResourceName, "Arn")
+	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	// Build up the filters...
+	customResource.Filters = make([]*cloudformationresources.CloudWatchLogsLambdaEventSourceFilter, 0)
+	for eachName, eachFilter := range globallyUniqueFilters {
+		customResource.Filters = append(customResource.Filters,
+			&cloudformationresources.CloudWatchLogsLambdaEventSourceFilter{
+				Name:         gocf.String(eachName),
+				Pattern:      gocf.String(eachFilter.FilterPattern),
+				LogGroupName: gocf.String(eachFilter.LogGroupName),
+			})
+
+	}
+
+	resourceInvokerName := CloudFormationResourceName("ConfigCloudWatchLogs",
+		lambdaLogicalCFResourceName,
+		perm.BasePermission.SourceAccount)
+	// Add it
+	cfResource := template.AddResource(resourceInvokerName, customResource)
+
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		lambdaInvokePermission,
+		lambdaLogicalCFResourceName,
+		configurationResourceName)
 	return "", nil
 }
 

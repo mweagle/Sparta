@@ -55,13 +55,13 @@ const (
 // in resources/index.js
 var customResourceScripts = []string{"cfn-response.js",
 	"sparta_utils.js",
-	"logs.js",
-	"ses.js",
-	"sns.js",
 	"golang-constants.json"}
 
 var golangCustomResourceTypes = []string{
+	cloudformationresources.SESLambdaEventSource,
 	cloudformationresources.S3LambdaEventSource,
+	cloudformationresources.SNSLambdaEventSource,
+	cloudformationresources.CloudWatchLogsLambdaEventSource,
 	cloudformationresources.ZipToS3Bucket,
 }
 

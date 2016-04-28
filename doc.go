@@ -2,9 +2,6 @@
 
 //go:generate rm -rf ./resources/provision/node_modules
 //go:generate npm install ./resources/provision/ --prefix ./resources/provision --silent
-// There's a handful of subdirectories that we don't need at runtime...
-//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist/
-//go:generate rm -rf ./resources/provision/node_modules/aws-sdk/dist-xtools/
 // Zip up the modules
 //go:generate bash -c "pushd ./resources/provision; zip -qr ./node_modules.zip ./node_modules/"
 //go:generate rm -rf ./resources/provision/node_modules
