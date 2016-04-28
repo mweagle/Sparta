@@ -23,10 +23,6 @@ var SPARTA_SERVICE_NAME = 'SpartaService';
 var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME);
 var MAXIMUM_RESPAWN_COUNT = 5;
 
-// Handlers that are referenced as part of stack creation, via CustomResource
-// references.
-var PROXIED_MODULES = ['sns', 'ses', 'logs'];
-
 // Handle to the active golang process.
 var golangProcess = null;
 var failCount = 0;
@@ -215,81 +211,6 @@ var createForwarder = function(path) {
   };
   return forwardToGolangProcess;
 };
-
-var sendResponse = function(event, context, e, results)
-{
-  try {
-    var response = require('cfn-response');
-    var data = {
-      ERROR: e ? e.toString() : undefined,
-      RESULTS: results || undefined
-    };
-    response.send(event, context, e ? response.FAILED : response.SUCCESS, data);
-  }
-  catch (eResponse) {
-    sparta_utils.log('ERROR sending response: ' + eResponse.toString());
-  }
-};
-
-
-// CustomResource Configuration exports
-PROXIED_MODULES.forEach(function (eachConfig) {
-  var exportName = util.format('%sConfiguration', eachConfig);
-  exports[exportName] = function(event, context)
-  {
-    try {
-      // If the stack is in update mode, don't delegate
-      var proxyTasks = [];
-      proxyTasks.push(function (taskCB) {
-        var params = {
-          StackName: event.StackId
-        };
-        var awsConfig = new AWS.Config({});
-        awsConfig.logger = console;
-        var cloudFormation = new AWS.CloudFormation(awsConfig);
-        cloudFormation.describeStacks(params, taskCB);
-      });
-
-      // Only delegate to the stack if the update is in progress.
-      var onStackDescription = function(e, stackDescriptionResponse) {
-        if (e)
-        {
-          sendResponse(event, context, e, null);
-        }
-        else {
-          var stackDescription = stackDescriptionResponse.Stacks ? stackDescriptionResponse.Stacks[0] : {};
-          var stackStatus = stackDescription.StackStatus || "";
-          if (stackStatus !== "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
-          {
-            try {
-              // sparta_utils.log({
-              //   requestType: event.RequestType,
-              //   handler: eachConfig,
-              //   event: event
-              // });
-              var svc = require(util.format('./%s', eachConfig));
-              svc.handler(event, context);
-            } catch (e) {
-              sendResponse(event, context, e, null);
-            }
-          } else {
-            sparta_utils.log('Bypassing configurator execution due to status: ' + stackStatus);
-            sendResponse(event, context, e, "NOP");
-          }
-        }
-      };
-      // Get the current stack status
-      var params = {
-        StackName: event.StackId
-      };
-      var cloudFormation = new AWS.CloudFormation(awsConfig);
-      cloudFormation.describeStacks(params, onStackDescription);
-    } catch (e) {
-      console.error('Failed to load configurator:' + e.toString());
-      sendResponse(event, context, e, null);
-    }
-  };
-});
 
 // Log the outputs
 var envSettings = {
