@@ -27,7 +27,7 @@ import (
 )
 
 // SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.5.5"
+const SpartaVersion = "0.5.6"
 
 // NodeJSVersion is the Node JS runtime used for the shim layer
 const NodeJSVersion = "nodejs4.3"
