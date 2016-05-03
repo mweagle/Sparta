@@ -16,7 +16,9 @@ import (
 
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
 const (
-	// TagType is the type of the referred resource type
+	// TagLogicalResourceID is the current logical resource name
+	TagLogicalResourceID = "aws:cloudformation:logical-id"
+	// TagResourceType is the type of the referred resource type
 	TagResourceType = "sparta:cloudformation:restype"
 	// TagStackRegion is the current stack's logical id
 	TagStackRegion = "sparta:cloudformation:region"
