@@ -1073,9 +1073,10 @@ func ensureCloudFormationStack() workflowStep {
 		}
 
 		// Next pass - exchange outputs between dependencies.  Lambda functions
-		for _, eachResource := range ctx.cfTemplate.Resources {
+		for eachResourceID, eachResource := range ctx.cfTemplate.Resources {
 			// Only apply this to lambda functions
 			if eachResource.Properties.ResourceType() == "AWS::Lambda::Function" {
+
 				// Update the metdata with a reference to the output of each
 				// depended on item...
 				for _, eachDependsKey := range eachResource.DependsOn {
@@ -1091,6 +1092,7 @@ func ensureCloudFormationStack() workflowStep {
 				}
 				// Also include standard AWS outputs at a resource level if a lambda
 				// needs to self-discover other resources
+				safeMetadataInsert(eachResource, TagLogicalResourceID, gocf.String(eachResourceID))
 				safeMetadataInsert(eachResource, TagStackRegion, gocf.Ref("AWS::Region"))
 				safeMetadataInsert(eachResource, TagStackID, gocf.Ref("AWS::StackId"))
 				safeMetadataInsert(eachResource, TagStackName, gocf.Ref("AWS::StackName"))
