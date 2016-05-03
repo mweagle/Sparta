@@ -64,7 +64,7 @@ func newDiscoveryResource(resourceID string, props map[string]interface{}) (Disc
 }
 
 //
-// START - DiscoveryResource
+// END - DiscoveryResource
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,6 +76,8 @@ func newDiscoveryResource(resourceID string, props map[string]interface{}) (Disc
 // AWS environment or resources that the function created explicit
 // `DependsOn` relationships
 type DiscoveryInfo struct {
+	// Current logical resource ID
+	ResourceID string
 	// Current AWS region
 	Region string
 	// Current Stack ID
@@ -97,6 +99,8 @@ func (discoveryInfo *DiscoveryInfo) UnmarshalJSON(data []byte) error {
 		typeAssertOk := true
 
 		switch eachKey {
+		case TagLogicalResourceID:
+			discoveryInfo.ResourceID, typeAssertOk = eachValue.(string)
 		case TagStackRegion:
 			discoveryInfo.Region, typeAssertOk = eachValue.(string)
 		case TagStackID:
@@ -200,7 +204,10 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			var discoveryInfo DiscoveryInfo
 			err = json.Unmarshal([]byte(*metadata), &discoveryInfo)
 			if err != nil {
-				logger.Error("Failed to unmarshal discovery info")
+				logger.WithFields(logrus.Fields{
+					"Metadata": *metadata,
+					"Error":    err,
+				}).Error("Failed to unmarshal discovery info")
 			}
 			discoveryCache[lambdaCFResource] = &discoveryInfo
 			return &discoveryInfo, err
