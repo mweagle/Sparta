@@ -52,10 +52,32 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 	return lambdaFunctions
 }
 
+func userDefinedCustomResource1(requestType string,
+	stackID string,
+	properties map[string]interface{},
+	logger *logrus.Logger) (map[string]interface{}, error) {
+	return nil, nil
+}
+
+func userDefinedCustomResource2(requestType string,
+	stackID string,
+	properties map[string]interface{},
+	logger *logrus.Logger) (map[string]interface{}, error) {
+	return nil, nil
+}
+
 func TestStruct(t *testing.T) {
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", testLambdaStructData(), nil, nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true,
+		"SampleProvision",
+		"",
+		testLambdaStructData(),
+		nil,
+		nil,
+		"S3Bucket",
+		&templateWriter,
+		logger)
 	if nil != err {
 		t.Fatal(err.Error())
 	}
@@ -64,8 +86,72 @@ func TestStruct(t *testing.T) {
 func TestDoubleRefStruct(t *testing.T) {
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", testLambdaDoubleStructPtrData(), nil, nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true,
+		"SampleProvision",
+		"",
+		testLambdaDoubleStructPtrData(),
+		nil,
+		nil,
+		"S3Bucket",
+		&templateWriter,
+		logger)
+
 	if nil == err {
-		t.Fatal(err.Error())
+		t.Fatal("Failed to enforce lambda function uniqueness")
+	}
+}
+
+func TestCustomResource(t *testing.T) {
+	logger, err := NewLogger("info")
+	lambdaFuncs := testLambdaStructData()
+	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
+		userDefinedCustomResource1,
+		nil,
+		nil)
+
+	lambdaFuncs[1].RequireCustomResource(IAMRoleDefinition{},
+		userDefinedCustomResource2,
+		nil,
+		nil)
+
+	var templateWriter bytes.Buffer
+	err = Provision(true,
+		"SampleProvision",
+		"",
+		lambdaFuncs,
+		nil,
+		nil,
+		"S3Bucket",
+		&templateWriter,
+		logger)
+
+	if nil != err {
+		t.Fatal("Failed to accept unique user CustomResource functions")
+	}
+}
+
+func TestDoubleRefCustomResource(t *testing.T) {
+	logger, err := NewLogger("info")
+	lambdaFuncs := testLambdaStructData()
+
+	for _, eachLambda := range lambdaFuncs {
+		eachLambda.RequireCustomResource(IAMRoleDefinition{},
+			userDefinedCustomResource1,
+			nil,
+			nil)
+	}
+	var templateWriter bytes.Buffer
+	err = Provision(true,
+		"SampleProvision",
+		"",
+		lambdaFuncs,
+		nil,
+		nil,
+		"S3Bucket",
+		&templateWriter,
+		logger)
+
+	if nil == err {
+		t.Fatal("Failed to reject duplicate user CustomResource functions")
 	}
 }
