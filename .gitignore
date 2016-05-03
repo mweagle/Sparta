@@ -1,3 +1,4 @@
+.vscode/*
 vendor/*
 graph.html
 tags
