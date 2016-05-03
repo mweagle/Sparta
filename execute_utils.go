@@ -3,6 +3,7 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/mweagle/cloudformationresources"
 	"net/http"
 
 	"strings"
