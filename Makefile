@@ -34,9 +34,12 @@ reset:
 		git reset --hard
 		git clean -f -d
 
-generate: get
+generate: 
 	go generate -x
 	@echo "Generate complete: `date`"
+
+travisci: get generate
+	@echo "TravisCI build complete"
 
 format:
 	go fmt .

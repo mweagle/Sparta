@@ -4,7 +4,7 @@ go:
 before_install:
 - nvm install 4.2.4
 - nvm use 4.2.4
-install: make get
+install: make travisci
 script: make test
 env:
   global:
