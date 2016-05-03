@@ -1,3 +1,13 @@
+## v0.6.0
+- :warning: **BREAKING**
+  - `TemplateDecorator` signature changed to include `map[string]string` to allow for decorating CloudFormation resource metadata
+- :checkered_flag: **CHANGES**
+  - All NodeJS CustomResources moved to _go_
+  - Add support for user-defined CloudFormation CustomResources via `LambdaAWSInfo.RequireCustomResource`
+  - `DiscoveryInfo` struct now includes `TagLogicalResourceID` field with CloudFormation Resource ID of calling lambda function
+- :bug: **FIXED**
+  - N/A
+
 ## v0.5.5
 This release includes a major internal refactoring to move the current set of NodeJS [Lambda-backed CloudFormation CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to Sparta Go functions. The two migrated CustomActions are:
 
