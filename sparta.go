@@ -26,13 +26,19 @@ import (
 	"github.com/voxelbrain/goptions"
 )
 
-// SpartaVersion defines the current Sparta release
-const SpartaVersion = "0.5.6"
-
-// NodeJSVersion is the Node JS runtime used for the shim layer
-const NodeJSVersion = "nodejs4.3"
+////////////////////////////////////////////////////////////////////////////////
+// Constants
+////////////////////////////////////////////////////////////////////////////////
 
 const (
+	// SpartaVersion defines the current Sparta release
+	SpartaVersion = "0.6.0"
+	// NodeJSVersion is the Node JS runtime used for the shim layer
+	NodeJSVersion = "nodejs4.3"
+
+	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
+	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
+
 	// @enum cliOptionExecute
 	cliOptionExecute = "execute"
 	// @enum cliOptionDescribe
@@ -44,15 +50,6 @@ const (
 	// @enum cliOptionDelete
 	cliOptionDelete = "delete"
 )
-
-func init() {
-	rand.Seed(time.Now().Unix())
-}
-
-// ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
-// are aggregated as []ArbitraryJSONObject before being marsharled to JSON
-// for API operations.
-type ArbitraryJSONObject map[string]interface{}
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 // See also
@@ -73,42 +70,31 @@ const (
 	LambdaPrincipal = "lambda.amazonaws.com"
 )
 
-var wildcardArn = gocf.String("*")
-
-// AssumePolicyDocument defines common a IAM::Role PolicyDocument
-// used as part of IAM::Role resource definitions
-var AssumePolicyDocument = ArbitraryJSONObject{
-	"Version": "2012-10-17",
-	"Statement": []ArbitraryJSONObject{
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{LambdaPrincipal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{EC2Principal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{APIGatewayPrincipal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-	},
+type cloudFormationLambdaCustomResource struct {
+	gocf.CloudFormationCustomResource
+	ServiceToken   *gocf.StringExpr
+	UserProperties map[string]interface{} `json:",omitempty"`
 }
 
-type iamPolicyStatement struct {
-	Effect   string
-	Action   []string
-	Resource *gocf.StringExpr
+func customResourceProvider(resourceType string) gocf.ResourceProperties {
+	switch resourceType {
+	case cloudFormationLambda:
+		{
+			return &cloudFormationLambdaCustomResource{}
+		}
+	default:
+		return nil
+	}
 }
+
+func init() {
+	gocf.RegisterCustomResourceProvider(customResourceProvider)
+	rand.Seed(time.Now().Unix())
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Variables
+////////////////////////////////////////////////////////////////////////////////
 
 // Represents the CloudFormation Arn of this stack, referenced
 // in CommonIAMStatements
@@ -180,6 +166,68 @@ var reSanitize = regexp.MustCompile("[:\\.\\-\\s]+")
 // Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 var reCloudFormationInvalidChars = regexp.MustCompile("[^A-Za-z0-9]+")
 
+// Wildcard ARN for any AWS resource
+var wildcardArn = gocf.String("*")
+
+// AssumePolicyDocument defines common a IAM::Role PolicyDocument
+// used as part of IAM::Role resource definitions
+var AssumePolicyDocument = ArbitraryJSONObject{
+	"Version": "2012-10-17",
+	"Statement": []ArbitraryJSONObject{
+		{
+			"Effect": "Allow",
+			"Principal": ArbitraryJSONObject{
+				"Service": []string{LambdaPrincipal},
+			},
+			"Action": []string{"sts:AssumeRole"},
+		},
+		{
+			"Effect": "Allow",
+			"Principal": ArbitraryJSONObject{
+				"Service": []string{EC2Principal},
+			},
+			"Action": []string{"sts:AssumeRole"},
+		},
+		{
+			"Effect": "Allow",
+			"Principal": ArbitraryJSONObject{
+				"Service": []string{APIGatewayPrincipal},
+			},
+			"Action": []string{"sts:AssumeRole"},
+		},
+	},
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Types
+////////////////////////////////////////////////////////////////////////////////
+
+// CustomResourceFunction represents a user-defined function that is used
+// as a CloudFormation lambda backed resource target
+type CustomResourceFunction func(requestType string,
+	stackID string,
+	properties map[string]interface{},
+	logger *logrus.Logger) (map[string]interface{}, error)
+
+// ArbitraryJSONObject represents an untyped key-value object. CloudFormation resource representations
+// are aggregated as []ArbitraryJSONObject before being marsharled to JSON
+// for API operations.
+type ArbitraryJSONObject map[string]interface{}
+
+// IAM policy statement entry
+type iamPolicyStatement struct {
+	Effect   string
+	Action   []string
+	Resource *gocf.StringExpr
+}
+
+// Package private type to deserialize NodeJS proxied
+// Lambda Event and Context information
+type lambdaRequest struct {
+	Event   json.RawMessage `json:"event"`
+	Context LambdaContext   `json:"context"`
+}
+
 // LambdaContext defines the AWS Lambda Context object provided by the AWS Lambda runtime.
 // See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
 // for more information on field values.  Note that the golang version doesn't functions
@@ -193,13 +241,6 @@ type LambdaContext struct {
 	MemoryLimitInMB    string `json:"memoryLimitInMB"`
 	FunctionVersion    string `json:"functionVersion"`
 	InvokedFunctionARN string `json:"invokedFunctionArn"`
-}
-
-// Package private type to deserialize NodeJS proxied
-// Lambda Event and Context information
-type lambdaRequest struct {
-	Event   json.RawMessage `json:"event"`
-	Context LambdaContext   `json:"context"`
 }
 
 // LambdaFunction is the golang function signature required to support AWS Lambda execution.
@@ -230,6 +271,14 @@ type LambdaFunctionOptions struct {
 	VpcConfig *gocf.LambdaFunctionVPCConfig
 }
 
+func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
+	return &LambdaFunctionOptions{Description: "",
+		MemorySize: 128,
+		Timeout:    3,
+		VpcConfig:  nil,
+	}
+}
+
 // TemplateDecorator allows Lambda functions to annotate the CloudFormation
 // template definition.  Both the resources and the outputs params
 // are initialized to an empty ArbitraryJSONObject and should
@@ -241,6 +290,7 @@ type LambdaFunctionOptions struct {
 // more information.
 type TemplateDecorator func(lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
 	template *gocf.Template,
 	logger *logrus.Logger) error
 
@@ -343,6 +393,7 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
+// START - EventSourceMapping
 
 // EventSourceMapping specifies data necessary for pull-based configuration. The fields
 // directly correspond to the golang AWS SDK's CreateEventSourceMappingInput
@@ -354,9 +405,128 @@ type EventSourceMapping struct {
 	BatchSize        int64
 }
 
+func (mapping *EventSourceMapping) export(serviceName string,
+	targetLambda *gocf.StringExpr,
+	S3Bucket string,
+	S3Key string,
+	template *gocf.Template,
+	logger *logrus.Logger) error {
+
+	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
+		EventSourceArn:   gocf.String(mapping.EventSourceArn),
+		FunctionName:     targetLambda,
+		StartingPosition: gocf.String(mapping.StartingPosition),
+		BatchSize:        gocf.Integer(mapping.BatchSize),
+		Enabled:          gocf.Bool(!mapping.Disabled),
+	}
+
+	hash := sha1.New()
+	hash.Write([]byte(mapping.EventSourceArn))
+	binary.Write(hash, binary.LittleEndian, mapping.BatchSize)
+	hash.Write([]byte(mapping.StartingPosition))
+	resourceName := fmt.Sprintf("LambdaES%s", hex.EncodeToString(hash.Sum(nil)))
+	template.AddResource(resourceName, eventSourceMappingResource)
+	return nil
+}
+
+//
+// END - EventSourceMapping
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - customResourceInfo
+
+// customResourceInfo wraps up information about any userDefined CloudFormation
+// user-defined Resources
+type customResourceInfo struct {
+	roleDefinition   *IAMRoleDefinition
+	roleName         string
+	userFunction     CustomResourceFunction
+	userFunctionName string
+	options          *LambdaFunctionOptions
+	properties       map[string]interface{}
+}
+
+// Returns a JavaScript compatible function name for the golang function name.  This
+// value will be used as the URL path component for the HTTP proxying layer.
+func (resourceInfo *customResourceInfo) jsHandlerName() string {
+	// The JS handler name must take into account the
+	return sanitizedName(resourceInfo.userFunctionName)
+}
+
+// Returns the stable CloudFormation resource logical name for this resource.  For
+// a CustomResource, this name corresponds to the AWS::CloudFormation::CustomResource
+// invocation of the Lambda function, not the lambda function itself
+func (resourceInfo *customResourceInfo) logicalName() string {
+	hash := sha1.New()
+	// The name has to be stable so that the ServiceToken value which is
+	// part the CustomResource invocation doesn't change during stack updates. CF
+	// will throw an error if the ServiceToken changes across updates.
+	source := fmt.Sprintf("%#v", resourceInfo.userFunctionName)
+	hash.Write([]byte(source))
+	return CloudFormationResourceName(resourceInfo.userFunctionName, hex.EncodeToString(hash.Sum(nil)))
+}
+
+func (resourceInfo *customResourceInfo) export(serviceName string,
+	targetLambda *gocf.StringExpr,
+	S3Bucket string,
+	S3Key string,
+	roleNameMap map[string]*gocf.StringExpr,
+	template *gocf.Template,
+	logger *logrus.Logger) error {
+
+	// Figure out the role name
+	iamRoleArnName := resourceInfo.roleName
+
+	// If there is no user supplied role, that means that the associated
+	// IAMRoleDefinition name has been created and this resource needs to
+	// depend on that being created.
+	if iamRoleArnName == "" && resourceInfo.roleDefinition != nil {
+		iamRoleArnName = resourceInfo.roleDefinition.logicalName(serviceName, resourceInfo.userFunctionName)
+	}
+	lambdaDescription := resourceInfo.options.Description
+	if "" == lambdaDescription {
+		lambdaDescription = fmt.Sprintf("%s CustomResource: %s", serviceName, resourceInfo.userFunctionName)
+	}
+
+	// Create the Lambda Function
+	lambdaResource := gocf.LambdaFunction{
+		Code: &gocf.LambdaFunctionCode{
+			S3Bucket: gocf.String(S3Bucket),
+			S3Key:    gocf.String(S3Key),
+		},
+		Description: gocf.String(lambdaDescription),
+		Handler:     gocf.String(fmt.Sprintf("index.%s", resourceInfo.jsHandlerName())),
+		MemorySize:  gocf.Integer(resourceInfo.options.MemorySize),
+		Role:        roleNameMap[iamRoleArnName],
+		Runtime:     gocf.String(NodeJSVersion),
+		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
+		VpcConfig:   resourceInfo.options.VpcConfig,
+	}
+	lambdaFunctionCFName := CloudFormationResourceName("CustomResourceLambda",
+		resourceInfo.userFunctionName,
+		resourceInfo.logicalName())
+
+	cfResource := template.AddResource(lambdaFunctionCFName, lambdaResource)
+	safeMetadataInsert(cfResource, "golangFunc", resourceInfo.userFunctionName)
+
+	// And create the CustomResource that actually invokes it...
+	newResource, newResourceError := newCloudFormationResource(cloudFormationLambda, logger)
+	if nil != newResourceError {
+		return newResourceError
+	}
+	customResource := newResource.(*cloudFormationLambdaCustomResource)
+	customResource.ServiceToken = gocf.GetAtt(lambdaFunctionCFName, "Arn")
+	customResource.UserProperties = resourceInfo.properties
+	template.AddResource(resourceInfo.logicalName(), customResource)
+	return nil
+}
+
+// END - customResourceInfo
+////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////////////////////////////////////////////////////
 // START - LambdaAWSInfo
-//
 
 // LambdaAWSInfo stores all data necessary to provision a golang-based AWS Lambda function.
 type LambdaAWSInfo struct {
@@ -388,12 +558,50 @@ type LambdaAWSInfo struct {
 	// Optional array of infrastructure resource logical names, typically
 	// defined by a TemplateDecorator, that this lambda depends on
 	DependsOn []string
+	// Slice of customResourceInfo pointers for any associated CloudFormation
+	// CustomResources associated with this lambda
+	customResources []*customResourceInfo
 }
 
 // URLPath returns the URL path that can be used as an argument
 // to NewLambdaRequest or NewAPIGatewayRequest
 func (info *LambdaAWSInfo) URLPath() string {
 	return info.lambdaFnName
+}
+
+// RequireCustomResource adds a Lambda-backed CustomResource entry to the CloudFormation
+// template. This function will be made a dependency of the owning Lambda function.
+// The returned string is the custom resource's CloudFormation logical resource
+// name that can be used for `Fn:GetAtt` calls for metadata lookups
+func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition interface{},
+	userFunc CustomResourceFunction,
+	lambdaOptions *LambdaFunctionOptions,
+	resourceProps map[string]interface{}) (string, error) {
+	if nil == userFunc {
+		return "", fmt.Errorf("RequireCustomResource userFunc must not be nil")
+	}
+	if nil == lambdaOptions {
+		lambdaOptions = defaultLambdaFunctionOptions()
+	}
+	funcPtr := runtime.FuncForPC(reflect.ValueOf(userFunc).Pointer())
+	resourceInfo := &customResourceInfo{
+		userFunction:     userFunc,
+		userFunctionName: funcPtr.Name(),
+		options:          lambdaOptions,
+		properties:       resourceProps,
+	}
+	switch v := roleNameOrIAMRoleDefinition.(type) {
+	case string:
+		resourceInfo.roleName = roleNameOrIAMRoleDefinition.(string)
+	case IAMRoleDefinition:
+		definition := roleNameOrIAMRoleDefinition.(IAMRoleDefinition)
+		resourceInfo.roleDefinition = &definition
+	default:
+		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
+	}
+	info.customResources = append(info.customResources, resourceInfo)
+	info.DependsOn = append(info.DependsOn, resourceInfo.logicalName())
+	return resourceInfo.logicalName(), nil
 }
 
 // Returns a JavaScript compatible function name for the golang function name.  This
@@ -478,21 +686,30 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	}
 
 	// Event Source Mappings
-	hash := sha1.New()
 	for _, eachEventSourceMapping := range info.EventSourceMappings {
-		eventSourceMappingResource := gocf.LambdaEventSourceMapping{
-			EventSourceArn:   gocf.String(eachEventSourceMapping.EventSourceArn),
-			FunctionName:     functionAttr,
-			StartingPosition: gocf.String(eachEventSourceMapping.StartingPosition),
-			BatchSize:        gocf.Integer(eachEventSourceMapping.BatchSize),
-			Enabled:          gocf.Bool(!eachEventSourceMapping.Disabled),
+		mappingErr := eachEventSourceMapping.export(serviceName,
+			functionAttr,
+			S3Bucket,
+			S3Key,
+			template,
+			logger)
+		if nil != mappingErr {
+			return mappingErr
 		}
+	}
 
-		hash.Write([]byte(eachEventSourceMapping.EventSourceArn))
-		binary.Write(hash, binary.LittleEndian, eachEventSourceMapping.BatchSize)
-		hash.Write([]byte(eachEventSourceMapping.StartingPosition))
-		resourceName := fmt.Sprintf("LambdaES%s", hex.EncodeToString(hash.Sum(nil)))
-		template.AddResource(resourceName, eventSourceMappingResource)
+	// CustomResource
+	for _, eachCustomResource := range info.customResources {
+		resourceErr := eachCustomResource.export(serviceName,
+			functionAttr,
+			S3Bucket,
+			S3Key,
+			roleNameMap,
+			template,
+			logger)
+		if nil != resourceErr {
+			return resourceErr
+		}
 	}
 
 	// Decorator
@@ -500,13 +717,22 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		logger.Debug("Decorator found for Lambda: ", info.lambdaFnName)
 		// Create an empty template so that we can track whether things
 		// are overwritten
+		metadataMap := make(map[string]interface{}, 0)
 		decoratorProxyTemplate := gocf.NewTemplate()
 		err := info.Decorator(info.logicalName(),
 			lambdaResource,
+			metadataMap,
 			decoratorProxyTemplate,
 			logger)
 		if nil != err {
 			return err
+		}
+
+		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
+		// unmarshalled via sparta.Discover.  We're going to just stuff it into
+		// it's own same named property
+		if len(metadataMap) != 0 {
+			safeMetadataInsert(cfResource, info.logicalName(), metadataMap)
 		}
 		// Append the custom resources
 		err = safeMergeTemplates(decoratorProxyTemplate, template, logger)
@@ -522,7 +748,8 @@ func (info *LambdaAWSInfo) export(serviceName string,
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-// Private
+//
+// BEGIN - Private
 //
 
 func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) error {
@@ -530,14 +757,20 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus
 	var errorText []string
 	collisionMemo := make(map[string]int, 0)
 
+	incrementCounter := func(keyName string) {
+		_, exists := collisionMemo[keyName]
+		if !exists {
+			collisionMemo[keyName] = 1
+		} else {
+			collisionMemo[keyName] = collisionMemo[keyName] + 1
+		}
+	}
+
 	// 1 - check for duplicate golang function references.
 	for _, eachLambda := range lambdaAWSInfos {
-		testName := eachLambda.lambdaFnName
-		_, exists := collisionMemo[testName]
-		if !exists {
-			collisionMemo[testName] = 1
-		} else {
-			collisionMemo[testName] = collisionMemo[testName] + 1
+		incrementCounter(eachLambda.lambdaFnName)
+		for _, eachCustom := range eachLambda.customResources {
+			incrementCounter(eachCustom.userFunctionName)
 		}
 	}
 	// Duplicates?
@@ -546,13 +779,14 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus
 			logger.WithFields(logrus.Fields{
 				"CollisionCount": eachCount,
 				"Name":           eachLambdaName,
-			}).Error("Detected logically equivalent function associated with multiple LambdaAWSInfo structs")
+			}).Error("Detected logically equivalent function associated with multiple structs")
 			errorText = append(errorText, fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
 		}
 	}
 	logger.WithFields(logrus.Fields{
 		"CollisionMap": collisionMemo,
 	}).Debug("Lambda collision map")
+
 	if len(errorText) != 0 {
 		return errors.New(strings.Join(errorText[:], "\n"))
 	}
@@ -604,6 +838,15 @@ func awsSession(logger *logrus.Logger) *session.Session {
 	return sess
 }
 
+//
+// END - Private
+//
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Public
+////////////////////////////////////////////////////////////////////////////////
+
 // CloudFormationResourceName returns a name suitable as a logical
 // CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
@@ -626,10 +869,6 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 	return reCloudFormationInvalidChars.ReplaceAllString(resourceName, "x")
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Public
-////////////////////////////////////////////////////////////////////////////////
-
 // NewLambda returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
 // roleNameOrIAMRoleDefinition must either be a `string` or `IAMRoleDefinition`
 // type
@@ -637,7 +876,7 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	fn LambdaFunction,
 	lambdaOptions *LambdaFunctionOptions) *LambdaAWSInfo {
 	if nil == lambdaOptions {
-		lambdaOptions = &LambdaFunctionOptions{"", 128, 3, nil}
+		lambdaOptions = defaultLambdaFunctionOptions()
 	}
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(fn).Pointer())
 	lambda := &LambdaAWSInfo{

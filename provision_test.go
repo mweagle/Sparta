@@ -42,6 +42,7 @@ func TestProvision(t *testing.T) {
 
 func templateDecorator(lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 

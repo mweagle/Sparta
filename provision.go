@@ -53,8 +53,7 @@ const (
 // by `esc` during the generate phase.  In order to export these, there
 // MUST be a corresponding PROXIED_MODULES entry for the base filename
 // in resources/index.js
-var customResourceScripts = []string{"cfn-response.js",
-	"sparta_utils.js",
+var customResourceScripts = []string{"sparta_utils.js",
 	"golang-constants.json"}
 
 var golangCustomResourceTypes = []string{
@@ -424,42 +423,70 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	ctx.lambdaIAMRoleNameMap = make(map[string]*gocf.StringExpr, 0)
 	svc := iam.New(ctx.awsSession)
 
-	for _, eachLambda := range ctx.lambdaAWSInfos {
-		if "" != eachLambda.RoleName && nil != eachLambda.RoleDefinition {
-			return nil, fmt.Errorf("Both RoleName and RoleDefinition defined for lambda: %s", eachLambda.lambdaFnName)
+	// Assemble all the RoleNames and validate the inline IAMRoleDefinitions
+	var allRoleNames []string
+	for _, eachLambdaInfo := range ctx.lambdaAWSInfos {
+		if "" != eachLambdaInfo.RoleName {
+			allRoleNames = append(allRoleNames, eachLambdaInfo.RoleName)
+		}
+		// Custom resources?
+		for _, eachCustomResource := range eachLambdaInfo.customResources {
+			if "" != eachCustomResource.roleName {
+				allRoleNames = append(allRoleNames, eachCustomResource.roleName)
+			}
 		}
 
-		// Get the IAM role name
-		if "" != eachLambda.RoleName {
-			_, exists := ctx.lambdaIAMRoleNameMap[eachLambda.RoleName]
-			if !exists {
-				// Check the role
-				params := &iam.GetRoleInput{
-					RoleName: aws.String(eachLambda.RoleName),
-				}
-				ctx.logger.Debug("Checking IAM RoleName: ", eachLambda.RoleName)
-				resp, err := svc.GetRole(params)
-				if err != nil {
-					ctx.logger.Error(err.Error())
-					return nil, err
-				}
-				// Cache it - we'll need it later when we create the
-				// CloudFormation template which needs the execution Arn (not role)
-				ctx.lambdaIAMRoleNameMap[eachLambda.RoleName] = gocf.String(*resp.Role.Arn)
-			}
-		} else {
-			logicalName := eachLambda.RoleDefinition.logicalName(ctx.serviceName, eachLambda.lambdaFnName)
+		// Validate the IAMRoleDefinitions associated
+		if nil != eachLambdaInfo.RoleDefinition {
+			logicalName := eachLambdaInfo.RoleDefinition.logicalName(ctx.serviceName, eachLambdaInfo.lambdaFnName)
 			_, exists := ctx.lambdaIAMRoleNameMap[logicalName]
 			if !exists {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
 				ctx.cfTemplate.AddResource(logicalName,
-					eachLambda.RoleDefinition.toResource(eachLambda.EventSourceMappings, ctx.logger))
+					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings, ctx.logger))
 
 				ctx.lambdaIAMRoleNameMap[logicalName] = gocf.GetAtt(logicalName, "Arn")
 			}
 		}
+
+		// And the custom resource IAMRoles as well...
+		for _, eachCustomResource := range eachLambdaInfo.customResources {
+			if nil != eachCustomResource.roleDefinition {
+				customResourceLogicalName := eachCustomResource.roleDefinition.logicalName(ctx.serviceName,
+					eachCustomResource.userFunctionName)
+
+				_, exists := ctx.lambdaIAMRoleNameMap[customResourceLogicalName]
+				if !exists {
+					ctx.cfTemplate.AddResource(customResourceLogicalName,
+						eachCustomResource.roleDefinition.toResource(nil, ctx.logger))
+
+					ctx.lambdaIAMRoleNameMap[customResourceLogicalName] = gocf.GetAtt(customResourceLogicalName, "Arn")
+				}
+			}
+		}
 	}
+
+	// Then check all the RoleName literals
+	for _, eachRoleName := range allRoleNames {
+		_, exists := ctx.lambdaIAMRoleNameMap[eachRoleName]
+		if !exists {
+			// Check the role
+			params := &iam.GetRoleInput{
+				RoleName: aws.String(eachRoleName),
+			}
+			ctx.logger.Debug("Checking IAM RoleName: ", eachRoleName)
+			resp, err := svc.GetRole(params)
+			if err != nil {
+				ctx.logger.Error(err.Error())
+				return nil, err
+			}
+			// Cache it - we'll need it later when we create the
+			// CloudFormation template which needs the execution Arn (not role)
+			ctx.lambdaIAMRoleNameMap[eachRoleName] = gocf.String(*resp.Role.Arn)
+		}
+	}
+
 	ctx.logger.WithFields(logrus.Fields{
 		"Count": len(ctx.lambdaIAMRoleNameMap),
 	}).Info("IAM roles verified")
@@ -481,6 +508,21 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		lambdaInfo.jsHandlerName(),
 		lambdaInfo.lambdaFnName)
+	return primaryEntry
+}
+
+func createUserCustomResourceEntry(customResource *customResourceInfo, logger *logrus.Logger) string {
+	// The resource name is a :: delimited one, so let's sanitize that
+	// to make it a valid JS identifier
+
+	logger.WithFields(logrus.Fields{
+		"UserFunction":       customResource.userFunctionName,
+		"NodeJSFunctionName": customResource.jsHandlerName(),
+	}).Debug("Registering User CustomResource function")
+
+	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
+		customResource.jsHandlerName(),
+		customResource.userFunctionName)
 	return primaryEntry
 }
 
@@ -619,8 +661,21 @@ func createPackageStep() workflowStep {
 		}
 		nodeJSSource := _escFSMustString(false, "/resources/index.js")
 		nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
+
+		handlerNames := make(map[string]bool, 0)
 		for _, eachLambda := range ctx.lambdaAWSInfos {
-			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
+			if _, exists := handlerNames[eachLambda.jsHandlerName()]; !exists {
+				nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
+				handlerNames[eachLambda.jsHandlerName()] = true
+			}
+
+			// USER DEFINED RESOURCES
+			for _, eachCustomResource := range eachLambda.customResources {
+				if _, exists := handlerNames[eachCustomResource.jsHandlerName()]; !exists {
+					nodeJSSource += createUserCustomResourceEntry(eachCustomResource, ctx.logger)
+					handlerNames[eachCustomResource.jsHandlerName()] = true
+				}
+			}
 		}
 		// SPARTA CUSTOM RESOURCES
 		for _, eachCustomResourceName := range golangCustomResourceTypes {
