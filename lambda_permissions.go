@@ -186,7 +186,7 @@ func (perm LambdaPermission) export(serviceName string,
 
 func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
-		descriptionNode{
+		{
 			Name:     "Source",
 			Relation: describeInfoArn(perm.SourceArn),
 		},
@@ -292,7 +292,7 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 	}
 
 	nodes := []descriptionNode{
-		descriptionNode{
+		{
 			Name:     describeInfoArn(perm.SourceArn),
 			Relation: s3Events,
 		},
@@ -376,7 +376,7 @@ func (perm SNSPermission) export(serviceName string,
 
 func (perm SNSPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
-		descriptionNode{
+		{
 			Name:     describeInfoArn(perm.SourceArn),
 			Relation: "",
 		},
@@ -454,7 +454,7 @@ func (storage *MessageBodyStorage) export(serviceName string,
 	if "" != storage.cloudFormationS3BucketResourceName {
 		s3Bucket := &gocf.S3Bucket{
 			Tags: []gocf.ResourceTag{
-				gocf.ResourceTag{
+				{
 					Key:   gocf.String("sparta:logicalBucketName"),
 					Value: gocf.String(storage.logicalBucketName),
 				},
@@ -744,7 +744,7 @@ func (perm SESPermission) export(serviceName string,
 
 func (perm SESPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
-		descriptionNode{
+		{
 			Name:     "SimpleEmailService",
 			Relation: "All verified domain(s) email",
 		},
@@ -934,7 +934,7 @@ func (perm CloudWatchEventsPermission) descriptionInfo() ([]descriptionNode, err
 		ruleTriggers = fmt.Sprintf("%s-(%s)\n%s", eachName, filter, ruleTriggers)
 	}
 	nodes := []descriptionNode{
-		descriptionNode{
+		{
 			Name:     "CloudWatch Events",
 			Relation: ruleTriggers,
 		},

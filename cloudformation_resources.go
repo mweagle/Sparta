@@ -29,12 +29,12 @@ const (
 )
 
 var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
-	"AWS::DynamoDB::Table":    []string{"StreamArn"},
-	"AWS::Kinesis::Stream":    []string{"Arn"},
-	"AWS::Route53::RecordSet": []string{""},
-	"AWS::S3::Bucket":         []string{"DomainName", "WebsiteURL"},
-	"AWS::SNS::Topic":         []string{"TopicName"},
-	"AWS::SQS::Queue":         []string{"Arn", "QueueName"},
+	"AWS::DynamoDB::Table":    {"StreamArn"},
+	"AWS::Kinesis::Stream":    {"Arn"},
+	"AWS::Route53::RecordSet": {""},
+	"AWS::S3::Bucket":         {"DomainName", "WebsiteURL"},
+	"AWS::SNS::Topic":         {"TopicName"},
+	"AWS::SQS::Queue":         {"Arn", "QueueName"},
 }
 
 func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf.ResourceProperties, error) {

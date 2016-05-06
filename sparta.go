@@ -112,8 +112,8 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
 var CommonIAMStatements = map[string][]iamPolicyStatement{
-	"core": []iamPolicyStatement{
-		iamPolicyStatement{
+	"core": {
+		{
 			Action: []string{"logs:CreateLogGroup",
 				"logs:CreateLogStream",
 				"logs:PutLogEvents"},
@@ -125,20 +125,20 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 				gocf.Ref("AWS::AccountId"),
 				gocf.String("*")),
 		},
-		iamPolicyStatement{
+		{
 			Action:   []string{"cloudwatch:PutMetricData"},
 			Effect:   "Allow",
 			Resource: wildcardArn,
 		},
-		iamPolicyStatement{
+		{
 			Effect: "Allow",
 			Action: []string{"cloudformation:DescribeStacks",
 				"cloudformation:DescribeStackResource"},
 			Resource: gocf.Join("", cloudFormationThisStackArn...),
 		},
 	},
-	"dynamodb": []iamPolicyStatement{
-		iamPolicyStatement{
+	"dynamodb": {
+		{
 			Effect: "Allow",
 			Action: []string{"dynamodb:DescribeStream",
 				"dynamodb:GetRecords",
@@ -146,8 +146,8 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 				"dynamodb:ListStreams",
 			},
 		}},
-	"kinesis": []iamPolicyStatement{
-		iamPolicyStatement{
+	"kinesis": {
+		{
 			Effect: "Allow",
 			Action: []string{"kinesis:GetRecords",
 				"kinesis:GetShardIterator",
