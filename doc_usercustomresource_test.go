@@ -37,7 +37,7 @@ func userDefinedCustomResource(requestType string,
 	return results, nil
 }
 
-func ExampleRequireCustomResource() {
+func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 	lambdaFn := NewLambda(IAMRoleDefinition{},
 		helloWorld,
