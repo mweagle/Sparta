@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]> <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]> <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <title>Custom Resources  &middot; Sparta</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="description" content="" />
+
+<meta name="keywords" content="sparta, ">
+
+
+<meta property="og:title" content="Custom Resources  &middot; Sparta ">
+<meta property="og:site_name" content="Sparta"/>
+<meta property="og:url" content="http://gosparta.io/docs/custom_resources/" />
+<meta property="og:locale" content="en-EN">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=""/>
+<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+
+  
+    
+<meta property="og:article:tag" content="sparta">
+    
+  
+
+  
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@" />
+<meta name="twitter:creator" content="@" />
+<meta name="twitter:title" content="Custom Resources" />
+<meta name="twitter:description" content="" />
+<meta name="twitter:url" content="http://gosparta.io/docs/custom_resources/" />
+<meta name="twitter:domain" content="http://gosparta.io">
+  
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "headline": "Custom Resources",
+    "author": {
+      "@type": "Person",
+      "name": "http://profiles.google.com/+?rel=author"
+    },
+    "datePublished": "2015-11-29",
+    "description": "",
+    "wordCount":  755 
+  }
+</script>
+
+
+
+<link rel="canonical" href="http://gosparta.io/docs/custom_resources/" />
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
+<link href="http://gosparta.io/favicon.png" rel="icon">
+
+<meta name="generator" content="Hugo 0.15" />
+
+  <!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+
+    <link rel="stylesheet" href="http://gosparta.io/css/theme/lumen.css">
+
+
+<link rel="stylesheet" href="http://gosparta.io/css/font-awesome.min.css">
+<link rel="stylesheet" href="http://gosparta.io/css/style.css">
+
+
+  <link rel="stylesheet" href="http://gosparta.io/css/highlight/xcode.css">
+
+
+
+  
+  <script src="/mermaid_dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({startOnLoad:true});</script>
+  <link rel="stylesheet" href="/mermaid_dist/mermaid.css"></link>
+  <link rel="stylesheet" href="/css/mermaid-overrides.css"></link>
+
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-70794971-2', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body class="map[bitbucket: facebook: youtube: flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle twitter:mweagle name:lumen linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+    <header id="main-header">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://gosparta.io"><img src="/images/SpartaLogoNoDomain.png" height=32 /></a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+          
+          <li>
+
+            <a href="http://gosparta.io/docs"
+            >
+
+            
+                <i class="fa fa-book"></i>
+            
+
+            Documentation
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="http://gosparta.io/docs/faq"
+            >
+
+            
+                <i class="fa fa-question-circle"></i>
+            
+
+            FAQ
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://github.com/mweagle/Sparta"
+            >
+
+            
+                <i class="fa fa-github"></i>
+            
+
+            GitHub
+            </a>
+          </li>
+          
+          <li>
+
+            <a href="https://twitter.com/@mweagle"
+            >
+
+            
+                <i class="fa fa-twitter"></i>
+            
+
+            mweagle
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+      
+    </div>
+  </nav>
+</header>
+
+
+<div class="container content">
+  <div class="row">
+    <div class="col-md-2"><div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Contents</h3>
+  </div>
+  <div class="panel-body">
+    
+      <a href="/docs/">Overview</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/intro_example">Example</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/intro_example_details">Example - Details</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/eventsources">Event Sources</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudformation">CloudFormation (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchevents">CloudWatch Events</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/cognito">Cognito (TBD)</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/dynamodb">DynamoDB</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/kinesis">Kinesis</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/s3">S3</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/ses">SES</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/eventsources/sns/">SNS</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/apigateway">API Gateway</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/apigateway/example1">Echo</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example2">User Input</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/example3">GeoIP Service</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/cors">CORS</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/apigateway/slack">Slack Integration</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/s3site">Static S3 Websites</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/dynamic_infrastructure">Dynamic Infrastructure</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/custom_resources">Custom Resources</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/discovery">Discovery</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/commandline">Command Line Options</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/local_testing">Local Testing</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/faq">FAQ</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/limitations">Limitations</a>
+      <ul>
+      
+      </ul>
+    
+  </div>
+</div>
+</div>
+    <div class="col-md-10">
+
+      <header class="container hat">
+  <h1>Custom Resources
+</h1>
+
+</header>
+
+      <hr />
+      <div id="toc">
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a>
+<ul>
+<li><a href="#components:d680e8a854a7cbad6d490c445cba2eba">Components</a>
+<ul>
+<li><a href="#customresourcefunction:d680e8a854a7cbad6d490c445cba2eba">CustomResourceFunction</a></li>
+<li><a href="#requirecustomresource:d680e8a854a7cbad6d490c445cba2eba">RequireCustomResource</a></li>
+<li><a href="#optional-template-decorator:d680e8a854a7cbad6d490c445cba2eba">Optional - Template Decorator</a></li>
+<li><a href="#optional-discovery:d680e8a854a7cbad6d490c445cba2eba">Optional - Discovery</a></li>
+</ul></li>
+<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+</ul></li>
+<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+</ul>
+</nav>
+      </div>
+      <hr />
+
+      <div class="container content">
+  
+
+<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+
+<p>In some circumstances your service may need to provision or access resources that fall outside the standard workflow.  In this case you can use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">CloudFormation Lambda-backed CustomResources</a> to create or access resources during your CloudFormation stack&rsquo;s lifecycle.</p>
+
+<p>Sparta provides unchecked access to the CloudFormation resource lifecycle via the <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a> function.  This function registers a user-supplied <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> with the larger CloudFormation resource <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html">lifecycle</a>.</p>
+
+<p>In this section we&rsquo;ll walk through a sample user-defined custom resource and touch on on way state may be communicated across your application&rsquo;s resources.</p>
+
+<h2 id="components:d680e8a854a7cbad6d490c445cba2eba">Components</h2>
+
+<p>There are two required, and two optional components to user-defined CustomResources:</p>
+
+<ol>
+<li>The user-defined <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> instance
+
+<ul>
+<li>This function defines your resource&rsquo;s logic.  The multiple return value is <code>map[string]interface{}, error</code> which signify resource results and operation error, respectively.</li>
+</ul></li>
+<li>The <code>LambdaAWSInfo</code> struct which declares a dependency on your custom resource via the <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a> member function.</li>
+<li>(Optional) - The template decorator that binds your CustomResource&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html">data results</a> to the owning <code>LambdaAWSInfo</code> caller.</li>
+<li>(Optional) - A call from your standard Lambda&rsquo;s function body to discover the CustomResource outputs via <code>sparta.Discover()</code>.</li>
+</ol>
+
+<h3 id="customresourcefunction:d680e8a854a7cbad6d490c445cba2eba">CustomResourceFunction</h3>
+
+<p>This is the core of your custom resource&rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:</p>
+
+<pre><code>type CustomResourceFunction func(requestType string
+     stackID string
+     properties map[string]interface{}
+     logger *logrus.Logger) 
+(map[string]interface{}, error)
+</code></pre>
+
+<p>where</p>
+
+<ul>
+<li><code>requestType</code>: The CustomResource <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requests.html">operation type</a></li>
+<li><code>stackID</code> : The current stack being operated on.<br /></li>
+<li><code>properties</code>: User-defined properties provided to <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a> (see below).</li>
+<li><code>logger</code> : Preconfigured logger instance</li>
+</ul>
+
+<p>The multiple return values denote success with non-empty results, or an error.</p>
+
+<p>As an example, we&rsquo;ll use the following custom resource function:</p>
+
+<pre><code>// User defined λ-backed CloudFormation CustomResource
+func userDefinedCustomResource(requestType string,
+	stackID string,
+	properties map[string]interface{},
+	logger *logrus.Logger) (map[string]interface{}, error) {
+
+	var results = map[string]interface{}{
+		&quot;CustomResourceResult&quot;: &quot;Victory!&quot;,
+	}
+	return results, nil
+}
+</code></pre>
+
+<h3 id="requirecustomresource:d680e8a854a7cbad6d490c445cba2eba">RequireCustomResource</h3>
+
+<p>The next step is to associate this custom resource function with a previously created Sparta <code>NewLambda</code> result via <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a>.  This function accepts:</p>
+
+<ul>
+<li><code>roleNameOrIAMRoleDefinition</code>: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewLambda">NewLambda</a>.</li>
+<li><code>userFunc</code>: Custom resource function pointer</li>
+<li><code>lambdaOptions</code>: Lambda execution options. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewLambda">NewLambda</a>.</li>
+<li><code>resourceProps</code>: Arbitrary, optional properties that will be provided to the <code>userFunc</code> during execution.</li>
+</ul>
+
+<p>The multiple return values denote the logical, stable CloudFormation resource ID of the new custom resource, or an error if one occurred.</p>
+
+<p>For example, our custom resource function above can be associated via:</p>
+
+<pre><code>// Standard AWS λ function
+func helloWorld(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+
+	configuration, _ := Discover()
+
+	logger.WithFields(logrus.Fields{
+		&quot;Discovery&quot;: configuration,
+	}).Info(&quot;Custom resource request&quot;)
+
+	fmt.Fprint(w, &quot;Hello World&quot;)
+}
+
+func ExampleLambdaAWSInfo_RequireCustomResource() {
+
+	lambdaFn := NewLambda(IAMRoleDefinition{},
+		helloWorld,
+		nil)
+
+	cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
+		userDefinedCustomResource,
+		nil,
+		nil)
+
+</code></pre>
+
+<p>These two steps are sufficient to include your custom resource function in the CloudFormation stack lifecycle.</p>
+
+<p>It&rsquo;s possible to share state from the custom resource to a standard Sparta lambda function by annotating your Sparta lambda function&rsquo;s metadata and then discovering it at execution time.</p>
+
+<h3 id="optional-template-decorator:d680e8a854a7cbad6d490c445cba2eba">Optional - Template Decorator</h3>
+
+<p>The first step is to include a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> that annotates your Sparta lambda functions CloudFormation resource metadata.  This function specifies which user defined output keys (<code>CustomResourceResult</code> in this example) you wish to make available during your lambda function&rsquo;s execution.</p>
+
+<pre><code>lambdaFn.Decorator = func(lambdaResourceName string,
+  lambdaResource gocf.LambdaFunction,
+  resourceMetadata map[string]interface{},
+  template *gocf.Template,
+  logger *logrus.Logger) error {
+
+  // Pass CustomResource outputs to the λ function
+  resourceMetadata[&quot;CustomResource&quot;] = gocf.GetAtt(cfResName, &quot;CustomResourceResult&quot;)
+  return nil
+}
+</code></pre>
+
+<p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time.</p>
+
+<h3 id="optional-discovery:d680e8a854a7cbad6d490c445cba2eba">Optional - Discovery</h3>
+
+<p>Discovery is handled by <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover()</a> which returns a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DiscoveryInfo</a> pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover it&rsquo;s own <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource">DiscoveryResource</a> element via the <code>ResourceID</code> field. Once this is found, the calling function can lookup the linked custom resource output via the <code>Properties</code> field using the keyname  (<code>CustomResource</code>) provided in the previous template decorator.</p>
+
+<p>In this example, the unmarshalled <em>DiscoveryInfo</em> struct looks like:</p>
+
+<pre><code class="language-json">{
+  &quot;Discovery&quot;: {
+    &quot;ResourceID&quot;: &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;,
+    &quot;Region&quot;: &quot;us-west-2&quot;,
+    &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/70b28170-13f9-11e6-b0c7-50d5ca11b8d2&quot;,
+    &quot;StackName&quot;: &quot;SpartaHelloWorld&quot;,
+    &quot;Resources&quot;: {
+      &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;: {
+          &quot;ResourceID&quot;: &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;,
+          &quot;Properties&quot;: {
+            &quot;CustomResource&quot;: &quot;Victory!&quot;
+          },
+          &quot;Tags&quot;: {}
+      }
+    }
+  },
+  &quot;level&quot;: &quot;info&quot;,
+  &quot;msg&quot;: &quot;Custom resource request&quot;,
+  &quot;time&quot;: &quot;2016-05-07T14:13:37Z&quot;
+}
+</code></pre>
+
+<h2 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h2>
+
+<p>CloudFormation Custom Resources are a powerful tool that can help pre-existing applications migrate to a Sparta application.</p>
+
+<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+
+<ul>
+<li>Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed CustomResource</a> functions, so they are subject to the same <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a> as application-level Sparta lambda functions.</li>
+<li>Returning an error from the CustomResourceFunction will result in a <em>FAILED</em> reason being returned in the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html">response object</a>.</li>
+</ul>
+
+</div>
+
+
+      
+    </div>
+  </div>
+</div>
+      <footer class="footer">
+    <div class="container hidden-print">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+           <div class="pull-left">
+  <a class="toplink" href="#">back to top</a>
+</div>
+<div class="pull-right">
+  
+</div>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 text-center">
+          <small>
+              
+    
+<div class="container footline">
+  
+  <a href="https://en.wikipedia.org/wiki/Eddie_Aikau" target="_blank">Eddie would go</a>
+
+
+</div>
+
+
+    
+
+
+          </small>
+        </div>
+     </div>
+    </div>
+</footer>
+
+    <script src="http://gosparta.io/js/jquery.min-2.1.4.js"></script>
+<script src="http://gosparta.io/js/bootstrap.min-3.3.5.js"></script>
+
+
+
+<script type="text/javascript">
+  (function() {
+    
+    
+    if (window.location.hostname == "localhost")
+      return;
+
+    var dsq = document.createElement('script'); dsq.async = true; dsq.type = 'text/javascript';
+    dsq.src = '//mweagle.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://gosparta.io/js/highlight.pack.js"></script>
+<script src="http://gosparta.io/js/site.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+
+  </body>
+</html>
+

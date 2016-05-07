@@ -148,6 +148,13 @@
     "URL": "/dynamic_infrastructure",
     "Children": []
   },
+    {
+    "Name": "Custom Resources",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/custom_resources",
+    "Children": []
+  },
   {
     "Name": "Discovery",
     "IconClass": "",
