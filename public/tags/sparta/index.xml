@@ -1432,10 +1432,9 @@ Verbs:
 &lt;p&gt;This is the core of your custom resource&amp;rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;type CustomResourceFunction func(requestType string
-     stackID string
-     properties map[string]interface{}
-     logger *logrus.Logger) 
-(map[string]interface{}, error)
+                                 stackID string
+                                 properties map[string]interface{}
+                                 logger *logrus.Logger) (map[string]interface{}, error)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;where&lt;/p&gt;

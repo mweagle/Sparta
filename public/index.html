@@ -71,7 +71,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: twitter:mweagle youtube: name:lumen github:https://github.com/mweagle facebook:]">
+<body class="map[youtube: flattr: home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -156,38 +156,25 @@
 <p><br />
 <div class="jumbotron">
 <img src="images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128">
-<h2>A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a> microservices</h2></p>
-
-<p><hr />
-  <blockquote>
-    <p>&ldquo;No Server Is Easier To Manage Than No Server.&rdquo;</p>
-    <footer>Werner Vogels <cite title="Source Title">AWS re:Invent 2015</cite></footer>
-  </blockquote><br />
-  <iframe width="50%" height="200" src="https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742" frameborder="0" allowfullscreen></iframe>
+<h2>A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a> microservices</h2>
 </div></p>
 
-<h1 id="overview:d680e8a854a7cbad6d490c445cba2eba">Overview</h1>
-
-<hr />
-
-<p>Sparta provides a framework that enables you to deploy a set of <strong>Go</strong> HTTP request/response handlers to <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>.  More than a CLI deployment tool, Sparta helps you define and manage the <strong>other AWS resources and security policies</strong> in a single codebase.</p>
-
-<h1 id="features:d680e8a854a7cbad6d490c445cba2eba">Features</h1>
-
-<hr />
+<h1>
+Features
+</h1>
 
 <!-- Row 1 -->
 
 <div class="row">
   <div class="col-lg-6">
      <h2>Unified Language</h2>
-     <p>Use <b>Go</b> to define your service's:
+     <p>Use a single <b>Go</b> codebase to define your microservice's:
      <ul>
       <li>Application logic</li>
-      <li>AWS Infrastructure</li>
-      <li>Metric data</li>
+      <li>AWS infrastructure</li>
+      <li>Operational metrics</li>
       <li>Alert conditions</li>
-      <li>Security Policies</li>
+      <li>Security policies</li>
      </ul>
      </p>
   </div>
@@ -203,7 +190,7 @@
          <li>CloudWatch Events</li>
          <li>CloudWatch Logs</li>
        </ul>
-       Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource.
+       Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource and even your own <a href="http://gosparta.io/docs/custom_resources">CustomResources</a>.
       </p>
   </div>
  </div>
@@ -240,6 +227,47 @@
 
 <p>Sparta exclusively relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
 
+<h1 id="hello-lambda-world:d680e8a854a7cbad6d490c445cba2eba">Hello Lambda World</h1>
+
+<pre><code>// File: application.go
+package main
+
+import (
+	&quot;encoding/json&quot;
+	&quot;fmt&quot;
+	&quot;net/http&quot;
+
+	&quot;github.com/Sirupsen/logrus&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloWorld(event *json.RawMessage,
+              	context *sparta.LambdaContext,
+              	w http.ResponseWriter,
+              	logger *logrus.Logger) {
+	logger.Info(&quot;Hello World: &quot;, string(*event))
+	fmt.Fprint(w, string(*event))
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+  // Deploy it
+  sparta.Main(&quot;SpartaHelloWorld&quot;,
+		&quot;Simple Sparta application that creates a single AWS Lambda function&quot;,
+		lambdaFunctions,
+                nil,
+                nil)
+}
+</code></pre>
+
 <h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
 
 <p>To get started using Sparta, begin with the <a href="./docs">Documentation</a>.</p>
@@ -254,6 +282,7 @@
 <h2 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other resources</h2>
 
 <ul>
+<li><a href="https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg">Sparta - A Go framework for AWS Lambda</a></li>
 <li>Other libraries &amp; frameworks:
 
 <ul>

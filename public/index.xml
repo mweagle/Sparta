@@ -302,38 +302,25 @@ graph TD
 &lt;p&gt;&lt;br /&gt;
 &lt;div class=&#34;jumbotron&#34;&gt;
 &lt;img src=&#34;images/SpartaLogoNoDomain.png&#34; alt=&#34;Sparta shield&#34; height=&#34;128&#34;&gt;
-&lt;h2&gt;A &lt;b&gt;Go&lt;/b&gt; framework for &lt;a href=&#34;https://aws.amazon.com/lambda&#34;&gt;AWS Lambda&lt;/a&gt; microservices&lt;/h2&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;hr /&gt;
-  &lt;blockquote&gt;
-    &lt;p&gt;&amp;ldquo;No Server Is Easier To Manage Than No Server.&amp;rdquo;&lt;/p&gt;
-    &lt;footer&gt;Werner Vogels &lt;cite title=&#34;Source Title&#34;&gt;AWS re:Invent 2015&lt;/cite&gt;&lt;/footer&gt;
-  &lt;/blockquote&gt;&lt;br /&gt;
-  &lt;iframe width=&#34;50%&#34; height=&#34;200&#34; src=&#34;https://www.youtube.com/embed/y-0Wf2Zyi5Q?start=1742&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;h2&gt;A &lt;b&gt;Go&lt;/b&gt; framework for &lt;a href=&#34;https://aws.amazon.com/lambda&#34;&gt;AWS Lambda&lt;/a&gt; microservices&lt;/h2&gt;
 &lt;/div&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;overview:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Overview&lt;/h1&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;Sparta provides a framework that enables you to deploy a set of &lt;strong&gt;Go&lt;/strong&gt; HTTP request/response handlers to &lt;a href=&#34;https://aws.amazon.com/lambda/&#34;&gt;AWS Lambda&lt;/a&gt;.  More than a CLI deployment tool, Sparta helps you define and manage the &lt;strong&gt;other AWS resources and security policies&lt;/strong&gt; in a single codebase.&lt;/p&gt;
-
-&lt;h1 id=&#34;features:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Features&lt;/h1&gt;
-
-&lt;hr /&gt;
+&lt;h1&gt;
+Features
+&lt;/h1&gt;
 
 &lt;!-- Row 1 --&gt;
 
 &lt;div class=&#34;row&#34;&gt;
   &lt;div class=&#34;col-lg-6&#34;&gt;
      &lt;h2&gt;Unified Language&lt;/h2&gt;
-     &lt;p&gt;Use &lt;b&gt;Go&lt;/b&gt; to define your service&#39;s:
+     &lt;p&gt;Use a single &lt;b&gt;Go&lt;/b&gt; codebase to define your microservice&#39;s:
      &lt;ul&gt;
       &lt;li&gt;Application logic&lt;/li&gt;
-      &lt;li&gt;AWS Infrastructure&lt;/li&gt;
-      &lt;li&gt;Metric data&lt;/li&gt;
+      &lt;li&gt;AWS infrastructure&lt;/li&gt;
+      &lt;li&gt;Operational metrics&lt;/li&gt;
       &lt;li&gt;Alert conditions&lt;/li&gt;
-      &lt;li&gt;Security Policies&lt;/li&gt;
+      &lt;li&gt;Security policies&lt;/li&gt;
      &lt;/ul&gt;
      &lt;/p&gt;
   &lt;/div&gt;
@@ -349,7 +336,7 @@ graph TD
          &lt;li&gt;CloudWatch Events&lt;/li&gt;
          &lt;li&gt;CloudWatch Logs&lt;/li&gt;
        &lt;/ul&gt;
-       Additionally, your service may provision any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; supported resource.
+       Additionally, your service may provision any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; supported resource and even your own &lt;a href=&#34;http://gosparta.io/docs/custom_resources&#34;&gt;CustomResources&lt;/a&gt;.
       &lt;/p&gt;
   &lt;/div&gt;
  &lt;/div&gt;
@@ -386,6 +373,47 @@ graph TD
 
 &lt;p&gt;Sparta exclusively relies on &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html&#34;&gt;CloudFormation&lt;/a&gt; to deploy and update your application.  For resources that CloudFormation does not yet support, it uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;Lambda-backed Custom Resources&lt;/a&gt; so that all service updates support both update and rollback semantics.  Sparta&amp;rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html&#34;&gt;service availability&lt;/a&gt; during updates.&lt;/p&gt;
 
+&lt;h1 id=&#34;hello-lambda-world:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Hello Lambda World&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;// File: application.go
+package main
+
+import (
+	&amp;quot;encoding/json&amp;quot;
+	&amp;quot;fmt&amp;quot;
+	&amp;quot;net/http&amp;quot;
+
+	&amp;quot;github.com/Sirupsen/logrus&amp;quot;
+	sparta &amp;quot;github.com/mweagle/Sparta&amp;quot;
+)
+
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloWorld(event *json.RawMessage,
+              	context *sparta.LambdaContext,
+              	w http.ResponseWriter,
+              	logger *logrus.Logger) {
+	logger.Info(&amp;quot;Hello World: &amp;quot;, string(*event))
+	fmt.Fprint(w, string(*event))
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+  // Deploy it
+  sparta.Main(&amp;quot;SpartaHelloWorld&amp;quot;,
+		&amp;quot;Simple Sparta application that creates a single AWS Lambda function&amp;quot;,
+		lambdaFunctions,
+                nil,
+                nil)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
 
 &lt;p&gt;To get started using Sparta, begin with the &lt;a href=&#34;./docs&#34;&gt;Documentation&lt;/a&gt;.&lt;/p&gt;
@@ -400,6 +428,7 @@ graph TD
 &lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other resources&lt;/h2&gt;
 
 &lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg&#34;&gt;Sparta - A Go framework for AWS Lambda&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;Other libraries &amp;amp; frameworks:
 
 &lt;ul&gt;
@@ -1714,10 +1743,9 @@ Verbs:
 &lt;p&gt;This is the core of your custom resource&amp;rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;type CustomResourceFunction func(requestType string
-     stackID string
-     properties map[string]interface{}
-     logger *logrus.Logger) 
-(map[string]interface{}, error)
+                                 stackID string
+                                 properties map[string]interface{}
+                                 logger *logrus.Logger) (map[string]interface{}, error)
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;where&lt;/p&gt;

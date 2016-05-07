@@ -30,10 +30,9 @@ Defining a custom resource is a two stage process, depending on whether your app
 This is the core of your custom resource's logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature: 
   
     type CustomResourceFunction func(requestType string
-         stackID string
-         properties map[string]interface{}
-         logger *logrus.Logger) 
-    (map[string]interface{}, error)
+                                     stackID string
+                                     properties map[string]interface{}
+                                     logger *logrus.Logger) (map[string]interface{}, error)
 
 where
 
