@@ -1563,11 +1563,11 @@ Verbs:
 
 &lt;p&gt;Sparta provides unchecked access to the CloudFormation resource lifecycle via the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource&#34;&gt;RequireCustomResource&lt;/a&gt; function.  This function registers a user-supplied &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction&#34;&gt;CustomResourceFunction&lt;/a&gt; with the larger CloudFormation resource &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html&#34;&gt;lifecycle&lt;/a&gt;.&lt;/p&gt;
 
-&lt;p&gt;In this section we&amp;rsquo;ll walk through a sample user-defined custom resource and touch on on way state may be communicated across your application&amp;rsquo;s resources.&lt;/p&gt;
+&lt;p&gt;In this section we&amp;rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&amp;rsquo;s outputs can be propagated to an application-level Sparta lambda function.&lt;/p&gt;
 
 &lt;h2 id=&#34;components:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Components&lt;/h2&gt;
 
-&lt;p&gt;There are two required, and two optional components to user-defined CustomResources:&lt;/p&gt;
+&lt;p&gt;Defining a custom resource is a two stage process, depending on whether your application-level lambda function requires access to the custom resource outputs:&lt;/p&gt;
 
 &lt;ol&gt;
 &lt;li&gt;The user-defined &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction&#34;&gt;CustomResourceFunction&lt;/a&gt; instance
@@ -1576,8 +1576,8 @@ Verbs:
 &lt;li&gt;This function defines your resource&amp;rsquo;s logic.  The multiple return value is &lt;code&gt;map[string]interface{}, error&lt;/code&gt; which signify resource results and operation error, respectively.&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;The &lt;code&gt;LambdaAWSInfo&lt;/code&gt; struct which declares a dependency on your custom resource via the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource&#34;&gt;RequireCustomResource&lt;/a&gt; member function.&lt;/li&gt;
-&lt;li&gt;(Optional) - The template decorator that binds your CustomResource&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html&#34;&gt;data results&lt;/a&gt; to the owning &lt;code&gt;LambdaAWSInfo&lt;/code&gt; caller.&lt;/li&gt;
-&lt;li&gt;(Optional) - A call from your standard Lambda&amp;rsquo;s function body to discover the CustomResource outputs via &lt;code&gt;sparta.Discover()&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Optional&lt;/em&gt; - The template decorator that binds your CustomResource&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html&#34;&gt;data results&lt;/a&gt; to the owning &lt;code&gt;LambdaAWSInfo&lt;/code&gt; caller.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Optional&lt;/em&gt; - A call from your standard Lambda&amp;rsquo;s function body to discover the CustomResource outputs via &lt;code&gt;sparta.Discover()&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h3 id=&#34;customresourcefunction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;CustomResourceFunction&lt;/h3&gt;
@@ -1617,9 +1617,11 @@ func userDefinedCustomResource(requestType string,
 }
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;This function always succeeds and returns a non-empty results map consisting of a single key (&lt;code&gt;CustomResourceResult&lt;/code&gt;).&lt;/p&gt;
+
 &lt;h3 id=&#34;requirecustomresource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;RequireCustomResource&lt;/h3&gt;
 
-&lt;p&gt;The next step is to associate this custom resource function with a previously created Sparta &lt;code&gt;NewLambda&lt;/code&gt; result via &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource&#34;&gt;RequireCustomResource&lt;/a&gt;.  This function accepts:&lt;/p&gt;
+&lt;p&gt;The next step is to associate this custom resource function with a previously created Sparta &lt;code&gt;LambdaAWSInfo&lt;/code&gt; instance via &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource&#34;&gt;RequireCustomResource&lt;/a&gt;.  This function accepts:&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;roleNameOrIAMRoleDefinition&lt;/code&gt;: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#NewLambda&#34;&gt;NewLambda&lt;/a&gt;.&lt;/li&gt;
@@ -1660,13 +1662,15 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;Since our custom resource function doesn&amp;rsquo;t require any additional AWS resources, we provide an empty &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt;.&lt;/p&gt;
+
 &lt;p&gt;These two steps are sufficient to include your custom resource function in the CloudFormation stack lifecycle.&lt;/p&gt;
 
 &lt;p&gt;It&amp;rsquo;s possible to share state from the custom resource to a standard Sparta lambda function by annotating your Sparta lambda function&amp;rsquo;s metadata and then discovering it at execution time.&lt;/p&gt;
 
 &lt;h3 id=&#34;optional-template-decorator:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Optional - Template Decorator&lt;/h3&gt;
 
-&lt;p&gt;The first step is to include a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; that annotates your Sparta lambda functions CloudFormation resource metadata.  This function specifies which user defined output keys (&lt;code&gt;CustomResourceResult&lt;/code&gt; in this example) you wish to make available during your lambda function&amp;rsquo;s execution.&lt;/p&gt;
+&lt;p&gt;To link these resources together, the first step is to include a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; that annotates your Sparta lambda function&amp;rsquo;s CloudFormation resource metadata.  This function specifies which user defined output keys (&lt;code&gt;CustomResourceResult&lt;/code&gt; in this example) you wish to make available during your lambda function&amp;rsquo;s execution.&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;lambdaFn.Decorator = func(lambdaResourceName string,
   lambdaResource gocf.LambdaFunction,
@@ -1680,11 +1684,11 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;The &lt;code&gt;cfResName&lt;/code&gt; value is the CloudFormation resource name returned by &lt;code&gt;RequireCustomResource&lt;/code&gt;.  The template decorator specifies which of your &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction&#34;&gt;CustomResourceFunction&lt;/a&gt; outputs should be discoverable during the paren&amp;rsquo;t lambda functions execution time.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;cfResName&lt;/code&gt; value is the CloudFormation resource name returned by &lt;code&gt;RequireCustomResource&lt;/code&gt;.  The template decorator specifies which of your &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction&#34;&gt;CustomResourceFunction&lt;/a&gt; outputs should be discoverable during the paren&amp;rsquo;t lambda functions execution time through a &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt&#34;&gt;go-cloudformation&lt;/a&gt; version of &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html&#34;&gt;Fn::GetAtt&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&#34;optional-discovery:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Optional - Discovery&lt;/h3&gt;
 
-&lt;p&gt;Discovery is handled by &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Discover&#34;&gt;sparta.Discover()&lt;/a&gt; which returns a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo&#34;&gt;DiscoveryInfo&lt;/a&gt; pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover it&amp;rsquo;s own &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource&#34;&gt;DiscoveryResource&lt;/a&gt; element via the &lt;code&gt;ResourceID&lt;/code&gt; field. Once this is found, the calling function can lookup the linked custom resource output via the &lt;code&gt;Properties&lt;/code&gt; field using the keyname  (&lt;code&gt;CustomResource&lt;/code&gt;) provided in the previous template decorator.&lt;/p&gt;
+&lt;p&gt;Discovery is handled by &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Discover&#34;&gt;sparta.Discover()&lt;/a&gt; which returns a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo&#34;&gt;DiscoveryInfo&lt;/a&gt; instance pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover its own &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource&#34;&gt;DiscoveryResource&lt;/a&gt; keyname via the top-level &lt;code&gt;ResourceID&lt;/code&gt; field. Once found, the calling function then looks up the linked custom resource output via the &lt;code&gt;Properties&lt;/code&gt; field using the keyname  (&lt;code&gt;CustomResource&lt;/code&gt;) provided in the previous template decorator.&lt;/p&gt;
 
 &lt;p&gt;In this example, the unmarshalled &lt;em&gt;DiscoveryInfo&lt;/em&gt; struct looks like:&lt;/p&gt;
 
@@ -1708,6 +1712,12 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
   &amp;quot;msg&amp;quot;: &amp;quot;Custom resource request&amp;quot;,
   &amp;quot;time&amp;quot;: &amp;quot;2016-05-07T14:13:37Z&amp;quot;
 }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To lookup the output, the calling function might do something like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;configuration, _ := sparta.Discover()
+customResult := configuration.Resources[configuration.ResourceID].Properties[&amp;quot;CustomResourceResult&amp;quot;]
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;h2 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h2&gt;

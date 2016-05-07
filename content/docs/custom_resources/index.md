@@ -12,17 +12,17 @@ In some circumstances your service may need to provision or access resources tha
 
 Sparta provides unchecked access to the CloudFormation resource lifecycle via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) function.  This function registers a user-supplied [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) with the larger CloudFormation resource [lifecycle](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html). 
 
-In this section we'll walk through a sample user-defined custom resource and touch on on way state may be communicated across your application's resources.
+In this section we'll walk through a sample user-defined custom resource and discuss how a custom resource's outputs can be propagated to an application-level Sparta lambda function.
 
 ## Components
 
-There are two required, and two optional components to user-defined CustomResources:
+Defining a custom resource is a two stage process, depending on whether your application-level lambda function requires access to the custom resource outputs:
 
   1. The user-defined [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) instance
     - This function defines your resource's logic.  The multiple return value is `map[string]interface{}, error` which signify resource results and operation error, respectively.
   1. The `LambdaAWSInfo` struct which declares a dependency on your custom resource via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) member function.
-  1. (Optional) - The template decorator that binds your CustomResource's [data results](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html) to the owning `LambdaAWSInfo` caller.
-  1. (Optional) - A call from your standard Lambda's function body to discover the CustomResource outputs via `sparta.Discover()`. 
+  1. *Optional* - The template decorator that binds your CustomResource's [data results](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html) to the owning `LambdaAWSInfo` caller.
+  1. *Optional* - A call from your standard Lambda's function body to discover the CustomResource outputs via `sparta.Discover()`. 
   
   
 ### CustomResourceFunction
@@ -60,9 +60,11 @@ func userDefinedCustomResource(requestType string,
 }
 ```
 
+This function always succeeds and returns a non-empty results map consisting of a single key (`CustomResourceResult`).
+
 ### RequireCustomResource
 
-The next step is to associate this custom resource function with a previously created Sparta `NewLambda` result via [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource).  This function accepts:
+The next step is to associate this custom resource function with a previously created Sparta `LambdaAWSInfo` instance via [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource).  This function accepts:
 
   * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [NewLambda](https://godoc.org/github.com/mweagle/Sparta#NewLambda).
   * `userFunc`: Custom resource function pointer
@@ -103,13 +105,15 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 ```
 
+Since our custom resource function doesn't require any additional AWS resources, we provide an empty [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition).
+
 These two steps are sufficient to include your custom resource function in the CloudFormation stack lifecycle.  
 
 It's possible to share state from the custom resource to a standard Sparta lambda function by annotating your Sparta lambda function's metadata and then discovering it at execution time.   
 
 ### Optional - Template Decorator
 
-The first step is to include a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) that annotates your Sparta lambda functions CloudFormation resource metadata.  This function specifies which user defined output keys (`CustomResourceResult` in this example) you wish to make available during your lambda function's execution.  
+To link these resources together, the first step is to include a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) that annotates your Sparta lambda function's CloudFormation resource metadata.  This function specifies which user defined output keys (`CustomResourceResult` in this example) you wish to make available during your lambda function's execution.  
 
 ```
 lambdaFn.Decorator = func(lambdaResourceName string,
@@ -124,11 +128,11 @@ lambdaFn.Decorator = func(lambdaResourceName string,
 }
 ```
 
-The `cfResName` value is the CloudFormation resource name returned by `RequireCustomResource`.  The template decorator specifies which of your [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) outputs should be discoverable during the paren't lambda functions execution time.  
+The `cfResName` value is the CloudFormation resource name returned by `RequireCustomResource`.  The template decorator specifies which of your [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) outputs should be discoverable during the paren't lambda functions execution time through a [go-cloudformation](https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt) version of [Fn::GetAtt](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html).
 
 ### Optional - Discovery
 
-Discovery is handled by [sparta.Discover()](https://godoc.org/github.com/mweagle/Sparta#Discover) which returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover it's own [DiscoveryResource](https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource) element via the `ResourceID` field. Once this is found, the calling function can lookup the linked custom resource output via the `Properties` field using the keyname  (`CustomResource`) provided in the previous template decorator.  
+Discovery is handled by [sparta.Discover()](https://godoc.org/github.com/mweagle/Sparta#Discover) which returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) instance pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover its own [DiscoveryResource](https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource) keyname via the top-level `ResourceID` field. Once found, the calling function then looks up the linked custom resource output via the `Properties` field using the keyname  (`CustomResource`) provided in the previous template decorator.  
 
 In this example, the unmarshalled _DiscoveryInfo_ struct looks like:
   
@@ -154,6 +158,13 @@ In this example, the unmarshalled _DiscoveryInfo_ struct looks like:
   "msg": "Custom resource request",
   "time": "2016-05-07T14:13:37Z"
 }
+```
+
+To lookup the output, the calling function might do something like:
+
+```
+configuration, _ := sparta.Discover()
+customResult := configuration.Resources[configuration.ResourceID].Properties["CustomResourceResult"]
 ```
 
 ## Wrapping Up
