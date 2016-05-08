@@ -152,17 +152,20 @@ func (s3Site *S3Site) export(serviceName string,
 			gocf.String(S3ResourcesKey)),
 	})
 
+	iamPolicyList := gocf.IAMPoliciesList{}
+	iamPolicyList = append(iamPolicyList,
+		gocf.IAMPolicies{
+			PolicyDocument: ArbitraryJSONObject{
+				"Version":   "2012-10-17",
+				"Statement": statements,
+			},
+			PolicyName: gocf.String("S3SiteMgmnt"),
+		},
+	)
+
 	iamS3Role := &gocf.IAMRole{
 		AssumeRolePolicyDocument: AssumePolicyDocument,
-		Policies: &gocf.IAMPoliciesList{
-			gocf.IAMPolicies{
-				PolicyDocument: ArbitraryJSONObject{
-					"Version":   "2012-10-17",
-					"Statement": statements,
-				},
-				PolicyName: gocf.String("S3SiteMgmnt"),
-			},
-		},
+		Policies:                 &iamPolicyList,
 	}
 
 	iamRoleName := stableCloudformationResourceName("S3SiteIAMRole")
