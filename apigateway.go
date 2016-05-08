@@ -327,6 +327,12 @@ func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringa
 		ResponseParameters: corsIntegrationResponseParams(),
 	}
 
+	methodIntegrationIntegrationResponseList := gocf.APIGatewayMethodIntegrationIntegrationResponseList{}
+	methodIntegrationIntegrationResponseList = append(methodIntegrationIntegrationResponseList,
+		integrationResponse)
+	methodResponseList := gocf.APIGatewayMethodMethodResponseList{}
+	methodResponseList = append(methodResponseList, methodResponse)
+
 	corsMethod := &gocf.ApiGatewayMethod{
 		HttpMethod:        gocf.String("OPTIONS"),
 		AuthorizationType: gocf.String("NONE"),
@@ -338,9 +344,9 @@ func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringa
 				"application/json": "{\"statusCode\": 200}",
 				"text/plain":       "statusCode: 200",
 			},
-			IntegrationResponses: &gocf.APIGatewayMethodIntegrationIntegrationResponseList{integrationResponse},
+			IntegrationResponses: &methodIntegrationIntegrationResponseList,
 		},
-		MethodResponses: &gocf.APIGatewayMethodMethodResponseList{methodResponse},
+		MethodResponses: &methodResponseList,
 	}
 	return corsMethod
 }
