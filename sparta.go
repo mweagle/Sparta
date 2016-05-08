@@ -363,17 +363,17 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 		}
 	}
 
+	iamPolicies := gocf.IAMPoliciesList{}
+	iamPolicies = append(iamPolicies, gocf.IAMPolicies{
+		PolicyDocument: ArbitraryJSONObject{
+			"Version":   "2012-10-17",
+			"Statement": statements,
+		},
+		PolicyName: gocf.String(CloudFormationResourceName("LambdaPolicy")),
+	})
 	return gocf.IAMRole{
 		AssumeRolePolicyDocument: AssumePolicyDocument,
-		Policies: &gocf.IAMPoliciesList{
-			gocf.IAMPolicies{
-				PolicyDocument: ArbitraryJSONObject{
-					"Version":   "2012-10-17",
-					"Statement": statements,
-				},
-				PolicyName: gocf.String(CloudFormationResourceName("LambdaPolicy")),
-			},
-		},
+		Policies:                 &iamPolicies,
 	}
 }
 
