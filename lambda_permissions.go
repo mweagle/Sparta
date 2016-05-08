@@ -891,16 +891,20 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		if nil != exportErr {
 			return "", exportErr
 		}
+
+		cwEventsRuleTargetList := gocf.CloudWatchEventsRuleTargetList{}
+		cwEventsRuleTargetList = append(cwEventsRuleTargetList,
+			gocf.CloudWatchEventsRuleTarget{
+				Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+				Id:  gocf.String(uniqueRuleName),
+			},
+		)
+
 		// Add the rule
 		eventsRule := &gocf.EventsRule{
 			Name:        gocf.String(uniqueRuleName),
 			Description: gocf.String(eachRuleDefinition.Description),
-			Targets: &gocf.CloudWatchEventsRuleTargetList{
-				gocf.CloudWatchEventsRuleTarget{
-					Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-					Id:  gocf.String(uniqueRuleName),
-				},
-			},
+			Targets:     &cwEventsRuleTargetList,
 		}
 		if nil != eachRuleDefinition.EventPattern && "" != eachRuleDefinition.ScheduleExpression {
 			return "", fmt.Errorf("CloudWatchEvents rule %s specifies both EventPattern and ScheduleExpression", eachRuleName)
