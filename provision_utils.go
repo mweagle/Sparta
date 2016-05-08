@@ -158,17 +158,21 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 		// Insert the IAM role here.  We'll walk the policies data in the next section
 		// to make sure that the sourceARN we have is in the list
 		statements := CommonIAMStatements["core"]
+
+		iamPolicyList := gocf.IAMPoliciesList{}
+		iamPolicyList = append(iamPolicyList,
+			gocf.IAMPolicies{
+				PolicyDocument: ArbitraryJSONObject{
+					"Version":   "2012-10-17",
+					"Statement": statements,
+				},
+				PolicyName: gocf.String(fmt.Sprintf("%sPolicy", stableRoleName)),
+			},
+		)
+
 		existingIAMRole = &gocf.IAMRole{
 			AssumeRolePolicyDocument: AssumePolicyDocument,
-			Policies: &gocf.IAMPoliciesList{
-				gocf.IAMPolicies{
-					PolicyDocument: ArbitraryJSONObject{
-						"Version":   "2012-10-17",
-						"Statement": statements,
-					},
-					PolicyName: gocf.String(fmt.Sprintf("%sPolicy", stableRoleName)),
-				},
-			},
+			Policies:                 &iamPolicyList,
 		}
 		template.AddResource(stableRoleName, existingIAMRole)
 
