@@ -48,9 +48,12 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 		nil,
 		nil)
 
-	lambdaFn.Decorator = func(lambdaResourceName string,
+	lambdaFn.Decorator = func(serviceName string,
+		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
 		resourceMetadata map[string]interface{},
+		S3Bucket string,
+		S3Key string,
 		template *gocf.Template,
 		logger *logrus.Logger) error {
 
