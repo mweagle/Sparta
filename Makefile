@@ -30,8 +30,8 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/spf13/cobra
 	git clone --depth=1 https://github.com/spf13/cobra $(GOPATH)/src/github.com/spf13/cobra
 
-	rm -rf $(GOPATH)/src/github.com/ogier/pflag
-	git clone --depth=1 https://github.com/ogier/pflag $(GOPATH)/src/github.com/ogier/pflag
+	rm -rf $(GOPATH)/src/github.com/spf13/pflag
+	git clone --depth=1 https://github.com/spf13/pflag $(GOPATH)/src/github.com/spf13/pflag
 
 	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
 	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
