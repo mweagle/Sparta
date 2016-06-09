@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-06-09",
     "description": "",
-    "wordCount":  267 
+    "wordCount":  269 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[youtube: name:lumen github:https://github.com/mweagle googleplus: twitter:mweagle facebook: flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: flattr: name:lumen home:Sparta facebook: github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -388,13 +388,13 @@ func main() {
 
 <p><pre><code class="go">// Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
-  if command.Name() == &#34;provision&#34; &amp;&amp; len(options.SSHKeyName) &lt;= 0 {
+  if command.Name() == &#34;provision&#34; &amp;&amp; len(SSHKeyName) &lt;= 0 {
     return fmt.Errorf(&#34;SSHKeyName option is required&#34;)
   }
   return nil
   }
 }
-// What are the subnets?
+// Extract &amp; validate the SSH Key
 parseErr := sparta.ParseOptions(validationHook)
 if nil != parseErr {
   os.Exit(3)

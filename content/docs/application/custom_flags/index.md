@@ -44,13 +44,13 @@ The result of `ParseOptions` will be the value returned from your validation hoo
 {{< highlight go >}}
 // Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
-  if command.Name() == "provision" && len(options.SSHKeyName) <= 0 {
+  if command.Name() == "provision" && len(SSHKeyName) <= 0 {
     return fmt.Errorf("SSHKeyName option is required")
   }
   return nil
   }
 }
-// What are the subnets?
+// Extract & validate the SSH Key
 parseErr := sparta.ParseOptions(validationHook)
 if nil != parseErr {
   os.Exit(3)

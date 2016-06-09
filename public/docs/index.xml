@@ -156,13 +156,13 @@ func main() {
 
 &lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
-  if command.Name() == &amp;#34;provision&amp;#34; &amp;amp;&amp;amp; len(options.SSHKeyName) &amp;lt;= 0 {
+  if command.Name() == &amp;#34;provision&amp;#34; &amp;amp;&amp;amp; len(SSHKeyName) &amp;lt;= 0 {
     return fmt.Errorf(&amp;#34;SSHKeyName option is required&amp;#34;)
   }
   return nil
   }
 }
-// What are the subnets?
+// Extract &amp;amp; validate the SSH Key
 parseErr := sparta.ParseOptions(validationHook)
 if nil != parseErr {
   os.Exit(3)
