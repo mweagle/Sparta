@@ -162,6 +162,7 @@ var createForwarder = function(path) {
   {
     if (!golangProcess) {
       ensureGoLangBinary(function() {
+        sparta_utils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid));
         golangProcess = child_process.spawn(SPARTA_BINARY_PATH, ['execute', '--signal', process.pid], {});
 
         golangProcess.stdout.on('data', function(buf) {
@@ -192,14 +193,17 @@ var createForwarder = function(path) {
         golangProcess.on('error', terminationHandler('error'));
         golangProcess.on('exit', terminationHandler('exit'));
         process.on('exit', function() {
+          sparta_utils.log('Go process exited');
           if (golangProcess) {
             golangProcess.kill();
           }
         });
         var golangProcessReadyHandler = function() {
+           sparta_utils.log('SIGUSR2 signal received');
           process.removeListener('SIGUSR2', golangProcessReadyHandler);
           forwardToGolangProcess(event, context, METRIC_NAMES.CREATED);
         };
+        sparta_utils.log('Waiting for SIGUSR2 signal');
         process.on('SIGUSR2', golangProcessReadyHandler);
       });
     }
