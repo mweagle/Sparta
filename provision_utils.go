@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	gocf "github.com/crewjam/go-cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"github.com/mweagle/cloudformationresources"
-
-	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 )
@@ -19,31 +18,31 @@ const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
 // push-source configuration management.
 // The configuration is handled by CustomResources inserted into the generated
 // CloudFormation template.
-var PushSourceConfigurationActions = map[string][]string{}
-
-func init() {
-
-	PushSourceConfigurationActions[cloudformationresources.SNSLambdaEventSource] = []string{"sns:ConfirmSubscription",
+var PushSourceConfigurationActions = struct {
+	SNSLambdaEventSource            []string
+	S3LambdaEventSource             []string
+	SESLambdaEventSource            []string
+	CloudWatchLogsLambdaEventSource []string
+}{
+	SNSLambdaEventSource: []string{"sns:ConfirmSubscription",
 		"sns:GetTopicAttributes",
 		"sns:ListSubscriptionsByTopic",
 		"sns:Subscribe",
-		"sns:Unsubscribe"}
-
-	PushSourceConfigurationActions[cloudformationresources.S3LambdaEventSource] = []string{"s3:GetBucketLocation",
+		"sns:Unsubscribe"},
+	S3LambdaEventSource: []string{"s3:GetBucketLocation",
 		"s3:GetBucketNotification",
 		"s3:PutBucketNotification",
 		"s3:GetBucketNotificationConfiguration",
-		"s3:PutBucketNotificationConfiguration"}
-
-	PushSourceConfigurationActions[cloudformationresources.SESLambdaEventSource] = []string{"ses:CreateReceiptRuleSet",
+		"s3:PutBucketNotificationConfiguration"},
+	SESLambdaEventSource: []string{"ses:CreateReceiptRuleSet",
 		"ses:CreateReceiptRule",
 		"ses:DeleteReceiptRule",
 		"ses:DeleteReceiptRuleSet",
-		"ses:DescribeReceiptRuleSet"}
-
-	PushSourceConfigurationActions[cloudformationresources.CloudWatchLogsLambdaEventSource] = []string{"logs:DescribeSubscriptionFilters",
+		"ses:DescribeReceiptRuleSet"},
+	CloudWatchLogsLambdaEventSource: []string{"logs:DescribeSubscriptionFilters",
 		"logs:DeleteSubscriptionFilter",
-		"logs:PutSubscriptionFilter"}
+		"logs:PutSubscriptionFilter",
+	},
 }
 
 func nodeJSHandlerName(jsBaseFilename string) string {
@@ -135,8 +134,17 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	template *gocf.Template,
 	logger *logrus.Logger) (string, error) {
 
-	principalActions, exists := PushSourceConfigurationActions[awsPrincipalName]
-	if !exists {
+	var principalActions []string
+	switch awsPrincipalName {
+	case cloudformationresources.SNSLambdaEventSource:
+		principalActions = PushSourceConfigurationActions.SNSLambdaEventSource
+	case cloudformationresources.S3LambdaEventSource:
+		principalActions = PushSourceConfigurationActions.S3LambdaEventSource
+	case cloudformationresources.SESLambdaEventSource:
+		principalActions = PushSourceConfigurationActions.SESLambdaEventSource
+	case cloudformationresources.CloudWatchLogsLambdaEventSource:
+		principalActions = PushSourceConfigurationActions.CloudWatchLogsLambdaEventSource
+	default:
 		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
 

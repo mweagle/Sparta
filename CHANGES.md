@@ -2,8 +2,8 @@
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) of self-binary.
   - `CommonIAMStatements` changed from `map[string]*` to struct with named fields.
-    - Eliminated [goptions](https://github.com/voxelbrain/goptions)
-    - Added [cobra](https://github.com/spf13/cobra), [govalidator](https://github.com/asaskevich/govalidator/)
+  - `PushSourceConfigurationActions` changed from `map[string][]string]` to struct with named fields.
+  - Eliminated [goptions](https://github.com/voxelbrain/goptions)
 - :checkered_flag: **CHANGES**
   - Moved CLI parsing to [Cobra](https://github.com/spf13/cobra)
     - Applications can extend the set of flags for existing Sparta commands (eg, `provision` can include `--subnetIDs`) as well as add their own top level commands to the `CommandLineOptions` exported _var_.  See [SpartaCICD](https://github.com/mweagle/SpartaCICD) for an example.
