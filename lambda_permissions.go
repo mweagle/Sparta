@@ -212,7 +212,7 @@ var s3SourceArnParts = []gocf.Stringable{
 // for more information.
 type S3Permission struct {
 	BasePermission
-	// S3 events to register for (eg: `[]string{"s3:ObjectCreated:*", "s3:ObjectRemoved:*"}`).
+	// S3 events to register for (eg: `[]string{s3:GetObjectObjectCreated:*", "s3:ObjectRemoved:*"}`).
 	Events []string `json:"Events,omitempty"`
 	// S3.NotificationConfigurationFilter
 	// to scope event forwarding.  See
