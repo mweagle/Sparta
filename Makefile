@@ -46,9 +46,8 @@ generate:
 	go generate -x
 	@echo "Generate complete: `date`"
 
-travisci: get generate
+travisci: generate
 	go build .
-
 
 format:
 	go fmt .
