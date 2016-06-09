@@ -1,3 +1,17 @@
+## v0.7.0
+- :warning: **BREAKING**
+  - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) of self-binary.
+  - `CommonIAMStatements` changed from `map[string]*` to struct with named fields.
+    - Eliminated [goptions](https://github.com/voxelbrain/goptions)
+    - Added [cobra](https://github.com/spf13/cobra), [govalidator](https://github.com/asaskevich/govalidator/)
+- :checkered_flag: **CHANGES**
+  - Moved CLI parsing to [Cobra](https://github.com/spf13/cobra)
+    - Applications can extend the set of flags for existing Sparta commands (eg, `provision` can include `--subnetIDs`) as well as add their own top level commands to the `CommandLineOptions` exported _var_.  See [SpartaCICD](https://github.com/mweagle/SpartaCICD) for an example.
+  - Added _Sparta/aws/cloudformation_ `ConvertToTemplateExpression` to convert string value into [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible representation. Parses inline AWS references and supports user-defined [template](https://golang.org/pkg/text/template/) properties.
+  - Added `sparta/aws/iam` _PolicyStatement_ type 
+- :bug: **FIXED**
+  - N/A
+  
 ## v0.6.0
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `map[string]string` to allow for decorating CloudFormation resource metadata
