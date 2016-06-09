@@ -8,6 +8,7 @@ import (
 	"github.com/mweagle/cloudformationresources"
 
 	gocf "github.com/crewjam/go-cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
@@ -127,14 +128,14 @@ func (s3Site *S3Site) export(serviceName string,
 	// 3 - Create the IAM role for the lambda function
 	// The lambda function needs to download the posted resource content, as well
 	// as manage the S3 bucket that hosts the site.
-	statements := CommonIAMStatements["core"]
-	statements = append(statements, iamPolicyStatement{
+	statements := CommonIAMStatements.Core
+	statements = append(statements, spartaIAM.PolicyStatement{
 		Action: []string{"s3:ListBucket",
 			"s3:ListObjectsPages"},
 		Effect:   "Allow",
 		Resource: s3SiteBucketResourceValue,
 	})
-	statements = append(statements, iamPolicyStatement{
+	statements = append(statements, spartaIAM.PolicyStatement{
 		Action: []string{"s3:DeleteObject",
 			"s3:PutObject",
 			"s3:DeleteObjects",
@@ -142,7 +143,7 @@ func (s3Site *S3Site) export(serviceName string,
 		Effect:   "Allow",
 		Resource: s3SiteBucketAllKeysResourceValue,
 	})
-	statements = append(statements, iamPolicyStatement{
+	statements = append(statements, spartaIAM.PolicyStatement{
 		Action: []string{"s3:GetObject"},
 		Effect: "Allow",
 		Resource: gocf.Join("",

@@ -31,6 +31,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	gocf "github.com/crewjam/go-cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -444,7 +445,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
 				ctx.cfTemplate.AddResource(logicalName,
-					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings, ctx.logger))
+					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings, eachLambdaInfo.Options, ctx.logger))
 
 				ctx.lambdaIAMRoleNameMap[logicalName] = gocf.GetAtt(logicalName, "Arn")
 			}
@@ -459,8 +460,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				_, exists := ctx.lambdaIAMRoleNameMap[customResourceLogicalName]
 				if !exists {
 					ctx.cfTemplate.AddResource(customResourceLogicalName,
-						eachCustomResource.roleDefinition.toResource(nil, ctx.logger))
-
+						eachCustomResource.roleDefinition.toResource(nil, eachCustomResource.options, ctx.logger))
 					ctx.lambdaIAMRoleNameMap[customResourceLogicalName] = gocf.GetAtt(customResourceLogicalName, "Arn")
 				}
 			}
@@ -974,7 +974,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 		createStackInput := &cloudformation.CreateStackInput{
 			StackName:        aws.String(ctx.serviceName),
 			TemplateURL:      aws.String(cfTemplateURL),
-			TimeoutInMinutes: aws.Int64(5),
+			TimeoutInMinutes: aws.Int64(20),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
 			Capabilities:     stackCapabilities(ctx.cfTemplate),
 		}
@@ -1279,7 +1279,7 @@ func Provision(noop bool,
 		},
 		cfTemplate:     gocf.NewTemplate(),
 		s3Bucket:       s3Bucket,
-		awsSession:     awsSession(logger),
+		awsSession:     spartaAWS.NewSession(logger),
 		templateWriter: templateWriter,
 		logger:         logger,
 	}
@@ -1294,6 +1294,8 @@ func Provision(noop bool,
 		next, err := step(ctx)
 		if err != nil {
 			ctx.rollback()
+			// Workflow step?
+			ctx.logger.Error(err)
 			return err
 		}
 		if next == nil {

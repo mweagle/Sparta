@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"github.com/mweagle/cloudformationresources"
 
 	gocf "github.com/crewjam/go-cloudformation"
@@ -157,7 +158,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	if !exists {
 		// Insert the IAM role here.  We'll walk the policies data in the next section
 		// to make sure that the sourceARN we have is in the list
-		statements := CommonIAMStatements["core"]
+		statements := CommonIAMStatements.Core
 
 		iamPolicyList := gocf.IAMPoliciesList{}
 		iamPolicyList = append(iamPolicyList,
@@ -188,7 +189,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 		for _, eachPolicy := range *existingIAMRole.Policies {
 			policyDoc := eachPolicy.PolicyDocument.(ArbitraryJSONObject)
 			statements := policyDoc["Statement"]
-			for _, eachStatement := range statements.([]iamPolicyStatement) {
+			for _, eachStatement := range statements.([]spartaIAM.PolicyStatement) {
 				if sourceArn.String() == eachStatement.Resource.String() {
 
 					logger.WithFields(logrus.Fields{
@@ -210,8 +211,8 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 		if len(principalActions) > 0 {
 			rootPolicy := (*existingIAMRole.Policies)[0]
 			rootPolicyDoc := rootPolicy.PolicyDocument.(ArbitraryJSONObject)
-			rootPolicyStatements := rootPolicyDoc["Statement"].([]iamPolicyStatement)
-			rootPolicyDoc["Statement"] = append(rootPolicyStatements, iamPolicyStatement{
+			rootPolicyStatements := rootPolicyDoc["Statement"].([]spartaIAM.PolicyStatement)
+			rootPolicyDoc["Statement"] = append(rootPolicyStatements, spartaIAM.PolicyStatement{
 				Effect:   "Allow",
 				Action:   principalActions,
 				Resource: sourceArn,

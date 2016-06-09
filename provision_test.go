@@ -40,9 +40,12 @@ func TestProvision(t *testing.T) {
 	}
 }
 
-func templateDecorator(lambdaResourceName string,
+func templateDecorator(serviceName string,
+	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 

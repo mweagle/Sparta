@@ -7,9 +7,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"math/rand"
 	"net/http"
-	"os"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -20,10 +20,6 @@ import (
 	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/voxelbrain/goptions"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,23 +28,12 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.6.0"
+	SpartaVersion = "0.7.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
-
-	// @enum cliOptionExecute
-	cliOptionExecute = "execute"
-	// @enum cliOptionDescribe
-	cliOptionDescribe = "describe"
-	// @enum cliOptionExplore
-	cliOptionExplore = "explore"
-	// @enum cliOptionProvision
-	cliOptionProvision = "provision"
-	// @enum cliOptionDelete
-	cliOptionDelete = "delete"
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -111,8 +96,13 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
-var CommonIAMStatements = map[string][]iamPolicyStatement{
-	"core": {
+var CommonIAMStatements = struct {
+	Core     []spartaIAM.PolicyStatement
+	VPC      []spartaIAM.PolicyStatement
+	DynamoDB []spartaIAM.PolicyStatement
+	Kinesis  []spartaIAM.PolicyStatement
+}{
+	Core: []spartaIAM.PolicyStatement{
 		{
 			Action: []string{"logs:CreateLogGroup",
 				"logs:CreateLogStream",
@@ -137,7 +127,16 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 			Resource: gocf.Join("", cloudFormationThisStackArn...),
 		},
 	},
-	"dynamodb": {
+	VPC: []spartaIAM.PolicyStatement{
+		{
+			Action: []string{"ec2:CreateNetworkInterface",
+				"ec2:DescribeNetworkInterfaces",
+				"ec2:DeleteNetworkInterface"},
+			Effect:   "Allow",
+			Resource: wildcardArn,
+		},
+	},
+	DynamoDB: []spartaIAM.PolicyStatement{
 		{
 			Effect: "Allow",
 			Action: []string{"dynamodb:DescribeStream",
@@ -145,8 +144,9 @@ var CommonIAMStatements = map[string][]iamPolicyStatement{
 				"dynamodb:GetShardIterator",
 				"dynamodb:ListStreams",
 			},
-		}},
-	"kinesis": {
+		},
+	},
+	Kinesis: []spartaIAM.PolicyStatement{
 		{
 			Effect: "Allow",
 			Action: []string{"kinesis:GetRecords",
@@ -213,13 +213,6 @@ type CustomResourceFunction func(requestType string,
 // are aggregated as []ArbitraryJSONObject before being marsharled to JSON
 // for API operations.
 type ArbitraryJSONObject map[string]interface{}
-
-// IAM policy statement entry
-type iamPolicyStatement struct {
-	Effect   string
-	Action   []string
-	Resource *gocf.StringExpr
-}
 
 // Package private type to deserialize NodeJS proxied
 // Lambda Event and Context information
@@ -288,9 +281,12 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html and
 // http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for
 // more information.
-type TemplateDecorator func(lambdaResourceName string,
+type TemplateDecorator func(serviceName string,
+	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
 	template *gocf.Template,
 	logger *logrus.Logger) error
 
@@ -337,15 +333,23 @@ type IAMRoleDefinition struct {
 }
 
 func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*EventSourceMapping,
+	options *LambdaFunctionOptions,
 	logger *logrus.Logger) gocf.IAMRole {
 
-	statements := CommonIAMStatements["core"]
+	statements := CommonIAMStatements.Core
 	for _, eachPrivilege := range roleDefinition.Privileges {
-		statements = append(statements, iamPolicyStatement{
+		statements = append(statements, spartaIAM.PolicyStatement{
 			Effect:   "Allow",
 			Action:   eachPrivilege.Actions,
 			Resource: eachPrivilege.resourceExpr(),
 		})
+	}
+
+	// Add VPC permissions iff needed
+	if options != nil && options.VpcConfig != nil {
+		for _, eachStatement := range CommonIAMStatements.VPC {
+			statements = append(statements, eachStatement)
+		}
 	}
 
 	// http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -355,10 +359,13 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 		if len(arnParts) >= 2 {
 			awsService := arnParts[2]
 			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
-			serviceStatements, exists := CommonIAMStatements[awsService]
-			if exists {
-				statements = append(statements, serviceStatements...)
-				statements[len(statements)-1].Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
+			switch awsService {
+			case "dynamodb":
+				statements = append(statements, CommonIAMStatements.DynamoDB...)
+			case "kinesis":
+				statements = append(statements, CommonIAMStatements.Kinesis...)
+			default:
+				logger.Debug("No additional statements found")
 			}
 		}
 	}
@@ -719,9 +726,12 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		// are overwritten
 		metadataMap := make(map[string]interface{}, 0)
 		decoratorProxyTemplate := gocf.NewTemplate()
-		err := info.Decorator(info.logicalName(),
+		err := info.Decorator(serviceName,
+			info.logicalName(),
 			lambdaResource,
 			metadataMap,
+			S3Bucket,
+			S3Key,
 			decoratorProxyTemplate,
 			logger)
 		if nil != err {
@@ -796,46 +806,6 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus
 // Sanitize the provided input by replacing illegal characters with underscores
 func sanitizedName(input string) string {
 	return reSanitize.ReplaceAllString(input, "_")
-}
-
-type logrusProxy struct {
-	logger *logrus.Logger
-}
-
-func (proxy *logrusProxy) Log(args ...interface{}) {
-	proxy.logger.Info(args...)
-}
-
-// Returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
-// object that attaches a debug level handler to all AWS requests from services
-// sharing the session value.
-func awsSession(logger *logrus.Logger) *session.Session {
-	awsConfig := &aws.Config{
-		CredentialsChainVerboseErrors: aws.Bool(true),
-	}
-	// Log AWS calls if needed
-	switch logger.Level {
-	case logrus.DebugLevel:
-		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithRequestErrors)
-	}
-	awsConfig.Logger = &logrusProxy{logger}
-	sess := session.New(awsConfig)
-	sess.Handlers.Send.PushFront(func(r *request.Request) {
-		logger.WithFields(logrus.Fields{
-			"Service":   r.ClientInfo.ServiceName,
-			"Operation": r.Operation.Name,
-			"Method":    r.Operation.HTTPMethod,
-			"Path":      r.Operation.HTTPPath,
-			"Payload":   r.Params,
-		}).Debug("AWS Request")
-	})
-
-	logger.WithFields(logrus.Fields{
-		"Name":    aws.SDKName,
-		"Version": aws.SDKVersion,
-	}).Debug("AWS SDK Info")
-
-	return sess
 }
 
 //
@@ -917,94 +887,4 @@ func NewLogger(level string) (*logrus.Logger, error) {
 	}
 	logger.Level = logLevel
 	return logger, nil
-}
-
-// Main defines the primary handler for transforming an application into a Sparta package.  The
-// serviceName is used to uniquely identify your service within a region and will
-// be used for subsequent updates.  For provisioning, ensure that you've
-// properly configured AWS credentials for the golang SDK.
-// See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
-// for more information.
-func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
-
-	// We need to be able to provision an IAM role that has capabilities to
-	// manage the other sources.  That'll give us the role arn to use in the custom
-	// resource execution.
-	options := struct {
-		Noop     bool          `goptions:"-n, --noop, description='Dry-run behavior only (do not provision stack)'"`
-		LogLevel string        `goptions:"-l, --level, description='Log level [panic, fatal, error, warn, info, debug]'"`
-		Help     goptions.Help `goptions:"-h, --help, description='Show this help'"`
-
-		Verb      goptions.Verbs
-		Provision struct {
-			S3Bucket string `goptions:"-b,--s3Bucket, description='S3 Bucket to use for Lambda source', obligatory"`
-		} `goptions:"provision"`
-		Delete struct {
-		} `goptions:"delete"`
-		Execute struct {
-			Port            int `goptions:"-p,--port, description='Alternative port for HTTP binding (default=9999)'"`
-			SignalParentPID int `goptions:"-s,--signal, description='Process ID to signal with SIGUSR2 once ready'"`
-		} `goptions:"execute"`
-		Describe struct {
-			OutputFile string `goptions:"-o,--out, description='Output file for HTML description', obligatory"`
-		} `goptions:"describe"`
-		Explore struct {
-			Port int `goptions:"-p,--port, description='Alternative port for HTTP binding (default=9999)'"`
-		} `goptions:"explore"`
-	}{ // Default values goes here
-		LogLevel: "info",
-	}
-	goptions.ParseAndFail(&options)
-	logger, err := NewLogger(options.LogLevel)
-	if err != nil {
-		goptions.PrintHelp()
-		os.Exit(1)
-	}
-	// Set the formatter before outputting the info s.t. it's properly
-	// parsed by CloudWatch Logs
-	if cliOptionExecute == options.Verb {
-		logger.Formatter = new(logrus.JSONFormatter)
-	} else {
-		logger.Formatter = new(logrus.TextFormatter)
-	}
-	logger.WithFields(logrus.Fields{
-		"Option":  options.Verb,
-		"Version": SpartaVersion,
-		"UTC":     (time.Now().UTC().Format(time.RFC3339)),
-	}).Info("Welcome to Sparta")
-	if cliOptionExecute != options.Verb {
-		logger.Info(strings.Repeat("-", 80))
-	}
-	err = validateSpartaPreconditions(lambdaAWSInfos, logger)
-	if err != nil {
-		return err
-	}
-	switch options.Verb {
-	case cliOptionProvision:
-		err = Provision(options.Noop, serviceName, serviceDescription, lambdaAWSInfos, api, site, options.Provision.S3Bucket, nil, logger)
-	case cliOptionExecute:
-		initializeDiscovery(serviceName, lambdaAWSInfos, logger)
-		err = Execute(lambdaAWSInfos, options.Execute.Port, options.Execute.SignalParentPID, logger)
-	case cliOptionDelete:
-		err = Delete(serviceName, logger)
-	case cliOptionExplore:
-		err = Explore(lambdaAWSInfos, options.Explore.Port, logger)
-	case cliOptionDescribe:
-		fileWriter, errCreate := os.Create(options.Describe.OutputFile)
-		if errCreate != nil {
-			return fmt.Errorf("Failed to open %s output. Error: %s", options.Describe.OutputFile, errCreate)
-		}
-		defer fileWriter.Close()
-		err = Describe(serviceName, serviceDescription, lambdaAWSInfos, api, site, fileWriter, logger)
-		if err != nil {
-			err = fileWriter.Sync()
-		}
-	default:
-		goptions.PrintHelp()
-		err = fmt.Errorf("Unsupported subcommand: %s", string(options.Verb))
-	}
-	if nil != err {
-		logger.Error(err)
-	}
-	return err
 }
