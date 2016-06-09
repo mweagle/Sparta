@@ -1,6 +1,6 @@
 +++
 author = "Matt Weagle"
-date = "2015-11-29T06:50:17"
+date = "2016-06-09T17:46:33Z"
 title = "Command Line Options"
 tags = ["sparta"]
 type = "doc"

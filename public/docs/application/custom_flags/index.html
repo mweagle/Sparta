@@ -25,8 +25,8 @@
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
-<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:published_time" content="2016-06-09T17:46:33Z" />
+<meta property="og:article:modified_time" content="2016-06-09T17:46:33Z" />
 
   
     
@@ -53,9 +53,9 @@
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2015-11-29",
+    "datePublished": "2016-06-09",
     "description": "",
-    "wordCount":  0 
+    "wordCount":  267 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: name:lumen home:Sparta github:https://github.com/mweagle googleplus: twitter:mweagle youtube:]">
+<body class="map[youtube: name:lumen github:https://github.com/mweagle googleplus: twitter:mweagle facebook: flattr: home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -338,12 +338,71 @@
 
       <hr />
       <div id="toc">
-      
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a>
+<ul>
+<li><a href="#adding-flags:d680e8a854a7cbad6d490c445cba2eba">Adding Flags</a></li>
+<li><a href="#validating-flags:d680e8a854a7cbad6d490c445cba2eba">Validating Flags</a></li>
+</ul></li>
+</ul>
+</nav>
       </div>
       <hr />
 
       <div class="container content">
   
+
+<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+
+<p>Some commands (eg: <code>provision</code>) may require additional options.  For instance, your application&rsquo;s provision logic may require VPC <a href="https://aws.amazon.com/blogs/aws/new-access-resources-in-a-vpc-from-your-lambda-functions/">subnets</a> or EC2 <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html">SSH Key Names</a>.</p>
+
+<p>The default Sparta command line option flags may be extended and validated by building on the exposed <a href="https://github.com/spf13/cobra">Cobra</a> command objects.</p>
+
+<h2 id="adding-flags:d680e8a854a7cbad6d490c445cba2eba">Adding Flags</h2>
+
+<p>To add a flag, use one of the <a href="https://github.com/spf13/pflag">pflag</a> functions to register your custom flag with one of the standard <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17">CommandLineOption</a> values.</p>
+
+<p>For example:</p>
+
+<pre><code class="go">// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
+var SSHKeyName string
+
+func main() {
+  // And add the SSHKeyName option to the provision step
+  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
+    &#34;key&#34;,
+    &#34;k&#34;,
+    &#34;&#34;,
+    &#34;SSH Key Name to use for EC2 instances&#34;)
+}</code></pre>
+
+
+<h2 id="validating-flags:d680e8a854a7cbad6d490c445cba2eba">Validating Flags</h2>
+
+<p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input.</p>
+
+<p>To validate user input, define a <a href="https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook">CommandLineOptionsHook</a> function and provide it to <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">sparta.ParseOptions</a>.  This function is called after <em>pflag</em> bindings are invoked.</p>
+
+<p>The result of <code>ParseOptions</code> will be the value returned from your validation hook function. If there is an error, your application can exit with an application specific exit code.  For instance:</p>
+
+<p><pre><code class="go">// Define a validation hook s.t. we can verify the SSHKey is valid
+validationHook := func(command *cobra.Command) error {
+  if command.Name() == &#34;provision&#34; &amp;&amp; len(options.SSHKeyName) &lt;= 0 {
+    return fmt.Errorf(&#34;SSHKeyName option is required&#34;)
+  }
+  return nil
+  }
+}
+// What are the subnets?
+parseErr := sparta.ParseOptions(validationHook)
+if nil != parseErr {
+  os.Exit(3)
+}</code></pre>
+</p>
+
+<p>Sparta uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
+
 </div>
 
 

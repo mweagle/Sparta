@@ -8,8 +8,170 @@
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
-    <lastBuildDate>Tue, 16 Feb 2016 06:40:36 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jun 2016 17:46:33 +0000</lastBuildDate>
     <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Application Customization</title>
+      <link>http://gosparta.io/docs/application/</link>
+      <pubDate>Thu, 09 Jun 2016 17:46:33 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/</guid>
+      <description>&lt;p&gt;Sparta-based applications use the &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; package to expose a rich set of command line options.  This section describes:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/commandline&#34;&gt;Default options&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;Adding flags&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;Adding commands&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Adding custom flags or commands is typically a prerequisite to supporting &lt;a href=&#34;http://gosparta.io/docs/alternative_topologies&#34;&gt;alternative topologies&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Command Line Options</title>
+      <link>http://gosparta.io/docs/application/commandline/</link>
+      <pubDate>Thu, 09 Jun 2016 17:46:33 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/commandline/</guid>
+      <description>
+
+&lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaFunctions []*sparta.LambdaAWSInfo
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;,
+  fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;),
+  lambdaFunctions,
+  nil,
+  nil)&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;A compiled application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;$ ./SpartaHelloWorld --help
+
+Test HelloWorld resource command
+
+Usage:
+  SpartaHelloWorld [command]
+
+Available Commands:
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&amp;#39; (default &amp;#34;info&amp;#34;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information about a command.&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;It&amp;rsquo;s also possible to add &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;custom flags&lt;/a&gt; and/or &lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;custom commands&lt;/a&gt; to extend your application&amp;rsquo;s behavior.&lt;/p&gt;
+
+&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
+
+&lt;h1 id=&#34;delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/h1&gt;
+
+&lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
+
+&lt;h1 id=&#34;describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
+
+&lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
+
+&lt;h1 id=&#34;execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
+
+&lt;h1 id=&#34;explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
+
+&lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
+
+&lt;h1 id=&#34;version:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Version&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;version&lt;/code&gt; option is a diagnostic command that prints the version of the Sparta framework embedded in the application.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Custom Application Commands</title>
+      <link>http://gosparta.io/docs/application/custom_commands/</link>
+      <pubDate>Thu, 09 Jun 2016 17:46:33 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/custom_commands/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>http://gosparta.io/docs/application/custom_flags/</link>
+      <pubDate>Thu, 09 Jun 2016 17:46:33 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/custom_flags/</guid>
+      <description>
+
+&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;Some commands (eg: &lt;code&gt;provision&lt;/code&gt;) may require additional options.  For instance, your application&amp;rsquo;s provision logic may require VPC &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-access-resources-in-a-vpc-from-your-lambda-functions/&#34;&gt;subnets&lt;/a&gt; or EC2 &lt;a href=&#34;http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html&#34;&gt;SSH Key Names&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;The default Sparta command line option flags may be extended and validated by building on the exposed &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; command objects.&lt;/p&gt;
+
+&lt;h2 id=&#34;adding-flags:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Adding Flags&lt;/h2&gt;
+
+&lt;p&gt;To add a flag, use one of the &lt;a href=&#34;https://github.com/spf13/pflag&#34;&gt;pflag&lt;/a&gt; functions to register your custom flag with one of the standard &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17&#34;&gt;CommandLineOption&lt;/a&gt; values.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
+var SSHKeyName string
+
+func main() {
+  // And add the SSHKeyName option to the provision step
+  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;amp;SSHKeyName,
+    &amp;#34;key&amp;#34;,
+    &amp;#34;k&amp;#34;,
+    &amp;#34;&amp;#34;,
+    &amp;#34;SSH Key Name to use for EC2 instances&amp;#34;)
+}&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;h2 id=&#34;validating-flags:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Validating Flags&lt;/h2&gt;
+
+&lt;p&gt;Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input.&lt;/p&gt;
+
+&lt;p&gt;To validate user input, define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook&#34;&gt;CommandLineOptionsHook&lt;/a&gt; function and provide it to &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ParseOptions&#34;&gt;sparta.ParseOptions&lt;/a&gt;.  This function is called after &lt;em&gt;pflag&lt;/em&gt; bindings are invoked.&lt;/p&gt;
+
+&lt;p&gt;The result of &lt;code&gt;ParseOptions&lt;/code&gt; will be the value returned from your validation hook function. If there is an error, your application can exit with an application specific exit code.  For instance:&lt;/p&gt;
+
+&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Define a validation hook s.t. we can verify the SSHKey is valid
+validationHook := func(command *cobra.Command) error {
+  if command.Name() == &amp;#34;provision&amp;#34; &amp;amp;&amp;amp; len(options.SSHKeyName) &amp;lt;= 0 {
+    return fmt.Errorf(&amp;#34;SSHKeyName option is required&amp;#34;)
+  }
+  return nil
+  }
+}
+// What are the subnets?
+parseErr := sparta.ParseOptions(validationHook)
+if nil != parseErr {
+  os.Exit(3)
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Sparta uses the &lt;a href=&#34;https://github.com/asaskevich/govalidator/&#34;&gt;govalidator&lt;/a&gt; package to simplify validating command line arguments.  See &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/sparta_main.go&#34;&gt;sparta_main.go&lt;/a&gt; for an example.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Event Source - CloudWatch Logs</title>
@@ -1639,117 +1801,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
 </description>
-    </item>
-    
-    <item>
-      <title>Alternative Topologies</title>
-      <link>http://gosparta.io/docs/alternative_topologies/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/alternative_topologies/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Application Customization</title>
-      <link>http://gosparta.io/docs/application/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/application/</guid>
-      <description>&lt;p&gt;Sparta-based applications use the &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; package to expose a rich set of command line options.  This section describes:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/commandline&#34;&gt;Default options&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;Adding flags&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;Adding commands&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Adding custom flags or commands is typically a prerequisite to supporting &lt;a href=&#34;http://gosparta.io/alternative_topologies&#34;&gt;alternative topologies&lt;/a&gt;.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Command Line Options</title>
-      <link>http://gosparta.io/docs/application/commandline/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/application/commandline/</guid>
-      <description>
-
-&lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaFunctions []*sparta.LambdaAWSInfo
-lambdaFunctions = append(lambdaFunctions, lambdaFn)
-err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;,
-  fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;),
-  lambdaFunctions,
-  nil,
-  nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;A compiled application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;$ ./SpartaHelloWorld --help
-
-Test HelloWorld resource command
-
-Usage:
-  SpartaHelloWorld [command]
-
-Available Commands:
-  version     Sparta framework version
-  provision   Provision service
-  delete      Delete service
-  execute     Execute
-  describe    Describe service
-  explore     Interactively explore service
-
-Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&amp;#39; (default &amp;#34;info&amp;#34;)
-  -n, --noop           Dry-run behavior only (do not perform mutations)
-
-Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information about a command.&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;It&amp;rsquo;s also possible to add &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;custom flags&lt;/a&gt; and/or &lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;custom commands&lt;/a&gt; to extend your application&amp;rsquo;s behavior.&lt;/p&gt;
-
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
-
-&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
-
-&lt;h1 id=&#34;delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/h1&gt;
-
-&lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
-
-&lt;h1 id=&#34;describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/h1&gt;
-
-&lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
-
-&lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
-
-&lt;h1 id=&#34;execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/h1&gt;
-
-&lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
-
-&lt;h1 id=&#34;explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/h1&gt;
-
-&lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
-
-&lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
-
-&lt;h1 id=&#34;version:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Version&lt;/h1&gt;
-
-&lt;p&gt;The &lt;code&gt;version&lt;/code&gt; option is a diagnostic command that prints the version of the Sparta framework embedded in the application.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Custom Application Commands</title>
-      <link>http://gosparta.io/docs/application/custom_commands/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/application/custom_commands/</guid>
-      <description></description>
     </item>
     
   </channel>

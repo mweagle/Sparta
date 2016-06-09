@@ -3,8 +3,28 @@
   
   <url>
     <loc>http://gosparta.io/</loc>
-    <lastmod>2016-02-16T06:40:36+00:00</lastmod>
+    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/application/</loc>
+    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/application/commandline/</loc>
+    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/application/custom_commands/</loc>
+    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/application/custom_flags/</loc>
+    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
   </url>
   
   <url>
@@ -64,26 +84,6 @@
   
   <url>
     <loc>http://gosparta.io/docs/alternative_topologies/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/application/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/application/commandline/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/application/custom_commands/</loc>
-    <lastmod>2015-11-29T06:50:17+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/application/custom_flags/</loc>
     <lastmod>2015-11-29T06:50:17+00:00</lastmod>
   </url>
   
