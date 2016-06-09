@@ -9,6 +9,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 )
 
 // Dynamically assigned discover function that is set by Main
@@ -181,7 +182,7 @@ func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, lo
 			}
 
 			// Look it up
-			awsCloudFormation := cloudformation.New(awsSession(logger))
+			awsCloudFormation := cloudformation.New(spartaAWS.NewSession(logger))
 			params := &cloudformation.DescribeStackResourceInput{
 				LogicalResourceId: aws.String(lambdaCFResource),
 				StackName:         aws.String(serviceName),
