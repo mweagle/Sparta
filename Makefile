@@ -18,9 +18,6 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/Sirupsen/logrus
 	git clone --depth=1 https://github.com/Sirupsen/logrus $(GOPATH)/src/github.com/Sirupsen/logrus
 
-	rm -rf $(GOPATH)/src/github.com/voxelbrain/goptions
-	git clone --depth=1 https://github.com/voxelbrain/goptions $(GOPATH)/src/github.com/voxelbrain/goptions
-
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 
@@ -30,6 +27,12 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources
 	git clone --depth=1 https://github.com/mweagle/cloudformationresources $(GOPATH)/src/github.com/mweagle/cloudformationresources
 
+	rm -rf $(GOPATH)/src/github.com/spf13/cobra
+	git clone --depth=1 https://github.com/spf13/cobra $(GOPATH)/src/github.com/spf13/cobra
+
+	rm -rf $(GOPATH)/src/github.com/ogier/pflag
+	git clone --depth=1 https://github.com/ogier/pflag $(GOPATH)/src/github.com/ogier/pflag
+	
 reset:
 		git reset --hard
 		git clean -f -d
