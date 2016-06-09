@@ -11,6 +11,11 @@ import (
 // Explore supports interactive command line invocation of the previously
 // provisioned Sparta service
 func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) error {
+	validationErr := validateSpartaPreconditions(lambdaAWSInfos, logger)
+	if validationErr != nil {
+		return validationErr
+	}
+	
 	if 0 == port {
 		port = 9999
 	}
