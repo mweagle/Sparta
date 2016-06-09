@@ -21,6 +21,9 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 
+	rm -rf $(GOPATH)/src/mweagle/cloudformationresources/
+	git clone --depth=1 https://mweagle/cloudformationresources/ $(GOPATH)/src/mweagle/cloudformationresources/
+
 	rm -rf $(GOPATH)/src/github.com/crewjam/go-cloudformation
 	git clone --depth=1 https://github.com/crewjam/go-cloudformation $(GOPATH)/src/github.com/crewjam/go-cloudformation
 
