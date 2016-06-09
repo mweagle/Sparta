@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  276 
+    "wordCount":  297 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[facebook: youtube: name:lumen bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
+<body class="map[home:Sparta github:https://github.com/mweagle googleplus: twitter:mweagle youtube: name:lumen bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: googleAnalytics:UA-70794971-1]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -340,11 +340,12 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
+<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
 <li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
 <li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
 <li><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></li>
 <li><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></li>
-<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
+<li><a href="#version:d680e8a854a7cbad6d490c445cba2eba">Version</a></li>
 </ul>
 </nav>
       </div>
@@ -355,35 +356,44 @@
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<pre><code class="go">sparta.Main(&#34;MyStack&#34;,
-  &#34;Simple Sparta application&#34;,
-  myLambdaFunctions,
+<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+err := sparta.Main(&#34;SpartaHelloWorld&#34;,
+  fmt.Sprintf(&#34;Test HelloWorld resource command&#34;),
+  lambdaFunctions,
   nil,
   nil)</code></pre>
 
 
-<p>The application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
+<p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<pre><code class="nohighlight">go run application.go --help
-Usage: application [global options] &lt;verb&gt; [verb options]
+<pre><code class="nohighlight">$ ./SpartaHelloWorld --help
 
-Global options:
-        -n, --noop     Dry-run behavior only (do not provision stack)
-        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
-        -h, --help     Show this help
+Test HelloWorld resource command
 
-Verbs:
-    delete:
-    describe:
-        -o, --out      Output file for HTML description (*)
-    execute:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-        -s, --signal   Process ID to signal with SIGUSR2 once ready
-    explore:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-    provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
+Usage:
+  SpartaHelloWorld [command]
 
+Available Commands:
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&#39; (default &#34;info&#34;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a command.</code></pre>
+
+
+<p>It&rsquo;s also possible to add <a href="/docs/application/custom_flags">custom flags</a> and/or <a href="/docs/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
+
+<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
+
+<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
 <h1 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h1>
 
@@ -405,9 +415,9 @@ Verbs:
 
 <p>NOTE: API Gateway mapping templates are not currently supported.</p>
 
-<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
+<h1 id="version:d680e8a854a7cbad6d490c445cba2eba">Version</h1>
 
-<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
+<p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
 
 </div>
 

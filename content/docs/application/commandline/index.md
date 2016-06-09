@@ -10,38 +10,45 @@ Sparta provides a [Main](https://godoc.org/github.com/mweagle/Sparta#Main) funct
 
 
 {{< highlight go >}}
-sparta.Main("MyStack",
-  "Simple Sparta application",
-  myLambdaFunctions,
+var lambdaFunctions []*sparta.LambdaAWSInfo
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+err := sparta.Main("SpartaHelloWorld",
+  fmt.Sprintf("Test HelloWorld resource command"),
+  lambdaFunctions,
   nil,
   nil)
 {{< /highlight >}}
 
-
-The application provides several command line options which are available by providing the `-h/--help` option as in:
+A compiled application provides several command line options which are available by providing the `-h/--help` option as in:
 
 {{< highlight nohighlight >}}
-go run application.go --help
-Usage: application [global options] <verb> [verb options]
+$ ./SpartaHelloWorld --help
 
-Global options:
-        -n, --noop     Dry-run behavior only (do not provision stack)
-        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
-        -h, --help     Show this help
+Test HelloWorld resource command
 
-Verbs:
-    delete:
-    describe:
-        -o, --out      Output file for HTML description (*)
-    execute:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-        -s, --signal   Process ID to signal with SIGUSR2 once ready
-    explore:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-    provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)
+Usage:
+  SpartaHelloWorld [command]
+
+Available Commands:
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug]' (default "info")
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+Use "SpartaHelloWorld [command] --help" for more information about a command.
 {{< /highlight >}}
 
+It's also possible to add [custom flags](/docs/application/custom_flags) and/or [custom commands](/docs/application/custom_commands) to extend your application's behavior.
+
+# Provision
+
+The `provision` option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.
 
 # Delete
 
@@ -63,6 +70,8 @@ The `explore` option creates a _localhost_ server to allow Sparta lambda functio
 
 NOTE: API Gateway mapping templates are not currently supported.
 
-# Provision
 
-The `provision` option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.
+# Version
+
+The `version` option is a diagnostic command that prints the version of the Sparta framework embedded in the application.
+

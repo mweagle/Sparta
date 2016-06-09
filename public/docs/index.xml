@@ -1500,10 +1500,11 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
       <guid>http://gosparta.io/docs/application/</guid>
       <description>&lt;p&gt;Sparta-based applications use the &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; package to expose a rich set of command line options.  This section describes:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;* [Default options](/application/commandline)
-* [Adding flags](/application/custom_flags)
-* [Adding commands](/application/custom_commands)
-&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/commandline&#34;&gt;Default options&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;Adding flags&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;Adding commands&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;p&gt;Adding custom flags or commands is typically a prerequisite to supporting &lt;a href=&#34;http://gosparta.io/alternative_topologies&#34;&gt;alternative topologies&lt;/a&gt;.&lt;/p&gt;
 </description>
@@ -1519,35 +1520,44 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;sparta.Main(&amp;#34;MyStack&amp;#34;,
-  &amp;#34;Simple Sparta application&amp;#34;,
-  myLambdaFunctions,
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaFunctions []*sparta.LambdaAWSInfo
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;,
+  fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;),
+  lambdaFunctions,
   nil,
   nil)&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;p&gt;The application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
+&lt;p&gt;A compiled application provides several command line options which are available by providing the &lt;code&gt;-h/--help&lt;/code&gt; option as in:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --help
-Usage: application [global options] &amp;lt;verb&amp;gt; [verb options]
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;$ ./SpartaHelloWorld --help
 
-Global options:
-        -n, --noop     Dry-run behavior only (do not provision stack)
-        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
-        -h, --help     Show this help
+Test HelloWorld resource command
 
-Verbs:
-    delete:
-    describe:
-        -o, --out      Output file for HTML description (*)
-    execute:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-        -s, --signal   Process ID to signal with SIGUSR2 once ready
-    explore:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-    provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)&lt;/code&gt;&lt;/pre&gt;
+Usage:
+  SpartaHelloWorld [command]
 
+Available Commands:
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&amp;#39; (default &amp;#34;info&amp;#34;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information about a command.&lt;/code&gt;&lt;/pre&gt;
+
+
+&lt;p&gt;It&amp;rsquo;s also possible to add &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;custom flags&lt;/a&gt; and/or &lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;custom commands&lt;/a&gt; to extend your application&amp;rsquo;s behavior.&lt;/p&gt;
+
+&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
+
+&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
 
 &lt;h1 id=&#34;delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/h1&gt;
 
@@ -1569,9 +1579,9 @@ Verbs:
 
 &lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
 
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
+&lt;h1 id=&#34;version:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Version&lt;/h1&gt;
 
-&lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;version&lt;/code&gt; option is a diagnostic command that prints the version of the Sparta framework embedded in the application.&lt;/p&gt;
 </description>
     </item>
     
