@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Command Line Options  &middot; Sparta</title>
+  <title>Custom Application Commands  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,9 +17,9 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Command Line Options  &middot; Sparta ">
+<meta property="og:title" content="Custom Application Commands  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/commandline/" />
+<meta property="og:url" content="http://gosparta.io/docs/application/custom_commands/" />
 <meta property="og:locale" content="en-EN">
 
 
@@ -38,9 +38,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Command Line Options" />
+<meta name="twitter:title" content="Custom Application Commands" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/commandline/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/application/custom_commands/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -48,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Command Line Options",
+    "headline": "Custom Application Commands",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  276 
+    "wordCount":  0 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/commandline/" />
+<link rel="canonical" href="http://gosparta.io/docs/application/custom_commands/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: youtube: flattr: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle facebook: twitter:mweagle]">
+<body class="map[facebook: youtube: name:lumen bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -288,7 +288,24 @@
       
       </ul>
     
-      <a href="/docs/commandline">Command Line Options</a>
+      <a href="/docs/application">Application Customization</a>
+      <ul>
+      
+        <li>
+          <small><a href="/docs/application/commandline">Command Line Options</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/application/custom_flags">Adding Flags</a></small>
+        </li>
+      
+        <li>
+          <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
+        </li>
+      
+      </ul>
+    
+      <a href="/docs/alternative_topologies">Alternative Topologies</a>
       <ul>
       
       </ul>
@@ -314,84 +331,19 @@
     <div class="col-md-10">
 
       <header class="container hat">
-  <h1>Command Line Options
+  <h1>Custom Application Commands
 </h1>
 
 </header>
 
       <hr />
       <div id="toc">
-      <nav id="TableOfContents">
-<ul>
-<li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
-<li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
-<li><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></li>
-<li><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></li>
-<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
-</ul>
-</nav>
+      
       </div>
       <hr />
 
       <div class="container content">
   
-
-<p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
-
-<pre><code class="go">sparta.Main(&#34;MyStack&#34;,
-  &#34;Simple Sparta application&#34;,
-  myLambdaFunctions,
-  nil,
-  nil)</code></pre>
-
-
-<p>The application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
-
-<pre><code class="nohighlight">go run application.go --help
-Usage: application [global options] &lt;verb&gt; [verb options]
-
-Global options:
-        -n, --noop     Dry-run behavior only (do not provision stack)
-        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
-        -h, --help     Show this help
-
-Verbs:
-    delete:
-    describe:
-        -o, --out      Output file for HTML description (*)
-    execute:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-        -s, --signal   Process ID to signal with SIGUSR2 once ready
-    explore:
-        -p, --port     Alternative port for HTTP binding (default=9999)
-    provision:
-        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
-
-
-<h1 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h1>
-
-<p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
-
-<h1 id="describe:d680e8a854a7cbad6d490c445cba2eba">Describe</h1>
-
-<p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
-
-<p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
-
-<h1 id="execute:d680e8a854a7cbad6d490c445cba2eba">Execute</h1>
-
-<p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
-
-<h1 id="explore:d680e8a854a7cbad6d490c445cba2eba">Explore</h1>
-
-<p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
-
-<p>NOTE: API Gateway mapping templates are not currently supported.</p>
-
-<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
-
-<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
-
 </div>
 
 

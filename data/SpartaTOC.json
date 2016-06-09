@@ -163,10 +163,39 @@
     "Children": []
   },
   {
-    "Name": "Command Line Options",
+    "Name": "Application Customization",
     "IconClass": "",
     "Title": "",
-    "URL": "/commandline",
+    "URL": "/application",
+    "Children": [
+      {
+      "Name": "Command Line Options",
+      "IconClass": "",
+      "Title": "",
+      "URL": "/application/commandline",
+      "Children": []
+      },
+      {
+      "Name": "Adding Flags",
+      "IconClass": "",
+      "Title": "",
+      "URL": "/application/custom_flags",
+      "Children": []
+      },
+      {
+      "Name": "Adding Commands",
+      "IconClass": "",
+      "Title": "",
+      "URL": "/application/custom_commands",
+      "Children": []
+      }
+    ]
+  },
+  {
+    "Name": "Alternative Topologies",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/alternative_topologies",
     "Children": []
   },
   {

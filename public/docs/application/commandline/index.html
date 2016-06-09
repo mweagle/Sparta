@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Overview  &middot; Sparta</title>
+  <title>Command Line Options  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -14,29 +14,33 @@
 
 <meta name="description" content="" />
 
-<meta name="keywords" content="">
+<meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Overview  &middot; Sparta ">
+<meta property="og:title" content="Command Line Options  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/" />
+<meta property="og:url" content="http://gosparta.io/docs/application/commandline/" />
 <meta property="og:locale" content="en-EN">
 
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2016-02-16T05:36:20Z" />
-<meta property="og:article:modified_time" content="2016-02-16T05:36:20Z" />
+<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
 
+  
+    
+<meta property="og:article:tag" content="sparta">
+    
   
 
   
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Overview" />
+<meta name="twitter:title" content="Command Line Options" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/application/commandline/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -44,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Overview",
+    "headline": "Command Line Options",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2016-02-16",
+    "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  533 
+    "wordCount":  276 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/" />
+<link rel="canonical" href="http://gosparta.io/docs/application/commandline/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -99,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle googleplus: twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:lumen bitbucket:]">
+<body class="map[facebook: youtube: name:lumen bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -327,7 +331,7 @@
     <div class="col-md-10">
 
       <header class="container hat">
-  <h1>Overview
+  <h1>Command Line Options
 </h1>
 
 </header>
@@ -336,8 +340,11 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#terms-and-concepts:d680e8a854a7cbad6d490c445cba2eba">Terms and Concepts</a></li>
-<li><a href="#next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</a></li>
+<li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
+<li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
+<li><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></li>
+<li><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></li>
+<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
 </ul>
 </nav>
       </div>
@@ -346,148 +353,61 @@
       <div class="container content">
   
 
-<p>This is a brief overview of Sparta&rsquo;s core concepts.  Additional information regarding specific features is available from the menu.</p>
+<p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<h1 id="terms-and-concepts:d680e8a854a7cbad6d490c445cba2eba">Terms and Concepts</h1>
-
-<p>At a high level, Sparta transforms a single <strong>Go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
-
-<p>The table below summarizes some of the primary Sparta terminology.</p>
-
-<div class="list-group">
-  <!-- Service Name -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Service Name</h3>
-    <h5 class="list-group-item-text large">Sparta applications are deployed as a single unit, using the <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application's <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a> .</h5>
-    <p />
-    <pre><code class="go">stackName := &#34;MyUniqueServiceName&#34;
-sparta.Main(stackName,
-  &#34;Simple Sparta application,
+<pre><code class="go">sparta.Main(&#34;MyStack&#34;,
+  &#34;Simple Sparta application&#34;,
   myLambdaFunctions,
   nil,
   nil)</code></pre>
 
-    </p>
-  </div>
-  <!-- Lambda Functions -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Sparta Lambda Function</h3>
-    <h5 class="list-group-item-text large">A Sparta-compatible lambda is a <b>Go</b> function with a specific signature. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
-    <p />
-    <pre><code class="go">func mySpartaLambdaFunction(event *json.RawMessage,
-                      context *sparta.LambdaContext,
-                      w http.ResponseWriter,
-                      logger *logrus.Logger) {
 
-  // Lambda code
-}</code></pre>
+<p>The application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-    </p>
-  </div>
-  <!-- Privileges -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Privileges</h3>
-    <h5 class="list-group-item-text">To support accessing other AWS resources in your <b>Go</b> function, Sparta users may define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
-    <p />
-    <pre><code class="go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-  	Actions:  []string{&#34;s3:GetObject&#34;, &#34;s3:HeadObject&#34;},
-  	Resource: &#34;arn:aws:s3:::MyS3Bucket&#34;,
-})</code></pre>
+<pre><code class="nohighlight">go run application.go --help
+Usage: application [global options] &lt;verb&gt; [verb options]
 
-    </p>
-  </div>
-  <!-- Permissions -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Permissions</h3>
-    <h5 class="list-group-item-text">To configure AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">Event Sources</a>, Sparta provides both <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaPermission"><code>sparta.LambdaPermission</code></a> and service-specific <i>Permission</i> types; eg: <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission"><code>sparta.CloudWatchEventsPermission</code></a>. The service-specific <i>Permission</i> types automatically register your lambda function with the remote AWS service, using each service's specific API.</h5>
-    <p />
-    <pre><code class="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
-cloudWatchEventsPermission.Rules[&#34;Rate5Mins&#34;] = sparta.CloudWatchEventsRule{
-  ScheduleExpression: &#34;rate(5 minutes)&#34;,
-}
-lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)</code></pre>
+Global options:
+        -n, --noop     Dry-run behavior only (do not provision stack)
+        -l, --level    Log level [panic, fatal, error, warn, info, debug] (default: info)
+        -h, --help     Show this help
 
-    </p>
-  </div>
-  <!-- Dynamic Resources -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Dynamic Resources</h3>
-    <h5 class="list-group-item-text">Sparta applications can specify other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">AWS Resources</a> (eg, <i>SNS Topics</i>) as part of their application. The dynamic resource outputs can be referenced by Sparta lambda functions via <code>gocf.Ref</code> and <code>gocf.GetAtt</code> functions.</h5>
-    <p />
-    <pre><code class="go">snsTopicName := sparta.CloudFormationResourceName(&#34;SNSDynamicTopic&#34;)
-snsTopic := &amp;gocf.SNSTopic{
-  DisplayName: gocf.String(&#34;Sparta Application SNS topic&#34;),
-})  
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamicSNSEvent, nil)
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-	BasePermission: sparta.BasePermission{
-		SourceArn: gocf.Ref(snsTopicName),
-	},
-})</code></pre>
+Verbs:
+    delete:
+    describe:
+        -o, --out      Output file for HTML description (*)
+    execute:
+        -p, --port     Alternative port for HTTP binding (default=9999)
+        -s, --signal   Process ID to signal with SIGUSR2 once ready
+    explore:
+        -p, --port     Alternative port for HTTP binding (default=9999)
+    provision:
+        -b, --s3Bucket S3 Bucket to use for Lambda source (*)</code></pre>
 
-    </p>
-  </div>
-  <!-- Discovery -->
-  <div class="list-group-item">
-    <h3 class="list-group-item-heading">Discovery</h3>
-    <h5 class="list-group-item-text">To support Sparta lambda functions discovering dynamically assigned AWS values (eg, <i>S3 Bucket Names</i>), Sparta provides <code>sparta.Discover</code>. </h5>
-    <p />
-    <pre><code class="go">func echoS3DynamicBucketEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
 
-  config, _ := sparta.Discover()
-  // Use config to determine the bucket name to which RawMessage should be stored
-}</code></pre>
+<h1 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h1>
 
-    </p>
-  </div>
-</div>
+<p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
 
-<p>Given a set of Sparta lambda functions, during a <code>provision</code> build Sparta follows this workflow:</p>
+<h1 id="describe:d680e8a854a7cbad6d490c445cba2eba">Describe</h1>
 
-<p><div class="mermaid">
-graph TD
-  iam[Verify Static IAM Roles]
-  compile[Cross Compile for AWS Linux AMI]
-  proxyShims[Create NodeJS-Go HTTP Proxies]
-  package[ZIP archive]
-  upload[Upload Archive to S3]
-  packageAssets[Conditionally ZIP S3 Site Assets]
-  uploadAssets[Upload S3 Assets]
-  generate[Marshal to CloudFormation]
-  decorate[Call User Template Decorators - Dynamic AWS Resources]
-  uploadTemplate[Upload Template to S3]
-  converge[Create/Update Stack]
-  wait[Wait for Complete/Failure Result]
+<p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
 
-  iam-->compile
-  compile-->proxyShims
-  proxyShims-->package
-  proxyShims-->packageAssets
-  package-->upload
-  packageAssets-->uploadAssets
-  uploadAssets-->generate
-  upload-->generate
-  generate-->decorate
-  decorate-->uploadTemplate
-  uploadTemplate-->converge
-  converge-->wait
-</div>
-<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
-<hr />
-</p>
+<p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
 
-<p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
+<h1 id="execute:d680e8a854a7cbad6d490c445cba2eba">Execute</h1>
 
-<p>At runtime, Sparta uses <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> shims to proxy the request to your <strong>Go</strong> handler.</p>
+<p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
 
-<h1 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h1>
+<h1 id="explore:d680e8a854a7cbad6d490c445cba2eba">Explore</h1>
 
-<p>Writing a simple <a href="/docs/intro_example">Sparta Application</a>.</p>
+<p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
+
+<p>NOTE: API Gateway mapping templates are not currently supported.</p>
+
+<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
+
+<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
 </div>
 

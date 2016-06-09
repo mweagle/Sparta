@@ -1331,11 +1331,37 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
     </item>
     
     <item>
-      <title>Command Line Options</title>
-      <link>http://gosparta.io/docs/commandline/</link>
+      <title>Alternative Topologies</title>
+      <link>http://gosparta.io/docs/alternative_topologies/</link>
       <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/commandline/</guid>
+      <guid>http://gosparta.io/docs/alternative_topologies/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Application Customization</title>
+      <link>http://gosparta.io/docs/application/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/</guid>
+      <description>&lt;p&gt;Sparta-based applications use the &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; package to expose a rich set of command line options.  This section describes:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;* [Default options](/application/commandline)
+* [Adding flags](/application/custom_flags)
+* [Adding commands](/application/custom_commands)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Adding custom flags or commands is typically a prerequisite to supporting &lt;a href=&#34;http://gosparta.io/alternative_topologies&#34;&gt;alternative topologies&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Command Line Options</title>
+      <link>http://gosparta.io/docs/application/commandline/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/commandline/</guid>
       <description>
 
 &lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
@@ -1394,6 +1420,24 @@ Verbs:
 
 &lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
 </description>
+    </item>
+    
+    <item>
+      <title>Custom Application Commands</title>
+      <link>http://gosparta.io/docs/application/custom_commands/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/custom_commands/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>http://gosparta.io/docs/application/custom_flags/</link>
+      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/custom_flags/</guid>
+      <description></description>
     </item>
     
     <item>
@@ -1575,610 +1619,6 @@ customResult := configuration.Resources[configuration.ResourceID].Properties[&am
 &lt;ul&gt;
 &lt;li&gt;Sparta uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;Lambda-backed CustomResource&lt;/a&gt; functions, so they are subject to the same &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/limits.html&#34;&gt;Lambda limits&lt;/a&gt; as application-level Sparta lambda functions.&lt;/li&gt;
 &lt;li&gt;Returning an error from the CustomResourceFunction will result in a &lt;em&gt;FAILED&lt;/em&gt; reason being returned in the CloudFormation &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html&#34;&gt;response object&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Discovery Service</title>
-      <link>http://gosparta.io/docs/discovery/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/discovery/</guid>
-      <description>
-
-&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
-
-&lt;p&gt;The ability to provision &lt;a href=&#34;http://gosparta.io/docs/dynamic_infrastructure&#34;&gt;dynamic infrastructure&lt;/a&gt; (see also the &lt;a href=&#34;http://gosparta.io/docs/eventsources/ses/#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;SES Event Source Example&lt;/a&gt;) as part of a Sparta application creates a need to discover those resources at lambda execution time.&lt;/p&gt;
-
-&lt;p&gt;Sparta exposes this functionality via &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Discover&#34;&gt;sparta.Discover&lt;/a&gt;.  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling &lt;strong&gt;Go&lt;/strong&gt; lambda function.&lt;/p&gt;
-
-&lt;p&gt;The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.  It is extracted from &lt;code&gt;appendDynamicS3BucketLambda&lt;/code&gt; in the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;SpartaApplication&lt;/a&gt; source.&lt;/p&gt;
-
-&lt;p&gt;If you haven&amp;rsquo;t already done so, please review the &lt;a href=&#34;http://gosparta.io/docs/dynamic_infrastructure&#34;&gt;Dynamic Infrastructure&lt;/a&gt; section for background on dynamic infrastructure provisioning.&lt;/p&gt;
-
-&lt;h1 id=&#34;discovery:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Discovery&lt;/h1&gt;
-
-&lt;p&gt;For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our &lt;code&gt;gocf.S3Bucket{}&lt;/code&gt; struct uses a zero-length &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name&#34;&gt;BucketName&lt;/a&gt; property, CloudFormation will dynamically assign one.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;s3BucketResourceName := sparta.CloudFormationResourceName(&amp;quot;S3DynamicBucket&amp;quot;)
-
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{&amp;quot;s3:ObjectCreated:*&amp;quot;,
-                    &amp;quot;s3:ObjectRemoved:*&amp;quot;},
-})
-
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-
-// Add permission s.t. the lambda function could read from the S3 bucket
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&amp;quot;s3:GetObject&amp;quot;,
-                       &amp;quot;s3:HeadObject&amp;quot;},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
-
-// Add the S3 resource to our template
-lambdaFn.Decorator = func(lambdaResourceName string,
-  lambdaResource gocf.LambdaFunction,
-  template *gocf.Template,
-  logger *logrus.Logger) error {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;amp;gocf.S3Bucket{
-    AccessControl: gocf.String(&amp;quot;PublicRead&amp;quot;),
-  })
-  cfResource.DeletionPolicy = &amp;quot;Delete&amp;quot;
-  return nil
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The key to &lt;code&gt;sparta.Discovery&lt;/code&gt; is the &lt;code&gt;DependsOn&lt;/code&gt; slice value.&lt;/p&gt;
-
-&lt;h1 id=&#34;template-marshaling-decoration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Template Marshaling &amp;amp; Decoration&lt;/h1&gt;
-
-&lt;p&gt;Sparta only uses CloudFormation to update service state.  Each CloudFormation resource may be annotated with a &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html&#34;&gt;Metadata&lt;/a&gt; property.  This is unstructured, application-defined data.&lt;/p&gt;
-
-&lt;p&gt;During template marshaling, Sparta scans for &lt;code&gt;DependsOn&lt;/code&gt; relationships and propagates information (immediate-children only) across CloudFormation resource definitions.  Most importantly, this information includes &lt;code&gt;Ref&lt;/code&gt; and any other &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go#L24&#34;&gt;outputs&lt;/a&gt; of referred resources.  This information then becomes available as a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo&#34;&gt;DisocveryInfo&lt;/a&gt; value returned by &lt;code&gt;sparta.Discovery()&lt;/code&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;sample-discoveryinfo:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sample DiscoveryInfo&lt;/h1&gt;
-
-&lt;p&gt;In our example, a &lt;code&gt;DiscoveryInfo&lt;/code&gt; from a sample stack might be:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
-  &amp;quot;Region&amp;quot;: &amp;quot;us-west-2&amp;quot;,
-  &amp;quot;StackID&amp;quot;: &amp;quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&amp;quot;,
-  &amp;quot;StackName&amp;quot;: &amp;quot;SpartaApplication&amp;quot;,
-  &amp;quot;Resources&amp;quot;: {
-    &amp;quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&amp;quot;: {
-      &amp;quot;ResourceID&amp;quot;: &amp;quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&amp;quot;,
-      &amp;quot;Properties&amp;quot;: {
-        &amp;quot;DomainName&amp;quot;: &amp;quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&amp;quot;,
-        &amp;quot;Ref&amp;quot;: &amp;quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&amp;quot;,
-        &amp;quot;WebsiteURL&amp;quot;: &amp;quot;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&amp;quot;,
-        &amp;quot;sparta:cloudformation:restype&amp;quot;: &amp;quot;AWS::S3::Bucket&amp;quot;
-      },
-      &amp;quot;Tags&amp;quot;: {}
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With this, our lambda function can discover the dynamically assigned bucket name using non-production ready code similar to:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;configuration, _ := sparta.Discover()
-bucketName := &amp;quot;&amp;quot;
-for _, eachResource := range configuration.Resources {
-  if eachResource.Properties[sparta.TagResourceType] == &amp;quot;AWS::S3::Bucket&amp;quot; {
-    bucketName = eachResource.Properties[&amp;quot;Ref&amp;quot;]
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;Properties&lt;/code&gt; map includes the CloudFormation &lt;code&gt;Ref&lt;/code&gt; and other outputs (see each resource type&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;documentation&lt;/a&gt; for the complete set) as well as the actual resource type (keyed by &lt;code&gt;sparta.TagResourceType&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;Multiple dependencies can be disambiguated by annotating the CloudFormation resource&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html&#34;&gt;Tags&lt;/a&gt; slice.  Tag key-values are published as a key-value map as part of each &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource&#34;&gt;DiscoveryResource&lt;/a&gt;.  For example:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;cfResource := template.AddResource(s3BucketResourceName, &amp;amp;gocf.S3Bucket{
-  AccessControl: gocf.String(&amp;quot;PublicRead&amp;quot;),
-  Tags: []gocf.ResourceTag{
-    gocf.ResourceTag{
-      Key:   gocf.String(&amp;quot;SomeUserKey&amp;quot;),
-      Value: gocf.String(&amp;quot;MyMagicValue&amp;quot;),
-    },
-  },
-})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h1 id=&#34;special-considerations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Special Considerations&lt;/h1&gt;
-
-&lt;p&gt;You may have noticed that &lt;code&gt;sparta.Discover()&lt;/code&gt; doesn&amp;rsquo;t accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant &lt;strong&gt;Go&lt;/strong&gt; function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; values and enables unique discovery.&lt;/p&gt;
-
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
-
-&lt;p&gt;Combined with &lt;a href=&#34;http://gosparta.io/docs/dynamic_infrastructure&#34;&gt;dynamic infrastructure&lt;/a&gt;, &lt;code&gt;sparta.Discover()&lt;/code&gt; enables a Sparta service to define its entire AWS infrastructure requirements.  Coupling application logic with infrastructure requirements moves a service towards being completely self-contained and in the direction of &lt;a href=&#34;https://fugue.co/oreilly/&#34;&gt;immutable infrastructure&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;notes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;sparta.Discovery()&lt;/code&gt; &lt;strong&gt;only&lt;/strong&gt; succeeds within a Sparta-compliant lambda function call block.
-
-&lt;ul&gt;
-&lt;li&gt;Call-site restrictions are validated in the &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/discovery_test.go&#34;&gt;discovery_tests.go&lt;/a&gt; tests.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Dynamic Infrastructure</title>
-      <link>http://gosparta.io/docs/dynamic_infrastructure/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/dynamic_infrastructure/</guid>
-      <description>
-
-&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
-
-&lt;p&gt;In addition to provisioning AWS Lambda functions, Sparta supports the creation of other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resources&lt;/a&gt;.  This enables a service to move towards &lt;a href=&#34;https://fugue.co/oreilly/&#34;&gt;immutable infrastructure&lt;/a&gt;, where the service and its infrastructure requirements are treated as a logical unit.&lt;/p&gt;
-
-&lt;p&gt;For instance, consider the case where two developers are working in the same AWS account.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Developer 1 is working on analyzing text documents.&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Their lambda code is triggered in response to uploading sample text documents to S3.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Developer 2 is working on image recognition.&lt;br /&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Their lambda code is triggered in response to uploading sample images to S3.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&#34;mermaid&#34;&gt;
-    
-graph LR
-  sharedBucket[S3 Bucket]
-
-  dev1Lambda[Dev1 LambdaCode]
-  dev2Lambda[Dev2 LambdaCode]
-
-  sharedBucket --&gt; dev1Lambda
-  sharedBucket --&gt; dev2Lambda
-
-&lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
-  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
-  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
-&lt;hr /&gt;
-
-
-&lt;p&gt;Using a shared, externally provisioned S3 bucket has several impacts:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Adding conditionals in each lambda codebase to scope valid processing targets.&lt;/li&gt;
-&lt;li&gt;Ambiguity regarding which codebase handled an event.&lt;/li&gt;
-&lt;li&gt;Infrastructure ownership/lifespan management.  When a service is decommissioned, its infrastructure requirements may be automatically decommissioned as well.
-
-&lt;ul&gt;
-&lt;li&gt;Eg, &amp;ldquo;Is this S3 bucket in use by any service?&amp;rdquo;.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Overly permissive IAM roles due to static Arns.
-
-&lt;ul&gt;
-&lt;li&gt;Eg, &amp;ldquo;Arn hugging&amp;rdquo;.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Contention updating the shared bucket&amp;rsquo;s &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketNotificationConfiguration-property&#34;&gt;notification configuration&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Alternatively, each developer could provision and manage disjoint topologies:&lt;/p&gt;
-
-&lt;div class=&#34;mermaid&#34;&gt;
-    
-graph LR
-  dev1S3Bucket[Dev1 S3 Bucket]
-  dev1Lambda[Dev1 LambdaCode]
-
-  dev2S3Bucket[Dev2 S3 Bucket]
-  dev2Lambda[Dev2 LambdaCode]
-
-  dev1S3Bucket --&gt; dev1Lambda
-  dev2S3Bucket --&gt; dev2Lambda
-
-&lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
-  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
-  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
-&lt;hr /&gt;
-
-
-&lt;p&gt;Enabling each developer to create other AWS resources also means more complex topologies can be expressed.  These topologies can benefit from CloudWatch monitoring (eg, &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions-metrics.html&#34;&gt;per-Lambda Metrics&lt;/a&gt; ) without the need to add &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/publishingMetrics.html&#34;&gt;custom metrics&lt;/a&gt;.&lt;/p&gt;
-
-&lt;div class=&#34;mermaid&#34;&gt;
-    
-graph LR
-  dev1S3Bucket[Dev1 S3 Bucket]
-  dev1Lambda[Dev1 LambdaCode]
-
-  dev2S3Bucket[Dev2 S3 Images Bucket]
-  dev2PNGLambda[Dev2 PNG LambdaCode]
-  dev2JPGLambda[Dev2 JPEG LambdaCode]
-  dev2TIFFLambda[Dev2 TIFF LambdaCode]
-  dev2S3VideoBucket[Dev2 VideoBucket]
-  dev2VideoLambda[Dev2 Video LambdaCode]
-
-  dev1S3Bucket --&gt; dev1Lambda
-  dev2S3Bucket --&gt;|SuffixFilter=*.PNG|dev2PNGLambda
-  dev2S3Bucket --&gt;|SuffixFilter=*.JPEG,*.JPG|dev2JPGLambda
-  dev2S3Bucket --&gt;|SuffixFilter=*.TIFF|dev2TIFFLambda
-  dev2S3VideoBucket --&gt;dev2VideoLambda
-
-&lt;/div&gt;
-&lt;i&gt;&lt;small&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;.
-  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt;
-  if it doesn&#39;t render properly.&lt;/small&gt;&lt;/i&gt;
-&lt;hr /&gt;
-
-
-&lt;p&gt;Sparta supports Dynamic Resources via &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; functions.&lt;/p&gt;
-
-&lt;h1 id=&#34;template-decorators:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Template Decorators&lt;/h1&gt;
-
-&lt;p&gt;A template decorator is a &lt;strong&gt;Go&lt;/strong&gt; function with the following signature&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type TemplateDecorator func(lambdaResourceName string,
-                            lambdaResource gocf.LambdaFunction,
-                            template *gocf.Template,
-                            logger *logrus.Logger) error {
-
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Clients use &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation&#34;&gt;go-cloudformation&lt;/a&gt; types for CloudFormation resources and  &lt;code&gt;template.AddResource&lt;/code&gt; to add them to the &lt;code&gt;*template&lt;/code&gt; parameter.  After a decorator is invoked, Sparta verifies that the user-supplied function has not produced entities that collide with the internally-generated ones.&lt;/p&gt;
-
-&lt;h2 id=&#34;unique-resource-names:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Unique Resource Names&lt;/h2&gt;
-
-&lt;p&gt;CloudFormation uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html&#34;&gt;Logical IDs&lt;/a&gt; as resource key names.&lt;/p&gt;
-
-&lt;p&gt;To minimize collision likelihood, Sparta publishes &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName&#34;&gt;CloudFormationResourceName(prefix, &amp;hellip;parts)&lt;/a&gt; to generate compliant identifiers.  To produce content-based hash values, callers can provide a non-empty set of values as the &lt;code&gt;...parts&lt;/code&gt; variadic argument.  This produces stable identifiers across Sparta execution (which may affect availability during updates).&lt;/p&gt;
-
-&lt;p&gt;When called with only a single value (eg: &lt;code&gt;CloudFormationResourceName(&amp;quot;myResource&amp;quot;)&lt;/code&gt;), Sparta will return a random resource name that is &lt;strong&gt;NOT&lt;/strong&gt; stable across executions.&lt;/p&gt;
-
-&lt;h1 id=&#34;example-s3-bucket:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Example - S3 Bucket&lt;/h1&gt;
-
-&lt;p&gt;Let&amp;rsquo;s work through an example to make things a bit more concrete.  We have the following requirements:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Our lambda function needs a immutable-infrastructure compliant S3 bucket&lt;/li&gt;
-&lt;li&gt;Our lambda function should be notified when items are created or deleted from the bucket&lt;/li&gt;
-&lt;li&gt;Our lambda function must be able to access the contents in the bucket (not shown below)&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;lambda-function:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Lambda Function&lt;/h2&gt;
-
-&lt;p&gt;To start with, we&amp;rsquo;ll need a Sparta lambda function to expose:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func echoS3DynamicBucketEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
-
-  config, _ := sparta.Discover()
-  logger.WithFields(logrus.Fields{
-    &amp;quot;RequestID&amp;quot;:     context.AWSRequestID,
-    &amp;quot;Event&amp;quot;:         string(*event),
-    &amp;quot;Configuration&amp;quot;: config,
-  }).Info(&amp;quot;Request received&amp;quot;)
-
-  fmt.Fprintf(w, string(*event))
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;For brevity our demo function doesn&amp;rsquo;t access the S3 bucket objects.  To support that we&amp;rsquo;ll need to discuss the &lt;code&gt;sparta.Discover&lt;/code&gt; function in another &lt;a href=&#34;http://gosparta.io/docs/discovery/&#34;&gt;section&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h2 id=&#34;s3-resource-name:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;S3 Resource Name&lt;/h2&gt;
-
-&lt;p&gt;The next thing we need is a &lt;em&gt;Logical ID&lt;/em&gt; for our bucket:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;s3BucketResourceName := sparta.CloudFormationResourceName(&amp;quot;S3DynamicBucket&amp;quot;, &amp;quot;myServiceBucket&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;sparta-integration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h2&gt;
-
-&lt;p&gt;With these two values we&amp;rsquo;re ready to get started building up the lambda function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The open issue is how to publish the CloudFormation-defined S3 Arn to the &lt;code&gt;compile&lt;/code&gt;-time application.  Our lambda function needs to provide both:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege&#34;&gt;IAMRolePrivilege&lt;/a&gt; values that reference the (as yet) undefined Arn.&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#S3Permission&#34;&gt;S3Permission&lt;/a&gt; values to configure our lambda&amp;rsquo;s event triggers on the (as yet) undefined Arn.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The missing piece is &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#Ref&#34;&gt;gocf.Ref()&lt;/a&gt;, whose single argument is the &lt;em&gt;Logical ID&lt;/em&gt; of the S3 resource we&amp;rsquo;ll be inserting in the decorator call.&lt;/p&gt;
-
-&lt;h3 id=&#34;dynamic-iam-role-privilege:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic IAM Role Privilege&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;IAMRolePrivilege&lt;/code&gt; struct references the dynamically assigned S3 Arn as follows:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{&amp;quot;s3:ObjectCreated:*&amp;quot;, &amp;quot;s3:ObjectRemoved:*&amp;quot;},
-})
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;dynamic-s3-permissions:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dynamic S3 Permissions&lt;/h3&gt;
-
-&lt;p&gt;The &lt;code&gt;S3Permission&lt;/code&gt; struct also requires the dynamic Arn, to which it will append &lt;code&gt;&amp;quot;/*&amp;quot;&lt;/code&gt; to enable object read access.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&amp;quot;s3:GetObject&amp;quot;, &amp;quot;s3:HeadObject&amp;quot;},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;The &lt;code&gt;spartaCF.S3AllKeysArnForBucket&lt;/code&gt; call is a convenience wrapper around &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#Join&#34;&gt;gocf.Join&lt;/a&gt; to generate the concatenated, dynamic Arn expression.&lt;/p&gt;
-
-&lt;h2 id=&#34;s3-resource-insertion:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;S3 Resource Insertion&lt;/h2&gt;
-
-&lt;p&gt;All that&amp;rsquo;s left to do is actually insert the S3 resource in our decorator:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;lambdaFn.Decorator = func(lambdaResourceName string,
-                          lambdaResource gocf.LambdaFunction,
-                          template *gocf.Template,
-                          logger *logrus.Logger) error {
-
-  cfResource := template.AddResource(s3BucketResourceName, &amp;amp;gocf.S3Bucket{
-    AccessControl: gocf.String(&amp;quot;PublicRead&amp;quot;),
-  })
-  cfResource.DeletionPolicy = &amp;quot;Delete&amp;quot;
-  return nil
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;dependencies:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Dependencies&lt;/h3&gt;
-
-&lt;p&gt;In reality, we shouldn&amp;rsquo;t even attempt to create the AWS Lambda function if the S3 bucket creation fails.  As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html&#34;&gt;DependsOn&lt;/a&gt; attribute:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;code-listing:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Code Listing&lt;/h2&gt;
-
-&lt;p&gt;Putting everything together, our Sparta lambda function with dynamic infrastructure is listed below.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;s3BucketResourceName := sparta.CloudFormationResourceName(&amp;quot;S3DynamicBucket&amp;quot;)
-
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-
-// Our lambda function requires the S3 bucket
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-
-// Add a permission s.t. the lambda function could read from the S3 bucket
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&amp;quot;s3:GetObject&amp;quot;,
-                       &amp;quot;s3:HeadObject&amp;quot;},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
-
-// Configure the S3 event source
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{&amp;quot;s3:ObjectCreated:*&amp;quot;,
-                   &amp;quot;s3:ObjectRemoved:*&amp;quot;},
-})
-
-// Actually add the resource
-lambdaFn.Decorator = func(lambdaResourceName string,
-                          lambdaResource gocf.LambdaFunction,
-                          template *gocf.Template,
-                          logger *logrus.Logger) error {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;amp;gocf.S3Bucket{
-    AccessControl: gocf.String(&amp;quot;PublicRead&amp;quot;),
-  })
-  cfResource.DeletionPolicy = &amp;quot;Delete&amp;quot;
-  return nil
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h2&gt;
-
-&lt;p&gt;Sparta provides an opportunity to bring infrastructure management into the application programming model.  It&amp;rsquo;s still possible to use literal Arn strings, but the ability to include other infrastructure requirements brings a service closer to being self-contained and more operationally sustainable.&lt;/p&gt;
-
-&lt;h1 id=&#34;notes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The &lt;code&gt;echoS3DynamicBucketEvent&lt;/code&gt; function can also access the bucket Arn via &lt;a href=&#34;http://gosparta.io/docs/discovery&#34;&gt;sparta.Discover&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;See the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html&#34;&gt;DeletionPolicy&lt;/a&gt; documentation regarding S3 management.&lt;/li&gt;
-&lt;li&gt;CloudFormation resources also publish &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html&#34;&gt;other outputs&lt;/a&gt; that can be retrieved via &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt&#34;&gt;gocf.GetAtt&lt;/a&gt;.&lt;br /&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;go-cloudformation&lt;/code&gt; exposes &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#Join&#34;&gt;gocf.Join&lt;/a&gt; to create compound, dynamic expressions.
-
-&lt;ul&gt;
-&lt;li&gt;See the CloudWatch docs on &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html&#34;&gt;Fn::Join&lt;/a&gt; for more information.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - CloudFormation</title>
-      <link>http://gosparta.io/docs/eventsources/cloudformation/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/cloudformation/</guid>
-      <description>&lt;p&gt;&lt;span class=&#34;label label-warning&#34;&gt;NOT YET IMPLEMENTED&lt;/span&gt;&lt;/p&gt;
-
-&lt;p&gt;TODO: CloudFormation source documentation&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Event Source - CloudWatch Events</title>
-      <link>http://gosparta.io/docs/eventsources/cloudwatchevents/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
-      <description>
-
-&lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Events&lt;/a&gt;.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
-
-&lt;h1 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h1&gt;
-
-&lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Run every &lt;em&gt;5 minutes&lt;/em&gt; to provide a heartbeat notification to our alerting system via a logfile entry&lt;/li&gt;
-&lt;li&gt;Log &lt;em&gt;EC2-related&lt;/em&gt; events for later processing&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
-
-&lt;p&gt;Our lambda function is relatively small:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func echoCloudWatchEvent(event *json.RawMessage,
-                        context *sparta.LambdaContext,
-                        w http.ResponseWriter,
-                        logger *logrus.Logger) {
-
-	logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;: context.AWSRequestID,
-	}).Info(&amp;#34;Request received&amp;#34;)
-
-	config, _ := sparta.Discover()
-	logger.WithFields(logrus.Fields{
-		&amp;#34;RequestID&amp;#34;:     context.AWSRequestID,
-		&amp;#34;Event&amp;#34;:         string(*event),
-		&amp;#34;Configuration&amp;#34;: config,
-	}).Info(&amp;#34;Request received&amp;#34;)
-	fmt.Fprintf(w, &amp;#34;Hello World!&amp;#34;)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the event other than log it.&lt;/p&gt;
-
-&lt;h1 id=&#34;spartaIntegration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
-
-&lt;p&gt;With &lt;code&gt;echoCloudWatchEvent()&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchEventHandler&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
-
-&lt;p&gt;Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty &lt;code&gt;sparta.IAMRoleDefinition&lt;/code&gt; value:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
-                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The next step is to add a &lt;code&gt;CloudWatchEventsPermission&lt;/code&gt; value that includes the two rule triggers.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Our two rules will be inserted into the &lt;code&gt;Rules&lt;/code&gt; map in the next steps.&lt;/p&gt;
-
-&lt;h2 id=&#34;cron-expression:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cron Expression&lt;/h2&gt;
-
-&lt;p&gt;Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
-  ScheduleExpression: &amp;#34;rate(5 minutes)&amp;#34;,
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;ScheduleExpression&lt;/code&gt; value can either be a &lt;em&gt;rate&lt;/em&gt; or a &lt;em&gt;cron&lt;/em&gt; &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html&#34;&gt;expression&lt;/a&gt;.  The map keyname is used when adding the &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property&#34;&gt;rule&lt;/a&gt; during stack provisioning.&lt;/p&gt;
-
-&lt;h2 id=&#34;event-pattern:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Pattern&lt;/h2&gt;
-
-&lt;p&gt;The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&amp;rsquo;ll add a second &lt;code&gt;Rule&lt;/code&gt;:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
-  EventPattern: map[string]interface{}{
-    &amp;#34;source&amp;#34;:      []string{&amp;#34;aws.ec2&amp;#34;},
-    &amp;#34;detail-type&amp;#34;: []string{&amp;#34;EC2 Instance State-change Notification&amp;#34;},
-  },
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The EC2 event pattern is the &lt;strong&gt;Go&lt;/strong&gt; JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.&lt;/p&gt;
-
-&lt;div class=&#34;panel panel-warning&#34;&gt;
-  &lt;div class=&#34;panel-heading&#34;&gt;Validity Checks&lt;/div&gt;
-   &lt;div class=&#34;panel-body&#34;&gt;
-    Sparta does &lt;b&gt;NOT&lt;/b&gt; attempt to validate either &lt;code&gt;ScheduleExpression&lt;/code&gt; or &lt;code&gt;EventPattern&lt;/code&gt; values prior to calling CloudFormation.  Syntax errors in either value will be detected during provisioning when the Sparta CloudFormation CustomResource calls &lt;a href=&#34;http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property&#34;&gt;putRule&lt;/a&gt; to add the lambda target.  This error will cause the CloudFormation operation to fail.  Any API errors will be logged &amp; are viewable in the &lt;a href=&#34;https://blogs.aws.amazon.com/application-management/post/TxPYD8JT4CB5UY/View-CloudFormation-Logs-in-the-Console&#34;&gt;CloudFormation Logs Console&lt;/a&gt;.
-   &lt;/div&gt;
-&lt;/div&gt;
-
-&lt;h1 id=&#34;add-permission:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Add Permission&lt;/h1&gt;
-
-&lt;p&gt;With the two rules configured, the final step is to add the &lt;code&gt;sparta.CloudWatchPermission&lt;/code&gt; to our &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; value:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-return append(lambdaFunctions, lambdaFn)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Our entire function is therefore:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func appendCloudWatchEventHandler(api *sparta.API,
-                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
-
-  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-  cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
-  cloudWatchEventsPermission.Rules[&amp;#34;Rate5Mins&amp;#34;] = sparta.CloudWatchEventsRule{
-    ScheduleExpression: &amp;#34;rate(5 minutes)&amp;#34;,
-  }
-  cloudWatchEventsPermission.Rules[&amp;#34;EC2Activity&amp;#34;] = sparta.CloudWatchEventsRule{
-    EventPattern: map[string]interface{}{
-    	&amp;#34;source&amp;#34;:      []string{&amp;#34;aws.ec2&amp;#34;},
-    	&amp;#34;detail-type&amp;#34;: []string{&amp;#34;EC2 Instance State-change Notification&amp;#34;},
-    },
-  }
-  lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-
-  return append(lambdaFunctions, lambdaFn)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
-
-&lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all CloudWatch Events-triggered lambda functions:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Define the lambda function (&lt;code&gt;echoCloudWatchEvent&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;If needed, create the required &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition&#34;&gt;IAMRoleDefinition&lt;/a&gt; with appropriate privileges.&lt;/li&gt;
-&lt;li&gt;Provide the lambda function &amp;amp; IAMRoleDefinition to &lt;code&gt;sparta.NewLambda()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Create a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission&#34;&gt;CloudWatchEventsPermission&lt;/a&gt; value.&lt;/li&gt;
-&lt;li&gt;Add one or more &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsRule&#34;&gt;CloudWatchEventsRules&lt;/a&gt; to the &lt;code&gt;CloudWatchEventsPermission.Rules&lt;/code&gt; map that define your lambda function&amp;rsquo;s trigger condition:
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html&#34;&gt;Scheduled Events&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html&#34;&gt;Event Patterns&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;Append the &lt;code&gt;CloudWatchEventsPermission&lt;/code&gt; value to the lambda function&amp;rsquo;s &lt;code&gt;Permissions&lt;/code&gt; slice.&lt;/li&gt;
-&lt;li&gt;Include the reference in the call to &lt;code&gt;sparta.Main()&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Introduction to &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Events&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;Tim Bray&amp;rsquo;s &lt;a href=&#34;https://www.tbray.org/ongoing/When/201x/2016/01/11/CloudWatch-Events&#34;&gt;Cloud Eventing&lt;/a&gt; writeup&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/RunLambdaSchedule.html&#34;&gt;Run an AWS Lambda Function on a Schedule Using the AWS CLI&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;The EC2 event pattern is drawn from the AWS &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CloudWatchEventsandEventPatterns.html&#34;&gt;Events &amp;amp; Event Patterns&lt;/a&gt; documentation&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
