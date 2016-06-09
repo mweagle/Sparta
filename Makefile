@@ -6,36 +6,35 @@ clean:
 	go env
 
 get: clean
-	rm -rf ./vendor
-	rm -rf ./vendor/github.com/aws/aws-sdk-go
-	git clone --depth=1 https://github.com/aws/aws-sdk-go ./vendor/github.com/aws/aws-sdk-go
+	rm -rf $(GOPATH)/src/github.com/aws/aws-sdk-go
+	git clone --depth=1 https://github.com/aws/aws-sdk-go $(GOPATH)/src/github.com/aws/aws-sdk-go
 
-	rm -rf ./vendor/github.com/go-ini/ini
-	git clone --depth=1 https://github.com/go-ini/ini ./vendor/github.com/go-ini/ini
+	rm -rf $(GOPATH)/src/github.com/go-ini/ini
+	git clone --depth=1 https://github.com/go-ini/ini $(GOPATH)/src/github.com/go-ini/ini
 
-	rm -rf ./vendor/github.com/jmespath/go-jmespath
-	git clone --depth=1 https://github.com/jmespath/go-jmespath ./vendor/github.com/jmespath/go-jmespath
+	rm -rf $(GOPATH)/src/github.com/jmespath/go-jmespath
+	git clone --depth=1 https://github.com/jmespath/go-jmespath $(GOPATH)/src/github.com/jmespath/go-jmespath
 
-	rm -rf ./vendor/github.com/Sirupsen/logrus
-	git clone --depth=1 https://github.com/Sirupsen/logrus ./vendor/github.com/Sirupsen/logrus
+	rm -rf $(GOPATH)/src/github.com/Sirupsen/logrus
+	git clone --depth=1 https://github.com/Sirupsen/logrus $(GOPATH)/src/github.com/Sirupsen/logrus
 
-	rm -rf ./vendor/github.com/mjibson/esc
-	git clone --depth=1 https://github.com/mjibson/esc ./vendor/github.com/mjibson/esc
+	rm -rf $(GOPATH)/src/github.com/mjibson/esc
+	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 
-	rm -rf ./vendor/github.com/crewjam/go-cloudformation
-	git clone --depth=1 https://github.com/crewjam/go-cloudformation ./vendor/github.com/crewjam/go-cloudformation
+	rm -rf $(GOPATH)/src/github.com/crewjam/go-cloudformation
+	git clone --depth=1 https://github.com/crewjam/go-cloudformation $(GOPATH)/src/github.com/crewjam/go-cloudformation
 
-	rm -rf ./vendor/github.com/mweagle/cloudformationresources
-	git clone --depth=1 https://github.com/mweagle/cloudformationresources ./vendor/github.com/mweagle/cloudformationresources
+	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources
+	git clone --depth=1 https://github.com/mweagle/cloudformationresources $(GOPATH)/src/github.com/mweagle/cloudformationresources
 
-	rm -rf ./vendor/github.com/spf13/cobra
-	git clone --depth=1 https://github.com/spf13/cobra ./vendor/github.com/spf13/cobra
+	rm -rf $(GOPATH)/src/github.com/spf13/cobra
+	git clone --depth=1 https://github.com/spf13/cobra $(GOPATH)/src/github.com/spf13/cobra
 
-	rm -rf ./vendor/github.com/ogier/pflag
-	git clone --depth=1 https://github.com/ogier/pflag ./vendor/github.com/ogier/pflag
+	rm -rf $(GOPATH)/src/github.com/ogier/pflag
+	git clone --depth=1 https://github.com/ogier/pflag $(GOPATH)/src/github.com/ogier/pflag
 
-	rm -rf ./vendor/github.com/asaskevich/govalidator
-	git clone --depth=1 https://github.com/asaskevich/govalidator ./vendor/github.com/asaskevich/govalidator
+	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
+	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
 	
 
 reset:
