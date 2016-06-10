@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  0 
+    "wordCount":  1413 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: twitter:mweagle name:lumen]">
+<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -338,12 +338,395 @@
 
       <hr />
       <div id="toc">
-      
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
+<li><a href="#mixed-topology:d680e8a854a7cbad6d490c445cba2eba">Mixed Topology</a>
+<ul>
+<li><a href="#add-custom-command-line-option:d680e8a854a7cbad6d490c445cba2eba">Add Custom Command Line Option</a></li>
+<li><a href="#create-cloudinit-userdata:d680e8a854a7cbad6d490c445cba2eba">Create CloudInit Userdata</a>
+<ul>
+<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+</ul></li>
+<li><a href="#decorate-toplogy:d680e8a854a7cbad6d490c445cba2eba">Decorate Toplogy</a></li>
+</ul></li>
+<li><a href="#result:d680e8a854a7cbad6d490c445cba2eba">Result</a>
+<ul>
+<li><a href="#http-access:d680e8a854a7cbad6d490c445cba2eba">HTTP Access</a></li>
+<li><a href="#lambda-access:d680e8a854a7cbad6d490c445cba2eba">Lambda Access</a></li>
+</ul></li>
+<li><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></li>
+<li><a href="#notes-1:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+</ul>
+</nav>
       </div>
       <hr />
 
       <div class="container content">
   
+
+<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+
+<p>At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.</p>
+
+<p>However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks.  For example, given the current <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a>, the following task types might better be handled by &ldquo;legacy&rdquo; AWS services:</p>
+
+<ul>
+<li>Long running tasks</li>
+<li>Tasks with significant disk space requirements</li>
+<li>Large HTTP(S) I/O tasks</li>
+</ul>
+
+<p>It may also make sense to integrate EC2 when:</p>
+
+<ul>
+<li>Applications are being gradually decomposed into Lambda functions</li>
+<li>Latency-sensitive request paths can&rsquo;t afford <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">cold container</a> startup times</li>
+<li>Price/performance justifies using EC2</li>
+<li>Using EC2 as a failover for system-wide Lambda outages</li>
+</ul>
+
+<p>For such cases, Sparta supports running the exact same binary on EC2.  This section describes how to create a single Sparta service that publishes a function via AWS Lambda <em>and</em> EC2 as part of the same application codebase. It&rsquo;s based on the <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> project.</p>
+
+<h1 id="mixed-topology:d680e8a854a7cbad6d490c445cba2eba">Mixed Topology</h1>
+
+<p>Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no &ldquo;make mixed&rdquo; command line option.</p>
+
+<h2 id="add-custom-command-line-option:d680e8a854a7cbad6d490c445cba2eba">Add Custom Command Line Option</h2>
+
+<p>The first step is to add a <a href="/docs/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
+
+<pre><code class="go">// Custom command to startup a simple HelloWorld HTTP server
+httpServerCommand := &amp;cobra.Command{
+  Use:   &#34;httpServer&#34;,
+  Short: &#34;Sample HelloWorld HTTP server&#34;,
+  Long:  `Sample HelloWorld HTTP server that binds to port: ` &#43; HTTPServerPort,
+  RunE: func(cmd *cobra.Command, args []string) error {
+    http.HandleFunc(&#34;/&#34;, helloWorldResource)
+    return http.ListenAndServe(fmt.Sprintf(&#34;:%d&#34;, HTTPServerPort), nil)
+  },
+}
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
+
+
+<p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
+
+<h2 id="create-cloudinit-userdata:d680e8a854a7cbad6d490c445cba2eba">Create CloudInit Userdata</h2>
+
+<p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
+
+<pre><code class="bash">#!/bin/bash -xe
+SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{ .ServiceName }}.lambda.amd64
+
+################################################################################
+# 
+# Tested on Ubuntu 16.04
+#
+# AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
+if [ ! -f &#34;/home/ubuntu/userdata.sh&#34; ]
+then
+  curl -vs http://169.254.169.254/latest/user-data -o /home/ubuntu/userdata.sh
+  chmod &#43;x /home/ubuntu/userdata.sh
+fi
+
+# Install everything
+service supervisor stop || apt-get install supervisor -y
+apt-get update -y 
+apt-get upgrade -y 
+apt-get install supervisor awscli unzip git -y
+
+################################################################################
+# Our own binary
+aws s3 cp s3://{{ .S3Bucket }}/{{ .S3Key }} /home/ubuntu/application.zip
+unzip -o /home/ubuntu/application.zip -d /home/ubuntu
+chmod &#43;x $SPARTA_OMEGA_BINARY_PATH
+
+################################################################################
+# SUPERVISOR
+# REF: http://supervisord.org/
+# Cleanout secondary directory
+mkdir -pv /etc/supervisor/conf.d
+  
+SPARTA_OMEGA_SUPERVISOR_CONF=&#34;[program:spartaomega]
+command=$SPARTA_OMEGA_BINARY_PATH httpServer
+numprocs=1
+directory=/tmp
+priority=999
+autostart=true
+autorestart=unexpected
+startsecs=10
+startretries=3
+exitcodes=0,2
+stopsignal=TERM
+stopwaitsecs=10
+stopasgroup=false
+killasgroup=false
+user=ubuntu
+stdout_logfile=/var/log/spartaomega.log
+stdout_logfile_maxbytes=1MB
+stdout_logfile_backups=10
+stdout_capture_maxbytes=1MB
+stdout_events_enabled=false
+redirect_stderr=false
+stderr_logfile=spartaomega.err.log
+stderr_logfile_maxbytes=1MB
+stderr_logfile_backups=10
+stderr_capture_maxbytes=1MB
+stderr_events_enabled=false
+&#34;
+echo &#34;$SPARTA_OMEGA_SUPERVISOR_CONF&#34; &gt; /etc/supervisor/conf.d/spartaomega.conf
+
+# Patch up the directory
+chown -R ubuntu:ubuntu /home/ubuntu
+
+# Startup Supervisor
+service supervisor restart || service supervisor start</code></pre>
+
+
+<p>The script uses the command line option (<code>command=$SPARTA_OMEGA_BINARY_PATH httpServer</code>) that was defined in the first step.</p>
+
+<p>It also uses the <code>S3Bucket</code> and <code>S3Key</code> properties that Sparta creates during the build and provides to your decorator function (next section).</p>
+
+<h3 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h3>
+
+<p>The script is using <a href="https://golang.org/pkg/text/template/">text/template</a> markup to expand properties known at build time.  Because this content will be parsed by <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression">ConvertToTemplateExpression</a> (next section), it&rsquo;s also possible to use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html">Fn::Join</a> compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.</p>
+
+<p>For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:</p>
+
+<pre><code class="bash">POSTGRES_ADDRESS={ &#34;Fn::GetAtt&#34; : [ &#34;{{ .DBInstanceResourceName }}&#34; , &#34;Endpoint.Address&#34; ] }</code></pre>
+
+
+<p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
+
+<h2 id="decorate-toplogy:d680e8a854a7cbad6d490c445cba2eba">Decorate Toplogy</h2>
+
+<p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource.  For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
+
+<p><pre><code class="go">// The CloudFormation template decorator that inserts all the other
+// AWS components we need to support this deployment...
+func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
+
+  return func(serviceName string,
+    lambdaResourceName string,
+    lambdaResource gocf.LambdaFunction,
+    resourceMetadata map[string]interface{},
+    S3Bucket string,
+    S3Key string,
+    template *gocf.Template,
+    logger *logrus.Logger) error {
+
+    // Create the launch configuration with Metadata to download the ZIP file, unzip it &amp; launch the
+    // golang binary...
+    ec2SecurityGroupResourceName := sparta.CloudFormationResourceName(&#34;SpartaOmegaSecurityGroup&#34;,
+      &#34;SpartaOmegaSecurityGroup&#34;)
+    asgLaunchConfigurationName := sparta.CloudFormationResourceName(&#34;SpartaOmegaASGLaunchConfig&#34;,
+      &#34;SpartaOmegaASGLaunchConfig&#34;)
+    asgResourceName := sparta.CloudFormationResourceName(&#34;SpartaOmegaASG&#34;,
+      &#34;SpartaOmegaASG&#34;)
+    ec2InstanceRoleName := sparta.CloudFormationResourceName(&#34;SpartaOmegaEC2InstanceRole&#34;,
+      &#34;SpartaOmegaEC2InstanceRole&#34;)
+    ec2InstanceProfileName := sparta.CloudFormationResourceName(&#34;SpartaOmegaEC2InstanceProfile&#34;,
+      &#34;SpartaOmegaEC2InstanceProfile&#34;)
+
+    //////////////////////////////////////////////////////////////////////////////
+    // 1 - Create the security group for the SpartaOmega EC2 instance
+    ec2SecurityGroup := &amp;gocf.EC2SecurityGroup{
+      GroupDescription: gocf.String(&#34;SpartaOmega Security Group&#34;),
+      SecurityGroupIngress: &amp;gocf.EC2SecurityGroupRuleList{
+        gocf.EC2SecurityGroupRule{
+          CidrIp:     gocf.String(&#34;0.0.0.0/0&#34;),
+          IpProtocol: gocf.String(&#34;tcp&#34;),
+          FromPort:   gocf.Integer(HTTPServerPort),
+          ToPort:     gocf.Integer(HTTPServerPort),
+        },
+        gocf.EC2SecurityGroupRule{
+          CidrIp:     gocf.String(&#34;0.0.0.0/0&#34;),
+          IpProtocol: gocf.String(&#34;tcp&#34;),
+          FromPort:   gocf.Integer(22),
+          ToPort:     gocf.Integer(22),
+        },
+      },
+    }
+    template.AddResource(ec2SecurityGroupResourceName, ec2SecurityGroup)
+    //////////////////////////////////////////////////////////////////////////////
+    // 2 - Create the ASG and associate the userdata with the EC2 init
+    // EC2 Instance Role...
+    statements := sparta.CommonIAMStatements.Core
+
+    // Add the statement that allows us to fetch the S3 object with this compiled
+    // binary
+    statements = append(statements, spartaIAM.PolicyStatement{
+      Effect:   &#34;Allow&#34;,
+      Action:   []string{&#34;s3:GetObject&#34;},
+      Resource: gocf.String(fmt.Sprintf(&#34;arn:aws:s3:::%s/%s&#34;, S3Bucket, S3Key)),
+    })
+    iamPolicyList := gocf.IAMPoliciesList{}
+    iamPolicyList = append(iamPolicyList,
+      gocf.IAMPolicies{
+        PolicyDocument: sparta.ArbitraryJSONObject{
+          &#34;Version&#34;:   &#34;2012-10-17&#34;,
+          &#34;Statement&#34;: statements,
+        },
+        PolicyName: gocf.String(&#34;EC2Policy&#34;),
+      },
+    )
+    ec2InstanceRole := &amp;gocf.IAMRole{
+      AssumeRolePolicyDocument: sparta.AssumePolicyDocument,
+      Policies:                 &amp;iamPolicyList,
+    }
+    template.AddResource(ec2InstanceRoleName, ec2InstanceRole)
+
+    // Create the instance profile
+    ec2InstanceProfile := &amp;gocf.IAMInstanceProfile{
+      Path:  gocf.String(&#34;/&#34;),
+      Roles: []gocf.Stringable{gocf.Ref(ec2InstanceRoleName).String()},
+    }
+    template.AddResource(ec2InstanceProfileName, ec2InstanceProfile)
+
+    //Now setup the properties map, expand the userdata, and attach it...
+    userDataProps := map[string]interface{}{
+      &#34;S3Bucket&#34;:    S3Bucket,
+      &#34;S3Key&#34;:       S3Key,
+      &#34;ServiceName&#34;: serviceName,
+    }
+
+    userDataTemplateInput, userDataTemplateInputErr := resources.FSString(false, &#34;/resources/source/userdata.sh&#34;)
+    if nil != userDataTemplateInputErr {
+      return userDataTemplateInputErr
+    }
+    templateReader := strings.NewReader(userDataTemplateInput)
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+                                                                                      userDataProps)
+    if nil != userDataExpressionErr {
+      return userDataExpressionErr
+    }
+
+    logger.WithFields(logrus.Fields{
+      &#34;Parameters&#34;: userDataProps,
+      &#34;Expanded&#34;:   userDataExpression,
+    }).Debug(&#34;Expanded userdata&#34;)
+
+    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+      ImageId:            gocf.GetAtt(customResourceAMILookupName, &#34;HVM&#34;),
+      InstanceType:       gocf.String(&#34;t2.micro&#34;),
+      KeyName:            gocf.String(SSHKeyName),
+      IamInstanceProfile: gocf.Ref(ec2InstanceProfileName).String(),
+      UserData:           gocf.Base64(userDataExpression),
+      SecurityGroups:     gocf.StringList(gocf.GetAtt(ec2SecurityGroupResourceName, &#34;GroupId&#34;)),
+    }
+    launchConfigResource := template.AddResource(asgLaunchConfigurationName,
+      asgLaunchConfigurationResource)
+    launchConfigResource.DependsOn = append(launchConfigResource.DependsOn,
+      customResourceAMILookupName)
+
+    // Create the ASG
+    asgResource := &amp;gocf.AutoScalingAutoScalingGroup{
+      // Empty Region is equivalent to all region AZs
+      // Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
+      AvailabilityZones:       gocf.GetAZs(gocf.String(&#34;&#34;)),
+      LaunchConfigurationName: gocf.Ref(asgLaunchConfigurationName).String(),
+      MaxSize:                 gocf.String(&#34;1&#34;),
+      MinSize:                 gocf.String(&#34;1&#34;),
+    }
+    template.AddResource(asgResourceName, asgResource)
+    return nil
+  }
+}</code></pre>
+</p>
+
+<p>There are a few things to point out in this function:</p>
+
+<ul>
+<li><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:
+<pre><code class="go">gocf.EC2SecurityGroupRule{
+          CidrIp:     gocf.String(&#34;0.0.0.0/0&#34;),
+          IpProtocol: gocf.String(&#34;tcp&#34;),
+          FromPort:   gocf.Integer(HTTPServerPort),
+          ToPort:     gocf.Integer(HTTPServerPort),
+        }</code></pre>
+</li>
+<li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:
+<pre><code class="go">statements = append(statements, spartaIAM.PolicyStatement{
+      Effect:   &#34;Allow&#34;,
+      Action:   []string{&#34;s3:GetObject&#34;},
+      Resource: gocf.String(fmt.Sprintf(&#34;arn:aws:s3:::%s/%s&#34;, S3Bucket, S3Key)),
+    })</code></pre>
+</li>
+<li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:
+<pre><code class="go">// Now setup the properties map, expand the userdata, and attach it...
+    userDataProps := map[string]interface{}{
+      &#34;S3Bucket&#34;:    S3Bucket,
+      &#34;S3Key&#34;:       S3Key,
+      &#34;ServiceName&#34;: serviceName,
+    }
+    // ...
+    templateReader := strings.NewReader(userDataTemplateInput)
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+                                                                                      userDataProps)
+    // ...
+    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+      // ...
+      UserData:           gocf.Base64(userDataExpression),
+      // ...
+    }</code></pre>
+</li>
+<li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/docs/application/custom_flags">custom flag</a> (not shown above):
+<pre><code class="go">// And add the SSHKeyName option to the provision step
+  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
+    &#34;key&#34;,
+    &#34;k&#34;,
+    &#34;&#34;,
+    &#34;SSH Key Name to use for EC2 instances&#34;)</code></pre>
+
+This value is used as an input to the AutoScalingLaunchConfiguration value:
+<pre><code class="go">asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+      // ...
+      KeyName:            gocf.String(SSHKeyName),
+      // ...
+    }</code></pre>
+</li>
+</ul>
+
+<h1 id="result:d680e8a854a7cbad6d490c445cba2eba">Result</h1>
+
+<p>Deploying your Go application using a mixed topology enables your &ldquo;Lambda&rdquo; endpoint to be addressable via AWS Lambda and standard HTTP.</p>
+
+<h2 id="http-access:d680e8a854a7cbad6d490c445cba2eba">HTTP Access</h2>
+
+<p><pre><code class="bash">$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
+*   Trying 52.26.146.138...
+* Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com (52.26.146.138) port 9999 (#0)
+&gt; GET / HTTP/1.1
+&gt; Host: ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Date: Fri, 10 Jun 2016 14:58:15 GMT
+&lt; Content-Length: 29
+&lt; Content-Type: text/plain; charset=utf-8
+&lt;
+* Connection #0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
+Hello world from SpartaOmega!</code></pre>
+</p>
+
+<h2 id="lambda-access:d680e8a854a7cbad6d490c445cba2eba">Lambda Access</h2>
+
+<p><img src="/images/alternative_topology/lambda.jpg" alt="Lambda" /></p>
+
+<h1 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h1>
+
+<p>Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.</p>
+
+<h1 id="notes-1:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+
+<ul>
+<li><em>userdata.sh</em> isn&rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html">cfn-hup</a> listeners.</li>
+<li>Production deployments may consider <a href="https://aws.amazon.com/codedeploy/">CodeDeploy</a> to assist in HA binary rollover.</li>
+<li>Forwarding <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html">CloudWatch Logs</a> is not handled by this sample.</li>
+<li>Consider using HTTPS &amp; <a href="https://ivopetkov.com/b/let-s-encrypt-on-ec2/">Let&rsquo;s Encrypt</a> on your EC2 instances.</li>
+</ul>
+
 </div>
 
 
