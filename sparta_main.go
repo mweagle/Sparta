@@ -88,7 +88,7 @@ func init() {
 		"level",
 		"l",
 		"info",
-		"Log level [panic, fatal, error, warn, info, debug]'")
+		"Log level [panic, fatal, error, warn, info, debug]")
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
 		Use:   "version",
@@ -189,7 +189,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		"level",
 		"l",
 		"info",
-		"Log level [panic, fatal, error, warn, info, debug]'")
+		"Log level [panic, fatal, error, warn, info, debug]")
 
 	// Now, for any user-attached commands, add them to the temporary Parse
 	// root command.
