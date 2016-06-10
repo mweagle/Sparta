@@ -21,8 +21,8 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 
-	rm -rf $(GOPATH)/src/mweagle/cloudformationresources/
-	git clone --depth=1 https://mweagle/cloudformationresources/ $(GOPATH)/src/mweagle/cloudformationresources/
+	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources/
+	git clone --depth=1 https://github.com/mweagle/cloudformationresources/ $(GOPATH)/src/github.com/mweagle/cloudformationresources/
 
 	rm -rf $(GOPATH)/src/github.com/crewjam/go-cloudformation
 	git clone --depth=1 https://github.com/crewjam/go-cloudformation $(GOPATH)/src/github.com/crewjam/go-cloudformation
@@ -36,7 +36,6 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
 	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
 	
-
 reset:
 		git reset --hard
 		git clean -f -d
