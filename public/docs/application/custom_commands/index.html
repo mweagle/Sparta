@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-06-09",
     "description": "",
-    "wordCount":  0 
+    "wordCount":  232 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[flattr: home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -338,12 +338,72 @@
 
       <hr />
       <div id="toc">
-      
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
+</ul>
+</nav>
       </div>
       <hr />
 
       <div class="container content">
   
+
+<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+
+<p>In addition to <a href="/docs/application/custom_flags">custom flags</a>, an application may register completely new commands. For example, to support <a href="/docs/application/custom_flags">alternative topologies</a> or integrated automated acceptance tests as part of a CI/CD pipeline.</p>
+
+<p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
+
+<pre><code class="go">httpServerCommand := &amp;cobra.Command{
+  Use:   &#34;httpServer&#34;,
+  Short: &#34;Sample HelloWorld HTTP server&#34;,
+  Long:  `Sample HelloWorld HTTP server that binds to port: ` &#43; HTTPServerPort,
+  RunE: func(cmd *cobra.Command, args []string) error {
+    http.HandleFunc(&#34;/&#34;, helloWorldResource)
+    return http.ListenAndServe(fmt.Sprintf(&#34;:%d&#34;, HTTPServerPort), nil)
+  },
+}
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
+
+
+<p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
+
+<p><pre><code class="bash">$ ./SpartaOmega --help
+Provision AWS Lambda and EC2 instance with same code
+
+Usage:
+  SpartaOmega [command]
+
+Available Commands:
+  httpServer  Sample HelloWorld HTTP server
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default &#34;info&#34;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+Use &#34;SpartaOmega [command] --help&#34; for more information about a command.</code></pre>
+</p>
+
+<p>And you can query for user-command specific usage as in:</p>
+
+<p><pre><code class="bash">$ ./SpartaOmega httpServer --help
+Custom command
+
+Usage:
+  SpartaOmega httpServer [flags]
+
+Global Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default &#34;info&#34;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)</code></pre>
+</p>
+
 </div>
 
 

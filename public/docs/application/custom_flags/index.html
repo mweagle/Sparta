@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-06-09",
     "description": "",
-    "wordCount":  269 
+    "wordCount":  281 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: flattr: name:lumen home:Sparta facebook: github:https://github.com/mweagle googleplus:]">
+<body class="map[youtube: flattr: home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -343,7 +343,7 @@
 <li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a>
 <ul>
 <li><a href="#adding-flags:d680e8a854a7cbad6d490c445cba2eba">Adding Flags</a></li>
-<li><a href="#validating-flags:d680e8a854a7cbad6d490c445cba2eba">Validating Flags</a></li>
+<li><a href="#validating-input:d680e8a854a7cbad6d490c445cba2eba">Validating Input</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -378,13 +378,13 @@ func main() {
 }</code></pre>
 
 
-<h2 id="validating-flags:d680e8a854a7cbad6d490c445cba2eba">Validating Flags</h2>
+<h2 id="validating-input:d680e8a854a7cbad6d490c445cba2eba">Validating Input</h2>
 
-<p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input.</p>
+<p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling <code>sparta.Main()</code>.</p>
 
-<p>To validate user input, define a <a href="https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook">CommandLineOptionsHook</a> function and provide it to <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">sparta.ParseOptions</a>.  This function is called after <em>pflag</em> bindings are invoked.</p>
+<p>To validate user input, define a <a href="https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook">CommandLineOptionsHook</a> function and provide it to <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">sparta.ParseOptions</a>.  This function is called after the <em>pflag</em> bindings are invoked so that your application can validate user input.</p>
 
-<p>The result of <code>ParseOptions</code> will be the value returned from your validation hook function. If there is an error, your application can exit with an application specific exit code.  For instance:</p>
+<p>The <code>ParseOptions</code> result is the optional error returned from your <em>CommandLineOptionsHook</em> function. If there is an error, your application can then exit with an application specific exit code.  For instance:</p>
 
 <p><pre><code class="go">// Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
@@ -401,7 +401,7 @@ if nil != parseErr {
 }</code></pre>
 </p>
 
-<p>Sparta uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
+<p>Sparta itself uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
 
 </div>
 

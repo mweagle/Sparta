@@ -33,13 +33,13 @@ func main() {
 }
 {{< /highlight >}}
 
-## Validating Flags
+## Validating Input
 
-Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input.  
+Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling `sparta.Main()`.  
 
-To validate user input, define a [CommandLineOptionsHook](https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook) function and provide it to [sparta.ParseOptions](https://godoc.org/github.com/mweagle/Sparta#ParseOptions).  This function is called after _pflag_ bindings are invoked. 
+To validate user input, define a [CommandLineOptionsHook](https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook) function and provide it to [sparta.ParseOptions](https://godoc.org/github.com/mweagle/Sparta#ParseOptions).  This function is called after the _pflag_ bindings are invoked so that your application can validate user input. 
 
-The result of `ParseOptions` will be the value returned from your validation hook function. If there is an error, your application can exit with an application specific exit code.  For instance:
+The `ParseOptions` result is the optional error returned from your _CommandLineOptionsHook_ function. If there is an error, your application can then exit with an application specific exit code.  For instance:
 
 {{< highlight go >}}
 // Define a validation hook s.t. we can verify the SSHKey is valid
@@ -57,4 +57,4 @@ if nil != parseErr {
 }
 {{< /highlight >}}
 
-Sparta uses the [govalidator](https://github.com/asaskevich/govalidator/) package to simplify validating command line arguments.  See [sparta_main.go](https://github.com/mweagle/Sparta/blob/master/sparta_main.go) for an example.
+Sparta itself uses the [govalidator](https://github.com/asaskevich/govalidator/) package to simplify validating command line arguments.  See [sparta_main.go](https://github.com/mweagle/Sparta/blob/master/sparta_main.go) for an example.
