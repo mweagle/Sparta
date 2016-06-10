@@ -15,7 +15,7 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) e
 	if validationErr != nil {
 		return validationErr
 	}
-	
+
 	if 0 == port {
 		port = 9999
 	}

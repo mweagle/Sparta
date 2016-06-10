@@ -53,7 +53,7 @@ func Describe(serviceName string,
 	s3Site *S3Site,
 	outputWriter io.Writer,
 	logger *logrus.Logger) error {
-	
+
 	validationErr := validateSpartaPreconditions(lambdaAWSInfos, logger)
 	if validationErr != nil {
 		return validationErr

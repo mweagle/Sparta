@@ -113,15 +113,15 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 				if matchInfo[0] != 0 {
 					head := curContents[0:matchInfo[0]]
 					contents = append(contents, gocf.String(fmt.Sprintf("%s", head)))
-					curContents = curContents[len(head):len(curContents)]
+					curContents = curContents[len(head):]
 				}
 				// There's at least one match...find the closing brace...
 				var parsed map[string]interface{}
-				tail := curContents[0:len(curContents)]
+				tail := curContents[0:]
 				for closingTokenIndex := strings.Index(tail, "}"); closingTokenIndex >= 0; closingTokenIndex = strings.Index(tail, "}") {
 
 					testBlock := tail[0 : closingTokenIndex+1]
-					curContents = tail[closingTokenIndex+1 : len(tail)]
+					curContents = tail[closingTokenIndex+1:]
 					err := json.Unmarshal([]byte(testBlock), &parsed)
 					if err != nil {
 						break
@@ -152,7 +152,7 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 								return nil, fmt.Errorf("Unsupported AWS Function detected: %s", testBlock)
 							}
 						}
-						tail = tail[closingTokenIndex+1 : len(tail)]
+						tail = tail[closingTokenIndex+1:]
 					}
 				}
 				if len(parsed) <= 0 {
