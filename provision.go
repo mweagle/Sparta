@@ -579,38 +579,116 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
+func buildGoBinary(executableOutput string, logger *logrus.Logger) error {
+	// Go generate
+	cmd := exec.Command("go", "generate")
+	if logger.Level == logrus.DebugLevel {
+		cmd = exec.Command("go", "generate", "-v", "-x")
+	}
+	cmd.Env = os.Environ()
+	commandString := fmt.Sprintf("%s", cmd.Args)
+	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
+	goGenerateErr := runOSCommand(cmd, logger)
+	if nil != goGenerateErr {
+		return goGenerateErr
+	}
+
+	// TODO: Smaller binaries via linker flags
+	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
+	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
+	logger.WithFields(logrus.Fields{
+		"Name": executableOutput,
+	}).Info("Compiling binary")
+	return runOSCommand(cmd, logger)
+}
+
+func writeNodeJSShim(serviceName string,
+	executableOutput string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	zipWriter *zip.Writer,
+	logger *logrus.Logger) error {
+
+	// Add the string literal adapter, which requires us to add exported
+	// functions to the end of index.js.  These NodeJS exports will be
+	// linked to the AWS Lambda NodeJS function name, and are basically
+	// automatically generated pass through proxies to the golang HTTP handler.
+	nodeJSWriter, err := zipWriter.Create("index.js")
+	if err != nil {
+		return errors.New("Failed to create ZIP entry: index.js")
+	}
+	nodeJSSource := _escFSMustString(false, "/resources/index.js")
+	nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
+
+	handlerNames := make(map[string]bool, 0)
+	for _, eachLambda := range lambdaAWSInfos {
+		if _, exists := handlerNames[eachLambda.jsHandlerName()]; !exists {
+			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, logger)
+			handlerNames[eachLambda.jsHandlerName()] = true
+		}
+
+		// USER DEFINED RESOURCES
+		for _, eachCustomResource := range eachLambda.customResources {
+			if _, exists := handlerNames[eachCustomResource.jsHandlerName()]; !exists {
+				nodeJSSource += createUserCustomResourceEntry(eachCustomResource, logger)
+				handlerNames[eachCustomResource.jsHandlerName()] = true
+			}
+		}
+	}
+	// SPARTA CUSTOM RESOURCES
+	for _, eachCustomResourceName := range golangCustomResourceTypes {
+		nodeJSSource += createNewSpartaCustomResourceEntry(eachCustomResourceName, logger)
+	}
+
+	// Finally, replace
+	// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
+	// with the service binary name
+	nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
+	// And the service name
+	nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", serviceName)
+	logger.WithFields(logrus.Fields{
+		"index.js": nodeJSSource,
+	}).Debug("Dynamically generated NodeJS adapter")
+
+	stringReader := strings.NewReader(nodeJSSource)
+	_, copyErr := io.Copy(nodeJSWriter, stringReader)
+	return copyErr
+}
+
+func writeCustomResources(zipWriter *zip.Writer,
+	logger *logrus.Logger) error {
+	for _, eachName := range customResourceScripts {
+		resourceName := fmt.Sprintf("%s/%s", provisioningResourcesRelPath, eachName)
+		resourceContent := _escFSMustString(false, resourceName)
+		stringReader := strings.NewReader(resourceContent)
+		embedWriter, errCreate := zipWriter.Create(eachName)
+		if nil != errCreate {
+			return errCreate
+		}
+		logger.WithFields(logrus.Fields{
+			"Name": eachName,
+		}).Debug("Script name")
+
+		_, copyErr := io.Copy(embedWriter, stringReader)
+		if nil != copyErr {
+			return copyErr
+		}
+	}
+	return nil
+}
+
 // Build and package the application
 func createPackageStep() workflowStep {
 
 	return func(ctx *workflowContext) (workflowStep, error) {
-		// Go generate
-		cmd := exec.Command("go", "generate")
-		if ctx.logger.Level == logrus.DebugLevel {
-			cmd = exec.Command("go", "generate", "-v", "-x")
-		}
-		cmd.Env = os.Environ()
-		commandString := fmt.Sprintf("%s", cmd.Args)
-		ctx.logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
-		err := runOSCommand(cmd, ctx.logger)
-		if err != nil {
-			return nil, err
-		}
-
-		// Compilation
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		// TODO: Smaller binaries via linker flags
-		// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
-		cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
-		cmd.Env = os.Environ()
-		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
-		ctx.logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
-		}).Info("Compiling binary")
-		err = runOSCommand(cmd, ctx.logger)
-		if err != nil {
-			return nil, err
+		buildErr := buildGoBinary(executableOutput, ctx.logger)
+		if nil != buildErr {
+			return nil, buildErr
 		}
+		// Cleanup
 		defer func() {
 			errRemove := os.Remove(executableOutput)
 			if nil != errRemove {
@@ -655,63 +733,22 @@ func createPackageStep() workflowStep {
 		// functions to the end of index.js.  These NodeJS exports will be
 		// linked to the AWS Lambda NodeJS function name, and are basically
 		// automatically generated pass through proxies to the golang HTTP handler.
-		nodeJSWriter, err := lambdaArchive.Create("index.js")
-		if err != nil {
-			return nil, errors.New("Failed to create ZIP entry: index.js")
+		shimErr := writeNodeJSShim(ctx.serviceName,
+			executableOutput,
+			ctx.lambdaAWSInfos,
+			lambdaArchive,
+			ctx.logger)
+		if nil != shimErr {
+			return nil, shimErr
 		}
-		nodeJSSource := _escFSMustString(false, "/resources/index.js")
-		nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
-
-		handlerNames := make(map[string]bool, 0)
-		for _, eachLambda := range ctx.lambdaAWSInfos {
-			if _, exists := handlerNames[eachLambda.jsHandlerName()]; !exists {
-				nodeJSSource += createNewNodeJSProxyEntry(eachLambda, ctx.logger)
-				handlerNames[eachLambda.jsHandlerName()] = true
-			}
-
-			// USER DEFINED RESOURCES
-			for _, eachCustomResource := range eachLambda.customResources {
-				if _, exists := handlerNames[eachCustomResource.jsHandlerName()]; !exists {
-					nodeJSSource += createUserCustomResourceEntry(eachCustomResource, ctx.logger)
-					handlerNames[eachCustomResource.jsHandlerName()] = true
-				}
-			}
-		}
-		// SPARTA CUSTOM RESOURCES
-		for _, eachCustomResourceName := range golangCustomResourceTypes {
-			nodeJSSource += createNewSpartaCustomResourceEntry(eachCustomResourceName, ctx.logger)
-		}
-
-		// Finally, replace
-		// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
-		// with the service binary name
-		nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
-		// And the service name
-		nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", ctx.serviceName)
-		ctx.logger.WithFields(logrus.Fields{
-			"index.js": nodeJSSource,
-		}).Debug("Dynamically generated NodeJS adapter")
-
-		stringReader := strings.NewReader(nodeJSSource)
-		io.Copy(nodeJSWriter, stringReader)
 
 		// Next embed the custom resource scripts into the package.
 		// TODO - conditionally include custom NodeJS scripts based on service requirement
 		ctx.logger.Debug("Embedding CustomResource scripts")
-
-		for _, eachName := range customResourceScripts {
-			resourceName := fmt.Sprintf("%s/%s", provisioningResourcesRelPath, eachName)
-			resourceContent := _escFSMustString(false, resourceName)
-			stringReader := strings.NewReader(resourceContent)
-			embedWriter, errCreate := lambdaArchive.Create(eachName)
-			if nil != errCreate {
-				return nil, errCreate
-			}
-			ctx.logger.WithFields(logrus.Fields{
-				"Name": eachName,
-			}).Debug("Script name")
-
-			io.Copy(embedWriter, stringReader)
+		customResourceErr := writeCustomResources(lambdaArchive,
+			ctx.logger)
+		if nil != customResourceErr {
+			return nil, customResourceErr
 		}
 
 		// And finally, if there is a node_modules.zip file, then include it.  The
@@ -946,6 +983,57 @@ func updateStackViaChangeSet(serviceName string,
 	return executeChangeSetError
 }
 
+type waitForStackOperationCompleteResult struct {
+	operationSuccessful bool
+	stackInfo           *cloudformation.Stack
+}
+
+func waitForStackOperationComplete(stackID string,
+	pollingMessage string,
+	awsCloudFormation *cloudformation.CloudFormation,
+	logger *logrus.Logger) (*waitForStackOperationCompleteResult, error) {
+
+	result := &waitForStackOperationCompleteResult{}
+
+	// Poll for the current stackID state, and
+	describeStacksInput := &cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackID),
+	}
+	for waitComplete := false; !waitComplete; {
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
+		time.Sleep(sleepDuration)
+
+		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+		if nil != err {
+			// TODO - add retry iff we're RateExceeded due to collective access
+			return nil, err
+		}
+		if len(describeStacksOutput.Stacks) <= 0 {
+			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
+		}
+		result.stackInfo = describeStacksOutput.Stacks[0]
+		switch *(result.stackInfo).StackStatus {
+		case cloudformation.StackStatusCreateComplete,
+			cloudformation.StackStatusUpdateComplete:
+			result.operationSuccessful = true
+			waitComplete = true
+		case
+			// Include DeleteComplete as new provisions will automatically rollback
+			cloudformation.StackStatusDeleteComplete,
+			cloudformation.StackStatusCreateFailed,
+			cloudformation.StackStatusDeleteFailed,
+			cloudformation.StackStatusRollbackFailed,
+			cloudformation.StackStatusRollbackComplete,
+			cloudformation.StackStatusUpdateRollbackComplete:
+			result.operationSuccessful = false
+			waitComplete = true
+		default:
+			logger.Info(pollingMessage)
+		}
+	}
+	return result, nil
+}
+
 // Converge the stack to the new state, taking into account whether
 // it was previously provisioned.
 func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
@@ -989,53 +1077,23 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 
 		stackID = *createStackResponse.StackId
 	}
-
-	// Poll for the current stackID state, and
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackID),
+	// Wait for the operation to succeeed
+	var pollingMessage string
+	if exists {
+		pollingMessage = "Waiting for ExecuteChangeSet to complete"
+	} else {
+		pollingMessage = "Waiting for CreateStack to complete"
 	}
-
-	var stackInfo *cloudformation.Stack
-	var convegeStackStateSucceeded bool
-	for waitComplete := false; !waitComplete; {
-		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
-		time.Sleep(sleepDuration)
-
-		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
-		if nil != err {
-			// TODO - add retry iff we're RateExceeded due to collective access
-			return nil, err
-		}
-		if len(describeStacksOutput.Stacks) <= 0 {
-			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
-		}
-		stackInfo = describeStacksOutput.Stacks[0]
-		switch *stackInfo.StackStatus {
-		case cloudformation.StackStatusCreateComplete,
-			cloudformation.StackStatusUpdateComplete:
-			convegeStackStateSucceeded = true
-			waitComplete = true
-		case
-			// Include DeleteComplete as new provisions will automatically rollback
-			cloudformation.StackStatusDeleteComplete,
-			cloudformation.StackStatusCreateFailed,
-			cloudformation.StackStatusDeleteFailed,
-			cloudformation.StackStatusRollbackFailed,
-			cloudformation.StackStatusRollbackComplete,
-			cloudformation.StackStatusUpdateRollbackComplete:
-			convegeStackStateSucceeded = false
-			waitComplete = true
-		default:
-			if exists {
-				ctx.logger.Info("Waiting for ExecuteChangeSet to complete")
-			} else {
-				ctx.logger.Info("Waiting for CreateStack to complete")
-			}
-		}
+	convergeResult, convergeErr := waitForStackOperationComplete(stackID,
+		pollingMessage,
+		awsCloudFormation,
+		ctx.logger)
+	if nil != convergeErr {
+		return nil, convergeErr
 	}
 
 	// If it didn't work, then output some failure information
-	if !convegeStackStateSucceeded {
+	if !convergeResult.operationSuccessful {
 		// Get the stack events and find the ones that failed.
 		events, err := stackEvents(stackID, awsCloudFormation)
 		if nil != err {
@@ -1058,8 +1116,8 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			}
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
-	} else if nil != stackInfo.Outputs {
-		for _, eachOutput := range stackInfo.Outputs {
+	} else if nil != convergeResult.stackInfo.Outputs {
+		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			ctx.logger.WithFields(logrus.Fields{
 				"Key":         *eachOutput.OutputKey,
 				"Value":       *eachOutput.OutputValue,
@@ -1067,7 +1125,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 			}).Info("Stack output")
 		}
 	}
-	return stackInfo, nil
+	return convergeResult.stackInfo, nil
 }
 
 func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf.Template {
