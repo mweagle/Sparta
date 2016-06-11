@@ -68,42 +68,63 @@ func MapToResourceTags(tagMap map[string]string) []interface{} {
 	return tags
 }
 
-// ConvertToTemplateExpression transforms the templateDataReader contents into
-// an Fn::Join- compatible representation for template serialization.
-func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+// Struct to encapsulate transforming data into
+type templateConverter struct {
+	templateReader          io.Reader
+	additionalTemplateProps map[string]interface{}
+	// internals
+	expandedTemplate string
+	contents         []gocf.Stringable
+	conversionError  error
+}
 
-	templateDataBytes, templateDataErr := ioutil.ReadAll(templateDataReader)
+func (converter *templateConverter) expandTemplate() *templateConverter {
+	if nil != converter.conversionError {
+		return converter
+	}
+	templateDataBytes, templateDataErr := ioutil.ReadAll(converter.templateReader)
 	if nil != templateDataErr {
-		return nil, templateDataErr
+		converter.conversionError = templateDataErr
+		return converter
 	}
 	templateData := string(templateDataBytes)
 
-	toExpressionSlice := func(input interface{}) ([]string, error) {
-		var expressions []string
-		slice, sliceOK := input.([]interface{})
-		if !sliceOK {
-			return nil, fmt.Errorf("Failed to convert to slice")
-		}
-		for _, eachValue := range slice {
-			switch str := eachValue.(type) {
-			case string:
-				expressions = append(expressions, str)
-			}
-		}
-		return expressions, nil
-	}
 	parsedTemplate, templateErr := template.New("CloudFormation").Parse(templateData)
 	if nil != templateErr {
-		return nil, fmt.Errorf("Failed to parse template: %s", templateErr.Error())
+		converter.conversionError = templateDataErr
+		return converter
 	}
 	output := &bytes.Buffer{}
-	executeErr := parsedTemplate.Execute(output, additionalUserTemplateProperties)
+	executeErr := parsedTemplate.Execute(output, converter.additionalTemplateProps)
 	if nil != executeErr {
-		return nil, fmt.Errorf("Failed to execute template: %s", executeErr.Error())
+		converter.conversionError = executeErr
+		return converter
+	}
+	converter.expandedTemplate = output.String()
+	return converter
+}
+func (converter *templateConverter) toExpressionSlice(input interface{}) ([]string, error) {
+	var expressions []string
+	slice, sliceOK := input.([]interface{})
+	if !sliceOK {
+		return nil, fmt.Errorf("Failed to convert to slice")
+	}
+	for _, eachValue := range slice {
+		switch str := eachValue.(type) {
+		case string:
+			expressions = append(expressions, str)
+		}
+	}
+	return expressions, nil
+}
+
+func (converter *templateConverter) parseData() *templateConverter {
+	if converter.conversionError != nil {
+		return converter
 	}
 	reAWSProp := regexp.MustCompile("\\{\\s*\"([Ref|Fn\\:\\:\\w+])")
-	splitData := strings.Split(output.String(), "\n")
-	var contents []gocf.Stringable
+	splitData := strings.Split(converter.expandedTemplate, "\n")
+
 	for eachLineIndex, eachLine := range splitData {
 		curContents := eachLine
 		for {
@@ -112,7 +133,7 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 				// If there's anything at the head, push it.
 				if matchInfo[0] != 0 {
 					head := curContents[0:matchInfo[0]]
-					contents = append(contents, gocf.String(fmt.Sprintf("%s", head)))
+					converter.contents = append(converter.contents, gocf.String(fmt.Sprintf("%s", head)))
 					curContents = curContents[len(head):]
 				}
 				// There's at least one match...find the closing brace...
@@ -129,27 +150,32 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 						for eachKey, eachValue := range parsed {
 							switch eachKey {
 							case "Ref":
-								contents = append(contents, gocf.Ref(eachValue.(string)))
+								converter.contents = append(converter.contents, gocf.Ref(eachValue.(string)))
 							case "Fn::GetAtt":
-								attrValues, attrValuesErr := toExpressionSlice(eachValue)
+								attrValues, attrValuesErr := converter.toExpressionSlice(eachValue)
 								if nil != attrValuesErr {
-									return nil, attrValuesErr
+									converter.conversionError = attrValuesErr
+									return converter
 								}
 								if len(attrValues) != 2 {
-									return nil, fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
+									converter.conversionError = fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
+									return converter
 								}
-								contents = append(contents, gocf.GetAtt(attrValues[0], attrValues[1]))
+								converter.contents = append(converter.contents, gocf.GetAtt(attrValues[0], attrValues[1]))
 							case "Fn::FindInMap":
-								attrValues, attrValuesErr := toExpressionSlice(eachValue)
+								attrValues, attrValuesErr := converter.toExpressionSlice(eachValue)
 								if nil != attrValuesErr {
-									return nil, attrValuesErr
+									converter.conversionError = attrValuesErr
+									return converter
 								}
 								if len(attrValues) != 3 {
-									return nil, fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
+									converter.conversionError = fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
+									return converter
 								}
-								contents = append(contents, gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])))
+								converter.contents = append(converter.contents, gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])))
 							default:
-								return nil, fmt.Errorf("Unsupported AWS Function detected: %s", testBlock)
+								converter.conversionError = fmt.Errorf("Unsupported AWS Function detected: %s", testBlock)
+								return converter
 							}
 						}
 						tail = tail[closingTokenIndex+1:]
@@ -157,7 +183,8 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 				}
 				if len(parsed) <= 0 {
 					// We never did find the end...
-					return nil, fmt.Errorf("Invalid CloudFormation JSON expression on line: %s", eachLine)
+					converter.conversionError = fmt.Errorf("Invalid CloudFormation JSON expression on line: %s", eachLine)
+					return converter
 				}
 			}
 			// No match, just include it iff there is another line afterwards
@@ -168,10 +195,29 @@ func ConvertToTemplateExpression(templateDataReader io.Reader, additionalUserTem
 			// Always include a newline at a minimum
 			appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
 			if len(appendLine) != 0 {
-				contents = append(contents, gocf.String(appendLine))
+				converter.contents = append(converter.contents, gocf.String(appendLine))
 			}
 			break
 		}
 	}
-	return gocf.Join("", contents...), nil
+	return converter
+}
+
+func (converter *templateConverter) results() (*gocf.StringExpr, error) {
+	if nil != converter.conversionError {
+		return nil, converter.conversionError
+	}
+	return gocf.Join("", converter.contents...), nil
+}
+
+// ConvertToTemplateExpression transforms the templateData contents into
+// an Fn::Join- compatible representation for template serialization.
+// The templateData contents may include both golang text/template properties
+// and single-line JSON Fn::Join supported serializations.
+func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	converter := &templateConverter{
+		templateReader:          templateData,
+		additionalTemplateProps: additionalUserTemplateProperties,
+	}
+	return converter.expandTemplate().parseData().results()
 }
