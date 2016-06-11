@@ -12,6 +12,58 @@ import (
 	"text/template"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+// Private
+////////////////////////////////////////////////////////////////////////////////
+func toExpressionSlice(input interface{}) ([]string, error) {
+	var expressions []string
+	slice, sliceOK := input.([]interface{})
+	if !sliceOK {
+		return nil, fmt.Errorf("Failed to convert to slice")
+	}
+	for _, eachValue := range slice {
+		switch str := eachValue.(type) {
+		case string:
+			expressions = append(expressions, str)
+		}
+	}
+	return expressions, nil
+}
+func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
+	if len(data) <= 0 {
+		return nil, fmt.Errorf("FnJoinExpr data is empty")
+	}
+	for eachKey, eachValue := range data {
+		switch eachKey {
+		case "Ref":
+			return gocf.Ref(eachValue.(string)).String(), nil
+		case "Fn::GetAtt":
+			attrValues, attrValuesErr := toExpressionSlice(eachValue)
+			if nil != attrValuesErr {
+				return nil, attrValuesErr
+			}
+			if len(attrValues) != 2 {
+				return nil, fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
+			}
+			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
+		case "Fn::FindInMap":
+			attrValues, attrValuesErr := toExpressionSlice(eachValue)
+			if nil != attrValuesErr {
+				return nil, attrValuesErr
+			}
+			if len(attrValues) != 3 {
+				return nil, fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
+			}
+			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
+		}
+	}
+	return nil, fmt.Errorf("Unsupported AWS Function detected: %#v", data)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Public
+////////////////////////////////////////////////////////////////////////////////
+
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
@@ -103,20 +155,6 @@ func (converter *templateConverter) expandTemplate() *templateConverter {
 	converter.expandedTemplate = output.String()
 	return converter
 }
-func (converter *templateConverter) toExpressionSlice(input interface{}) ([]string, error) {
-	var expressions []string
-	slice, sliceOK := input.([]interface{})
-	if !sliceOK {
-		return nil, fmt.Errorf("Failed to convert to slice")
-	}
-	for _, eachValue := range slice {
-		switch str := eachValue.(type) {
-		case string:
-			expressions = append(expressions, str)
-		}
-	}
-	return expressions, nil
-}
 
 func (converter *templateConverter) parseData() *templateConverter {
 	if converter.conversionError != nil {
@@ -147,37 +185,12 @@ func (converter *templateConverter) parseData() *templateConverter {
 					if err != nil {
 						break
 					} else {
-						for eachKey, eachValue := range parsed {
-							switch eachKey {
-							case "Ref":
-								converter.contents = append(converter.contents, gocf.Ref(eachValue.(string)))
-							case "Fn::GetAtt":
-								attrValues, attrValuesErr := converter.toExpressionSlice(eachValue)
-								if nil != attrValuesErr {
-									converter.conversionError = attrValuesErr
-									return converter
-								}
-								if len(attrValues) != 2 {
-									converter.conversionError = fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
-									return converter
-								}
-								converter.contents = append(converter.contents, gocf.GetAtt(attrValues[0], attrValues[1]))
-							case "Fn::FindInMap":
-								attrValues, attrValuesErr := converter.toExpressionSlice(eachValue)
-								if nil != attrValuesErr {
-									converter.conversionError = attrValuesErr
-									return converter
-								}
-								if len(attrValues) != 3 {
-									converter.conversionError = fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
-									return converter
-								}
-								converter.contents = append(converter.contents, gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])))
-							default:
-								converter.conversionError = fmt.Errorf("Unsupported AWS Function detected: %s", testBlock)
-								return converter
-							}
+						parsedContents, parsedContentsErr := parseFnJoinExpr(parsed)
+						if nil != parsedContentsErr {
+							converter.conversionError = parsedContentsErr
+							return converter
 						}
+						converter.contents = append(converter.contents, parsedContents)
 						tail = tail[closingTokenIndex+1:]
 					}
 				}
