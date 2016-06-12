@@ -1,17 +1,17 @@
 ## v0.7.0
 - :warning: **BREAKING**
-  - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) of self-binary.
-  - `CommonIAMStatements` changed from `map[string]*` to struct with named fields.
-  - `PushSourceConfigurationActions` changed from `map[string][]string]` to struct with named fields.
+  - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) to support [alternative topology](http://gosparta.io/docs/alternative_topologies/) deployments.
+  - `CommonIAMStatements` changed from `map[string][]iamPolicyStatement` to struct with named fields.
+  - `PushSourceConfigurationActions` changed from `map[string][]string` to struct with named fields.
   - Eliminated [goptions](https://github.com/voxelbrain/goptions)
 - :checkered_flag: **CHANGES**
   - Moved CLI parsing to [Cobra](https://github.com/spf13/cobra)
-    - Applications can extend the set of flags for existing Sparta commands (eg, `provision` can include `--subnetIDs`) as well as add their own top level commands to the `CommandLineOptions` exported _var_.  See [SpartaCICD](https://github.com/mweagle/SpartaCICD) for an example.
+    - Applications can extend the set of flags for existing Sparta commands (eg, `provision` can include `--subnetIDs`) as well as add their own top level commands to the `CommandLineOptions` exported values.  See [SpartaCICD](https://github.com/mweagle/SpartaCICD) for an example.
   - Added _Sparta/aws/cloudformation_ `ConvertToTemplateExpression` to convert string value into [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible representation. Parses inline AWS references and supports user-defined [template](https://golang.org/pkg/text/template/) properties.
   - Added `sparta/aws/iam` _PolicyStatement_ type
   - Upgraded `describe` output to use [Mermaid 6.0.0](https://github.com/knsv/mermaid/releases/tag/6.0.0)
 - :bug: **FIXED**
-  - Fixed latent VPC provisioning bug
+  - Fixed latent VPC provisioning bug where VPC/Subnet IDs couldn't be provided to template serialization.
   
 ## v0.6.0
 - :warning: **BREAKING**
