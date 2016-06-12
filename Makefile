@@ -35,6 +35,10 @@ get: clean
 	
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
 	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
+
+travisget: 
+	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources
+	git clone --depth=1 https://github.com/mweagle/cloudformationresources $(GOPATH)/src/github.com/mweagle/cloudformationresources
 	
 reset:
 		git reset --hard
@@ -55,7 +59,7 @@ validate:
 format:
 	go fmt .
 
-travisci: get generate validate
+travisci: get travisget generate validate
 	go build .
 
 build: format generate validate
