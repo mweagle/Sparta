@@ -60,7 +60,7 @@ vet: generate
 	go tool vet -composites=false ./explore
 	go tool vet -composites=false ./aws/
 
-travisci: generate validate vet
+travisci: get generate validate vet
 	go build .
 
 build: format generate vet
