@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1413 
+    "wordCount":  1425 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: flattr:]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -502,7 +502,7 @@ service supervisor restart || service supervisor start</code></pre>
 
 <p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource.  For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
 
-<p><pre><code class="go">// The CloudFormation template decorator that inserts all the other
+<pre><code class="go">// The CloudFormation template decorator that inserts all the other
 // AWS components we need to support this deployment...
 func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
 
@@ -632,7 +632,7 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
     return nil
   }
 }</code></pre>
-</p>
+
 
 <p>There are a few things to point out in this function:</p>
 
@@ -721,7 +721,8 @@ Hello world from SpartaOmega!</code></pre>
 <h1 id="notes-1:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
 
 <ul>
-<li><em>userdata.sh</em> isn&rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html">cfn-hup</a> listeners.</li>
+<li>The <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> sample application uses <a href="http://supervisord.org/">supervisord</a> for process monitoring.</li>
+<li>The current <em>userdata.sh</em> script isn&rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html">cfn-hup</a> listeners.</li>
 <li>Production deployments may consider <a href="https://aws.amazon.com/codedeploy/">CodeDeploy</a> to assist in HA binary rollover.</li>
 <li>Forwarding <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html">CloudWatch Logs</a> is not handled by this sample.</li>
 <li>Consider using HTTPS &amp; <a href="https://ivopetkov.com/b/let-s-encrypt-on-ec2/">Let&rsquo;s Encrypt</a> on your EC2 instances.</li>

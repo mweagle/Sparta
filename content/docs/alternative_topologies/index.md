@@ -366,7 +366,9 @@ Hello world from SpartaOmega!
 Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.  
 
 # Notes
-  - _userdata.sh_ isn't sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include [cfn-hup](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html) listeners.
+  - The [SpartaOmega](https://github.com/mweagle/SpartaOmega) sample application uses [supervisord](http://supervisord.org/) for process monitoring. 
+  - The current _userdata.sh_ script isn't sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include [cfn-hup](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html) listeners.
   - Production deployments may consider [CodeDeploy](https://aws.amazon.com/codedeploy/) to assist in HA binary rollover.
   - Forwarding [CloudWatch Logs](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html) is not handled by this sample. 
   - Consider using HTTPS & [Let's Encrypt](https://ivopetkov.com/b/let-s-encrypt-on-ec2/) on your EC2 instances.
+

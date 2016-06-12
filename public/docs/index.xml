@@ -1850,7 +1850,7 @@ service supervisor restart || service supervisor start&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;The final step is to use a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; to tie everything together. A decorator can annotate the CloudFormation template with any supported &lt;a href=&#34;https://github.com/crewjam/go-cloudformation&#34;&gt;go-cloudformation&lt;/a&gt; resource.  For this example, we&amp;rsquo;ll create a single AutoScalingGroup and EC2 instance that&amp;rsquo;s bootstrapped with our custom &lt;em&gt;userdata.sh&lt;/em&gt; script.&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The CloudFormation template decorator that inserts all the other
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// The CloudFormation template decorator that inserts all the other
 // AWS components we need to support this deployment...
 func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
 
@@ -1980,7 +1980,7 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
     return nil
   }
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;There are a few things to point out in this function:&lt;/p&gt;
 
@@ -2069,7 +2069,8 @@ Hello world from SpartaOmega!&lt;/code&gt;&lt;/pre&gt;
 &lt;h1 id=&#34;notes-1:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/h1&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;userdata.sh&lt;/em&gt; isn&amp;rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html&#34;&gt;cfn-hup&lt;/a&gt; listeners.&lt;/li&gt;
+&lt;li&gt;The &lt;a href=&#34;https://github.com/mweagle/SpartaOmega&#34;&gt;SpartaOmega&lt;/a&gt; sample application uses &lt;a href=&#34;http://supervisord.org/&#34;&gt;supervisord&lt;/a&gt; for process monitoring.&lt;/li&gt;
+&lt;li&gt;The current &lt;em&gt;userdata.sh&lt;/em&gt; script isn&amp;rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html&#34;&gt;cfn-hup&lt;/a&gt; listeners.&lt;/li&gt;
 &lt;li&gt;Production deployments may consider &lt;a href=&#34;https://aws.amazon.com/codedeploy/&#34;&gt;CodeDeploy&lt;/a&gt; to assist in HA binary rollover.&lt;/li&gt;
 &lt;li&gt;Forwarding &lt;a href=&#34;http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html&#34;&gt;CloudWatch Logs&lt;/a&gt; is not handled by this sample.&lt;/li&gt;
 &lt;li&gt;Consider using HTTPS &amp;amp; &lt;a href=&#34;https://ivopetkov.com/b/let-s-encrypt-on-ec2/&#34;&gt;Let&amp;rsquo;s Encrypt&lt;/a&gt; on your EC2 instances.&lt;/li&gt;
