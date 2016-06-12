@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"path"
+	"runtime"
 	"time"
 )
 
@@ -332,6 +333,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
+			"Go":            runtime.Version(),
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 		}).Info("Welcome to " + serviceName)
 		return nil
