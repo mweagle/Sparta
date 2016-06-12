@@ -39,6 +39,8 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
 	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
 
+	ls -lAr $(GOPATH)/src/github.com/fzipp/gocyclo
+	
 reset:
 		git reset --hard
 		git clean -f -d
