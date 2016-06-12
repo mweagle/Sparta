@@ -8,9 +8,10 @@
   - Moved CLI parsing to [Cobra](https://github.com/spf13/cobra)
     - Applications can extend the set of flags for existing Sparta commands (eg, `provision` can include `--subnetIDs`) as well as add their own top level commands to the `CommandLineOptions` exported _var_.  See [SpartaCICD](https://github.com/mweagle/SpartaCICD) for an example.
   - Added _Sparta/aws/cloudformation_ `ConvertToTemplateExpression` to convert string value into [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible representation. Parses inline AWS references and supports user-defined [template](https://golang.org/pkg/text/template/) properties.
-  - Added `sparta/aws/iam` _PolicyStatement_ type 
+  - Added `sparta/aws/iam` _PolicyStatement_ type
+  - Upgraded `describe` output to use [Mermaid 6.0.0](https://github.com/knsv/mermaid/releases/tag/6.0.0)
 - :bug: **FIXED**
-  - N/A
+  - Fixed latent VPC provisioning bug
   
 ## v0.6.0
 - :warning: **BREAKING**
