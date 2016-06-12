@@ -38,8 +38,6 @@ get: clean
 	
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
 	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
-
-	ls -lAr $(GOPATH)/src/github.com/fzipp/gocyclo
 	
 reset:
 		git reset --hard
@@ -50,7 +48,7 @@ generate:
 	@echo "Generate complete: `date`"
 
 validate: 
-	go run $(GOPATH)/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
+	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
 
 format:
 	go fmt .
