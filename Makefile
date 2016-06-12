@@ -49,21 +49,19 @@ generate:
 
 validate: 
 	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
-
-format:
-	go fmt .
-
-vet: generate
 	# Disable composites until https://github.com/golang/go/issues/9171 is resolved.  Currently
 	# failing due to gocf.IAMPoliciesList literal initialization
 	go tool vet -composites=false *.go
 	go tool vet -composites=false ./explore
 	go tool vet -composites=false ./aws/
+	
+format:
+	go fmt .
 
-travisci: get generate validate vet
+travisci: get generate validate
 	go build .
 
-build: format generate vet
+build: format generate validate
 	go build .
 	@echo "Build complete"
 
