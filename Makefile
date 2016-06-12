@@ -36,6 +36,9 @@ get: clean
 	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
 	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
 	
+	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
+	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
+
 reset:
 		git reset --hard
 		git clean -f -d
@@ -44,8 +47,8 @@ generate:
 	go generate -x
 	@echo "Generate complete: `date`"
 
-travisci: generate
-	go build .
+validate: 
+	gocyclo -over 15 .
 
 format:
 	go fmt .
@@ -56,6 +59,9 @@ vet: generate
 	go tool vet -composites=false *.go
 	go tool vet -composites=false ./explore
 	go tool vet -composites=false ./aws/
+
+travisci: generate validate vet
+	go build .
 
 build: format generate vet
 	go build .
