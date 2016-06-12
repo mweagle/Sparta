@@ -48,7 +48,7 @@ generate:
 	@echo "Generate complete: `date`"
 
 validate: 
-	gocyclo -over 15 .
+	go run $(GOPATH)/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
 
 format:
 	go fmt .
