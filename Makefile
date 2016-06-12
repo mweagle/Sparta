@@ -69,7 +69,7 @@ build: format generate vet
 
 docs:
 	@echo ""
-	@echo "Sparta godocs: http://localhost:8090/pkg/Sparta/"
+	@echo "Sparta godocs: http://localhost:8090/pkg/github.com/mweagle/Sparta"
 	@echo
 	godoc -v -http=:8090 -index=true
 
