@@ -395,7 +395,7 @@ func (perm SNSPermission) descriptionInfo() ([]descriptionNode, error) {
 // message body content.  By default, all rules associated with the owning
 // SESPermission object will store message bodies if the MessageBodyStorage
 // field is non-nil.  Message bodies are by default prefixed with
-// `ServiceName/RuleName/`, which can be overriden by specifying a non-empty
+// `ServiceName/RuleName/`, which can be overridden by specifying a non-empty
 // ObjectKeyPrefix value.  A rule can opt-out of message body storage
 // with the DisableStorage field.  See
 // http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html

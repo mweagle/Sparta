@@ -196,7 +196,7 @@ type Stage struct {
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-CreateRestApiInput
 type API struct {
 	// The API name
-	// TOOD: bind this to the stack name to prevent provisioning collisions.
+	// TODO: bind this to the stack name to prevent provisioning collisions.
 	name string
 	// Optional stage. If defined, the API will be deployed
 	stage *Stage
