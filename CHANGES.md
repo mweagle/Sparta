@@ -10,6 +10,7 @@
   - Added _Sparta/aws/cloudformation_ `ConvertToTemplateExpression` to convert string value into [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible representation. Parses inline AWS references and supports user-defined [template](https://golang.org/pkg/text/template/) properties.
   - Added `sparta/aws/iam` _PolicyStatement_ type
   - Upgraded `describe` output to use [Mermaid 6.0.0](https://github.com/knsv/mermaid/releases/tag/6.0.0)
+  - All [goreportcard](https://goreportcard.com/report/github.com/mweagle/Sparta) issues fixed.
 - :bug: **FIXED**
   - Fixed latent VPC provisioning bug where VPC/Subnet IDs couldn't be provided to template serialization.
   
