@@ -904,7 +904,7 @@ func stackCapabilities(template *gocf.Template) []*string {
 	// Only require IAM capability if the definition requires it.
 	var capabilities []*string
 	for _, eachResource := range template.Resources {
-		if eachResource.Properties.ResourceType() == "AWS::IAM::Role" {
+		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
 			found := false
 			for _, eachElement := range capabilities {
 				found = (found || (*eachElement == "CAPABILITY_IAM"))
@@ -1131,7 +1131,7 @@ func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudforma
 func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf.Template {
 	for eachResourceID, eachResource := range template.Resources {
 		// Only apply this to lambda functions
-		if eachResource.Properties.ResourceType() == "AWS::Lambda::Function" {
+		if eachResource.Properties.CfnResourceType() == "AWS::Lambda::Function" {
 
 			// Update the metdata with a reference to the output of each
 			// depended on item...
