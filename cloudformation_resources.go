@@ -58,10 +58,10 @@ func outputsForResource(template *gocf.Template,
 	}
 
 	outputs := make(map[string]interface{}, 0)
-	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.ResourceType()]
+	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.CfnResourceType()]
 	if exists {
 		outputs["Ref"] = gocf.Ref(logicalResourceName).String()
-		outputs[TagResourceType] = item.Properties.ResourceType()
+		outputs[TagResourceType] = item.Properties.CfnResourceType()
 
 		for _, eachAttr := range attrs {
 			outputs[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
