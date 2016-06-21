@@ -1,3 +1,9 @@
+## v0.7.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Upgrade to latest [go-cloudformation](https://github.com/crewjam/go-cloudformation) that required internal [refactoring](https://github.com/mweagle/Sparta/pull/9).
+- :bug: **FIXED**
+  - N/A
 ## v0.7.0
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) to support [alternative topology](http://gosparta.io/docs/alternative_topologies/) deployments.
