@@ -157,9 +157,7 @@ func _escFSByte(useLocal bool, name string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		b, err := ioutil.ReadAll(f)
-		f.Close()
-		return b, err
+		return ioutil.ReadAll(f)
 	}
 	f, err := _escStatic.prepare(name)
 	if err != nil {
@@ -193,7 +191,7 @@ var _escData = map[string]*_escFile{
 	"/resources/awsbinary/README.md": {
 		local:   "./resources/awsbinary/README.md",
 		size:    104,
-		modtime: 1466360039,
+		modtime: 1465740315,
 		compressed: `
 H4sIAAAJbogA/wrJyCxWSMvMSVUA0vl5OZUKpcWpKQol+QrJRamJJakKiQqpxcm6yfm5BYklmUlAdc7+
 fsEhjn4hwfHBHp6+wRDNYE1p+UUKjuHBCj6JuUkpiQopqQU5+ZW5qXklegpcgAAAAP//AOMpDWgAAAA=
