@@ -29,7 +29,7 @@ var CommandLineOptions = struct {
 // Global options
 type optionsGlobalStruct struct {
 	Noop     bool           `valid:"-"`
-	LogLevel string         `valid:"matches(panic|fatal|error|warn|info|debug])"`
+	LogLevel string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
 	Logger   *logrus.Logger `valid:"-"`
 	Command  string         `valid:"-"`
 }
