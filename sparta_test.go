@@ -77,6 +77,7 @@ func TestStruct(t *testing.T) {
 		nil,
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 	if nil != err {
 		t.Fatal(err.Error())
@@ -94,6 +95,7 @@ func TestDoubleRefStruct(t *testing.T) {
 		nil,
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil == err {
@@ -123,6 +125,7 @@ func TestCustomResource(t *testing.T) {
 		nil,
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil != err {
@@ -149,6 +152,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		nil,
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil == err {
