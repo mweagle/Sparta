@@ -52,6 +52,7 @@ func Describe(serviceName string,
 	api *API,
 	s3Site *S3Site,
 	outputWriter io.Writer,
+	workflowHooks *WorkflowHooks,
 	logger *logrus.Logger) error {
 
 	validationErr := validateSpartaPreconditions(lambdaAWSInfos, logger)
@@ -67,7 +68,9 @@ func Describe(serviceName string,
 		api,
 		s3Site,
 		"S3Bucket",
+		"N/A",
 		&cloudFormationTemplate,
+		workflowHooks,
 		logger)
 	if nil != err {
 		return err
