@@ -42,6 +42,7 @@ var OptionsGlobal optionsGlobalStruct
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsProvisionStruct struct {
 	S3Bucket string `valid:"required,matches(\\w+)"`
+	BuildID  string `valid:"matches(\\S+)"` // non-whitespace
 }
 
 var optionsProvision optionsProvisionStruct
@@ -110,6 +111,12 @@ func init() {
 		"s",
 		"",
 		"S3 Bucket to use for Lambda source")
+
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.BuildID,
+		"buildID",
+		"i",
+		"",
+		"Optional BuildID to use")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
