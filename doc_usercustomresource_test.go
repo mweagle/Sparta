@@ -55,6 +55,7 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 		S3Bucket string,
 		S3Key string,
 		template *gocf.Template,
+		context map[string]interface{},
 		logger *logrus.Logger) error {
 
 		// Pass CustomResource outputs to the λ function
