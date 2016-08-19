@@ -110,6 +110,18 @@ func safeMergeTemplates(sourceTemplate *gocf.Template, destTemplate *gocf.Templa
 			destTemplate.Resources[eachKey] = eachLambdaResource
 		}
 	}
+
+	// Append the custom Mappings
+	for eachKey, eachMapping := range sourceTemplate.Mappings {
+		_, exists := destTemplate.Mappings[eachKey]
+		if exists {
+			errorMsg := fmt.Sprintf("Duplicate CloudFormation Mapping name: %s", eachKey)
+			mergeErrors = append(mergeErrors, errorMsg)
+		} else {
+			destTemplate.Mappings[eachKey] = eachMapping
+		}
+	}
+
 	// Append the custom outputs
 	for eachKey, eachLambdaOutput := range sourceTemplate.Outputs {
 		_, exists := destTemplate.Outputs[eachKey]
