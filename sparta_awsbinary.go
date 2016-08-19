@@ -20,20 +20,38 @@ func Delete(serviceName string, logger *logrus.Logger) error {
 }
 
 // Provision is not available in the AWS Lambda binary
-func Provision(noop bool, serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site, s3Bucket string, writer io.Writer, logger *logrus.Logger) error {
+func Provision(noop bool,
+	serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	s3Bucket string,
+	buildID string,
+	writer io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *logrus.Logger) error {
 	logger.Error("Deploy() not supported in AWS Lambda binary")
 	return errors.New("Deploy not supported for this binary")
-
 }
 
 // Describe is not available in the AWS Lambda binary
-func Describe(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site, outputWriter io.Writer, logger *logrus.Logger) error {
+func Describe(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	outputWriter io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *logrus.Logger) error {
 	logger.Error("Describe() not supported in AWS Lambda binary")
 	return errors.New("Describe not supported for this binary")
 }
 
 // Explore is not available in the AWS Lambda binary
-func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) error {
+func Explore(lambdaAWSInfos []*LambdaAWSInfo,
+	port int,
+	logger *logrus.Logger) error {
 	logger.Error("Explore() not supported in AWS Lambda binary")
 	return errors.New("Explore not supported for this binary")
 }

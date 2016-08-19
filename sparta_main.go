@@ -1,6 +1,9 @@
 package sparta
 
 import (
+	"crypto/rand"
+	"crypto/sha1"
+	"encoding/hex"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 	"github.com/asaskevich/govalidator"
@@ -321,9 +324,20 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 // See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
 // for more information.
 func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
+	return MainEx(serviceName, serviceDescription, lambdaAWSInfos, api, site, nil)
+}
+
+// MainEx provides an "extended" Main that supports customizing the standard Sparta
+// workflow via the `workflowHooks` parameter.
+func MainEx(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	workflowHooks *WorkflowHooks) error {
 	//////////////////////////////////////////////////////////////////////////////
 	// cmdRoot defines the root, non-executable command
-	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta powered AWS Lambda Microservice", serviceName)
+	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
 	CommandLineOptions.Root.Long = serviceDescription
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 
@@ -365,6 +379,17 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 
 	if nil == CommandLineOptions.Provision.RunE {
 		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
+			buildID := optionsProvision.BuildID
+			if "" == buildID {
+				hash := sha1.New()
+				randomBytes := make([]byte, 256)
+				_, err := rand.Read(randomBytes)
+				if err != nil {
+					return err
+				}
+				hash.Write(randomBytes)
+				buildID = hex.EncodeToString(hash.Sum(nil))
+			}
 			return Provision(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
@@ -372,7 +397,9 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 				api,
 				site,
 				optionsProvision.S3Bucket,
+				buildID,
 				nil,
+				workflowHooks,
 				OptionsGlobal.Logger)
 		}
 	}
@@ -418,7 +445,15 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 				return fileWriterErr
 			}
 			defer fileWriter.Close()
-			describeErr := Describe(serviceName, serviceDescription, lambdaAWSInfos, api, site, fileWriter, OptionsGlobal.Logger)
+			describeErr := Describe(serviceName,
+				serviceDescription,
+				lambdaAWSInfos,
+				api,
+				site,
+				fileWriter,
+				workflowHooks,
+				OptionsGlobal.Logger)
+
 			if describeErr == nil {
 				describeErr = fileWriter.Sync()
 			}

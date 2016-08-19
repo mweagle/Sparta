@@ -34,7 +34,7 @@ func TestProvision(t *testing.T) {
 
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", testLambdaData(), nil, nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true, "SampleProvision", "", testLambdaData(), nil, nil, "S3Bucket", &templateWriter, nil, logger)
 	if nil != err {
 		t.Fatal(err.Error())
 	}
@@ -47,6 +47,7 @@ func templateDecorator(serviceName string,
 	S3Bucket string,
 	S3Key string,
 	template *gocf.Template,
+	context map[string]interface{},
 	logger *logrus.Logger) error {
 
 	// Add an empty resource
@@ -74,7 +75,7 @@ func TestDecorateProvision(t *testing.T) {
 
 	logger, err := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true, "SampleProvision", "", lambdas, nil, nil, "S3Bucket", &templateWriter, logger)
+	err = Provision(true, "SampleProvision", "", lambdas, nil, nil, "S3Bucket", &templateWriter, nil, logger)
 	if nil != err {
 		t.Fatal(err.Error())
 	}
