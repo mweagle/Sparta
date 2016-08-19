@@ -94,6 +94,18 @@ B`,
 			"B",
 		},
 	},
+	{
+		"{\"Ref\" : \"AWS::Region\"} = {\"Ref\" : \"AWS::AccountId\"}",
+		[]interface{}{
+			map[string]string{
+				"Ref": "AWS::Region",
+			},
+			" = ",
+			map[string]string{
+				"Ref": "AWS::AccountId",
+			},
+		},
+	},
 }
 
 /*

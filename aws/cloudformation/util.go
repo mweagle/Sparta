@@ -162,10 +162,12 @@ func (converter *templateConverter) parseData() *templateConverter {
 	}
 	reAWSProp := regexp.MustCompile("\\{\\s*\"([Ref|Fn\\:\\:\\w+])")
 	splitData := strings.Split(converter.expandedTemplate, "\n")
+	splitDataLineCount := len(splitData)
 
 	for eachLineIndex, eachLine := range splitData {
 		curContents := eachLine
-		for {
+		for len(curContents) != 0 {
+
 			matchInfo := reAWSProp.FindStringSubmatchIndex(curContents)
 			if nil != matchInfo {
 				// If there's anything at the head, push it.
@@ -174,43 +176,46 @@ func (converter *templateConverter) parseData() *templateConverter {
 					converter.contents = append(converter.contents, gocf.String(fmt.Sprintf("%s", head)))
 					curContents = curContents[len(head):]
 				}
+
 				// There's at least one match...find the closing brace...
 				var parsed map[string]interface{}
-				tail := curContents[0:]
-				for closingTokenIndex := strings.Index(tail, "}"); closingTokenIndex >= 0; closingTokenIndex = strings.Index(tail, "}") {
-
-					testBlock := tail[0 : closingTokenIndex+1]
-					curContents = tail[closingTokenIndex+1:]
-					err := json.Unmarshal([]byte(testBlock), &parsed)
-					if err != nil {
-						break
-					} else {
-						parsedContents, parsedContentsErr := parseFnJoinExpr(parsed)
-						if nil != parsedContentsErr {
-							converter.conversionError = parsedContentsErr
-							return converter
+				for indexPos, eachChar := range curContents {
+					if string(eachChar) == "}" {
+						testBlock := curContents[0 : indexPos+1]
+						err := json.Unmarshal([]byte(testBlock), &parsed)
+						if err == nil {
+							parsedContents, parsedContentsErr := parseFnJoinExpr(parsed)
+							if nil != parsedContentsErr {
+								converter.conversionError = parsedContentsErr
+								return converter
+							}
+							converter.contents = append(converter.contents, parsedContents)
+							curContents = curContents[indexPos+1:]
+							if len(curContents) <= 0 && (eachLineIndex < (splitDataLineCount - 1)) {
+								converter.contents = append(converter.contents, gocf.String("\n"))
+							}
+							break
 						}
-						converter.contents = append(converter.contents, parsedContents)
-						tail = tail[closingTokenIndex+1:]
 					}
 				}
-				if len(parsed) <= 0 {
+				if nil == parsed {
 					// We never did find the end...
 					converter.conversionError = fmt.Errorf("Invalid CloudFormation JSON expression on line: %s", eachLine)
 					return converter
 				}
+			} else {
+				// No match, just include it iff there is another line afterwards
+				newlineValue := ""
+				if eachLineIndex < (splitDataLineCount - 1) {
+					newlineValue = "\n"
+				}
+				// Always include a newline at a minimum
+				appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
+				if len(appendLine) != 0 {
+					converter.contents = append(converter.contents, gocf.String(appendLine))
+				}
+				break
 			}
-			// No match, just include it iff there is another line afterwards
-			newlineValue := ""
-			if eachLineIndex < (len(splitData) - 1) {
-				newlineValue = "\n"
-			}
-			// Always include a newline at a minimum
-			appendLine := fmt.Sprintf("%s%s", curContents, newlineValue)
-			if len(appendLine) != 0 {
-				converter.contents = append(converter.contents, gocf.String(appendLine))
-			}
-			break
 		}
 	}
 	return converter
