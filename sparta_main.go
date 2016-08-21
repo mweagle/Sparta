@@ -50,6 +50,21 @@ type optionsProvisionStruct struct {
 
 var optionsProvision optionsProvisionStruct
 
+func provisionBuildID(userSuppliedValue string) (string, error) {
+	buildID := userSuppliedValue
+	if "" == buildID {
+		hash := sha1.New()
+		randomBytes := make([]byte, 256)
+		_, err := rand.Read(randomBytes)
+		if err != nil {
+			return "", err
+		}
+		hash.Write(randomBytes)
+		buildID = hex.EncodeToString(hash.Sum(nil))
+	}
+	return buildID, nil
+}
+
 /******************************************************************************/
 // Execute options
 type optionsExecuteStruct struct {
@@ -231,7 +246,6 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Then add the standard Sparta ones...
-
 	spartaCommands := []*cobra.Command{
 		CommandLineOptions.Version,
 		CommandLineOptions.Provision,
@@ -324,7 +338,12 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 // See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
 // for more information.
 func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
-	return MainEx(serviceName, serviceDescription, lambdaAWSInfos, api, site, nil)
+	return MainEx(serviceName,
+		serviceDescription,
+		lambdaAWSInfos,
+		api,
+		site,
+		nil)
 }
 
 // MainEx provides an "extended" Main that supports customizing the standard Sparta
@@ -335,6 +354,7 @@ func MainEx(serviceName string,
 	api *API,
 	site *S3Site,
 	workflowHooks *WorkflowHooks) error {
+
 	//////////////////////////////////////////////////////////////////////////////
 	// cmdRoot defines the root, non-executable command
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
@@ -379,16 +399,9 @@ func MainEx(serviceName string,
 
 	if nil == CommandLineOptions.Provision.RunE {
 		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID := optionsProvision.BuildID
-			if "" == buildID {
-				hash := sha1.New()
-				randomBytes := make([]byte, 256)
-				_, err := rand.Read(randomBytes)
-				if err != nil {
-					return err
-				}
-				hash.Write(randomBytes)
-				buildID = hex.EncodeToString(hash.Sum(nil))
+			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID)
+			if nil != buildIDErr {
+				return buildIDErr
 			}
 			return Provision(OptionsGlobal.Noop,
 				serviceName,

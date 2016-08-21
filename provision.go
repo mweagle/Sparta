@@ -636,6 +636,42 @@ func writeNodeJSShim(serviceName string,
 	return copyErr
 }
 
+func insertNodeModulesArchive(provisioningResourcesRelPath string,
+	zipWriter *zip.Writer,
+	logger *logrus.Logger) error {
+
+	nodeModulesZipRelName := fmt.Sprintf("%s/node_modules.zip", provisioningResourcesRelPath)
+	nodeModuleBytes, err := _escFSByte(false, nodeModulesZipRelName)
+	if nil == err {
+		nodeModuleReader, errReader := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
+		if errReader != nil {
+			return errReader
+		}
+		logger.WithFields(logrus.Fields{
+			"Name": nodeModulesZipRelName,
+		}).Debug("Embedding CustomResource node_modules.zip")
+
+		for _, zipFile := range nodeModuleReader.File {
+			embedWriter, errCreate := zipWriter.Create(zipFile.Name)
+			if nil != errCreate {
+				return errCreate
+			}
+
+			sourceReader, errOpen := zipFile.Open()
+			if errOpen != nil {
+				return errOpen
+			}
+			io.Copy(embedWriter, sourceReader)
+		}
+	} else {
+		logger.WithFields(logrus.Fields{
+			"Name":  nodeModulesZipRelName,
+			"Error": err,
+		}).Warn("Failed to load node_modules.zip for embedding")
+	}
+	return nil
+}
+
 func writeCustomResources(zipWriter *zip.Writer,
 	logger *logrus.Logger) error {
 	for _, eachName := range customResourceScripts {
@@ -715,8 +751,8 @@ func createPackageStep() workflowStep {
 		defer lambdaArchive.Close()
 
 		// Archive Hook
-		if ctx.workflowHooks != nil && ctx.workflowHooks.ArchiveHook != nil {
-			archiveErr := ctx.workflowHooks.ArchiveHook(ctx.workflowHooksContext,
+		if ctx.workflowHooks != nil && ctx.workflowHooks.Archive != nil {
+			archiveErr := ctx.workflowHooks.Archive(ctx.workflowHooksContext,
 				ctx.serviceName,
 				lambdaArchive,
 				ctx.awsSession,
@@ -764,36 +800,10 @@ func createPackageStep() workflowStep {
 		// And finally, if there is a node_modules.zip file, then include it.  The
 		// node_modules archive includes supplementary libraries that the
 		// CustomResource handlers may need at CloudFormation stack creation time.
-		nodeModulesZipRelName := fmt.Sprintf("%s/node_modules.zip", provisioningResourcesRelPath)
-		nodeModuleBytes, err := _escFSByte(false, nodeModulesZipRelName)
-		if nil == err {
-			nodeModuleReader, errReader := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
-			if errReader != nil {
-				return nil, errReader
-			}
-			ctx.logger.WithFields(logrus.Fields{
-				"Name": nodeModulesZipRelName,
-			}).Debug("Embedding CustomResource node_modules.zip")
-
-			for _, zipFile := range nodeModuleReader.File {
-				embedWriter, errCreate := lambdaArchive.Create(zipFile.Name)
-				if nil != errCreate {
-					return nil, errCreate
-				}
-
-				sourceReader, errOpen := zipFile.Open()
-				if errOpen != nil {
-					return nil, errOpen
-				}
-				io.Copy(embedWriter, sourceReader)
-			}
-		} else {
-			ctx.logger.WithFields(logrus.Fields{
-				"Name":  nodeModulesZipRelName,
-				"Error": err,
-			}).Warn("Failed to load node_modules.zip for embedding")
-		}
-		return createUploadStep(tmpFile.Name()), nil
+		insertModulesErr := insertNodeModulesArchive(provisioningResourcesRelPath,
+			lambdaArchive,
+			ctx.logger)
+		return createUploadStep(tmpFile.Name()), insertModulesErr
 	}
 }
 
@@ -1173,6 +1183,79 @@ func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf
 	return template
 }
 
+func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
+
+	// Generate a complete CloudFormation template
+	cfTemplate, err := json.Marshal(ctx.cfTemplate)
+	if err != nil {
+		ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
+		return nil, err
+	}
+
+	// Upload the actual CloudFormation template to S3 to maximize the template
+	// size limit
+	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html
+	contentBody := string(cfTemplate)
+	sanitizedServiceName := sanitizedName(ctx.serviceName)
+	hash := sha1.New()
+	hash.Write([]byte(contentBody))
+	s3keyName := fmt.Sprintf("%s/%s-%s-cf.json",
+		ctx.serviceName,
+		sanitizedServiceName,
+		hex.EncodeToString(hash.Sum(nil)))
+
+	uploadInput := &s3manager.UploadInput{
+		Bucket:      &ctx.s3Bucket,
+		Key:         &s3keyName,
+		ContentType: aws.String("application/json"),
+		Body:        strings.NewReader(contentBody),
+	}
+	formatted, err := json.MarshalIndent(contentBody, "", " ")
+	if nil != err {
+		return nil, err
+	}
+
+	ctx.logger.WithFields(logrus.Fields{
+		"Body": string(formatted),
+	}).Debug("CloudFormation template body")
+
+	if nil != ctx.templateWriter {
+		io.WriteString(ctx.templateWriter, string(formatted))
+	}
+
+	if ctx.noop {
+		ctx.logger.WithFields(logrus.Fields{
+			"Bucket": ctx.s3Bucket,
+			"Key":    s3keyName,
+		}).Info("Bypassing template upload & creation due to -n/-noop command line argument")
+	} else {
+		ctx.logger.Info("Uploading CloudFormation template")
+		uploader := s3manager.NewUploader(ctx.awsSession)
+		templateUploadResult, err := uploader.Upload(uploadInput)
+		if nil != err {
+			return nil, err
+		}
+		// Cleanup if there's a problem
+		ctx.registerRollback(createS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, s3keyName, ctx.noop))
+
+		// Be transparent
+		ctx.logger.WithFields(logrus.Fields{
+			"URL": templateUploadResult.Location,
+		}).Info("Template uploaded")
+
+		stack, err := convergeStackState(templateUploadResult.Location, ctx)
+		if nil != err {
+			return nil, err
+		}
+		ctx.logger.WithFields(logrus.Fields{
+			"StackName":    *stack.StackName,
+			"StackId":      *stack.StackId,
+			"CreationTime": *stack.CreationTime,
+		}).Info("Stack provisioned")
+	}
+	return nil, nil
+}
+
 func ensureCloudFormationStack() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		// PreMarshall Hook
@@ -1245,82 +1328,14 @@ func ensureCloudFormationStack() workflowStep {
 		}
 		ctx.cfTemplate = annotateDiscoveryInfo(ctx.cfTemplate, ctx.logger)
 
-		// Generate a complete CloudFormation template
-		cfTemplate, err := json.Marshal(ctx.cfTemplate)
-		if err != nil {
-			ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
-			return nil, err
-		}
-
-		// PreMarshall Hook
+		// PostMarshall Hook
 		if ctx.workflowHooks != nil {
 			postMarshallErr := callWorkflowHook(ctx.workflowHooks.PostMarshall, ctx)
 			if nil != postMarshallErr {
 				return nil, postMarshallErr
 			}
 		}
-
-		// Upload the actual CloudFormation template to S3 to increase the template
-		// size limit
-		contentBody := string(cfTemplate)
-		sanitizedServiceName := sanitizedName(ctx.serviceName)
-		hash := sha1.New()
-		hash.Write([]byte(contentBody))
-		s3keyName := fmt.Sprintf("%s/%s-%s-cf.json",
-			ctx.serviceName,
-			sanitizedServiceName,
-			hex.EncodeToString(hash.Sum(nil)))
-
-		uploadInput := &s3manager.UploadInput{
-			Bucket:      &ctx.s3Bucket,
-			Key:         &s3keyName,
-			ContentType: aws.String("application/json"),
-			Body:        strings.NewReader(contentBody),
-		}
-		formatted, err := json.MarshalIndent(contentBody, "", " ")
-		if nil != err {
-			return nil, err
-		}
-
-		ctx.logger.WithFields(logrus.Fields{
-			"Body": string(formatted),
-		}).Debug("CloudFormation template body")
-
-		if nil != ctx.templateWriter {
-			io.WriteString(ctx.templateWriter, string(formatted))
-		}
-
-		if ctx.noop {
-			ctx.logger.WithFields(logrus.Fields{
-				"Bucket": ctx.s3Bucket,
-				"Key":    s3keyName,
-			}).Info("Bypassing template upload & creation due to -n/-noop command line argument")
-		} else {
-			ctx.logger.Info("Uploading CloudFormation template")
-			uploader := s3manager.NewUploader(ctx.awsSession)
-			templateUploadResult, err := uploader.Upload(uploadInput)
-			if nil != err {
-				return nil, err
-			}
-			// Cleanup if there's a problem
-			ctx.registerRollback(createS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, s3keyName, ctx.noop))
-
-			// Be transparent
-			ctx.logger.WithFields(logrus.Fields{
-				"URL": templateUploadResult.Location,
-			}).Info("Template uploaded")
-
-			stack, err := convergeStackState(templateUploadResult.Location, ctx)
-			if nil != err {
-				return nil, err
-			}
-			ctx.logger.WithFields(logrus.Fields{
-				"StackName":    *stack.StackName,
-				"StackId":      *stack.StackId,
-				"CreationTime": *stack.CreationTime,
-			}).Info("Stack provisioned")
-		}
-		return nil, nil
+		return applyCloudFormationOperation(ctx)
 	}
 }
 
