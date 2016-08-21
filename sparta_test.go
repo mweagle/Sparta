@@ -13,14 +13,20 @@ import (
 type StructHandler1 struct {
 }
 
-func (handler *StructHandler1) handler(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+func (handler *StructHandler1) handler(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
 type StructHandler2 struct {
 }
 
-func (handler *StructHandler2) handler(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+func (handler *StructHandler2) handler(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
