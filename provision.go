@@ -154,6 +154,25 @@ func (ctx *workflowContext) rollback() {
 	var wg sync.WaitGroup
 	wg.Add(len(ctx.rollbackFunctions))
 
+	// Include the user defined rollback if there is one...
+	if ctx.workflowHooks != nil && ctx.workflowHooks.Rollback != nil {
+		wg.Add(1)
+		go func(hook RollbackHook, context map[string]interface{},
+			serviceName string,
+			awsSession *session.Session,
+			noop bool,
+			logger *logrus.Logger) {
+			// Decrement the counter when the goroutine completes.
+			defer wg.Done()
+			hook(context, serviceName, awsSession, noop, logger)
+		}(ctx.workflowHooks.Rollback,
+			ctx.workflowHooksContext,
+			ctx.serviceName,
+			ctx.awsSession,
+			ctx.noop,
+			ctx.logger)
+	}
+
 	ctx.logger.WithFields(logrus.Fields{
 		"RollbackCount": len(ctx.rollbackFunctions),
 	}).Info("Invoking rollback functions")

@@ -315,6 +315,14 @@ type ArchiveHook func(context map[string]interface{},
 	noop bool,
 	logger *logrus.Logger) error
 
+// RollbackHook provides callers an opportunity to handle failures
+// associated with failing to perform the requested operation
+type RollbackHook func(context map[string]interface{},
+	serviceName string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger)
+
 // WorkflowHooks is a structure that allows callers to customize the Sparta provisioning
 // pipeline to add contents the Lambda archive or perform other workflow operations.
 type WorkflowHooks struct {
@@ -325,11 +333,13 @@ type WorkflowHooks struct {
 	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
 	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
 	// to add additional resource files to your Lambda package
-	ArchiveHook ArchiveHook
+	Archive ArchiveHook
 	// PreMarshall is called before Sparta marshalls the application contents to a CloudFormation template
 	PreMarshall WorkflowHook
 	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
 	PostMarshall WorkflowHook
+	// Rollback is called if there is an error performing the requested operation
+	Rollback RollbackHook
 }
 
 ////////////////////////////////////////////////////////////////////////////////
