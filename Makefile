@@ -32,30 +32,29 @@ get: clean
 
 	rm -rf $(GOPATH)/src/github.com/asaskevich/govalidator
 	git clone --depth=1 https://github.com/asaskevich/govalidator $(GOPATH)/src/github.com/asaskevich/govalidator
-	
+
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
 	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
 
-travisget: 
+travisget:
 	rm -rf $(GOPATH)/src/github.com/mweagle/cloudformationresources
 	git clone --depth=1 https://github.com/mweagle/cloudformationresources $(GOPATH)/src/github.com/mweagle/cloudformationresources
-	
+
 reset:
 		git reset --hard
 		git clean -f -d
 
-generate: 
+generate:
 	go generate -x
 	@echo "Generate complete: `date`"
 
-validate: 
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
-	# Disable composites until https://github.com/golang/go/issues/9171 is resolved.  Currently
-	# failing due to gocf.IAMPoliciesList literal initialization
-	go tool vet -composites=false *.go
-	go tool vet -composites=false ./explore
-	go tool vet -composites=false ./aws/
-	
+validate:
+	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 20 .
+	go tool vet *.go
+	go tool vet ./explore
+	go tool vet ./aws/
+	go tool vet ./docker/
+
 format:
 	go fmt .
 
