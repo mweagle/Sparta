@@ -436,6 +436,9 @@ func MainEx(serviceName string,
 			}
 
 			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
+			// Ensure the discovery service is initialized
+			initializeDiscovery(serviceName, lambdaAWSInfos, OptionsGlobal.Logger)
+
 			return Execute(lambdaAWSInfos,
 				optionsExecute.Port,
 				optionsExecute.SignalParentPID,
