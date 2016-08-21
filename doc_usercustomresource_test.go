@@ -54,7 +54,8 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 		resourceMetadata map[string]interface{},
 		S3Bucket string,
 		S3Key string,
-		template *gocf.Template,
+		buildID string,
+		cfTemplate *gocf.Template,
 		context map[string]interface{},
 		logger *logrus.Logger) error {
 
