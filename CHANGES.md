@@ -16,6 +16,7 @@
   - Add `sparta.MainEx` for non-breaking signature extension
 - :bug: **FIXED**
   - Fixed latent bug in [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) when parsing input with multiple AWS JSON fragments.
+  - Fixed latent bug in [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) which prevented dependent resources from being discovered at Lambda execution time.
 
 ## v0.7.1
 - :warning: **BREAKING**
