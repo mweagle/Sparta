@@ -113,15 +113,22 @@ func NewAPIGatewayRequest(lambdaName string, httpMethod string, whitelistParamVa
 		// namespace as part of the whitelist expression:
 		// method.request.querystring.keyName
 		parts := strings.Split(eachWhitelistKey, ".")
-		switch parts[2] {
+
+		// The string should have 4 parts...
+		if len(parts) != 4 {
+			return nil, fmt.Errorf("Invalid whitelist param name: %s (MUST be: method.request.KEY_TYPE.KEY_NAME, ex: method.request.querystring.myQueryParam", eachWhitelistKey)
+		}
+		keyType := parts[2]
+		keyName := parts[3]
+		switch keyType {
 		case "header":
-			mockAPIGatewayRequest.Headers[eachWhitelistKey] = eachWhitelistValue
+			mockAPIGatewayRequest.Headers[keyName] = eachWhitelistValue
 		case "querystring":
-			mockAPIGatewayRequest.QueryParams[eachWhitelistKey] = eachWhitelistValue
+			mockAPIGatewayRequest.QueryParams[keyName] = eachWhitelistValue
 		case "path":
-			mockAPIGatewayRequest.PathParams[eachWhitelistKey] = eachWhitelistValue
+			mockAPIGatewayRequest.PathParams[keyName] = eachWhitelistValue
 		default:
-			return nil, fmt.Errorf("Unsupported whitelist param value: %s", eachWhitelistKey)
+			return nil, fmt.Errorf("Unsupported whitelist param type: %s", keyType)
 		}
 	}
 

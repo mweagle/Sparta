@@ -17,6 +17,7 @@
 - :bug: **FIXED**
   - Fixed latent bug in [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) when parsing input with multiple AWS JSON fragments.
   - Fixed latent bug in [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) which prevented dependent resources from being discovered at Lambda execution time.
+  - Fixed latent bug in [explore.NewAPIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/explore#NewAPIGatewayRequest) where whitelisted param keynames were unmarshalled to `method.request.TYPE.VALUE` rather than `TYPE`.
 
 ## v0.7.1
 - :warning: **BREAKING**
