@@ -46,7 +46,7 @@ func archiveHook(context map[string]interface{},
 
 func ExampleWorkflowHooks() {
 	workflowHooks := WorkflowHooks{
-		ArchiveHook: archiveHook,
+		Archive: archiveHook,
 	}
 
 	var lambdaFunctions []*LambdaAWSInfo
