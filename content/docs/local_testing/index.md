@@ -72,7 +72,7 @@ INFO[0000] 	{context: {}, event: {}}
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999
 {{< /highlight >}}
 
-The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **Go** binary that is used in the AWS Lambda execution environment.  
+The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **Go** binary that is used in the AWS Lambda execution environment.
 
 Per the instructions, let's create a _testEvent.json_ file with the required structure:
 
@@ -116,7 +116,7 @@ While this approach does work, it's not a scalable approach to writing automated
 To integrate with the existing [go test](https://golang.org/pkg/testing/) command, Sparta includes two functions:
 
   1. `NewLambdaHTTPHandler` : Creates an [httptest.NewServer](https://golang.org/pkg/net/http/httptest/#NewServer)-compliant `http.Handler` value.
-  1. `Sparta/explore.NewRequest` : Creates a mock JSON object with optional user-defined *event* data.  
+  1. `Sparta/explore.NewRequest` : Creates a mock JSON object with optional user-defined *event* data.
 
 To show this in action, let's walk through how Sparta [does this](https://github.com/mweagle/Sparta/blob/master/explore_test.go):
 
@@ -163,7 +163,7 @@ The test function above has the following features:
 These _localhost_ tests will be executed as part of your application's normal `go test` lifecycle.
 
 # Notes
-  * API Gateway [input mappings](https://github.com/mweagle/Sparta/tree/master/resources/provision/apigateway) are not currently supported.
+  * APIGateway requests can be tested using mock payloads via [Sparta/explore.NewAPIGatewayRequest](https://github.com/mweagle/Sparta/blob/master/explore/explore.go#L103)
   * Ensure your localhost AWS credentials have sufficient privileges to access any AWS services.
     * Sparta does not provision `IAM::Role` resources for local testing.
   * Localhost testing is not a substitute for CI/CD pipelines.

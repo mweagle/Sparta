@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  559 
+    "wordCount":  594 
   }
 </script>
 
@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr:]">
+<body class="map[bitbucket: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,17 +349,17 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#provisioning-flow:d680e8a854a7cbad6d490c445cba2eba">Provisioning Flow</a>
+<li><a href="#provisioning-flow">Provisioning Flow</a>
 <ul>
-<li><a href="#verify-static-iam-roles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</a></li>
-<li><a href="#compile:d680e8a854a7cbad6d490c445cba2eba">Compile</a></li>
-<li><a href="#package:d680e8a854a7cbad6d490c445cba2eba">Package</a></li>
-<li><a href="#upload-archive-to-s3:d680e8a854a7cbad6d490c445cba2eba">Upload Archive To S3</a></li>
-<li><a href="#generate-cloudformation-template:d680e8a854a7cbad6d490c445cba2eba">Generate CloudFormation Template</a></li>
-<li><a href="#upload-cloudformation-template-to-s3:d680e8a854a7cbad6d490c445cba2eba">Upload CloudFormation Template to S3</a></li>
-<li><a href="#create-update-stack:d680e8a854a7cbad6d490c445cba2eba">Create/Update Stack</a></li>
+<li><a href="#verify-static-iam-roles">Verify Static IAM Roles</a></li>
+<li><a href="#compile">Compile</a></li>
+<li><a href="#package">Package</a></li>
+<li><a href="#upload-archive-to-s3">Upload Archive To S3</a></li>
+<li><a href="#generate-cloudformation-template">Generate CloudFormation Template</a></li>
+<li><a href="#upload-cloudformation-template-to-s3">Upload CloudFormation Template to S3</a></li>
+<li><a href="#create-update-stack">Create/Update Stack</a></li>
 </ul></li>
-<li><a href="#next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
 </ul>
 </nav>
       </div>
@@ -361,7 +370,7 @@
 
 <p>The <a href="/docs/intro_example">Overview</a> walked through a simple &ldquo;Hello World&rdquo; example.  In this section we&rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the <code>provision</code> command line argument, so this section will outline exactly what that entails.</p>
 
-<h1 id="provisioning-flow:d680e8a854a7cbad6d490c445cba2eba">Provisioning Flow</h1>
+<h1 id="provisioning-flow">Provisioning Flow</h1>
 
 <p>The provisioning workflow is defined in <a href="https://github.com/mweagle/Sparta/blob/master/provision.go">provision.go</a>, with a singular goal of encapsulating all AWS mutations into a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> template.  Where CloudFormation does not support a given service, Sparta injects <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> into the template definition.</p>
 
@@ -370,28 +379,50 @@
 <div class="mermaid">
 graph TD
   iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   proxyShims[Create NodeJS-Go HTTP Proxies]
   package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   generate[Marshal to CloudFormation]
   decorate[Call User Template Decorators - Dynamic AWS Resources]
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
 
-  iam-->compile
-  compile-->proxyShims
+  iam-->preBuild
+  preBuild-->compile
+  compile-->postBuild
+  postBuild-->proxyShims
   proxyShims-->package
   proxyShims-->packageAssets
-  package-->upload
+  package-->userArchive
+  userArchive-->upload
   packageAssets-->uploadAssets
   uploadAssets-->generate
   upload-->generate
-  generate-->decorate
-  decorate-->uploadTemplate
+
+  generate-->preMarshall
+  preMarshall-->decorate
+  decorate-->postMarshall
+  postMarshall-->uploadTemplate
   uploadTemplate-->converge
   converge-->wait
 </div>
@@ -399,11 +430,11 @@ graph TD
 <hr />
 
 
-<h2 id="verify-static-iam-roles:d680e8a854a7cbad6d490c445cba2eba">Verify Static IAM Roles</h2>
+<h2 id="verify-static-iam-roles">Verify Static IAM Roles</h2>
 
 <p>The <code>NewLambda</code> function accepts either a <code>string</code> or a <code>sparta.IAMRoleDefinition</code> value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns">IAM Role ARN</a> is cached to minimize AWS calls during template generation.</p>
 
-<h2 id="compile:d680e8a854a7cbad6d490c445cba2eba">Compile</h2>
+<h2 id="compile">Compile</h2>
 
 <p>The next step is to cross compile the application to a binary that can be executed on an AWS Lambda instance.  The compile flags are:</p>
 
@@ -414,7 +445,7 @@ graph TD
 
 <p>The binary is built in the current directory with a <em>.lambda.amd64</em> suffix.</p>
 
-<h2 id="package:d680e8a854a7cbad6d490c445cba2eba">Package</h2>
+<h2 id="package">Package</h2>
 
 <p>The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
 This includes the NodeJS proxy entries that forward AWS Lambda requests to your <strong>Go</strong> binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
@@ -424,25 +455,25 @@ API Gateway configuration and S3 push source configuration.  Finally, a known ve
 
 <p>Everything is ZIP&rsquo;d up and ready for S3 upload.</p>
 
-<h2 id="upload-archive-to-s3:d680e8a854a7cbad6d490c445cba2eba">Upload Archive To S3</h2>
+<h2 id="upload-archive-to-s3">Upload Archive To S3</h2>
 
 <p>Uploads the archive to S3.  There&rsquo;s not much else to see here.</p>
 
-<h2 id="generate-cloudformation-template:d680e8a854a7cbad6d490c445cba2eba">Generate CloudFormation Template</h2>
+<h2 id="generate-cloudformation-template">Generate CloudFormation Template</h2>
 
 <p>Once the archive is uploaded and the S3 Item key is available, the  CloudFormation template is generated by marshaling the <code>sparta.LambdaAWSInfo</code> objects into CloudFormation JSON representations.</p>
 
 <p>The AWS Lambda marshaling is automatically handled.  This is also the point at which the optional <a href="https://github.com/mweagle/Sparta/blob/master/sparta.go#L192">TemplateDecorator</a> functions are called to annotate the automatically generated template with additional resources.</p>
 
-<h2 id="upload-cloudformation-template-to-s3:d680e8a854a7cbad6d490c445cba2eba">Upload CloudFormation Template to S3</h2>
+<h2 id="upload-cloudformation-template-to-s3">Upload CloudFormation Template to S3</h2>
 
 <p>Uploads the template to S3 to maximize <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">template size</a>.  There&rsquo;s not much else to see here.</p>
 
-<h2 id="create-update-stack:d680e8a854a7cbad6d490c445cba2eba">Create/Update Stack</h2>
+<h2 id="create-update-stack">Create/Update Stack</h2>
 
 <p>Finally, the provisioning workflow determines whether the Sparta <code>serviceName</code> exists and either creates or updates as appropriate.</p>
 
-<h1 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h1>
+<h1 id="next-steps">Next Steps</h1>
 
 <p>Now that we&rsquo;ve covered how Sparta handles provisioning your stack, we&rsquo;re ready to expand functionality to leverge more of the AWS ecosystem in the <a href="/docs/eventsources/">next section</a>.</p>
 

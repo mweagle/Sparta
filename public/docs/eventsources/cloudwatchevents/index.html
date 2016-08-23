@@ -68,7 +68,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: twitter:mweagle youtube: home:Sparta linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -305,9 +305,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -342,16 +351,16 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
-<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
-<li><a href="#spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#spartaIntegration">Sparta Integration</a>
 <ul>
-<li><a href="#cron-expression:d680e8a854a7cbad6d490c445cba2eba">Cron Expression</a></li>
-<li><a href="#event-pattern:d680e8a854a7cbad6d490c445cba2eba">Event Pattern</a></li>
+<li><a href="#cron-expression">Cron Expression</a></li>
+<li><a href="#event-pattern">Event Pattern</a></li>
 </ul></li>
-<li><a href="#add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</a></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
-<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+<li><a href="#add-permission">Add Permission</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
+<li><a href="#other-resources">Other Resources</a></li>
 </ul>
 </nav>
       </div>
@@ -362,7 +371,7 @@
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to different types of <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Events</a>.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
+<h1 id="goal">Goal</h1>
 
 <p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch event function that has two requirements:</p>
 
@@ -371,7 +380,7 @@
 <li>Log <em>EC2-related</em> events for later processing</li>
 </ul>
 
-<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
+<h1 id="getting-started">Getting Started</h1>
 
 <p>Our lambda function is relatively small:</p>
 
@@ -396,7 +405,7 @@
 
 <p>Our lambda function doesn&rsquo;t need to do much with the event other than log it.</p>
 
-<h1 id="spartaIntegration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+<h1 id="spartaIntegration">Sparta Integration</h1>
 
 <p>With <code>echoCloudWatchEvent()</code> implemented, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is done by the <code>appendCloudWatchEventHandler</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
 
@@ -416,7 +425,7 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 <p>Our two rules will be inserted into the <code>Rules</code> map in the next steps.</p>
 
-<h2 id="cron-expression:d680e8a854a7cbad6d490c445cba2eba">Cron Expression</h2>
+<h2 id="cron-expression">Cron Expression</h2>
 
 <p>Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:</p>
 
@@ -427,7 +436,7 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 <p>The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em>cron</em> <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html">expression</a>.  The map keyname is used when adding the <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">rule</a> during stack provisioning.</p>
 
-<h2 id="event-pattern:d680e8a854a7cbad6d490c445cba2eba">Event Pattern</h2>
+<h2 id="event-pattern">Event Pattern</h2>
 
 <p>The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&rsquo;ll add a second <code>Rule</code>:</p>
 
@@ -448,7 +457,7 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
    </div>
 </div>
 
-<h1 id="add-permission:d680e8a854a7cbad6d490c445cba2eba">Add Permission</h1>
+<h1 id="add-permission">Add Permission</h1>
 
 <p>With the two rules configured, the final step is to add the <code>sparta.CloudWatchPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
@@ -480,7 +489,7 @@ return append(lambdaFunctions, lambdaFn)</code></pre>
 }</code></pre>
 
 
-<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+<h1 id="wrapping-up">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all CloudWatch Events-triggered lambda functions:</p>
 
@@ -499,7 +508,7 @@ return append(lambdaFunctions, lambdaFn)</code></pre>
 <li>Include the reference in the call to <code>sparta.Main()</code>.</li>
 </ul>
 
-<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
+<h1 id="other-resources">Other Resources</h1>
 
 <ul>
 <li>Introduction to <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Events</a></li>

@@ -68,7 +68,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: home:Sparta]">
+<body class="map[bitbucket: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -305,9 +305,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -342,11 +351,11 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
-<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
-<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
-<li><a href="#other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</a></li>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#sparta-integration">Sparta Integration</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
+<li><a href="#other-resources">Other Resources</a></li>
 </ul>
 </nav>
       </div>
@@ -357,11 +366,11 @@
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to  <a href="https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/">CloudWatch Logs</a>.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
+<h1 id="goal">Goal</h1>
 
 <p>Assume that we&rsquo;re supposed to write a simple &ldquo;HelloWorld&rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.</p>
 
-<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
+<h1 id="getting-started">Getting Started</h1>
 
 <p>Our lambda function is relatively short:</p>
 
@@ -378,7 +387,7 @@
 
 <p>Our lambda function doesn&rsquo;t need to do much with the log message other than log it.</p>
 
-<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+<h1 id="sparta-integration">Sparta Integration</h1>
 
 <p>With <code>echoCloudWatchLogsEvent()</code> implemented, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is done by the <code>appendCloudWatchLogsLambda</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
 
@@ -424,7 +433,7 @@ cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubs
 }</code></pre>
 
 
-<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+<h1 id="wrapping-up">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:</p>
 
@@ -438,7 +447,7 @@ cloudWatchLogsPermission.Filters[&#34;MyFilter&#34;] = sparta.CloudWatchLogsSubs
 <li>Include the reference in the call to <code>sparta.Main()</code>.</li>
 </ul>
 
-<h1 id="other-resources:d680e8a854a7cbad6d490c445cba2eba">Other Resources</h1>
+<h1 id="other-resources">Other Resources</h1>
 
 </div>
 

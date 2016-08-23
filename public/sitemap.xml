@@ -3,8 +3,17 @@
   
   <url>
     <loc>http://gosparta.io/</loc>
-    <lastmod>2016-06-09T17:46:33+00:00</lastmod>
-    <priority>0</priority>
+    <lastmod>2016-08-22T21:00:29+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/application/workflow_hooks/</loc>
+    <lastmod>2016-08-22T21:00:29+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/docker/</loc>
+    <lastmod>2016-08-22T21:00:12+00:00</lastmod>
   </url>
   
   <url>

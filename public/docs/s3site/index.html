@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  513 
+    "wordCount":  515 
   }
 </script>
 
@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen]">
+<body class="map[youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle bitbucket: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,11 +349,11 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#create-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</a></li>
-<li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
-<li><a href="#define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</a></li>
-<li><a href="#a-href-hugoshortcode-5-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></a></li>
-<li><a href="#discover:d680e8a854a7cbad6d490c445cba2eba">Discover</a></li>
+<li><a href="#create-the-lambda-function">Create the Lambda function</a></li>
+<li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
+<li><a href="#define-the-s3-site">Define the S3 Site</a></li>
+<li><a href="#{#HUGOSHORTCODE-5#">&lt;a href=&rdquo;</a></li>
+<li><a href="#discover">Discover</a></li>
 </ul>
 </nav>
       </div>
@@ -357,7 +366,7 @@
 
 <p>The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a> example application.</p>
 
-<h1 id="create-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Create the Lambda function</h1>
+<h1 id="create-the-lambda-function">Create the Lambda function</h1>
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
@@ -372,7 +381,7 @@
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
 
-<h1 id="create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</h1>
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
@@ -403,7 +412,7 @@ apiGateway.CORSEnabled = true</code></pre>
 }</code></pre>
 
 
-<h1 id="define-the-s3-site:d680e8a854a7cbad6d490c445cba2eba">Define the S3 Site</h1>
+<h1 id="define-the-s3-site">Define the S3 Site</h1>
 
 <p>The next part is to define the S3 site resources via <code>sparta.NewS3Site(localFilePath)</code>.  The <em>localFilePath</em> parameter
 typically points to a directory, which will be:</p>
@@ -414,7 +423,9 @@ typically points to a directory, which will be:</p>
 <li>Dynamically unpacked by a CloudFormation CustomResource during <code>provision</code> to a new S3 bucket.</li>
 </ol>
 
-<h1 id="a-href-hugoshortcode-5-provision-a:d680e8a854a7cbad6d490c445cba2eba"><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></h1>
+<h1 id="{#HUGOSHORTCODE-5#">&lt;a href=&rdquo;</h1>
+
+<p>#}&ldquo;&gt;Provision</a></p>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
@@ -443,17 +454,17 @@ func main() {
 
 <p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
 
-<p><pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+<pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
 INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
 INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
 INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
 INFO[0114] Elapsed time        Seconds=114</code></pre>
-</p>
+
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
 
-<h1 id="discover:d680e8a854a7cbad6d490c445cba2eba">Discover</h1>
+<h1 id="discover">Discover</h1>
 
 <p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
 

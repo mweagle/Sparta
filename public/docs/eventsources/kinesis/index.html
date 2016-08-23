@@ -68,7 +68,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen googleAnalytics:UA-70794971-1 googleplus: twitter:mweagle youtube: home:Sparta linkedin:https://www.linkedin.com/in/mweagle]">
+<body class="map[googleplus: facebook: twitter:mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:lumen]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -305,9 +305,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -342,12 +351,12 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#goal:d680e8a854a7cbad6d490c445cba2eba">Goal</a></li>
-<li><a href="#getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</a></li>
-<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
-<li><a href="#event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</a></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#goal">Goal</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<li><a href="#sparta-integration">Sparta Integration</a></li>
+<li><a href="#event-source-registration">Event Source Registration</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -358,11 +367,11 @@
 
 <p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to <a href="https://aws.amazon.com/kinesis/">Amazon Kinesis</a> streams.  This overview is based on the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L130">SpartaApplication</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<h1 id="goal:d680e8a854a7cbad6d490c445cba2eba">Goal</h1>
+<h1 id="goal">Goal</h1>
 
 <p>The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.</p>
 
-<h1 id="getting-started:d680e8a854a7cbad6d490c445cba2eba">Getting Started</h1>
+<h1 id="getting-started">Getting Started</h1>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -395,7 +404,7 @@
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
 
-<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+<h1 id="sparta-integration">Sparta Integration</h1>
 
 <p>First we wrap the <strong>Go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
@@ -404,7 +413,7 @@
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
-<h1 id="event-source-registration:d680e8a854a7cbad6d490c445cba2eba">Event Source Registration</h1>
+<h1 id="event-source-registration">Event Source Registration</h1>
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
@@ -418,7 +427,7 @@
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
 
-<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+<h1 id="wrapping-up">Wrapping Up</h1>
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all Kinesis-triggered lambda functions:</p>
 
@@ -429,7 +438,7 @@
 <li>Add the necessary <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput">EventSourceMappings</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is properly configured.</li>
 </ul>
 
-<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes">Notes</h1>
 
 <ul>
 <li>The Kinesis stream and the AWS Lambda function must be provisioned in the same region.</li>

@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: twitter:mweagle youtube: home:Sparta linkedin:https://www.linkedin.com/in/mweagle github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen googleAnalytics:UA-70794971-1]">
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:lumen home:Sparta facebook: twitter:mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,15 +349,15 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></li>
-<li><a href="#create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</a></li>
-<li><a href="#create-lambda-binding:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</a></li>
-<li><a href="#create-resources:d680e8a854a7cbad6d490c445cba2eba">Create Resources</a></li>
-<li><a href="#whitelist-input:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</a></li>
-<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
-<li><a href="#querying:d680e8a854a7cbad6d490c445cba2eba">Querying</a></li>
-<li><a href="#cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#define-the-lambda-function">Define the Lambda Function</a></li>
+<li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
+<li><a href="#create-lambda-binding">Create Lambda Binding</a></li>
+<li><a href="#create-resources">Create Resources</a></li>
+<li><a href="#whitelist-input">Whitelist Input</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#querying">Querying</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul>
 </nav>
       </div>
@@ -359,7 +368,7 @@
 
 <p>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> function defined as part of the  <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a>.</p>
 
-<h1 id="define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</h1>
+<h1 id="define-the-lambda-function">Define the Lambda Function</h1>
 
 <p>Our function will accept two params:</p>
 
@@ -422,7 +431,7 @@ if err != nil {
 }</code></pre>
 
 
-<h1 id="create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba">Create the API Gateway</h1>
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The next step is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
@@ -430,7 +439,7 @@ if err != nil {
 apiGateway := sparta.NewAPIGateway(&#34;SpartaImagerAPI&#34;, apiStage)</code></pre>
 
 
-<h1 id="create-lambda-binding:d680e8a854a7cbad6d490c445cba2eba">Create Lambda Binding</h1>
+<h1 id="create-lambda-binding">Create Lambda Binding</h1>
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
@@ -459,7 +468,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 </ul></li>
 </ul>
 
-<h1 id="create-resources:d680e8a854a7cbad6d490c445cba2eba">Create Resources</h1>
+<h1 id="create-resources">Create Resources</h1>
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
 
@@ -470,14 +479,14 @@ if err != nil {
 }</code></pre>
 
 
-<h1 id="whitelist-input:d680e8a854a7cbad6d490c445cba2eba">Whitelist Input</h1>
+<h1 id="whitelist-input">Whitelist Input</h1>
 
 <p>The final step is to add the whitelisted parameters to the Method definition.</p>
 
-<p><pre><code class="go">// Whitelist query string params
+<pre><code class="go">// Whitelist query string params
 method.Parameters[&#34;method.request.querystring.keyName&#34;] = true
 method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code></pre>
-</p>
+
 
 <p>Note that the keynames in the <code>method.Parameters</code> map must be of the form: <strong>method.request.{location}.{name}</strong> where location is one of:</p>
 
@@ -489,27 +498,27 @@ method.Parameters[&#34;method.request.querystring.bucketName&#34;] = true</code>
 
 <p>See the <a href="http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters">REST documentation</a> for more information.</p>
 
-<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
+<h1 id="provision">Provision</h1>
 
 <p>With everything configured, let&rsquo;s provision the stack:</p>
 
-<p><pre><code class="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
-</p>
+<pre><code class="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
+
 
 <p>and check the results.</p>
 
-<h1 id="querying:d680e8a854a7cbad6d490c445cba2eba">Querying</h1>
+<h1 id="querying">Querying</h1>
 
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
 
-<p><pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+<pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
 INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
-</p>
+
 
 <p>Let&rsquo;s fetch an item we know exists:</p>
 
-<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=somebucket-log&#34;
+<pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=somebucket-log&#34;
 
 *   Trying 54.192.70.158...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
@@ -534,11 +543,11 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;
 * Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
 {&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 02:35:03 GMT&#34;,&#34;content-length&#34;:&#34;1468&#34;},&#34;results&#34;:{&#34;S3&#34;:{&#34;AcceptRanges&#34;:&#34;bytes&#34;,&#34;Body&#34;:{},&#34;CacheControl&#34;:null,&#34;ContentDisposition&#34;:null,&#34;ContentEncoding&#34;:null,&#34;ContentLanguage&#34;:null,&#34;ContentLength&#34;:70372,&#34;ContentRange&#34;:null,&#34;ContentType&#34;:&#34;image/png&#34;,&#34;DeleteMarker&#34;:null,&#34;ETag&#34;:&#34;\&#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&#34;&#34;,&#34;Expiration&#34;:null,&#34;Expires&#34;:null,&#34;LastModified&#34;:&#34;2015-11-09T15:38:01Z&#34;,&#34;Metadata&#34;:{},&#34;MissingMeta&#34;:null,&#34;ReplicationStatus&#34;:null,&#34;RequestCharged&#34;:null,&#34;Restore&#34;:null,&#34;SSECustomerAlgorithm&#34;:null,&#34;SSECustomerKeyMD5&#34;:null,&#34;SSEKMSKeyId&#34;:null,&#34;ServerSideEncryption&#34;:null,&#34;StorageClass&#34;:null,&#34;VersionId&#34;:null,&#34;WebsiteRedirectLocation&#34;:null},&#34;URL&#34;:&#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;}}</code></pre>
-</p>
+
 
 <p>Pretty printing the response body:</p>
 
-<p><pre><code class="json">{
+<pre><code class="json">{
   &#34;code&#34;: 200,
   &#34;status&#34;: &#34;OK&#34;,
   &#34;headers&#34;: {
@@ -578,13 +587,13 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
     &#34;URL&#34;: &#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;
   }
 }</code></pre>
-</p>
+
 
 <p>Please see the <a href="/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 
 <p>What about an item that we know doesn&rsquo;t exist, but is in the bucket our lambda function has privileges to access:</p>
 
-<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
+<pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
 
 *   Trying 54.230.71.213...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
@@ -609,11 +618,11 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;
 * Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:40:14 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
-</p>
+
 
 <p>And finally, what if we try to access a bucket that our lambda function isn&rsquo;t authorized to access:</p>
 
-<p><pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=weagle&#34;
+<pre><code class="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=weagle&#34;
 
 *   Trying 54.192.70.129...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
@@ -638,16 +647,16 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;
 * Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:42:52 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
-</p>
 
-<h1 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h1>
+
+<h1 id="cleaning-up">Cleaning Up</h1>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">go run application.go delete</code></pre>
-</p>
+<pre><code class="nohighlight">go run application.go delete</code></pre>
 
-<h1 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h1>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
 
 <p>With this example we&rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.</p>
 

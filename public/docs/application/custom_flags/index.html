@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[facebook: flattr: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: youtube: home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle]">
+<body class="map[youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle bitbucket: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,10 +349,10 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a>
+<li><a href="#introduction">Introduction</a>
 <ul>
-<li><a href="#adding-flags:d680e8a854a7cbad6d490c445cba2eba">Adding Flags</a></li>
-<li><a href="#validating-input:d680e8a854a7cbad6d490c445cba2eba">Validating Input</a></li>
+<li><a href="#adding-flags">Adding Flags</a></li>
+<li><a href="#validating-input">Validating Input</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -353,13 +362,13 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>Some commands (eg: <code>provision</code>) may require additional options.  For instance, your application&rsquo;s provision logic may require VPC <a href="https://aws.amazon.com/blogs/aws/new-access-resources-in-a-vpc-from-your-lambda-functions/">subnets</a> or EC2 <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html">SSH Key Names</a>.</p>
 
 <p>The default Sparta command line option flags may be extended and validated by building on the exposed <a href="https://github.com/spf13/cobra">Cobra</a> command objects.</p>
 
-<h2 id="adding-flags:d680e8a854a7cbad6d490c445cba2eba">Adding Flags</h2>
+<h2 id="adding-flags">Adding Flags</h2>
 
 <p>To add a flag, use one of the <a href="https://github.com/spf13/pflag">pflag</a> functions to register your custom flag with one of the standard <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17">CommandLineOption</a> values.</p>
 
@@ -378,7 +387,7 @@ func main() {
 }</code></pre>
 
 
-<h2 id="validating-input:d680e8a854a7cbad6d490c445cba2eba">Validating Input</h2>
+<h2 id="validating-input">Validating Input</h2>
 
 <p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling <code>sparta.Main()</code>.</p>
 
@@ -386,7 +395,7 @@ func main() {
 
 <p>The <code>ParseOptions</code> result is the optional error returned from your <em>CommandLineOptionsHook</em> function. If there is an error, your application can then exit with an application specific exit code.  For instance:</p>
 
-<p><pre><code class="go">// Define a validation hook s.t. we can verify the SSHKey is valid
+<pre><code class="go">// Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
   if command.Name() == &#34;provision&#34; &amp;&amp; len(SSHKeyName) &lt;= 0 {
     return fmt.Errorf(&#34;SSHKeyName option is required&#34;)
@@ -399,7 +408,7 @@ parseErr := sparta.ParseOptions(validationHook)
 if nil != parseErr {
   os.Exit(3)
 }</code></pre>
-</p>
+
 
 <p>Sparta itself uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
 

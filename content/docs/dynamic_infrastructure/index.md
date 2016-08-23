@@ -8,13 +8,13 @@ type = "doc"
 
 # Introduction
 
-In addition to provisioning AWS Lambda functions, Sparta supports the creation of other [CloudFormation Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html).  This enables a service to move towards [immutable infrastructure](https://fugue.co/oreilly/), where the service and its infrastructure requirements are treated as a logical unit.  
+In addition to provisioning AWS Lambda functions, Sparta supports the creation of other [CloudFormation Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html).  This enables a service to move towards [immutable infrastructure](https://fugue.co/oreilly/), where the service and its infrastructure requirements are treated as a logical unit.
 
 For instance, consider the case where two developers are working in the same AWS account.
 
-  * Developer 1 is working on analyzing text documents.  
+  * Developer 1 is working on analyzing text documents.
     - Their lambda code is triggered in response to uploading sample text documents to S3.
-  * Developer 2 is working on image recognition.  
+  * Developer 2 is working on image recognition.
     - Their lambda code is triggered in response to uploading sample images to S3.
 
 {{< mermaid >}}
@@ -80,10 +80,14 @@ Sparta supports Dynamic Resources via [TemplateDecorator](https://godoc.org/gith
 A template decorator is a **Go** function with the following signature
 
 ```go
-type TemplateDecorator func(lambdaResourceName string,
-                            lambdaResource gocf.LambdaFunction,
-                            template *gocf.Template,
-                            logger *logrus.Logger) error {
+type TemplateDecorator func(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	template *gocf.Template,
+	logger *logrus.Logger) error {
 
 }
 ```
@@ -94,7 +98,7 @@ Clients use [go-cloudformation](https://godoc.org/github.com/crewjam/go-cloudfor
 
 CloudFormation uses [Logical IDs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html) as resource key names.
 
-To minimize collision likelihood, Sparta publishes [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to generate compliant identifiers.  To produce content-based hash values, callers can provide a non-empty set of values as the `...parts` variadic argument.  This produces stable identifiers across Sparta execution (which may affect availability during updates).  
+To minimize collision likelihood, Sparta publishes [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to generate compliant identifiers.  To produce content-based hash values, callers can provide a non-empty set of values as the `...parts` variadic argument.  This produces stable identifiers across Sparta execution (which may affect availability during updates).
 
 When called with only a single value (eg: `CloudFormationResourceName("myResource")`), Sparta will return a random resource name that is **NOT** stable across executions.
 
@@ -150,7 +154,7 @@ The open issue is how to publish the CloudFormation-defined S3 Arn to the `compi
   * [IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) values that reference the (as yet) undefined Arn.
   * [S3Permission](https://godoc.org/github.com/mweagle/Sparta#S3Permission) values to configure our lambda's event triggers on the (as yet) undefined Arn.
 
-The missing piece is [gocf.Ref()](https://godoc.org/github.com/crewjam/go-cloudformation#Ref), whose single argument is the _Logical ID_ of the S3 resource we'll be inserting in the decorator call.  
+The missing piece is [gocf.Ref()](https://godoc.org/github.com/crewjam/go-cloudformation#Ref), whose single argument is the _Logical ID_ of the S3 resource we'll be inserting in the decorator call.
 
 ### Dynamic IAM Role Privilege
 
@@ -168,7 +172,7 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 
 ### Dynamic S3 Permissions
 
-The `S3Permission` struct also requires the dynamic Arn, to which it will append `"/*"` to enable object read access.  
+The `S3Permission` struct also requires the dynamic Arn, to which it will append `"/*"` to enable object read access.
 
 ```go
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
@@ -255,6 +259,6 @@ Sparta provides an opportunity to bring infrastructure management into the appli
 # Notes
   * The `echoS3DynamicBucketEvent` function can also access the bucket Arn via [sparta.Discover](/docs/discovery).
   * See the [DeletionPolicy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html) documentation regarding S3 management.
-  * CloudFormation resources also publish [other outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) that can be retrieved via [gocf.GetAtt](https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt).  
+  * CloudFormation resources also publish [other outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) that can be retrieved via [gocf.GetAtt](https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt).
   * `go-cloudformation` exposes [gocf.Join](https://godoc.org/github.com/crewjam/go-cloudformation#Join) to create compound, dynamic expressions.
     - See the CloudWatch docs on [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) for more information.

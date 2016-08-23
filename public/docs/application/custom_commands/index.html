@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr:]">
+<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:lumen home:Sparta facebook: twitter:mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,7 +349,7 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
+<li><a href="#introduction">Introduction</a></li>
 </ul>
 </nav>
       </div>
@@ -349,7 +358,7 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>In addition to <a href="/docs/application/custom_flags">custom flags</a>, an application may register completely new commands. For example, to support <a href="/docs/application/custom_flags">alternative topologies</a> or integrated automated acceptance tests as part of a CI/CD pipeline.</p>
 
@@ -369,7 +378,7 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
-<p><pre><code class="bash">$ ./SpartaOmega --help
+<pre><code class="bash">$ ./SpartaOmega --help
 Provision AWS Lambda and EC2 instance with same code
 
 Usage:
@@ -389,11 +398,11 @@ Flags:
   -n, --noop           Dry-run behavior only (do not perform mutations)
 
 Use &#34;SpartaOmega [command] --help&#34; for more information about a command.</code></pre>
-</p>
+
 
 <p>And you can query for user-command specific usage as in:</p>
 
-<p><pre><code class="bash">$ ./SpartaOmega httpServer --help
+<pre><code class="bash">$ ./SpartaOmega httpServer --help
 Custom command
 
 Usage:
@@ -402,7 +411,7 @@ Usage:
 Global Flags:
   -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default &#34;info&#34;)
   -n, --noop           Dry-run behavior only (do not perform mutations)</code></pre>
-</p>
+
 
 </div>
 

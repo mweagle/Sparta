@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1068 
+    "wordCount":  1076 
   }
 </script>
 
@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr:]">
+<body class="map[bitbucket: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,28 +349,28 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
-<li><a href="#template-decorators:d680e8a854a7cbad6d490c445cba2eba">Template Decorators</a>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#template-decorators">Template Decorators</a>
 <ul>
-<li><a href="#unique-resource-names:d680e8a854a7cbad6d490c445cba2eba">Unique Resource Names</a></li>
+<li><a href="#unique-resource-names">Unique Resource Names</a></li>
 </ul></li>
-<li><a href="#example-s3-bucket:d680e8a854a7cbad6d490c445cba2eba">Example - S3 Bucket</a>
+<li><a href="#example-s3-bucket">Example - S3 Bucket</a>
 <ul>
-<li><a href="#lambda-function:d680e8a854a7cbad6d490c445cba2eba">Lambda Function</a></li>
-<li><a href="#s3-resource-name:d680e8a854a7cbad6d490c445cba2eba">S3 Resource Name</a></li>
-<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a>
+<li><a href="#lambda-function">Lambda Function</a></li>
+<li><a href="#s3-resource-name">S3 Resource Name</a></li>
+<li><a href="#sparta-integration">Sparta Integration</a>
 <ul>
-<li><a href="#dynamic-iam-role-privilege:d680e8a854a7cbad6d490c445cba2eba">Dynamic IAM Role Privilege</a></li>
-<li><a href="#dynamic-s3-permissions:d680e8a854a7cbad6d490c445cba2eba">Dynamic S3 Permissions</a></li>
+<li><a href="#dynamic-iam-role-privilege">Dynamic IAM Role Privilege</a></li>
+<li><a href="#dynamic-s3-permissions">Dynamic S3 Permissions</a></li>
 </ul></li>
-<li><a href="#s3-resource-insertion:d680e8a854a7cbad6d490c445cba2eba">S3 Resource Insertion</a>
+<li><a href="#s3-resource-insertion">S3 Resource Insertion</a>
 <ul>
-<li><a href="#dependencies:d680e8a854a7cbad6d490c445cba2eba">Dependencies</a></li>
+<li><a href="#dependencies">Dependencies</a></li>
 </ul></li>
-<li><a href="#code-listing:d680e8a854a7cbad6d490c445cba2eba">Code Listing</a></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#code-listing">Code Listing</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul></li>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -370,19 +379,19 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>In addition to provisioning AWS Lambda functions, Sparta supports the creation of other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resources</a>.  This enables a service to move towards <a href="https://fugue.co/oreilly/">immutable infrastructure</a>, where the service and its infrastructure requirements are treated as a logical unit.</p>
 
 <p>For instance, consider the case where two developers are working in the same AWS account.</p>
 
 <ul>
-<li>Developer 1 is working on analyzing text documents.<br />
+<li>Developer 1 is working on analyzing text documents.
 
 <ul>
 <li>Their lambda code is triggered in response to uploading sample text documents to S3.</li>
 </ul></li>
-<li>Developer 2 is working on image recognition.<br />
+<li>Developer 2 is working on image recognition.
 
 <ul>
 <li>Their lambda code is triggered in response to uploading sample images to S3.</li>
@@ -476,21 +485,25 @@ graph LR
 
 <p>Sparta supports Dynamic Resources via <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> functions.</p>
 
-<h1 id="template-decorators:d680e8a854a7cbad6d490c445cba2eba">Template Decorators</h1>
+<h1 id="template-decorators">Template Decorators</h1>
 
 <p>A template decorator is a <strong>Go</strong> function with the following signature</p>
 
-<pre><code class="language-go">type TemplateDecorator func(lambdaResourceName string,
-                            lambdaResource gocf.LambdaFunction,
-                            template *gocf.Template,
-                            logger *logrus.Logger) error {
+<pre><code class="language-go">type TemplateDecorator func(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	template *gocf.Template,
+	logger *logrus.Logger) error {
 
 }
 </code></pre>
 
 <p>Clients use <a href="https://godoc.org/github.com/crewjam/go-cloudformation">go-cloudformation</a> types for CloudFormation resources and  <code>template.AddResource</code> to add them to the <code>*template</code> parameter.  After a decorator is invoked, Sparta verifies that the user-supplied function has not produced entities that collide with the internally-generated ones.</p>
 
-<h2 id="unique-resource-names:d680e8a854a7cbad6d490c445cba2eba">Unique Resource Names</h2>
+<h2 id="unique-resource-names">Unique Resource Names</h2>
 
 <p>CloudFormation uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html">Logical IDs</a> as resource key names.</p>
 
@@ -498,7 +511,7 @@ graph LR
 
 <p>When called with only a single value (eg: <code>CloudFormationResourceName(&quot;myResource&quot;)</code>), Sparta will return a random resource name that is <strong>NOT</strong> stable across executions.</p>
 
-<h1 id="example-s3-bucket:d680e8a854a7cbad6d490c445cba2eba">Example - S3 Bucket</h1>
+<h1 id="example-s3-bucket">Example - S3 Bucket</h1>
 
 <p>Let&rsquo;s work through an example to make things a bit more concrete.  We have the following requirements:</p>
 
@@ -508,7 +521,7 @@ graph LR
 <li>Our lambda function must be able to access the contents in the bucket (not shown below)</li>
 </ul>
 
-<h2 id="lambda-function:d680e8a854a7cbad6d490c445cba2eba">Lambda Function</h2>
+<h2 id="lambda-function">Lambda Function</h2>
 
 <p>To start with, we&rsquo;ll need a Sparta lambda function to expose:</p>
 
@@ -530,14 +543,14 @@ graph LR
 
 <p>For brevity our demo function doesn&rsquo;t access the S3 bucket objects.  To support that we&rsquo;ll need to discuss the <code>sparta.Discover</code> function in another <a href="/docs/discovery/">section</a>.</p>
 
-<h2 id="s3-resource-name:d680e8a854a7cbad6d490c445cba2eba">S3 Resource Name</h2>
+<h2 id="s3-resource-name">S3 Resource Name</h2>
 
 <p>The next thing we need is a <em>Logical ID</em> for our bucket:</p>
 
 <pre><code class="language-go">s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;, &quot;myServiceBucket&quot;)
 </code></pre>
 
-<h2 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h2>
+<h2 id="sparta-integration">Sparta Integration</h2>
 
 <p>With these two values we&rsquo;re ready to get started building up the lambda function:</p>
 
@@ -553,7 +566,7 @@ graph LR
 
 <p>The missing piece is <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Ref">gocf.Ref()</a>, whose single argument is the <em>Logical ID</em> of the S3 resource we&rsquo;ll be inserting in the decorator call.</p>
 
-<h3 id="dynamic-iam-role-privilege:d680e8a854a7cbad6d490c445cba2eba">Dynamic IAM Role Privilege</h3>
+<h3 id="dynamic-iam-role-privilege">Dynamic IAM Role Privilege</h3>
 
 <p>The <code>IAMRolePrivilege</code> struct references the dynamically assigned S3 Arn as follows:</p>
 
@@ -566,7 +579,7 @@ graph LR
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 </code></pre>
 
-<h3 id="dynamic-s3-permissions:d680e8a854a7cbad6d490c445cba2eba">Dynamic S3 Permissions</h3>
+<h3 id="dynamic-s3-permissions">Dynamic S3 Permissions</h3>
 
 <p>The <code>S3Permission</code> struct also requires the dynamic Arn, to which it will append <code>&quot;/*&quot;</code> to enable object read access.</p>
 
@@ -579,7 +592,7 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 
 <p>The <code>spartaCF.S3AllKeysArnForBucket</code> call is a convenience wrapper around <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Join">gocf.Join</a> to generate the concatenated, dynamic Arn expression.</p>
 
-<h2 id="s3-resource-insertion:d680e8a854a7cbad6d490c445cba2eba">S3 Resource Insertion</h2>
+<h2 id="s3-resource-insertion">S3 Resource Insertion</h2>
 
 <p>All that&rsquo;s left to do is actually insert the S3 resource in our decorator:</p>
 
@@ -596,14 +609,14 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 }
 </code></pre>
 
-<h3 id="dependencies:d680e8a854a7cbad6d490c445cba2eba">Dependencies</h3>
+<h3 id="dependencies">Dependencies</h3>
 
 <p>In reality, we shouldn&rsquo;t even attempt to create the AWS Lambda function if the S3 bucket creation fails.  As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html">DependsOn</a> attribute:</p>
 
 <pre><code class="language-go">lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 </code></pre>
 
-<h2 id="code-listing:d680e8a854a7cbad6d490c445cba2eba">Code Listing</h2>
+<h2 id="code-listing">Code Listing</h2>
 
 <p>Putting everything together, our Sparta lambda function with dynamic infrastructure is listed below.</p>
 
@@ -644,16 +657,16 @@ lambdaFn.Decorator = func(lambdaResourceName string,
 }
 </code></pre>
 
-<h2 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h2>
+<h2 id="wrapping-up">Wrapping Up</h2>
 
 <p>Sparta provides an opportunity to bring infrastructure management into the application programming model.  It&rsquo;s still possible to use literal Arn strings, but the ability to include other infrastructure requirements brings a service closer to being self-contained and more operationally sustainable.</p>
 
-<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes">Notes</h1>
 
 <ul>
 <li>The <code>echoS3DynamicBucketEvent</code> function can also access the bucket Arn via <a href="/docs/discovery">sparta.Discover</a>.</li>
 <li>See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html">DeletionPolicy</a> documentation regarding S3 management.</li>
-<li>CloudFormation resources also publish <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">other outputs</a> that can be retrieved via <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">gocf.GetAtt</a>.<br /></li>
+<li>CloudFormation resources also publish <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">other outputs</a> that can be retrieved via <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">gocf.GetAtt</a>.</li>
 <li><code>go-cloudformation</code> exposes <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Join">gocf.Join</a> to create compound, dynamic expressions.
 
 <ul>

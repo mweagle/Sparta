@@ -51,7 +51,7 @@
     },
     "datePublished": "2016-02-16",
     "description": "",
-    "wordCount":  533 
+    "wordCount":  568 
   }
 </script>
 
@@ -62,7 +62,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -99,7 +99,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: flattr: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook:]">
+<body class="map[name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -299,9 +299,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -336,8 +345,8 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#terms-and-concepts:d680e8a854a7cbad6d490c445cba2eba">Terms and Concepts</a></li>
-<li><a href="#next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</a></li>
+<li><a href="#terms-and-concepts">Terms and Concepts</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
 </ul>
 </nav>
       </div>
@@ -348,7 +357,7 @@
 
 <p>This is a brief overview of Sparta&rsquo;s core concepts.  Additional information regarding specific features is available from the menu.</p>
 
-<h1 id="terms-and-concepts:d680e8a854a7cbad6d490c445cba2eba">Terms and Concepts</h1>
+<h1 id="terms-and-concepts">Terms and Concepts</h1>
 
 <p>At a high level, Sparta transforms a single <strong>Go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
 
@@ -449,43 +458,65 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 
 <p>Given a set of Sparta lambda functions, during a <code>provision</code> build Sparta follows this workflow:</p>
 
-<p><div class="mermaid">
+<div class="mermaid">
 graph TD
   iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   proxyShims[Create NodeJS-Go HTTP Proxies]
   package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   generate[Marshal to CloudFormation]
   decorate[Call User Template Decorators - Dynamic AWS Resources]
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
 
-  iam-->compile
-  compile-->proxyShims
+  iam-->preBuild
+  preBuild-->compile
+  compile-->postBuild
+  postBuild-->proxyShims
   proxyShims-->package
   proxyShims-->packageAssets
-  package-->upload
+  package-->userArchive
+  userArchive-->upload
   packageAssets-->uploadAssets
   uploadAssets-->generate
   upload-->generate
-  generate-->decorate
-  decorate-->uploadTemplate
+
+  generate-->preMarshall
+  preMarshall-->decorate
+  decorate-->postMarshall
+  postMarshall-->uploadTemplate
   uploadTemplate-->converge
   converge-->wait
 </div>
 <h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
 <hr />
-</p>
+
 
 <p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
 
 <p>At runtime, Sparta uses <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html">NodeJS</a> shims to proxy the request to your <strong>Go</strong> handler.</p>
 
-<h1 id="next-steps:d680e8a854a7cbad6d490c445cba2eba">Next Steps</h1>
+<h1 id="next-steps">Next Steps</h1>
 
 <p>Writing a simple <a href="/docs/intro_example">Sparta Application</a>.</p>
 

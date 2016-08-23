@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  594 
+    "wordCount":  596 
   }
 </script>
 
@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr:]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:lumen googleplus: facebook: twitter:mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,10 +349,10 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#example:d680e8a854a7cbad6d490c445cba2eba">Example</a></li>
-<li><a href="#command-line-testing:d680e8a854a7cbad6d490c445cba2eba">Command Line Testing</a></li>
-<li><a href="#code-httptest-code-support:d680e8a854a7cbad6d490c445cba2eba"><code>httptest</code> support</a></li>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#example">Example</a></li>
+<li><a href="#command-line-testing">Command Line Testing</a></li>
+<li><a href="#code-httptest-code-support"><code>httptest</code> support</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -359,7 +368,7 @@
 <li><code>httptest.NewServer</code> for <em>go test</em> style testing</li>
 </ul>
 
-<h1 id="example:d680e8a854a7cbad6d490c445cba2eba">Example</h1>
+<h1 id="example">Example</h1>
 
 <p>For this example, let&rsquo;s define a simple Sparta application:</p>
 
@@ -401,7 +410,7 @@ func main() {
 }</code></pre>
 
 
-<h1 id="command-line-testing:d680e8a854a7cbad6d490c445cba2eba">Command Line Testing</h1>
+<h1 id="command-line-testing">Command Line Testing</h1>
 
 <p>With our application defined, let&rsquo;s run it:</p>
 
@@ -455,18 +464,18 @@ Hello World</code></pre>
 
 <p>While this approach does work, it&rsquo;s not a scalable approach to writing automated tests.</p>
 
-<h1 id="code-httptest-code-support:d680e8a854a7cbad6d490c445cba2eba"><code>httptest</code> support</h1>
+<h1 id="code-httptest-code-support"><code>httptest</code> support</h1>
 
 <p>To integrate with the existing <a href="https://golang.org/pkg/testing/">go test</a> command, Sparta includes two functions:</p>
 
 <ol>
 <li><code>NewLambdaHTTPHandler</code> : Creates an <a href="https://golang.org/pkg/net/http/httptest/#NewServer">httptest.NewServer</a>-compliant <code>http.Handler</code> value.</li>
-<li><code>Sparta/explore.NewRequest</code> : Creates a mock JSON object with optional user-defined <em>event</em> data.<br /></li>
+<li><code>Sparta/explore.NewRequest</code> : Creates a mock JSON object with optional user-defined <em>event</em> data.</li>
 </ol>
 
 <p>To show this in action, let&rsquo;s walk through how Sparta <a href="https://github.com/mweagle/Sparta/blob/master/explore_test.go">does this</a>:</p>
 
-<p><pre><code class="golang">func TestExplore(t *testing.T) {
+<pre><code class="golang">func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
@@ -494,7 +503,7 @@ Hello World</code></pre>
 	t.Log(&#34;Headers: &#34;, resp.Header)
 	t.Log(&#34;Body: &#34;, string(body))
 }</code></pre>
-</p>
+
 
 <p>The test function above has the following features:</p>
 
@@ -508,10 +517,10 @@ Hello World</code></pre>
 
 <p>These <em>localhost</em> tests will be executed as part of your application&rsquo;s normal <code>go test</code> lifecycle.</p>
 
-<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes">Notes</h1>
 
 <ul>
-<li>API Gateway <a href="https://github.com/mweagle/Sparta/tree/master/resources/provision/apigateway">input mappings</a> are not currently supported.</li>
+<li>APIGateway requests can be tested using mock payloads via <a href="https://github.com/mweagle/Sparta/blob/master/explore/explore.go#L103">Sparta/explore.NewAPIGatewayRequest</a></li>
 <li>Ensure your localhost AWS credentials have sufficient privileges to access any AWS services.
 
 <ul>

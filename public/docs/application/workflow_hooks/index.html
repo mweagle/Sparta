@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Discovery Service  &middot; Sparta</title>
+  <title>Workflow Hooks  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,16 +17,16 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Discovery Service  &middot; Sparta ">
+<meta property="og:title" content="Workflow Hooks  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/discovery/" />
+<meta property="og:url" content="http://gosparta.io/docs/application/workflow_hooks/" />
 <meta property="og:locale" content="en-EN">
 
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
-<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:published_time" content="2016-08-22T21:00:29Z" />
+<meta property="og:article:modified_time" content="2016-08-22T21:00:29Z" />
 
   
     
@@ -38,9 +38,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Discovery Service" />
+<meta name="twitter:title" content="Workflow Hooks" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/discovery/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/application/workflow_hooks/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -48,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Discovery Service",
+    "headline": "Workflow Hooks",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2015-11-29",
+    "datePublished": "2016-08-22",
     "description": "",
-    "wordCount":  560 
+    "wordCount":  2 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/discovery/" />
+<link rel="canonical" href="http://gosparta.io/docs/application/workflow_hooks/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -340,7 +340,7 @@
     <div class="col-md-10">
 
       <header class="container hat">
-  <h1>Discovery Service
+  <h1>Workflow Hooks
 </h1>
 
 </header>
@@ -350,12 +350,6 @@
       <nav id="TableOfContents">
 <ul>
 <li><a href="#introduction">Introduction</a></li>
-<li><a href="#discovery">Discovery</a></li>
-<li><a href="#template-marshaling-decoration">Template Marshaling &amp; Decoration</a></li>
-<li><a href="#sample-discoveryinfo">Sample DiscoveryInfo</a></li>
-<li><a href="#special-considerations">Special Considerations</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
-<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -366,126 +360,7 @@
 
 <h1 id="introduction">Introduction</h1>
 
-<p>The ability to provision <a href="/docs/dynamic_infrastructure">dynamic infrastructure</a> (see also the <a href="/docs/eventsources/ses/#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba">SES Event Source Example</a>) as part of a Sparta application creates a need to discover those resources at lambda execution time.</p>
-
-<p>Sparta exposes this functionality via <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover</a>.  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling <strong>Go</strong> lambda function.</p>
-
-<p>The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.  It is extracted from <code>appendDynamicS3BucketLambda</code> in the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">SpartaApplication</a> source.</p>
-
-<p>If you haven&rsquo;t already done so, please review the <a href="/docs/dynamic_infrastructure">Dynamic Infrastructure</a> section for background on dynamic infrastructure provisioning.</p>
-
-<h1 id="discovery">Discovery</h1>
-
-<p>For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our <code>gocf.S3Bucket{}</code> struct uses a zero-length <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">BucketName</a> property, CloudFormation will dynamically assign one.</p>
-
-<pre><code class="language-go">s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;)
-
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{&quot;s3:ObjectCreated:*&quot;,
-                    &quot;s3:ObjectRemoved:*&quot;},
-})
-
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-
-// Add permission s.t. the lambda function could read from the S3 bucket
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&quot;s3:GetObject&quot;,
-                       &quot;s3:HeadObject&quot;},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
-
-// Add the S3 resource to our template
-lambdaFn.Decorator = func(lambdaResourceName string,
-  lambdaResource gocf.LambdaFunction,
-  template *gocf.Template,
-  logger *logrus.Logger) error {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-    AccessControl: gocf.String(&quot;PublicRead&quot;),
-  })
-  cfResource.DeletionPolicy = &quot;Delete&quot;
-  return nil
-}
-</code></pre>
-
-<p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
-
-<h1 id="template-marshaling-decoration">Template Marshaling &amp; Decoration</h1>
-
-<p>Sparta only uses CloudFormation to update service state.  Each CloudFormation resource may be annotated with a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html">Metadata</a> property.  This is unstructured, application-defined data.</p>
-
-<p>During template marshaling, Sparta scans for <code>DependsOn</code> relationships and propagates information (immediate-children only) across CloudFormation resource definitions.  Most importantly, this information includes <code>Ref</code> and any other <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go#L24">outputs</a> of referred resources.  This information then becomes available as a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DisocveryInfo</a> value returned by <code>sparta.Discovery()</code>.</p>
-
-<h1 id="sample-discoveryinfo">Sample DiscoveryInfo</h1>
-
-<p>In our example, a <code>DiscoveryInfo</code> from a sample stack might be:</p>
-
-<pre><code class="language-json">{
-  &quot;Region&quot;: &quot;us-west-2&quot;,
-  &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&quot;,
-  &quot;StackName&quot;: &quot;SpartaApplication&quot;,
-  &quot;Resources&quot;: {
-    &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;: {
-      &quot;ResourceID&quot;: &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;,
-      &quot;Properties&quot;: {
-        &quot;DomainName&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&quot;,
-        &quot;Ref&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&quot;,
-        &quot;WebsiteURL&quot;: &quot;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&quot;,
-        &quot;sparta:cloudformation:restype&quot;: &quot;AWS::S3::Bucket&quot;
-      },
-      &quot;Tags&quot;: {}
-    }
-  }
-}
-</code></pre>
-
-<p>With this, our lambda function can discover the dynamically assigned bucket name using non-production ready code similar to:</p>
-
-<pre><code class="language-go">configuration, _ := sparta.Discover()
-bucketName := &quot;&quot;
-for _, eachResource := range configuration.Resources {
-  if eachResource.Properties[sparta.TagResourceType] == &quot;AWS::S3::Bucket&quot; {
-    bucketName = eachResource.Properties[&quot;Ref&quot;]
-  }
-}
-</code></pre>
-
-<p>The <code>Properties</code> map includes the CloudFormation <code>Ref</code> and other outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set) as well as the actual resource type (keyed by <code>sparta.TagResourceType</code>).</p>
-
-<p>Multiple dependencies can be disambiguated by annotating the CloudFormation resource&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html">Tags</a> slice.  Tag key-values are published as a key-value map as part of each <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource">DiscoveryResource</a>.  For example:</p>
-
-<pre><code class="language-go">cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-  AccessControl: gocf.String(&quot;PublicRead&quot;),
-  Tags: []gocf.ResourceTag{
-    gocf.ResourceTag{
-      Key:   gocf.String(&quot;SomeUserKey&quot;),
-      Value: gocf.String(&quot;MyMagicValue&quot;),
-    },
-  },
-})
-</code></pre>
-
-<h1 id="special-considerations">Special Considerations</h1>
-
-<p>You may have noticed that <code>sparta.Discover()</code> doesn&rsquo;t accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant <strong>Go</strong> function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> values and enables unique discovery.</p>
-
-<h1 id="wrapping-up">Wrapping Up</h1>
-
-<p>Combined with <a href="/docs/dynamic_infrastructure">dynamic infrastructure</a>, <code>sparta.Discover()</code> enables a Sparta service to define its entire AWS infrastructure requirements.  Coupling application logic with infrastructure requirements moves a service towards being completely self-contained and in the direction of <a href="https://fugue.co/oreilly/">immutable infrastructure</a>.</p>
-
-<h1 id="notes">Notes</h1>
-
-<ul>
-<li><code>sparta.Discovery()</code> <strong>only</strong> succeeds within a Sparta-compliant lambda function call block.
-
-<ul>
-<li>Call-site restrictions are validated in the <a href="https://github.com/mweagle/Sparta/blob/master/discovery_test.go">discovery_tests.go</a> tests.</li>
-</ul></li>
-</ul>
+<p>TODO</p>
 
 </div>
 

@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: name:lumen googleplus: facebook: twitter:mweagle youtube: flattr: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,23 +349,23 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
-<li><a href="#mixed-topology:d680e8a854a7cbad6d490c445cba2eba">Mixed Topology</a>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#mixed-topology">Mixed Topology</a>
 <ul>
-<li><a href="#add-custom-command-line-option:d680e8a854a7cbad6d490c445cba2eba">Add Custom Command Line Option</a></li>
-<li><a href="#create-cloudinit-userdata:d680e8a854a7cbad6d490c445cba2eba">Create CloudInit Userdata</a>
+<li><a href="#add-custom-command-line-option">Add Custom Command Line Option</a></li>
+<li><a href="#create-cloudinit-userdata">Create CloudInit Userdata</a>
 <ul>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul></li>
-<li><a href="#decorate-toplogy:d680e8a854a7cbad6d490c445cba2eba">Decorate Toplogy</a></li>
+<li><a href="#decorate-toplogy">Decorate Toplogy</a></li>
 </ul></li>
-<li><a href="#result:d680e8a854a7cbad6d490c445cba2eba">Result</a>
+<li><a href="#result">Result</a>
 <ul>
-<li><a href="#http-access:d680e8a854a7cbad6d490c445cba2eba">HTTP Access</a></li>
-<li><a href="#lambda-access:d680e8a854a7cbad6d490c445cba2eba">Lambda Access</a></li>
+<li><a href="#http-access">HTTP Access</a></li>
+<li><a href="#lambda-access">Lambda Access</a></li>
 </ul></li>
-<li><a href="#conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</a></li>
-<li><a href="#notes-1:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#notes-1">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -365,7 +374,7 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.</p>
 
@@ -374,7 +383,8 @@
 <ul>
 <li>Long running tasks</li>
 <li>Tasks with significant disk space requirements</li>
-<li>Large HTTP(S) I/O tasks</li>
+<li>Large HTTP(S) I/O tasks
+<br /></li>
 </ul>
 
 <p>It may also make sense to integrate EC2 when:</p>
@@ -388,11 +398,11 @@
 
 <p>For such cases, Sparta supports running the exact same binary on EC2.  This section describes how to create a single Sparta service that publishes a function via AWS Lambda <em>and</em> EC2 as part of the same application codebase. It&rsquo;s based on the <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> project.</p>
 
-<h1 id="mixed-topology:d680e8a854a7cbad6d490c445cba2eba">Mixed Topology</h1>
+<h1 id="mixed-topology">Mixed Topology</h1>
 
 <p>Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no &ldquo;make mixed&rdquo; command line option.</p>
 
-<h2 id="add-custom-command-line-option:d680e8a854a7cbad6d490c445cba2eba">Add Custom Command Line Option</h2>
+<h2 id="add-custom-command-line-option">Add Custom Command Line Option</h2>
 
 <p>The first step is to add a <a href="/docs/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
 
@@ -411,7 +421,7 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
 
 <p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
 
-<h2 id="create-cloudinit-userdata:d680e8a854a7cbad6d490c445cba2eba">Create CloudInit Userdata</h2>
+<h2 id="create-cloudinit-userdata">Create CloudInit Userdata</h2>
 
 <p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
 
@@ -487,7 +497,7 @@ service supervisor restart || service supervisor start</code></pre>
 
 <p>It also uses the <code>S3Bucket</code> and <code>S3Key</code> properties that Sparta creates during the build and provides to your decorator function (next section).</p>
 
-<h3 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h3>
+<h3 id="notes">Notes</h3>
 
 <p>The script is using <a href="https://golang.org/pkg/text/template/">text/template</a> markup to expand properties known at build time.  Because this content will be parsed by <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression">ConvertToTemplateExpression</a> (next section), it&rsquo;s also possible to use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html">Fn::Join</a> compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.</p>
 
@@ -498,7 +508,7 @@ service supervisor restart || service supervisor start</code></pre>
 
 <p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
 
-<h2 id="decorate-toplogy:d680e8a854a7cbad6d490c445cba2eba">Decorate Toplogy</h2>
+<h2 id="decorate-toplogy">Decorate Toplogy</h2>
 
 <p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource.  For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
 
@@ -687,13 +697,13 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 </li>
 </ul>
 
-<h1 id="result:d680e8a854a7cbad6d490c445cba2eba">Result</h1>
+<h1 id="result">Result</h1>
 
 <p>Deploying your Go application using a mixed topology enables your &ldquo;Lambda&rdquo; endpoint to be addressable via AWS Lambda and standard HTTP.</p>
 
-<h2 id="http-access:d680e8a854a7cbad6d490c445cba2eba">HTTP Access</h2>
+<h2 id="http-access">HTTP Access</h2>
 
-<p><pre><code class="bash">$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
+<pre><code class="bash">$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
 *   Trying 52.26.146.138...
 * Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com (52.26.146.138) port 9999 (#0)
 &gt; GET / HTTP/1.1
@@ -708,17 +718,17 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 &lt;
 * Connection #0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
 Hello world from SpartaOmega!</code></pre>
-</p>
 
-<h2 id="lambda-access:d680e8a854a7cbad6d490c445cba2eba">Lambda Access</h2>
+
+<h2 id="lambda-access">Lambda Access</h2>
 
 <p><img src="/images/alternative_topology/lambda.jpg" alt="Lambda" /></p>
 
-<h1 id="conclusion:d680e8a854a7cbad6d490c445cba2eba">Conclusion</h1>
+<h1 id="conclusion">Conclusion</h1>
 
 <p>Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.</p>
 
-<h1 id="notes-1:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes-1">Notes</h1>
 
 <ul>
 <li>The <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> sample application uses <a href="http://supervisord.org/">supervisord</a> for process monitoring.</li>

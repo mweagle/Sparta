@@ -1,28 +1,50 @@
 <div class="mermaid">
 graph TD
   iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   proxyShims[Create NodeJS-Go HTTP Proxies]
   package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   generate[Marshal to CloudFormation]
   decorate[Call User Template Decorators - Dynamic AWS Resources]
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
 
-  iam-->compile
-  compile-->proxyShims
+  iam-->preBuild
+  preBuild-->compile
+  compile-->postBuild
+  postBuild-->proxyShims
   proxyShims-->package
   proxyShims-->packageAssets
-  package-->upload
+  package-->userArchive
+  userArchive-->upload
   packageAssets-->uploadAssets
   uploadAssets-->generate
   upload-->generate
-  generate-->decorate
-  decorate-->uploadTemplate
+
+  generate-->preMarshall
+  preMarshall-->decorate
+  decorate-->postMarshall
+  postMarshall-->uploadTemplate
   uploadTemplate-->converge
   converge-->wait
 </div>

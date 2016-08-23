@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube:]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,15 +349,15 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a></li>
-<li><a href="#standard-commands:d680e8a854a7cbad6d490c445cba2eba">Standard Commands</a>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#standard-commands">Standard Commands</a>
 <ul>
-<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
-<li><a href="#delete:d680e8a854a7cbad6d490c445cba2eba">Delete</a></li>
-<li><a href="#describe:d680e8a854a7cbad6d490c445cba2eba">Describe</a></li>
-<li><a href="#execute:d680e8a854a7cbad6d490c445cba2eba">Execute</a></li>
-<li><a href="#explore:d680e8a854a7cbad6d490c445cba2eba">Explore</a></li>
-<li><a href="#version:d680e8a854a7cbad6d490c445cba2eba">Version</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#delete">Delete</a></li>
+<li><a href="#describe">Describe</a></li>
+<li><a href="#execute">Execute</a></li>
+<li><a href="#explore">Explore</a></li>
+<li><a href="#version">Version</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -358,7 +367,7 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
@@ -397,33 +406,33 @@ Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a com
 
 <p>It&rsquo;s also possible to add <a href="/docs/application/custom_flags">custom flags</a> and/or <a href="/docs/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
 
-<h1 id="standard-commands:d680e8a854a7cbad6d490c445cba2eba">Standard Commands</h1>
+<h1 id="standard-commands">Standard Commands</h1>
 
-<h2 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h2>
+<h2 id="provision">Provision</h2>
 
 <p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
-<h2 id="delete:d680e8a854a7cbad6d490c445cba2eba">Delete</h2>
+<h2 id="delete">Delete</h2>
 
 <p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
 
-<h2 id="describe:d680e8a854a7cbad6d490c445cba2eba">Describe</h2>
+<h2 id="describe">Describe</h2>
 
 <p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
 
 <p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
 
-<h2 id="execute:d680e8a854a7cbad6d490c445cba2eba">Execute</h2>
+<h2 id="execute">Execute</h2>
 
 <p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
 
-<h2 id="explore:d680e8a854a7cbad6d490c445cba2eba">Explore</h2>
+<h2 id="explore">Explore</h2>
 
 <p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
 
 <p>NOTE: API Gateway mapping templates are not currently supported.</p>
 
-<h2 id="version:d680e8a854a7cbad6d490c445cba2eba">Version</h2>
+<h2 id="version">Version</h2>
 
 <p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
 

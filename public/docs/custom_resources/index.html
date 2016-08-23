@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  832 
+    "wordCount":  838 
   }
 </script>
 
@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr: name:lumen]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,18 +349,18 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</a>
+<li><a href="#introduction">Introduction</a>
 <ul>
-<li><a href="#components:d680e8a854a7cbad6d490c445cba2eba">Components</a>
+<li><a href="#components">Components</a>
 <ul>
-<li><a href="#customresourcefunction:d680e8a854a7cbad6d490c445cba2eba">CustomResourceFunction</a></li>
-<li><a href="#requirecustomresource:d680e8a854a7cbad6d490c445cba2eba">RequireCustomResource</a></li>
-<li><a href="#optional-template-decorator:d680e8a854a7cbad6d490c445cba2eba">Optional - Template Decorator</a></li>
-<li><a href="#optional-discovery:d680e8a854a7cbad6d490c445cba2eba">Optional - Discovery</a></li>
+<li><a href="#customresourcefunction">CustomResourceFunction</a></li>
+<li><a href="#requirecustomresource">RequireCustomResource</a></li>
+<li><a href="#optional-template-decorator">Optional - Template Decorator</a></li>
+<li><a href="#optional-discovery">Optional - Discovery</a></li>
 </ul></li>
-<li><a href="#wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul></li>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -360,7 +369,7 @@
       <div class="container content">
   
 
-<h1 id="introduction:d680e8a854a7cbad6d490c445cba2eba">Introduction</h1>
+<h1 id="introduction">Introduction</h1>
 
 <p>In some circumstances your service may need to provision or access resources that fall outside the standard workflow.  In this case you can use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">CloudFormation Lambda-backed CustomResources</a> to create or access resources during your CloudFormation stack&rsquo;s lifecycle.</p>
 
@@ -368,7 +377,7 @@
 
 <p>In this section we&rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&rsquo;s outputs can be propagated to an application-level Sparta lambda function.</p>
 
-<h2 id="components:d680e8a854a7cbad6d490c445cba2eba">Components</h2>
+<h2 id="components">Components</h2>
 
 <p>Defining a custom resource is a two stage process, depending on whether your application-level lambda function requires access to the custom resource outputs:</p>
 
@@ -383,7 +392,7 @@
 <li><em>Optional</em> - A call from your standard Lambda&rsquo;s function body to discover the CustomResource outputs via <code>sparta.Discover()</code>.</li>
 </ol>
 
-<h3 id="customresourcefunction:d680e8a854a7cbad6d490c445cba2eba">CustomResourceFunction</h3>
+<h3 id="customresourcefunction">CustomResourceFunction</h3>
 
 <p>This is the core of your custom resource&rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:</p>
 
@@ -397,7 +406,7 @@
 
 <ul>
 <li><code>requestType</code>: The CustomResource <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requests.html">operation type</a></li>
-<li><code>stackID</code> : The current stack being operated on.<br /></li>
+<li><code>stackID</code> : The current stack being operated on.</li>
 <li><code>properties</code>: User-defined properties provided to <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a> (see below).</li>
 <li><code>logger</code> : Preconfigured logger instance</li>
 </ul>
@@ -421,7 +430,7 @@ func userDefinedCustomResource(requestType string,
 
 <p>This function always succeeds and returns a non-empty results map consisting of a single key (<code>CustomResourceResult</code>).</p>
 
-<h3 id="requirecustomresource:d680e8a854a7cbad6d490c445cba2eba">RequireCustomResource</h3>
+<h3 id="requirecustomresource">RequireCustomResource</h3>
 
 <p>The next step is to associate this custom resource function with a previously created Sparta <code>LambdaAWSInfo</code> instance via <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a>.  This function accepts:</p>
 
@@ -470,15 +479,18 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 <p>It&rsquo;s possible to share state from the custom resource to a standard Sparta lambda function by annotating your Sparta lambda function&rsquo;s metadata and then discovering it at execution time.</p>
 
-<h3 id="optional-template-decorator:d680e8a854a7cbad6d490c445cba2eba">Optional - Template Decorator</h3>
+<h3 id="optional-template-decorator">Optional - Template Decorator</h3>
 
 <p>To link these resources together, the first step is to include a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> that annotates your Sparta lambda function&rsquo;s CloudFormation resource metadata.  This function specifies which user defined output keys (<code>CustomResourceResult</code> in this example) you wish to make available during your lambda function&rsquo;s execution.</p>
 
-<pre><code>lambdaFn.Decorator = func(lambdaResourceName string,
-  lambdaResource gocf.LambdaFunction,
-  resourceMetadata map[string]interface{},
-  template *gocf.Template,
-  logger *logrus.Logger) error {
+<pre><code>lambdaFn.Decorator = func(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	template *gocf.Template,
+	logger *logrus.Logger) error {
 
   // Pass CustomResource outputs to the λ function
   resourceMetadata[&quot;CustomResource&quot;] = gocf.GetAtt(cfResName, &quot;CustomResourceResult&quot;)
@@ -488,7 +500,7 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 <p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time through a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">go-cloudformation</a> version of <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a>.</p>
 
-<h3 id="optional-discovery:d680e8a854a7cbad6d490c445cba2eba">Optional - Discovery</h3>
+<h3 id="optional-discovery">Optional - Discovery</h3>
 
 <p>Discovery is handled by <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover()</a> which returns a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DiscoveryInfo</a> instance pointer containing the linked Custom Resource outputs.  The calling Sparta lambda function can discover its own <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource">DiscoveryResource</a> keyname via the top-level <code>ResourceID</code> field. Once found, the calling function then looks up the linked custom resource output via the <code>Properties</code> field using the keyname  (<code>CustomResource</code>) provided in the previous template decorator.</p>
 
@@ -522,11 +534,11 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 customResult := configuration.Resources[configuration.ResourceID].Properties[&quot;CustomResourceResult&quot;]
 </code></pre>
 
-<h2 id="wrapping-up:d680e8a854a7cbad6d490c445cba2eba">Wrapping Up</h2>
+<h2 id="wrapping-up">Wrapping Up</h2>
 
 <p>CloudFormation Custom Resources are a powerful tool that can help pre-existing applications migrate to a Sparta application.</p>
 
-<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes">Notes</h1>
 
 <ul>
 <li>Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed CustomResource</a> functions, so they are subject to the same <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a> as application-level Sparta lambda functions.</li>

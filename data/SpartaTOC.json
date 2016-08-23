@@ -188,6 +188,13 @@
       "Title": "",
       "URL": "/application/custom_commands",
       "Children": []
+      },
+      {
+      "Name": "Workflow Hooks",
+      "IconClass": "",
+      "Title": "",
+      "URL": "/application/workflow_hooks",
+      "Children": []
       }
     ]
   },
@@ -196,6 +203,13 @@
     "IconClass": "",
     "Title": "",
     "URL": "/alternative_topologies",
+    "Children": []
+  },
+  {
+    "Name": "Docker & ECS",
+    "IconClass": "",
+    "Title": "",
+    "URL": "/docker",
     "Children": []
   },
   {

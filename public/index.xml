@@ -8,8 +8,36 @@
     <language>en-EN</language>
     <managingEditor>mweagle@gmail.com (Matt Weagle)</managingEditor>
     <webMaster>mweagle@gmail.com (Matt Weagle)</webMaster>
-    <lastBuildDate>Thu, 09 Jun 2016 17:46:33 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 22 Aug 2016 21:00:29 +0000</lastBuildDate>
     <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Workflow Hooks</title>
+      <link>http://gosparta.io/docs/application/workflow_hooks/</link>
+      <pubDate>Mon, 22 Aug 2016 21:00:29 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/workflow_hooks/</guid>
+      <description>
+
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>http://gosparta.io/docs/docker/</link>
+      <pubDate>Mon, 22 Aug 2016 21:00:12 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/docker/</guid>
+      <description>
+
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;TODO&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Application Customization</title>
@@ -37,7 +65,7 @@
       <guid>http://gosparta.io/docs/application/commandline/</guid>
       <description>
 
-&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;Sparta provides a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;Main&lt;/a&gt; function that transforms a set of &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;lambda functions&lt;/a&gt; into an application.  This function should be called from your application&amp;rsquo;s &lt;code&gt;package main&lt;/code&gt; as in:&lt;/p&gt;
 
@@ -76,33 +104,33 @@ Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information abo
 
 &lt;p&gt;It&amp;rsquo;s also possible to add &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;custom flags&lt;/a&gt; and/or &lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;custom commands&lt;/a&gt; to extend your application&amp;rsquo;s behavior.&lt;/p&gt;
 
-&lt;h1 id=&#34;standard-commands:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Standard Commands&lt;/h1&gt;
+&lt;h1 id=&#34;standard-commands&#34;&gt;Standard Commands&lt;/h1&gt;
 
-&lt;h2 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h2&gt;
+&lt;h2 id=&#34;provision&#34;&gt;Provision&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;provision&lt;/code&gt; option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.&lt;/p&gt;
 
-&lt;h2 id=&#34;delete:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Delete&lt;/h2&gt;
+&lt;h2 id=&#34;delete&#34;&gt;Delete&lt;/h2&gt;
 
 &lt;p&gt;This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.&lt;/p&gt;
 
-&lt;h2 id=&#34;describe:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Describe&lt;/h2&gt;
+&lt;h2 id=&#34;describe&#34;&gt;Describe&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;describe&lt;/code&gt; command line option produces an HTML summary (see &lt;a href=&#34;http://gosparta.io/images/overview/graph.html&#34;&gt;graph.html&lt;/a&gt; for an example) of your Sparta service.&lt;/p&gt;
 
 &lt;p&gt;The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.&lt;/p&gt;
 
-&lt;h2 id=&#34;execute:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Execute&lt;/h2&gt;
+&lt;h2 id=&#34;execute&#34;&gt;Execute&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;execute&lt;/code&gt; option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.&lt;/p&gt;
 
-&lt;h2 id=&#34;explore:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Explore&lt;/h2&gt;
+&lt;h2 id=&#34;explore&#34;&gt;Explore&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;explore&lt;/code&gt; option creates a &lt;em&gt;localhost&lt;/em&gt; server to allow Sparta lambda functions to be tested locally.&lt;/p&gt;
 
 &lt;p&gt;NOTE: API Gateway mapping templates are not currently supported.&lt;/p&gt;
 
-&lt;h2 id=&#34;version:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Version&lt;/h2&gt;
+&lt;h2 id=&#34;version&#34;&gt;Version&lt;/h2&gt;
 
 &lt;p&gt;The &lt;code&gt;version&lt;/code&gt; option is a diagnostic command that prints the version of the Sparta framework embedded in the application.&lt;/p&gt;
 </description>
@@ -116,7 +144,7 @@ Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information abo
       <guid>http://gosparta.io/docs/application/custom_commands/</guid>
       <description>
 
-&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;In addition to &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;custom flags&lt;/a&gt;, an application may register completely new commands. For example, to support &lt;a href=&#34;http://gosparta.io/docs/application/custom_flags&#34;&gt;alternative topologies&lt;/a&gt; or integrated automated acceptance tests as part of a CI/CD pipeline.&lt;/p&gt;
 
@@ -136,7 +164,7 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)&lt;/code&gt;&lt;/pr
 
 &lt;p&gt;Registering a user-defined command makes that command&amp;rsquo;s usage information seamlessly integrate with the standard commands:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;$ ./SpartaOmega --help
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;$ ./SpartaOmega --help
 Provision AWS Lambda and EC2 instance with same code
 
 Usage:
@@ -156,11 +184,11 @@ Flags:
   -n, --noop           Dry-run behavior only (do not perform mutations)
 
 Use &amp;#34;SpartaOmega [command] --help&amp;#34; for more information about a command.&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;And you can query for user-command specific usage as in:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;$ ./SpartaOmega httpServer --help
+&lt;pre&gt;&lt;code class=&#34;bash&#34;&gt;$ ./SpartaOmega httpServer --help
 Custom command
 
 Usage:
@@ -169,7 +197,7 @@ Usage:
 Global Flags:
   -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default &amp;#34;info&amp;#34;)
   -n, --noop           Dry-run behavior only (do not perform mutations)&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 </description>
     </item>
     
@@ -181,13 +209,13 @@ Global Flags:
       <guid>http://gosparta.io/docs/application/custom_flags/</guid>
       <description>
 
-&lt;h1 id=&#34;introduction:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Introduction&lt;/h1&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 
 &lt;p&gt;Some commands (eg: &lt;code&gt;provision&lt;/code&gt;) may require additional options.  For instance, your application&amp;rsquo;s provision logic may require VPC &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-access-resources-in-a-vpc-from-your-lambda-functions/&#34;&gt;subnets&lt;/a&gt; or EC2 &lt;a href=&#34;http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html&#34;&gt;SSH Key Names&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;The default Sparta command line option flags may be extended and validated by building on the exposed &lt;a href=&#34;https://github.com/spf13/cobra&#34;&gt;Cobra&lt;/a&gt; command objects.&lt;/p&gt;
 
-&lt;h2 id=&#34;adding-flags:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Adding Flags&lt;/h2&gt;
+&lt;h2 id=&#34;adding-flags&#34;&gt;Adding Flags&lt;/h2&gt;
 
 &lt;p&gt;To add a flag, use one of the &lt;a href=&#34;https://github.com/spf13/pflag&#34;&gt;pflag&lt;/a&gt; functions to register your custom flag with one of the standard &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17&#34;&gt;CommandLineOption&lt;/a&gt; values.&lt;/p&gt;
 
@@ -206,7 +234,7 @@ func main() {
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h2 id=&#34;validating-input:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Validating Input&lt;/h2&gt;
+&lt;h2 id=&#34;validating-input&#34;&gt;Validating Input&lt;/h2&gt;
 
 &lt;p&gt;Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling &lt;code&gt;sparta.Main()&lt;/code&gt;.&lt;/p&gt;
 
@@ -214,7 +242,7 @@ func main() {
 
 &lt;p&gt;The &lt;code&gt;ParseOptions&lt;/code&gt; result is the optional error returned from your &lt;em&gt;CommandLineOptionsHook&lt;/em&gt; function. If there is an error, your application can then exit with an application specific exit code.  For instance:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Define a validation hook s.t. we can verify the SSHKey is valid
+&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Define a validation hook s.t. we can verify the SSHKey is valid
 validationHook := func(command *cobra.Command) error {
   if command.Name() == &amp;#34;provision&amp;#34; &amp;amp;&amp;amp; len(SSHKeyName) &amp;lt;= 0 {
     return fmt.Errorf(&amp;#34;SSHKeyName option is required&amp;#34;)
@@ -227,7 +255,7 @@ parseErr := sparta.ParseOptions(validationHook)
 if nil != parseErr {
   os.Exit(3)
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;Sparta itself uses the &lt;a href=&#34;https://github.com/asaskevich/govalidator/&#34;&gt;govalidator&lt;/a&gt; package to simplify validating command line arguments.  See &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/sparta_main.go&#34;&gt;sparta_main.go&lt;/a&gt; for an example.&lt;/p&gt;
 </description>
@@ -243,11 +271,11 @@ if nil != parseErr {
 
 &lt;p&gt;In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to  &lt;a href=&#34;https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/&#34;&gt;CloudWatch Logs&lt;/a&gt;.  This overview is based on the &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt; sample code if you&amp;rsquo;d rather jump to the end result.&lt;/p&gt;
 
-&lt;h1 id=&#34;goal:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Goal&lt;/h1&gt;
+&lt;h1 id=&#34;goal&#34;&gt;Goal&lt;/h1&gt;
 
 &lt;p&gt;Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.&lt;/p&gt;
 
-&lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
+&lt;h1 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h1&gt;
 
 &lt;p&gt;Our lambda function is relatively short:&lt;/p&gt;
 
@@ -264,7 +292,7 @@ if nil != parseErr {
 
 &lt;p&gt;Our lambda function doesn&amp;rsquo;t need to do much with the log message other than log it.&lt;/p&gt;
 
-&lt;h1 id=&#34;sparta-integration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
+&lt;h1 id=&#34;sparta-integration&#34;&gt;Sparta Integration&lt;/h1&gt;
 
 &lt;p&gt;With &lt;code&gt;echoCloudWatchLogsEvent()&lt;/code&gt; implemented, the next step is to integrate the &lt;strong&gt;Go&lt;/strong&gt; function with Sparta.  This is done by the &lt;code&gt;appendCloudWatchLogsLambda&lt;/code&gt; in the SpartaApplication &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go&#34;&gt;application.go&lt;/a&gt; source.&lt;/p&gt;
 
@@ -310,7 +338,7 @@ cloudWatchLogsPermission.Filters[&amp;#34;MyFilter&amp;#34;] = sparta.CloudWatch
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
+&lt;h1 id=&#34;wrapping-up&#34;&gt;Wrapping Up&lt;/h1&gt;
 
 &lt;p&gt;With the &lt;code&gt;lambdaFn&lt;/code&gt; fully defined, we can provide it to &lt;code&gt;sparta.Main()&lt;/code&gt; and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:&lt;/p&gt;
 
@@ -324,7 +352,7 @@ cloudWatchLogsPermission.Filters[&amp;#34;MyFilter&amp;#34;] = sparta.CloudWatch
 &lt;li&gt;Include the reference in the call to &lt;code&gt;sparta.Main()&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
+&lt;h1 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h1&gt;
 </description>
     </item>
     
@@ -370,7 +398,7 @@ cloudWatchLogsPermission.Filters[&amp;#34;MyFilter&amp;#34;] = sparta.CloudWatch
 
 &lt;p&gt;This is a brief overview of Sparta&amp;rsquo;s core concepts.  Additional information regarding specific features is available from the menu.&lt;/p&gt;
 
-&lt;h1 id=&#34;terms-and-concepts:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Terms and Concepts&lt;/h1&gt;
+&lt;h1 id=&#34;terms-and-concepts&#34;&gt;Terms and Concepts&lt;/h1&gt;
 
 &lt;p&gt;At a high level, Sparta transforms a single &lt;strong&gt;Go&lt;/strong&gt; binary&amp;rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).&lt;/p&gt;
 
@@ -471,43 +499,65 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 
 &lt;p&gt;Given a set of Sparta lambda functions, during a &lt;code&gt;provision&lt;/code&gt; build Sparta follows this workflow:&lt;/p&gt;
 
-&lt;p&gt;&lt;div class=&#34;mermaid&#34;&gt;
+&lt;div class=&#34;mermaid&#34;&gt;
 graph TD
   iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   proxyShims[Create NodeJS-Go HTTP Proxies]
   package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   generate[Marshal to CloudFormation]
   decorate[Call User Template Decorators - Dynamic AWS Resources]
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
   uploadTemplate[Upload Template to S3]
   converge[Create/Update Stack]
   wait[Wait for Complete/Failure Result]
 
-  iam--&gt;compile
-  compile--&gt;proxyShims
+  iam--&gt;preBuild
+  preBuild--&gt;compile
+  compile--&gt;postBuild
+  postBuild--&gt;proxyShims
   proxyShims--&gt;package
   proxyShims--&gt;packageAssets
-  package--&gt;upload
+  package--&gt;userArchive
+  userArchive--&gt;upload
   packageAssets--&gt;uploadAssets
   uploadAssets--&gt;generate
   upload--&gt;generate
-  generate--&gt;decorate
-  decorate--&gt;uploadTemplate
+
+  generate--&gt;preMarshall
+  preMarshall--&gt;decorate
+  decorate--&gt;postMarshall
+  postMarshall--&gt;uploadTemplate
   uploadTemplate--&gt;converge
   converge--&gt;wait
 &lt;/div&gt;
 &lt;h6&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/h6&gt;
 &lt;hr /&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;During provisioning, Sparta uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;AWS Lambda-backed Custom Resources&lt;/a&gt; to support operations for which CloudFormation doesn&amp;rsquo;t yet support (eg, &lt;a href=&#34;https://aws.amazon.com/api-gateway/&#34;&gt;API Gateway&lt;/a&gt; creation).&lt;/p&gt;
 
 &lt;p&gt;At runtime, Sparta uses &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html&#34;&gt;NodeJS&lt;/a&gt; shims to proxy the request to your &lt;strong&gt;Go&lt;/strong&gt; handler.&lt;/p&gt;
 
-&lt;h1 id=&#34;next-steps:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Next Steps&lt;/h1&gt;
+&lt;h1 id=&#34;next-steps&#34;&gt;Next Steps&lt;/h1&gt;
 
 &lt;p&gt;Writing a simple &lt;a href=&#34;http://gosparta.io/docs/intro_example&#34;&gt;Sparta Application&lt;/a&gt;.&lt;/p&gt;
 </description>
@@ -595,7 +645,7 @@ Features
 
 &lt;p&gt;Sparta exclusively relies on &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html&#34;&gt;CloudFormation&lt;/a&gt; to deploy and update your application.  For resources that CloudFormation does not yet support, it uses &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html&#34;&gt;Lambda-backed Custom Resources&lt;/a&gt; so that all service updates support both update and rollback semantics.  Sparta&amp;rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html&#34;&gt;service availability&lt;/a&gt; during updates.&lt;/p&gt;
 
-&lt;h1 id=&#34;hello-lambda-world:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Hello Lambda World&lt;/h1&gt;
+&lt;h1 id=&#34;hello-lambda-world&#34;&gt;Hello Lambda World&lt;/h1&gt;
 
 &lt;pre&gt;&lt;code&gt;// File: application.go
 package main
@@ -636,18 +686,18 @@ func main() {
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;getting-started:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Getting Started&lt;/h1&gt;
+&lt;h1 id=&#34;getting-started&#34;&gt;Getting Started&lt;/h1&gt;
 
 &lt;p&gt;To get started using Sparta, begin with the &lt;a href=&#34;./docs&#34;&gt;Documentation&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;administration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Administration&lt;/h1&gt;
+&lt;h1 id=&#34;administration&#34;&gt;Administration&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Problems?  Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34;&gt;issue&lt;/a&gt; in GitHub.&lt;/li&gt;
 &lt;li&gt;See &lt;a href=&#34;https://trello.com/b/WslDce70/sparta&#34;&gt;Trello&lt;/a&gt; for the Sparta backlog.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other resources&lt;/h2&gt;
+&lt;h2 id=&#34;other-resources&#34;&gt;Other resources&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg&#34;&gt;Sparta - A Go framework for AWS Lambda&lt;/a&gt;&lt;/li&gt;
@@ -679,46 +729,46 @@ func main() {
       <guid>http://gosparta.io/docs/faq/</guid>
       <description>
 
-&lt;h1 id=&#34;development:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Development&lt;/h1&gt;
+&lt;h1 id=&#34;development&#34;&gt;Development&lt;/h1&gt;
 
 &lt;hr /&gt;
 
-&lt;h2 id=&#34;what-flags-are-defined-during-aws-ami-compilation:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;What flags are defined during AWS AMI compilation:&lt;/h2&gt;
+&lt;h2 id=&#34;what-flags-are-defined-during-aws-ami-compilation&#34;&gt;What flags are defined during AWS AMI compilation:&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;TAGS&lt;/strong&gt;:         &lt;code&gt;-tags lambdabinary&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;ENVIRONMENT&lt;/strong&gt;:  &lt;code&gt;GOOS=linux GOARCH=amd64&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;how-can-i-test-locally:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I test locally?&lt;/h2&gt;
+&lt;h2 id=&#34;how-can-i-test-locally&#34;&gt;How can I test locally?&lt;/h2&gt;
 
 &lt;p&gt;Local testing is available via the &lt;a href=&#34;http://gosparta.io/docs/local_testing/&#34;&gt;explore&lt;/a&gt; command.&lt;/p&gt;
 
-&lt;h1 id=&#34;event-sources-ses:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Event Sources - SES&lt;/h1&gt;
+&lt;h1 id=&#34;event-sources-ses&#34;&gt;Event Sources - SES&lt;/h1&gt;
 
 &lt;hr /&gt;
 
-&lt;h2 id=&#34;where-does-the-spartaruleset-come-from:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?&lt;/h2&gt;
+&lt;h2 id=&#34;where-does-the-spartaruleset-come-from&#34;&gt;Where does the &lt;em&gt;SpartaRuleSet&lt;/em&gt; come from?&lt;/h2&gt;
 
 &lt;p&gt;SES only permits a single &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html&#34;&gt;active receipt rule&lt;/a&gt;.  Additionally, it&amp;rsquo;s possible that multiple Sparta-based services are handing different SES recipients.&lt;/p&gt;
 
 &lt;p&gt;All Sparta-based services share the &lt;em&gt;SpartaRuleSet&lt;/em&gt; SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES &lt;a href=&#34;http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html&#34;&gt;ReceiptRule&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&#34;why-does-provision-not-always-enable-the-spartaruleset:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Why does &lt;code&gt;provision&lt;/code&gt; not always enable the &lt;em&gt;SpartaRuleSet&lt;/em&gt;?&lt;/h2&gt;
+&lt;h2 id=&#34;why-does-provision-not-always-enable-the-spartaruleset&#34;&gt;Why does &lt;code&gt;provision&lt;/code&gt; not always enable the &lt;em&gt;SpartaRuleSet&lt;/em&gt;?&lt;/h2&gt;
 
 &lt;p&gt;Initial &lt;em&gt;SpartaRuleSet&lt;/em&gt; will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&amp;rsquo;t attempt to override the user setting.&lt;/p&gt;
 
-&lt;h1 id=&#34;operations:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Operations&lt;/h1&gt;
+&lt;h1 id=&#34;operations&#34;&gt;Operations&lt;/h1&gt;
 
 &lt;hr /&gt;
 
-&lt;h2 id=&#34;where-can-i-view-my-function-s-logger-output:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view my function&amp;rsquo;s &lt;code&gt;*logger&lt;/code&gt; output?&lt;/h2&gt;
+&lt;h2 id=&#34;where-can-i-view-my-function-s-logger-output&#34;&gt;Where can I view my function&amp;rsquo;s &lt;code&gt;*logger&lt;/code&gt; output?&lt;/h2&gt;
 
 &lt;p&gt;Each lambda function includes privileges to write to &lt;a href=&#34;https://console.aws.amazon.com/cloudwatch/home&#34;&gt;CloudWatch Logs&lt;/a&gt;.  The &lt;code&gt;*logrus.logger&lt;/code&gt; output is written (with a brief delay) to a lambda-specific log group.&lt;/p&gt;
 
 &lt;p&gt;The CloudWatch log group name includes a sanitized version of your &lt;strong&gt;Go&lt;/strong&gt; function name &amp;amp; owning service name.&lt;/p&gt;
 
-&lt;h2 id=&#34;where-can-i-view-sparta-s-golang-spawn-metrics:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Where can I view Sparta&amp;rsquo;s golang spawn metrics?&lt;/h2&gt;
+&lt;h2 id=&#34;where-can-i-view-sparta-s-golang-spawn-metrics&#34;&gt;Where can I view Sparta&amp;rsquo;s golang spawn metrics?&lt;/h2&gt;
 
 &lt;p&gt;Visit the &lt;a href=&#34;https://aws.amazon.com/cloudwatch/&#34;&gt;CloudWatch Metrics&lt;/a&gt; AWS console page and select the &lt;code&gt;Sparta/{SERVICE_NAME}&lt;/code&gt; namespace:&lt;/p&gt;
 
@@ -731,23 +781,23 @@ func main() {
 &lt;li&gt;&lt;code&gt;ProcessReused&lt;/code&gt;: An existing &lt;strong&gt;Go&lt;/strong&gt; process was used to handle requests.  See also the discussion on AWS Lambda &lt;a href=&#34;https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/&#34;&gt;container reuse&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&#34;how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I include additional AWS resources as part of my Sparta application?&lt;/h2&gt;
+&lt;h2 id=&#34;how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application&#34;&gt;How can I include additional AWS resources as part of my Sparta application?&lt;/h2&gt;
 
 &lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with additional AWS resources.&lt;/p&gt;
 
-&lt;h2 id=&#34;how-do-i-forward-additional-metrics:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How do I forward additional metrics?&lt;/h2&gt;
+&lt;h2 id=&#34;how-do-i-forward-additional-metrics&#34;&gt;How do I forward additional metrics?&lt;/h2&gt;
 
 &lt;p&gt;Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics &lt;code&gt;putMetric&lt;/code&gt; privileges.  Your lambda code can call &lt;code&gt;putMetric&lt;/code&gt; with application-specific data.&lt;/p&gt;
 
-&lt;h2 id=&#34;how-do-i-setup-alerts-on-additional-metrics:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How do I setup alerts on additional metrics?&lt;/h2&gt;
+&lt;h2 id=&#34;how-do-i-setup-alerts-on-additional-metrics&#34;&gt;How do I setup alerts on additional metrics?&lt;/h2&gt;
 
 &lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with the needed &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm&#34;&gt;AWS::CloudWatch::Alarm&lt;/a&gt; values.  Use &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName&#34;&gt;CloudFormationResourceName(prefix, &amp;hellip;parts)&lt;/a&gt; to help generate unique resource names.&lt;/p&gt;
 
-&lt;h2 id=&#34;how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?&lt;/h2&gt;
+&lt;h2 id=&#34;how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources&#34;&gt;How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?&lt;/h2&gt;
 
 &lt;p&gt;The list of registered output provider types is defined by &lt;code&gt;cloudformationTypeMapDiscoveryOutputs&lt;/code&gt; in &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go&#34;&gt;cloudformation_resources.go&lt;/a&gt;.  See the &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation Resource Types Reference&lt;/a&gt; for information on interpreting the values.&lt;/p&gt;
 
-&lt;h1 id=&#34;future:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Future&lt;/h1&gt;
+&lt;h1 id=&#34;future&#34;&gt;Future&lt;/h1&gt;
 </description>
     </item>
     
@@ -769,7 +819,7 @@ func main() {
 &lt;li&gt;&lt;a href=&#34;http://gosparta.io/docs/apigateway/cors&#34;&gt;Example 5 - CORS&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;concepts:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Concepts&lt;/h1&gt;
+&lt;h1 id=&#34;concepts&#34;&gt;Concepts&lt;/h1&gt;
 
 &lt;p&gt;Before moving on to the examples, it&amp;rsquo;s suggested you familiarize yourself with the API Gateway concepts.&lt;/p&gt;
 
@@ -798,7 +848,7 @@ func main() {
 
 &lt;p&gt;With that overview, let&amp;rsquo;s start with a simple &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;example&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
+&lt;h1 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html&#34;&gt;Walkthrough: API Gateway and Lambda Functions&lt;/a&gt;&lt;/li&gt;
@@ -827,7 +877,7 @@ apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Setting the boolean to &lt;code&gt;true&lt;/code&gt; will add the necessary &lt;code&gt;OPTIONS&lt;/code&gt; and mock responses to &lt;em&gt;all&lt;/em&gt; resources exposed by your API.  See the &lt;a href=&#34;http://gosparta.io/docs/s3site&#34;&gt;SpartaHTML&lt;/a&gt; sample for a complete example.&lt;/p&gt;
 
-&lt;h1 id=&#34;references:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;References&lt;/h1&gt;
+&lt;h1 id=&#34;references&#34;&gt;References&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html&#34;&gt;API Gateway Docs&lt;/a&gt;&lt;/li&gt;
@@ -861,7 +911,7 @@ apiGateway.CORSEnabled = true&lt;/code&gt;&lt;/pre&gt;
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h1 id=&#34;create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/h1&gt;
+&lt;h1 id=&#34;create-the-api-gateway&#34;&gt;Create the API Gateway&lt;/h1&gt;
 
 &lt;p&gt;The first requirement is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
 
@@ -871,7 +921,7 @@ apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)&lt;/cod
 
 &lt;p&gt;In the example above, we&amp;rsquo;re also including a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Stage&#34;&gt;Stage&lt;/a&gt; value.  A non-&lt;code&gt;nil&lt;/code&gt; Stage value will cause the registered API to be deployed.  If the Stage value is &lt;code&gt;nil&lt;/code&gt;, a REST API will be created, but it will not be &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html&#34;&gt;deployed&lt;/a&gt; (and therefore not publicly accessible).&lt;/p&gt;
 
-&lt;h1 id=&#34;create-a-resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create a Resource&lt;/h1&gt;
+&lt;h1 id=&#34;create-a-resource&#34;&gt;Create a Resource&lt;/h1&gt;
 
 &lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;strong&gt;Go&lt;/strong&gt; function:&lt;/p&gt;
 
@@ -881,7 +931,7 @@ apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Our &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34&#34;&gt;echoS3Event&lt;/a&gt; only supports &lt;code&gt;GET&lt;/code&gt;.  We&amp;rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.&lt;/p&gt;
 
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
+&lt;h1 id=&#34;provision&#34;&gt;Provision&lt;/h1&gt;
 
 &lt;p&gt;The final step is to to provide the API instance to &lt;code&gt;Sparta.Main()&lt;/code&gt;&lt;/p&gt;
 
@@ -904,7 +954,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;Combining the &lt;em&gt;API Gateway URL&lt;/em&gt; &lt;code&gt;OutputValue&lt;/code&gt; with our resource path (&lt;em&gt;/hello/world/test&lt;/em&gt;), we get the absolute URL to our lambda function: &lt;em&gt;&lt;a href=&#34;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&#34;&gt;https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
 
-&lt;h1 id=&#34;querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/h1&gt;
+&lt;h1 id=&#34;querying&#34;&gt;Querying&lt;/h1&gt;
 
 &lt;p&gt;Let&amp;rsquo;s query the lambda function and see what the &lt;code&gt;event&lt;/code&gt; data is at execution time:&lt;/p&gt;
 
@@ -981,7 +1031,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;While this demonstrates that our lambda function is publicly accessible, it&amp;rsquo;s not immediately obvious where the &lt;code&gt;*event&lt;/code&gt; data is being populated.&lt;/p&gt;
 
-&lt;h1 id=&#34;mapping-templates:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Mapping Templates&lt;/h1&gt;
+&lt;h1 id=&#34;mapping-templates&#34;&gt;Mapping Templates&lt;/h1&gt;
 
 &lt;p&gt;The event data that&amp;rsquo;s actually supplied to &lt;code&gt;echoS3Event&lt;/code&gt; is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;rsquo;re not whitelisting any params, so those fields (&lt;code&gt;queryParams&lt;/code&gt;, &lt;code&gt;pathParams&lt;/code&gt;) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;rsquo;s more amenable to the target.&lt;/p&gt;
 
@@ -994,7 +1044,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;The &lt;code&gt;application/json&lt;/code&gt; template is copied below:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function
 
@@ -1045,13 +1095,13 @@ See
     }
   }
 }&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+
 
 &lt;p&gt;This template forwards all whitelisted data &amp;amp; body to the lambda function.  You can see by switching on the &lt;code&gt;method&lt;/code&gt; field would permit a single function to service multiple HTTP method names.&lt;/p&gt;
 
 &lt;p&gt;The next example will show how to unmarshal this data and perform request-specific actions.&lt;/p&gt;
 
-&lt;h1 id=&#34;proxying-envelope:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Proxying Envelope&lt;/h1&gt;
+&lt;h1 id=&#34;proxying-envelope&#34;&gt;Proxying Envelope&lt;/h1&gt;
 
 &lt;p&gt;Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;rsquo;s output.&lt;/p&gt;
 
@@ -1072,18 +1122,18 @@ See
 &lt;li&gt;&lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Method&#34;&gt;Method.Responses&lt;/a&gt;.  See the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses&#34;&gt;DefaultMethodResponses&lt;/a&gt; for the default method response mappings.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h1 id=&#34;cleaning-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/h1&gt;
+&lt;h1 id=&#34;cleaning-up&#34;&gt;Cleaning Up&lt;/h1&gt;
 
 &lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
 
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
 
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
+
+&lt;h1 id=&#34;wrapping-up&#34;&gt;Wrapping Up&lt;/h1&gt;
 
 &lt;p&gt;Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&amp;rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.&lt;/p&gt;
 
-&lt;h1 id=&#34;other-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Other Resources&lt;/h1&gt;
+&lt;h1 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;Mapping Template Reference&lt;/a&gt;&lt;/li&gt;
@@ -1101,7 +1151,7 @@ See
 
 &lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
 
-&lt;h1 id=&#34;define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/h1&gt;
+&lt;h1 id=&#34;define-the-lambda-function&#34;&gt;Define the Lambda Function&lt;/h1&gt;
 
 &lt;p&gt;Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the &lt;a href=&#34;http://dev.maxmind.com/geoip/geoip2/geolite2/&#34;&gt;GeoLite2 Database&lt;/a&gt; and return any information to the client.&lt;/p&gt;
 
@@ -1146,7 +1196,7 @@ if err != nil {
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h1 id=&#34;sparta-integration:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Sparta Integration&lt;/h1&gt;
+&lt;h1 id=&#34;sparta-integration&#34;&gt;Sparta Integration&lt;/h1&gt;
 
 &lt;p&gt;The next steps are to:&lt;/p&gt;
 
@@ -1180,7 +1230,7 @@ func main() {
 }&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
+&lt;h1 id=&#34;provision&#34;&gt;Provision&lt;/h1&gt;
 
 &lt;p&gt;The next step is to provision the stack:&lt;/p&gt;
 
@@ -1194,7 +1244,7 @@ INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://g
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
 
 
-&lt;h1 id=&#34;query:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Query&lt;/h1&gt;
+&lt;h1 id=&#34;query&#34;&gt;Query&lt;/h1&gt;
 
 &lt;p&gt;With the API Gateway provisioned, let&amp;rsquo;s check the response:&lt;/p&gt;
 
@@ -1310,556 +1360,19 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 &lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
 
-&lt;h1 id=&#34;cleaning-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/h1&gt;
+&lt;h1 id=&#34;cleaning-up&#34;&gt;Cleaning Up&lt;/h1&gt;
 
 &lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
 
 &lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete&lt;/code&gt;&lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;h1 id=&#34;notes:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Notes&lt;/h1&gt;
+&lt;h1 id=&#34;notes&#34;&gt;Notes&lt;/h1&gt;
 
 &lt;ul&gt;
 &lt;li&gt;The &lt;em&gt;GeoLite2-Country.mmdb&lt;/em&gt; content is embedded in the go binary via &lt;a href=&#34;https://github.com/mjibson/esc&#34;&gt;esc&lt;/a&gt; as part of the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27&#34;&gt;go generate&lt;/a&gt; phase.&lt;/li&gt;
 &lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>API Gateway - Slack SlashCommand</title>
-      <link>http://gosparta.io/docs/apigateway/slack/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/slack/</guid>
-      <description>
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/slack_rgb.png&#34; alt=&#34;SlashLogo&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;In this example, we&amp;rsquo;ll walk through creating a &lt;a href=&#34;https://api.slack.com/slash-commands&#34;&gt;Slack Slash Command&lt;/a&gt; service.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaSlackbot&#34;&gt;SpartaSlackbot&lt;/a&gt; repo.&lt;/p&gt;
-
-&lt;p&gt;Our initial command handler won&amp;rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.&lt;/p&gt;
-
-&lt;h1 id=&#34;define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/h1&gt;
-
-&lt;p&gt;This lambda handler is a bit more complicated than the other examples, primarily because of the &lt;a href=&#34;https://api.slack.com/slash-commands&#34;&gt;Slack Integration&lt;/a&gt; requirements.  The full source is:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;////////////////////////////////////////////////////////////////////////////////
-// Hello world event handler
-//
-func helloSlackbot(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
-	// 1. Unmarshal the primary event
-	var lambdaEvent slackLambdaJSONEvent
-	err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-	if err != nil {
-		logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	// 2. Conditionally unmarshal to get the Slack text.  See
-	// https://api.slack.com/slash-commands
-	// for the value name list
-	requestParams := url.Values{}
-	if bodyData, ok := lambdaEvent.Body.(string); ok {
-		requestParams, err = url.ParseQuery(bodyData)
-		if err != nil {
-			logger.Error(&amp;#34;Failed to parse query: &amp;#34;, err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		logger.WithFields(logrus.Fields{
-			&amp;#34;Values&amp;#34;: requestParams,
-		}).Info(&amp;#34;Slack slashcommand values&amp;#34;)
-	} else {
-		logger.Info(&amp;#34;Event body empty&amp;#34;)
-	}
-
-	// 3. Create the response
-	// Slack formatting:
-	// https://api.slack.com/docs/formatting
-	responseText := &amp;#34;You talkin to me?&amp;#34;
-	for _, eachLine := range requestParams[&amp;#34;text&amp;#34;] {
-		responseText &amp;#43;= fmt.Sprintf(&amp;#34;\n&amp;gt;&amp;gt;&amp;gt; %s&amp;#34;, eachLine)
-	}
-
-	// 4. Setup the response object:
-	// https://api.slack.com/slash-commands, &amp;#34;Responding to a command&amp;#34;
-	responseData := sparta.ArbitraryJSONObject{
-		&amp;#34;response_type&amp;#34;: &amp;#34;in_channel&amp;#34;,
-		&amp;#34;text&amp;#34;:          responseText,
-	}
-	// 5. Send it off
-	responseBody, err := json.Marshal(responseData)
-	if err != nil {
-		logger.Error(&amp;#34;Failed to marshal response: &amp;#34;, err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	fmt.Fprint(w, string(responseBody))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;There are a couple of things to note in this code:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Custom Event Type&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The inbound Slack &lt;code&gt;POST&lt;/code&gt; request is &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt; data.  However, our &lt;a href=&#34;https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl&#34;&gt;integration mapping&lt;/a&gt; mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw &lt;code&gt;POST&lt;/code&gt; body with the mapping envelope (so that we can access &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;identity information, HTTP headers, etc.&lt;/a&gt;), which produces an inbound JSON request that includes a &lt;strong&gt;Body&lt;/strong&gt; parameter.  The &lt;strong&gt;Body&lt;/strong&gt; string value is the raw inbound &lt;code&gt;POST&lt;/code&gt; data.  Since it&amp;rsquo;s &lt;code&gt;application/x-www-form-urlencoded&lt;/code&gt;, to get the actual parameters we need to parse it:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;if bodyData, ok := lambdaEvent.Body.(string); ok {
-  requestParams, err = url.ParseQuery(bodyData)
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;The lambda function extracts all Slack parameters and if defined, sends the &lt;code&gt;text&lt;/code&gt; back with a bit of &lt;a href=&#34;https://api.slack.com/docs/formatting&#34;&gt;Slack Message Formatting&lt;/a&gt; (and some attitude, to be honest about it):&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;responseText := &amp;quot;You talkin to me?&amp;quot;
-for _, eachLine := range requestParams[&amp;quot;text&amp;quot;] {
-  responseText += fmt.Sprintf(&amp;quot;\n&amp;gt;&amp;gt;&amp;gt; %s&amp;quot;, eachLine)
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Custom Response&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The Slack API expects a &lt;a href=&#34;https://api.slack.com/slash-commands&#34;&gt;JSON formatted response&lt;/a&gt;, which is created in step 4:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;responseData := sparta.ArbitraryJSONObject{
-    &amp;quot;response_type&amp;quot;: &amp;quot;in_channel&amp;quot;,
-    &amp;quot;text&amp;quot;:          responseText,
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h1 id=&#34;create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/h1&gt;
-
-&lt;p&gt;With our lambda function defined, we need to setup an API Gateway so that it&amp;rsquo;s publicly available:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaSlackbot&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;code&gt;apiStage&lt;/code&gt; value implies that we want to deploy this API Gateway Rest API as part of Sparta&amp;rsquo;s &lt;code&gt;provision&lt;/code&gt; step.&lt;/p&gt;
-
-&lt;h1 id=&#34;create-lambda-binding-resource:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Lambda Binding &amp;amp; Resource&lt;/h1&gt;
-
-&lt;p&gt;Next we create an &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that references the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloSlackbot, nil)
-
-	if nil != api {
-		apiGatewayResource, _ := api.NewResource(&amp;#34;/slack&amp;#34;, lambdaFn)
-		_, err := apiGatewayResource.NewMethod(&amp;#34;POST&amp;#34;)
-		if nil != err {
-			panic(&amp;#34;Failed to create /hello resource&amp;#34;)
-		}
-	}
-	return append(lambdaFunctions, lambdaFn)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;A few items to note here:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;We&amp;rsquo;re using an empty &lt;code&gt;sparta.IAMRoleDefinition{}&lt;/code&gt; definition because our go lambda function doesn&amp;rsquo;t access any additional AWS services.&lt;/li&gt;
-&lt;li&gt;Our lambda function will be accessible at the &lt;em&gt;/slack&lt;/em&gt; child path of the deployed API Gateway instance&lt;/li&gt;
-&lt;li&gt;Slack supports both &lt;a href=&#34;https://api.slack.com/slash-commands&#34;&gt;GET and POST&lt;/a&gt; integration types, but we&amp;rsquo;re limiting our lambda function to &lt;code&gt;POST&lt;/code&gt; only&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
-
-&lt;p&gt;With everything configured, we then configure our &lt;code&gt;main()&lt;/code&gt; function to forward to Sparta:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func main() {
-	// Register the function with the API Gateway
-	apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
-	apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaSlackbot&amp;#34;, apiStage)
-
-	// Deploy it
-	sparta.Main(&amp;#34;SpartaSlackbot&amp;#34;,
-		fmt.Sprintf(&amp;#34;Sparta app that responds to Slack commands&amp;#34;),
-		spartaLambdaFunctions(apiGateway),
-		apiGateway,
-		nil)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;and provision the service:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;S3_BUCKET=&amp;lt;MY_S3_BUCKETNAME&amp;gt; go run slack.go --level info provision&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Look for the &lt;em&gt;Stack output&lt;/em&gt; section of the log, you&amp;rsquo;ll need the &lt;strong&gt;APIGatewayURL&lt;/strong&gt; value to configure Slack in the next step.&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
-INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h1 id=&#34;configure-slack:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Configure Slack&lt;/h1&gt;
-
-&lt;p&gt;At this point our lambda function is deployed and is available through the API Gateway (&lt;em&gt;&lt;a href=&#34;https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack&#34;&gt;https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack&lt;/a&gt;&lt;/em&gt; in the current example).&lt;/p&gt;
-
-&lt;p&gt;The next step is to configure Slack with this custom integration:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;&lt;p&gt;Visit &lt;a href=&#34;https://slack.com/apps/build&#34;&gt;https://slack.com/apps/build&lt;/a&gt; and choose the &amp;ldquo;Custom Integration&amp;rdquo; option:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/customIntegration.jpg&#34; alt=&#34;Custom integration&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;On the next page, choose &amp;ldquo;Slash Commands&amp;rdquo;:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/slashCommandMenu.jpg&#34; alt=&#34;Slash Commands&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;The next screen is where you input the command that will trigger your lambda function.  Enter &lt;code&gt;/sparta&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/chooseCommand.jpg&#34; alt=&#34;Slash Chose Command&#34; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;and click the &amp;ldquo;Add Slash Command Integration&amp;rdquo; button.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Finally, scroll down the next page to the &lt;strong&gt;Integration Settings&lt;/strong&gt; section and provide the API Gateway URL of your lambda function.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/integrationSettings.jpg&#34; alt=&#34;Slash URL&#34; /&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Leave the &lt;em&gt;Method&lt;/em&gt; field unchanged (it should be &lt;code&gt;POST&lt;/code&gt;), to match how we configured the API Gateway entry above.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;p&gt;Save it&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/saveIntegration.jpg&#34; alt=&#34;Save it&#34; /&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;There are additional Slash Command Integration options, but for this example the &lt;strong&gt;URL&lt;/strong&gt; option is sufficient to trigger our command.&lt;/p&gt;
-
-&lt;h1 id=&#34;test:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Test&lt;/h1&gt;
-
-&lt;p&gt;With everything configured, visit your team&amp;rsquo;s Slack room and verify the integration via &lt;code&gt;/sparta&lt;/code&gt; slash command:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;http://gosparta.io/images/apigateway/slack/slackResponse.jpg&#34; alt=&#34;Sparta Response&#34; /&gt;&lt;/p&gt;
-
-&lt;h1 id=&#34;cleaning-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/h1&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run slack.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
-
-&lt;p&gt;This example provides a good overview of Sparta &amp;amp; Slack integration, including how to handle external requests that are not &lt;code&gt;application/json&lt;/code&gt; formatted.&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>API Gateway - User Input</title>
-      <link>http://gosparta.io/docs/apigateway/example2/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/example2/</guid>
-      <description>
-
-&lt;p&gt;This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; function defined as part of the  &lt;a href=&#34;https://github.com/mweagle/SpartaApplication&#34;&gt;SpartaApplication&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Define the Lambda Function&lt;/h1&gt;
-
-&lt;p&gt;Our function will accept two params:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;bucketName&lt;/code&gt; : The S3 bucket name storing the asset&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;keyName&lt;/code&gt; : The S3 item key&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.&lt;/p&gt;
-
-&lt;p&gt;Because &lt;a href=&#34;https://github.com/mweagle/SpartaImager/blob/master/application.go#L149&#34;&gt;s3ItemInfo&lt;/a&gt; is expected to be invoked by the API Gateway, we&amp;rsquo;ll start by unmarshalling the event data:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-  logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;The &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;sparta.APIGatewayLambdaJSONEvent&lt;/a&gt; fields correspond to the Integration Response Mapping template discussed in the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;previous example&lt;/a&gt; (see the full mapping template &lt;a href=&#34;https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl&#34;&gt;here&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;Once the event is unmarshaled, we can use it to fetch the S3 item info:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;getObjectInput := &amp;amp;s3.GetObjectInput{
-  Bucket: aws.String(lambdaEvent.QueryParams[&amp;#34;bucketName&amp;#34;]),
-  Key:    aws.String(lambdaEvent.QueryParams[&amp;#34;keyName&amp;#34;]),
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;awsSession := awsSession(logger)
-svc := s3.New(awsSession)
-result, err := svc.GetObject(getObjectInput)
-if nil != err {
-  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}
-presignedReq, _ := svc.GetObjectRequest(getObjectInput)
-url, err := presignedReq.Presign(5 * time.Minute)
-if nil != err {
-  logger.Error(&amp;#34;Failed to process event: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}
-httpResponse := map[string]interface{}{
-  &amp;#34;S3&amp;#34;:  result,
-  &amp;#34;URL&amp;#34;: url,
-}
-
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
-  fmt.Fprint(w, string(responseBody))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;create-the-api-gateway:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create the API Gateway&lt;/h1&gt;
-
-&lt;p&gt;The next step is to create a new &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#API&#34;&gt;API&lt;/a&gt; instance via &lt;code&gt;sparta.NewAPIGateway()&lt;/code&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;)
-apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaImagerAPI&amp;#34;, apiStage)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;create-lambda-binding:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Lambda Binding&lt;/h1&gt;
-
-&lt;p&gt;Next we create an &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that references the &lt;code&gt;s3ItemInfo&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;s3ItemInfoOptions := &amp;amp;sparta.LambdaFunctionOptions{
-  Description: &amp;#34;Get information about an item in S3 via querystring params&amp;#34;,
-  MemorySize:  128,
-  Timeout:     10,
-}
-var iamDynamicRole = sparta.IAMRoleDefinition{}
-iamDynamicRole.Privileges = append(iamDynamicRole.Privileges, sparta.IAMRolePrivilege{
-  Actions:  []string{&amp;#34;s3:GetObject&amp;#34;},
-  Resource: resourceArn,
-})
-s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOptions)&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;A few items to note here:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;We&amp;rsquo;re providing a custom &lt;code&gt;LambdaFunctionOptions&lt;/code&gt; in case the request to S3 to get item metadata exceeds the default 3 second timeout.&lt;/li&gt;
-&lt;li&gt;We also add a custom &lt;code&gt;iamDynamicRole.Privileges&lt;/code&gt; entry to the &lt;code&gt;Privileges&lt;/code&gt; slice that authorizes the lambda function to &lt;em&gt;only&lt;/em&gt; access objects in a single bucket (&lt;em&gt;resourceArn&lt;/em&gt;).
-
-&lt;ul&gt;
-&lt;li&gt;This bucket ARN is externally created and the ARN provided to this code.&lt;/li&gt;
-&lt;li&gt;While the API will accept any &lt;em&gt;bucketName&lt;/em&gt; value, it is only authorized to access a single bucket.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&#34;create-resources:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Create Resources&lt;/h1&gt;
-
-&lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;code&gt;s3ItemInfo&lt;/code&gt; function. This will be the relative path component used to reference our lambda function via the API Gateway.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/info&amp;#34;, s3ItemInfoLambdaFn)
-method, err := apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
-if err != nil {
-  return nil, err
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;whitelist-input:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Whitelist Input&lt;/h1&gt;
-
-&lt;p&gt;The final step is to add the whitelisted parameters to the Method definition.&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Whitelist query string params
-method.Parameters[&amp;#34;method.request.querystring.keyName&amp;#34;] = true
-method.Parameters[&amp;#34;method.request.querystring.bucketName&amp;#34;] = true&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Note that the keynames in the &lt;code&gt;method.Parameters&lt;/code&gt; map must be of the form: &lt;strong&gt;method.request.{location}.{name}&lt;/strong&gt; where location is one of:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;querystring&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;path&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;header&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;See the &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters&#34;&gt;REST documentation&lt;/a&gt; for more information.&lt;/p&gt;
-
-&lt;h1 id=&#34;provision:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Provision&lt;/h1&gt;
-
-&lt;p&gt;With everything configured, let&amp;rsquo;s provision the stack:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go --level debug provision --s3Bucket $S3_BUCKET&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;and check the results.&lt;/p&gt;
-
-&lt;h1 id=&#34;querying:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Querying&lt;/h1&gt;
-
-&lt;p&gt;As this Sparta application includes an API Gateway definition, the stack &lt;code&gt;Outputs&lt;/code&gt; includes the API Gateway URL:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s fetch an item we know exists:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log&amp;#34;
-
-*   Trying 54.192.70.158...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=somebucket-log HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 1584
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:35:03 GMT
-&amp;lt; x-amzn-RequestId: f333f4bb-9bc1-11e5-afde-61a428c89049
-&amp;lt; X-Cache: Miss from cloudfront
-&amp;lt; Via: 1.1 2f31d4850470c56c3b326946dc542a6b.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: 6rBpqjmi7DPax7XOHTbxDx8-FfFfvI04m2_K-PxLWfYFor7WtIcdxA==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;1468&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;S3&amp;#34;:{&amp;#34;AcceptRanges&amp;#34;:&amp;#34;bytes&amp;#34;,&amp;#34;Body&amp;#34;:{},&amp;#34;CacheControl&amp;#34;:null,&amp;#34;ContentDisposition&amp;#34;:null,&amp;#34;ContentEncoding&amp;#34;:null,&amp;#34;ContentLanguage&amp;#34;:null,&amp;#34;ContentLength&amp;#34;:70372,&amp;#34;ContentRange&amp;#34;:null,&amp;#34;ContentType&amp;#34;:&amp;#34;image/png&amp;#34;,&amp;#34;DeleteMarker&amp;#34;:null,&amp;#34;ETag&amp;#34;:&amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,&amp;#34;Expiration&amp;#34;:null,&amp;#34;Expires&amp;#34;:null,&amp;#34;LastModified&amp;#34;:&amp;#34;2015-11-09T15:38:01Z&amp;#34;,&amp;#34;Metadata&amp;#34;:{},&amp;#34;MissingMeta&amp;#34;:null,&amp;#34;ReplicationStatus&amp;#34;:null,&amp;#34;RequestCharged&amp;#34;:null,&amp;#34;Restore&amp;#34;:null,&amp;#34;SSECustomerAlgorithm&amp;#34;:null,&amp;#34;SSECustomerKeyMD5&amp;#34;:null,&amp;#34;SSEKMSKeyId&amp;#34;:null,&amp;#34;ServerSideEncryption&amp;#34;:null,&amp;#34;StorageClass&amp;#34;:null,&amp;#34;VersionId&amp;#34;:null,&amp;#34;WebsiteRedirectLocation&amp;#34;:null},&amp;#34;URL&amp;#34;:&amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;}}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Pretty printing the response body:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;json&#34;&gt;{
-  &amp;#34;code&amp;#34;: 200,
-  &amp;#34;status&amp;#34;: &amp;#34;OK&amp;#34;,
-  &amp;#34;headers&amp;#34;: {
-    &amp;#34;content-type&amp;#34;: &amp;#34;application/json&amp;#34;,
-    &amp;#34;date&amp;#34;: &amp;#34;Sun, 06 Dec 2015 02:35:03 GMT&amp;#34;,
-    &amp;#34;content-length&amp;#34;: &amp;#34;1468&amp;#34;
-  },
-  &amp;#34;results&amp;#34;: {
-    &amp;#34;S3&amp;#34;: {
-      &amp;#34;AcceptRanges&amp;#34;: &amp;#34;bytes&amp;#34;,
-      &amp;#34;Body&amp;#34;: {},
-      &amp;#34;CacheControl&amp;#34;: null,
-      &amp;#34;ContentDisposition&amp;#34;: null,
-      &amp;#34;ContentEncoding&amp;#34;: null,
-      &amp;#34;ContentLanguage&amp;#34;: null,
-      &amp;#34;ContentLength&amp;#34;: 70372,
-      &amp;#34;ContentRange&amp;#34;: null,
-      &amp;#34;ContentType&amp;#34;: &amp;#34;image/png&amp;#34;,
-      &amp;#34;DeleteMarker&amp;#34;: null,
-      &amp;#34;ETag&amp;#34;: &amp;#34;\&amp;#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&amp;#34;&amp;#34;,
-      &amp;#34;Expiration&amp;#34;: null,
-      &amp;#34;Expires&amp;#34;: null,
-      &amp;#34;LastModified&amp;#34;: &amp;#34;2015-11-09T15:38:01Z&amp;#34;,
-      &amp;#34;Metadata&amp;#34;: {},
-      &amp;#34;MissingMeta&amp;#34;: null,
-      &amp;#34;ReplicationStatus&amp;#34;: null,
-      &amp;#34;RequestCharged&amp;#34;: null,
-      &amp;#34;Restore&amp;#34;: null,
-      &amp;#34;SSECustomerAlgorithm&amp;#34;: null,
-      &amp;#34;SSECustomerKeyMD5&amp;#34;: null,
-      &amp;#34;SSEKMSKeyId&amp;#34;: null,
-      &amp;#34;ServerSideEncryption&amp;#34;: null,
-      &amp;#34;StorageClass&amp;#34;: null,
-      &amp;#34;VersionId&amp;#34;: null,
-      &amp;#34;WebsiteRedirectLocation&amp;#34;: null
-    },
-    &amp;#34;URL&amp;#34;: &amp;#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;amp;X-Amz-Date=20151206T023503Z&amp;amp;X-Amz-Expires=300&amp;amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;amp;X-Amz-SignedHeaders=host&amp;amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&amp;#34;
-  }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
-
-&lt;p&gt;What about an item that we know doesn&amp;rsquo;t exist, but is in the bucket our lambda function has privileges to access:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log&amp;#34;
-
-*   Trying 54.230.71.213...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher42.png&amp;amp;bucketName=somebucket-log HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 500 Internal Server Error
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 524
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:40:14 GMT
-&amp;lt; x-amzn-RequestId: ad5d94eb-9bc2-11e5-8fad-476a6cacabce
-&amp;lt; X-Cache: Error from cloudfront
-&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: XoVLBjm1dgozZsNAEGk8Vy_a5PXMYNWRD6eKJJBcVTXrtMgMhiLNyQ==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:40:14 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;p&gt;And finally, what if we try to access a bucket that our lambda function isn&amp;rsquo;t authorized to access:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs &amp;#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;amp;bucketName=weagle&amp;#34;
-
-*   Trying 54.192.70.129...
-* Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /v1/info?keyName=gopher.png&amp;amp;bucketName=weagle HTTP/1.1
-&amp;gt; Host: 0ux556ho77.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 500 Internal Server Error
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 524
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 02:42:52 GMT
-&amp;lt; x-amzn-RequestId: 0be0fc4f-9bc3-11e5-b827-81d99c02192f
-&amp;lt; X-Cache: Error from cloudfront
-&amp;lt; Via: 1.1 400bdbea4e851ce61e7df8252da93d3f.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: M_7pB1UsW63xzh_9g37-CqNYDXfXlec0B6DV4bdkq3tbCANCOrTY6Q==
-&amp;lt;
-* Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;errorMessage&amp;#34;:&amp;#34;{\&amp;#34;code\&amp;#34;:500,\&amp;#34;status\&amp;#34;:\&amp;#34;Internal Server Error\&amp;#34;,\&amp;#34;headers\&amp;#34;:{\&amp;#34;content-type\&amp;#34;:\&amp;#34;text/plain; charset=utf-8\&amp;#34;,\&amp;#34;x-content-type-options\&amp;#34;:\&amp;#34;nosniff\&amp;#34;,\&amp;#34;date\&amp;#34;:\&amp;#34;Sun, 06 Dec 2015 02:42:52 GMT\&amp;#34;,\&amp;#34;content-length\&amp;#34;:\&amp;#34;60\&amp;#34;},\&amp;#34;error\&amp;#34;:\&amp;#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&amp;#34;}&amp;#34;,&amp;#34;errorType&amp;#34;:&amp;#34;Error&amp;#34;,&amp;#34;stackTrace&amp;#34;:[&amp;#34;IncomingMessage.&amp;lt;anonymous&amp;gt; (/var/task/index.js:68:53)&amp;#34;,&amp;#34;IncomingMessage.emit (events.js:117:20)&amp;#34;,&amp;#34;_stream_readable.js:944:16&amp;#34;,&amp;#34;process._tickCallback (node.js:442:13)&amp;#34;]}&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h1 id=&#34;cleaning-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Cleaning Up&lt;/h1&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run application.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h1 id=&#34;wrapping-up:d680e8a854a7cbad6d490c445cba2eba&#34;&gt;Wrapping Up&lt;/h1&gt;
-
-&lt;p&gt;With this example we&amp;rsquo;ve walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.&lt;/p&gt;
 </description>
     </item>
     

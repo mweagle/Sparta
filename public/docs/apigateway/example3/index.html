@@ -66,7 +66,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.15" />
+<meta name="generator" content="Hugo 0.16" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: facebook: flattr:]">
+<body class="map[name:lumen home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -303,9 +303,18 @@
           <small><a href="/docs/application/custom_commands">Adding Commands</a></small>
         </li>
       
+        <li>
+          <small><a href="/docs/application/workflow_hooks">Workflow Hooks</a></small>
+        </li>
+      
       </ul>
     
       <a href="/docs/alternative_topologies">Alternative Topologies</a>
+      <ul>
+      
+      </ul>
+    
+      <a href="/docs/docker">Docker &amp; ECS</a>
       <ul>
       
       </ul>
@@ -340,12 +349,12 @@
       <div id="toc">
       <nav id="TableOfContents">
 <ul>
-<li><a href="#define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</a></li>
-<li><a href="#sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</a></li>
-<li><a href="#provision:d680e8a854a7cbad6d490c445cba2eba">Provision</a></li>
-<li><a href="#query:d680e8a854a7cbad6d490c445cba2eba">Query</a></li>
-<li><a href="#cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</a></li>
-<li><a href="#notes:d680e8a854a7cbad6d490c445cba2eba">Notes</a></li>
+<li><a href="#define-the-lambda-function">Define the Lambda Function</a></li>
+<li><a href="#sparta-integration">Sparta Integration</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#query">Query</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
       </div>
@@ -356,7 +365,7 @@
 
 <p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">APIGatewayLambdaJSONEvent</a> event.  The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
 
-<h1 id="define-the-lambda-function:d680e8a854a7cbad6d490c445cba2eba">Define the Lambda Function</h1>
+<h1 id="define-the-lambda-function">Define the Lambda Function</h1>
 
 <p>Our function will examine the inbound request, lookup the user&rsquo;s IP address in the <a href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2 Database</a> and return any information to the client.</p>
 
@@ -401,7 +410,7 @@ if err != nil {
 }</code></pre>
 
 
-<h1 id="sparta-integration:d680e8a854a7cbad6d490c445cba2eba">Sparta Integration</h1>
+<h1 id="sparta-integration">Sparta Integration</h1>
 
 <p>The next steps are to:</p>
 
@@ -435,7 +444,7 @@ func main() {
 }</code></pre>
 
 
-<h1 id="provision:d680e8a854a7cbad6d490c445cba2eba">Provision</h1>
+<h1 id="provision">Provision</h1>
 
 <p>The next step is to provision the stack:</p>
 
@@ -449,7 +458,7 @@ INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://g
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 
 
-<h1 id="query:d680e8a854a7cbad6d490c445cba2eba">Query</h1>
+<h1 id="query">Query</h1>
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
@@ -565,14 +574,14 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Please see the <a href="/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 
-<h1 id="cleaning-up:d680e8a854a7cbad6d490c445cba2eba">Cleaning Up</h1>
+<h1 id="cleaning-up">Cleaning Up</h1>
 
 <p>Before moving on, remember to decommission the service via:</p>
 
 <p><pre><code class="nohighlight">go run main.go delete</code></pre>
 </p>
 
-<h1 id="notes:d680e8a854a7cbad6d490c445cba2eba">Notes</h1>
+<h1 id="notes">Notes</h1>
 
 <ul>
 <li>The <em>GeoLite2-Country.mmdb</em> content is embedded in the go binary via <a href="https://github.com/mjibson/esc">esc</a> as part of the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27">go generate</a> phase.</li>
