@@ -415,7 +415,10 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			case "dynamodb":
 				statements = append(statements, CommonIAMStatements.DynamoDB...)
 			case "kinesis":
-				statements = append(statements, CommonIAMStatements.Kinesis...)
+				for _, statement := range CommonIAMStatements.Kinesis {
+					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
+					statements = append(statements, statement)
+				}
 			default:
 				logger.Debug("No additional statements found")
 			}
