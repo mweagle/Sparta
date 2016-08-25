@@ -1,6 +1,7 @@
 package sparta
 
 import (
+	"archive/zip"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -17,6 +18,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
@@ -28,7 +30,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.7.1"
+	SpartaVersion = "0.8.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 
@@ -287,8 +289,58 @@ type TemplateDecorator func(serviceName string,
 	resourceMetadata map[string]interface{},
 	S3Bucket string,
 	S3Key string,
+	buildID string,
 	template *gocf.Template,
+	context map[string]interface{},
 	logger *logrus.Logger) error
+
+// WorkflowHook defines a user function that should be called at a specific
+// point in the larger Sparta workflow. The first argument is a map that
+// is shared across all LifecycleHooks and which Sparta treats as an opaque
+// value.
+type WorkflowHook func(context map[string]interface{},
+	serviceName string,
+	S3Bucket string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+
+// ArchiveHook provides callers an opportunity to insert additional
+// files into the ZIP archive deployed to S3
+type ArchiveHook func(context map[string]interface{},
+	serviceName string,
+	zipWriter *zip.Writer,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+
+// RollbackHook provides callers an opportunity to handle failures
+// associated with failing to perform the requested operation
+type RollbackHook func(context map[string]interface{},
+	serviceName string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger)
+
+// WorkflowHooks is a structure that allows callers to customize the Sparta provisioning
+// pipeline to add contents the Lambda archive or perform other workflow operations.
+type WorkflowHooks struct {
+	// PreBuild is called before the current Sparta-binary is compiled
+	PreBuild WorkflowHook
+	// PostBuild is called after the current Sparta-binary is compiled
+	PostBuild WorkflowHook
+	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
+	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
+	// to add additional resource files to your Lambda package
+	Archive ArchiveHook
+	// PreMarshall is called before Sparta marshalls the application contents to a CloudFormation template
+	PreMarshall WorkflowHook
+	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
+	PostMarshall WorkflowHook
+	// Rollback is called if there is an error performing the requested operation
+	Rollback RollbackHook
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // START - IAMRolePrivilege
@@ -363,7 +415,10 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			case "dynamodb":
 				statements = append(statements, CommonIAMStatements.DynamoDB...)
 			case "kinesis":
-				statements = append(statements, CommonIAMStatements.Kinesis...)
+				for _, statement := range CommonIAMStatements.Kinesis {
+					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
+					statements = append(statements, statement)
+				}
 			default:
 				logger.Debug("No additional statements found")
 			}
@@ -632,8 +687,10 @@ func (info *LambdaAWSInfo) logicalName() string {
 func (info *LambdaAWSInfo) export(serviceName string,
 	S3Bucket string,
 	S3Key string,
+	buildID string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
+	context map[string]interface{},
 	logger *logrus.Logger) error {
 
 	// If we have RoleName, then get the ARN, otherwise get the Ref
@@ -732,7 +789,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			metadataMap,
 			S3Bucket,
 			S3Key,
+			buildID,
 			decoratorProxyTemplate,
+			context,
 			logger)
 		if nil != err {
 			return err

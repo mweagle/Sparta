@@ -157,7 +157,9 @@ func _escFSByte(useLocal bool, name string) ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		return ioutil.ReadAll(f)
+		b, err := ioutil.ReadAll(f)
+		f.Close()
+		return b, err
 	}
 	f, err := _escStatic.prepare(name)
 	if err != nil {

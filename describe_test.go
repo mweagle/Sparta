@@ -13,7 +13,14 @@ func TestDescribe(t *testing.T) {
 		return
 	}
 	defer output.Close()
-	err = Describe("SampleService", "SampleService Description", testLambdaData(), nil, nil, output, logger)
+	err = Describe("SampleService",
+		"SampleService Description",
+		testLambdaData(),
+		nil,
+		nil,
+		output,
+		nil,
+		logger)
 	if nil != err {
 		t.Errorf("Failed to describe: %s", err)
 	}

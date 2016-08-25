@@ -13,14 +13,20 @@ import (
 type StructHandler1 struct {
 }
 
-func (handler *StructHandler1) handler(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+func (handler *StructHandler1) handler(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
 type StructHandler2 struct {
 }
 
-func (handler *StructHandler2) handler(event *json.RawMessage, context *LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+func (handler *StructHandler2) handler(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
@@ -75,8 +81,10 @@ func TestStruct(t *testing.T) {
 		testLambdaStructData(),
 		nil,
 		nil,
+		"testBuildID",
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 	if nil != err {
 		t.Fatal(err.Error())
@@ -92,8 +100,10 @@ func TestDoubleRefStruct(t *testing.T) {
 		testLambdaDoubleStructPtrData(),
 		nil,
 		nil,
+		"testBuildID",
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil == err {
@@ -121,8 +131,10 @@ func TestCustomResource(t *testing.T) {
 		lambdaFuncs,
 		nil,
 		nil,
+		"testBuildID",
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil != err {
@@ -147,8 +159,10 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		lambdaFuncs,
 		nil,
 		nil,
+		"testBuildID",
 		"S3Bucket",
 		&templateWriter,
+		nil,
 		logger)
 
 	if nil == err {

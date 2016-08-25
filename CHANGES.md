@@ -1,9 +1,31 @@
+
+## v0.8.0
+- TODO:
+  - [ ] Update `gh-docs`
+- :warning: **BREAKING**
+  - `TemplateDecorator` signature changed to include `context map[string]interface{}` to support sharing state across `WorkflowHooks` (below).
+- :checkered_flag: **CHANGES**
+  - Add `SpartaBuildID` stack output with build ID
+  - `WorkflowHooks`
+    - WorkflowHooks enable an application to customize the ZIP archive used as the AWS Lambda target rather than needing to embed resources inside their Go binary
+    - They may also be used for Docker-based mixed topologies. See
+  - Add optional `-i/--buildID` parameter for `provision`.
+    - The parameter will be added to the stack outputs
+    - A random value will be used if non is provided on the command line
+  - Artifacts posted to S3 are now scoped by `serviceName`
+  - Add `sparta.MainEx` for non-breaking signature extension
+- :bug: **FIXED**
+  - Fixed latent bug in [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) when parsing input with multiple AWS JSON fragments.
+  - Fixed latent bug in [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) which prevented dependent resources from being discovered at Lambda execution time.
+  - Fixed latent bug in [explore.NewAPIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/explore#NewAPIGatewayRequest) where whitelisted param keynames were unmarshalled to `method.request.TYPE.VALUE` rather than `TYPE`.
+
 ## v0.7.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Upgrade to latest [go-cloudformation](https://github.com/crewjam/go-cloudformation) that required internal [refactoring](https://github.com/mweagle/Sparta/pull/9).
 - :bug: **FIXED**
   - N/A
+
 ## v0.7.0
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) to support [alternative topology](http://gosparta.io/docs/alternative_topologies/) deployments.
@@ -19,7 +41,7 @@
   - All [goreportcard](https://goreportcard.com/report/github.com/mweagle/Sparta) issues fixed.
 - :bug: **FIXED**
   - Fixed latent VPC provisioning bug where VPC/Subnet IDs couldn't be provided to template serialization.
-  
+
 ## v0.6.0
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `map[string]string` to allow for decorating CloudFormation resource metadata
@@ -102,7 +124,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
 ## v0.3.0
 - :warning: **BREAKING**
-  - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.  
+  - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.
     - This was done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for discovery.
   - Enforce that a non-nil `*sparta.API` value provided to `sparta.Main()` includes a non-empty set of resources and methods
 - :checkered_flag: **CHANGES**
@@ -205,7 +227,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
-  - Added `explore.NewRequest` to support _localhost_ testing of lambda functions.  
+  - Added `explore.NewRequest` to support _localhost_ testing of lambda functions.
     - Clients can supply optional **event** data similar to the AWS Console feature.
     - See [explore_test](https://github.com/mweagle/Sparta/blob/master/explore_test.go) for an example.
 
@@ -235,7 +257,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 - :checkered_flag: **CHANGES**
   - Added `S3Site` type and optional static resource provisioning as part of `provision`
     - See the [SpartaHTML](https://github.com/mweagle/SpartaHTML) application for a complete example
-  - Added `API.CORSEnabled` option (defaults to _false_).  
+  - Added `API.CORSEnabled` option (defaults to _false_).
     - If defined, all APIGateway methods will have [CORS Enabled](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html).
   - Update logging to use structured fields rather than variadic, concatenation
   - Reimplement `explore` command line option.
@@ -269,7 +291,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
       - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
     - Improved API Gateway `describe` output.
-    - Added [method response](http://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/) support.  
+    - Added [method response](http://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/) support.
       - The [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) map is used if [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method) is empty  (`len(Responses) <= 0`) at provision time.
       - The default response map defines `201` for _POST_ methods, and `200` for all other methods. An API Gateway method may only support a single 2XX status code.
     - Added [integration response](http://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/) support for to support HTTP status codes defined in [status.go](https://golang.org/src/net/http/status.go).
