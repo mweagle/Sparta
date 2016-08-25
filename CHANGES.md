@@ -1,7 +1,5 @@
 
 ## v0.8.0
-- TODO:
-  - [ ] Update `gh-docs`
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `context map[string]interface{}` to support sharing state across `WorkflowHooks` (below).
 - :checkered_flag: **CHANGES**
