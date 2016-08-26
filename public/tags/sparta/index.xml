@@ -21,7 +21,130 @@
 
 &lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
 
-&lt;p&gt;TODO&lt;/p&gt;
+&lt;p&gt;While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.&lt;/p&gt;
+
+&lt;p&gt;To support this, Sparta allows you to customize the build pipeline via &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks&#34;&gt;WorkflowHooks&lt;/a&gt; structure.  These hooks are called at specific points in the &lt;em&gt;provision&lt;/em&gt; lifecycle and support augmenting the standard pipeline:&lt;/p&gt;
+
+&lt;div class=&#34;mermaid&#34;&gt;
+graph TD
+  iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  proxyShims[Create NodeJS-Go HTTP Proxies]
+  package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  upload[Upload Archive to S3]
+  packageAssets[Conditionally ZIP S3 Site Assets]
+  uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  generate[Marshal to CloudFormation]
+  decorate[Call User Template Decorators - Dynamic AWS Resources]
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  uploadTemplate[Upload Template to S3]
+  converge[Create/Update Stack]
+  wait[Wait for Complete/Failure Result]
+
+  iam--&gt;preBuild
+  preBuild--&gt;compile
+  compile--&gt;postBuild
+  postBuild--&gt;proxyShims
+  proxyShims--&gt;package
+  proxyShims--&gt;packageAssets
+  package--&gt;userArchive
+  userArchive--&gt;upload
+  packageAssets--&gt;uploadAssets
+  uploadAssets--&gt;generate
+  upload--&gt;generate
+
+  generate--&gt;preMarshall
+  preMarshall--&gt;decorate
+  decorate--&gt;postMarshall
+  postMarshall--&gt;uploadTemplate
+  uploadTemplate--&gt;converge
+  converge--&gt;wait
+&lt;/div&gt;
+&lt;h6&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/h6&gt;
+&lt;hr /&gt;
+
+
+&lt;p&gt;The following sections describe the three types of WorkflowHooks available.  All hooks accept a &lt;code&gt;context map[string]interface{}&lt;/code&gt; as their first parameter.  Sparta treats this as an opaque property bag that enables hooks to communicate state.&lt;/p&gt;
+
+&lt;h1 id=&#34;workflowhook-types&#34;&gt;WorkflowHook Types&lt;/h1&gt;
+
+&lt;h2 id=&#34;builder-hooks&#34;&gt;Builder Hooks&lt;/h2&gt;
+
+&lt;p&gt;BuilderHooks share the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#WorkflowHook&#34;&gt;WorkflowHook&lt;/a&gt; signature:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type WorkflowHook func(context map[string]interface{},
+    serviceName string,
+    S3Bucket string,
+    buildID string,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger) error
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These functions include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PreBuild&lt;/li&gt;
+&lt;li&gt;PostBuild&lt;/li&gt;
+&lt;li&gt;PreMarshall&lt;/li&gt;
+&lt;li&gt;PostMarshall&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;archive-hook&#34;&gt;Archive Hook&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;ArchiveHook&lt;/code&gt; allows a service to add custom resources to the ZIP archive and have the signature:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type ArchiveHook func(context map[string]interface{},
+    serviceName string,
+    zipWriter *zip.Writer,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger) error
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This function is called &lt;em&gt;after&lt;/em&gt; Sparta has written the standard resources to the &lt;code&gt;*zip.Writer&lt;/code&gt; stream.&lt;/p&gt;
+
+&lt;h2 id=&#34;rollback-hook&#34;&gt;Rollback Hook&lt;/h2&gt;
+
+&lt;p&gt;The &lt;code&gt;RollbackHook&lt;/code&gt; is called &lt;em&gt;iff&lt;/em&gt; the &lt;em&gt;provision&lt;/em&gt; operation fails and has the signature:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type RollbackHook func(context map[string]interface{},
+    serviceName string,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;using-workflowhooks&#34;&gt;Using WorkflowHooks&lt;/h1&gt;
+
+&lt;p&gt;To use the Workflow Hooks feature, initialize a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks&#34;&gt;WorkflowHooks&lt;/a&gt; structure with 1 or more hook functions and call &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#MainEx&#34;&gt;sparta.MainEx&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;notes&#34;&gt;Notes&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Workflow hooks can be used to support &lt;a href=&#34;https://github.com/mweagle/SpartaDocker&#34;&gt;Dockerizing&lt;/a&gt; your application
+
+&lt;ul&gt;
+&lt;li&gt;You may need to add &lt;a href=&#34;http://gosparta.io/docs/application/custom_commands&#34;&gt;custom CLI commands&lt;/a&gt; to fully support Docker&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Enable &lt;code&gt;--level debug&lt;/code&gt; for detailed workflow hook debugging information&lt;/li&gt;
+&lt;/ul&gt;
 </description>
     </item>
     
