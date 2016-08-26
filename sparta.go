@@ -958,7 +958,7 @@ functionName string) (*LambdaAWSInfo, error) {
 	lambda := NewLambda(roleNameOrIAMRoleDefinition, fn, lambdaOptions)
 	lambda.functionName = functionName
 
-	return lambda
+	return lambda, nil
 }
 
 // NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
