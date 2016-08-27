@@ -596,6 +596,9 @@ type LambdaAWSInfo struct {
 	lambdaFnName string
 	// pointer to lambda function
 	lambdaFn LambdaFunction
+	// function name used in the CloudFormation template to define a function name that is
+	// easily known and doesn't change between deployments
+	functionName string
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
 	// the FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 	// docs for more info.
@@ -726,6 +729,13 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Runtime:     gocf.String(NodeJSVersion),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
+	}
+
+	// Need to check if a functionName exists in the LambdaAwsInfo struct
+	// If an empty string is passed, the template will error with invalid
+	// function name.
+	if "" != info.functionName {
+		lambdaResource.FunctionName = gocf.String(info.functionName)
 	}
 
 	cfResource := template.AddResource(info.logicalName(), lambdaResource)
@@ -934,6 +944,24 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 		lambda.Options.Timeout = 3
 	}
 	return lambda
+}
+
+// NewNamedLambda returns a LambdaAWSInfo value with a declared function name that can be provisioned
+// via CloudFormation. The `functionName` value must be a non-empty string, otherwise CloudFormation
+// will error out as "" is not a valid function name. The roleNameOrIAMRoleDefinition must either be
+// a `string` or `IAMRoleDefinition` type
+func NewNamedLambda(roleNameOrIAMRoleDefinition interface{},
+fn LambdaFunction,
+lambdaOptions *LambdaFunctionOptions,
+functionName string) (*LambdaAWSInfo, error) {
+	if functionName == "" {
+		return nil, errors.New("Invalid 'functionName' parameter, cannot be nil or empty")
+	}
+
+	lambda := NewLambda(roleNameOrIAMRoleDefinition, fn, lambdaOptions)
+	lambda.functionName = functionName
+
+	return lambda, nil
 }
 
 // NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
