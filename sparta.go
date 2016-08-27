@@ -951,9 +951,9 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 // will error out as "" is not a valid function name. The roleNameOrIAMRoleDefinition must either be
 // a `string` or `IAMRoleDefinition` type
 func NewNamedLambda(roleNameOrIAMRoleDefinition interface{},
-fn LambdaFunction,
-lambdaOptions *LambdaFunctionOptions,
-functionName string) (*LambdaAWSInfo, error) {
+	fn LambdaFunction,
+	lambdaOptions *LambdaFunctionOptions,
+	functionName string) (*LambdaAWSInfo, error) {
 	if functionName == "" {
 		return nil, errors.New("Invalid 'functionName' parameter, cannot be nil or empty")
 	}
