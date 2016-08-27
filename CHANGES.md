@@ -1,3 +1,10 @@
+## v0.8.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
+  - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
+- :bug: **FIXED**
+  - N/A
 
 ## v0.8.0
 - :warning: **BREAKING**
