@@ -1,5 +1,17 @@
 ## v0.8.1
 - :warning: **BREAKING**
+  - `NewMethod` and `NewAuthorizedMethod` signature changed to include new, final parameter that marks the _default_ integration response code.
+    - Prior to this change, Sparta would automatically use `200` for all non-POST requests, and `201` for POST requests. The change allows you to control whitelisted headers to be returned through APIGateway as in:
+    ```
+    apiGWMethod, apiGWMethodErr := apiGatewayResource.NewMethod("GET", 200)
+    if nil != apiGWMethodErr {
+      panic("Failed to create /hello resource")
+    }
+    apiGWMethod.Responses[200].Parameters = map[string]bool{
+      "method.response.header.Location": true,
+    }
+    apiGWMethod.Integration.Responses[200].Parameters["method.response.header.Location"] = "integration.response.body.location"
+    ```
 - :checkered_flag: **CHANGES**
   - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
