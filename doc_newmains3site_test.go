@@ -30,7 +30,7 @@ func ExampleMain_s3Site() {
 	// Create a lambda function
 	echoS3SiteAPIGatewayEventLambdaFn := NewLambda(IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
 	apiGatewayResource, _ := apiGateway.NewResource("/hello", echoS3SiteAPIGatewayEventLambdaFn)
-	_, err := apiGatewayResource.NewMethod("GET")
+	_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 	if nil != err {
 		panic("Failed to create GET resource")
 	}

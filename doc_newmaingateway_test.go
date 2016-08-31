@@ -38,7 +38,7 @@ func ExampleMain_apiGateway() {
 	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
 
 	// Associate 1 or more HTTP methods with the Resource.
-	apiGatewayResource.NewMethod("GET")
+	apiGatewayResource.NewMethod("GET", http.StatusOK)
 
 	// After the stack is deployed, the
 	// echoAPIGatewayEvent lambda function will be available at:

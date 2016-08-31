@@ -47,7 +47,7 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)
 
 	// Associate 1 or more HTTP methods with the Resource.
-	method, err := apiGatewayResource.NewMethod("GET")
+	method, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 	if err != nil {
 		panic("Failed to create NewMethod")
 	}
