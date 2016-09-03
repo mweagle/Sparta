@@ -2,18 +2,26 @@
 - :warning: **BREAKING**
   - `NewMethod` and `NewAuthorizedMethod` signature changed to include new, final parameter that marks the _default_ integration response code.
     - Prior to this change, Sparta would automatically use `http.StatusOK` for all non-POST requests, and `http.StatusCreated` for POST requests. The change allows you to control whitelisted headers to be returned through APIGateway as in:
-    ```
-    apiGWMethod, apiGWMethodErr := apiGatewayResource.NewMethod("GET", http.StatusOK)
-    if nil != apiGWMethodErr {
-      panic("Failed to create /hello resource")
+    ```golang
+    // API response struct
+    type helloWorldResponse struct {
+      Location string `json:"location"`
+      Body     string `json:"body"`
     }
+    //
+    // Promote the location key value to an HTTP header
+    //
+    apiGWMethod, _ := apiGatewayResource.NewMethod("GET", http.StatusOK)
     apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
       "method.response.header.Location": true,
     }
     apiGWMethod.Integration.Responses[http.StatusOK].Parameters["method.response.header.Location"] = "integration.response.body.location"
     ```
 - :checkered_flag: **CHANGES**
-  - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
+  - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames]
+  - Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html)(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
+  - Removed all NodeJS shim `dependencies` from _./resources/provision/package.json_
+  - Added utility CloudFormation script _./aws/cloudformation/cli/describe.go_ which produces a JSON serialization of a [DescribeStacksOutput](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#DescribeStacksOutput) struct for build-time discovery of cluster-scoped resources.
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
 - :bug: **FIXED**
   - N/A
@@ -32,6 +40,11 @@
   - Artifacts posted to S3 are now scoped by `serviceName`
   - Add `sparta.MainEx` for non-breaking signature extension
 - :bug: **FIXED**
+  - (@sdbeard) Fixed latent bug in Kinesis event source subscriptions that caused `ValidationError`s during provisioning:
+    ```bash
+    ERRO[0028] ValidationError: [/Resources/IAMRole3dbc1b4199ad659e6267d25cfd8cc63b4124530d/Type/Policies/0/PolicyDocument/Statement/5/Resource] 'null' values are not allowed in templates
+        status code: 400, request id: ed5fae8e-7103-11e6-8d13-b943b498f5a2
+    ```
   - Fixed latent bug in [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) when parsing input with multiple AWS JSON fragments.
   - Fixed latent bug in [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) which prevented dependent resources from being discovered at Lambda execution time.
   - Fixed latent bug in [explore.NewAPIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/explore#NewAPIGatewayRequest) where whitelisted param keynames were unmarshalled to `method.request.TYPE.VALUE` rather than `TYPE`.
@@ -305,6 +318,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
 - Add _.travis.yml_ for CI support.
 - :checkered_flag: **CHANGES**
+    - Added [spartaCF.AddAutoIncrementingLambdaVersionResource](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AddAutoIncrementingLambdaVersionResource) to support Lambda function versions.
     - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
       - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
     - Improved API Gateway `describe` output.
