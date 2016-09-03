@@ -4,13 +4,25 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudformation"
 	gocf "github.com/crewjam/go-cloudformation"
+	sparta "github.com/mweagle/Sparta"
 	"io"
 	"io/ioutil"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 )
+
+var cloudFormationStackTemplateMap map[string]*gocf.Template
+
+func init() {
+	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private
@@ -238,4 +250,90 @@ func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateP
 		additionalTemplateProps: additionalUserTemplateProperties,
 	}
 	return converter.expandTemplate().parseData().results()
+}
+
+// AddAutoIncrementingLambdaVersionResource inserts a new
+// AWS::Lambda::Version resource into the template. It uses
+// the existing CloudFormation template representation
+// to determine the
+func AddAutoIncrementingLambdaVersionResource(serviceName string,
+	lambdaResourceName string,
+	cfTemplate *gocf.Template,
+	logger *logrus.Logger) error {
+
+	stackTemplate, exists := cloudFormationStackTemplateMap[serviceName]
+	if !exists {
+		// Get the template
+		sess, err := session.NewSession()
+		if err != nil {
+			fmt.Println("failed to create AWS session,", err)
+			return err
+		}
+		logger.WithFields(logrus.Fields{
+			"Service": serviceName,
+		}).Info("Fetching existing Stack template for Lambda function versioning")
+
+		svc := cloudformation.New(sess)
+		params := &cloudformation.GetTemplateInput{
+			StackName: aws.String(serviceName),
+		}
+		getTemplate, getTemplateErr := svc.GetTemplate(params)
+		if nil != getTemplateErr {
+			logger.WithFields(logrus.Fields{
+				"GetTemplateErr": getTemplateErr,
+			}).Debug("Error fetching current template")
+
+			if strings.Contains(getTemplateErr.Error(), "does not exist") {
+				cloudFormationStackTemplateMap[serviceName] = nil
+				stackTemplate = nil
+			} else {
+				return getTemplateErr
+			}
+		} else {
+			t := gocf.Template{}
+			decodeErr := json.NewDecoder(strings.NewReader(*(getTemplate.TemplateBody))).Decode(&t)
+			if nil != decodeErr {
+				return decodeErr
+			}
+			cloudFormationStackTemplateMap[serviceName] = &t
+			stackTemplate = &t
+		}
+	}
+
+	lambdaVersionResourceName := func(versionIndex int) string {
+		return sparta.CloudFormationResourceName(lambdaResourceName,
+			"version",
+			strconv.Itoa(versionIndex))
+	}
+
+	nextVersion := 1
+	if nil != stackTemplate {
+		// Copy all the existing resources starting with nextVersion
+		for nextVersion >= 0 {
+			testVersionName := lambdaVersionResourceName(nextVersion)
+			existingResource, exists := stackTemplate.Resources[testVersionName]
+			if exists {
+				logger.WithFields(logrus.Fields{
+					"Version":  nextVersion,
+					"Resource": existingResource,
+				}).Debug("Preserving Lambda version")
+
+				cfTemplate.Resources[testVersionName] = existingResource
+				nextVersion++
+			} else {
+				break
+			}
+		}
+	}
+
+	// Then add a new version resource
+	versionResource := &gocf.LambdaVersion{
+		FunctionName: gocf.GetAtt(lambdaResourceName, "Arn").String(),
+	}
+	cfTemplate.AddResource(lambdaVersionResourceName(nextVersion), versionResource)
+	logger.WithFields(logrus.Fields{
+		"Version":  nextVersion,
+		"Function": lambdaResourceName,
+	}).Info("Registering new AWS::Lambda::Version resource")
+	return nil
 }
