@@ -596,7 +596,7 @@ type LambdaAWSInfo struct {
 	lambdaFnName string
 	// pointer to lambda function
 	lambdaFn LambdaFunction
-	// function name used in the CloudFormation template to define a function name that is
+	// User defined name used in the CloudFormation template to define a function name that is
 	// easily known and doesn't change between deployments
 	functionName string
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
@@ -680,7 +680,12 @@ func (info *LambdaAWSInfo) logicalName() string {
 	// Per http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html,
 	// we can only use alphanumeric, so we'll take the sanitized name and
 	// remove all underscores
-	resourceName := strings.Replace(sanitizedName(info.lambdaFnName), "_", "", -1)
+	// Prefer the user-supplied stable name to the internal one.
+	baseName := info.functionName
+	if "" == baseName {
+		baseName = info.lambdaFnName
+	}
+	resourceName := strings.Replace(sanitizedName(baseName), "_", "", -1)
 	prefix := fmt.Sprintf("%sLambda", resourceName)
 	return CloudFormationResourceName(prefix, info.lambdaFnName)
 }
