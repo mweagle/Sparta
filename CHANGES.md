@@ -18,8 +18,18 @@
     apiGWMethod.Integration.Responses[http.StatusOK].Parameters["method.response.header.Location"] = "integration.response.body.location"
     ```
 - :checkered_flag: **CHANGES**
-  - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames]
-  - Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html)(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
+  - Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname)
+  - Added [spartaCF.AddAutoIncrementingLambdaVersionResource](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AddAutoIncrementingLambdaVersionResource) to support Lambda function versions.  Should be called from a TemplateDecorator. Usage:
+    ```golang
+    autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+      lambdaResourceName,
+      cfTemplate,
+      logger)
+    if nil != autoIncrementingInfoErr {
+      return autoIncrementingInfoErr
+    }
+    ```
+  - Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html).html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
   - Removed all NodeJS shim `dependencies` from _./resources/provision/package.json_
   - Added utility CloudFormation script _./aws/cloudformation/cli/describe.go_ which produces a JSON serialization of a [DescribeStacksOutput](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#DescribeStacksOutput) struct for build-time discovery of cluster-scoped resources.
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
@@ -318,7 +328,6 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
 - Add _.travis.yml_ for CI support.
 - :checkered_flag: **CHANGES**
-    - Added [spartaCF.AddAutoIncrementingLambdaVersionResource](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AddAutoIncrementingLambdaVersionResource) to support Lambda function versions.
     - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
       - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
     - Improved API Gateway `describe` output.
