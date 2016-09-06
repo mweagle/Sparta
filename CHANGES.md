@@ -1,6 +1,6 @@
 ## v0.9.0
 - :warning: **BREAKING**
-  - `NewMethod` and `NewAuthorizedMethod` signature changed to include new, final parameter that marks the _default_ integration response code.
+  - `NewMethod` and `NewAuthorizedMethod` for APIGateway definitions have been changed to include new, final parameter that marks the _default_ integration response code.
     - Prior to this change, Sparta would automatically use `http.StatusOK` for all non-POST requests, and `http.StatusCreated` for POST requests. The change allows you to control whitelisted headers to be returned through APIGateway as in:
     ```golang
     // API response struct
