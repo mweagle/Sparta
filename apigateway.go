@@ -435,8 +435,9 @@ func (api *API) export(serviceName string,
 
 	// List of all the method resources we're creating s.t. the
 	// deployment can DependOn them
+	optionsMethodPathMap := make(map[string]bool)
 	var apiMethodCloudFormationResources []string
-	for eachResourcePath, eachResourceDef := range api.resources {
+	for eachResourceMethodKey, eachResourceDef := range api.resources {
 		// First walk all the user resources and create intermediate paths
 		// to repreesent all the resources
 		var parentResource *gocf.StringExpr
@@ -461,7 +462,7 @@ func (api *API) export(serviceName string,
 		}
 
 		// Add the lambda permission
-		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm", eachResourcePath)
+		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm", eachResourceMethodKey)
 		lambdaInvokePermission := &gocf.LambdaPermission{
 			Action:       gocf.String("lambda:InvokeFunction"),
 			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
@@ -470,11 +471,17 @@ func (api *API) export(serviceName string,
 		template.AddResource(apiGatewayPermissionResourceName, lambdaInvokePermission)
 
 		// BEGIN CORS - OPTIONS verb
-		// Then if the api is CORS enabled, setup the options method
+		// CORS is API global, but it's possible that there are multiple different lambda functions
+		// that are handling the same HTTP resource. In this case, track whether we've already created an
+		// OPTIONS entry for this path and only append iff this is the first time through
 		if api.CORSEnabled {
-			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS", eachResourcePath), eachResourcePath)
-			template.AddResource(methodResourceName, corsOptionsGatewayMethod(apiGatewayRestAPIID, parentResource))
-			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
+			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS", eachResourceDef.pathPart), eachResourceDef.pathPart)
+			_, resourceExists := optionsMethodPathMap[methodResourceName]
+			if !resourceExists {
+				template.AddResource(methodResourceName, corsOptionsGatewayMethod(apiGatewayRestAPIID, parentResource))
+				apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
+				optionsMethodPathMap[methodResourceName] = true
+			}
 		}
 		// END CORS - OPTIONS verb
 
@@ -507,8 +514,8 @@ func (api *API) export(serviceName string,
 			apiGatewayMethod.MethodResponses = methodResponses(eachMethodDef.Responses,
 				api.CORSEnabled)
 
-			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourcePath)
-			methodResourceName := CloudFormationResourceName(prefix, eachResourcePath, serviceName)
+			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourceMethodKey)
+			methodResourceName := CloudFormationResourceName(prefix, eachResourceMethodKey, serviceName)
 			res := template.AddResource(methodResourceName, apiGatewayMethod)
 			res.DependsOn = append(res.DependsOn, apiGatewayPermissionResourceName)
 			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
@@ -597,7 +604,10 @@ func NewStage(name string) *Stage {
 // NewResource associates a URL path value with the LambdaAWSInfo golang lambda.  To make
 // the Resource available, associate one or more Methods via NewMethod().
 func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Resource, error) {
-	_, exists := api.resources[pathPart]
+	// The key is the path+resource, since we want to support POLA scoped
+	// security roles based on HTTP method
+	resourcesKey := fmt.Sprintf("%s%s", parentLambda.lambdaFnName, pathPart)
+	_, exists := api.resources[resourcesKey]
 	if exists {
 		return nil, fmt.Errorf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFnName)
 	}
@@ -606,7 +616,7 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 		parentLambda: parentLambda,
 		Methods:      make(map[string]*Method, 0),
 	}
-	api.resources[pathPart] = resource
+	api.resources[resourcesKey] = resource
 	return resource, nil
 }
 
