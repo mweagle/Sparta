@@ -144,16 +144,16 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   var onProxyComplete = function (err, response) {
     try {
       responseEndDuration = process.hrtime(requestTime)
-      lambdaCallback(err, response)
-
       postRequestMetrics(path,
         startRemainingCountMillis,
         socketDuration,
         lambdaBodyLength,
         writeCompleteDuration,
         responseEndDuration)
+
+      context.done(err, response)
     } catch (e) {
-      spartaUtils.log({ERROR: e.toString()})
+      context.done(e, null)
     }
   }
 
@@ -240,7 +240,10 @@ var ensureGoLangBinary = function (callback) {
         console.error(err)
         process.exit(1)
       } else {
-        spartaUtils.log(stdout.toString('utf-8'))
+        var stdoutMsg = stdout.toString('utf-8')
+        if (stdoutMsg.length !== 0) {
+          spartaUtils.log(stdoutMsg)
+        }
       // Post the
       }
       callback(err, stdout)
