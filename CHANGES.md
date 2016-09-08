@@ -33,13 +33,15 @@
     }
     ```
 
-  - Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html).html#cfn-lambda-function-functionname) <[sdbeard](https://github.com/sdbeard)>
+  - (@sdbeard) Added new [CloudWatch Metrics](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CW_Support_For_AWS.html.html#cfn-lambda-function-functionname) for lambda execution
   - Removed all NodeJS shim `dependencies` from _./resources/provision/package.json_
   - Added utility CloudFormation script _./aws/cloudformation/cli/describe.go_ which produces a JSON serialization of a [DescribeStacksOutput](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#DescribeStacksOutput) struct for build-time discovery of cluster-scoped resources.
   - Relaxed constraint that an API GW resource is bound to single Sparta lambda function. You can now register per-HTTP method name lambda functions for the same API GW resource.
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
 - :bug: **FIXED**
-  - N/A
+  - https://github.com/mweagle/Sparta/issues/19
+  - https://github.com/mweagle/Sparta/issues/16
+  - https://github.com/mweagle/Sparta/issues/15
 
 ## v0.8.0
 - :warning: **BREAKING**
