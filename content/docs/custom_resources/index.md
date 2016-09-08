@@ -121,8 +121,10 @@ lambdaFn.Decorator = func(serviceName string,
 	resourceMetadata map[string]interface{},
 	S3Bucket string,
 	S3Key string,
-	template *gocf.Template,
-	logger *logrus.Logger) error {
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger)  error {
 
   // Pass CustomResource outputs to the λ function
   resourceMetadata["CustomResource"] = gocf.GetAtt(cfResName, "CustomResourceResult")

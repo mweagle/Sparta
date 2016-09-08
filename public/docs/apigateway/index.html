@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  212 
+    "wordCount":  318 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 googleplus: facebook: youtube: name:lumen bitbucket:]">
+<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle youtube:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -350,6 +350,7 @@
       <nav id="TableOfContents">
 <ul>
 <li><a href="#concepts">Concepts</a></li>
+<li><a href="#custom-http-headers">Custom HTTP Headers</a></li>
 <li><a href="#other-resources">Other Resources</a></li>
 </ul>
 </nav>
@@ -397,6 +398,37 @@
 </ol>
 
 <p>With that overview, let&rsquo;s start with a simple <a href="/docs/apigateway/example1">example</a>.</p>
+
+<h1 id="custom-http-headers">Custom HTTP Headers</h1>
+
+<p>API Gateway supports returning custom HTTP headers whose values are extracted from your response payload.</p>
+
+<p>Assume your Sparta lambda function returns a JSON struct as in:</p>
+
+<pre><code class="language-golang">// API response struct
+type helloWorldResponse struct {
+  Location string `json:&quot;location&quot;`
+  Body     string `json:&quot;body&quot;`
+}
+</code></pre>
+
+<p>To extract the <code>location</code> field and promote it to the HTTP <code>Location</code> header, you must configure the <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html">response data mappings</a>:</p>
+
+<pre><code class="language-golang">//
+// Promote the location key value to an HTTP header
+//
+lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorldResponseFunc, nil)
+	apiGatewayResource, _ := api.NewResource(&quot;/hello&quot;, lambdaFn)
+
+apiGWMethod, _ := apiGatewayResource.NewMethod(&quot;GET&quot;, http.StatusOK)
+apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
+  &quot;method.response.header.Location&quot;: true,
+}
+apiGWMethod.Integration.Responses[http.StatusOK].Parameters[&quot;method.response.header.Location&quot;] = &quot;integration.response.body.location&quot;
+
+</code></pre>
+
+<p>See the related <a href="https://forums.aws.amazon.com/thread.jspa?threadID=199443">AWS Forum thread</a>.</p>
 
 <h1 id="other-resources">Other Resources</h1>
 

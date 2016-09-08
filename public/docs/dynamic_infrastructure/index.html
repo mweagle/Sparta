@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1076 
+    "wordCount":  1080 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: googleplus: facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: home:Sparta]">
+<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: googleplus: facebook: twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -495,8 +495,10 @@ graph LR
 	resourceMetadata map[string]interface{},
 	S3Bucket string,
 	S3Key string,
-	template *gocf.Template,
-	logger *logrus.Logger) error {
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger)  error {
 
 }
 </code></pre>

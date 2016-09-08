@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  349 
+    "wordCount":  456 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: facebook: youtube: name:lumen bitbucket: github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1]">
+<body class="map[github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr: youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -364,6 +364,7 @@
 <li><a href="#where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
 <li><a href="#where-can-i-view-sparta-s-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
 <li><a href="#how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</a></li>
+<li><a href="#does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</a></li>
 <li><a href="#how-do-i-forward-additional-metrics">How do I forward additional metrics?</a></li>
 <li><a href="#how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</a></li>
 <li><a href="#how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
@@ -432,6 +433,30 @@
 <h2 id="how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</h2>
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
+
+<h2 id="does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</h2>
+
+<p>Yes.</p>
+
+<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
+
+<pre><code class="language-golang">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+  lambdaResourceName,
+  cfTemplate,
+  logger)
+</code></pre>
+
+<p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
+
+<pre><code class="language-go">// Add an alias to the version we're publishing as part of this `provision` operation
+aliasResourceName := sparta.CloudFormationResourceName(&quot;Alias&quot;, lambdaResourceName)
+aliasResource := &amp;gocf.LambdaAlias{
+    Name:            gocf.String(&quot;MostRecentVersion&quot;),
+    FunctionName:    gocf.Ref(lambdaResourceName).String(),
+    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, &quot;Version&quot;).String(),
+}
+cfTemplate.AddResource(aliasResourceName, aliasResource)
+</code></pre>
 
 <h2 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h2>
 

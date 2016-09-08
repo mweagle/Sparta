@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1425 
+    "wordCount":  1429 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[twitter:mweagle flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle youtube: name:lumen bitbucket: googleplus: facebook:]">
+<body class="map[twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -383,8 +383,7 @@
 <ul>
 <li>Long running tasks</li>
 <li>Tasks with significant disk space requirements</li>
-<li>Large HTTP(S) I/O tasks
-<br /></li>
+<li>Large HTTP(S) I/O tasks</li>
 </ul>
 
 <p>It may also make sense to integrate EC2 when:</p>
@@ -429,7 +428,7 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
 SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{ .ServiceName }}.lambda.amd64
 
 ################################################################################
-# 
+#
 # Tested on Ubuntu 16.04
 #
 # AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
@@ -441,8 +440,8 @@ fi
 
 # Install everything
 service supervisor stop || apt-get install supervisor -y
-apt-get update -y 
-apt-get upgrade -y 
+apt-get update -y
+apt-get upgrade -y
 apt-get install supervisor awscli unzip git -y
 
 ################################################################################
@@ -456,7 +455,7 @@ chmod &#43;x $SPARTA_OMEGA_BINARY_PATH
 # REF: http://supervisord.org/
 # Cleanout secondary directory
 mkdir -pv /etc/supervisor/conf.d
-  
+
 SPARTA_OMEGA_SUPERVISOR_CONF=&#34;[program:spartaomega]
 command=$SPARTA_OMEGA_BINARY_PATH httpServer
 numprocs=1
@@ -517,13 +516,15 @@ service supervisor restart || service supervisor start</code></pre>
 func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
 
   return func(serviceName string,
-    lambdaResourceName string,
-    lambdaResource gocf.LambdaFunction,
-    resourceMetadata map[string]interface{},
-    S3Bucket string,
-    S3Key string,
-    template *gocf.Template,
-    logger *logrus.Logger) error {
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
 
     // Create the launch configuration with Metadata to download the ZIP file, unzip it &amp; launch the
     // golang binary...
@@ -605,7 +606,7 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
       return userDataTemplateInputErr
     }
     templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
                                                                                       userDataProps)
     if nil != userDataExpressionErr {
       return userDataExpressionErr
@@ -671,7 +672,7 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
     }
     // ...
     templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
                                                                                       userDataProps)
     // ...
     asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{

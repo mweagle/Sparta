@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.  
+One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 
   * [Example 1 - Echo Event](/docs/apigateway/example1)
   * [Example 2 - User Input & JSON Response](/docs/apigateway/example2)
@@ -16,7 +16,7 @@ One of the most powerful ways to use AWS Lambda is to make function publicly ava
 
 # Concepts
 
-Before moving on to the examples, it's suggested you familiarize yourself with the API Gateway concepts.  
+Before moving on to the examples, it's suggested you familiarize yourself with the API Gateway concepts.
 
   * [Gettting Started with Amazon API Gateway](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started-intro.html)
 
@@ -35,6 +35,43 @@ The API Gateway presents a powerful and complex domain model.  In brief, to inte
   1. Deploy the given stage
 
 With that overview, let's start with a simple [example](/docs/apigateway/example1).
+
+
+# Custom HTTP Headers
+
+API Gateway supports returning custom HTTP headers whose values are extracted from your response payload.
+
+Assume your Sparta lambda function returns a JSON struct as in:
+
+```golang
+// API response struct
+type helloWorldResponse struct {
+  Location string `json:"location"`
+  Body     string `json:"body"`
+}
+```
+
+To extract the `location` field and promote it to the HTTP `Location` header, you must configure the [response data mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html
+):
+
+
+```golang
+//
+// Promote the location key value to an HTTP header
+//
+lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorldResponseFunc, nil)
+	apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
+
+apiGWMethod, _ := apiGatewayResource.NewMethod("GET", http.StatusOK)
+apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
+  "method.response.header.Location": true,
+}
+apiGWMethod.Integration.Responses[http.StatusOK].Parameters["method.response.header.Location"] = "integration.response.body.location"
+
+```
+
+See the related [AWS Forum thread](https://forums.aws.amazon.com/thread.jspa?threadID=199443).
+
 
 # Other Resources
   * [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)

@@ -12,22 +12,22 @@ At a broad level, AWS Lambda represents a new level of compute abstraction for s
 
 However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks.  For example, given the current [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html), the following task types might better be handled by "legacy" AWS services:
 
-  * Long running tasks 
+  * Long running tasks
   * Tasks with significant disk space requirements
   * Large HTTP(S) I/O tasks
-  
+
 It may also make sense to integrate EC2 when:
 
   * Applications are being gradually decomposed into Lambda functions
   * Latency-sensitive request paths can't afford [cold container](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/) startup times
-  * Price/performance justifies using EC2 
+  * Price/performance justifies using EC2
   * Using EC2 as a failover for system-wide Lambda outages
 
 For such cases, Sparta supports running the exact same binary on EC2.  This section describes how to create a single Sparta service that publishes a function via AWS Lambda _and_ EC2 as part of the same application codebase. It's based on the [SpartaOmega](https://github.com/mweagle/SpartaOmega) project.
 
 # Mixed Topology
 
-Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no "make mixed" command line option. 
+Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no "make mixed" command line option.
 
 ## Add Custom Command Line Option
 
@@ -51,14 +51,14 @@ Our command doesn't accept any additional flags. If your command needs additiona
 
 ## Create CloudInit Userdata
 
-The next step is to write a [user-data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary. 
+The next step is to write a [user-data](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.
 
 {{< highlight bash >}}
 #!/bin/bash -xe
 SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{ .ServiceName }}.lambda.amd64
 
 ################################################################################
-# 
+#
 # Tested on Ubuntu 16.04
 #
 # AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
@@ -70,8 +70,8 @@ fi
 
 # Install everything
 service supervisor stop || apt-get install supervisor -y
-apt-get update -y 
-apt-get upgrade -y 
+apt-get update -y
+apt-get upgrade -y
 apt-get install supervisor awscli unzip git -y
 
 ################################################################################
@@ -85,7 +85,7 @@ chmod +x $SPARTA_OMEGA_BINARY_PATH
 # REF: http://supervisord.org/
 # Cleanout secondary directory
 mkdir -pv /etc/supervisor/conf.d
-  
+
 SPARTA_OMEGA_SUPERVISOR_CONF="[program:spartaomega]
 command=$SPARTA_OMEGA_BINARY_PATH httpServer
 numprocs=1
@@ -128,7 +128,7 @@ It also uses the `S3Bucket` and `S3Key` properties that Sparta creates during th
 
 ### Notes
 
-The script is using [text/template](https://golang.org/pkg/text/template/) markup to expand properties known at build time.  Because this content will be parsed by [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) (next section), it's also possible to use [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.  
+The script is using [text/template](https://golang.org/pkg/text/template/) markup to expand properties known at build time.  Because this content will be parsed by [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) (next section), it's also possible to use [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.
 
 For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:
 
@@ -149,13 +149,15 @@ The final step is to use a [TemplateDecorator](https://godoc.org/github.com/mwea
 func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
 
   return func(serviceName string,
-    lambdaResourceName string,
-    lambdaResource gocf.LambdaFunction,
-    resourceMetadata map[string]interface{},
-    S3Bucket string,
-    S3Key string,
-    template *gocf.Template,
-    logger *logrus.Logger) error {
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
 
     // Create the launch configuration with Metadata to download the ZIP file, unzip it & launch the
     // golang binary...
@@ -237,7 +239,7 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
       return userDataTemplateInputErr
     }
     templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
                                                                                       userDataProps)
     if nil != userDataExpressionErr {
       return userDataExpressionErr
@@ -305,7 +307,7 @@ There are a few things to point out in this function:
     }
     // ...
     templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader, 
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
                                                                                       userDataProps)
     // ...
     asgLaunchConfigurationResource := &gocf.AutoScalingLaunchConfiguration{
@@ -363,12 +365,12 @@ Hello world from SpartaOmega!
 
 # Conclusion
 
-Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.  
+Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.
 
 # Notes
-  - The [SpartaOmega](https://github.com/mweagle/SpartaOmega) sample application uses [supervisord](http://supervisord.org/) for process monitoring. 
+  - The [SpartaOmega](https://github.com/mweagle/SpartaOmega) sample application uses [supervisord](http://supervisord.org/) for process monitoring.
   - The current _userdata.sh_ script isn't sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include [cfn-hup](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html) listeners.
   - Production deployments may consider [CodeDeploy](https://aws.amazon.com/codedeploy/) to assist in HA binary rollover.
-  - Forwarding [CloudWatch Logs](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html) is not handled by this sample. 
+  - Forwarding [CloudWatch Logs](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html) is not handled by this sample.
   - Consider using HTTPS & [Let's Encrypt](https://ivopetkov.com/b/let-s-encrypt-on-ec2/) on your EC2 instances.
 

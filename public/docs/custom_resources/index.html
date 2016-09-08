@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  838 
+    "wordCount":  842 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[flattr: home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle name:lumen bitbucket: googleplus: facebook: youtube:]">
+<body class="map[facebook: twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -489,8 +489,10 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 	resourceMetadata map[string]interface{},
 	S3Bucket string,
 	S3Key string,
-	template *gocf.Template,
-	logger *logrus.Logger) error {
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger)  error {
 
   // Pass CustomResource outputs to the λ function
   resourceMetadata[&quot;CustomResource&quot;] = gocf.GetAtt(cfResName, &quot;CustomResourceResult&quot;)

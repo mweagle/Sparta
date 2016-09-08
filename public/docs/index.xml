@@ -750,6 +750,30 @@ graph TD
 
 &lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with additional AWS resources.&lt;/p&gt;
 
+&lt;h2 id=&#34;does-sparta-support-versioning-aliasing&#34;&gt;Does Sparta support Versioning &amp;amp; Aliasing?&lt;/h2&gt;
+
+&lt;p&gt;Yes.&lt;/p&gt;
+
+&lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with an &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo&#34;&gt;AutoIncrementingLambdaVersionInfo&lt;/a&gt; resource. During each &lt;code&gt;provision&lt;/code&gt; operation, the &lt;code&gt;AutoIncrementingLambdaVersionInfo&lt;/code&gt; resource will dynamically update the CloudFormation template with a new version.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+  lambdaResourceName,
+  cfTemplate,
+  logger)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can also move the &amp;ldquo;alias pointer&amp;rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+aliasResourceName := sparta.CloudFormationResourceName(&amp;quot;Alias&amp;quot;, lambdaResourceName)
+aliasResource := &amp;amp;gocf.LambdaAlias{
+    Name:            gocf.String(&amp;quot;MostRecentVersion&amp;quot;),
+    FunctionName:    gocf.Ref(lambdaResourceName).String(),
+    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, &amp;quot;Version&amp;quot;).String(),
+}
+cfTemplate.AddResource(aliasResourceName, aliasResource)
+&lt;/code&gt;&lt;/pre&gt;
+
 &lt;h2 id=&#34;how-do-i-forward-additional-metrics&#34;&gt;How do I forward additional metrics?&lt;/h2&gt;
 
 &lt;p&gt;Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics &lt;code&gt;putMetric&lt;/code&gt; privileges.  Your lambda code can call &lt;code&gt;putMetric&lt;/code&gt; with application-specific data.&lt;/p&gt;
@@ -812,6 +836,37 @@ graph TD
 &lt;/ol&gt;
 
 &lt;p&gt;With that overview, let&amp;rsquo;s start with a simple &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;example&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;custom-http-headers&#34;&gt;Custom HTTP Headers&lt;/h1&gt;
+
+&lt;p&gt;API Gateway supports returning custom HTTP headers whose values are extracted from your response payload.&lt;/p&gt;
+
+&lt;p&gt;Assume your Sparta lambda function returns a JSON struct as in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// API response struct
+type helloWorldResponse struct {
+  Location string `json:&amp;quot;location&amp;quot;`
+  Body     string `json:&amp;quot;body&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To extract the &lt;code&gt;location&lt;/code&gt; field and promote it to the HTTP &lt;code&gt;Location&lt;/code&gt; header, you must configure the &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html&#34;&gt;response data mappings&lt;/a&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;//
+// Promote the location key value to an HTTP header
+//
+lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorldResponseFunc, nil)
+	apiGatewayResource, _ := api.NewResource(&amp;quot;/hello&amp;quot;, lambdaFn)
+
+apiGWMethod, _ := apiGatewayResource.NewMethod(&amp;quot;GET&amp;quot;, http.StatusOK)
+apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
+  &amp;quot;method.response.header.Location&amp;quot;: true,
+}
+apiGWMethod.Integration.Responses[http.StatusOK].Parameters[&amp;quot;method.response.header.Location&amp;quot;] = &amp;quot;integration.response.body.location&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;See the related &lt;a href=&#34;https://forums.aws.amazon.com/thread.jspa?threadID=199443&#34;&gt;AWS Forum thread&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h1 id=&#34;other-resources&#34;&gt;Other Resources&lt;/h1&gt;
 
