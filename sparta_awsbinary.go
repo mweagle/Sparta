@@ -7,10 +7,9 @@ package sparta
 
 import (
 	"errors"
+	"github.com/Sirupsen/logrus"
 	"io"
 	"syscall"
-
-	"github.com/Sirupsen/logrus"
 )
 
 // Delete is not available in the AWS Lambda binary

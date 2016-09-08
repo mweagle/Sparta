@@ -49,7 +49,7 @@ generate:
 	@echo "Generate complete: `date`"
 
 validate:
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 15 .
+	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 16 .
 	go tool vet *.go
 	go tool vet ./explore
 	go tool vet ./aws/

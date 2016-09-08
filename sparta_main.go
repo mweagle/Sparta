@@ -393,7 +393,7 @@ func MainEx(serviceName string,
 			"validationResults": validationResults,
 			"validateErr":       validateErr,
 			"optionsProvision":  optionsProvision,
-		}).Debug("Provision Validation")
+		}).Debug("Provision validation results")
 		return validateErr
 	}
 

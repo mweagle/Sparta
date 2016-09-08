@@ -1,11 +1,5 @@
 // TODO: make `go generate` work on windows
 
-//go:generate rm -rf ./resources/provision/node_modules
-//go:generate npm install ./resources/provision/ --prefix ./resources/provision --silent
-// Zip up the modules
-//go:generate bash -c "pushd ./resources/provision; zip -qr ./node_modules.zip ./node_modules/"
-//go:generate rm -rf ./resources/provision/node_modules
-
 // Embed the custom service handlers
 // TODO: Once AWS lambda supports golang as first class, move the
 // NodeJS custom action helpers into golang

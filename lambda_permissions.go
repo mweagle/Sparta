@@ -912,7 +912,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 		if nil != eachRuleDefinition.EventPattern {
 			eventsRule.EventPattern = eachRuleDefinition.EventPattern
 		} else if "" != eachRuleDefinition.ScheduleExpression {
-			eventsRule.ScheduleExpression = eachRuleDefinition.ScheduleExpression
+			eventsRule.ScheduleExpression = gocf.String(eachRuleDefinition.ScheduleExpression)
 		}
 		cloudWatchLogsEventResName := CloudFormationResourceName(fmt.Sprintf("%s-CloudWatchEventsRule", eachRuleName),
 			lambdaLogicalCFResourceName,

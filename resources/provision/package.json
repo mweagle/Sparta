@@ -9,7 +9,5 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "async": "1.5.2",
-    "underscore": "1.8.3"
   }
 }

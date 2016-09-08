@@ -1,73 +1,72 @@
-var _ = require('underscore');
+var isString = function (value) {
+  return typeof value === 'string'
+}
 
-module.exports.toBoolean = function(value) {
-  var bValue = value;
-  if (_.isString(bValue)) {
+module.exports.toBoolean = function (value) {
+  var bValue = value
+  if (isString(bValue)) {
     switch (bValue.toLowerCase().trim()) {
-      case "true":
-      case "1":
-        bValue = true;
-        break;
-      case "false":
-      case "0":
+      case 'true':
+      case '1':
+        bValue = true
+        break
+      case 'false':
+      case '0':
       case null:
-        bValue = false;
-        break;
+        bValue = false
+        break
       default:
-        bValue = false;
+        bValue = false
     }
   }
-  return bValue;
-};
+  return bValue
+}
 
-module.exports.idempotentDeleteHandler = function(successString, cb) {
-  return function(e, results) {
+module.exports.idempotentDeleteHandler = function (successString, cb) {
+  return function (e, results) {
     if (e) {
       if (e.toString().indexOf(successString) >= 0) {
-        e = null;
+        e = null
       }
     }
-    cb(e, results || true);
+    cb(e, results || true)
   }
-};
-module.exports.cfnResponseLocalTesting = function() {
-  console.log('Using local CFN response object');
+}
+module.exports.cfnResponseLocalTesting = function () {
+  console.log('Using local CFN response object')
   return {
-    FAILED : 'FAILED',
+    FAILED: 'FAILED',
     SUCCESS: 'SUCCESS',
-    send: function(event, context, status, responseData) {
-        var msg = {
-          event: event,
-          context: context,
-          result: status,
-          responseData: responseData
-        };
-        console.log(JSON.stringify(msg, null, ' '));
+    send: function (event, context, status, responseData) {
+      var msg = {
+        event: event,
+        context: context,
+        result: status,
+        responseData: responseData
+      }
+      console.log(JSON.stringify(msg, null, ' '))
     }
-  };
-};
+  }
+}
 
-module.exports.log = function(obj_or_string) {
-  if (_.isString(obj_or_string)) {
+module.exports.log = function (objOrString) {
+  if (isString(objOrString)) {
     try {
       // If it's empty, just skip it...
-      if (_.isEmpty(obj_or_string)) {
-        return;
+      if (objOrString.length <= 0) {
+        return
       }
-      obj_or_string = JSON.parse(obj_or_string);
+      objOrString = JSON.parse(objOrString)
     } catch (e) {
       // NOP
     }
   }
-  if (_.isString(obj_or_string)) {
-    obj_or_string = {msg: obj_or_string};
+  if (isString(objOrString)) {
+    objOrString = {msg: objOrString}
   }
-  if (obj_or_string.stack)
-  {
-    console.error();
+  if (objOrString.stack) {
+    console.error(objOrString)
+  } else {
+    console.log(JSON.stringify(objOrString))
   }
-  else
-  {
-    console.log(JSON.stringify(obj_or_string));
-  }
-};
+}

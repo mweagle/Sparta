@@ -4,7 +4,6 @@ package sparta
 
 import (
 	"archive/zip"
-	"bytes"
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
@@ -636,42 +635,6 @@ func writeNodeJSShim(serviceName string,
 	return copyErr
 }
 
-func insertNodeModulesArchive(provisioningResourcesRelPath string,
-	zipWriter *zip.Writer,
-	logger *logrus.Logger) error {
-
-	nodeModulesZipRelName := fmt.Sprintf("%s/node_modules.zip", provisioningResourcesRelPath)
-	nodeModuleBytes, err := _escFSByte(false, nodeModulesZipRelName)
-	if nil == err {
-		nodeModuleReader, errReader := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
-		if errReader != nil {
-			return errReader
-		}
-		logger.WithFields(logrus.Fields{
-			"Name": nodeModulesZipRelName,
-		}).Debug("Embedding CustomResource node_modules.zip")
-
-		for _, zipFile := range nodeModuleReader.File {
-			embedWriter, errCreate := zipWriter.Create(zipFile.Name)
-			if nil != errCreate {
-				return errCreate
-			}
-
-			sourceReader, errOpen := zipFile.Open()
-			if errOpen != nil {
-				return errOpen
-			}
-			io.Copy(embedWriter, sourceReader)
-		}
-	} else {
-		logger.WithFields(logrus.Fields{
-			"Name":  nodeModulesZipRelName,
-			"Error": err,
-		}).Warn("Failed to load node_modules.zip for embedding")
-	}
-	return nil
-}
-
 func writeCustomResources(zipWriter *zip.Writer,
 	logger *logrus.Logger) error {
 	for _, eachName := range customResourceScripts {
@@ -793,17 +756,7 @@ func createPackageStep() workflowStep {
 		ctx.logger.Debug("Embedding CustomResource scripts")
 		customResourceErr := writeCustomResources(lambdaArchive,
 			ctx.logger)
-		if nil != customResourceErr {
-			return nil, customResourceErr
-		}
-
-		// And finally, if there is a node_modules.zip file, then include it.  The
-		// node_modules archive includes supplementary libraries that the
-		// CustomResource handlers may need at CloudFormation stack creation time.
-		insertModulesErr := insertNodeModulesArchive(provisioningResourcesRelPath,
-			lambdaArchive,
-			ctx.logger)
-		return createUploadStep(tmpFile.Name()), insertModulesErr
+		return createUploadStep(tmpFile.Name()), customResourceErr
 	}
 }
 

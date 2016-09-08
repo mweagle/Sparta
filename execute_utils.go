@@ -6,9 +6,9 @@ import (
 	"github.com/mweagle/cloudformationresources"
 	"net/http"
 
-	"strings"
-
+	"expvar"
 	"github.com/Sirupsen/logrus"
+	"strings"
 )
 
 // Dispatch map for user defined CloudFormation CustomResources to
@@ -133,7 +133,27 @@ type LambdaHTTPHandler struct {
 	logger                    *logrus.Logger
 }
 
+func expvarHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintf(w, "{\n")
+	first := true
+	expvar.Do(func(kv expvar.KeyValue) {
+		if !first {
+			fmt.Fprintf(w, ",\n")
+		}
+		first = false
+		fmt.Fprintf(w, "%q: %s", kv.Key, kv.Value)
+	})
+	fmt.Fprintf(w, "\n}\n")
+}
+
 func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	// If this is the expvar handler then skip it
+	if "/golang/expvar" == req.URL.Path {
+		expvarHandler(w, req)
+		return
+	}
+
 	// Remove the leading slash and dispatch it to the golang handler
 	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
 	decoder := json.NewDecoder(req.Body)

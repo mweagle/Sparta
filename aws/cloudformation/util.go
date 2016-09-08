@@ -4,13 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/service/lambda"
 	gocf "github.com/crewjam/go-cloudformation"
+	sparta "github.com/mweagle/Sparta"
 	"io"
 	"io/ioutil"
 	"regexp"
+	"strconv"
 	"strings"
 	"text/template"
 )
+
+var cloudFormationStackTemplateMap map[string]*gocf.Template
+
+func init() {
+	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private
@@ -238,4 +251,207 @@ func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateP
 		additionalTemplateProps: additionalUserTemplateProperties,
 	}
 	return converter.expandTemplate().parseData().results()
+}
+
+func existingStackTemplate(serviceName string,
+	session *session.Session,
+	logger *logrus.Logger) (*gocf.Template, error) {
+	template, templateExists := cloudFormationStackTemplateMap[serviceName]
+	if !templateExists {
+		templateParams := &cloudformation.GetTemplateInput{
+			StackName: aws.String(serviceName),
+		}
+		logger.WithFields(logrus.Fields{
+			"Service": serviceName,
+		}).Info("Fetching existing CloudFormation template")
+
+		cloudformationSvc := cloudformation.New(session)
+		rawTemplate, rawTemplateErr := cloudformationSvc.GetTemplate(templateParams)
+		if nil != rawTemplateErr {
+			if strings.Contains(rawTemplateErr.Error(), "does not exist") {
+				template = nil
+			} else {
+				return nil, rawTemplateErr
+			}
+		} else {
+			t := gocf.Template{}
+			jsonDecodeErr := json.NewDecoder(strings.NewReader(*rawTemplate.TemplateBody)).Decode(&t)
+			if nil != jsonDecodeErr {
+				return nil, jsonDecodeErr
+			}
+			template = &t
+		}
+		cloudFormationStackTemplateMap[serviceName] = template
+	} else {
+		logger.WithFields(logrus.Fields{
+			"Service": serviceName,
+		}).Debug("Using cached CloudFormation Template resources")
+	}
+
+	return template, nil
+}
+
+func existingLambdaResourceVersions(serviceName string,
+	lambdaResourceName string,
+	session *session.Session,
+	logger *logrus.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
+
+	errorIsNotExist := func(apiError error) bool {
+		return apiError != nil && strings.Contains(apiError.Error(), "does not exist")
+	}
+
+	logger.WithFields(logrus.Fields{
+		"ResourceName": lambdaResourceName,
+	}).Info("Fetching existing function versions")
+
+	cloudFormationSvc := cloudformation.New(session)
+	describeParams := &cloudformation.DescribeStackResourceInput{
+		StackName:         aws.String(serviceName),
+		LogicalResourceId: aws.String(lambdaResourceName),
+	}
+	describeResponse, describeResponseErr := cloudFormationSvc.DescribeStackResource(describeParams)
+	logger.WithFields(logrus.Fields{
+		"Response":    describeResponse,
+		"ResponseErr": describeResponseErr,
+	}).Debug("Describe response")
+	if errorIsNotExist(describeResponseErr) {
+		return nil, nil
+	} else if describeResponseErr != nil {
+		return nil, describeResponseErr
+	}
+
+	listVersionsParams := &lambda.ListVersionsByFunctionInput{
+		FunctionName: describeResponse.StackResourceDetail.PhysicalResourceId,
+		MaxItems:     aws.Int64(128),
+	}
+	lambdaSvc := lambda.New(session)
+	listVersionsResp, listVersionsRespErr := lambdaSvc.ListVersionsByFunction(listVersionsParams)
+	if errorIsNotExist(listVersionsRespErr) {
+		return nil, nil
+	} else if listVersionsRespErr != nil {
+		return nil, listVersionsRespErr
+	}
+	logger.WithFields(logrus.Fields{
+		"Response":    listVersionsResp,
+		"ResponseErr": listVersionsRespErr,
+	}).Debug("ListVersionsByFunction")
+	return listVersionsResp, nil
+}
+
+// AutoIncrementingLambdaVersionInfo is dynamically populated during
+// a call AddAutoIncrementingLambdaVersionResource. The VersionHistory
+// is a map of published versions to their CloudFormation resource names
+type AutoIncrementingLambdaVersionInfo struct {
+	// The version that will be published as part of this operation
+	CurrentVersion int
+	// The CloudFormation resource name that defines the
+	// AWS::Lambda::Version resource to be included with this operation
+	CurrentVersionResourceName string
+	// The version history that maps a published version value
+	// to its CloudFormation resource name. Used for defining lagging
+	// indicator Alias values
+	VersionHistory map[int]string
+}
+
+// AddAutoIncrementingLambdaVersionResource inserts a new
+// AWS::Lambda::Version resource into the template. It uses
+// the existing CloudFormation template representation
+// to determine the version index to append. The returned
+// map is from `versionIndex`->`CloudFormationResourceName`
+// to support second-order AWS::Lambda::Alias records on a
+// per-version level
+func AddAutoIncrementingLambdaVersionResource(serviceName string,
+	lambdaResourceName string,
+	cfTemplate *gocf.Template,
+	logger *logrus.Logger) (*AutoIncrementingLambdaVersionInfo, error) {
+
+	// Get the template
+	session, sessionErr := session.NewSession()
+	if sessionErr != nil {
+		return nil, sessionErr
+	}
+
+	// Get the current template - for each version we find in the version listing
+	// we look up the actual CF resource and copy it into this template
+	existingStackDefinition, existingStackDefinitionErr := existingStackTemplate(serviceName,
+		session,
+		logger)
+	if nil != existingStackDefinitionErr {
+		return nil, existingStackDefinitionErr
+	}
+
+	// TODO - fetch the template and look up the resources
+	existingVersions, existingVersionsErr := existingLambdaResourceVersions(serviceName,
+		lambdaResourceName,
+		session,
+		logger)
+	if nil != existingVersionsErr {
+		return nil, existingVersionsErr
+	}
+
+	// Initialize the auto incrementing version struct
+	autoIncrementingLambdaVersionInfo := AutoIncrementingLambdaVersionInfo{
+		CurrentVersion:             0,
+		CurrentVersionResourceName: "",
+		VersionHistory:             make(map[int]string, 0),
+	}
+
+	lambdaVersionResourceName := func(versionIndex int) string {
+		return sparta.CloudFormationResourceName(lambdaResourceName,
+			"version",
+			strconv.Itoa(versionIndex))
+	}
+
+	if nil != existingVersions {
+		// Add the CloudFormation resource
+		logger.WithFields(logrus.Fields{
+			"VersionCount": len(existingVersions.Versions) - 1, // Ignore $LATEST
+			"ResourceName": lambdaResourceName,
+		}).Info("Total number of published versions")
+
+		for _, eachEntry := range existingVersions.Versions {
+			versionIndex, versionIndexErr := strconv.Atoi(*eachEntry.Version)
+			if nil == versionIndexErr {
+				// Find the existing resource...
+				versionResourceName := lambdaVersionResourceName(versionIndex)
+				if nil == existingStackDefinition {
+					return nil, fmt.Errorf("Unable to find exising Version resource in nil Template")
+				}
+				cfResourceDefinition, cfResourceDefinitionExists := existingStackDefinition.Resources[versionResourceName]
+				if !cfResourceDefinitionExists {
+					return nil, fmt.Errorf("Unable to find exising Version resource (Resource: %s, Version: %d) in template",
+						versionResourceName,
+						versionIndex)
+				}
+				cfTemplate.Resources[versionResourceName] = cfResourceDefinition
+				// Add the CloudFormation resource
+				logger.WithFields(logrus.Fields{
+					"Version":      versionIndex,
+					"ResourceName": versionResourceName,
+				}).Debug("Preserving Lambda version")
+
+				// Store the state, tracking the latest version
+				autoIncrementingLambdaVersionInfo.VersionHistory[versionIndex] = versionResourceName
+				if versionIndex > autoIncrementingLambdaVersionInfo.CurrentVersion {
+					autoIncrementingLambdaVersionInfo.CurrentVersion = versionIndex
+				}
+			}
+		}
+	}
+
+	// Bump the version and add a new entry...
+	autoIncrementingLambdaVersionInfo.CurrentVersion++
+	versionResource := &gocf.LambdaVersion{
+		FunctionName: gocf.GetAtt(lambdaResourceName, "Arn").String(),
+	}
+	autoIncrementingLambdaVersionInfo.CurrentVersionResourceName = lambdaVersionResourceName(autoIncrementingLambdaVersionInfo.CurrentVersion)
+	cfTemplate.AddResource(autoIncrementingLambdaVersionInfo.CurrentVersionResourceName, versionResource)
+
+	// Log the version we're about to publish...
+	logger.WithFields(logrus.Fields{
+		"ResourceName": lambdaResourceName,
+		"StackVersion": autoIncrementingLambdaVersionInfo.CurrentVersion,
+	}).Info("Inserting new version resource")
+
+	return &autoIncrementingLambdaVersionInfo, nil
 }
