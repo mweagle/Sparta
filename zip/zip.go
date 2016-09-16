@@ -3,10 +3,10 @@ package zip
 import (
 	"archive/zip"
 	"errors"
-	"fmt"
 	"github.com/Sirupsen/logrus"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -19,31 +19,30 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	if nil != err {
 		return err
 	}
-	appendFile := func(sourceFile string) error {
-		// Get the relative path
-		var name = filepath.Base(sourceFile)
-		if sourceFile != rootSource {
-			name = strings.TrimPrefix(strings.TrimPrefix(sourceFile, rootSource), string(os.PathSeparator))
 
-			// Normalize the name s.t. path delimiters are AWS Linux friendly when
-			// unpacking the archive.
-			name = strings.Replace(name, "\\", "/", -1)
+	appendFile := func(info os.FileInfo) error {
+		zipEntryName := source
+		if "" != rootSource {
+			zipEntryName = path.Join(strings.Replace(rootSource, "\\", "/", -1), info.Name())
 		}
-		binaryWriter, errCreate := zipWriter.Create(name)
-		if errCreate != nil {
-			return fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(sourceFile))
+		// File info for the binary executable
+		binaryWriter, binaryWriterErr := zipWriter.Create(zipEntryName)
+		if binaryWriterErr != nil {
+			return binaryWriterErr
 		}
-		reader, errOpen := os.Open(sourceFile)
-		if errOpen != nil {
-			return fmt.Errorf("Failed to open file: %s", sourceFile)
+		reader, readerErr := os.Open(fullPathSource)
+		if readerErr != nil {
+			return readerErr
 		}
-		defer reader.Close()
-		io.Copy(binaryWriter, reader)
+		written, copyErr := io.Copy(binaryWriter, reader)
+		reader.Close()
+
 		logger.WithFields(logrus.Fields{
-			"Path": sourceFile,
+			"WrittenBytes": written,
+			"SourcePath":   fullPathSource,
+			"ZipName":      zipEntryName,
 		}).Debug("Archiving file")
-
-		return nil
+		return copyErr
 	}
 
 	directoryWalker := func(path string, info os.FileInfo, err error) error {
@@ -84,7 +83,7 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	case mode.IsDir():
 		err = filepath.Walk(fullPathSource, directoryWalker)
 	case mode.IsRegular():
-		err = appendFile(fullPathSource)
+		err = appendFile(fileInfo)
 	default:
 		err = errors.New("Inavlid source type")
 	}
