@@ -206,12 +206,9 @@
               <li><a href="#apigateway" aria-controls="apigateway" role="tab" data-toggle="tab" id="apiGatewayTab">API Gateway</a></li>
               <li><a href="#cloudformationTemplate" aria-controls="cloudformationTemplate" role="tab" data-toggle="tab">Template</a></li>
             </ul>
-            <div id="navbar" class="navbar-collapse collapse">
-              <form class="navbar-form navbar-right">
-                Sparta version: {{.SpartaVersion}}
-                <button type="submit" class="btn btn-info" onclick="window.open('https://github.com/mweagle/Sparta','_blank','resizable=yes')">Sparta Home</button>
-              </form>
-           </div>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="http://gosparta.io" target="_blank">Sparta (v.{{.SpartaVersion}})</a></li>
+            </ul>
           </div>
         </div>
       </nav>
@@ -220,7 +217,7 @@
         <div role="tabpanel" class="tab-pane active" id="lambda">
           <div class="mermaid spartaLayout" id="mermaidGraph">
 %% Sparta Graph
-graph LR
+graph RL
 
 {{ .MermaidData}}
         	</div>
