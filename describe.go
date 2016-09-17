@@ -14,6 +14,14 @@ import (
 	"github.com/Sirupsen/logrus"
 )
 
+const (
+	nodeColorService     = "#8C1B20"
+	nodeColorEventSource = "#FBBB06"
+	nodeColorLambda      = "#F58206"
+	nodeColorAPIGateway  = "#D9A741"
+	nodeNameAPIGateway   = "API Gateway"
+)
+
 // RE for sanitizing golang/JS layer
 var reSanitizeMermaidNodeName = regexp.MustCompile("[\\W\\s]+")
 var reSanitizeMermaidLabelValue = regexp.MustCompile("[\\{\\}\"\\[\\]']+")
@@ -26,9 +34,12 @@ func mermaidLabelValue(labelText string) string {
 	return reSanitizeMermaidLabelValue.ReplaceAllString(labelText, "")
 }
 
-func writeNode(writer io.Writer, nodeName string, nodeColor string) {
+func writeNode(writer io.Writer, nodeName string, nodeColor string, extraStyles string) {
+	if "" != extraStyles {
+		extraStyles = fmt.Sprintf(",%s", extraStyles)
+	}
 	sanitizedName := mermaidNodeName(nodeName)
-	fmt.Fprintf(writer, "style %s fill:#%s,stroke:#000,stroke-width:1px;\n", sanitizedName, nodeColor)
+	fmt.Fprintf(writer, "style %s fill:%s,stroke:#000,stroke-width:1px%s;\n", sanitizedName, nodeColor, extraStyles)
 	fmt.Fprintf(writer, "%s[%s]\n", sanitizedName, mermaidLabelValue(nodeName))
 }
 
@@ -84,11 +95,11 @@ func Describe(serviceName string,
 	var b bytes.Buffer
 
 	// Setup the root object
-	writeNode(&b, serviceName, "2AF1EA")
+	writeNode(&b, serviceName, nodeColorService, "color:white,font-weight:bold,stroke-width:4px")
 
 	for _, eachLambda := range lambdaAWSInfos {
 		// Create the node...
-		writeNode(&b, eachLambda.lambdaFnName, "00A49F")
+		writeNode(&b, eachLambda.lambdaFnName, nodeColorLambda, "")
 		writeLink(&b, eachLambda.lambdaFnName, serviceName, "")
 
 		// Create permission & event mappings
@@ -105,16 +116,32 @@ func Describe(serviceName string,
 				// Style it to have the Amazon color
 				nodeColor := eachNode.Color
 				if "" == nodeColor {
-					nodeColor = "F1702A"
+					nodeColor = nodeColorEventSource
 				}
-				writeNode(&b, name, nodeColor)
+				writeNode(&b, name, nodeColor, "border-style:dotted")
 				writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br><br>", -1))
 			}
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			writeNode(&b, eachEventSourceMapping.EventSourceArn, "F1702A")
+			writeNode(&b, eachEventSourceMapping.EventSourceArn, nodeColorEventSource, "border-style:dotted")
 			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFnName, "")
+		}
+	}
+
+	// API?
+	if nil != api {
+		// Create the APIGateway virtual node && connect it to the application
+		writeNode(&b, nodeNameAPIGateway, nodeColorAPIGateway, "")
+
+		for _, eachResource := range api.resources {
+			for eachMethod, _ := range eachResource.Methods {
+				// Create the PATH node
+				var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
+				writeNode(&b, nodeName, nodeColorAPIGateway, "")
+				writeLink(&b, nodeNameAPIGateway, nodeName, "")
+				writeLink(&b, nodeName, eachResource.parentLambda.lambdaFnName, "")
+			}
 		}
 	}
 
@@ -136,7 +163,7 @@ func Describe(serviceName string,
 		serviceName,
 		serviceDescription,
 		cloudFormationTemplate.String(),
-		_escFSMustString(false, "/resources/bootstrap/css/bootstrap.min.css"),
+		_escFSMustString(false, "/resources/bootstrap/lumen/bootstrap.min.css"),
 		_escFSMustString(false, "/resources/mermaid/mermaid.css"),
 		_escFSMustString(false, "/resources/highlights/styles/vs.css"),
 		_escFSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
