@@ -306,6 +306,17 @@ type WorkflowHook func(context map[string]interface{},
 	noop bool,
 	logger *logrus.Logger) error
 
+// ServiceDecorator defines a user function that is called a single
+// time in the marshall workflow.
+type ServiceDecoratorHook func(context map[string]interface{},
+	serviceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+
 // ArchiveHook provides callers an opportunity to insert additional
 // files into the ZIP archive deployed to S3
 type ArchiveHook func(context map[string]interface{},
@@ -326,6 +337,8 @@ type RollbackHook func(context map[string]interface{},
 // WorkflowHooks is a structure that allows callers to customize the Sparta provisioning
 // pipeline to add contents the Lambda archive or perform other workflow operations.
 type WorkflowHooks struct {
+	// Initial hook context. May be empty
+	Context map[string]interface{}
 	// PreBuild is called before the current Sparta-binary is compiled
 	PreBuild WorkflowHook
 	// PostBuild is called after the current Sparta-binary is compiled
@@ -336,6 +349,8 @@ type WorkflowHooks struct {
 	Archive ArchiveHook
 	// PreMarshall is called before Sparta marshalls the application contents to a CloudFormation template
 	PreMarshall WorkflowHook
+	// ServiceDecorator is called before Sparta marshalls the CloudFormation template
+	ServiceDecorator ServiceDecoratorHook
 	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
 	PostMarshall WorkflowHook
 	// Rollback is called if there is an error performing the requested operation
