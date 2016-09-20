@@ -2,6 +2,9 @@
 	"ImportPath": "github.com/mweagle/Sparta",
 	"GoVersion": "go1.7",
 	"GodepVersion": "v74",
+	"Packages": [
+		"./..."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/Sirupsen/logrus",
@@ -159,7 +162,22 @@
 			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/dynamodb",
+			"Comment": "v1.4.10-2-gb2dc98b",
+			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/ecr",
+			"Comment": "v1.4.10-2-gb2dc98b",
+			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
+		},
+		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/iam",
+			"Comment": "v1.4.10-2-gb2dc98b",
+			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
+		},
+		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/lambda",
 			"Comment": "v1.4.10-2-gb2dc98b",
 			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
 		},
@@ -225,16 +243,6 @@
 		{
 			"ImportPath": "golang.org/x/sys/unix",
 			"Rev": "d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03"
-		},
-		{
-			"ImportPath": "github.com/aws/aws-sdk-go/vendor/github.com/go-ini/ini",
-			"Comment": "v1.4.10-2-gb2dc98b",
-			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
-		},
-		{
-			"ImportPath": "github.com/aws/aws-sdk-go/vendor/github.com/jmespath/go-jmespath",
-			"Comment": "v1.4.10-2-gb2dc98b",
-			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
 		}
 	]
 }
