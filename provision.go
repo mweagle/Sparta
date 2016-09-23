@@ -1265,7 +1265,36 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.cfTemplate,
 				ctx.logger)
 		}
+		// Service decorator?
+		// If there's an API gateway definition, include the resources that provision it. Since this export will likely
+		// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator, pass that to the S3Site
+		// if it's defined, and then merge it with the normal output map.-
+		if nil != ctx.workflowHooks && nil != ctx.workflowHooks.ServiceDecorator {
+			hookName := runtime.FuncForPC(reflect.ValueOf(ctx.workflowHooks.ServiceDecorator).Pointer()).Name()
+			ctx.logger.WithFields(logrus.Fields{
+				"WorkflowHook":        hookName,
+				"WorkflowHookContext": ctx.workflowHooksContext,
+			}).Info("Calling WorkflowHook")
 
+			serviceTemplate := gocf.NewTemplate()
+			decoratorError := ctx.workflowHooks.ServiceDecorator(
+				ctx.workflowHooksContext,
+				ctx.serviceName,
+				serviceTemplate,
+				ctx.s3Bucket,
+				ctx.buildID,
+				ctx.awsSession,
+				ctx.noop,
+				ctx.logger,
+			)
+			if nil != decoratorError {
+				return nil, decoratorError
+			}
+			mergeErr := safeMergeTemplates(serviceTemplate, ctx.cfTemplate, ctx.logger)
+			if nil != mergeErr {
+				return nil, mergeErr
+			}
+		}
 		// Save the output
 		ctx.cfTemplate.Outputs[OutputSpartaHomeKey] = &gocf.Output{
 			Description: "Sparta Home",
@@ -1355,6 +1384,13 @@ func Provision(noop bool,
 		logger:               logger,
 	}
 	ctx.cfTemplate.Description = serviceDescription
+
+	// Update the context iff it exists
+	if nil != workflowHooks && nil != workflowHooks.Context {
+		for eachKey, eachValue := range workflowHooks.Context {
+			ctx.workflowHooksContext[eachKey] = eachValue
+		}
+	}
 
 	ctx.logger.WithFields(logrus.Fields{
 		"BuildID": buildID,

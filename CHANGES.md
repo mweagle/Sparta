@@ -1,3 +1,15 @@
+## v0.9.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Improved `describe` output. Includes APIGateway resources and more consistent UI.
+  - Additive changes to [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks)
+    - `Context` property to set the initial context for Workflow hook execution
+    - [ServiceDecorator](https://godoc.org/github.com/mweagle/Sparta#ServiceDecorator) type  to define service-scoped AWS resources. Previously, template decoration was bound to specific Lambda functions.
+  - Published related [SpartaVault](https://github.com/mweagle/SpartaVault): use AWS KMS to encrypt secrets as Go variables. See the [KMS Docs](http://docs.aws.amazon.com/kms/latest/developerguide/workflow.html) for information.
+  - Add Godeps support
+- :bug: **FIXED**
+  - Fixed latent bug when adding custom resources to the ZIP archive via [ArchiveHook](https://godoc.org/github.com/mweagle/Sparta#ArchiveHook). ArchiveHook is now called after core Sparta assets are injected into archive.
+
 ## v0.9.0
 - :warning: **BREAKING**
   - `NewMethod` and `NewAuthorizedMethod` for APIGateway definitions have been changed to include new, final parameter that marks the _default_ integration response code.
