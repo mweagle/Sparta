@@ -47,7 +47,10 @@ graph TD
   style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   generate[Marshal to CloudFormation]
-  decorate[Call User Template Decorators - Dynamic AWS Resources]
+  decorate[Call Lambda Decorators - Dynamic AWS Resources]
+
+  serviceDecorator[Service Decorator]
+  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   postMarshall[WorkflowHook - PostMarshall]
   style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
@@ -70,7 +73,8 @@ graph TD
 
   generate--&gt;preMarshall
   preMarshall--&gt;decorate
-  decorate--&gt;postMarshall
+  decorate--&gt;serviceDecorator
+  serviceDecorator--&gt;postMarshall
   postMarshall--&gt;uploadTemplate
   uploadTemplate--&gt;converge
   converge--&gt;wait
@@ -644,7 +648,10 @@ graph TD
   style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   generate[Marshal to CloudFormation]
-  decorate[Call User Template Decorators - Dynamic AWS Resources]
+  decorate[Call Lambda Decorators - Dynamic AWS Resources]
+
+  serviceDecorator[Service Decorator]
+  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   postMarshall[WorkflowHook - PostMarshall]
   style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
@@ -667,7 +674,8 @@ graph TD
 
   generate--&gt;preMarshall
   preMarshall--&gt;decorate
-  decorate--&gt;postMarshall
+  decorate--&gt;serviceDecorator
+  serviceDecorator--&gt;postMarshall
   postMarshall--&gt;uploadTemplate
   uploadTemplate--&gt;converge
   converge--&gt;wait

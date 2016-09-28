@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  594 
+    "wordCount":  599 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle youtube: github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle flattr:]">
+<body class="map[youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: googleplus: facebook: twitter:mweagle flattr: github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -398,7 +398,10 @@ graph TD
   style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   generate[Marshal to CloudFormation]
-  decorate[Call User Template Decorators - Dynamic AWS Resources]
+  decorate[Call Lambda Decorators - Dynamic AWS Resources]
+
+  serviceDecorator[Service Decorator]
+  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
 
   postMarshall[WorkflowHook - PostMarshall]
   style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
@@ -421,7 +424,8 @@ graph TD
 
   generate-->preMarshall
   preMarshall-->decorate
-  decorate-->postMarshall
+  decorate-->serviceDecorator
+  serviceDecorator-->postMarshall
   postMarshall-->uploadTemplate
   uploadTemplate-->converge
   converge-->wait
