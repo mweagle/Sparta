@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	nodeColorService     = "#8C1B20"
+	nodeColorService     = "#EFEFEF"
 	nodeColorEventSource = "#FBBB06"
 	nodeColorLambda      = "#F58206"
-	nodeColorAPIGateway  = "#D9A741"
+	nodeColorAPIGateway  = "#06B5F5"
 	nodeNameAPIGateway   = "API Gateway"
 )
 
