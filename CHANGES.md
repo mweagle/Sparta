@@ -2,6 +2,7 @@
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Legibility enhancements for `describe` output
+  - `sparta.CloudFormationResourceName` proxies to `github.com/mweagle/Sparta/aws/cloudformation.CloudFormationResourceName`. The `sparta` package function is *deprecated* and will be removed in a subsequent release.
 - :bug: **FIXED**
   - Fixed latent parsing _userdata_ input
   - Fixed latent issue where empty [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets-execute.html) were applied rather than deleted.
