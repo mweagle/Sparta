@@ -1,3 +1,11 @@
+## v0.9.2
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Legibility enhancements for `describe` output
+- :bug: **FIXED**
+  - Fixed latent parsing _userdata_ input
+  - Fixed latent issue where empty [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets-execute.html) were applied rather than deleted.
+
 ## v0.9.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
