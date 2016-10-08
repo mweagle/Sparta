@@ -1,9 +1,13 @@
 ## v0.9.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added [Sparta/aws/cloudformation](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to support stack creation.
+  - Added [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to encapsulate common S3 operations.
+  - Added  [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/zip) functions to expose common ZIP related functions.
   - Legibility enhancements for `describe` output
   - `sparta.CloudFormationResourceName` proxies to `github.com/mweagle/Sparta/aws/cloudformation.CloudFormationResourceName`. The `sparta` package function is *deprecated* and will be removed in a subsequent release.
 - :bug: **FIXED**
+  - Fixed latent bug in `github.com/mweagle/Sparta/zip.AddToZip` where the supplied ZipWriter was incorrectly closed on function exit.
   - Fixed latent parsing _userdata_ input
   - Fixed latent issue where empty [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets-execute.html) were applied rather than deleted.
 
