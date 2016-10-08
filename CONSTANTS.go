@@ -1091,7 +1091,7 @@ R53MN2YW/78AAAD//9UFgn72/gEA
 	"/resources/describe/template.html": {
 		local:   "resources/describe/template.html",
 		size:    7663,
-		modtime: 1475032757,
+		modtime: 1475935861,
 		compressed: `
 H4sIAAAJbogA/6xZbW/jNhL+vPkVU+11Y6O2dFdcD4VjG0idpM02b5e47YfFoqDFsc0uTQoUZa/r+r8f
 SIkSJctZF7hdwBHJh8+8cIYcUcOvqIz1NkFY6hUfnw3zPwDDJRJqHgCGmmmO490OwhdUaxbjA1kh7PfD
