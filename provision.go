@@ -305,7 +305,16 @@ func uploadLocalFileToS3(localPath string,
 		logger.WithFields(logrus.Fields{
 			"Bucket": S3Bucket,
 			"Key":    keyName,
-		}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
+		}).Info("Bypassing S3 upload due to -n/-noop command line argument")
+
+		// Just delete it...
+		errRemove := os.Remove(localPath)
+		if nil != errRemove {
+			logger.WithFields(logrus.Fields{
+				"File":  localPath,
+				"Error": errRemove,
+			}).Warn("Failed to delete local archive")
+		}
 	} else {
 		_, uploadURLErr := spartaS3.UploadLocalFileToS3(localPath,
 			awsSession,
@@ -580,7 +589,7 @@ func createPackageStep() workflowStep {
 		if nil != buildErr {
 			return nil, buildErr
 		}
-		// Cleanup
+		// Cleanup the temporary binary
 		defer func() {
 			errRemove := os.Remove(executableOutput)
 			if nil != errRemove {
