@@ -208,11 +208,11 @@ func updateStackViaChangeSet(serviceName string,
 		StackName:     aws.String(serviceName),
 		TemplateURL:   aws.String(cfTemplateURL),
 	}
-
 	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
 	if nil != changeSetError {
 		return changeSetError
 	}
+
 	logger.WithFields(logrus.Fields{
 		"StackName": serviceName,
 	}).Info("Issued CreateChangeSet request")
@@ -239,23 +239,38 @@ func updateStackViaChangeSet(serviceName string,
 		"DescribeChangeSetOutput": describeChangeSetOutput,
 	}).Debug("DescribeChangeSet result")
 
-	// Apply the change
-	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
-	}
-	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
-
-	logger.WithFields(logrus.Fields{
-		"ExecuteChangeSetOutput": executeChangeSetOutput,
-	}).Debug("ExecuteChangeSet result")
-
-	if nil == executeChangeSetError {
+	// If there aren't any changes, then skip it...
+	if len(describeChangeSetOutput.Changes) <= 0 {
 		logger.WithFields(logrus.Fields{
 			"StackName": serviceName,
-		}).Info("Issued ExecuteChangeSet request")
+		}).Info("No changes detected for service")
+
+		// Delete it...
+		deleteChangeSetInput := cloudformation.DeleteChangeSetInput{
+			ChangeSetName: aws.String(changeSetRequestName),
+			StackName:     aws.String(serviceName),
+		}
+		_, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
+		return deleteChangeSetResultErr
+	} else {
+		// Apply the change
+		executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
+			ChangeSetName: aws.String(changeSetRequestName),
+			StackName:     aws.String(serviceName),
+		}
+		executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
+
+		logger.WithFields(logrus.Fields{
+			"ExecuteChangeSetOutput": executeChangeSetOutput,
+		}).Debug("ExecuteChangeSet result")
+
+		if nil == executeChangeSetError {
+			logger.WithFields(logrus.Fields{
+				"StackName": serviceName,
+			}).Info("Issued ExecuteChangeSet request")
+		}
+		return executeChangeSetError
 	}
-	return executeChangeSetError
 }
 
 // Does a given stack exist?
