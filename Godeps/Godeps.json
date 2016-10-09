@@ -164,6 +164,11 @@
 			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/lambda",
+			"Comment": "v1.4.10-2-gb2dc98b",
+			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
+		},
+		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/s3",
 			"Comment": "v1.4.10-2-gb2dc98b",
 			"Rev": "b2dc98bb584e48b0f5f39c93110633173c5da43c"
