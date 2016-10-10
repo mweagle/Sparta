@@ -256,6 +256,8 @@ type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, 
 // to "nodejs4.3" (at least until golang is officially supported). See
 // http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html
 type LambdaFunctionOptions struct {
+	// Function Name
+	Name string
 	// Additional function description
 	Description string
 	// Memory limit
@@ -938,8 +940,12 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 		lambdaOptions = defaultLambdaFunctionOptions()
 	}
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(fn).Pointer())
+	lambdaFuncName := lambdaPtr.Name()
+	if lambdaOptions.Name != "" {
+		lambdaFuncName = lambdaOptions.Name
+	}
 	lambda := &LambdaAWSInfo{
-		lambdaFnName:        lambdaPtr.Name(),
+		lambdaFnName:        lambdaFuncName,
 		lambdaFn:            fn,
 		Options:             lambdaOptions,
 		Permissions:         make([]LambdaPermissionExporter, 0),
