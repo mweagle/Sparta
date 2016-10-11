@@ -1,6 +1,8 @@
 ## v0.9.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Move Sparta-related provisioning values from stack [Outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) to [Tags](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html).
+  - Add support for go [BuildTags](https://golang.org/pkg/go/build/) to support environment settings.
   - Added [Sparta/aws/cloudformation](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to support stack creation.
   - Added [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to encapsulate common S3 operations.
   - Added  [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/zip) functions to expose common ZIP related functions.
