@@ -55,7 +55,7 @@ var SpartaTagVersionKey = spartaTagName("version")
 // SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
 // that stores the user-supplied or automatically generated BuildID
 // for this run
-var SpartaTagBuildIDKey = spartaTagName("buildID")
+var SpartaTagBuildIDKey = spartaTagName("buildId")
 
 // SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
 // that stores the optional user-supplied golang build tags
