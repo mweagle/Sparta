@@ -38,23 +38,28 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 ////////////////////////////////////////////////////////////////////////////////
+func spartaTagName(baseKey string) string {
+	return fmt.Sprintf("io:gosparta:%s", baseKey)
+}
 
-const (
-	// OutputSpartaHomeKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta home URL.
-	// @enum OutputKey
-	OutputSpartaHomeKey = "SpartaHome"
+// SpartaTagHomeKey is the keyname used in the CloudFormation Output
+// that stores the Sparta home URL.
+// @enum OutputKey
+var SpartaTagHomeKey = spartaTagName("home")
 
-	// OutputSpartaVersionKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta version used to provision/update the service.
-	// @enum OutputKey
-	OutputSpartaVersionKey = "SpartaVersion"
+// SpartaTagVersionKey is the keyname used in the CloudFormation Output
+// that stores the Sparta version used to provision/update the service.
+// @enum OutputKey
+var SpartaTagVersionKey = spartaTagName("version")
 
-	// OutputSpartaBuildIDKey is the keyname used in the CloudFormation Output
-	// that stores the user-supplied or automatically generated BuildID
-	// for this run
-	OutputSpartaBuildIDKey = "SpartaBuildID"
-)
+// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
+// that stores the user-supplied or automatically generated BuildID
+// for this run
+var SpartaTagBuildIDKey = spartaTagName("buildID")
+
+// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
+// that stores the optional user-supplied golang build tags
+var SpartaTagBuildTagsKey = spartaTagName("buildTags")
 
 // The basename of the scripts that are embedded into CONSTANTS.go
 // by `esc` during the generate phase.  In order to export these, there
@@ -114,6 +119,8 @@ type workflowContext struct {
 	s3Bucket string
 	// The user-supplied or automatically generated BuildID
 	buildID string
+	// Optional user-supplied build tags
+	buildTags string
 	// The time when we started s.t. we can filter stack events
 	buildTime time.Time
 	// The programmatically determined S3 item key for this service's cloudformation
@@ -300,21 +307,24 @@ func uploadLocalFileToS3(localPath string,
 	if nil != err {
 		return "", fmt.Errorf("Failed to ensure bucket policies: %s", err.Error())
 	}
+
+	// Ensure the local file is deleted
+	defer func() {
+		err = os.Remove(localPath)
+		if nil != err {
+			logger.WithFields(logrus.Fields{
+				"Path":  localPath,
+				"Error": err,
+			}).Warn("Failed to delete local file")
+		}
+	}()
+
 	keyName := path.Join(S3KeyPrefix, filepath.Base(localPath))
 	if noop {
 		logger.WithFields(logrus.Fields{
 			"Bucket": S3Bucket,
 			"Key":    keyName,
 		}).Info("Bypassing S3 upload due to -n/-noop command line argument")
-
-		// Just delete it...
-		errRemove := os.Remove(localPath)
-		if nil != errRemove {
-			logger.WithFields(logrus.Fields{
-				"File":  localPath,
-				"Error": errRemove,
-			}).Warn("Failed to delete local archive")
-		}
 	} else {
 		_, uploadURLErr := spartaS3.UploadLocalFileToS3(localPath,
 			awsSession,
@@ -472,7 +482,7 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
-func buildGoBinary(executableOutput string, logger *logrus.Logger) error {
+func buildGoBinary(executableOutput string, buildTags string, logger *logrus.Logger) error {
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
@@ -488,7 +498,8 @@ func buildGoBinary(executableOutput string, logger *logrus.Logger) error {
 
 	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
-	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
+	allBuildTags := fmt.Sprintf("lambdabinary %s", buildTags)
+	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", allBuildTags, ".")
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 	logger.WithFields(logrus.Fields{
@@ -585,7 +596,7 @@ func createPackageStep() workflowStep {
 		}
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		buildErr := buildGoBinary(executableOutput, ctx.logger)
+		buildErr := buildGoBinary(executableOutput, ctx.buildTags, ctx.logger)
 		if nil != buildErr {
 			return nil, buildErr
 		}
@@ -795,6 +806,14 @@ func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf
 
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 
+	stackTags := map[string]string{
+		SpartaTagHomeKey:    "http://gosparta.io",
+		SpartaTagVersionKey: SpartaVersion,
+		SpartaTagBuildIDKey: ctx.buildID,
+	}
+	if len(ctx.buildTags) != 0 {
+		stackTags[SpartaTagBuildTagsKey] = ctx.buildTags
+	}
 	// Generate a complete CloudFormation template
 	if nil != ctx.templateWriter || ctx.logger.Level <= logrus.DebugLevel {
 		cfTemplate, err := json.Marshal(ctx.cfTemplate)
@@ -837,6 +856,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			ctx.cfTemplate,
 			ctx.s3Bucket,
 			s3KeyName,
+			stackTags,
 			ctx.buildTime,
 			ctx.awsSession,
 			ctx.logger)
@@ -939,19 +959,6 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, mergeErr
 			}
 		}
-		// Save the output
-		ctx.cfTemplate.Outputs[OutputSpartaHomeKey] = &gocf.Output{
-			Description: "Sparta Home",
-			Value:       gocf.String("http://gosparta.io"),
-		}
-		ctx.cfTemplate.Outputs[OutputSpartaVersionKey] = &gocf.Output{
-			Description: "Sparta Version",
-			Value:       gocf.String(SpartaVersion),
-		}
-		ctx.cfTemplate.Outputs[OutputSpartaBuildIDKey] = &gocf.Output{
-			Description: "Build ID",
-			Value:       gocf.String(ctx.buildID),
-		}
 		ctx.cfTemplate = annotateDiscoveryInfo(ctx.cfTemplate, ctx.logger)
 
 		// PostMarshall Hook
@@ -999,6 +1006,7 @@ func Provision(noop bool,
 	site *S3Site,
 	s3Bucket string,
 	buildID string,
+	buildTags string,
 	templateWriter io.Writer,
 	workflowHooks *WorkflowHooks,
 	logger *logrus.Logger) error {
@@ -1021,6 +1029,7 @@ func Provision(noop bool,
 		cfTemplate:           gocf.NewTemplate(),
 		s3Bucket:             s3Bucket,
 		buildID:              buildID,
+		buildTags:            buildTags,
 		buildTime:            time.Now(),
 		awsSession:           spartaAWS.NewSession(logger),
 		templateWriter:       templateWriter,

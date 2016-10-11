@@ -31,10 +31,11 @@ var CommandLineOptions = struct {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	Noop     bool           `valid:"-"`
-	LogLevel string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
-	Logger   *logrus.Logger `valid:"-"`
-	Command  string         `valid:"-"`
+	Noop      bool           `valid:"-"`
+	LogLevel  string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
+	Logger    *logrus.Logger `valid:"-"`
+	Command   string         `valid:"-"`
+	BuildTags string         `valid:"-"`
 }
 
 // OptionsGlobal stores the global command line options
@@ -136,6 +137,12 @@ func init() {
 		"",
 		"Optional BuildID to use")
 
+	CommandLineOptions.Provision.Flags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags to use for compilation")
+
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
 		Use:   "delete",
@@ -166,12 +173,16 @@ func init() {
 		Short: "Describe service",
 		Long:  `Produce an HTML report of the service`,
 	}
-
 	CommandLineOptions.Describe.Flags().StringVarP(&optionsDescribe.OutputFile,
 		"out",
 		"o",
 		"",
 		"Output file for HTML description")
+	CommandLineOptions.Describe.Flags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags to use for compilation")
 
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
@@ -179,6 +190,11 @@ func init() {
 		Short: "Interactively explore service",
 		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
 	}
+	CommandLineOptions.Explore.Flags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags to use for compilation")
 	CommandLineOptions.Explore.Flags().IntVarP(&optionsExplore.Port,
 		"port",
 		"p",
@@ -411,6 +427,7 @@ func MainEx(serviceName string,
 				site,
 				optionsProvision.S3Bucket,
 				buildID,
+				OptionsGlobal.BuildTags,
 				nil,
 				workflowHooks,
 				OptionsGlobal.Logger)
@@ -466,6 +483,7 @@ func MainEx(serviceName string,
 				lambdaAWSInfos,
 				api,
 				site,
+				OptionsGlobal.BuildTags,
 				fileWriter,
 				workflowHooks,
 				OptionsGlobal.Logger)
