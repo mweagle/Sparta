@@ -1049,6 +1049,7 @@ func Provision(noop bool,
 	ctx.logger.WithFields(logrus.Fields{
 		"BuildID": buildID,
 		"NOOP":    noop,
+		"Tags":    ctx.buildTags,
 	}).Info("Provisioning service")
 
 	if len(lambdaAWSInfos) <= 0 {
