@@ -44,7 +44,7 @@ func CreateS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key st
 
 // UploadLocalFileToS3 takes a local path and uploads the content at localPath
 // to the given S3Bucket and KeyPrefix.  The final S3 keyname is the S3KeyPrefix+
-// the basename of the localPath
+// the basename of the localPath.
 func UploadLocalFileToS3(localPath string,
 	awsSession *session.Session,
 	S3Bucket string,
@@ -56,16 +56,6 @@ func UploadLocalFileToS3(localPath string,
 	if nil != err {
 		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
 	}
-	defer func() {
-		reader.Close()
-		err = os.Remove(localPath)
-		if nil != err {
-			logger.WithFields(logrus.Fields{
-				"Path":  localPath,
-				"Error": err,
-			}).Warn("Failed to delete local file")
-		}
-	}()
 
 	// Make sure the key prefix ends with a trailing slash
 	canonicalKeyPrefix := S3KeyPrefix
