@@ -18,6 +18,8 @@ func TestDescribe(t *testing.T) {
 		testLambdaData(),
 		nil,
 		nil,
+		"",
+		"",
 		output,
 		nil,
 		logger)
