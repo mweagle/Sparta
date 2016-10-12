@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  456 
+    "wordCount":  485 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[name:lumen home:Sparta linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: twitter:mweagle youtube:]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle googleAnalytics:UA-70794971-1 bitbucket: github:https://github.com/mweagle googleplus: facebook: youtube: flattr: name:lumen home:Sparta]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -368,6 +368,7 @@
 <li><a href="#where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
 <li><a href="#where-can-i-view-sparta-s-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
 <li><a href="#how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</a></li>
+<li><a href="#how-can-i-provide-environment-variables-to-lambda-functions">How can I provide environment variables to lambda functions?</a></li>
 <li><a href="#does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</a></li>
 <li><a href="#how-do-i-forward-additional-metrics">How do I forward additional metrics?</a></li>
 <li><a href="#how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</a></li>
@@ -437,6 +438,12 @@
 <h2 id="how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</h2>
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
+
+<p>For more flexibility, use a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHook</a>.</p>
+
+<h2 id="how-can-i-provide-environment-variables-to-lambda-functions">How can I provide environment variables to lambda functions?</h2>
+
+<p>Sparta uses conditional compilation rather than environment variables. See <a href="/docs/application/environments/">Managing Environments</a> for more information.</p>
 
 <h2 id="does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</h2>
 

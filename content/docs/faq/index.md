@@ -55,6 +55,12 @@ Sparta publishes two counters:
 
 Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with additional AWS resources.
 
+For more flexibility, use a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks).
+
+## How can I provide environment variables to lambda functions?
+
+Sparta uses conditional compilation rather than environment variables. See [Managing Environments](/docs/application/environments/) for more information.
+
 ## Does Sparta support Versioning & Aliasing?
 
 Yes.

@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[twitter:mweagle youtube: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: flattr: name:lumen home:Sparta linkedin:https://www.linkedin.com/in/mweagle facebook:]">
+<body class="map[flattr: name:lumen home:Sparta github:https://github.com/mweagle googleplus: facebook: youtube: googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle twitter:mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -382,7 +382,7 @@
 
 <p>Each environment is largely similar, but the application may need slightly different configuration in each context.</p>
 
-<p>To support this, Sparta uses Go&rsquo;s <a href="http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">conditional compliation</a> support to ensure that configuration information is validate at build time.  Conditional compilation is supported via the <code>--tags/-t</code> command line argument.</p>
+<p>To support this, Sparta uses Go&rsquo;s <a href="http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">conditional compliation</a> support to ensure that configuration information is validated at build time.  Conditional compilation is supported via the <code>--tags/-t</code> command line argument.</p>
 
 <p>This example will work through the <a href="https://github.com/mweagle/SpartaConfig">SpartaConfig</a> sample. The requirement is that each environment declare it&rsquo;s <code>Name</code> and also add that value as a Stack <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html">Output</a>.</p>
 

@@ -31,7 +31,7 @@
 
 &lt;p&gt;Each environment is largely similar, but the application may need slightly different configuration in each context.&lt;/p&gt;
 
-&lt;p&gt;To support this, Sparta uses Go&amp;rsquo;s &lt;a href=&#34;http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool&#34;&gt;conditional compliation&lt;/a&gt; support to ensure that configuration information is validate at build time.  Conditional compilation is supported via the &lt;code&gt;--tags/-t&lt;/code&gt; command line argument.&lt;/p&gt;
+&lt;p&gt;To support this, Sparta uses Go&amp;rsquo;s &lt;a href=&#34;http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool&#34;&gt;conditional compliation&lt;/a&gt; support to ensure that configuration information is validated at build time.  Conditional compilation is supported via the &lt;code&gt;--tags/-t&lt;/code&gt; command line argument.&lt;/p&gt;
 
 &lt;p&gt;This example will work through the &lt;a href=&#34;https://github.com/mweagle/SpartaConfig&#34;&gt;SpartaConfig&lt;/a&gt; sample. The requirement is that each environment declare it&amp;rsquo;s &lt;code&gt;Name&lt;/code&gt; and also add that value as a Stack &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html&#34;&gt;Output&lt;/a&gt;.&lt;/p&gt;
 
@@ -976,6 +976,12 @@ graph TD
 &lt;h2 id=&#34;how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application&#34;&gt;How can I include additional AWS resources as part of my Sparta application?&lt;/h2&gt;
 
 &lt;p&gt;Define a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator&#34;&gt;TemplateDecorator&lt;/a&gt; function and annotate the &lt;code&gt;*gocf.Template&lt;/code&gt; with additional AWS resources.&lt;/p&gt;
+
+&lt;p&gt;For more flexibility, use a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks&#34;&gt;WorkflowHook&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;how-can-i-provide-environment-variables-to-lambda-functions&#34;&gt;How can I provide environment variables to lambda functions?&lt;/h2&gt;
+
+&lt;p&gt;Sparta uses conditional compilation rather than environment variables. See &lt;a href=&#34;http://gosparta.io/docs/application/environments/&#34;&gt;Managing Environments&lt;/a&gt; for more information.&lt;/p&gt;
 
 &lt;h2 id=&#34;does-sparta-support-versioning-aliasing&#34;&gt;Does Sparta support Versioning &amp;amp; Aliasing?&lt;/h2&gt;
 
