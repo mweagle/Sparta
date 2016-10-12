@@ -42,7 +42,7 @@ disqusShortname = "mweagle"
     # You can use markdown here.
     brand = "Sparta"
     topline = "A **Go** Framework for AWS Lambda"
-    footline = "<a href=\"https://en.wikipedia.org/wiki/Eddie_Aikau\" target=\"_blank\">Eddie would go</a>"
+    footline = "Updated for Sparta 0.9.2"
 
     # Select a syntax highight.
     # Check the static/css/highlight directory for options.
