@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Event Source - Cognito  &middot; Sparta</title>
+  <title>Environments  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -14,25 +14,23 @@
 
 <meta name="description" content="" />
 
-<meta name="keywords" content="sparta, event_source, ">
+<meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Event Source - Cognito  &middot; Sparta ">
+<meta property="og:title" content="Environments  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
-<meta property="og:url" content="http://gosparta.io/docs/eventsources/cognito/" />
+<meta property="og:url" content="http://gosparta.io/docs/application/environments/" />
 <meta property="og:locale" content="en-EN">
 
 
 <meta property="og:type" content="article" />
 <meta property="og:description" content=""/>
-<meta property="og:article:published_time" content="2015-11-29T06:50:17Z" />
-<meta property="og:article:modified_time" content="2015-11-29T06:50:17Z" />
+<meta property="og:article:published_time" content="2016-08-22T21:00:29Z" />
+<meta property="og:article:modified_time" content="2016-08-22T21:00:29Z" />
 
   
     
 <meta property="og:article:tag" content="sparta">
-    
-<meta property="og:article:tag" content="event_source">
     
   
 
@@ -40,9 +38,9 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Event Source - Cognito" />
+<meta name="twitter:title" content="Environments" />
 <meta name="twitter:description" content="" />
-<meta name="twitter:url" content="http://gosparta.io/docs/eventsources/cognito/" />
+<meta name="twitter:url" content="http://gosparta.io/docs/application/environments/" />
 <meta name="twitter:domain" content="http://gosparta.io">
   
 
@@ -50,20 +48,20 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Event Source - Cognito",
+    "headline": "Environments",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
-    "datePublished": "2015-11-29",
+    "datePublished": "2016-08-22",
     "description": "",
-    "wordCount":  7 
+    "wordCount":  610 
   }
 </script>
 
 
 
-<link rel="canonical" href="http://gosparta.io/docs/eventsources/cognito/" />
+<link rel="canonical" href="http://gosparta.io/docs/application/environments/" />
 
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
@@ -105,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleplus: facebook: twitter:mweagle flattr: name:lumen github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle youtube: home:Sparta googleAnalytics:UA-70794971-1 bitbucket:]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 bitbucket: youtube: facebook: twitter:mweagle flattr: name:lumen github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -346,21 +344,213 @@
     <div class="col-md-10">
 
       <header class="container hat">
-  <h1>Event Source - Cognito
+  <h1>Environments
 </h1>
 
 </header>
 
       <hr />
       <div id="toc">
-      
+      <nav id="TableOfContents">
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#default-configuration">Default Configuration</a>
+<ul>
+<li><a href="#environments-default-go">environments/default.go</a></li>
+</ul></li>
+<li><a href="#environment-configuration">Environment Configuration</a>
+<ul>
+<li><a href="#environments-staging-go">environments/staging.go</a></li>
+<li><a href="#environments-production-go">environments/production.go</a></li>
+</ul></li>
+<li><a href="#segregating-services">Segregating Services</a></li>
+<li><a href="#enforcing-environments">Enforcing Environments</a></li>
+<li><a href="#provisioning">Provisioning</a></li>
+<li><a href="#notes">Notes</a></li>
+</ul></li>
+</ul>
+</nav>
       </div>
       <hr />
 
       <div class="container content">
-  <p><span class="label label-warning">NOT YET IMPLEMENTED</span></p>
+  
 
-<p>TODO: Cognito source documentation</p>
+<h1 id="introduction">Introduction</h1>
+
+<p>It&rsquo;s common for a single Sparta application to target multiple <em>environments</em>. For example:</p>
+
+<ul>
+<li>Development</li>
+<li>Staging</li>
+<li>Production</li>
+</ul>
+
+<p>Each environment is largely similar, but the application may need slightly different configuration in each context.</p>
+
+<p>To support this, Sparta uses Go&rsquo;s <a href="http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">conditional compliation</a> support to ensure that configuration information is validate at build time.  Conditional compilation is supported via the <code>--tags/-t</code> command line argument.</p>
+
+<p>This example will work through the <a href="https://github.com/mweagle/SpartaConfig">SpartaConfig</a> sample. The requirement is that each environment declare it&rsquo;s <code>Name</code> and also add that value as a Stack <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html">Output</a>.</p>
+
+<h2 id="default-configuration">Default Configuration</h2>
+
+<p>To start with, create the <em>default</em> configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.</p>
+
+<h3 id="environments-default-go">environments/default.go</h3>
+
+<pre><code class="language-golang">// +build !staging,!production
+
+package environments
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the default configuration
+const Name = &quot;&quot;
+</code></pre>
+
+<p>The important part is the set of excluded tags at the top of the file:</p>
+
+<pre><code class="language-golang">// +build !staging,!production
+</code></pre>
+
+<p>This ensures that the configuration is only eligible for compilation when Sparta goes to <code>provision</code> the service.</p>
+
+<h2 id="environment-configuration">Environment Configuration</h2>
+
+<p>The next steps are to define the environment-specific configuration files:</p>
+
+<h3 id="environments-staging-go">environments/staging.go</h3>
+
+<pre><code class="language-golang">// +build staging
+
+package environments
+
+import (
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the production configuration
+const Name = &quot;staging&quot;
+
+</code></pre>
+
+<h3 id="environments-production-go">environments/production.go</h3>
+
+<pre><code class="language-golang">// +build production
+
+package environments
+
+import (
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the production configuration
+const Name = &quot;production&quot;
+
+</code></pre>
+
+<p>These three files define the set of mutually-exclusive compile time files that represent environment targets.</p>
+
+<h2 id="segregating-services">Segregating Services</h2>
+
+<p>Sparta uses the <code>sparta.Main(ServiceName, ...)</code> to define the AWS CloudFormation StackName which supports your application.  While the previous files represent different environments, they will collide at <code>provision</code> time as we have not specialized the service name.</p>
+
+<p>We can specialize this by including the <code>buildTags</code> in the service name with:</p>
+
+<pre><code class="language-golang">fmt.Sprintf(&quot;SpartaHelloWorld-%s&quot;, sparta.OptionsGlobal.BuildTags),
+</code></pre>
+
+<p>Each time you run <code>provision</code> with a unique <code>--tags</code> value, a new CloudFormation stack will be created.</p>
+
+<p><em>NOTE</em>: This isn&rsquo;t something suitable for production, since there could be multiple <code>BuildTags</code>.</p>
+
+<h2 id="enforcing-environments">Enforcing Environments</h2>
+
+<p>The final step is to add the environment name as a Stack Output. To annotate the stack with the output value, we&rsquo;ll register a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecorator</a> and use the same conditional compilation support to compile the proper version.</p>
+
+<p>The <em>main.go</em> source file registers the workflow hook via:</p>
+
+<pre><code class="language-golang">hooks := &amp;sparta.WorkflowHooks{
+	Context:          map[string]interface{}{},
+	ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
+}
+</code></pre>
+
+<p>Both <em>environments/staging.go</em> and <em>environments/production.go</em> define the same hook function:</p>
+
+<pre><code class="language-golang">func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		template.Outputs[&quot;Environment&quot;] = &amp;gocf.Output{
+			Description: &quot;Sparta Config target environment&quot;,
+			Value:       Name,
+		}
+		return nil
+	}
+}
+</code></pre>
+
+<p>The <em>environments/default.go</em> definition is slightly different. The <em>default</em> environment isn&rsquo;t one that our service should deploy to. It simply exists to make the initial Sparta build compile.  Build tags are applied to the <em>AWS Lambda</em> compiled binary that Sparta generates.</p>
+
+<p>To prevent users from accidentally deploying to the &ldquo;default&rdquo; environment, the <code>BuildTags</code> are valdiated in the hook definition:</p>
+
+<pre><code class="language-golang">func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		if len(buildTags) &lt;= 0 {
+			return fmt.Errorf(&quot;Please provide a --tags value for environment target&quot;)
+		}
+		return nil
+	}
+}
+</code></pre>
+
+<h2 id="provisioning">Provisioning</h2>
+
+<p>Putting everything together, the <code>SpartaConfig</code> service can deploy to either environment:</p>
+
+<p><strong>staging</strong></p>
+
+<pre><code>    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging`
+</code></pre>
+
+<p><strong>production</strong></p>
+
+<pre><code>    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production`
+</code></pre>
+
+<p>Attempting to deploy to <strong>default</strong> will generate an error:</p>
+
+<h2 id="notes">Notes</h2>
+
+<ul>
+<li>An alternative approach is to define a custom <a href="https://godoc.org/github.com/mweagle/Sparta#ArchiveHook">ArchiveHook</a> and inject custom configuration into the ZIP archive. This data is available at <code>Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)</code></li>
+</ul>
 
 </div>
 

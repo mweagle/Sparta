@@ -195,6 +195,13 @@
       "Title": "",
       "URL": "/application/workflow_hooks",
       "Children": []
+      },
+      {
+      "Name": "Environments",
+      "IconClass": "",
+      "Title": "",
+      "URL": "/application/environments",
+      "Children": []
       }
     ]
   },

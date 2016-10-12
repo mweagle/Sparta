@@ -12,6 +12,191 @@
     <atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
+      <title>Environments</title>
+      <link>http://gosparta.io/docs/application/environments/</link>
+      <pubDate>Mon, 22 Aug 2016 21:00:29 +0000</pubDate>
+      <author>mweagle@gmail.com (Matt Weagle)</author>
+      <guid>http://gosparta.io/docs/application/environments/</guid>
+      <description>
+
+&lt;h1 id=&#34;introduction&#34;&gt;Introduction&lt;/h1&gt;
+
+&lt;p&gt;It&amp;rsquo;s common for a single Sparta application to target multiple &lt;em&gt;environments&lt;/em&gt;. For example:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Development&lt;/li&gt;
+&lt;li&gt;Staging&lt;/li&gt;
+&lt;li&gt;Production&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each environment is largely similar, but the application may need slightly different configuration in each context.&lt;/p&gt;
+
+&lt;p&gt;To support this, Sparta uses Go&amp;rsquo;s &lt;a href=&#34;http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool&#34;&gt;conditional compliation&lt;/a&gt; support to ensure that configuration information is validate at build time.  Conditional compilation is supported via the &lt;code&gt;--tags/-t&lt;/code&gt; command line argument.&lt;/p&gt;
+
+&lt;p&gt;This example will work through the &lt;a href=&#34;https://github.com/mweagle/SpartaConfig&#34;&gt;SpartaConfig&lt;/a&gt; sample. The requirement is that each environment declare it&amp;rsquo;s &lt;code&gt;Name&lt;/code&gt; and also add that value as a Stack &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html&#34;&gt;Output&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;default-configuration&#34;&gt;Default Configuration&lt;/h2&gt;
+
+&lt;p&gt;To start with, create the &lt;em&gt;default&lt;/em&gt; configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.&lt;/p&gt;
+
+&lt;h3 id=&#34;environments-default-go&#34;&gt;environments/default.go&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build !staging,!production
+
+package environments
+
+import (
+	&amp;quot;fmt&amp;quot;
+	&amp;quot;github.com/Sirupsen/logrus&amp;quot;
+	&amp;quot;github.com/aws/aws-sdk-go/aws/session&amp;quot;
+	gocf &amp;quot;github.com/crewjam/go-cloudformation&amp;quot;
+	sparta &amp;quot;github.com/mweagle/Sparta&amp;quot;
+)
+
+// Name is the default configuration
+const Name = &amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The important part is the set of excluded tags at the top of the file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build !staging,!production
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This ensures that the configuration is only eligible for compilation when Sparta goes to &lt;code&gt;provision&lt;/code&gt; the service.&lt;/p&gt;
+
+&lt;h2 id=&#34;environment-configuration&#34;&gt;Environment Configuration&lt;/h2&gt;
+
+&lt;p&gt;The next steps are to define the environment-specific configuration files:&lt;/p&gt;
+
+&lt;h3 id=&#34;environments-staging-go&#34;&gt;environments/staging.go&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build staging
+
+package environments
+
+import (
+	&amp;quot;github.com/Sirupsen/logrus&amp;quot;
+	&amp;quot;github.com/aws/aws-sdk-go/aws/session&amp;quot;
+	gocf &amp;quot;github.com/crewjam/go-cloudformation&amp;quot;
+	sparta &amp;quot;github.com/mweagle/Sparta&amp;quot;
+)
+
+// Name is the production configuration
+const Name = &amp;quot;staging&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;environments-production-go&#34;&gt;environments/production.go&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build production
+
+package environments
+
+import (
+	&amp;quot;github.com/Sirupsen/logrus&amp;quot;
+	&amp;quot;github.com/aws/aws-sdk-go/aws/session&amp;quot;
+	gocf &amp;quot;github.com/crewjam/go-cloudformation&amp;quot;
+	sparta &amp;quot;github.com/mweagle/Sparta&amp;quot;
+)
+
+// Name is the production configuration
+const Name = &amp;quot;production&amp;quot;
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;These three files define the set of mutually-exclusive compile time files that represent environment targets.&lt;/p&gt;
+
+&lt;h2 id=&#34;segregating-services&#34;&gt;Segregating Services&lt;/h2&gt;
+
+&lt;p&gt;Sparta uses the &lt;code&gt;sparta.Main(ServiceName, ...)&lt;/code&gt; to define the AWS CloudFormation StackName which supports your application.  While the previous files represent different environments, they will collide at &lt;code&gt;provision&lt;/code&gt; time as we have not specialized the service name.&lt;/p&gt;
+
+&lt;p&gt;We can specialize this by including the &lt;code&gt;buildTags&lt;/code&gt; in the service name with:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;fmt.Sprintf(&amp;quot;SpartaHelloWorld-%s&amp;quot;, sparta.OptionsGlobal.BuildTags),
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Each time you run &lt;code&gt;provision&lt;/code&gt; with a unique &lt;code&gt;--tags&lt;/code&gt; value, a new CloudFormation stack will be created.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;NOTE&lt;/em&gt;: This isn&amp;rsquo;t something suitable for production, since there could be multiple &lt;code&gt;BuildTags&lt;/code&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;enforcing-environments&#34;&gt;Enforcing Environments&lt;/h2&gt;
+
+&lt;p&gt;The final step is to add the environment name as a Stack Output. To annotate the stack with the output value, we&amp;rsquo;ll register a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook&#34;&gt;ServiceDecorator&lt;/a&gt; and use the same conditional compilation support to compile the proper version.&lt;/p&gt;
+
+&lt;p&gt;The &lt;em&gt;main.go&lt;/em&gt; source file registers the workflow hook via:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;hooks := &amp;amp;sparta.WorkflowHooks{
+	Context:          map[string]interface{}{},
+	ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Both &lt;em&gt;environments/staging.go&lt;/em&gt; and &lt;em&gt;environments/production.go&lt;/em&gt; define the same hook function:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		template.Outputs[&amp;quot;Environment&amp;quot;] = &amp;amp;gocf.Output{
+			Description: &amp;quot;Sparta Config target environment&amp;quot;,
+			Value:       Name,
+		}
+		return nil
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;em&gt;environments/default.go&lt;/em&gt; definition is slightly different. The &lt;em&gt;default&lt;/em&gt; environment isn&amp;rsquo;t one that our service should deploy to. It simply exists to make the initial Sparta build compile.  Build tags are applied to the &lt;em&gt;AWS Lambda&lt;/em&gt; compiled binary that Sparta generates.&lt;/p&gt;
+
+&lt;p&gt;To prevent users from accidentally deploying to the &amp;ldquo;default&amp;rdquo; environment, the &lt;code&gt;BuildTags&lt;/code&gt; are valdiated in the hook definition:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		if len(buildTags) &amp;lt;= 0 {
+			return fmt.Errorf(&amp;quot;Please provide a --tags value for environment target&amp;quot;)
+		}
+		return nil
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;provisioning&#34;&gt;Provisioning&lt;/h2&gt;
+
+&lt;p&gt;Putting everything together, the &lt;code&gt;SpartaConfig&lt;/code&gt; service can deploy to either environment:&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;staging&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;production&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Attempting to deploy to &lt;strong&gt;default&lt;/strong&gt; will generate an error:&lt;/p&gt;
+
+&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;An alternative approach is to define a custom &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ArchiveHook&#34;&gt;ArchiveHook&lt;/a&gt; and inject custom configuration into the ZIP archive. This data is available at &lt;code&gt;Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Workflow Hooks</title>
       <link>http://gosparta.io/docs/application/workflow_hooks/</link>
       <pubDate>Mon, 22 Aug 2016 21:00:29 +0000</pubDate>
@@ -1323,241 +1508,6 @@ See
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;Mapping Template Reference&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>API Gateway - Request Context</title>
-      <link>http://gosparta.io/docs/apigateway/example3/</link>
-      <pubDate>Sun, 29 Nov 2015 06:50:17 +0000</pubDate>
-      <author>mweagle@gmail.com (Matt Weagle)</author>
-      <guid>http://gosparta.io/docs/apigateway/example3/</guid>
-      <description>
-
-&lt;p&gt;This example demonstrates how to use the &lt;code&gt;Context&lt;/code&gt; struct provided as part of the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent&#34;&gt;APIGatewayLambdaJSONEvent&lt;/a&gt; event.  The &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP&#34;&gt;SpartaGeoIP&lt;/a&gt; service will return Geo information based on the inbound request&amp;rsquo;s IP address.&lt;/p&gt;
-
-&lt;h1 id=&#34;define-the-lambda-function&#34;&gt;Define the Lambda Function&lt;/h1&gt;
-
-&lt;p&gt;Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the &lt;a href=&#34;http://dev.maxmind.com/geoip/geoip2/geolite2/&#34;&gt;GeoLite2 Database&lt;/a&gt; and return any information to the client.&lt;/p&gt;
-
-&lt;p&gt;As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;func ipGeoLambda(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger) {
-var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &amp;amp;lambdaEvent)
-if err != nil {
-	logger.Error(&amp;#34;Failed to unmarshal event data: &amp;#34;, err.Error())
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-	return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;We&amp;rsquo;ll then parse the inbound IP address from the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext&#34;&gt;Context&lt;/a&gt; and perform a lookup against the database handle opened in the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19&#34;&gt;init&lt;/a&gt; block:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
-record, err := dbHandle.City(parsedIP)
-if err != nil {
-  logger.Error(&amp;#34;Failed to find city: &amp;#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Finally, marshal the data or error result and we&amp;rsquo;re done:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;// Return the Info
-httpResponse := map[string]interface{}{
-  &amp;#34;info&amp;#34;: record,
-}
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set(&amp;#34;Content-Type&amp;#34;, &amp;#34;application/json&amp;#34;)
-  fmt.Fprint(w, string(responseBody))
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;sparta-integration&#34;&gt;Sparta Integration&lt;/h1&gt;
-
-&lt;p&gt;The next steps are to:&lt;/p&gt;
-
-&lt;ol&gt;
-&lt;li&gt;Create the &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo&#34;&gt;LambdaAWSInfo&lt;/a&gt; value&lt;/li&gt;
-&lt;li&gt;Create an associated API Gateway&lt;/li&gt;
-&lt;li&gt;Create an API Gateway resource that invokes our lambda function&lt;/li&gt;
-&lt;li&gt;Add a Method name to the resource.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;These four steps are managed in the service&amp;rsquo;s &lt;code&gt;main()&lt;/code&gt; function:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;go&#34;&gt;////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	stage := sparta.NewStage(&amp;#34;ipgeo&amp;#34;)
-	apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaGeoIPService&amp;#34;, stage)
-	stackName := &amp;#34;SpartaGeoIP&amp;#34;
-
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
-	apiGatewayResource, _ := apiGateway.NewResource(&amp;#34;/info&amp;#34;, lambdaFn)
-	apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	sparta.Main(stackName,
-		&amp;#34;Sparta app supporting ip-&amp;gt;geo mapping&amp;#34;,
-		lambdaFunctions,
-		apiGateway,
-    nil)
-}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;provision&#34;&gt;Provision&lt;/h1&gt;
-
-&lt;p&gt;The next step is to provision the stack:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;S3_BUCKET=&amp;lt;MY-S3-BUCKETNAME&amp;gt; make provision&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Assuming all goes well, the log output will include the API Gateway URL as in:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;h1 id=&#34;query&#34;&gt;Query&lt;/h1&gt;
-
-&lt;p&gt;With the API Gateway provisioned, let&amp;rsquo;s check the response:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
-
-*   Trying 54.192.70.206...
-* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&amp;gt; GET /ipgeo/info HTTP/1.1
-&amp;gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
-&amp;gt; User-Agent: curl/7.43.0
-&amp;gt; Accept: */*
-&amp;gt;
-&amp;lt; HTTP/1.1 200 OK
-&amp;lt; Content-Type: application/json
-&amp;lt; Content-Length: 1129
-&amp;lt; Connection: keep-alive
-&amp;lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
-&amp;lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
-&amp;lt; X-Cache: Miss from cloudfront
-&amp;lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-&amp;lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
-&amp;lt;
-* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-{&amp;#34;code&amp;#34;:200,&amp;#34;status&amp;#34;:&amp;#34;OK&amp;#34;,&amp;#34;headers&amp;#34;:{&amp;#34;content-type&amp;#34;:&amp;#34;application/json&amp;#34;,&amp;#34;date&amp;#34;:&amp;#34;Sun, 06 Dec 2015 21:50:18 GMT&amp;#34;,&amp;#34;content-length&amp;#34;:&amp;#34;984&amp;#34;},&amp;#34;results&amp;#34;:{&amp;#34;info&amp;#34;:{&amp;#34;City&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;Names&amp;#34;:null},&amp;#34;Continent&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;NA&amp;#34;,&amp;#34;GeoNameID&amp;#34;:6255149,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;Nordamerika&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;North America&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Norteamérica&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;Amérique du Nord&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;北アメリカ&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;América do Norte&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;Северная Америка&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;北美洲&amp;#34;}},&amp;#34;Country&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;Location&amp;#34;:{&amp;#34;Latitude&amp;#34;:0,&amp;#34;Longitude&amp;#34;:0,&amp;#34;MetroCode&amp;#34;:0,&amp;#34;TimeZone&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Postal&amp;#34;:{&amp;#34;Code&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;RegisteredCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:6252001,&amp;#34;IsoCode&amp;#34;:&amp;#34;US&amp;#34;,&amp;#34;Names&amp;#34;:{&amp;#34;de&amp;#34;:&amp;#34;USA&amp;#34;,&amp;#34;en&amp;#34;:&amp;#34;United States&amp;#34;,&amp;#34;es&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;fr&amp;#34;:&amp;#34;États-Unis&amp;#34;,&amp;#34;ja&amp;#34;:&amp;#34;アメリカ合衆国&amp;#34;,&amp;#34;pt-BR&amp;#34;:&amp;#34;Estados Unidos&amp;#34;,&amp;#34;ru&amp;#34;:&amp;#34;США&amp;#34;,&amp;#34;zh-CN&amp;#34;:&amp;#34;美国&amp;#34;}},&amp;#34;RepresentedCountry&amp;#34;:{&amp;#34;GeoNameID&amp;#34;:0,&amp;#34;IsoCode&amp;#34;:&amp;#34;&amp;#34;,&amp;#34;Names&amp;#34;:null,&amp;#34;Type&amp;#34;:&amp;#34;&amp;#34;},&amp;#34;Subdivisions&amp;#34;:null,&amp;#34;Traits&amp;#34;:{&amp;#34;IsAnonymousProxy&amp;#34;:false,&amp;#34;IsSatelliteProvider&amp;#34;:false}}}}&lt;/code&gt;&lt;/pre&gt;
-
-
-&lt;p&gt;Pretty-printing the response body:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
-  &amp;quot;code&amp;quot;: 200,
-  &amp;quot;status&amp;quot;: &amp;quot;OK&amp;quot;,
-  &amp;quot;headers&amp;quot;: {
-    &amp;quot;content-type&amp;quot;: &amp;quot;application/json&amp;quot;,
-    &amp;quot;date&amp;quot;: &amp;quot;Sun, 06 Dec 2015 17:50:15 GMT&amp;quot;,
-    &amp;quot;content-length&amp;quot;: &amp;quot;984&amp;quot;
-  },
-  &amp;quot;results&amp;quot;: {
-    &amp;quot;info&amp;quot;: {
-      &amp;quot;City&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 0,
-        &amp;quot;Names&amp;quot;: null
-      },
-      &amp;quot;Continent&amp;quot;: {
-        &amp;quot;Code&amp;quot;: &amp;quot;NA&amp;quot;,
-        &amp;quot;GeoNameID&amp;quot;: 6255149,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;Nordamerika&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;North America&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Norteamérica&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;Amérique du Nord&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;北アメリカ&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;América do Norte&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;Северная Америка&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;北美洲&amp;quot;
-        }
-      },
-      &amp;quot;Country&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 6252001,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
-        }
-      },
-      &amp;quot;Location&amp;quot;: {
-        &amp;quot;Latitude&amp;quot;: 0,
-        &amp;quot;Longitude&amp;quot;: 0,
-        &amp;quot;MetroCode&amp;quot;: 0,
-        &amp;quot;TimeZone&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;Postal&amp;quot;: {
-        &amp;quot;Code&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;RegisteredCountry&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 6252001,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;US&amp;quot;,
-        &amp;quot;Names&amp;quot;: {
-          &amp;quot;de&amp;quot;: &amp;quot;USA&amp;quot;,
-          &amp;quot;en&amp;quot;: &amp;quot;United States&amp;quot;,
-          &amp;quot;es&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;fr&amp;quot;: &amp;quot;États-Unis&amp;quot;,
-          &amp;quot;ja&amp;quot;: &amp;quot;アメリカ合衆国&amp;quot;,
-          &amp;quot;pt-BR&amp;quot;: &amp;quot;Estados Unidos&amp;quot;,
-          &amp;quot;ru&amp;quot;: &amp;quot;США&amp;quot;,
-          &amp;quot;zh-CN&amp;quot;: &amp;quot;美国&amp;quot;
-        }
-      },
-      &amp;quot;RepresentedCountry&amp;quot;: {
-        &amp;quot;GeoNameID&amp;quot;: 0,
-        &amp;quot;IsoCode&amp;quot;: &amp;quot;&amp;quot;,
-        &amp;quot;Names&amp;quot;: null,
-        &amp;quot;Type&amp;quot;: &amp;quot;&amp;quot;
-      },
-      &amp;quot;Subdivisions&amp;quot;: null,
-      &amp;quot;Traits&amp;quot;: {
-        &amp;quot;IsAnonymousProxy&amp;quot;: false,
-        &amp;quot;IsSatelliteProvider&amp;quot;: false
-      }
-    }
-  }
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Please see the &lt;a href=&#34;http://gosparta.io/docs/apigateway/example1&#34;&gt;first example&lt;/a&gt; for more information on the &lt;code&gt;code&lt;/code&gt;, &lt;code&gt;status&lt;/code&gt;, and &lt;code&gt;headers&lt;/code&gt; keys.&lt;/p&gt;
-
-&lt;h1 id=&#34;cleaning-up&#34;&gt;Cleaning Up&lt;/h1&gt;
-
-&lt;p&gt;Before moving on, remember to decommission the service via:&lt;/p&gt;
-
-&lt;p&gt;&lt;pre&gt;&lt;code class=&#34;nohighlight&#34;&gt;go run main.go delete&lt;/code&gt;&lt;/pre&gt;
-&lt;/p&gt;
-
-&lt;h1 id=&#34;notes&#34;&gt;Notes&lt;/h1&gt;
-
-&lt;ul&gt;
-&lt;li&gt;The &lt;em&gt;GeoLite2-Country.mmdb&lt;/em&gt; content is embedded in the go binary via &lt;a href=&#34;https://github.com/mjibson/esc&#34;&gt;esc&lt;/a&gt; as part of the &lt;a href=&#34;https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27&#34;&gt;go generate&lt;/a&gt; phase.&lt;/li&gt;
-&lt;li&gt;This is a port of Tom Maiaroto&amp;rsquo;s &lt;a href=&#34;https://github.com/tmaiaroto/go-lambda-geoip&#34;&gt;https://github.com/tmaiaroto/go-lambda-geoip&lt;/a&gt; implementation.&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
