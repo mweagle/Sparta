@@ -5,7 +5,7 @@
   - Add support for go [BuildTags](https://golang.org/pkg/go/build/) to support environment settings.
   - Added [Sparta/aws/cloudformation](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to support stack creation.
   - Added [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation) functions to encapsulate common S3 operations.
-  - Added  [Sparta/aws/s3](https://godoc.org/github.com/mweagle/Sparta/zip) functions to expose common ZIP related functions.
+  - Added  [Sparta/zip](https://godoc.org/github.com/mweagle/Sparta/zip) functions to expose common ZIP related functions.
   - Legibility enhancements for `describe` output
   - `sparta.CloudFormationResourceName` proxies to `github.com/mweagle/Sparta/aws/cloudformation.CloudFormationResourceName`. The `sparta` package function is *deprecated* and will be removed in a subsequent release.
 - :bug: **FIXED**
