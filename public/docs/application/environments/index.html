@@ -5,7 +5,7 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <title>Environments  &middot; Sparta</title>
+  <title>Managing Environments  &middot; Sparta</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -17,7 +17,7 @@
 <meta name="keywords" content="sparta, ">
 
 
-<meta property="og:title" content="Environments  &middot; Sparta ">
+<meta property="og:title" content="Managing Environments  &middot; Sparta ">
 <meta property="og:site_name" content="Sparta"/>
 <meta property="og:url" content="http://gosparta.io/docs/application/environments/" />
 <meta property="og:locale" content="en-EN">
@@ -38,7 +38,7 @@
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@" />
 <meta name="twitter:creator" content="@" />
-<meta name="twitter:title" content="Environments" />
+<meta name="twitter:title" content="Managing Environments" />
 <meta name="twitter:description" content="" />
 <meta name="twitter:url" content="http://gosparta.io/docs/application/environments/" />
 <meta name="twitter:domain" content="http://gosparta.io">
@@ -48,14 +48,14 @@
   {
     "@context": "http://schema.org",
     "@type": "Article",
-    "headline": "Environments",
+    "headline": "Managing Environments",
     "author": {
       "@type": "Person",
       "name": "http://profiles.google.com/+?rel=author"
     },
     "datePublished": "2016-08-22",
     "description": "",
-    "wordCount":  803 
+    "wordCount":  833 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta googleAnalytics:UA-70794971-1 googleplus: facebook: twitter:mweagle name:lumen github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle youtube: flattr:]">
+<body class="map[twitter:mweagle youtube: googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: googleplus: flattr: name:lumen home:Sparta linkedin:https://www.linkedin.com/in/mweagle facebook:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -308,7 +308,7 @@
         </li>
       
         <li>
-          <small><a href="/docs/application/environments">Environments</a></small>
+          <small><a href="/docs/application/environments">Managing Environments</a></small>
         </li>
       
       </ul>
@@ -344,7 +344,7 @@
     <div class="col-md-10">
 
       <header class="container hat">
-  <h1>Environments
+  <h1>Managing Environments
 </h1>
 
 </header>
@@ -355,15 +355,8 @@
 <ul>
 <li><a href="#introduction">Introduction</a>
 <ul>
-<li><a href="#default-configuration">Default Configuration</a>
-<ul>
-<li><a href="#environments-default-go">environments/default.go</a></li>
-</ul></li>
-<li><a href="#environment-configuration">Environment Configuration</a>
-<ul>
-<li><a href="#environments-staging-go">environments/staging.go</a></li>
-<li><a href="#environments-production-go">environments/production.go</a></li>
-</ul></li>
+<li><a href="#default-configuration">Default Configuration</a></li>
+<li><a href="#environment-configuration">Environment Configuration</a></li>
 <li><a href="#segregating-services">Segregating Services</a></li>
 <li><a href="#enforcing-environments">Enforcing Environments</a></li>
 <li><a href="#provisioning">Provisioning</a></li>
@@ -397,9 +390,8 @@
 
 <p>To start with, create the <em>default</em> configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.</p>
 
-<h3 id="environments-default-go">environments/default.go</h3>
-
 <pre><code class="language-golang">// +build !staging,!production
+// file: environments/default.go
 
 package environments
 
@@ -426,9 +418,8 @@ const Name = &quot;&quot;
 
 <p>The next steps are to define the environment-specific configuration files:</p>
 
-<h3 id="environments-staging-go">environments/staging.go</h3>
-
 <pre><code class="language-golang">// +build staging
+// file: environments/staging.go
 
 package environments
 
@@ -444,9 +435,8 @@ const Name = &quot;staging&quot;
 
 </code></pre>
 
-<h3 id="environments-production-go">environments/production.go</h3>
-
 <pre><code class="language-golang">// +build production
+// file: environments/production.go
 
 package environments
 
@@ -462,24 +452,24 @@ const Name = &quot;production&quot;
 
 </code></pre>
 
-<p>These three files define the set of mutually-exclusive compile time files that represent environment targets.</p>
+<p>These three files define the set of compile-time mutually-exclusive sources that represent environment targets.</p>
 
 <h2 id="segregating-services">Segregating Services</h2>
 
-<p>Sparta uses the <code>sparta.Main(ServiceName, ...)</code> to define the AWS CloudFormation StackName which supports your application.  While the previous files represent different environments, they will collide at <code>provision</code> time as we have not specialized the service name.</p>
+<p>The <code>serviceName</code> argument supplied to <a href="https://godoc.org/github.com/mweagle/Sparta#Main">sparta.Main</a> defines the AWS CloudFormation stack that supports your application.  While the previous files represent different environments, they will collide at <code>provision</code> time since they share the same service name.</p>
 
-<p>We can specialize this by including the <code>buildTags</code> in the service name with:</p>
+<p>The <code>serviceName</code> can be specialized by using the <code>buildTags</code> in the service name definition as in:</p>
 
 <pre><code class="language-golang">fmt.Sprintf(&quot;SpartaHelloWorld-%s&quot;, sparta.OptionsGlobal.BuildTags),
 </code></pre>
 
 <p>Each time you run <code>provision</code> with a unique <code>--tags</code> value, a new CloudFormation stack will be created.</p>
 
-<p><em>NOTE</em>: This isn&rsquo;t something suitable for production, since there could be multiple <code>BuildTags</code>.</p>
+<p><em>NOTE</em>: This isn&rsquo;t something suitable for production use as there could be multiple <code>BuildTags</code> values.</p>
 
 <h2 id="enforcing-environments">Enforcing Environments</h2>
 
-<p>The final step is to add the environment name as a Stack Output. To annotate the stack with the output value, we&rsquo;ll register a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecorator</a> and use the same conditional compilation support to compile the proper version.</p>
+<p>The final requirement is to add the environment name as a Stack Output. To annotate the stack with the output value, we&rsquo;ll register a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecorator</a> and use the same conditional compilation support to compile the environment-specific version.</p>
 
 <p>The <em>main.go</em> source file registers the workflow hook via:</p>
 
@@ -509,7 +499,7 @@ const Name = &quot;production&quot;
 }
 </code></pre>
 
-<p>The <em>environments/default.go</em> definition is slightly different. The <em>default</em> environment isn&rsquo;t one that our service should deploy to. It simply exists to make the initial Sparta build compile.  Build tags are applied to the <em>AWS Lambda</em> compiled binary that Sparta generates.</p>
+<p>The <em>environments/default.go</em> definition is slightly different. The &ldquo;default&rdquo; environment isn&rsquo;t one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile.  Build tags are applied to the <em>AWS Lambda</em> compiled binary that Sparta generates.</p>
 
 <p>To prevent users from accidentally deploying to the &ldquo;default&rdquo; environment, the <code>BuildTags</code> are valdiated in the hook definition:</p>
 
@@ -536,15 +526,15 @@ const Name = &quot;production&quot;
 
 <p><strong>staging</strong></p>
 
-<pre><code>    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging`
+<pre><code>    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
 </code></pre>
 
 <p><strong>production</strong></p>
 
-<pre><code>    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production`
+<pre><code>    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
 </code></pre>
 
-<p>Attempting to deploy to <strong>default</strong> will generate an error:</p>
+<p>Attempting to deploy to &ldquo;default&rdquo; generates an error:</p>
 
 <pre><code class="language-bash">INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
 INFO[0000] Provisioning service                          BuildID=550c9e360426f48201c885c0abeb078dfc000a0a NOOP=true Tags=
@@ -582,7 +572,11 @@ exit status 1
 
 <ul>
 <li>Call <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> to initialize  <code>sparta.OptionsGlobal.BuildTags</code> field for use in a service name definition.</li>
-<li>An alternative approach is to define a custom <a href="https://godoc.org/github.com/mweagle/Sparta#ArchiveHook">ArchiveHook</a> and inject custom configuration into the ZIP archive. This data is available at <code>Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)</code></li>
+<li>An alternative approach is to define a custom <a href="https://godoc.org/github.com/mweagle/Sparta#ArchiveHook">ArchiveHook</a> and inject custom configuration into the ZIP archive. This data is available at <code>Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)</code>
+
+<ul>
+<li>See <a href="https://github.com/tmaiaroto/discfg">discfg</a>, <a href="https://github.com/coreos/etcd">etcd</a>, <a href="https://www.consul.io/">Consul</a> (among others) for alternative, more dynamic discovery services.</li>
+</ul></li>
 </ul>
 
 </div>

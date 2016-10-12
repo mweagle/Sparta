@@ -12,7 +12,7 @@
     <atom:link href="http://gosparta.io/tags/sparta/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
-      <title>Environments</title>
+      <title>Managing Environments</title>
       <link>http://gosparta.io/docs/application/environments/</link>
       <pubDate>Mon, 22 Aug 2016 21:00:29 +0000</pubDate>
       <author>mweagle@gmail.com (Matt Weagle)</author>
@@ -39,9 +39,8 @@
 
 &lt;p&gt;To start with, create the &lt;em&gt;default&lt;/em&gt; configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.&lt;/p&gt;
 
-&lt;h3 id=&#34;environments-default-go&#34;&gt;environments/default.go&lt;/h3&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build !staging,!production
+// file: environments/default.go
 
 package environments
 
@@ -68,9 +67,8 @@ const Name = &amp;quot;&amp;quot;
 
 &lt;p&gt;The next steps are to define the environment-specific configuration files:&lt;/p&gt;
 
-&lt;h3 id=&#34;environments-staging-go&#34;&gt;environments/staging.go&lt;/h3&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build staging
+// file: environments/staging.go
 
 package environments
 
@@ -86,9 +84,8 @@ const Name = &amp;quot;staging&amp;quot;
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h3 id=&#34;environments-production-go&#34;&gt;environments/production.go&lt;/h3&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;// +build production
+// file: environments/production.go
 
 package environments
 
@@ -104,24 +101,24 @@ const Name = &amp;quot;production&amp;quot;
 
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;These three files define the set of mutually-exclusive compile time files that represent environment targets.&lt;/p&gt;
+&lt;p&gt;These three files define the set of compile-time mutually-exclusive sources that represent environment targets.&lt;/p&gt;
 
 &lt;h2 id=&#34;segregating-services&#34;&gt;Segregating Services&lt;/h2&gt;
 
-&lt;p&gt;Sparta uses the &lt;code&gt;sparta.Main(ServiceName, ...)&lt;/code&gt; to define the AWS CloudFormation StackName which supports your application.  While the previous files represent different environments, they will collide at &lt;code&gt;provision&lt;/code&gt; time as we have not specialized the service name.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;serviceName&lt;/code&gt; argument supplied to &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#Main&#34;&gt;sparta.Main&lt;/a&gt; defines the AWS CloudFormation stack that supports your application.  While the previous files represent different environments, they will collide at &lt;code&gt;provision&lt;/code&gt; time since they share the same service name.&lt;/p&gt;
 
-&lt;p&gt;We can specialize this by including the &lt;code&gt;buildTags&lt;/code&gt; in the service name with:&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;serviceName&lt;/code&gt; can be specialized by using the &lt;code&gt;buildTags&lt;/code&gt; in the service name definition as in:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-golang&#34;&gt;fmt.Sprintf(&amp;quot;SpartaHelloWorld-%s&amp;quot;, sparta.OptionsGlobal.BuildTags),
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Each time you run &lt;code&gt;provision&lt;/code&gt; with a unique &lt;code&gt;--tags&lt;/code&gt; value, a new CloudFormation stack will be created.&lt;/p&gt;
 
-&lt;p&gt;&lt;em&gt;NOTE&lt;/em&gt;: This isn&amp;rsquo;t something suitable for production, since there could be multiple &lt;code&gt;BuildTags&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;NOTE&lt;/em&gt;: This isn&amp;rsquo;t something suitable for production use as there could be multiple &lt;code&gt;BuildTags&lt;/code&gt; values.&lt;/p&gt;
 
 &lt;h2 id=&#34;enforcing-environments&#34;&gt;Enforcing Environments&lt;/h2&gt;
 
-&lt;p&gt;The final step is to add the environment name as a Stack Output. To annotate the stack with the output value, we&amp;rsquo;ll register a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook&#34;&gt;ServiceDecorator&lt;/a&gt; and use the same conditional compilation support to compile the proper version.&lt;/p&gt;
+&lt;p&gt;The final requirement is to add the environment name as a Stack Output. To annotate the stack with the output value, we&amp;rsquo;ll register a &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook&#34;&gt;ServiceDecorator&lt;/a&gt; and use the same conditional compilation support to compile the environment-specific version.&lt;/p&gt;
 
 &lt;p&gt;The &lt;em&gt;main.go&lt;/em&gt; source file registers the workflow hook via:&lt;/p&gt;
 
@@ -151,7 +148,7 @@ const Name = &amp;quot;production&amp;quot;
 }
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;The &lt;em&gt;environments/default.go&lt;/em&gt; definition is slightly different. The &lt;em&gt;default&lt;/em&gt; environment isn&amp;rsquo;t one that our service should deploy to. It simply exists to make the initial Sparta build compile.  Build tags are applied to the &lt;em&gt;AWS Lambda&lt;/em&gt; compiled binary that Sparta generates.&lt;/p&gt;
+&lt;p&gt;The &lt;em&gt;environments/default.go&lt;/em&gt; definition is slightly different. The &amp;ldquo;default&amp;rdquo; environment isn&amp;rsquo;t one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile.  Build tags are applied to the &lt;em&gt;AWS Lambda&lt;/em&gt; compiled binary that Sparta generates.&lt;/p&gt;
 
 &lt;p&gt;To prevent users from accidentally deploying to the &amp;ldquo;default&amp;rdquo; environment, the &lt;code&gt;BuildTags&lt;/code&gt; are valdiated in the hook definition:&lt;/p&gt;
 
@@ -178,15 +175,15 @@ const Name = &amp;quot;production&amp;quot;
 
 &lt;p&gt;&lt;strong&gt;staging&lt;/strong&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging`
+&lt;pre&gt;&lt;code&gt;    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;&lt;strong&gt;production&lt;/strong&gt;&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;    `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production`
+&lt;pre&gt;&lt;code&gt;    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;Attempting to deploy to &lt;strong&gt;default&lt;/strong&gt; will generate an error:&lt;/p&gt;
+&lt;p&gt;Attempting to deploy to &amp;ldquo;default&amp;rdquo; generates an error:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
 INFO[0000] Provisioning service                          BuildID=550c9e360426f48201c885c0abeb078dfc000a0a NOOP=true Tags=
@@ -224,7 +221,11 @@ exit status 1
 
 &lt;ul&gt;
 &lt;li&gt;Call &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ParseOptions&#34;&gt;ParseOptions&lt;/a&gt; to initialize  &lt;code&gt;sparta.OptionsGlobal.BuildTags&lt;/code&gt; field for use in a service name definition.&lt;/li&gt;
-&lt;li&gt;An alternative approach is to define a custom &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ArchiveHook&#34;&gt;ArchiveHook&lt;/a&gt; and inject custom configuration into the ZIP archive. This data is available at &lt;code&gt;Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;An alternative approach is to define a custom &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#ArchiveHook&#34;&gt;ArchiveHook&lt;/a&gt; and inject custom configuration into the ZIP archive. This data is available at &lt;code&gt;Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)&lt;/code&gt;
+
+&lt;ul&gt;
+&lt;li&gt;See &lt;a href=&#34;https://github.com/tmaiaroto/discfg&#34;&gt;discfg&lt;/a&gt;, &lt;a href=&#34;https://github.com/coreos/etcd&#34;&gt;etcd&lt;/a&gt;, &lt;a href=&#34;https://www.consul.io/&#34;&gt;Consul&lt;/a&gt; (among others) for alternative, more dynamic discovery services.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>

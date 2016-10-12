@@ -1,7 +1,7 @@
 +++
 author = "Matt Weagle"
 date = "2016-08-22T21:00:29"
-title = "Environments"
+title = "Managing Environments"
 tags = ["sparta"]
 type = "doc"
 +++
@@ -24,10 +24,9 @@ This example will work through the [SpartaConfig](https://github.com/mweagle/Spa
 
 To start with, create the _default_ configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.
 
-### environments/default.go
-
 ```golang
 // +build !staging,!production
+// file: environments/default.go
 
 package environments
 
@@ -54,9 +53,10 @@ This ensures that the configuration is only eligible for compilation when Sparta
 
 The next steps are to define the environment-specific configuration files:
 
-### environments/staging.go
+
 ```golang
 // +build staging
+// file: environments/staging.go
 
 package environments
 
@@ -71,10 +71,11 @@ import (
 const Name = "staging"
 
 ```
-### environments/production.go
+
 
 ```golang
 // +build production
+// file: environments/production.go
 
 package environments
 
@@ -90,13 +91,13 @@ const Name = "production"
 
 ```
 
-These three files define the set of mutually-exclusive compile time files that represent environment targets.
+These three files define the set of compile-time mutually-exclusive sources that represent environment targets.
 
 ## Segregating Services
 
-Sparta uses the `sparta.Main(ServiceName, ...)` to define the AWS CloudFormation StackName which supports your application.  While the previous files represent different environments, they will collide at `provision` time as we have not specialized the service name.
+The `serviceName` argument supplied to [sparta.Main](https://godoc.org/github.com/mweagle/Sparta#Main) defines the AWS CloudFormation stack that supports your application.  While the previous files represent different environments, they will collide at `provision` time since they share the same service name.
 
-We can specialize this by including the `buildTags` in the service name with:
+The `serviceName` can be specialized by using the `buildTags` in the service name definition as in:
 
 ```golang
 fmt.Sprintf("SpartaHelloWorld-%s", sparta.OptionsGlobal.BuildTags),
@@ -104,12 +105,11 @@ fmt.Sprintf("SpartaHelloWorld-%s", sparta.OptionsGlobal.BuildTags),
 
 Each time you run `provision` with a unique `--tags` value, a new CloudFormation stack will be created.
 
-
-*NOTE*: This isn't something suitable for production, since there could be multiple `BuildTags`.
+*NOTE*: This isn't something suitable for production use as there could be multiple `BuildTags` values.
 
 ## Enforcing Environments
 
-The final step is to add the environment name as a Stack Output. To annotate the stack with the output value, we'll register a [ServiceDecorator](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) and use the same conditional compilation support to compile the proper version.
+The final requirement is to add the environment name as a Stack Output. To annotate the stack with the output value, we'll register a [ServiceDecorator](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) and use the same conditional compilation support to compile the environment-specific version.
 
 The _main.go_ source file registers the workflow hook via:
 
@@ -141,7 +141,7 @@ func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
 }
 ```
 
-The _environments/default.go_ definition is slightly different. The _default_ environment isn't one that our service should deploy to. It simply exists to make the initial Sparta build compile.  Build tags are applied to the *AWS Lambda* compiled binary that Sparta generates.
+The _environments/default.go_ definition is slightly different. The "default" environment isn't one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile.  Build tags are applied to the *AWS Lambda* compiled binary that Sparta generates.
 
 To prevent users from accidentally deploying to the "default" environment, the `BuildTags` are valdiated in the hook definition:
 
@@ -163,21 +163,19 @@ func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
 }
 ```
 
-
-
 ## Provisioning
 
 Putting everything together, the `SpartaConfig` service can deploy to either environment:
 
 **staging**
 
-		`go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging`
+		go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
 
 **production**
 
-		`go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production`
+		go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
 
-Attempting to deploy to **default** will generate an error:
+Attempting to deploy to "default" generates an error:
 
 ```bash
 INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
@@ -212,8 +210,8 @@ ERRO[0009] Please provide a --tags value for environment target
 exit status 1
 ```
 
-
 ## Notes
 
   - Call [ParseOptions](https://godoc.org/github.com/mweagle/Sparta#ParseOptions) to initialize  `sparta.OptionsGlobal.BuildTags` field for use in a service name definition.
   - An alternative approach is to define a custom [ArchiveHook](https://godoc.org/github.com/mweagle/Sparta#ArchiveHook) and inject custom configuration into the ZIP archive. This data is available at `Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)`
+	- See [discfg](https://github.com/tmaiaroto/discfg), [etcd](https://github.com/coreos/etcd), [Consul](https://www.consul.io/) (among others) for alternative, more dynamic discovery services.
