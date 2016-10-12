@@ -110,6 +110,12 @@ func init() {
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags for conditional compilation")
+
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
 		Use:   "version",
@@ -136,12 +142,6 @@ func init() {
 		"i",
 		"",
 		"Optional BuildID to use")
-
-	CommandLineOptions.Provision.Flags().StringVarP(&OptionsGlobal.BuildTags,
-		"tags",
-		"t",
-		"",
-		"Optional build tags to use for compilation")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
@@ -178,11 +178,6 @@ func init() {
 		"o",
 		"",
 		"Output file for HTML description")
-	CommandLineOptions.Describe.Flags().StringVarP(&OptionsGlobal.BuildTags,
-		"tags",
-		"t",
-		"",
-		"Optional build tags to use for compilation")
 
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
@@ -190,11 +185,7 @@ func init() {
 		Short: "Interactively explore service",
 		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
 	}
-	CommandLineOptions.Explore.Flags().StringVarP(&OptionsGlobal.BuildTags,
-		"tags",
-		"t",
-		"",
-		"Optional build tags to use for compilation")
+
 	CommandLineOptions.Explore.Flags().IntVarP(&optionsExplore.Port,
 		"port",
 		"p",
@@ -228,6 +219,11 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	parseCmdRoot.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags for conditional compilation")
 
 	// Now, for any user-attached commands, add them to the temporary Parse
 	// root command.
