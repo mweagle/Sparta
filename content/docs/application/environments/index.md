@@ -179,7 +179,41 @@ Putting everything together, the `SpartaConfig` service can deploy to either env
 
 Attempting to deploy to **default** will generate an error:
 
+```bash
+INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
+INFO[0000] Provisioning service                          BuildID=550c9e360426f48201c885c0abeb078dfc000a0a NOOP=true Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=SpartaConfig_.lambda.amd64
+INFO[0008] Executable binary size                        KB=15309 MB=14
+INFO[0008] Creating ZIP archive for upload               TempName=/Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaConfig/SpartaConfig_104207098
+INFO[0009] Registering Sparta function                   FunctionName=main.helloWorld
+INFO[0009] Lambda function deployment package size       KB=4262 MB=4
+INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=weagle
+INFO[0009] Bypassing S3 upload due to -n/-noop command line argument  Bucket=weagle Key=SpartaConfig-/SpartaConfig_104207098
+INFO[0009] Calling WorkflowHook                          WorkflowHook=github.com/mweagle/SpartaConfig/environments.ServiceDecoratorHook.func1 WorkflowHookContext=map[]
+INFO[0009] Invoking rollback functions                   RollbackCount=0
+ERRO[0009] Please provide a --tags value for environment target
+Error: Please provide a --tags value for environment target
+Usage:
+  main provision [flags]
+
+Flags:
+  -i, --buildID string    Optional BuildID to use
+  -s, --s3Bucket string   S3 Bucket to use for Lambda source
+  -t, --tags string       Optional build tags to use for compilation
+
+Global Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default "info")
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+ERRO[0009] Please provide a --tags value for environment target
+exit status 1
+```
 
 
 ## Notes
+
+  - Call [ParseOptions](https://godoc.org/github.com/mweagle/Sparta#ParseOptions) to initialize  `sparta.OptionsGlobal.BuildTags` field for use in a service name definition.
   - An alternative approach is to define a custom [ArchiveHook](https://godoc.org/github.com/mweagle/Sparta#ArchiveHook) and inject custom configuration into the ZIP archive. This data is available at `Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)`
