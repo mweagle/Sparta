@@ -41,6 +41,7 @@ func TestProvision(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -93,6 +94,7 @@ func TestDecorateProvision(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)

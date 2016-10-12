@@ -2,137 +2,46 @@ package cloudformation
 
 import (
 	"bytes"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	gocf "github.com/crewjam/go-cloudformation"
-	sparta "github.com/mweagle/Sparta"
+
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
 
 func init() {
 	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
+	rand.Seed(time.Now().Unix())
 }
+
+// RE to ensure CloudFormation compatible resource names
+// Issue: https://github.com/mweagle/Sparta/issues/8
+// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+var reCloudFormationInvalidChars = regexp.MustCompile("[^A-Za-z0-9]+")
 
 ////////////////////////////////////////////////////////////////////////////////
 // Private
 ////////////////////////////////////////////////////////////////////////////////
-func toExpressionSlice(input interface{}) ([]string, error) {
-	var expressions []string
-	slice, sliceOK := input.([]interface{})
-	if !sliceOK {
-		return nil, fmt.Errorf("Failed to convert to slice")
-	}
-	for _, eachValue := range slice {
-		switch str := eachValue.(type) {
-		case string:
-			expressions = append(expressions, str)
-		}
-	}
-	return expressions, nil
-}
-func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
-	if len(data) <= 0 {
-		return nil, fmt.Errorf("FnJoinExpr data is empty")
-	}
-	for eachKey, eachValue := range data {
-		switch eachKey {
-		case "Ref":
-			return gocf.Ref(eachValue.(string)).String(), nil
-		case "Fn::GetAtt":
-			attrValues, attrValuesErr := toExpressionSlice(eachValue)
-			if nil != attrValuesErr {
-				return nil, attrValuesErr
-			}
-			if len(attrValues) != 2 {
-				return nil, fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
-			}
-			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
-		case "Fn::FindInMap":
-			attrValues, attrValuesErr := toExpressionSlice(eachValue)
-			if nil != attrValuesErr {
-				return nil, attrValuesErr
-			}
-			if len(attrValues) != 3 {
-				return nil, fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
-			}
-			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
-		}
-	}
-	return nil, fmt.Errorf("Unsupported AWS Function detected: %#v", data)
-}
 
-////////////////////////////////////////////////////////////////////////////////
-// Public
-////////////////////////////////////////////////////////////////////////////////
-
-// S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
-// (string or Ref) for all bucket keys (`/*`).  The bucket
-// parameter may be either a string or an interface{} ("Ref: "myResource")
-// value
-func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
-	}
-	arnParts = append(arnParts, gocf.String("/*"))
-	return gocf.Join("", arnParts...).String()
-}
-
-// S3ArnForBucket returns a CloudFormation-compatible Arn expression
-// (string or Ref) suitable for template reference.  The bucket
-// parameter may be either a string or an interface{} ("Ref: "myResource")
-// value
-func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
-	}
-	return gocf.Join("", arnParts...).String()
-}
-
-// MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
-// Tags representation.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
-func MapToResourceTags(tagMap map[string]string) []interface{} {
-	var tags []interface{}
-	for eachKey, eachValue := range tagMap {
-		tags = append(tags, map[string]interface{}{
-			"Key":   eachKey,
-			"Value": eachValue,
-		})
-	}
-	return tags
-}
-
+// BEGIN - templateConverter
 // Struct to encapsulate transforming data into
 type templateConverter struct {
 	templateReader          io.Reader
@@ -173,7 +82,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 	if converter.conversionError != nil {
 		return converter
 	}
-	reAWSProp := regexp.MustCompile("\\{\\s*\"([Ref|Fn\\:\\:\\w+])")
+	reAWSProp := regexp.MustCompile("\\{\\s*\"\\s*(Ref|Fn::GetAtt|Fn::FindInMap)")
 	splitData := strings.Split(converter.expandedTemplate, "\n")
 	splitDataLineCount := len(splitData)
 
@@ -241,17 +150,7 @@ func (converter *templateConverter) results() (*gocf.StringExpr, error) {
 	return gocf.Join("", converter.contents...), nil
 }
 
-// ConvertToTemplateExpression transforms the templateData contents into
-// an Fn::Join- compatible representation for template serialization.
-// The templateData contents may include both golang text/template properties
-// and single-line JSON Fn::Join supported serializations.
-func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
-	converter := &templateConverter{
-		templateReader:          templateData,
-		additionalTemplateProps: additionalUserTemplateProperties,
-	}
-	return converter.expandTemplate().parseData().results()
-}
+// END - templateConverter
 
 func existingStackTemplate(serviceName string,
 	session *session.Session,
@@ -289,6 +188,93 @@ func existingStackTemplate(serviceName string,
 	}
 
 	return template, nil
+}
+
+func updateStackViaChangeSet(serviceName string,
+	cfTemplateURL string,
+	capabilities []*string,
+	awsTags []*cloudformation.Tag,
+	awsCloudFormation *cloudformation.CloudFormation,
+	logger *logrus.Logger) error {
+
+	// Create a change set name...
+
+	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
+
+	changeSetInput := &cloudformation.CreateChangeSetInput{
+		Capabilities:  capabilities,
+		ChangeSetName: aws.String(changeSetRequestName),
+		ClientToken:   aws.String(changeSetRequestName),
+		Description:   aws.String(fmt.Sprintf("Change set for service: %s", serviceName)),
+		StackName:     aws.String(serviceName),
+		TemplateURL:   aws.String(cfTemplateURL),
+	}
+	if len(awsTags) != 0 {
+		changeSetInput.Tags = awsTags
+	}
+	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
+	if nil != changeSetError {
+		return changeSetError
+	}
+
+	logger.WithFields(logrus.Fields{
+		"StackName": serviceName,
+	}).Info("Issued CreateChangeSet request")
+
+	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(serviceName),
+	}
+
+	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
+	for waitComplete := false; !waitComplete; {
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
+		time.Sleep(sleepDuration)
+
+		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
+
+		if nil != describeChangeSetError {
+			return describeChangeSetError
+		}
+		describeChangeSetOutput = changeSetOutput
+		waitComplete = (nil != describeChangeSetOutput)
+	}
+	logger.WithFields(logrus.Fields{
+		"DescribeChangeSetOutput": describeChangeSetOutput,
+	}).Debug("DescribeChangeSet result")
+
+	// If there aren't any changes, then skip it...
+	if len(describeChangeSetOutput.Changes) <= 0 {
+		logger.WithFields(logrus.Fields{
+			"StackName": serviceName,
+		}).Info("No changes detected for service")
+
+		// Delete it...
+		deleteChangeSetInput := cloudformation.DeleteChangeSetInput{
+			ChangeSetName: aws.String(changeSetRequestName),
+			StackName:     aws.String(serviceName),
+		}
+		_, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
+		return deleteChangeSetResultErr
+	} else {
+		// Apply the change
+		executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
+			ChangeSetName: aws.String(changeSetRequestName),
+			StackName:     aws.String(serviceName),
+		}
+		executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
+
+		logger.WithFields(logrus.Fields{
+			"ExecuteChangeSetOutput": executeChangeSetOutput,
+		}).Debug("ExecuteChangeSet result")
+
+		if nil == executeChangeSetError {
+			logger.WithFields(logrus.Fields{
+				"StackName": serviceName,
+			}).Info("Issued ExecuteChangeSet request")
+		}
+		return executeChangeSetError
+	}
 }
 
 func existingLambdaResourceVersions(serviceName string,
@@ -338,6 +324,170 @@ func existingLambdaResourceVersions(serviceName string,
 	return listVersionsResp, nil
 }
 
+func toExpressionSlice(input interface{}) ([]string, error) {
+	var expressions []string
+	slice, sliceOK := input.([]interface{})
+	if !sliceOK {
+		return nil, fmt.Errorf("Failed to convert to slice")
+	}
+	for _, eachValue := range slice {
+		switch str := eachValue.(type) {
+		case string:
+			expressions = append(expressions, str)
+		}
+	}
+	return expressions, nil
+}
+func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
+	if len(data) <= 0 {
+		return nil, fmt.Errorf("FnJoinExpr data is empty")
+	}
+	for eachKey, eachValue := range data {
+		switch eachKey {
+		case "Ref":
+			return gocf.Ref(eachValue.(string)).String(), nil
+		case "Fn::GetAtt":
+			attrValues, attrValuesErr := toExpressionSlice(eachValue)
+			if nil != attrValuesErr {
+				return nil, attrValuesErr
+			}
+			if len(attrValues) != 2 {
+				return nil, fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
+			}
+			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
+		case "Fn::FindInMap":
+			attrValues, attrValuesErr := toExpressionSlice(eachValue)
+			if nil != attrValuesErr {
+				return nil, attrValuesErr
+			}
+			if len(attrValues) != 3 {
+				return nil, fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
+			}
+			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
+		}
+	}
+	return nil, fmt.Errorf("Unsupported AWS Function detected: %#v", data)
+}
+
+func stackCapabilities(template *gocf.Template) []*string {
+	// Only require IAM capability if the definition requires it.
+	capabilities := make([]*string, 0)
+	for _, eachResource := range template.Resources {
+		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
+			found := false
+			for _, eachElement := range capabilities {
+				found = (found || (*eachElement == "CAPABILITY_IAM"))
+			}
+			if !found {
+				capabilities = append(capabilities, aws.String("CAPABILITY_IAM"))
+			}
+		}
+	}
+	return capabilities
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Public
+////////////////////////////////////////////////////////////////////////////////
+
+// Does a given stack exist?
+func StackExists(stackNameOrID string, awsSession *session.Session, logger *logrus.Logger) (bool, error) {
+	cf := cloudformation.New(awsSession)
+
+	describeStacksInput := &cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackNameOrID),
+	}
+	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
+	logger.WithFields(logrus.Fields{
+		"DescribeStackOutput": describeStacksOutput,
+	}).Debug("DescribeStackOutput results")
+
+	exists := false
+	if err != nil {
+		logger.WithFields(logrus.Fields{
+			"DescribeStackOutputError": err,
+		}).Debug("DescribeStackOutput")
+
+		// If the stack doesn't exist, then no worries
+		if strings.Contains(err.Error(), "does not exist") {
+			exists = false
+		} else {
+			return false, err
+		}
+	} else {
+		exists = true
+	}
+	return exists, nil
+}
+
+// S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
+// (string or Ref) for all bucket keys (`/*`).  The bucket
+// parameter may be either a string or an interface{} ("Ref: "myResource")
+// value
+func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
+	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
+
+	switch bucket.(type) {
+	case string:
+		// Don't be smart if the Arn value is a user supplied literal
+		arnParts = append(arnParts, gocf.String(bucket.(string)))
+	case *gocf.StringExpr:
+		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
+	case gocf.RefFunc:
+		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
+	default:
+		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	}
+	arnParts = append(arnParts, gocf.String("/*"))
+	return gocf.Join("", arnParts...).String()
+}
+
+// S3ArnForBucket returns a CloudFormation-compatible Arn expression
+// (string or Ref) suitable for template reference.  The bucket
+// parameter may be either a string or an interface{} ("Ref: "myResource")
+// value
+func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
+	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
+
+	switch bucket.(type) {
+	case string:
+		// Don't be smart if the Arn value is a user supplied literal
+		arnParts = append(arnParts, gocf.String(bucket.(string)))
+	case *gocf.StringExpr:
+		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
+	case gocf.RefFunc:
+		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
+	default:
+		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	}
+	return gocf.Join("", arnParts...).String()
+}
+
+// MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
+// Tags representation.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
+func MapToResourceTags(tagMap map[string]string) []interface{} {
+	var tags []interface{}
+	for eachKey, eachValue := range tagMap {
+		tags = append(tags, map[string]interface{}{
+			"Key":   eachKey,
+			"Value": eachValue,
+		})
+	}
+	return tags
+}
+
+// ConvertToTemplateExpression transforms the templateData contents into
+// an Fn::Join- compatible representation for template serialization.
+// The templateData contents may include both golang text/template properties
+// and single-line JSON Fn::Join supported serializations.
+func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	converter := &templateConverter{
+		templateReader:          templateData,
+		additionalTemplateProps: additionalUserTemplateProperties,
+	}
+	return converter.expandTemplate().parseData().results()
+}
+
 // AutoIncrementingLambdaVersionInfo is dynamically populated during
 // a call AddAutoIncrementingLambdaVersionResource. The VersionHistory
 // is a map of published versions to their CloudFormation resource names
@@ -380,7 +530,6 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 		return nil, existingStackDefinitionErr
 	}
 
-	// TODO - fetch the template and look up the resources
 	existingVersions, existingVersionsErr := existingLambdaResourceVersions(serviceName,
 		lambdaResourceName,
 		session,
@@ -397,7 +546,7 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 	}
 
 	lambdaVersionResourceName := func(versionIndex int) string {
-		return sparta.CloudFormationResourceName(lambdaResourceName,
+		return CloudFormationResourceName(lambdaResourceName,
 			"version",
 			strconv.Itoa(versionIndex))
 	}
@@ -454,4 +603,262 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 	}).Info("Inserting new version resource")
 
 	return &autoIncrementingLambdaVersionInfo, nil
+}
+
+// StackEvents returns the slice of cloudformation.StackEvents for the given stackID or stackName
+func StackEvents(stackID string,
+	eventFilterLowerBound time.Time,
+	awsSession *session.Session) ([]*cloudformation.StackEvent, error) {
+	cfService := cloudformation.New(awsSession)
+	var events []*cloudformation.StackEvent
+
+	nextToken := ""
+	for {
+		params := &cloudformation.DescribeStackEventsInput{
+			StackName: aws.String(stackID),
+		}
+		if len(nextToken) > 0 {
+			params.NextToken = aws.String(nextToken)
+		}
+
+		resp, err := cfService.DescribeStackEvents(params)
+		if nil != err {
+			return nil, err
+		}
+		for _, eachEvent := range resp.StackEvents {
+			if eachEvent.Timestamp.After(eventFilterLowerBound) {
+				events = append(events, eachEvent)
+			}
+		}
+		if nil == resp.NextToken {
+			break
+		} else {
+			nextToken = *resp.NextToken
+		}
+	}
+	return events, nil
+}
+
+// WaitForStackOperationCompleteResult encapsulates the stackInfo
+// following a WaitForStackOperationComplete call
+type WaitForStackOperationCompleteResult struct {
+	operationSuccessful bool
+	stackInfo           *cloudformation.Stack
+}
+
+// WaitForStackOperationComplete is a blocking, polling based call that
+// periodically fetches the stackID set of events and uses the state value
+// to determine if an operation is complete
+func WaitForStackOperationComplete(stackID string,
+	pollingMessage string,
+	awsCloudFormation *cloudformation.CloudFormation,
+	logger *logrus.Logger) (*WaitForStackOperationCompleteResult, error) {
+
+	result := &WaitForStackOperationCompleteResult{}
+
+	// Poll for the current stackID state, and
+	describeStacksInput := &cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackID),
+	}
+	for waitComplete := false; !waitComplete; {
+		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
+		time.Sleep(sleepDuration)
+
+		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
+		if nil != err {
+			// TODO - add retry iff we're RateExceeded due to collective access
+			return nil, err
+		}
+		if len(describeStacksOutput.Stacks) <= 0 {
+			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
+		}
+		result.stackInfo = describeStacksOutput.Stacks[0]
+		switch *(result.stackInfo).StackStatus {
+		case cloudformation.StackStatusCreateComplete,
+			cloudformation.StackStatusUpdateComplete:
+			result.operationSuccessful = true
+			waitComplete = true
+		case
+			// Include DeleteComplete as new provisions will automatically rollback
+			cloudformation.StackStatusDeleteComplete,
+			cloudformation.StackStatusCreateFailed,
+			cloudformation.StackStatusDeleteFailed,
+			cloudformation.StackStatusRollbackFailed,
+			cloudformation.StackStatusRollbackComplete,
+			cloudformation.StackStatusUpdateRollbackComplete:
+			result.operationSuccessful = false
+			waitComplete = true
+		default:
+			logger.Info(pollingMessage)
+		}
+	}
+	return result, nil
+}
+
+// CloudFormationResourceName returns a name suitable as a logical
+// CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
+// for more information.  The `prefix` value should provide a hint as to the
+// resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
+// name is not content-addressable.
+func CloudFormationResourceName(prefix string, parts ...string) string {
+	hash := sha1.New()
+	hash.Write([]byte(prefix))
+	if len(parts) <= 0 {
+		randValue := rand.Int63()
+		hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+	} else {
+		for _, eachPart := range parts {
+			hash.Write([]byte(eachPart))
+		}
+	}
+	resourceName := fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
+
+	// Ensure that any non alphanumeric characters are replaced with ""
+	return reCloudFormationInvalidChars.ReplaceAllString(resourceName, "x")
+}
+
+// ConvergeStackState ensures that the serviceName converges to the template
+// state defined by cfTemplate. This function establishes a polling loop to determine
+// when the stack operation has completed.
+func ConvergeStackState(serviceName string,
+	cfTemplate *gocf.Template,
+	s3Bucket string,
+	s3KeyName string,
+	tags map[string]string,
+	startTime time.Time,
+	awsSession *session.Session,
+	logger *logrus.Logger) (*cloudformation.Stack, error) {
+
+	awsCloudFormation := cloudformation.New(awsSession)
+	uploader := s3manager.NewUploader(awsSession)
+
+	// Serialize the template and upload it
+	cfTemplateJSON, err := json.Marshal(cfTemplate)
+	if err != nil {
+		logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
+		return nil, err
+	}
+
+	// Upload the actual CloudFormation template to S3 to maximize the template
+	// size limit
+	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html
+	contentBody := string(cfTemplateJSON)
+	uploadInput := &s3manager.UploadInput{
+		Bucket:      &s3Bucket,
+		Key:         &s3KeyName,
+		ContentType: aws.String("application/json"),
+		Body:        strings.NewReader(contentBody),
+	}
+	templateUploadResult, templateUploadResultErr := uploader.Upload(uploadInput)
+	if nil != templateUploadResultErr {
+		return nil, templateUploadResultErr
+	}
+
+	// Be transparent
+	logger.WithFields(logrus.Fields{
+		"URL": templateUploadResult.Location,
+	}).Info("Template uploaded")
+
+	// Check to see if the stack exists
+	exists, existsErr := StackExists(serviceName, awsSession, logger)
+	if nil != existsErr {
+		return nil, existsErr
+	}
+
+	awsTags := make([]*cloudformation.Tag, 0)
+	if nil != tags {
+		for eachKey, eachValue := range tags {
+			awsTags = append(awsTags,
+				&cloudformation.Tag{
+					Key:   aws.String(eachKey),
+					Value: aws.String(eachValue),
+				})
+		}
+	}
+
+	stackID := ""
+	if exists {
+		err = updateStackViaChangeSet(serviceName,
+			templateUploadResult.Location,
+			stackCapabilities(cfTemplate),
+			awsTags,
+			awsCloudFormation,
+			logger)
+
+		if nil != err {
+			return nil, err
+		}
+		stackID = serviceName
+	} else {
+		// Create stack
+		createStackInput := &cloudformation.CreateStackInput{
+			StackName:        aws.String(serviceName),
+			TemplateURL:      aws.String(templateUploadResult.Location),
+			TimeoutInMinutes: aws.Int64(20),
+			OnFailure:        aws.String(cloudformation.OnFailureDelete),
+			Capabilities:     stackCapabilities(cfTemplate),
+		}
+		if len(awsTags) != 0 {
+			createStackInput.Tags = awsTags
+		}
+		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
+		if nil != err {
+			return nil, err
+		}
+
+		logger.WithFields(logrus.Fields{
+			"StackID": *createStackResponse.StackId,
+		}).Info("Creating stack")
+
+		stackID = *createStackResponse.StackId
+	}
+	// Wait for the operation to succeeed
+	var pollingMessage string
+	if exists {
+		pollingMessage = "Waiting for ExecuteChangeSet to complete"
+	} else {
+		pollingMessage = "Waiting for CreateStack to complete"
+	}
+	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
+		pollingMessage,
+		awsCloudFormation,
+		logger)
+	if nil != convergeErr {
+		return nil, convergeErr
+	}
+
+	// If it didn't work, then output some failure information
+	if !convergeResult.operationSuccessful {
+		// Get the stack events and find the ones that failed.
+		events, err := StackEvents(stackID, startTime, awsSession)
+		if nil != err {
+			return nil, err
+		}
+
+		logger.Error("Stack provisioning error")
+		for _, eachEvent := range events {
+			switch *eachEvent.ResourceStatus {
+			case cloudformation.ResourceStatusCreateFailed,
+				cloudformation.ResourceStatusDeleteFailed,
+				cloudformation.ResourceStatusUpdateFailed:
+				errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
+					*eachEvent.ResourceType,
+					*eachEvent.LogicalResourceId,
+					*eachEvent.ResourceStatusReason)
+				logger.Error(errMsg)
+			default:
+				// NOP
+			}
+		}
+		return nil, fmt.Errorf("Failed to provision: %s", serviceName)
+	} else if nil != convergeResult.stackInfo.Outputs {
+		for _, eachOutput := range convergeResult.stackInfo.Outputs {
+			logger.WithFields(logrus.Fields{
+				"Key":         *eachOutput.OutputKey,
+				"Value":       *eachOutput.OutputValue,
+				"Description": *eachOutput.Description,
+			}).Info("Stack output")
+		}
+	}
+	return convergeResult.stackInfo, nil
 }

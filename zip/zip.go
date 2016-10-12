@@ -87,6 +87,5 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	default:
 		err = errors.New("Inavlid source type")
 	}
-	zipWriter.Close()
 	return err
 }
