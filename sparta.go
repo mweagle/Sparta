@@ -256,8 +256,8 @@ type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, 
 // to "nodejs4.3" (at least until golang is officially supported). See
 // http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html
 type LambdaFunctionOptions struct {
-	// Function Name
-	Name string
+	// Additional params
+	SpartaOptions
 	// Additional function description
 	Description string
 	// Memory limit
@@ -274,6 +274,12 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 		Timeout:    3,
 		VpcConfig:  nil,
 	}
+}
+
+// SpartaOptions allow the passing in of additional options during the creation of a Lambda Function
+type SpartaOptions struct {
+	// Function Name
+	Name string
 }
 
 // TemplateDecorator allows Lambda functions to annotate the CloudFormation
