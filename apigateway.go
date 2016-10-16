@@ -606,10 +606,10 @@ func NewStage(name string) *Stage {
 func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Resource, error) {
 	// The key is the path+resource, since we want to support POLA scoped
 	// security roles based on HTTP method
-	resourcesKey := fmt.Sprintf("%s%s", parentLambda.lambdaFnName, pathPart)
+	resourcesKey := fmt.Sprintf("%s%s", parentLambda.lambdaFunctionName(), pathPart)
 	_, exists := api.resources[resourcesKey]
 	if exists {
-		return nil, fmt.Errorf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFnName)
+		return nil, fmt.Errorf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFunctionName())
 	}
 	resource := &Resource{
 		pathPart:     pathPart,

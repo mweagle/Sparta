@@ -418,7 +418,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 
 		// Validate the IAMRoleDefinitions associated
 		if nil != eachLambdaInfo.RoleDefinition {
-			logicalName := eachLambdaInfo.RoleDefinition.logicalName(ctx.serviceName, eachLambdaInfo.lambdaFnName)
+			logicalName := eachLambdaInfo.RoleDefinition.logicalName(ctx.serviceName, eachLambdaInfo.lambdaFunctionName())
 			_, exists := ctx.lambdaIAMRoleNameMap[logicalName]
 			if !exists {
 				// Insert it into the resource creation map and add
@@ -477,7 +477,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 // to AWS Lambda
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
-		"FunctionName": lambdaInfo.lambdaFnName,
+		"FunctionName": lambdaInfo.lambdaFunctionName(),
 	}).Info("Registering Sparta function")
 
 	// We do know the CF resource name here - could write this into
@@ -486,7 +486,7 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 	// lambda function
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		lambdaInfo.jsHandlerName(),
-		lambdaInfo.lambdaFnName)
+		lambdaInfo.lambdaFunctionName())
 	return primaryEntry
 }
 

@@ -99,8 +99,8 @@ func Describe(serviceName string,
 
 	for _, eachLambda := range lambdaAWSInfos {
 		// Create the node...
-		writeNode(&b, eachLambda.lambdaFnName, nodeColorLambda, "")
-		writeLink(&b, eachLambda.lambdaFnName, serviceName, "")
+		writeNode(&b, eachLambda.lambdaFunctionName(), nodeColorLambda, "")
+		writeLink(&b, eachLambda.lambdaFunctionName(), serviceName, "")
 
 		// Create permission & event mappings
 		// functions declared in this
@@ -119,13 +119,13 @@ func Describe(serviceName string,
 					nodeColor = nodeColorEventSource
 				}
 				writeNode(&b, name, nodeColor, "border-style:dotted")
-				writeLink(&b, name, eachLambda.lambdaFnName, strings.Replace(link, "\n", "<br><br>", -1))
+				writeLink(&b, name, eachLambda.lambdaFunctionName(), strings.Replace(link, "\n", "<br><br>", -1))
 			}
 		}
 
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
 			writeNode(&b, eachEventSourceMapping.EventSourceArn, nodeColorEventSource, "border-style:dotted")
-			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFnName, "")
+			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFunctionName(), "")
 		}
 	}
 
@@ -140,7 +140,7 @@ func Describe(serviceName string,
 				var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
 				writeNode(&b, nodeName, nodeColorAPIGateway, "")
 				writeLink(&b, nodeNameAPIGateway, nodeName, "")
-				writeLink(&b, nodeName, eachResource.parentLambda.lambdaFnName, "")
+				writeLink(&b, nodeName, eachResource.parentLambda.lambdaFunctionName(), "")
 			}
 		}
 	}

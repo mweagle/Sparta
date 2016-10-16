@@ -27,14 +27,14 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) e
 	// Get unique paths
 	lambdaPaths := make(map[string]*LambdaAWSInfo, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
-		lambdaPaths[eachLambdaInfo.lambdaFnName] = eachLambdaInfo
+		lambdaPaths[eachLambdaInfo.lambdaFunctionName()] = eachLambdaInfo
 	}
 
 	for _, eachLambdaInfo := range lambdaPaths {
-		functionURL := fmt.Sprintf("%s/%s", urlHost, eachLambdaInfo.lambdaFnName)
+		functionURL := fmt.Sprintf("%s/%s", urlHost, eachLambdaInfo.lambdaFunctionName())
 		logger.WithFields(logrus.Fields{
 			"URL": functionURL,
-		}).Info(eachLambdaInfo.lambdaFnName)
+		}).Info(eachLambdaInfo.lambdaFunctionName())
 
 		if msgText == "" {
 			msgText = fmt.Sprintf("\tcurl -vs -X POST -H \"Content-Type: application/json\" --data @testEvent.json %s", functionURL)

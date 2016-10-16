@@ -169,3 +169,69 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		t.Fatal("Failed to reject duplicate user CustomResource functions")
 	}
 }
+
+func TestUserDefinedLambdaNames(t *testing.T) {
+	logger, err := NewLogger("info")
+
+	lambdaFunctions := testLambdaDoubleStructPtrData()
+	lambdaFunctions[0].Options = &LambdaFunctionOptions{
+		SpartaOptions: &SpartaOptions{
+			Name: fmt.Sprintf("Handler0"),
+		},
+	}
+	lambdaFunctions[1].Options = &LambdaFunctionOptions{
+		SpartaOptions: &SpartaOptions{
+			Name: fmt.Sprintf("Handler1"),
+		},
+	}
+	var templateWriter bytes.Buffer
+	err = Provision(true,
+		"TestOverlappingLambdas",
+		"",
+		lambdaFunctions,
+		nil,
+		nil,
+		"testBuildID",
+		"S3Bucket",
+		&templateWriter,
+		nil,
+		logger)
+
+	if nil != err {
+		t.Fatal("Failed to respect duplicate lambdas with user supplied names")
+	} else {
+		t.Logf("Rejected duplicate lambdas")
+	}
+}
+
+func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
+	logger, err := NewLogger("info")
+
+	lambdaFunctions := testLambdaDoubleStructPtrData()
+	for _, eachLambda := range lambdaFunctions {
+		eachLambda.Options = &LambdaFunctionOptions{
+			SpartaOptions: &SpartaOptions{
+				Name: fmt.Sprintf("HandlerX"),
+			},
+		}
+	}
+
+	var templateWriter bytes.Buffer
+	err = Provision(true,
+		"TestOverlappingLambdas",
+		"",
+		lambdaFunctions,
+		nil,
+		nil,
+		"testBuildID",
+		"S3Bucket",
+		&templateWriter,
+		nil,
+		logger)
+
+	if nil == err {
+		t.Fatal("Failed to reject duplicate lambdas with overlapping user supplied names")
+	} else {
+		t.Logf("Rejected overlapping user supplied names")
+	}
+}
