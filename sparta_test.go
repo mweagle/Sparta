@@ -197,6 +197,7 @@ func SignatureVersion(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -229,6 +230,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
