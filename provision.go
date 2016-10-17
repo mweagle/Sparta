@@ -9,11 +9,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaZip "github.com/mweagle/Sparta/zip"
+
 	"github.com/mweagle/cloudformationresources"
 	"io"
 	"io/ioutil"
-	"math/rand"
 	"os"
 	"os/exec"
 	"path"
@@ -27,10 +29,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	gocf "github.com/crewjam/go-cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 )
@@ -38,23 +38,28 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 ////////////////////////////////////////////////////////////////////////////////
+func spartaTagName(baseKey string) string {
+	return fmt.Sprintf("io:gosparta:%s", baseKey)
+}
 
-const (
-	// OutputSpartaHomeKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta home URL.
-	// @enum OutputKey
-	OutputSpartaHomeKey = "SpartaHome"
+// SpartaTagHomeKey is the keyname used in the CloudFormation Output
+// that stores the Sparta home URL.
+// @enum OutputKey
+var SpartaTagHomeKey = spartaTagName("home")
 
-	// OutputSpartaVersionKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta version used to provision/update the service.
-	// @enum OutputKey
-	OutputSpartaVersionKey = "SpartaVersion"
+// SpartaTagVersionKey is the keyname used in the CloudFormation Output
+// that stores the Sparta version used to provision/update the service.
+// @enum OutputKey
+var SpartaTagVersionKey = spartaTagName("version")
 
-	// OutputSpartaBuildIDKey is the keyname used in the CloudFormation Output
-	// that stores the user-supplied or automatically generated BuildID
-	// for this run
-	OutputSpartaBuildIDKey = "SpartaBuildID"
-)
+// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
+// that stores the user-supplied or automatically generated BuildID
+// for this run
+var SpartaTagBuildIDKey = spartaTagName("buildId")
+
+// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
+// that stores the optional user-supplied golang build tags
+var SpartaTagBuildTagsKey = spartaTagName("buildTags")
 
 // The basename of the scripts that are embedded into CONSTANTS.go
 // by `esc` during the generate phase.  In order to export these, there
@@ -80,9 +85,6 @@ type s3SiteContext struct {
 	s3Site             *S3Site
 	s3SiteLambdaZipKey string
 }
-
-// Rollback function called in the event of a stack provisioning failure
-type rollbackFunction func(logger *logrus.Logger) error
 
 // Type of a workflow step.  Each step is responsible
 // for returning the next step or an error if the overall
@@ -117,6 +119,10 @@ type workflowContext struct {
 	s3Bucket string
 	// The user-supplied or automatically generated BuildID
 	buildID string
+	// Optional user-supplied build tags
+	buildTags string
+	// The time when we started s.t. we can filter stack events
+	buildTime time.Time
 	// The programmatically determined S3 item key for this service's cloudformation
 	// definition.
 	s3LambdaZipKey string
@@ -133,14 +139,14 @@ type workflowContext struct {
 	logger *logrus.Logger
 	// Optional rollback functions that workflow steps may append to if they
 	// have made mutations during provisioning.
-	rollbackFunctions []rollbackFunction
+	rollbackFunctions []spartaS3.RollbackFunction
 }
 
 // Register a rollback function in the event that the provisioning
 // function failed.
-func (ctx *workflowContext) registerRollback(userFunction rollbackFunction) {
+func (ctx *workflowContext) registerRollback(userFunction spartaS3.RollbackFunction) {
 	if nil == ctx.rollbackFunctions || len(ctx.rollbackFunctions) <= 0 {
-		ctx.rollbackFunctions = make([]rollbackFunction, 0)
+		ctx.rollbackFunctions = make([]spartaS3.RollbackFunction, 0)
 	}
 	ctx.rollbackFunctions = append(ctx.rollbackFunctions, userFunction)
 }
@@ -177,7 +183,7 @@ func (ctx *workflowContext) rollback() {
 	}).Info("Invoking rollback functions")
 
 	for _, eachCleanup := range ctx.rollbackFunctions {
-		go func(cleanupFunc rollbackFunction, goLogger *logrus.Logger) {
+		go func(cleanupFunc spartaS3.RollbackFunction, goLogger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
 			// Fetch the URL.
@@ -288,7 +294,7 @@ func ensureExpirationPolicy(awsSession *session.Session, S3Bucket string, noop b
 
 // Upload a local file to S3.  Returns the s3 keyname of the
 // uploaded item, or an error
-func uploadLocalFileToS3(packagePath string,
+func uploadLocalFileToS3(localPath string,
 	awsSession *session.Session,
 	S3Bucket string,
 	S3KeyPrefix string,
@@ -301,90 +307,35 @@ func uploadLocalFileToS3(packagePath string,
 	if nil != err {
 		return "", fmt.Errorf("Failed to ensure bucket policies: %s", err.Error())
 	}
-	// Then do the actual work
-	reader, err := os.Open(packagePath)
-	if nil != err {
-		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
-	}
+
+	// Ensure the local file is deleted
 	defer func() {
-		reader.Close()
-		err = os.Remove(packagePath)
+		err = os.Remove(localPath)
 		if nil != err {
 			logger.WithFields(logrus.Fields{
-				"Path":  packagePath,
+				"Path":  localPath,
 				"Error": err,
 			}).Warn("Failed to delete local file")
 		}
 	}()
 
-	// Make sure the key prefix ends with a trailing slash
-	canonicalKeyPrefix := S3KeyPrefix
-	if !strings.HasSuffix(canonicalKeyPrefix, "/") {
-		canonicalKeyPrefix += "/"
-	}
-
-	// Cache it in case there was an error & we need to cleanup
-	keyName := fmt.Sprintf("%s%s", canonicalKeyPrefix, filepath.Base(packagePath))
-
-	uploadInput := &s3manager.UploadInput{
-		Bucket:      &S3Bucket,
-		Key:         &keyName,
-		ContentType: aws.String("application/zip"),
-		Body:        reader,
-	}
-
+	keyName := path.Join(S3KeyPrefix, filepath.Base(localPath))
 	if noop {
 		logger.WithFields(logrus.Fields{
 			"Bucket": S3Bucket,
 			"Key":    keyName,
-		}).Info("Bypassing S3 ZIP upload due to -n/-noop command line argument")
+		}).Info("Bypassing S3 upload due to -n/-noop command line argument")
 	} else {
-		logger.WithFields(logrus.Fields{
-			"Source": packagePath,
-		}).Info("Uploading local file to S3")
-		uploader := s3manager.NewUploader(awsSession)
-		result, err := uploader.Upload(uploadInput)
-		if nil != err {
-			return "", err
+		_, uploadURLErr := spartaS3.UploadLocalFileToS3(localPath,
+			awsSession,
+			S3Bucket,
+			S3KeyPrefix,
+			logger)
+		if nil != uploadURLErr {
+			return "", uploadURLErr
 		}
-		logger.WithFields(logrus.Fields{
-
-			"URL": result.Location,
-		}).Info("Upload complete")
 	}
 	return keyName, nil
-}
-
-// Creates an S3 rollback function that attempts to delete a previously
-// uploaded item.
-func createS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key string, noop bool) rollbackFunction {
-	return func(logger *logrus.Logger) error {
-		if !noop {
-			logger.Info("Attempting to cleanup S3 item: ", s3Key)
-			s3Client := s3.New(awsSession)
-			params := &s3.DeleteObjectInput{
-				Bucket: aws.String(s3Bucket),
-				Key:    aws.String(s3Key),
-			}
-			_, err := s3Client.DeleteObject(params)
-			if err != nil {
-				logger.WithFields(logrus.Fields{
-					"Error": err,
-				}).Warn("Failed to delete S3 item during rollback cleanup")
-			} else {
-				logger.WithFields(logrus.Fields{
-					"Bucket": s3Bucket,
-					"Key":    s3Key,
-				}).Debug("Item deleted during rollback cleanup")
-			}
-			return err
-		}
-		logger.WithFields(logrus.Fields{
-			"S3Bucket": s3Bucket,
-			"S3Key":    s3Key,
-		}).Info("Bypassing rollback cleanup ")
-		return nil
-	}
 }
 
 // Private - END
@@ -520,33 +471,6 @@ func createNewSpartaCustomResourceEntry(resourceName string, logger *logrus.Logg
 	return primaryEntry
 }
 
-// Return the StackEvents for the given StackName/StackID
-func stackEvents(stackID string, cfService *cloudformation.CloudFormation) ([]*cloudformation.StackEvent, error) {
-	var events []*cloudformation.StackEvent
-
-	nextToken := ""
-	for {
-		params := &cloudformation.DescribeStackEventsInput{
-			StackName: aws.String(stackID),
-		}
-		if len(nextToken) > 0 {
-			params.NextToken = aws.String(nextToken)
-		}
-
-		resp, err := cfService.DescribeStackEvents(params)
-		if nil != err {
-			return nil, err
-		}
-		events = append(events, resp.StackEvents...)
-		if nil == resp.NextToken {
-			break
-		} else {
-			nextToken = *resp.NextToken
-		}
-	}
-	return events, nil
-}
-
 func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	// Binary size
 	stat, err := os.Stat(filePath)
@@ -558,7 +482,7 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
-func buildGoBinary(executableOutput string, logger *logrus.Logger) error {
+func buildGoBinary(executableOutput string, buildTags string, logger *logrus.Logger) error {
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
@@ -574,7 +498,8 @@ func buildGoBinary(executableOutput string, logger *logrus.Logger) error {
 
 	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
-	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", "lambdabinary", ".")
+	allBuildTags := fmt.Sprintf("lambdabinary %s", buildTags)
+	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", allBuildTags, ".")
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 	logger.WithFields(logrus.Fields{
@@ -669,14 +594,13 @@ func createPackageStep() workflowStep {
 				return nil, preBuildErr
 			}
 		}
-
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		buildErr := buildGoBinary(executableOutput, ctx.logger)
+		buildErr := buildGoBinary(executableOutput, ctx.buildTags, ctx.logger)
 		if nil != buildErr {
 			return nil, buildErr
 		}
-		// Cleanup
+		// Cleanup the temporary binary
 		defer func() {
 			errRemove := os.Remove(executableOutput)
 			if nil != errRemove {
@@ -702,16 +626,11 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, errors.New("Failed to create temporary file")
 		}
-		defer func() {
-			tmpFile.Close()
-		}()
-
 		ctx.logger.WithFields(logrus.Fields{
 			"TempName": tmpFile.Name(),
 		}).Info("Creating ZIP archive for upload")
 
 		lambdaArchive := zip.NewWriter(tmpFile)
-		defer lambdaArchive.Close()
 
 		// Archive Hook
 		if ctx.workflowHooks != nil && ctx.workflowHooks.Archive != nil {
@@ -727,16 +646,13 @@ func createPackageStep() workflowStep {
 		}
 
 		// File info for the binary executable
-		binaryWriter, err := lambdaArchive.Create(filepath.Base(executableOutput))
-		if err != nil {
-			return nil, fmt.Errorf("Failed to create ZIP entry: %s", filepath.Base(executableOutput))
+		readerErr := spartaZip.AddToZip(lambdaArchive,
+			executableOutput,
+			"",
+			ctx.logger)
+		if nil != readerErr {
+			return nil, readerErr
 		}
-		reader, err := os.Open(executableOutput)
-		if err != nil {
-			return nil, fmt.Errorf("Failed to open file: %s", executableOutput)
-		}
-		defer reader.Close()
-		io.Copy(binaryWriter, reader)
 
 		// Add the string literal adapter, which requires us to add exported
 		// functions to the end of index.js.  These NodeJS exports will be
@@ -754,9 +670,19 @@ func createPackageStep() workflowStep {
 		// Next embed the custom resource scripts into the package.
 		// TODO - conditionally include custom NodeJS scripts based on service requirement
 		ctx.logger.Debug("Embedding CustomResource scripts")
-		customResourceErr := writeCustomResources(lambdaArchive,
-			ctx.logger)
-		return createUploadStep(tmpFile.Name()), customResourceErr
+		customResourceErr := writeCustomResources(lambdaArchive, ctx.logger)
+		if nil != customResourceErr {
+			return nil, customResourceErr
+		}
+		archiveCloseErr := lambdaArchive.Close()
+		if nil != archiveCloseErr {
+			return nil, archiveCloseErr
+		}
+		tempfileCloseErr := tmpFile.Close()
+		if nil != tempfileCloseErr {
+			return nil, tempfileCloseErr
+		}
+		return createUploadStep(tmpFile.Name()), nil
 	}
 }
 
@@ -783,8 +709,8 @@ func createUploadStep(packagePath string) workflowStep {
 
 			if nil != err {
 				uploadErrors = append(uploadErrors, err)
-			} else {
-				ctx.registerRollback(createS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, ctx.s3LambdaZipKey, ctx.noop))
+			} else if !ctx.noop {
+				ctx.registerRollback(spartaS3.CreateS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, ctx.s3LambdaZipKey))
 			}
 		}()
 
@@ -820,9 +746,7 @@ func createUploadStep(packagePath string) workflowStep {
 					uploadErrors = append(uploadErrors, err)
 					return
 				}
-
 				zipArchive.Close()
-				tmpFile.Close()
 				// Upload it & save the key
 				s3SiteLambdaZipKey, err := uploadLocalFileToS3(tmpFile.Name(),
 					ctx.awsSession,
@@ -833,8 +757,8 @@ func createUploadStep(packagePath string) workflowStep {
 				ctx.s3SiteContext.s3SiteLambdaZipKey = s3SiteLambdaZipKey
 				if nil != err {
 					uploadErrors = append(uploadErrors, err)
-				} else {
-					ctx.registerRollback(createS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, ctx.s3SiteContext.s3SiteLambdaZipKey, ctx.noop))
+				} else if !ctx.noop {
+					ctx.registerRollback(spartaS3.CreateS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, ctx.s3SiteContext.s3SiteLambdaZipKey))
 				}
 			}()
 		}
@@ -849,262 +773,6 @@ func createUploadStep(packagePath string) workflowStep {
 		}
 		return ensureCloudFormationStack(), nil
 	}
-}
-
-// Does a given stack exist?
-func stackExists(stackNameOrID string, cf *cloudformation.CloudFormation, logger *logrus.Logger) (bool, error) {
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackNameOrID),
-	}
-	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
-	logger.WithFields(logrus.Fields{
-		"DescribeStackOutput": describeStacksOutput,
-	}).Debug("DescribeStackOutput results")
-
-	exists := false
-	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"DescribeStackOutputError": err,
-		}).Debug("DescribeStackOutput")
-
-		// If the stack doesn't exist, then no worries
-		if strings.Contains(err.Error(), "does not exist") {
-			exists = false
-		} else {
-			return false, err
-		}
-	} else {
-		exists = true
-	}
-	return exists, nil
-}
-
-func stackCapabilities(template *gocf.Template) []*string {
-	// Only require IAM capability if the definition requires it.
-	var capabilities []*string
-	for _, eachResource := range template.Resources {
-		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
-			found := false
-			for _, eachElement := range capabilities {
-				found = (found || (*eachElement == "CAPABILITY_IAM"))
-			}
-			if !found {
-				capabilities = append(capabilities, aws.String("CAPABILITY_IAM"))
-			}
-		}
-	}
-	return capabilities
-}
-
-func updateStackViaChangeSet(serviceName string,
-	cfTemplateURL string,
-	capabilities []*string,
-	awsCloudFormation *cloudformation.CloudFormation,
-	logger *logrus.Logger) error {
-
-	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
-
-	changeSetInput := &cloudformation.CreateChangeSetInput{
-		Capabilities:  capabilities,
-		ChangeSetName: aws.String(changeSetRequestName),
-		ClientToken:   aws.String(changeSetRequestName),
-		Description:   aws.String(fmt.Sprintf("Change set for service: %s (Sparta v. %s)", serviceName, SpartaVersion)),
-		StackName:     aws.String(serviceName),
-		TemplateURL:   aws.String(cfTemplateURL),
-	}
-
-	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
-	if nil != changeSetError {
-		return changeSetError
-	}
-	logger.WithFields(logrus.Fields{
-		"StackName": serviceName,
-	}).Info("Issued CreateChangeSet request")
-
-	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
-	}
-
-	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
-	for waitComplete := false; !waitComplete; {
-		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
-		time.Sleep(sleepDuration)
-
-		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
-
-		if nil != describeChangeSetError {
-			return describeChangeSetError
-		}
-		describeChangeSetOutput = changeSetOutput
-		waitComplete = (nil != describeChangeSetOutput)
-	}
-	logger.WithFields(logrus.Fields{
-		"DescribeChangeSetOutput": describeChangeSetOutput,
-	}).Debug("DescribeChangeSet result")
-
-	// Apply the change
-	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
-	}
-	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
-
-	logger.WithFields(logrus.Fields{
-		"ExecuteChangeSetOutput": executeChangeSetOutput,
-	}).Debug("ExecuteChangeSet result")
-
-	if nil == executeChangeSetError {
-		logger.WithFields(logrus.Fields{
-			"StackName": serviceName,
-		}).Info("Issued ExecuteChangeSet request")
-	}
-	return executeChangeSetError
-}
-
-type waitForStackOperationCompleteResult struct {
-	operationSuccessful bool
-	stackInfo           *cloudformation.Stack
-}
-
-func waitForStackOperationComplete(stackID string,
-	pollingMessage string,
-	awsCloudFormation *cloudformation.CloudFormation,
-	logger *logrus.Logger) (*waitForStackOperationCompleteResult, error) {
-
-	result := &waitForStackOperationCompleteResult{}
-
-	// Poll for the current stackID state, and
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackID),
-	}
-	for waitComplete := false; !waitComplete; {
-		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
-		time.Sleep(sleepDuration)
-
-		describeStacksOutput, err := awsCloudFormation.DescribeStacks(describeStacksInput)
-		if nil != err {
-			// TODO - add retry iff we're RateExceeded due to collective access
-			return nil, err
-		}
-		if len(describeStacksOutput.Stacks) <= 0 {
-			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
-		}
-		result.stackInfo = describeStacksOutput.Stacks[0]
-		switch *(result.stackInfo).StackStatus {
-		case cloudformation.StackStatusCreateComplete,
-			cloudformation.StackStatusUpdateComplete:
-			result.operationSuccessful = true
-			waitComplete = true
-		case
-			// Include DeleteComplete as new provisions will automatically rollback
-			cloudformation.StackStatusDeleteComplete,
-			cloudformation.StackStatusCreateFailed,
-			cloudformation.StackStatusDeleteFailed,
-			cloudformation.StackStatusRollbackFailed,
-			cloudformation.StackStatusRollbackComplete,
-			cloudformation.StackStatusUpdateRollbackComplete:
-			result.operationSuccessful = false
-			waitComplete = true
-		default:
-			logger.Info(pollingMessage)
-		}
-	}
-	return result, nil
-}
-
-// Converge the stack to the new state, taking into account whether
-// it was previously provisioned.
-func convergeStackState(cfTemplateURL string, ctx *workflowContext) (*cloudformation.Stack, error) {
-	awsCloudFormation := cloudformation.New(ctx.awsSession)
-
-	// Does it exist?
-	exists, err := stackExists(ctx.serviceName, awsCloudFormation, ctx.logger)
-	if nil != err {
-		return nil, err
-	}
-	stackID := ""
-	if exists {
-
-		err = updateStackViaChangeSet(ctx.serviceName,
-			cfTemplateURL,
-			stackCapabilities(ctx.cfTemplate),
-			awsCloudFormation,
-			ctx.logger)
-
-		if nil != err {
-			return nil, err
-		}
-		stackID = ctx.serviceName
-	} else {
-		// Create stack
-		createStackInput := &cloudformation.CreateStackInput{
-			StackName:        aws.String(ctx.serviceName),
-			TemplateURL:      aws.String(cfTemplateURL),
-			TimeoutInMinutes: aws.Int64(20),
-			OnFailure:        aws.String(cloudformation.OnFailureDelete),
-			Capabilities:     stackCapabilities(ctx.cfTemplate),
-		}
-		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
-		if nil != err {
-			return nil, err
-		}
-
-		ctx.logger.WithFields(logrus.Fields{
-			"StackID": *createStackResponse.StackId,
-		}).Info("Creating stack")
-
-		stackID = *createStackResponse.StackId
-	}
-	// Wait for the operation to succeeed
-	var pollingMessage string
-	if exists {
-		pollingMessage = "Waiting for ExecuteChangeSet to complete"
-	} else {
-		pollingMessage = "Waiting for CreateStack to complete"
-	}
-	convergeResult, convergeErr := waitForStackOperationComplete(stackID,
-		pollingMessage,
-		awsCloudFormation,
-		ctx.logger)
-	if nil != convergeErr {
-		return nil, convergeErr
-	}
-
-	// If it didn't work, then output some failure information
-	if !convergeResult.operationSuccessful {
-		// Get the stack events and find the ones that failed.
-		events, err := stackEvents(stackID, awsCloudFormation)
-		if nil != err {
-			return nil, err
-		}
-
-		ctx.logger.Error("Stack provisioning error")
-		for _, eachEvent := range events {
-			switch *eachEvent.ResourceStatus {
-			case cloudformation.ResourceStatusCreateFailed,
-				cloudformation.ResourceStatusDeleteFailed,
-				cloudformation.ResourceStatusUpdateFailed:
-				errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
-					*eachEvent.ResourceType,
-					*eachEvent.LogicalResourceId,
-					*eachEvent.ResourceStatusReason)
-				ctx.logger.Error(errMsg)
-			default:
-				// NOP
-			}
-		}
-		return nil, fmt.Errorf("Failed to provision: %s", ctx.serviceName)
-	} else if nil != convergeResult.stackInfo.Outputs {
-		for _, eachOutput := range convergeResult.stackInfo.Outputs {
-			ctx.logger.WithFields(logrus.Fields{
-				"Key":         *eachOutput.OutputKey,
-				"Value":       *eachOutput.OutputValue,
-				"Description": *eachOutput.Description,
-			}).Info("Stack output")
-		}
-	}
-	return convergeResult.stackInfo, nil
 }
 
 func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf.Template {
@@ -1138,68 +806,64 @@ func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf
 
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 
+	stackTags := map[string]string{
+		SpartaTagHomeKey:    "http://gosparta.io",
+		SpartaTagVersionKey: SpartaVersion,
+		SpartaTagBuildIDKey: ctx.buildID,
+	}
+	if len(ctx.buildTags) != 0 {
+		stackTags[SpartaTagBuildTagsKey] = ctx.buildTags
+	}
 	// Generate a complete CloudFormation template
-	cfTemplate, err := json.Marshal(ctx.cfTemplate)
-	if err != nil {
-		ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
-		return nil, err
+	if nil != ctx.templateWriter || ctx.logger.Level <= logrus.DebugLevel {
+		cfTemplate, err := json.Marshal(ctx.cfTemplate)
+		if err != nil {
+			ctx.logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
+			return nil, err
+		}
+		templateBody := string(cfTemplate)
+		formatted, formattedErr := json.MarshalIndent(templateBody, "", " ")
+		if nil != formattedErr {
+			return nil, formattedErr
+		}
+		ctx.logger.WithFields(logrus.Fields{
+			"Body": string(formatted),
+		}).Debug("CloudFormation template body")
+		if nil != ctx.templateWriter {
+			io.WriteString(ctx.templateWriter, string(formatted))
+		}
 	}
 
 	// Upload the actual CloudFormation template to S3 to maximize the template
 	// size limit
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStack.html
-	contentBody := string(cfTemplate)
 	sanitizedServiceName := sanitizedName(ctx.serviceName)
 	hash := sha1.New()
-	hash.Write([]byte(contentBody))
-	s3keyName := fmt.Sprintf("%s/%s-%s-cf.json",
+	hash.Write([]byte(ctx.buildID))
+	s3KeyName := fmt.Sprintf("%s/%s-%s-cf.json",
 		ctx.serviceName,
 		sanitizedServiceName,
 		hex.EncodeToString(hash.Sum(nil)))
 
-	uploadInput := &s3manager.UploadInput{
-		Bucket:      &ctx.s3Bucket,
-		Key:         &s3keyName,
-		ContentType: aws.String("application/json"),
-		Body:        strings.NewReader(contentBody),
-	}
-	formatted, err := json.MarshalIndent(contentBody, "", " ")
-	if nil != err {
-		return nil, err
-	}
-
-	ctx.logger.WithFields(logrus.Fields{
-		"Body": string(formatted),
-	}).Debug("CloudFormation template body")
-
-	if nil != ctx.templateWriter {
-		io.WriteString(ctx.templateWriter, string(formatted))
-	}
-
 	if ctx.noop {
 		ctx.logger.WithFields(logrus.Fields{
 			"Bucket": ctx.s3Bucket,
-			"Key":    s3keyName,
+			"Key":    s3KeyName,
 		}).Info("Bypassing template upload & creation due to -n/-noop command line argument")
 	} else {
 		ctx.logger.Info("Uploading CloudFormation template")
-		uploader := s3manager.NewUploader(ctx.awsSession)
-		templateUploadResult, err := uploader.Upload(uploadInput)
-		if nil != err {
-			return nil, err
+		stack, stackErr := spartaCF.ConvergeStackState(ctx.serviceName,
+			ctx.cfTemplate,
+			ctx.s3Bucket,
+			s3KeyName,
+			stackTags,
+			ctx.buildTime,
+			ctx.awsSession,
+			ctx.logger)
+		if nil != stackErr {
+			return nil, stackErr
 		}
-		// Cleanup if there's a problem
-		ctx.registerRollback(createS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, s3keyName, ctx.noop))
-
-		// Be transparent
-		ctx.logger.WithFields(logrus.Fields{
-			"URL": templateUploadResult.Location,
-		}).Info("Template uploaded")
-
-		stack, err := convergeStackState(templateUploadResult.Location, ctx)
-		if nil != err {
-			return nil, err
-		}
+		ctx.registerRollback(spartaS3.CreateS3RollbackFunc(ctx.awsSession, ctx.s3Bucket, s3KeyName))
 		ctx.logger.WithFields(logrus.Fields{
 			"StackName":    *stack.StackName,
 			"StackId":      *stack.StackId,
@@ -1295,19 +959,6 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, mergeErr
 			}
 		}
-		// Save the output
-		ctx.cfTemplate.Outputs[OutputSpartaHomeKey] = &gocf.Output{
-			Description: "Sparta Home",
-			Value:       gocf.String("http://gosparta.io"),
-		}
-		ctx.cfTemplate.Outputs[OutputSpartaVersionKey] = &gocf.Output{
-			Description: "Sparta Version",
-			Value:       gocf.String(SpartaVersion),
-		}
-		ctx.cfTemplate.Outputs[OutputSpartaBuildIDKey] = &gocf.Output{
-			Description: "Build ID",
-			Value:       gocf.String(ctx.buildID),
-		}
 		ctx.cfTemplate = annotateDiscoveryInfo(ctx.cfTemplate, ctx.logger)
 
 		// PostMarshall Hook
@@ -1355,6 +1006,7 @@ func Provision(noop bool,
 	site *S3Site,
 	s3Bucket string,
 	buildID string,
+	buildTags string,
 	templateWriter io.Writer,
 	workflowHooks *WorkflowHooks,
 	logger *logrus.Logger) error {
@@ -1377,6 +1029,8 @@ func Provision(noop bool,
 		cfTemplate:           gocf.NewTemplate(),
 		s3Bucket:             s3Bucket,
 		buildID:              buildID,
+		buildTags:            buildTags,
+		buildTime:            time.Now(),
 		awsSession:           spartaAWS.NewSession(logger),
 		templateWriter:       templateWriter,
 		workflowHooks:        workflowHooks,
@@ -1395,6 +1049,7 @@ func Provision(noop bool,
 	ctx.logger.WithFields(logrus.Fields{
 		"BuildID": buildID,
 		"NOOP":    noop,
+		"Tags":    ctx.buildTags,
 	}).Info("Provisioning service")
 
 	if len(lambdaAWSInfos) <= 0 {

@@ -15,10 +15,10 @@ import (
 )
 
 const (
-	nodeColorService     = "#8C1B20"
+	nodeColorService     = "#EFEFEF"
 	nodeColorEventSource = "#FBBB06"
 	nodeColorLambda      = "#F58206"
-	nodeColorAPIGateway  = "#D9A741"
+	nodeColorAPIGateway  = "#06B5F5"
 	nodeNameAPIGateway   = "API Gateway"
 )
 
@@ -62,6 +62,7 @@ func Describe(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api *API,
 	s3Site *S3Site,
+	buildTags string,
 	outputWriter io.Writer,
 	workflowHooks *WorkflowHooks,
 	logger *logrus.Logger) error {
@@ -80,6 +81,7 @@ func Describe(serviceName string,
 		s3Site,
 		"S3Bucket",
 		"N/A",
+		buildTags,
 		&cloudFormationTemplate,
 		workflowHooks,
 		logger)

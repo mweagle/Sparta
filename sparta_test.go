@@ -83,6 +83,7 @@ func TestStruct(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -102,6 +103,7 @@ func TestDoubleRefStruct(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -133,6 +135,7 @@ func TestCustomResource(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -161,6 +164,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		&templateWriter,
 		nil,
 		logger)

@@ -31,10 +31,11 @@ var CommandLineOptions = struct {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	Noop     bool           `valid:"-"`
-	LogLevel string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
-	Logger   *logrus.Logger `valid:"-"`
-	Command  string         `valid:"-"`
+	Noop      bool           `valid:"-"`
+	LogLevel  string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
+	Logger    *logrus.Logger `valid:"-"`
+	Command   string         `valid:"-"`
+	BuildTags string         `valid:"-"`
 }
 
 // OptionsGlobal stores the global command line options
@@ -109,6 +110,12 @@ func init() {
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags for conditional compilation")
+
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
 		Use:   "version",
@@ -166,7 +173,6 @@ func init() {
 		Short: "Describe service",
 		Long:  `Produce an HTML report of the service`,
 	}
-
 	CommandLineOptions.Describe.Flags().StringVarP(&optionsDescribe.OutputFile,
 		"out",
 		"o",
@@ -179,6 +185,7 @@ func init() {
 		Short: "Interactively explore service",
 		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
 	}
+
 	CommandLineOptions.Explore.Flags().IntVarP(&optionsExplore.Port,
 		"port",
 		"p",
@@ -193,9 +200,6 @@ type CommandLineOptionsHook func(command *cobra.Command) error
 
 // ParseOptions the command line options
 func ParseOptions(handler CommandLineOptionsHook) error {
-	var noop bool
-	var level string
-
 	// First up, create a dummy Root command for the parse...
 	var parseCmdRoot = &cobra.Command{
 		Use:           CommandLineOptions.Root.Use,
@@ -206,16 +210,20 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 			return nil
 		},
 	}
-
-	parseCmdRoot.PersistentFlags().BoolVarP(&noop, "noop",
+	parseCmdRoot.PersistentFlags().BoolVarP(&OptionsGlobal.Noop, "noop",
 		"n",
 		false,
 		"Dry-run behavior only (do not perform mutations)")
-	parseCmdRoot.PersistentFlags().StringVarP(&level,
+	parseCmdRoot.PersistentFlags().StringVarP(&OptionsGlobal.LogLevel,
 		"level",
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	parseCmdRoot.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
+		"tags",
+		"t",
+		"",
+		"Optional build tags for conditional compilation")
 
 	// Now, for any user-attached commands, add them to the temporary Parse
 	// root command.
@@ -360,7 +368,6 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
 	CommandLineOptions.Root.Long = serviceDescription
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-
 		_, validateErr := govalidator.ValidateStruct(OptionsGlobal)
 		if nil != validateErr {
 			return validateErr
@@ -411,6 +418,7 @@ func MainEx(serviceName string,
 				site,
 				optionsProvision.S3Bucket,
 				buildID,
+				OptionsGlobal.BuildTags,
 				nil,
 				workflowHooks,
 				OptionsGlobal.Logger)
@@ -466,6 +474,7 @@ func MainEx(serviceName string,
 				lambdaAWSInfos,
 				api,
 				site,
+				OptionsGlobal.BuildTags,
 				fileWriter,
 				workflowHooks,
 				OptionsGlobal.Logger)
@@ -492,6 +501,7 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Explore)
 
 	// Run it!
+
 	executeErr := CommandLineOptions.Root.Execute()
 	if nil != OptionsGlobal.Logger && nil != executeErr {
 		OptionsGlobal.Logger.Error(executeErr)

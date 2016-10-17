@@ -8,13 +8,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"math/rand"
 	"net/http"
 	"reflect"
 	"regexp"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 
@@ -30,7 +30,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.9.1"
+	SpartaVersion = "0.9.2"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 
@@ -931,20 +931,7 @@ func sanitizedName(input string) string {
 // resource type (eg, `SNSConfigurator`, `ImageTranscoder`).  Note that the returned
 // name is not content-addressable.
 func CloudFormationResourceName(prefix string, parts ...string) string {
-	hash := sha1.New()
-	hash.Write([]byte(prefix))
-	if len(parts) <= 0 {
-		randValue := rand.Int63()
-		hash.Write([]byte(strconv.FormatInt(randValue, 10)))
-	} else {
-		for _, eachPart := range parts {
-			hash.Write([]byte(eachPart))
-		}
-	}
-	resourceName := fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
-
-	// Ensure that any non alphanumeric characters are replaced with ""
-	return reCloudFormationInvalidChars.ReplaceAllString(resourceName, "x")
+	return spartaCF.CloudFormationResourceName(prefix, parts...)
 }
 
 // NewLambda returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
