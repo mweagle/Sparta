@@ -30,7 +30,11 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
+<<<<<<< Updated upstream
 	SpartaVersion = "0.9.2"
+=======
+	SpartaVersion = "0.9.3"
+>>>>>>> Stashed changes
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 

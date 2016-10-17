@@ -174,7 +174,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 	}
 }
 
-func TestUserDefinedLambdaNames(t *testing.T) {
+func SignatureVersion(t *testing.T) {
 	logger, err := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()
