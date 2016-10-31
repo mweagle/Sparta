@@ -908,7 +908,8 @@ for _, eachRecord := range lambdaEvent.Records {
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift&#34;&gt;Subbu - Automate Everything&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments/&#34;&gt;Chad Fowler - Immutable Deployments&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://chadfowler.com/2013/06/23/immutable-deployments.html&#34;&gt;Chad Fowler - Immutable Deployments&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.thecloudcast.net/2015/09/the-cloudcast-213-what-is-immutable.html&#34;&gt;The Cloudcast - What is Immutable Infrastructure&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/&#34;&gt;The New Stack&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;/ul&gt;

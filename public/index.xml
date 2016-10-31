@@ -972,7 +972,7 @@ Features
   &lt;/div&gt;
   &lt;div class=&#34;col-lg-6&#34;&gt;
       &lt;h2&gt;Discovery&lt;/h2&gt;
-      &lt;p&gt;A service may provision dynamic AWS infrastructure, and &lt;a href=&#34;http://gosparta.io/docs/eventsources&#34;&gt;discover&lt;/a&gt;, at lambda execution time, the dependent resources&amp;rsquo; AWS-assigned outputs (&lt;code&gt;Ref&lt;/code&gt; &amp;amp; &lt;code&gt;Fn::Att&lt;/code&gt;).  Eliminate hardcoded &lt;i&gt;Magic ARNs&lt;/i&gt; from your codebase and move towards &lt;a href=&#34;http://chadfowler.com/blog/2013/06/23/immutable-deployments&#34;&gt;immutable infrastructure&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;A service may provision dynamic AWS infrastructure, and &lt;a href=&#34;http://gosparta.io/docs/eventsources&#34;&gt;discover&lt;/a&gt;, at lambda execution time, the dependent resources&amp;rsquo; AWS-assigned outputs (&lt;code&gt;Ref&lt;/code&gt; &amp;amp; &lt;code&gt;Fn::Att&lt;/code&gt;).  Eliminate hardcoded &lt;i&gt;Magic ARNs&lt;/i&gt; from your codebase and move towards &lt;a href=&#34;http://chadfowler.com/2013/06/23/immutable-deployments.html&#34;&gt;immutable infrastructure&lt;/a&gt;&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;&lt;/p&gt;
 

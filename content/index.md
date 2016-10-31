@@ -57,7 +57,7 @@ Features
   </div>
   <div class="col-lg-6">
       <h2>Discovery</h2>
-      <p>A service may provision dynamic AWS infrastructure, and <a href="http://gosparta.io/docs/eventsources">discover</a>, at lambda execution time, the dependent resources' AWS-assigned outputs (<code>Ref</code> &amp; <code>Fn::Att</code>).  Eliminate hardcoded <i>Magic ARNs</i> from your codebase and move towards <a href="http://chadfowler.com/blog/2013/06/23/immutable-deployments">immutable infrastructure</a></p>
+      <p>A service may provision dynamic AWS infrastructure, and <a href="http://gosparta.io/docs/eventsources">discover</a>, at lambda execution time, the dependent resources' AWS-assigned outputs (<code>Ref</code> &amp; <code>Fn::Att</code>).  Eliminate hardcoded <i>Magic ARNs</i> from your codebase and move towards <a href="http://chadfowler.com/2013/06/23/immutable-deployments.html">immutable infrastructure</a></p>
   </div>
 </div>
 
@@ -129,7 +129,7 @@ To get started using Sparta, begin with the [Documentation](./docs).
   - See [Trello](https://trello.com/b/WslDce70/sparta) for the Sparta backlog.
 
 ## Other resources
-  
+
   * [Sparta - A Go framework for AWS Lambda](https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg)
   * Other libraries & frameworks:
     * [Serverless](https://github.com/serverless/serverless)

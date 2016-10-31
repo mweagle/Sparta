@@ -12,7 +12,7 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 Assume that we have already [verified our email domain](http://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-domains.html) with AWS.  This allows our domain's email to be handled by SES.
 
-We've been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.  
+We've been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.
 
 There is also an additional requirement to support [immutable infrastructure](http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html), so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.
 
@@ -36,7 +36,7 @@ func echoSESEvent(event *json.RawMessage,
 
 At this point we would normally continue processing the SES event, using Sparta types if available.
 
-However, before moving on to the event unmarshaling, we need to take a detour into [dynamic infrastructure](/docs/dynamic_infrastructure/) because of the immutable infrastructure requirement.  
+However, before moving on to the event unmarshaling, we need to take a detour into [dynamic infrastructure](/docs/dynamic_infrastructure/) because of the immutable infrastructure requirement.
 
 This requirement implies that our service must be self-contained: we can't assume that "something else" has created an S3 bucket.  How can our locally compiled code access AWS-created resources?
 
@@ -140,7 +140,7 @@ logger.WithFields(logrus.Fields{
 }).Debug("Discovery results")
 ```
 
-The `sparta.Discover()` function returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) structure.  This structure is the unmarshaled CloudFormation [Metadata](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html) of the CloudFormation [Lambda::Function](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) resource.  
+The `sparta.Discover()` function returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) structure.  This structure is the unmarshaled CloudFormation [Metadata](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html) of the CloudFormation [Lambda::Function](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) resource.
 
 The structure includes the stack's [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html) as well information about any _immediate_ resource dependencies.  Eg, those that were explicitly marked as `DependsOn`.  See the [discovery documentation](/docs/discovery/) for more details.
 
@@ -253,5 +253,6 @@ Additionally, if the SES handler needs to access the raw email message body:
   * `sparta.Discover()` uses [reflection](https://golang.org/pkg/reflect/) to map from the current enclosing **Go** function name to the owning [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) CloudFormation. Therefore, calling `sparta.Discover()` from non-Sparta lambda functions (application helpers, function literals) will generate an error.
   * More on Immutable Infrastructure:
     * [Subbu - Automate Everything](https://www.subbu.org/blog/2014/10/automate-everything-but-dont-ignore-drift)
-    * [Chad Fowler - Immutable Deployments](http://chadfowler.com/blog/2013/06/23/immutable-deployments/)
+    * [Chad Fowler - Immutable Deployments](http://chadfowler.com/2013/06/23/immutable-deployments.html)
+    * [The Cloudcast - What is Immutable Infrastructure](http://www.thecloudcast.net/2015/09/the-cloudcast-213-what-is-immutable.html)
     * [The New Stack](http://thenewstack.io/a-brief-look-at-immutable-infrastructure-and-why-it-is-such-a-quest/)
