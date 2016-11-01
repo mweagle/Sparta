@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"./explore"
+	"github.com/mweagle/Sparta/explore"
 
 	"github.com/Sirupsen/logrus"
 )
