@@ -221,10 +221,10 @@ func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger
 	customResourceMap := make(customResourceDispatchMap, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		logger.WithFields(logrus.Fields{
-			"Path": eachLambdaInfo.lambdaFnName,
+			"Path": eachLambdaInfo.lambdaFunctionName(),
 		}).Debug("Registering lambda URL")
 
-		lookupMap[eachLambdaInfo.lambdaFnName] = eachLambdaInfo
+		lookupMap[eachLambdaInfo.lambdaFunctionName()] = eachLambdaInfo
 		// Build up the customResourceDispatchMap
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
 			logger.WithFields(logrus.Fields{

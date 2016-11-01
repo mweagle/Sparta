@@ -30,10 +30,9 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.9.2"
+	SpartaVersion = "0.9.3"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
-
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 )
@@ -264,6 +263,8 @@ type LambdaFunctionOptions struct {
 	Timeout int64
 	// VPC Settings
 	VpcConfig *gocf.LambdaFunctionVPCConfig
+	// Additional params
+	SpartaOptions *SpartaOptions
 }
 
 func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
@@ -272,6 +273,12 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 		Timeout:    3,
 		VpcConfig:  nil,
 	}
+}
+
+// SpartaOptions allow the passing in of additional options during the creation of a Lambda Function
+type SpartaOptions struct {
+	// Function Name
+	Name string
 }
 
 // TemplateDecorator allows Lambda functions to annotate the CloudFormation
@@ -607,8 +614,6 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 
 // LambdaAWSInfo stores all data necessary to provision a golang-based AWS Lambda function.
 type LambdaAWSInfo struct {
-	// internal function name, determined by reflection
-	lambdaFnName string
 	// pointer to lambda function
 	lambdaFn LambdaFunction
 	// User defined name used in the CloudFormation template to define a function name that is
@@ -645,8 +650,21 @@ type LambdaAWSInfo struct {
 
 // URLPath returns the URL path that can be used as an argument
 // to NewLambdaRequest or NewAPIGatewayRequest
+func (info *LambdaAWSInfo) lambdaFunctionName() string {
+	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
+	lambdaFuncName := lambdaPtr.Name()
+	if nil != info.Options &&
+		nil != info.Options.SpartaOptions &&
+		"" != info.Options.SpartaOptions.Name {
+		lambdaFuncName = info.Options.SpartaOptions.Name
+	}
+	return lambdaFuncName
+}
+
+// URLPath returns the URL path that can be used as an argument
+// to NewLambdaRequest or NewAPIGatewayRequest
 func (info *LambdaAWSInfo) URLPath() string {
-	return info.lambdaFnName
+	return info.lambdaFunctionName()
 }
 
 // RequireCustomResource adds a Lambda-backed CustomResource entry to the CloudFormation
@@ -687,7 +705,7 @@ func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition int
 // Returns a JavaScript compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
 func (info *LambdaAWSInfo) jsHandlerName() string {
-	return sanitizedName(info.lambdaFnName)
+	return sanitizedName(info.lambdaFunctionName())
 }
 
 // Returns the stable logical name for this LambdaAWSInfo value
@@ -698,11 +716,11 @@ func (info *LambdaAWSInfo) logicalName() string {
 	// Prefer the user-supplied stable name to the internal one.
 	baseName := info.functionName
 	if "" == baseName {
-		baseName = info.lambdaFnName
+		baseName = info.lambdaFunctionName()
 	}
 	resourceName := strings.Replace(sanitizedName(baseName), "_", "", -1)
 	prefix := fmt.Sprintf("%sLambda", resourceName)
-	return CloudFormationResourceName(prefix, info.lambdaFnName)
+	return CloudFormationResourceName(prefix, info.lambdaFunctionName())
 }
 
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
@@ -728,12 +746,12 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// IAMRoleDefinition name has been created and this resource needs to
 	// depend on that being created.
 	if iamRoleArnName == "" && info.RoleDefinition != nil {
-		iamRoleArnName = info.RoleDefinition.logicalName(serviceName, info.lambdaFnName)
-		dependsOn = append(dependsOn, info.RoleDefinition.logicalName(serviceName, info.lambdaFnName))
+		iamRoleArnName = info.RoleDefinition.logicalName(serviceName, info.lambdaFunctionName())
+		dependsOn = append(dependsOn, info.RoleDefinition.logicalName(serviceName, info.lambdaFunctionName()))
 	}
 	lambdaDescription := info.Options.Description
 	if "" == lambdaDescription {
-		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFnName)
+		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFunctionName())
 	}
 
 	// Create the primary resource
@@ -760,7 +778,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	cfResource := template.AddResource(info.logicalName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
-	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFnName)
+	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFunctionName())
 
 	// Create the lambda Ref in case we need a permission or event mapping
 	functionAttr := gocf.GetAtt(info.logicalName(), "Arn")
@@ -768,7 +786,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Permissions
 	for _, eachPermission := range info.Permissions {
 		_, err := eachPermission.export(serviceName,
-			info.lambdaFnName,
+			info.lambdaFunctionName(),
 			info.logicalName(),
 			template,
 			S3Bucket,
@@ -808,7 +826,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	// Decorator
 	if nil != info.Decorator {
-		logger.Debug("Decorator found for Lambda: ", info.lambdaFnName)
+		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
 		// Create an empty template so that we can track whether things
 		// are overwritten
 		metadataMap := make(map[string]interface{}, 0)
@@ -836,7 +854,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		// Append the custom resources
 		err = safeMergeTemplates(decoratorProxyTemplate, template, logger)
 		if nil != err {
-			return fmt.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFnName)
+			return fmt.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
 		}
 	}
 	return nil
@@ -867,7 +885,7 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus
 
 	// 1 - check for duplicate golang function references.
 	for _, eachLambda := range lambdaAWSInfos {
-		incrementCounter(eachLambda.lambdaFnName)
+		incrementCounter(eachLambda.lambdaFunctionName())
 		for _, eachCustom := range eachLambda.customResources {
 			incrementCounter(eachCustom.userFunctionName)
 		}
@@ -924,9 +942,7 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	if nil == lambdaOptions {
 		lambdaOptions = defaultLambdaFunctionOptions()
 	}
-	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(fn).Pointer())
 	lambda := &LambdaAWSInfo{
-		lambdaFnName:        lambdaPtr.Name(),
 		lambdaFn:            fn,
 		Options:             lambdaOptions,
 		Permissions:         make([]LambdaPermissionExporter, 0),

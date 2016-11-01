@@ -31,11 +31,12 @@ var CommandLineOptions = struct {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	Noop      bool           `valid:"-"`
-	LogLevel  string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
-	Logger    *logrus.Logger `valid:"-"`
-	Command   string         `valid:"-"`
-	BuildTags string         `valid:"-"`
+	Noop        bool           `valid:"-"`
+	LogLevel    string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
+	Logger      *logrus.Logger `valid:"-"`
+	Command     string         `valid:"-"`
+	BuildTags   string         `valid:"-"`
+	LinkerFlags string         `valid:"-"` // no requirements
 }
 
 // OptionsGlobal stores the global command line options
@@ -115,6 +116,11 @@ func init() {
 		"t",
 		"",
 		"Optional build tags for conditional compilation")
+	// Make sure there's a place to put any linker flags
+	CommandLineOptions.Root.PersistentFlags().StringVar(&OptionsGlobal.LinkerFlags,
+		"ldflags",
+		"",
+		"Go linker string definition flags (https://golang.org/cmd/link/)")
 
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
@@ -136,7 +142,6 @@ func init() {
 		"s",
 		"",
 		"S3 Bucket to use for Lambda source")
-
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.BuildID,
 		"buildID",
 		"i",
@@ -362,7 +367,6 @@ func MainEx(serviceName string,
 	api *API,
 	site *S3Site,
 	workflowHooks *WorkflowHooks) error {
-
 	//////////////////////////////////////////////////////////////////////////////
 	// cmdRoot defines the root, non-executable command
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
@@ -381,8 +385,9 @@ func MainEx(serviceName string,
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
-			"Go":            runtime.Version(),
+			"GoVersion":     runtime.Version(),
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
+			"LinkFlags":     OptionsGlobal.LinkerFlags,
 		}).Info("Welcome to " + serviceName)
 		return nil
 	}
@@ -419,6 +424,7 @@ func MainEx(serviceName string,
 				optionsProvision.S3Bucket,
 				buildID,
 				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
 				nil,
 				workflowHooks,
 				OptionsGlobal.Logger)
@@ -475,6 +481,7 @@ func MainEx(serviceName string,
 				api,
 				site,
 				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
 				fileWriter,
 				workflowHooks,
 				OptionsGlobal.Logger)

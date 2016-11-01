@@ -53,7 +53,7 @@ type Sns struct {
 	Message           string `json:"Message"`
 	Timestamp         string `json:"Timestamp"`
 	SignatureVersion  string `json:"SignatureVersion"`
-	Signature         string `json:"SignatureVersion"`
+	Signature         string `json:"Signature"`
 	SigningCertURL    string `json:"SigningCertUrl"`
 	UnsubscribeURL    string `json:"UnsubscribeUrl"`
 	MessageAttributes map[string]MessageAttributeValues
