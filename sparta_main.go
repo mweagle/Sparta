@@ -117,8 +117,7 @@ func init() {
 		"",
 		"Optional build tags for conditional compilation")
 	// Make sure there's a place to put any linker flags
-	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.LinkerFlags,
-		"ldflags",
+	CommandLineOptions.Root.PersistentFlags().StringVar(&OptionsGlobal.LinkerFlags,
 		"ldflags",
 		"",
 		"Go linker string definition flags (https://golang.org/cmd/link/)")
