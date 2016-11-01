@@ -1,4 +1,19 @@
+# Change Notes
+
+## v0.9.3
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `LambdaFunctionOptions.SpartaOptions` struct
+    - The primary use case is to support programmatically generated lambda functions that must be disambiguated by their Sparta name. Sparta defaults to reflection based function name identification.
+  - Added `-ldflags/--ldflags` support to support lightweight [dynamic string variables](https://golang.org/cmd/link/)
+    - Usage:
+      `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --ldflags "-X main.dynamicValue=SampleValue"`
+
+- :bug: **FIXED**
+
 ## v0.9.2
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Move Sparta-related provisioning values from stack [Outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) to [Tags](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html).
@@ -14,6 +29,7 @@
   - Fixed latent issue where empty [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets-execute.html) were applied rather than deleted.
 
 ## v0.9.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Improved `describe` output. Includes APIGateway resources and more consistent UI.
@@ -26,6 +42,7 @@
   - Fixed latent bug when adding custom resources to the ZIP archive via [ArchiveHook](https://godoc.org/github.com/mweagle/Sparta#ArchiveHook). ArchiveHook is now called after core Sparta assets are injected into archive.
 
 ## v0.9.0
+
 - :warning: **BREAKING**
   - `NewMethod` and `NewAuthorizedMethod` for APIGateway definitions have been changed to include new, final parameter that marks the _default_ integration response code.
     - Prior to this change, Sparta would automatically use `http.StatusOK` for all non-POST requests, and `http.StatusCreated` for POST requests. The change allows you to control whitelisted headers to be returned through APIGateway as in:
@@ -71,6 +88,7 @@
   - https://github.com/mweagle/Sparta/issues/15
 
 ## v0.8.0
+
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `context map[string]interface{}` to support sharing state across `WorkflowHooks` (below).
 - :checkered_flag: **CHANGES**
@@ -94,6 +112,7 @@
   - Fixed latent bug in [explore.NewAPIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/explore#NewAPIGatewayRequest) where whitelisted param keynames were unmarshalled to `method.request.TYPE.VALUE` rather than `TYPE`.
 
 ## v0.7.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Upgrade to latest [go-cloudformation](https://github.com/crewjam/go-cloudformation) that required internal [refactoring](https://github.com/mweagle/Sparta/pull/9).
@@ -101,6 +120,7 @@
   - N/A
 
 ## v0.7.0
+
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `serviceName`, `S3Bucket`, and `S3Key` to allow for decorating CloudFormation with [UserData](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html) to support [alternative topology](http://gosparta.io/docs/alternative_topologies/) deployments.
   - `CommonIAMStatements` changed from `map[string][]iamPolicyStatement` to struct with named fields.
@@ -117,6 +137,7 @@
   - Fixed latent VPC provisioning bug where VPC/Subnet IDs couldn't be provided to template serialization.
 
 ## v0.6.0
+
 - :warning: **BREAKING**
   - `TemplateDecorator` signature changed to include `map[string]string` to allow for decorating CloudFormation resource metadata
 - :checkered_flag: **CHANGES**
@@ -127,6 +148,7 @@
   - N/A
 
 ## v0.5.5
+
 This release includes a major internal refactoring to move the current set of NodeJS [Lambda-backed CloudFormation CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to Sparta Go functions. The two migrated CustomActions are:
 
 * The S3 event source configuration
@@ -147,6 +169,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - https://github.com/mweagle/SpartaApplication/issues/1
 
 ## v0.5.4
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -155,6 +178,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - N/A
 
 ## v0.5.3
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -163,12 +187,14 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - https://github.com/mweagle/Sparta/issues/6
 
 ## v0.5.2
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
   - Added [cloudwatchlogs.Event](https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatchlogs#Event) to support unmarshaling CloudWatchLogs data
 
 ## v0.5.1
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -178,6 +204,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - https://github.com/mweagle/Sparta/issues/8
 
 ## v0.5.0
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -190,6 +217,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Log output includes lambda deployment [package size](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 
 ## v0.4.0
+
 - :warning: **BREAKING**
   - Change `sparta.Discovery()` return type from `map[string]interface{}` to `sparta.DiscoveryInfo`.
       - This type provides first class access to service-scoped and `DependsOn`-related resource information
@@ -197,6 +225,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - N/A
 
 ## v0.3.0
+
 - :warning: **BREAKING**
   - Enforce that a single **Go** function cannot be associated with more than 1 `sparta.LamddaAWSInfo` struct.
     - This was done so that `sparta.Discovery` can reliably use the enclosing **Go** function name for discovery.
@@ -212,10 +241,11 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Upgrade to Mermaid [0.5.7](https://github.com/knsv/mermaid/releases/tag/0.5.7) to fix `describe` rendering failure on Chrome.
 
 ## v0.2.0
+
 - :warning: **BREAKING**
   - Changed `NewRequest` to `NewLambdaRequest` to support mock API gateway requests being made in `explore` mode
   - `TemplateDecorator` signature changed to support [go-cloudformation](https://github.com/crewjam/go-cloudformation) representation of the CloudFormation JSON template.
-    - /ht @crewjam for https://github.com/crewjam/go-cloudformation
+    - /ht @crewjam for [go-cloudformation](https://github.com/crewjam/go-cloudformation)
   - Use `sparta.EventSourceMapping` rather than [aws.CreateEventSourceMappingInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput) type for `LambdaAWSInfo.EventSourceMappings` slice
   - Add dependency on [crewjam/go-cloudformation](https://github.com/crewjam/go-cloudformation) for CloudFormation template creation
     - /ht @crewjam for the great library
@@ -258,6 +288,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Add `NewAPIGatewayRequest` to support _localhost_ API Gateway mock requests
 
 ## v0.1.5
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -265,12 +296,14 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Replace internal CloudFormation polling loop with [WaitUntilStackCreateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackCreateComplete) and [WaitUntilStackUpdateComplete](https://godoc.org/github.com/aws/aws-sdk-go/service/cloudformation#CloudFormation.WaitUntilStackUpdateComplete)
 
 ## v0.1.4
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
   - Reduce deployed binary size by excluding Sparta embedded resources from deployed binary via build tags.
 
 ## v0.1.3
+
 - :warning: **BREAKING**
   - API Gateway responses are only transformed into a standard format in the case of a go lambda function returning an HTTP status code >= 400
     - Previously all responses were wrapped which prevented integration with other services.
@@ -298,6 +331,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     ```
 
 ## v0.1.2
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -306,6 +340,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - See [explore_test](https://github.com/mweagle/Sparta/blob/master/explore_test.go) for an example.
 
 ## v0.1.1
+
 - :warning: **BREAKING**
   - `sparta.Main()` signature changed to accept optional `S3Site` pointer
 - :checkered_flag: **CHANGES**
@@ -326,6 +361,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - MetricNames: `ProcessCreated`, `ProcessReused`, `ProcessTerminated`.
 
 ## v0.1.0
+
 - :warning: **BREAKING**
   - `sparta.Main()` signature changed to accept optional `S3Site` pointer
 - :checkered_flag: **CHANGES**
@@ -339,6 +375,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Expose NewLambdaHTTPHandler() which can be used to generate an _httptest_
 
 ## v0.0.7
+
 - :warning: **BREAKING**
   - N/A
 - :checkered_flag: **CHANGES**
@@ -354,6 +391,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
 
 ## v0.0.6
+
 - :warning: **BREAKING**
   - Changed:
     - `type LambdaFunction func(*json.RawMessage, *LambdaContext, *http.ResponseWriter, *logrus.Logger)`
@@ -374,6 +412,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - Added `SpartaHome` and `SpartaVersion` template [outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
 
 ## v0.0.5
+
 - :warning: **BREAKING**
   - Changed `Sparta.Main()` signature to accept API pointer as fourth argument.  Parameter is optional.
 - :checkered_flag: **CHANGES**
@@ -386,6 +425,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - [Fixed latent bug](https://github.com/mweagle/Sparta/commit/684b48eb0c2356ba332eee6054f4d57fc48e1419) where remote push source registrations were deleted during stack updates.
 
 ## v0.0.3
+
 - :warning: **BREAKING**
   - Changed `LambdaEvent` type to `json.RawMessage`
   - Changed  [AddPermissionInput](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-AddPermissionInput) type to _sparta_ types:
@@ -411,8 +451,10 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Fixed latent bug where Lambda functions didn't have CloudFormation::Log privileges
 
 ## v0.0.2
+
   - Update describe command to use [mermaid](https://github.com/knsv/mermaid) for resource dependency tree
     - Previously used [vis.js](http://visjs.org/#)
 
 ## v0.0.1
+
   - Initial release
