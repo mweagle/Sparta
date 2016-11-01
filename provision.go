@@ -121,6 +121,8 @@ type workflowContext struct {
 	buildID string
 	// Optional user-supplied build tags
 	buildTags string
+	// Optional link flags
+	linkFlags string
 	// The time when we started s.t. we can filter stack events
 	buildTime time.Time
 	// The programmatically determined S3 item key for this service's cloudformation
@@ -482,7 +484,7 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
-func buildGoBinary(executableOutput string, buildTags string, logger *logrus.Logger) error {
+func buildGoBinary(executableOutput string, buildTags string, linkFlags string, logger *logrus.Logger) error {
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
@@ -499,7 +501,20 @@ func buildGoBinary(executableOutput string, buildTags string, logger *logrus.Log
 	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
 	allBuildTags := fmt.Sprintf("lambdabinary %s", buildTags)
-	cmd = exec.Command("go", "build", "-o", executableOutput, "-tags", allBuildTags, ".")
+
+	buildArgs := []string{
+		"build",
+		"-o",
+		executableOutput,
+		"-tags",
+		allBuildTags,
+	}
+	// Append all the linker flags
+	if len(linkFlags) != 0 {
+		buildArgs = append(buildArgs, "-ldflags", linkFlags)
+	}
+	buildArgs = append(buildArgs, ".")
+	cmd = exec.Command("go", buildArgs...)
 	cmd.Env = os.Environ()
 	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 	logger.WithFields(logrus.Fields{
@@ -596,10 +611,11 @@ func createPackageStep() workflowStep {
 		}
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
 		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		buildErr := buildGoBinary(executableOutput, ctx.buildTags, ctx.logger)
+		buildErr := buildGoBinary(executableOutput, ctx.buildTags, ctx.linkFlags, ctx.logger)
 		if nil != buildErr {
 			return nil, buildErr
 		}
+
 		// Cleanup the temporary binary
 		defer func() {
 			errRemove := os.Remove(executableOutput)
@@ -1007,6 +1023,7 @@ func Provision(noop bool,
 	s3Bucket string,
 	buildID string,
 	buildTags string,
+	linkerFlags string,
 	templateWriter io.Writer,
 	workflowHooks *WorkflowHooks,
 	logger *logrus.Logger) error {
@@ -1030,6 +1047,7 @@ func Provision(noop bool,
 		s3Bucket:             s3Bucket,
 		buildID:              buildID,
 		buildTags:            buildTags,
+		linkFlags:            linkerFlags,
 		buildTime:            time.Now(),
 		awsSession:           spartaAWS.NewSession(logger),
 		templateWriter:       templateWriter,

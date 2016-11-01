@@ -84,6 +84,7 @@ func TestStruct(t *testing.T) {
 		"testBuildID",
 		"S3Bucket",
 		"",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -103,6 +104,7 @@ func TestDoubleRefStruct(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		"",
 		&templateWriter,
 		nil,
@@ -136,6 +138,7 @@ func TestCustomResource(t *testing.T) {
 		"testBuildID",
 		"S3Bucket",
 		"",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -164,6 +167,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		"",
 		&templateWriter,
 		nil,
@@ -198,6 +202,7 @@ func SignatureVersion(t *testing.T) {
 		"testBuildID",
 		"S3Bucket",
 		"",
+		"",
 		&templateWriter,
 		nil,
 		logger)
@@ -230,6 +235,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		nil,
 		"testBuildID",
 		"S3Bucket",
+		"",
 		"",
 		&templateWriter,
 		nil,
