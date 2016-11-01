@@ -4,9 +4,9 @@
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
-  - Added `LambdaFunctionOptions.SpartaOptions` struct
+  - Added [LambdaFunctionOptions.SpartaOptions](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) struct
     - The primary use case is to support programmatically generated lambda functions that must be disambiguated by their Sparta name. Sparta defaults to reflection based function name identification.
-  - Added `-ldflags/--ldflags` support to support lightweight [dynamic string variables](https://golang.org/cmd/link/)
+  - Added `--ldflags` support to support lightweight [dynamic string variables](https://golang.org/cmd/link/)
     - Usage:
       `go run main.go provision --level info --s3Bucket $(S3_BUCKET) --ldflags "-X main.dynamicValue=SampleValue"`
 
