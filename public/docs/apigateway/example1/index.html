@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1061 
+    "wordCount":  1062 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 flattr: home:Sparta twitter:mweagle]">
+<body class="map[twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: flattr: github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -403,7 +403,7 @@ apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <strong>Go</strong> function:</p>
 
 <pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
-apiGatewayResource.NewMethod(&#34;GET&#34;)</code></pre>
+apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)</code></pre>
 
 
 <p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>

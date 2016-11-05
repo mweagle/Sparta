@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  888 
+    "wordCount":  889 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[twitter:mweagle home:Sparta googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:lumen flattr:]">
+<body class="map[github:https://github.com/mweagle googleplus: bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -490,7 +490,7 @@ apiGateway := sparta.NewAPIGateway(&#34;SpartaSlackbot&#34;, apiStage)</code></p
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource(&#34;/slack&#34;, lambdaFn)
-		_, err := apiGatewayResource.NewMethod(&#34;POST&#34;)
+		_, err := apiGatewayResource.NewMethod(&#34;POST&#34;, http.StatusCreated)
 		if nil != err {
 			panic(&#34;Failed to create /hello resource&#34;)
 		}

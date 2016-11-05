@@ -6,7 +6,7 @@ tags = ["sparta"]
 type = "doc"
 +++
 
-Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.  
+Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.
 
 The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) example application.
 
@@ -52,7 +52,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
-		_, err := apiGatewayResource.NewMethod("GET")
+		_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 		if nil != err {
 			panic("Failed to create /hello resource")
 		}
@@ -115,7 +115,7 @@ Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-site09b75dfd6
 
 # Discover
 
-An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.  
+An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.
 
 As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a _MANIFEST.json_ discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:
 

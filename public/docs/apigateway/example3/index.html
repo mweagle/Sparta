@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  687 
+    "wordCount":  688 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[home:Sparta twitter:mweagle googleplus: facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle flattr:]">
+<body class="map[linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 bitbucket: flattr: github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -437,7 +437,7 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
 	apiGatewayResource, _ := apiGateway.NewResource(&#34;/info&#34;, lambdaFn)
-	apiGatewayResource.NewMethod(&#34;GET&#34;)
+	apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	sparta.Main(stackName,

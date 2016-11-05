@@ -11,7 +11,7 @@ type = "doc"
 
 In this example, we'll walk through creating a [Slack Slash Command](https://api.slack.com/slash-commands) service.  The source for this is the [SpartaSlackbot](https://github.com/mweagle/SpartaSlackbot) repo.
 
-Our initial command handler won't be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.  
+Our initial command handler won't be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.
 
 # Define the Lambda Function
 
@@ -114,7 +114,7 @@ apiStage := sparta.NewStage("v1")
 apiGateway := sparta.NewAPIGateway("SpartaSlackbot", apiStage)
 {{< /highlight >}}
 
-The `apiStage` value implies that we want to deploy this API Gateway Rest API as part of Sparta's `provision` step.  
+The `apiStage` value implies that we want to deploy this API Gateway Rest API as part of Sparta's `provision` step.
 
 # Create Lambda Binding & Resource
 
@@ -127,7 +127,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/slack", lambdaFn)
-		_, err := apiGatewayResource.NewMethod("POST")
+		_, err := apiGatewayResource.NewMethod("POST", http.StatusCreated)
 		if nil != err {
 			panic("Failed to create /hello resource")
 		}
@@ -189,23 +189,23 @@ The next step is to configure Slack with this custom integration:
 
   1. On the next page, choose "Slash Commands":
 
-    ![Slash Commands](/images/apigateway/slack/slashCommandMenu.jpg)    
+    ![Slash Commands](/images/apigateway/slack/slashCommandMenu.jpg)
 
   1. The next screen is where you input the command that will trigger your lambda function.  Enter `/sparta`
 
-    ![Slash Chose Command](/images/apigateway/slack/chooseCommand.jpg)    
+    ![Slash Chose Command](/images/apigateway/slack/chooseCommand.jpg)
 
     - and click the "Add Slash Command Integration" button.
 
-  1. Finally, scroll down the next page to the **Integration Settings** section and provide the API Gateway URL of your lambda function.  
+  1. Finally, scroll down the next page to the **Integration Settings** section and provide the API Gateway URL of your lambda function.
 
-    ![Slash URL](/images/apigateway/slack/integrationSettings.jpg)    
+    ![Slash URL](/images/apigateway/slack/integrationSettings.jpg)
 
     * Leave the _Method_ field unchanged (it should be `POST`), to match how we configured the API Gateway entry above.
 
   1. Save it
 
-    ![Save it](/images/apigateway/slack/saveIntegration.jpg)    
+    ![Save it](/images/apigateway/slack/saveIntegration.jpg)
 
 
 There are additional Slash Command Integration options, but for this example the **URL** option is sufficient to trigger our command.
@@ -226,4 +226,4 @@ go run slack.go delete
 
 # Wrapping Up
 
-This example provides a good overview of Sparta & Slack integration, including how to handle external requests that are not `application/json` formatted.   
+This example provides a good overview of Sparta & Slack integration, including how to handle external requests that are not `application/json` formatted.

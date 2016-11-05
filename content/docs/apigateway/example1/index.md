@@ -42,7 +42,7 @@ The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct 
 
 {{< highlight go >}}
 apiGatewayResource, _ := api.NewResource("/hello/world/test", lambdaFn)
-apiGatewayResource.NewMethod("GET")
+apiGatewayResource.NewMethod("GET", http.StatusOK)
 {{< /highlight >}}
 
 Our [echoS3Event](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34) only supports `GET`.  We'll see how a single lambda function can support multiple HTTP methods shortly.
@@ -220,13 +220,13 @@ See
 
 This template forwards all whitelisted data & body to the lambda function.  You can see by switching on the `method` field would permit a single function to service multiple HTTP method names.
 
-The next example will show how to unmarshal this data and perform request-specific actions.  
+The next example will show how to unmarshal this data and perform request-specific actions.
 
 # Proxying Envelope
 
-Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output.  
+Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output.
 
-If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the **Go** HTTP response to a Lambda compatible result.  
+If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the **Go** HTTP response to a Lambda compatible result.
 
 A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 

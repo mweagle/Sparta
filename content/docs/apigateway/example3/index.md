@@ -10,7 +10,7 @@ This example demonstrates how to use the `Context` struct provided as part of th
 
 # Define the Lambda Function
 
-Our function will examine the inbound request, lookup the user's IP address in the [GeoLite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) and return any information to the client.  
+Our function will examine the inbound request, lookup the user's IP address in the [GeoLite2 Database](http://dev.maxmind.com/geoip/geoip2/geolite2/) and return any information to the client.
 
 As this function is only expected to be invoked from the API Gateway, we'll unmarshall the inbound event:
 
@@ -79,7 +79,7 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
 	apiGatewayResource, _ := apiGateway.NewResource("/info", lambdaFn)
-	apiGatewayResource.NewMethod("GET")
+	apiGatewayResource.NewMethod("GET", http.StatusOK)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	sparta.Main(stackName,

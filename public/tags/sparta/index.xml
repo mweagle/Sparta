@@ -1000,7 +1000,7 @@ apiGateway := sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;, stage)&lt;/cod
 &lt;p&gt;The next step is to associate a URL path with the &lt;code&gt;sparta.LambdaAWSInfo&lt;/code&gt; struct that represents the &lt;strong&gt;Go&lt;/strong&gt; function:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;go&#34;&gt;apiGatewayResource, _ := api.NewResource(&amp;#34;/hello/world/test&amp;#34;, lambdaFn)
-apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)&lt;/code&gt;&lt;/pre&gt;
+apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;, http.StatusOK)&lt;/code&gt;&lt;/pre&gt;
 
 
 &lt;p&gt;Our &lt;a href=&#34;https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34&#34;&gt;echoS3Event&lt;/a&gt; only supports &lt;code&gt;GET&lt;/code&gt;.  We&amp;rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.&lt;/p&gt;
@@ -1293,7 +1293,7 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
 	apiGatewayResource, _ := apiGateway.NewResource(&amp;#34;/info&amp;#34;, lambdaFn)
-	apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;)
+	apiGatewayResource.NewMethod(&amp;#34;GET&amp;#34;, http.StatusOK)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	sparta.Main(stackName,
@@ -1579,7 +1579,7 @@ apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaSlackbot&amp;#34;, apiStage)&l
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource(&amp;#34;/slack&amp;#34;, lambdaFn)
-		_, err := apiGatewayResource.NewMethod(&amp;#34;POST&amp;#34;)
+		_, err := apiGatewayResource.NewMethod(&amp;#34;POST&amp;#34;, http.StatusCreated)
 		if nil != err {
 			panic(&amp;#34;Failed to create /hello resource&amp;#34;)
 		}

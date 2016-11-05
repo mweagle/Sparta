@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  515 
+    "wordCount":  516 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle flattr: home:Sparta twitter:mweagle]">
+<body class="map[home:Sparta googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:lumen flattr: googleplus: github:https://github.com/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -407,7 +407,7 @@ apiGateway.CORSEnabled = true</code></pre>
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource(&#34;/hello&#34;, lambdaFn)
-		_, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
+		_, err := apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
 		if nil != err {
 			panic(&#34;Failed to create /hello resource&#34;)
 		}

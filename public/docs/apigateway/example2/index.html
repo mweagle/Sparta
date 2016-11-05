@@ -55,7 +55,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  1186 
+    "wordCount":  1187 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: youtube: name:lumen googleAnalytics:UA-70794971-1 github:https://github.com/mweagle bitbucket: flattr: home:Sparta twitter:mweagle]">
+<body class="map[bitbucket: linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle youtube: name:lumen home:Sparta googleAnalytics:UA-70794971-1 flattr: github:https://github.com/mweagle googleplus:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -477,7 +477,7 @@ s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOpt
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
 
 <pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/info&#34;, s3ItemInfoLambdaFn)
-method, err := apiGatewayResource.NewMethod(&#34;GET&#34;)
+method, err := apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
 if err != nil {
   return nil, err
 }</code></pre>

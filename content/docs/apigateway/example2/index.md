@@ -114,7 +114,7 @@ The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct 
 
 {{< highlight go >}}
 apiGatewayResource, _ := api.NewResource("/info", s3ItemInfoLambdaFn)
-method, err := apiGatewayResource.NewMethod("GET")
+method, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 if err != nil {
   return nil, err
 }
