@@ -14,6 +14,22 @@ type = "doc"
 * **TAGS**:         `-tags lambdabinary`
 * **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64`
 
+## What working directory should I use?
+
+Your working directory should be the root of your Sparta application.  Eg, use
+
+```
+go run main.go provision --level info --s3Bucket $S3_BUCKET
+```
+
+rather than
+
+```
+go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
+```
+
+See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
+
 ## How can I test locally?
 
 Local testing is available via the [explore](/docs/local_testing/) command.

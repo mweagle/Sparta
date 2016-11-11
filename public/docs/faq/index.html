@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  485 
+    "wordCount":  527 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[googleAnalytics:UA-70794971-1 github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle facebook: twitter:mweagle flattr: name:lumen home:Sparta bitbucket: googleplus: youtube:]">
+<body class="map[github:https://github.com/mweagle googleAnalytics:UA-70794971-1 home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: name:lumen flattr:]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -356,6 +356,7 @@
 <li><a href="#development">Development</a>
 <ul>
 <li><a href="#what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation:</a></li>
+<li><a href="#what-working-directory-should-i-use">What working directory should I use?</a></li>
 <li><a href="#how-can-i-test-locally">How can I test locally?</a></li>
 </ul></li>
 <li><a href="#event-sources-ses">Event Sources - SES</a>
@@ -393,6 +394,20 @@
 <li><strong>TAGS</strong>:         <code>-tags lambdabinary</code></li>
 <li><strong>ENVIRONMENT</strong>:  <code>GOOS=linux GOARCH=amd64</code></li>
 </ul>
+
+<h2 id="what-working-directory-should-i-use">What working directory should I use?</h2>
+
+<p>Your working directory should be the root of your Sparta application.  Eg, use</p>
+
+<pre><code>go run main.go provision --level info --s3Bucket $S3_BUCKET
+</code></pre>
+
+<p>rather than</p>
+
+<pre><code>go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
+</code></pre>
+
+<p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 
 <h2 id="how-can-i-test-locally">How can I test locally?</h2>
 

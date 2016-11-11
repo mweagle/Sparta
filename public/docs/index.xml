@@ -932,6 +932,20 @@ graph TD
 &lt;li&gt;&lt;strong&gt;ENVIRONMENT&lt;/strong&gt;:  &lt;code&gt;GOOS=linux GOARCH=amd64&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;h2 id=&#34;what-working-directory-should-i-use&#34;&gt;What working directory should I use?&lt;/h2&gt;
+
+&lt;p&gt;Your working directory should be the root of your Sparta application.  Eg, use&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go run main.go provision --level info --s3Bucket $S3_BUCKET
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;rather than&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;See &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/29&#34;&gt;GitHub&lt;/a&gt; for more details.&lt;/p&gt;
+
 &lt;h2 id=&#34;how-can-i-test-locally&#34;&gt;How can I test locally?&lt;/h2&gt;
 
 &lt;p&gt;Local testing is available via the &lt;a href=&#34;http://gosparta.io/docs/local_testing/&#34;&gt;explore&lt;/a&gt; command.&lt;/p&gt;
