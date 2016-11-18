@@ -35,7 +35,7 @@ type mockAPIGatewayContext struct {
 
 type mockAPIGatewayRequest struct {
 	Method      string                `json:"method"`
-	Data        interface{}           `json:"data"`
+	Data        interface{}           `json:"body"`
 	Headers     map[string]string     `json:"headers"`
 	QueryParams map[string]string     `json:"queryParams"`
 	PathParams  map[string]string     `json:"pathParams"`
