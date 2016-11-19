@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -382,13 +383,17 @@ func MainEx(serviceName string,
 		}
 		OptionsGlobal.Logger = logger
 
+		welcomeMessage := fmt.Sprintf("Welcome to %s", serviceName)
+		welcomeDivider := strings.Repeat("=", len(welcomeMessage))
+		logger.Info(welcomeDivider)
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
 			"GoVersion":     runtime.Version(),
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 			"LinkFlags":     OptionsGlobal.LinkerFlags,
-		}).Info("Welcome to " + serviceName)
+		}).Info(welcomeMessage)
+		logger.Info(welcomeDivider)
 		return nil
 	}
 
