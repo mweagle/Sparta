@@ -1,5 +1,14 @@
 # Change Notes
 
+## v0.9.4
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Always use [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stacks-changesets.html) to perform stack updates.
+  - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
+
+- :bug: **FIXED**
+
 ## v0.9.3
 
 - :warning: **BREAKING**
