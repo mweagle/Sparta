@@ -764,6 +764,9 @@ func ConvergeStackState(serviceName string,
 	if nil != existsErr {
 		return nil, existsErr
 	}
+	logger.WithFields(logrus.Fields{
+		"Exists": exists,
+	}).Debug("Stack existence status")
 
 	awsTags := make([]*cloudformation.Tag, 0)
 	if nil != tags {
@@ -776,48 +779,24 @@ func ConvergeStackState(serviceName string,
 		}
 	}
 
-	stackID := ""
-	if exists {
-		err = updateStackViaChangeSet(serviceName,
-			templateUploadResult.Location,
-			stackCapabilities(cfTemplate),
-			awsTags,
-			awsCloudFormation,
-			logger)
+	err = updateStackViaChangeSet(serviceName,
+		templateUploadResult.Location,
+		stackCapabilities(cfTemplate),
+		awsTags,
+		awsCloudFormation,
+		logger)
 
-		if nil != err {
-			return nil, err
-		}
-		stackID = serviceName
-	} else {
-		// Create stack
-		createStackInput := &cloudformation.CreateStackInput{
-			StackName:        aws.String(serviceName),
-			TemplateURL:      aws.String(templateUploadResult.Location),
-			TimeoutInMinutes: aws.Int64(20),
-			OnFailure:        aws.String(cloudformation.OnFailureDelete),
-			Capabilities:     stackCapabilities(cfTemplate),
-		}
-		if len(awsTags) != 0 {
-			createStackInput.Tags = awsTags
-		}
-		createStackResponse, err := awsCloudFormation.CreateStack(createStackInput)
-		if nil != err {
-			return nil, err
-		}
-
-		logger.WithFields(logrus.Fields{
-			"StackID": *createStackResponse.StackId,
-		}).Info("Creating stack")
-
-		stackID = *createStackResponse.StackId
+	if nil != err {
+		return nil, err
 	}
+	stackID := serviceName
+
 	// Wait for the operation to succeeed
 	var pollingMessage string
 	if exists {
 		pollingMessage = "Waiting for ExecuteChangeSet to complete"
 	} else {
-		pollingMessage = "Waiting for CreateStack to complete"
+		pollingMessage = "Waiting for Stack to be created"
 	}
 	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
 		pollingMessage,
