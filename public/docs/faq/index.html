@@ -55,7 +55,7 @@
     },
     "datePublished": "2016-01-20",
     "description": "",
-    "wordCount":  527 
+    "wordCount":  563 
   }
 </script>
 
@@ -103,7 +103,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[github:https://github.com/mweagle googleAnalytics:UA-70794971-1 home:Sparta bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: facebook: twitter:mweagle youtube: name:lumen flattr:]">
+<body class="map[googleAnalytics:UA-70794971-1 bitbucket: linkedin:https://www.linkedin.com/in/mweagle googleplus: twitter:mweagle flattr: home:Sparta github:https://github.com/mweagle facebook: youtube: name:lumen]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -355,7 +355,8 @@
 <ul>
 <li><a href="#development">Development</a>
 <ul>
-<li><a href="#what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation:</a></li>
+<li><a href="#how-do-i-setup-aws-sdk-credentials-and-region">How do I setup AWS SDK credentials and region?</a></li>
+<li><a href="#what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</a></li>
 <li><a href="#what-working-directory-should-i-use">What working directory should I use?</a></li>
 <li><a href="#how-can-i-test-locally">How can I test locally?</a></li>
 </ul></li>
@@ -388,7 +389,19 @@
 
 <hr />
 
-<h2 id="what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation:</h2>
+<h2 id="how-do-i-setup-aws-sdk-credentials-and-region">How do I setup AWS SDK credentials and region?</h2>
+
+<p>Sparta relies on standard AWS SDK configuration settings. See the <a href="https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html">official documentation</a> for more information.</p>
+
+<p>During development, configuration is typically done through environment variables:</p>
+
+<ul>
+<li><code>AWS_ACCESS_KEY_ID</code></li>
+<li><code>AWS_SECRET_ACCESS_KEY</code></li>
+<li><code>AWS_REGION</code></li>
+</ul>
+
+<h2 id="what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</h2>
 
 <ul>
 <li><strong>TAGS</strong>:         <code>-tags lambdabinary</code></li>

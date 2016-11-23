@@ -9,7 +9,17 @@ type = "doc"
 # Development
 <hr />
 
-## What flags are defined during AWS AMI compilation:
+## How do I setup AWS SDK credentials and region?
+
+Sparta relies on standard AWS SDK configuration settings. See the [official documentation](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) for more information.
+
+During development, configuration is typically done through environment variables:
+
+  - `AWS_ACCESS_KEY_ID`
+  - `AWS_SECRET_ACCESS_KEY`
+  - `AWS_REGION`
+
+## What flags are defined during AWS AMI compilation?
 
 * **TAGS**:         `-tags lambdabinary`
 * **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64`

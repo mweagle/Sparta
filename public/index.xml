@@ -1083,7 +1083,19 @@ func main() {
 
 &lt;hr /&gt;
 
-&lt;h2 id=&#34;what-flags-are-defined-during-aws-ami-compilation&#34;&gt;What flags are defined during AWS AMI compilation:&lt;/h2&gt;
+&lt;h2 id=&#34;how-do-i-setup-aws-sdk-credentials-and-region&#34;&gt;How do I setup AWS SDK credentials and region?&lt;/h2&gt;
+
+&lt;p&gt;Sparta relies on standard AWS SDK configuration settings. See the &lt;a href=&#34;https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html&#34;&gt;official documentation&lt;/a&gt; for more information.&lt;/p&gt;
+
+&lt;p&gt;During development, configuration is typically done through environment variables:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;AWS_ACCESS_KEY_ID&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AWS_SECRET_ACCESS_KEY&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;AWS_REGION&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;what-flags-are-defined-during-aws-ami-compilation&#34;&gt;What flags are defined during AWS AMI compilation?&lt;/h2&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;TAGS&lt;/strong&gt;:         &lt;code&gt;-tags lambdabinary&lt;/code&gt;&lt;/li&gt;
