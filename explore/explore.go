@@ -35,7 +35,7 @@ type mockAPIGatewayContext struct {
 
 type mockAPIGatewayRequest struct {
 	Method      string                `json:"method"`
-	Data        interface{}           `json:"data"`
+	Body        interface{}           `json:"body"`
 	Headers     map[string]string     `json:"headers"`
 	QueryParams map[string]string     `json:"queryParams"`
 	PathParams  map[string]string     `json:"pathParams"`
@@ -103,7 +103,7 @@ func NewLambdaRequest(lambdaName string, eventData interface{}, testingURL strin
 func NewAPIGatewayRequest(lambdaName string, httpMethod string, whitelistParamValues map[string]string, eventData interface{}, testingURL string) (*http.Response, error) {
 	mockAPIGatewayRequest := mockAPIGatewayRequest{
 		Method:      httpMethod,
-		Data:        eventData,
+		Body:        eventData,
 		Headers:     make(map[string]string, 0),
 		QueryParams: make(map[string]string, 0),
 		PathParams:  make(map[string]string, 0),
