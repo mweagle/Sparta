@@ -128,6 +128,16 @@ To get started using Sparta, begin with the [Documentation](./docs).
   - Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
   - See [Trello](https://trello.com/b/WslDce70/sparta) for the Sparta backlog.
 
+# Questions?
+
+Get in touch via:
+
+  - <i class="fa fa-twitter">&nbsp; @mweagle</i>
+  - <i class="fa fa-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
+    - [Signup page](https://invite.slack.golangbridge.org/)
+  - <i class="fa fa-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
+    - [Signup page](https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1)
+
 ## Other resources
 
   * [Sparta - A Go framework for AWS Lambda](https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg)

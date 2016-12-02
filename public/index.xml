@@ -1047,6 +1047,24 @@ func main() {
 &lt;li&gt;See &lt;a href=&#34;https://trello.com/b/WslDce70/sparta&#34;&gt;Trello&lt;/a&gt; for the Sparta backlog.&lt;/li&gt;
 &lt;/ul&gt;
 
+&lt;h1 id=&#34;questions&#34;&gt;Questions?&lt;/h1&gt;
+
+&lt;p&gt;Get in touch via:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;i class=&#34;fa fa-twitter&#34;&gt;&amp;nbsp; @mweagle&lt;/i&gt;&lt;/li&gt;
+&lt;li&gt;&lt;i class=&#34;fa fa-slack&#34;&gt;&amp;nbsp; Gophers: &lt;a href=&#34;https://gophers.slack.com/team/mweagle&#34;&gt;@mweagle&lt;/a&gt;&lt;/i&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://invite.slack.golangbridge.org/&#34;&gt;Signup page&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;i class=&#34;fa fa-slack&#34;&gt;&amp;nbsp; Serverless: &lt;a href=&#34;https://serverless-forum.slack.com/team/mweagle&#34;&gt;@mweagle&lt;/a&gt;&lt;/i&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1&#34;&gt;Signup page&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 &lt;h2 id=&#34;other-resources&#34;&gt;Other resources&lt;/h2&gt;
 
 &lt;ul&gt;
