@@ -777,10 +777,12 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		VpcConfig:   info.Options.VpcConfig,
 	}
 	if "" != info.Options.KmsKeyArn {
-		// TODO - set KeyArn
+		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
 	}
 	if nil != info.Options.Environment {
-		// TODO - set environment
+		lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
+			Variables: info.Options.Environment,
+		}
 	}
 	// Need to check if a functionName exists in the LambdaAwsInfo struct
 	// If an empty string is passed, the template will error with invalid
