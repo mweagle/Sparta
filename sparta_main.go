@@ -81,6 +81,7 @@ var optionsExecute optionsExecuteStruct
 // Describe options
 type optionsDescribeStruct struct {
 	OutputFile string `valid:"required"`
+	S3Bucket   string `valid:"required,matches(\\w+)"`
 }
 
 var optionsDescribe optionsDescribeStruct
@@ -184,6 +185,11 @@ func init() {
 		"o",
 		"",
 		"Output file for HTML description")
+	CommandLineOptions.Describe.Flags().StringVarP(&optionsDescribe.S3Bucket,
+		"s3Bucket",
+		"s",
+		"",
+		"S3 Bucket to use for Lambda source")
 
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
@@ -485,6 +491,7 @@ func MainEx(serviceName string,
 				lambdaAWSInfos,
 				api,
 				site,
+				optionsDescribe.S3Bucket,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
 				fileWriter,
