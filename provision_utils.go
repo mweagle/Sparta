@@ -2,14 +2,17 @@ package sparta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"strings"
-
+	"github.com/Sirupsen/logrus"
 	gocf "github.com/crewjam/go-cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	"github.com/mweagle/cloudformationresources"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/mweagle/cloudformationresources"
+	"os"
+	"os/exec"
+	"path"
+	"strings"
 )
 
 const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"

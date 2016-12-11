@@ -198,9 +198,7 @@ func updateStackViaChangeSet(serviceName string,
 	logger *logrus.Logger) error {
 
 	// Create a change set name...
-
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
-
 	changeSetInput := &cloudformation.CreateChangeSetInput{
 		Capabilities:  capabilities,
 		ChangeSetName: aws.String(changeSetRequestName),
@@ -243,6 +241,7 @@ func updateStackViaChangeSet(serviceName string,
 		"DescribeChangeSetOutput": describeChangeSetOutput,
 	}).Debug("DescribeChangeSet result")
 
+	//////////////////////////////////////////////////////////////////////////////
 	// If there aren't any changes, then skip it...
 	if len(describeChangeSetOutput.Changes) <= 0 {
 		logger.WithFields(logrus.Fields{
@@ -256,25 +255,26 @@ func updateStackViaChangeSet(serviceName string,
 		}
 		_, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
 		return deleteChangeSetResultErr
-	} else {
-		// Apply the change
-		executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
-			ChangeSetName: aws.String(changeSetRequestName),
-			StackName:     aws.String(serviceName),
-		}
-		executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
-
-		logger.WithFields(logrus.Fields{
-			"ExecuteChangeSetOutput": executeChangeSetOutput,
-		}).Debug("ExecuteChangeSet result")
-
-		if nil == executeChangeSetError {
-			logger.WithFields(logrus.Fields{
-				"StackName": serviceName,
-			}).Info("Issued ExecuteChangeSet request")
-		}
-		return executeChangeSetError
 	}
+	//////////////////////////////////////////////////////////////////////////////
+	// Apply the change
+	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(serviceName),
+	}
+	executeChangeSetOutput, executeChangeSetError := awsCloudFormation.ExecuteChangeSet(&executeChangeSetInput)
+
+	logger.WithFields(logrus.Fields{
+		"ExecuteChangeSetOutput": executeChangeSetOutput,
+	}).Debug("ExecuteChangeSet result")
+
+	if nil == executeChangeSetError {
+		logger.WithFields(logrus.Fields{
+			"StackName": serviceName,
+		}).Info("Issued ExecuteChangeSet request")
+	}
+	return executeChangeSetError
+
 }
 
 func existingLambdaResourceVersions(serviceName string,
@@ -389,36 +389,6 @@ func stackCapabilities(template *gocf.Template) []*string {
 ////////////////////////////////////////////////////////////////////////////////
 // Public
 ////////////////////////////////////////////////////////////////////////////////
-
-// Does a given stack exist?
-func StackExists(stackNameOrID string, awsSession *session.Session, logger *logrus.Logger) (bool, error) {
-	cf := cloudformation.New(awsSession)
-
-	describeStacksInput := &cloudformation.DescribeStacksInput{
-		StackName: aws.String(stackNameOrID),
-	}
-	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
-	logger.WithFields(logrus.Fields{
-		"DescribeStackOutput": describeStacksOutput,
-	}).Debug("DescribeStackOutput results")
-
-	exists := false
-	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"DescribeStackOutputError": err,
-		}).Debug("DescribeStackOutput")
-
-		// If the stack doesn't exist, then no worries
-		if strings.Contains(err.Error(), "does not exist") {
-			exists = false
-		} else {
-			return false, err
-		}
-	} else {
-		exists = true
-	}
-	return exists, nil
-}
 
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
@@ -717,26 +687,27 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 	return reCloudFormationInvalidChars.ReplaceAllString(resourceName, "x")
 }
 
-// ConvergeStackState ensures that the serviceName converges to the template
-// state defined by cfTemplate. This function establishes a polling loop to determine
-// when the stack operation has completed.
-func ConvergeStackState(serviceName string,
+// UploadTemplate marshals the given cfTemplate and uploads it to the
+// supplied bucket using the given KeyName
+func UploadTemplate(serviceName string,
 	cfTemplate *gocf.Template,
 	s3Bucket string,
 	s3KeyName string,
-	tags map[string]string,
-	startTime time.Time,
 	awsSession *session.Session,
-	logger *logrus.Logger) (*cloudformation.Stack, error) {
+	logger *logrus.Logger) (string, error) {
 
-	awsCloudFormation := cloudformation.New(awsSession)
-	uploader := s3manager.NewUploader(awsSession)
+	logger.WithFields(logrus.Fields{
+		"Key":    s3KeyName,
+		"Bucket": s3Bucket,
+	}).Info("Uploading CloudFormation template")
+
+	s3Uploader := s3manager.NewUploader(awsSession)
 
 	// Serialize the template and upload it
 	cfTemplateJSON, err := json.Marshal(cfTemplate)
 	if err != nil {
 		logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
-		return nil, err
+		return "", err
 	}
 
 	// Upload the actual CloudFormation template to S3 to maximize the template
@@ -749,25 +720,61 @@ func ConvergeStackState(serviceName string,
 		ContentType: aws.String("application/json"),
 		Body:        strings.NewReader(contentBody),
 	}
-	templateUploadResult, templateUploadResultErr := uploader.Upload(uploadInput)
+	templateUploadResult, templateUploadResultErr := s3Uploader.Upload(uploadInput)
 	if nil != templateUploadResultErr {
-		return nil, templateUploadResultErr
+		return "", templateUploadResultErr
 	}
 
 	// Be transparent
 	logger.WithFields(logrus.Fields{
 		"URL": templateUploadResult.Location,
 	}).Info("Template uploaded")
+	return templateUploadResult.Location, nil
+}
 
-	// Check to see if the stack exists
-	exists, existsErr := StackExists(serviceName, awsSession, logger)
-	if nil != existsErr {
-		return nil, existsErr
+// StackExists returns whether the given stackName or stackID currently exists
+func StackExists(stackNameOrID string, awsSession *session.Session, logger *logrus.Logger) (bool, error) {
+	cf := cloudformation.New(awsSession)
+
+	describeStacksInput := &cloudformation.DescribeStacksInput{
+		StackName: aws.String(stackNameOrID),
 	}
+	describeStacksOutput, err := cf.DescribeStacks(describeStacksInput)
 	logger.WithFields(logrus.Fields{
-		"Exists": exists,
-	}).Debug("Stack existence status")
+		"DescribeStackOutput": describeStacksOutput,
+	}).Debug("DescribeStackOutput results")
 
+	exists := false
+	if err != nil {
+		logger.WithFields(logrus.Fields{
+			"DescribeStackOutputError": err,
+		}).Debug("DescribeStackOutput")
+
+		// If the stack doesn't exist, then no worries
+		if strings.Contains(err.Error(), "does not exist") {
+			exists = false
+		} else {
+			return false, err
+		}
+	} else {
+		exists = true
+	}
+	return exists, nil
+}
+
+// ConvergeStackState ensures that the serviceName converges to the template
+// state defined by cfTemplate. This function establishes a polling loop to determine
+// when the stack operation has completed.
+func ConvergeStackState(serviceName string,
+	cfTemplate *gocf.Template,
+	templateURL string,
+	tags map[string]string,
+	startTime time.Time,
+	awsSession *session.Session,
+	logger *logrus.Logger) (*cloudformation.Stack, error) {
+
+	awsCloudFormation := cloudformation.New(awsSession)
+	// Update the tags
 	awsTags := make([]*cloudformation.Tag, 0)
 	if nil != tags {
 		for eachKey, eachValue := range tags {
@@ -779,25 +786,47 @@ func ConvergeStackState(serviceName string,
 		}
 	}
 
-	err = updateStackViaChangeSet(serviceName,
-		templateUploadResult.Location,
-		stackCapabilities(cfTemplate),
-		awsTags,
-		awsCloudFormation,
-		logger)
-
-	if nil != err {
-		return nil, err
+	exists, existsErr := StackExists(serviceName, awsSession, logger)
+	if nil != existsErr {
+		return nil, existsErr
 	}
-	stackID := serviceName
-
-	// Wait for the operation to succeeed
-	var pollingMessage string
+	stackID := ""
 	if exists {
-		pollingMessage = "Waiting for ExecuteChangeSet to complete"
+		updateErr := updateStackViaChangeSet(serviceName,
+			templateURL,
+			stackCapabilities(cfTemplate),
+			awsTags,
+			awsCloudFormation,
+			logger)
+
+		if nil != updateErr {
+			return nil, updateErr
+		}
+		stackID = serviceName
 	} else {
-		pollingMessage = "Waiting for Stack to be created"
+		// Create stack
+		createStackInput := &cloudformation.CreateStackInput{
+			StackName:        aws.String(serviceName),
+			TemplateURL:      aws.String(templateURL),
+			TimeoutInMinutes: aws.Int64(20),
+			OnFailure:        aws.String(cloudformation.OnFailureDelete),
+			Capabilities:     stackCapabilities(cfTemplate),
+		}
+		if len(awsTags) != 0 {
+			createStackInput.Tags = awsTags
+		}
+		createStackResponse, createStackResponseErr := awsCloudFormation.CreateStack(createStackInput)
+		if nil != createStackResponseErr {
+			return nil, createStackResponseErr
+		}
+		logger.WithFields(logrus.Fields{
+			"StackID": *createStackResponse.StackId,
+		}).Info("Creating stack")
+
+		stackID = *createStackResponse.StackId
 	}
+	// Wait for the operation to succeeed
+	pollingMessage := "Waiting for CloudFormation operation to complete"
 	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
 		pollingMessage,
 		awsCloudFormation,
