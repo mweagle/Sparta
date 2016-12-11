@@ -264,7 +264,7 @@ type LambdaFunctionOptions struct {
 	// VPC Settings
 	VpcConfig *gocf.LambdaFunctionVPCConfig
 	// Environment Variables
-	Environment *map[string]string
+	Environment map[string]*gocf.StringExpr
 	// KMS Key Arn used to encrypt environment variables
 	KmsKeyArn string
 	// Additional params
