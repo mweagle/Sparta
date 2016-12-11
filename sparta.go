@@ -320,7 +320,7 @@ type WorkflowHook func(context map[string]interface{},
 	noop bool,
 	logger *logrus.Logger) error
 
-// ServiceDecorator defines a user function that is called a single
+// ServiceDecoratorHook defines a user function that is called a single
 // time in the marshall workflow.
 type ServiceDecoratorHook func(context map[string]interface{},
 	serviceName string,
