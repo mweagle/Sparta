@@ -1,13 +1,22 @@
 # Change Notes
 
-## v0.9.4
+## v0.10.0
 
 - :warning: **BREAKING**
+  - Utility method signatures changed
+  - Changed `SpartaOptions` to `LambdaSpartaOptions` to eliminate stuttering warning
 - :checkered_flag: **CHANGES**
-  - Always use [ChangeSets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stacks-changesets.html) to perform stack updates.
+  - Add `-p/--codePipelineTrigger` command line option to generate CodePipeline deployment package
+  - Add `sparta.RegisterCodePipelineEnvironment` to define environment variables in support of [CloudFormation Deployments](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
   - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
-
-- :bug: **FIXED**
+ - Move all build artifacts to _./sparta_ directory
+  - `-n/--noop` argument orphans S3 artifacts in _./sparta_ directory
+  - Add S3 version policy awareness
+    - Artifacts pushed to S3 version-enabled buckets now use stable object keys. Rollback functions target specific versions if available.
+  - Cleanup log statements
+  - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
+ - :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/38
 
 ## v0.9.3
 
