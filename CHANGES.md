@@ -3,7 +3,7 @@
 ## v0.10.0
 
 - :warning: **BREAKING**
-  - Utility method signatures changed
+  - `describe` option now requires `-b/--s3Bucket` argument
   - Changed `SpartaOptions` to `LambdaSpartaOptions` to eliminate stuttering warning
 - :checkered_flag: **CHANGES**
   - Add `-p/--codePipelineTrigger` command line option to generate CodePipeline deployment package
