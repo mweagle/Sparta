@@ -119,3 +119,48 @@ func TestExploreUserName(t *testing.T) {
 	t.Log("Headers: ", resp.Header)
 	t.Log("Body: ", string(body))
 }
+
+func TestNewAPIGatewayRequest(t *testing.T) {
+	// Create the function to test
+	var lambdaFunctions []*LambdaAWSInfo
+	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	// Mock event specific data to send to the lambda function
+	eventData := ArbitraryJSONObject{
+		"key1": "value1",
+		"key2": "value2",
+		"key3": "value3"}
+
+	// Make the request and confirm
+	logger, _ := NewLogger("warning")
+	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	defer ts.Close()
+	var emptyWhitelist map[string]string
+	resp, err := explore.NewAPIGatewayRequest(lambdaFn.URLPath(),
+		"GET",
+		emptyWhitelist,
+		eventData,
+		ts.URL)
+
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	// test unmarshalling mock to APIGatewayLambdaJSONEvent
+	var testlambdaevent APIGatewayLambdaJSONEvent
+
+	err = json.Unmarshal(body, &testlambdaevent)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	t.Log("Method:", testlambdaevent.Method)
+	t.Log("Body:", testlambdaevent.Body)
+	t.Log("Headers:", testlambdaevent.Headers)
+	t.Log("QueryParams:", testlambdaevent.QueryParams)
+	t.Log("PathParams:", testlambdaevent.PathParams)
+	t.Log("Context:", testlambdaevent.Context)
+}
