@@ -65,3 +65,8 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo,
 func platformKill(parentProcessPID int) {
 	syscall.Kill(parentProcessPID, syscall.SIGUSR2)
 }
+
+// RegisterCodePipelineEnvironment is not available during lambda execution
+func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+	return nil
+}
