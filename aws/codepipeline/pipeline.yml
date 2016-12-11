@@ -208,7 +208,7 @@ Resources:
               - Action:
                   - '*'
                 Effect: Allow
-                Resource: '*'
+                Resource: 'lambda:*'
 
   PipelineRole:
     Type: AWS::IAM::Role
