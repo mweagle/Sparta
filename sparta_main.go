@@ -47,8 +47,9 @@ var OptionsGlobal optionsGlobalStruct
 // Provision options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsProvisionStruct struct {
-	S3Bucket string `valid:"required,matches(\\w+)"`
-	BuildID  string `valid:"matches(\\S+)"` // non-whitespace
+	S3Bucket        string `valid:"required,matches(\\w+)"`
+	BuildID         string `valid:"matches(\\S+)"` // non-whitespace
+	PipelineTrigger string `valid:"-"`
 }
 
 var optionsProvision optionsProvisionStruct
@@ -149,6 +150,11 @@ func init() {
 		"i",
 		"",
 		"Optional BuildID to use")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
+		"codePipeline",
+		"p",
+		"",
+		"Provision for CodePipeline integration")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
@@ -434,6 +440,7 @@ func MainEx(serviceName string,
 				site,
 				optionsProvision.S3Bucket,
 				buildID,
+				optionsProvision.PipelineTrigger,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
 				nil,
