@@ -30,7 +30,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.9.4"
+	SpartaVersion = "0.10.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
