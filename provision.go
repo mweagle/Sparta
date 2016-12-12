@@ -32,7 +32,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/s3"
 	gocf "github.com/crewjam/go-cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 )
@@ -284,7 +283,6 @@ func callWorkflowHook(hook WorkflowHook, ctx *workflowContext) error {
 		ctx.noop,
 		ctx.logger)
 }
-
 
 func versionAwareS3KeyName(s3DefaultKey string, s3VersioningEnabled bool, logger *logrus.Logger) (string, error) {
 	versionKeyName := s3DefaultKey
