@@ -26,7 +26,7 @@
     - Artifacts pushed to S3 version-enabled buckets now use stable object keys. Rollback functions target specific versions if available.
   - Cleanup log statements
   - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
- - :bug: **FIXED**
+- :bug: **FIXED**
   - https://github.com/mweagle/Sparta/issues/34
   - https://github.com/mweagle/Sparta/issues/37
   - https://github.com/mweagle/Sparta/issues/38
