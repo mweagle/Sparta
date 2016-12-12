@@ -11,7 +11,7 @@
   - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
  - Move all build artifacts to _./sparta_ directory
   - `-n/--noop` argument orphans S3 artifacts in _./sparta_ directory
-  - Add S3 version policy awareness
+  - Add support for S3 version policy enabled buckets
     - Artifacts pushed to S3 version-enabled buckets now use stable object keys. Rollback functions target specific versions if available.
   - Cleanup log statements
   - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
