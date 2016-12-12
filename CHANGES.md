@@ -1,5 +1,36 @@
 # Change Notes
 
+## v0.10.0
+
+- :warning: **BREAKING**
+  - `describe` option now requires `-b/--s3Bucket` argument
+  - Changed signature of `aws/s3/CreateS3RollbackFunc` to accept full S3 URL, including `versionId` query param
+  - Signatures for `sparta.Provision` and `sparta.Discover` updated with new arguments
+- :checkered_flag: **CHANGES**
+  - Add `-p/--codePipelineTrigger` command line option to generate CodePipeline deployment package
+  - Add `sparta.RegisterCodePipelineEnvironment` to define environment variables in support of [CloudFormation Deployments](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/). Example:
+  ```golang
+  func init() {
+    sparta.RegisterCodePipelineEnvironment("test", map[string]string{
+      "MESSAGE": "Hello Test!",
+    })
+    sparta.RegisterCodePipelineEnvironment("production", map[string]string{
+      "MESSAGE": "Hello Production!",
+    })
+  }
+  ```
+  - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
+ - Move all build artifacts to _./sparta_ directory
+  - `-n/--noop` argument orphans S3 artifacts in _./sparta_ directory
+  - Add support for S3 version policy enabled buckets
+    - Artifacts pushed to S3 version-enabled buckets now use stable object keys. Rollback functions target specific versions if available.
+  - Cleanup log statements
+  - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
+ - :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/34
+  - https://github.com/mweagle/Sparta/issues/37
+  - https://github.com/mweagle/Sparta/issues/38
+
 ## v0.9.3
 
 - :warning: **BREAKING**

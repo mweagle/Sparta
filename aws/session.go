@@ -19,13 +19,20 @@ func (proxy *logrusProxy) Log(args ...interface{}) {
 // object that attaches a debug level handler to all AWS requests from services
 // sharing the session value.
 func NewSession(logger *logrus.Logger) *session.Session {
+	return NewSessionWithLevel(aws.LogDebugWithRequestErrors, logger)
+}
+
+// NewSessionWithLevel returns an AWS Session (https://github.com/aws/aws-sdk-go/wiki/Getting-Started-Configuration)
+// object that attaches a debug level handler to all AWS requests from services
+// sharing the session value.
+func NewSessionWithLevel(level aws.LogLevelType, logger *logrus.Logger) *session.Session {
 	awsConfig := &aws.Config{
 		CredentialsChainVerboseErrors: aws.Bool(true),
 	}
 	// Log AWS calls if needed
 	switch logger.Level {
 	case logrus.DebugLevel:
-		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithRequestErrors)
+		awsConfig.LogLevel = aws.LogLevel(level)
 	}
 	awsConfig.Logger = &logrusProxy{logger}
 	sess := session.New(awsConfig)

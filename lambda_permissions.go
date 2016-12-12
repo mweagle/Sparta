@@ -872,7 +872,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	for eachRuleName, eachRuleDefinition := range perm.Rules {
 
 		// We need a stable unique name s.t. the permission is properly configured...
-		uniqueRuleName := fmt.Sprintf("%s-%s-%s", serviceName, lambdaFunctionDisplayName, eachRuleName)
+		uniqueRuleName := CloudFormationResourceName(eachRuleName, lambdaFunctionDisplayName, serviceName)
 		uniqueRuleNameMap[uniqueRuleName]++
 
 		// Add the permission

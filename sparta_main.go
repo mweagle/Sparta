@@ -11,6 +11,7 @@ import (
 	"os"
 	"path"
 	"runtime"
+	"strings"
 	"time"
 )
 
@@ -46,8 +47,9 @@ var OptionsGlobal optionsGlobalStruct
 // Provision options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsProvisionStruct struct {
-	S3Bucket string `valid:"required,matches(\\w+)"`
-	BuildID  string `valid:"matches(\\S+)"` // non-whitespace
+	S3Bucket        string `valid:"required,matches(\\w+)"`
+	BuildID         string `valid:"matches(\\S+)"` // non-whitespace
+	PipelineTrigger string `valid:"-"`
 }
 
 var optionsProvision optionsProvisionStruct
@@ -80,6 +82,7 @@ var optionsExecute optionsExecuteStruct
 // Describe options
 type optionsDescribeStruct struct {
 	OutputFile string `valid:"required"`
+	S3Bucket   string `valid:"required,matches(\\w+)"`
 }
 
 var optionsDescribe optionsDescribeStruct
@@ -147,6 +150,11 @@ func init() {
 		"i",
 		"",
 		"Optional BuildID to use")
+	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
+		"codePipeline",
+		"p",
+		"",
+		"Provision for CodePipeline integration")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
@@ -183,6 +191,11 @@ func init() {
 		"o",
 		"",
 		"Output file for HTML description")
+	CommandLineOptions.Describe.Flags().StringVarP(&optionsDescribe.S3Bucket,
+		"s3Bucket",
+		"s",
+		"",
+		"S3 Bucket to use for Lambda source")
 
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
@@ -382,13 +395,17 @@ func MainEx(serviceName string,
 		}
 		OptionsGlobal.Logger = logger
 
+		welcomeMessage := fmt.Sprintf("Welcome to %s", serviceName)
+		welcomeDivider := strings.Repeat("=", len(welcomeMessage))
+		logger.Info(welcomeDivider)
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
 			"GoVersion":     runtime.Version(),
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 			"LinkFlags":     OptionsGlobal.LinkerFlags,
-		}).Info("Welcome to " + serviceName)
+		}).Info(welcomeMessage)
+		logger.Info(welcomeDivider)
 		return nil
 	}
 
@@ -423,6 +440,7 @@ func MainEx(serviceName string,
 				site,
 				optionsProvision.S3Bucket,
 				buildID,
+				optionsProvision.PipelineTrigger,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
 				nil,
@@ -480,6 +498,7 @@ func MainEx(serviceName string,
 				lambdaAWSInfos,
 				api,
 				site,
+				optionsDescribe.S3Bucket,
 				OptionsGlobal.BuildTags,
 				OptionsGlobal.LinkerFlags,
 				fileWriter,

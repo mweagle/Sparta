@@ -27,6 +27,7 @@ func Provision(noop bool,
 	site *S3Site,
 	s3Bucket string,
 	buildID string,
+	codePipelineTrigger string,
 	buildTags string,
 	linkerFlags string,
 	writer io.Writer,
@@ -42,6 +43,7 @@ func Describe(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api *API,
 	site *S3Site,
+	s3BucketName string,
 	buildTags string,
 	linkerFlags string,
 	outputWriter io.Writer,
@@ -64,4 +66,9 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo,
 // include the lambdabinary flag
 func platformKill(parentProcessPID int) {
 	syscall.Kill(parentProcessPID, syscall.SIGUSR2)
+}
+
+// RegisterCodePipelineEnvironment is not available during lambda execution
+func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+	return nil
 }

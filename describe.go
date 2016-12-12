@@ -62,6 +62,7 @@ func Describe(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api *API,
 	s3Site *S3Site,
+	s3BucketName string,
 	buildTags string,
 	linkFlags string,
 	outputWriter io.Writer,
@@ -80,8 +81,9 @@ func Describe(serviceName string,
 		lambdaAWSInfos,
 		api,
 		s3Site,
-		"S3Bucket",
+		s3BucketName,
 		"N/A",
+		"",
 		buildTags,
 		linkFlags,
 		&cloudFormationTemplate,
@@ -139,7 +141,7 @@ func Describe(serviceName string,
 		writeNode(&b, nodeNameAPIGateway, nodeColorAPIGateway, "")
 
 		for _, eachResource := range api.resources {
-			for eachMethod, _ := range eachResource.Methods {
+			for eachMethod := range eachResource.Methods {
 				// Create the PATH node
 				var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
 				writeNode(&b, nodeName, nodeColorAPIGateway, "")

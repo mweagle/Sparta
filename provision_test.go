@@ -7,6 +7,7 @@ import (
 	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
+	"os"
 )
 
 type cloudFormationProvisionTestResource struct {
@@ -39,8 +40,9 @@ func TestProvision(t *testing.T) {
 		testLambdaData(),
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -93,8 +95,9 @@ func TestDecorateProvision(t *testing.T) {
 		lambdas,
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,

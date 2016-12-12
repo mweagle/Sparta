@@ -222,8 +222,7 @@ func corsMethodResponseParams() map[string]bool {
 // DefaultMethodResponses returns the default set of Method HTTPStatus->Response
 // pass through responses.  The successfulHTTPStatusCode param is the single
 // 2XX response code to use for the method.
-func methodResponses(userResponses map[int]*Response,
-	corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
+func methodResponses(userResponses map[int]*Response, corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
 
 	var responses gocf.APIGatewayMethodMethodResponseList
 	for eachHTTPStatusCode, eachResponse := range userResponses {
@@ -504,6 +503,13 @@ func (api *API) export(serviceName string,
 						gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
 						gocf.String("/invocations")),
 				},
+			}
+			if len(eachMethodDef.Parameters) != 0 {
+				requestParams := make(map[string]string, 0)
+				for eachKey, eachBool := range eachMethodDef.Parameters {
+					requestParams[eachKey] = fmt.Sprintf("%t", eachBool)
+				}
+				apiGatewayMethod.RequestParameters = requestParams
 			}
 
 			// Add the integration response RegExps

@@ -2,15 +2,15 @@ package s3
 
 import (
 	"fmt"
-	"os"
-
-	"path/filepath"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"mime"
+	"net/url"
+	"os"
+	"path"
 	"strings"
 )
 
@@ -18,25 +18,33 @@ import (
 type RollbackFunction func(logger *logrus.Logger) error
 
 // CreateS3RollbackFunc creates an S3 rollback function that attempts to delete a previously
-// uploaded item.
-func CreateS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key string) RollbackFunction {
+// uploaded item. Note that s3ArtifactURL may include a `versionId` query arg
+// to denote the specific version to delete.
+func CreateS3RollbackFunc(awsSession *session.Session, s3ArtifactURL string) RollbackFunction {
 	return func(logger *logrus.Logger) error {
-		logger.Info("Attempting to cleanup S3 item: ", s3Key)
+		logger.WithFields(logrus.Fields{
+			"URL": s3ArtifactURL,
+		}).Info("Deleting S3 object")
+		artifactURLParts, artifactURLPartsErr := url.Parse(s3ArtifactURL)
+		if nil != artifactURLPartsErr {
+			return artifactURLPartsErr
+		}
+		// Bucket is the first component
+		s3Bucket := strings.Split(artifactURLParts.Host, ".")[0]
 		s3Client := s3.New(awsSession)
 		params := &s3.DeleteObjectInput{
 			Bucket: aws.String(s3Bucket),
-			Key:    aws.String(s3Key),
+			Key:    aws.String(artifactURLParts.Path),
+		}
+		versionID := artifactURLParts.Query().Get("versionId")
+		if "" != versionID {
+			params.VersionId = aws.String(versionID)
 		}
 		_, err := s3Client.DeleteObject(params)
 		if err != nil {
 			logger.WithFields(logrus.Fields{
 				"Error": err,
 			}).Warn("Failed to delete S3 item during rollback cleanup")
-		} else {
-			logger.WithFields(logrus.Fields{
-				"Bucket": s3Bucket,
-				"Key":    s3Key,
-			}).Debug("Item deleted during rollback cleanup")
 		}
 		return err
 	}
@@ -48,7 +56,7 @@ func CreateS3RollbackFunc(awsSession *session.Session, s3Bucket string, s3Key st
 func UploadLocalFileToS3(localPath string,
 	awsSession *session.Session,
 	S3Bucket string,
-	S3KeyPrefix string,
+	S3KeyName string,
 	logger *logrus.Logger) (string, error) {
 
 	// Then do the actual work
@@ -56,33 +64,57 @@ func UploadLocalFileToS3(localPath string,
 	if nil != err {
 		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
 	}
-
-	// Make sure the key prefix ends with a trailing slash
-	canonicalKeyPrefix := S3KeyPrefix
-	if !strings.HasSuffix(canonicalKeyPrefix, "/") {
-		canonicalKeyPrefix += "/"
-	}
-
-	// Cache it in case there was an error & we need to cleanup
-	keyName := fmt.Sprintf("%s%s", canonicalKeyPrefix, filepath.Base(localPath))
-
 	uploadInput := &s3manager.UploadInput{
 		Bucket:      &S3Bucket,
-		Key:         &keyName,
-		ContentType: aws.String("application/zip"),
+		Key:         &S3KeyName,
+		ContentType: aws.String(mime.TypeByExtension(path.Ext(localPath))),
 		Body:        reader,
 	}
 	logger.WithFields(logrus.Fields{
-		"Source": localPath,
-	}).Info("Uploading local file to S3")
+		"Path": localPath,
+	}).Info("Uploading to S3")
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
 	if nil != err {
 		return "", err
 	}
-	logger.WithFields(logrus.Fields{
-		"URL": result.Location,
-	}).Info("Upload complete")
+	if result.VersionID != nil {
+		logger.WithFields(logrus.Fields{
+			"URL":       result.Location,
+			"VersionID": string(*result.VersionID),
+		}).Debug("S3 upload complete")
+	} else {
+		logger.WithFields(logrus.Fields{
+			"URL": result.Location,
+		}).Debug("S3 upload complete")
+	}
+	locationURL := result.Location
+	if nil != result.VersionID {
+		// http://docs.aws.amazon.com/AmazonS3/latest/dev/RetrievingObjectVersions.html
+		locationURL = fmt.Sprintf("%s?versionId=%s", locationURL, string(*result.VersionID))
+	}
+	return locationURL, nil
+}
 
-	return keyName, nil
+// BucketVersioningEnabled determines if a given S3 bucket has object
+// versioning enabled.
+func BucketVersioningEnabled(awsSession *session.Session,
+	S3Bucket string,
+	logger *logrus.Logger) (bool, error) {
+
+	s3Svc := s3.New(awsSession)
+	params := &s3.GetBucketVersioningInput{
+		Bucket: aws.String(S3Bucket), // Required
+	}
+	versioningEnabled := false
+	resp, err := s3Svc.GetBucketVersioning(params)
+	if err == nil && resp != nil && resp.Status != nil {
+		// What's the versioning policy?
+		logger.WithFields(logrus.Fields{
+			"VersionPolicy": *resp,
+			"BucketName":    S3Bucket,
+		}).Debug("Bucket version policy")
+		versioningEnabled = (strings.ToLower(*resp.Status) == "enabled")
+	}
+	return versioningEnabled, err
 }

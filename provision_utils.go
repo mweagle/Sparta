@@ -2,14 +2,17 @@ package sparta
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"strings"
-
+	"github.com/Sirupsen/logrus"
 	gocf "github.com/crewjam/go-cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	"github.com/mweagle/cloudformationresources"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/mweagle/cloudformationresources"
+	"os"
+	"os/exec"
+	"path"
+	"strings"
 )
 
 const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
@@ -43,6 +46,43 @@ var PushSourceConfigurationActions = struct {
 		"logs:DeleteSubscriptionFilter",
 		"logs:PutSubscriptionFilter",
 	},
+}
+
+// Create a stable temporary filename in the current working
+// directory
+func temporaryFile(name string) (*os.File, error) {
+	workingDir, err := os.Getwd()
+	if nil != err {
+		return nil, err
+	}
+	// Put everything in the ./sparta directory
+	buildDir := path.Join(workingDir, ".sparta")
+	mkdirErr := os.MkdirAll(buildDir, os.ModePerm)
+	if nil != mkdirErr {
+		return nil, mkdirErr
+	}
+
+	// Use a stable temporary name
+	temporaryPath := path.Join(buildDir, name)
+	tmpFile, err := os.Create(temporaryPath)
+	if err != nil {
+		return nil, errors.New("Failed to create temporary file: " + err.Error())
+	}
+	return tmpFile, nil
+}
+
+func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
+	logger.WithFields(logrus.Fields{
+		"Arguments": cmd.Args,
+		"Dir":       cmd.Dir,
+		"Path":      cmd.Path,
+		"Env":       cmd.Env,
+	}).Debug("Running Command")
+	outputWriter := logger.Writer()
+	defer outputWriter.Close()
+	cmd.Stdout = outputWriter
+	cmd.Stderr = outputWriter
+	return cmd.Run()
 }
 
 func nodeJSHandlerName(jsBaseFilename string) string {

@@ -30,7 +30,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.9.3"
+	SpartaVersion = "0.10.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
@@ -263,15 +263,22 @@ type LambdaFunctionOptions struct {
 	Timeout int64
 	// VPC Settings
 	VpcConfig *gocf.LambdaFunctionVPCConfig
+	// Environment Variables
+	Environment map[string]*gocf.StringExpr
+	// KMS Key Arn used to encrypt environment variables
+	KmsKeyArn string
 	// Additional params
 	SpartaOptions *SpartaOptions
 }
 
 func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 	return &LambdaFunctionOptions{Description: "",
-		MemorySize: 128,
-		Timeout:    3,
-		VpcConfig:  nil,
+		MemorySize:    128,
+		Timeout:       3,
+		VpcConfig:     nil,
+		Environment:   nil,
+		KmsKeyArn:     "",
+		SpartaOptions: nil,
 	}
 }
 
@@ -313,7 +320,7 @@ type WorkflowHook func(context map[string]interface{},
 	noop bool,
 	logger *logrus.Logger) error
 
-// ServiceDecorator defines a user function that is called a single
+// ServiceDecoratorHook defines a user function that is called a single
 // time in the marshall workflow.
 type ServiceDecoratorHook func(context map[string]interface{},
 	serviceName string,
@@ -587,6 +594,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
 		VpcConfig:   resourceInfo.options.VpcConfig,
 	}
+
 	lambdaFunctionCFName := CloudFormationResourceName("CustomResourceLambda",
 		resourceInfo.userFunctionName,
 		resourceInfo.logicalName())
@@ -768,7 +776,14 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
 	}
-
+	if "" != info.Options.KmsKeyArn {
+		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
+	}
+	if nil != info.Options.Environment {
+		lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
+			Variables: info.Options.Environment,
+		}
+	}
 	// Need to check if a functionName exists in the LambdaAwsInfo struct
 	// If an empty string is passed, the template will error with invalid
 	// function name.

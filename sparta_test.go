@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"testing"
-
 	"github.com/Sirupsen/logrus"
+	"net/http"
+	"os"
+	"testing"
 )
 
 type StructHandler1 struct {
@@ -81,8 +81,9 @@ func TestStruct(t *testing.T) {
 		testLambdaStructData(),
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -102,8 +103,9 @@ func TestDoubleRefStruct(t *testing.T) {
 		testLambdaDoubleStructPtrData(),
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -135,8 +137,9 @@ func TestCustomResource(t *testing.T) {
 		lambdaFuncs,
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -165,8 +168,9 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		lambdaFuncs,
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -199,8 +203,9 @@ func SignatureVersion(t *testing.T) {
 		lambdaFunctions,
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
@@ -233,8 +238,9 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		lambdaFunctions,
 		nil,
 		nil,
+		os.Getenv("S3_BUCKET"),
 		"testBuildID",
-		"S3Bucket",
+		"",
 		"",
 		"",
 		&templateWriter,
