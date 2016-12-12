@@ -4,7 +4,7 @@
 
 - :warning: **BREAKING**
   - `describe` option now requires `-b/--s3Bucket` argument
-  - Changed `SpartaOptions` to `LambdaSpartaOptions` to eliminate stuttering warning
+  - Changed signature of `aws/s3/CreateS3RollbackFunc` to accept full S3 URL, including `versionId` query param
 - :checkered_flag: **CHANGES**
   - Add `-p/--codePipelineTrigger` command line option to generate CodePipeline deployment package
   - Add `sparta.RegisterCodePipelineEnvironment` to define environment variables in support of [CloudFormation Deployments](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
@@ -16,6 +16,8 @@
   - Cleanup log statements
   - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
  - :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/34
+  - https://github.com/mweagle/Sparta/issues/37
   - https://github.com/mweagle/Sparta/issues/38
 
 ## v0.9.3
