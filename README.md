@@ -15,10 +15,12 @@ Sparta takes a set of _golang_ functions and automatically provisions them in
 
 Functions must implement
 
-    type LambdaFunction func(*json.RawMessage,
-                              *LambdaContext,
-                              http.ResponseWriter,
-                              *logrus.Logger)
+```go
+type LambdaFunction func(*json.RawMessage,
+                          *LambdaContext,
+                          http.ResponseWriter,
+                          *logrus.Logger)
+```
 
 where
 
