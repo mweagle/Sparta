@@ -23,6 +23,8 @@ import (
 	gocf "github.com/crewjam/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
+	_ "github.com/aws/aws-sdk-go/service/ecr"  // Ref to have Glide include depends
+	_ "github.com/mweagle/Sparta/aws/dynamodb" // Ref to have Glide include depends
 )
 
 ////////////////////////////////////////////////////////////////////////////////
