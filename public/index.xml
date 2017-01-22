@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sparta</title>
-    <link>http://gosparta.io/</link>
+    <link>http://gosparta.io/index.xml</link>
     <description>Recent content on Sparta</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-EN</language>

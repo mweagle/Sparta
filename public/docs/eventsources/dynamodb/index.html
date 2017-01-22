@@ -57,7 +57,7 @@
     },
     "datePublished": "2015-11-29",
     "description": "",
-    "wordCount":  487 
+    "wordCount":  483 
   }
 </script>
 
@@ -68,7 +68,7 @@
 <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://gosparta.io/touch-icon-144-precomposed.png">
 <link href="http://gosparta.io/favicon.png" rel="icon">
 
-<meta name="generator" content="Hugo 0.16" />
+<meta name="generator" content="Hugo 0.18.1" />
 
   <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -105,7 +105,7 @@
     ga('send', 'pageview');
   </script>
 </head>
-<body class="map[twitter:mweagle youtube: flattr: name:lumen googleAnalytics:UA-70794971-1 bitbucket: facebook: home:Sparta github:https://github.com/mweagle linkedin:https://www.linkedin.com/in/mweagle googleplus:]">
+<body class="map[home:Sparta twitter:mweagle youtube: googleanalytics:UA-70794971-1 facebook: googleplus: flattr: name:lumen github:https://github.com/mweagle bitbucket: linkedin:https://www.linkedin.com/in/mweagle]">
     <header id="main-header">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container">
@@ -357,8 +357,8 @@
 <ul>
 <li><a href="#goal">Goal</a></li>
 <li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#{#HUGOSHORTCODE-2#">&lt;a href=&rdquo;</a></li>
-<li><a href="#{#HUGOSHORTCODE-5#">&lt;a href=&rdquo;</a></li>
+<li><a href="#a-href-hahahugoshortcode-2hbhb-unmarshalling-the-dynamodb-event-a"><a href="HAHAHUGOSHORTCODE-2HBHB">Unmarshalling the DynamoDB Event</a></a></li>
+<li><a href="#a-href-hahahugoshortcode-5hbhb-sparta-integration-a"><a href="HAHAHUGOSHORTCODE-5HBHB">Sparta Integration</a></a></li>
 <li><a href="#event-source-mappings">Event Source Mappings</a></li>
 <li><a href="#wrapping-up">Wrapping Up</a></li>
 <li><a href="#other-resources">Other Resources</a></li>
@@ -400,9 +400,7 @@
 }</code></pre>
 
 
-<h1 id="{#HUGOSHORTCODE-2#">&lt;a href=&rdquo;</h1>
-
-<p>#}&ldquo;&gt;Unmarshalling the DynamoDB Event</a></p>
+<h1 id="a-href-hahahugoshortcode-2hbhb-unmarshalling-the-dynamodb-event-a"><a href="#unmarshalDynamoDBEvent">Unmarshalling the DynamoDB Event</a></h1>
 
 <p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>*json.RawMessage</code> data into an DynamoDB-specific event provided by Sparta via:</p>
 
@@ -426,9 +424,7 @@ if err != nil {
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
 
-<h1 id="{#HUGOSHORTCODE-5#">&lt;a href=&rdquo;</h1>
-
-<p>#}&ldquo;&gt;Sparta Integration</a></p>
+<h1 id="a-href-hahahugoshortcode-5hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
