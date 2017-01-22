@@ -36,6 +36,14 @@ docs:
 	@echo
 	godoc -v -http=:8090 -index=true
 
+travis-depends:
+	rm -rf $(GOPATH)/src/github.com/mjibson/esc
+	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
+
+travis-ci-test: travis-depends build
+	go test -v .
+	go test -v ./aws/...
+
 test: build
 	go test -v .
 	go test -v ./aws/...
