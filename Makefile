@@ -39,6 +39,8 @@ docs:
 travis-depends:
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
+	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
+	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
 
 travis-ci-test: travis-depends build
 	go test -v .
