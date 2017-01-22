@@ -1,9 +1,3 @@
-.vscode/*
-graph.html
-tags
-.atom-build.json
-resources/provision/node_modules/*
-
 # Compiled Object files, Static and Dynamic libs (Shared Objects)
 *.o
 *.a
@@ -28,6 +22,3 @@ _testmain.go
 *.exe
 *.test
 *.prof
-
-
-.sparta/*

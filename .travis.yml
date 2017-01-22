@@ -5,6 +5,7 @@ go:
 before_install:
   - nvm install 6.9.4
   - nvm use 6.9.4
+  - godep restore
 script: make travis-ci-test
 env:
   global:
