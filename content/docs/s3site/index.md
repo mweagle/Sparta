@@ -71,7 +71,7 @@ typically points to a directory, which will be:
   1. Posted to S3 alongside the Lambda code archive and CloudFormation Templates
   1. Dynamically unpacked by a CloudFormation CustomResource during `provision` to a new S3 bucket.
 
-# <a href="{{< relref "#provision" >}}">Provision</a>
+# Provision
 
 Putting it all together, our `main()` function looks like:
 
