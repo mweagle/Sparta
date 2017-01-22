@@ -5,8 +5,8 @@ go:
 before_install:
   - nvm install 4.5.0
   - nvm use 4.5.0
-  - make get
-install: make travisci
+  - godep restore
+install: make build
 script: make test
 env:
   - S3_BUCKET=weagle
