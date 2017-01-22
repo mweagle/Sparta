@@ -12,6 +12,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"math/rand"
 	"net/http"
+	"os"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -1011,5 +1012,10 @@ func NewLogger(level string) (*logrus.Logger, error) {
 		return nil, err
 	}
 	logger.Level = logLevel
+
+	// Running in CI?
+	if "" != os.Getenv("CI") {
+		logger.Level = logrus.DebugLevel
+	}
 	return logger, nil
 }
