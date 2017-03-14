@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/aws/aws-sdk-go/aws"
@@ -62,7 +62,7 @@ var RootCmd = &cobra.Command{
 		}
 
 		stackInfo, _ := json.Marshal(describeStacksResponse)
-		outputFilepath := path.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
+		outputFilepath := filepath.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
 		err = ioutil.WriteFile(outputFilepath, stackInfo, 0644)
 		if nil != err {
 			return err
