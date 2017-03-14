@@ -3,18 +3,24 @@ package zip
 import (
 	"archive/zip"
 	"errors"
-	"github.com/Sirupsen/logrus"
+	"fmt"
 	"io"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // AddToZip creates a source object (either a file, or a directory that will be recursively
 // added) to a previously opened zip.Writer.  The archive path of `source` is relative to the
 // `rootSource` parameter.
 func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
+
+	linuxZipName := func(platformValue string) string {
+		return strings.Replace(platformValue, "\\", "/", -1)
+	}
+
 	fullPathSource, err := filepath.Abs(source)
 	if nil != err {
 		return err
@@ -23,7 +29,7 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	appendFile := func(info os.FileInfo) error {
 		zipEntryName := source
 		if "" != rootSource {
-			zipEntryName = path.Join(strings.Replace(rootSource, "\\", "/", -1), info.Name())
+			zipEntryName = fmt.Sprintf("%s/%s", linuxZipName(rootSource), info.Name())
 		}
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.Create(zipEntryName)
@@ -53,7 +59,10 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		if err != nil {
 			return err
 		}
-		header.Name = strings.TrimPrefix(strings.TrimPrefix(path, rootSource), string(os.PathSeparator))
+		// Normalize the Name
+		platformName := strings.TrimPrefix(strings.TrimPrefix(path, rootSource), string(os.PathSeparator))
+		header.Name = linuxZipName(platformName)
+
 		if info.IsDir() {
 			header.Name += "/"
 		} else {
