@@ -36,6 +36,8 @@ const (
 	SpartaVersion = "0.10.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
+	// PythonVersion is the Python version used for CGO support
+	PythonVersion = "python2.7"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 )
@@ -543,7 +545,7 @@ type customResourceInfo struct {
 
 // Returns a JavaScript compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
-func (resourceInfo *customResourceInfo) jsHandlerName() string {
+func (resourceInfo *customResourceInfo) scriptExportHandlerName() string {
 	// The JS handler name must take into account the
 	return sanitizedName(resourceInfo.userFunctionName)
 }
@@ -563,6 +565,7 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 
 func (resourceInfo *customResourceInfo) export(serviceName string,
 	targetLambda *gocf.StringExpr,
+	runtime string,
 	S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]*gocf.StringExpr,
@@ -590,10 +593,10 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 			S3Key:    gocf.String(S3Key),
 		},
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(fmt.Sprintf("index.%s", resourceInfo.jsHandlerName())),
+		Handler:     gocf.String(fmt.Sprintf("index.%s", resourceInfo.scriptExportHandlerName())),
 		MemorySize:  gocf.Integer(resourceInfo.options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(NodeJSVersion),
+		Runtime:     gocf.String(runtime),
 		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
 		VpcConfig:   resourceInfo.options.VpcConfig,
 	}
@@ -659,8 +662,8 @@ type LambdaAWSInfo struct {
 	customResources []*customResourceInfo
 }
 
-// URLPath returns the URL path that can be used as an argument
-// to NewLambdaRequest or NewAPIGatewayRequest
+// lambdaFunctionName returns the internal script-sanitized
+// function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
 	lambdaFuncName := lambdaPtr.Name()
@@ -713,9 +716,9 @@ func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition int
 	return resourceInfo.logicalName(), nil
 }
 
-// Returns a JavaScript compatible function name for the golang function name.  This
+// Returns a script compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
-func (info *LambdaAWSInfo) jsHandlerName() string {
+func (info *LambdaAWSInfo) scriptExportHandlerName() string {
 	return sanitizedName(info.lambdaFunctionName())
 }
 
@@ -737,6 +740,7 @@ func (info *LambdaAWSInfo) logicalName() string {
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
 func (info *LambdaAWSInfo) export(serviceName string,
+	lambdaRuntime string,
 	S3Bucket string,
 	S3Key string,
 	buildID string,
@@ -772,10 +776,10 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			S3Key:    gocf.String(S3Key),
 		},
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(fmt.Sprintf("index.%s", info.jsHandlerName())),
+		Handler:     gocf.String(fmt.Sprintf("index.%s", info.scriptExportHandlerName())),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(NodeJSVersion),
+		Runtime:     gocf.String(lambdaRuntime),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
 	}
@@ -832,6 +836,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	for _, eachCustomResource := range info.customResources {
 		resourceErr := eachCustomResource.export(serviceName,
 			functionAttr,
+			lambdaRuntime,
 			S3Bucket,
 			S3Key,
 			roleNameMap,
@@ -1019,5 +1024,6 @@ func NewLogger(level string) (*logrus.Logger, error) {
 	if "" != os.Getenv("CI") {
 		logger.Level = logrus.DebugLevel
 	}
+	logger.Out = os.Stdout
 	return logger, nil
 }

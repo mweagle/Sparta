@@ -369,7 +369,8 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 		lambdaAWSInfos,
 		api,
 		site,
-		nil)
+		nil,
+		false)
 }
 
 // MainEx provides an "extended" Main that supports customizing the standard Sparta
@@ -379,7 +380,8 @@ func MainEx(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	api *API,
 	site *S3Site,
-	workflowHooks *WorkflowHooks) error {
+	workflowHooks *WorkflowHooks,
+	useCGO bool) error {
 	//////////////////////////////////////////////////////////////////////////////
 	// cmdRoot defines the root, non-executable command
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
@@ -439,6 +441,7 @@ func MainEx(serviceName string,
 				api,
 				site,
 				optionsProvision.S3Bucket,
+				useCGO,
 				buildID,
 				optionsProvision.PipelineTrigger,
 				OptionsGlobal.BuildTags,

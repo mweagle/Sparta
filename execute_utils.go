@@ -128,7 +128,7 @@ func spartaCustomResourceForwarder(event *json.RawMessage,
 // LambdaHTTPHandler is an HTTP compliant handler that implements
 // ServeHTTP
 type LambdaHTTPHandler struct {
-	lambdaDispatchMap         dispatchMap
+	LambdaDispatchMap         dispatchMap
 	customResourceDispatchMap customResourceDispatchMap
 	logger                    *logrus.Logger
 }
@@ -180,7 +180,7 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 		"LookupName": lambdaFunc,
 	}).Debug("Dispatching")
 
-	lambdaAWSInfo := handler.lambdaDispatchMap[lambdaFunc]
+	lambdaAWSInfo := handler.LambdaDispatchMap[lambdaFunc]
 	var lambdaFn LambdaFunction
 	if nil != lambdaAWSInfo {
 		lambdaFn = lambdaAWSInfo.lambdaFn
@@ -235,7 +235,7 @@ func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger
 	}
 
 	return &LambdaHTTPHandler{
-		lambdaDispatchMap:         lookupMap,
+		LambdaDispatchMap:         lookupMap,
 		customResourceDispatchMap: customResourceMap,
 		logger: logger,
 	}

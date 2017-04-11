@@ -10,32 +10,26 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
-
-	"net/url"
-	"path/filepath"
-
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaS3 "github.com/mweagle/Sparta/aws/s3"
-	spartaZip "github.com/mweagle/Sparta/zip"
-
-	"io"
-	"os"
-	"os/exec"
-	"path"
-	"runtime"
-	"strings"
-	"sync"
-	"time"
-
-	"github.com/mweagle/cloudformationresources"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	gocf "github.com/crewjam/go-cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/aws/s3"
+	spartaZip "github.com/mweagle/Sparta/zip"
+	"io"
+	"net/url"
+	"os"
+	"os/exec"
+	"path"
+	"path/filepath"
+	"reflect"
+	"runtime"
+	"strings"
+	"sync"
+	"time"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,26 +58,7 @@ var SpartaTagBuildIDKey = spartaTagName("buildId")
 // that stores the optional user-supplied golang build tags
 var SpartaTagBuildTagsKey = spartaTagName("buildTags")
 
-// The basename of the scripts that are embedded into CONSTANTS.go
-// by `esc` during the generate phase.  In order to export these, there
-// MUST be a corresponding PROXIED_MODULES entry for the base filename
-// in resources/index.js
-var customResourceScripts = []string{"sparta_utils.js",
-	"golang-constants.json"}
-
-var golangCustomResourceTypes = []string{
-	cloudformationresources.SESLambdaEventSource,
-	cloudformationresources.S3LambdaEventSource,
-	cloudformationresources.SNSLambdaEventSource,
-	cloudformationresources.CloudWatchLogsLambdaEventSource,
-	cloudformationresources.ZipToS3Bucket,
-}
-
 type finalizerFunction func(logger *logrus.Logger)
-
-// The relative path of the custom scripts that is used
-// to create the filename relative path when creating the custom archive
-const provisioningResourcesRelPath = "/resources/provision"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Type that encapsulates an S3 URL with accessors to return either the
@@ -146,6 +121,8 @@ type workflowContext struct {
 	s3Bucket string
 	// Is versioning enabled for s3 Bucket?
 	s3BucketVersioningEnabled bool
+	// Is this a CGO enabled build?
+	useCGO bool
 	// The user-supplied or automatically generated BuildID
 	buildID string
 	// Code pipeline S3 trigger keyname
@@ -172,7 +149,6 @@ type workflowContext struct {
 	// Optional rollback functions that workflow steps may append to if they
 	// have made mutations during provisioning.
 	rollbackFunctions []spartaS3.RollbackFunction
-
 	// Optional finalizer functions that are unconditionally executed following
 	// workflow completion, success or failure
 	finalizerFunctions []finalizerFunction
@@ -502,52 +478,6 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 	return createPackageStep(), nil
 }
 
-// Return a string representation of a JS function call that can be exposed
-// to AWS Lambda
-func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
-	logger.WithFields(logrus.Fields{
-		"FunctionName": lambdaInfo.lambdaFunctionName(),
-	}).Info("Registering Sparta function")
-
-	// We do know the CF resource name here - could write this into
-	// index.js and expose a GET localhost:9000/lambdaMetadata
-	// which wraps up DescribeStackResource for the running
-	// lambda function
-	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
-		lambdaInfo.jsHandlerName(),
-		lambdaInfo.lambdaFunctionName())
-	return primaryEntry
-}
-
-func createUserCustomResourceEntry(customResource *customResourceInfo, logger *logrus.Logger) string {
-	// The resource name is a :: delimited one, so let's sanitize that
-	// to make it a valid JS identifier
-	logger.WithFields(logrus.Fields{
-		"UserFunction":       customResource.userFunctionName,
-		"NodeJSFunctionName": customResource.jsHandlerName(),
-	}).Debug("Registering User CustomResource function")
-
-	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
-		customResource.jsHandlerName(),
-		customResource.userFunctionName)
-	return primaryEntry
-}
-
-func createNewSpartaCustomResourceEntry(resourceName string, logger *logrus.Logger) string {
-	// The resource name is a :: delimited one, so let's sanitize that
-	// to make it a valid JS identifier
-	jsName := javascriptExportNameForCustomResourceType(resourceName)
-	logger.WithFields(logrus.Fields{
-		"Resource":           resourceName,
-		"NodeJSFunctionName": jsName,
-	}).Debug("Registering Sparta CustomResource function")
-
-	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
-		jsName,
-		resourceName)
-	return primaryEntry
-}
-
 func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	// Binary size
 	stat, err := os.Stat(filePath)
@@ -559,7 +489,11 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
-func buildGoBinary(executableOutput string, buildTags string, linkFlags string, logger *logrus.Logger) error {
+func buildGoBinary(executableOutput string,
+	useCGO bool,
+	buildTags string,
+	linkFlags string,
+	logger *logrus.Logger) error {
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
@@ -572,104 +506,79 @@ func buildGoBinary(executableOutput string, buildTags string, linkFlags string, 
 	if nil != goGenerateErr {
 		return goGenerateErr
 	}
-
 	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
-	allBuildTags := fmt.Sprintf("lambdabinary %s", buildTags)
-
-	buildArgs := []string{
-		"build",
-		"-o",
-		executableOutput,
-		"-tags",
-		allBuildTags,
-	}
+	userBuildFlags := []string{"-tags",
+		fmt.Sprintf("lambdabinary %s", buildTags)}
 	// Append all the linker flags
 	if len(linkFlags) != 0 {
-		buildArgs = append(buildArgs, "-ldflags", linkFlags)
+		userBuildFlags = append(userBuildFlags, "-ldflags", linkFlags)
 	}
-	buildArgs = append(buildArgs, ".")
-	cmd = exec.Command("go", buildArgs...)
-	cmd.Env = os.Environ()
-	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
-	logger.WithFields(logrus.Fields{
-		"Name": executableOutput,
-	}).Info("Compiling binary")
-	return runOSCommand(cmd, logger)
-}
-
-func writeNodeJSShim(serviceName string,
-	executableOutput string,
-	lambdaAWSInfos []*LambdaAWSInfo,
-	zipWriter *zip.Writer,
-	logger *logrus.Logger) error {
-
-	// Add the string literal adapter, which requires us to add exported
-	// functions to the end of index.js.  These NodeJS exports will be
-	// linked to the AWS Lambda NodeJS function name, and are basically
-	// automatically generated pass through proxies to the golang HTTP handler.
-	nodeJSWriter, err := zipWriter.Create("index.js")
-	if err != nil {
-		return errors.New("Failed to create ZIP entry: index.js")
-	}
-	nodeJSSource := _escFSMustString(false, "/resources/index.js")
-	nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
-
-	handlerNames := make(map[string]bool, 0)
-	for _, eachLambda := range lambdaAWSInfos {
-		if _, exists := handlerNames[eachLambda.jsHandlerName()]; !exists {
-			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, logger)
-			handlerNames[eachLambda.jsHandlerName()] = true
+	// If this is CGO, do the Docker build
+	var cmdError error
+	if useCGO {
+		currentDir, currentDirErr := os.Getwd()
+		if nil != currentDirErr {
+			return currentDirErr
+		}
+		gopathVersion, gopathVersionErr := systemGoVersion(logger)
+		if nil != gopathVersionErr {
+			return gopathVersionErr
 		}
 
-		// USER DEFINED RESOURCES
-		for _, eachCustomResource := range eachLambda.customResources {
-			if _, exists := handlerNames[eachCustomResource.jsHandlerName()]; !exists {
-				nodeJSSource += createUserCustomResourceEntry(eachCustomResource, logger)
-				handlerNames[eachCustomResource.jsHandlerName()] = true
-			}
+		gopath := os.ExpandEnv("$GOPATH")
+		containerGoPath := "/usr/src/gopath"
+		// Get the package path in the current directory
+		// so that we can it to the container path
+		packagePath := strings.TrimPrefix(currentDir, gopath)
+		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
+		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
+		dockerBuildArgs := []string{
+			"run",
+			"--rm",
+			"-v",
+			volumeMountMapping,
+			"-w",
+			containerSourcePath,
+			"-e",
+			fmt.Sprintf("GOPATH=%s", containerGoPath),
+			"-e",
+			"GOOS=linux",
+			"-e",
+			"GOARCH=amd64",
+			fmt.Sprintf("golang:%s", gopathVersion),
+			"go",
+			"build",
+			"-o",
+			executableOutput,
+			"-buildmode=c-shared",
 		}
-	}
-	// SPARTA CUSTOM RESOURCES
-	for _, eachCustomResourceName := range golangCustomResourceTypes {
-		nodeJSSource += createNewSpartaCustomResourceEntry(eachCustomResourceName, logger)
-	}
 
-	// Finally, replace
-	// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
-	// with the service binary name
-	nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
-	// And the service name
-	nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", serviceName)
-	logger.WithFields(logrus.Fields{
-		"index.js": nodeJSSource,
-	}).Debug("Dynamically generated NodeJS adapter")
-
-	stringReader := strings.NewReader(nodeJSSource)
-	_, copyErr := io.Copy(nodeJSWriter, stringReader)
-	return copyErr
-}
-
-func writeCustomResources(zipWriter *zip.Writer,
-	logger *logrus.Logger) error {
-	for _, eachName := range customResourceScripts {
-		resourceName := fmt.Sprintf("%s/%s", provisioningResourcesRelPath, eachName)
-		resourceContent := _escFSMustString(false, resourceName)
-		stringReader := strings.NewReader(resourceContent)
-		embedWriter, errCreate := zipWriter.Create(eachName)
-		if nil != errCreate {
-			return errCreate
-		}
+		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
+		cmd = exec.Command("docker", dockerBuildArgs...)
+		cmd.Env = os.Environ()
 		logger.WithFields(logrus.Fields{
-			"Name": eachName,
-		}).Debug("Script name")
-
-		_, copyErr := io.Copy(embedWriter, stringReader)
-		if nil != copyErr {
-			return copyErr
+			"Name": executableOutput,
+			"Args": dockerBuildArgs,
+		}).Info("Building CGO library in Docker")
+		cmdError = runOSCommand(cmd, logger)
+	} else {
+		buildArgs := []string{
+			"build",
+			"-o",
+			executableOutput,
 		}
+		buildArgs = append(buildArgs, userBuildFlags...)
+		buildArgs = append(buildArgs, ".")
+		cmd = exec.Command("go", buildArgs...)
+		cmd.Env = os.Environ()
+		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
+		logger.WithFields(logrus.Fields{
+			"Name": executableOutput,
+		}).Info("Compiling binary")
+		cmdError = runOSCommand(cmd, logger)
 	}
-	return nil
+	return cmdError
 }
 
 // Build and package the application
@@ -684,9 +593,17 @@ func createPackageStep() workflowStep {
 				return nil, preBuildErr
 			}
 		}
+		binarySuffix := "lambda.amd64"
+		if ctx.useCGO {
+			binarySuffix = "lambda.so"
+		}
 		sanitizedServiceName := sanitizedName(ctx.serviceName)
-		executableOutput := fmt.Sprintf("%s.lambda.amd64", sanitizedServiceName)
-		buildErr := buildGoBinary(executableOutput, ctx.buildTags, ctx.linkFlags, ctx.logger)
+		executableOutput := fmt.Sprintf("%s.%s", sanitizedServiceName, binarySuffix)
+		buildErr := buildGoBinary(executableOutput,
+			ctx.useCGO,
+			ctx.buildTags,
+			ctx.linkFlags,
+			ctx.logger)
 		if nil != buildErr {
 			return nil, buildErr
 		}
@@ -743,24 +660,29 @@ func createPackageStep() workflowStep {
 			return nil, readerErr
 		}
 
+		// Based on whether this is NodeJS or CGO, pick the proper shim
+		// and write the custom entries
+
 		// Add the string literal adapter, which requires us to add exported
 		// functions to the end of index.js.  These NodeJS exports will be
 		// linked to the AWS Lambda NodeJS function name, and are basically
 		// automatically generated pass through proxies to the golang HTTP handler.
-		shimErr := writeNodeJSShim(ctx.serviceName,
-			executableOutput,
-			ctx.lambdaAWSInfos,
-			lambdaArchive,
-			ctx.logger)
+		var shimErr error
+		if ctx.useCGO {
+			shimErr = insertPythonProxyResources(ctx.serviceName,
+				executableOutput,
+				ctx.lambdaAWSInfos,
+				lambdaArchive,
+				ctx.logger)
+		} else {
+			shimErr = insertNodeJSProxyResources(ctx.serviceName,
+				executableOutput,
+				ctx.lambdaAWSInfos,
+				lambdaArchive,
+				ctx.logger)
+		}
 		if nil != shimErr {
 			return nil, shimErr
-		}
-
-		// Next embed the custom resource scripts into the package.
-		ctx.logger.Debug("Embedding CustomResource scripts")
-		customResourceErr := writeCustomResources(lambdaArchive, ctx.logger)
-		if nil != customResourceErr {
-			return nil, customResourceErr
 		}
 		archiveCloseErr := lambdaArchive.Close()
 		if nil != archiveCloseErr {
@@ -1077,11 +999,15 @@ func ensureCloudFormationStack() workflowStep {
 				}
 			}
 		}
-
+		lambdaRuntime := NodeJSVersion
+		if ctx.useCGO {
+			lambdaRuntime = PythonVersion
+		}
 		for _, eachEntry := range ctx.lambdaAWSInfos {
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.serviceName,
+				lambdaRuntime,
 				ctx.s3Bucket,
 				ctx.s3CodeZipURL.keyName(),
 				ctx.buildID,
@@ -1202,6 +1128,7 @@ func Provision(noop bool,
 	api *API,
 	site *S3Site,
 	s3Bucket string,
+	useCGO bool,
 	buildID string,
 	codePipelineTrigger string,
 	buildTags string,
@@ -1228,16 +1155,17 @@ func Provision(noop bool,
 		cfTemplate:                gocf.NewTemplate(),
 		s3Bucket:                  s3Bucket,
 		s3BucketVersioningEnabled: false,
-		buildID:                   buildID,
-		codePipelineTrigger:       codePipelineTrigger,
-		buildTags:                 buildTags,
-		linkFlags:                 linkerFlags,
-		buildTime:                 time.Now(),
-		awsSession:                spartaAWS.NewSession(logger),
-		templateWriter:            templateWriter,
-		workflowHooks:             workflowHooks,
-		workflowHooksContext:      make(map[string]interface{}, 0),
-		logger:                    logger,
+		useCGO:               useCGO,
+		buildID:              buildID,
+		codePipelineTrigger:  codePipelineTrigger,
+		buildTags:            buildTags,
+		linkFlags:            linkerFlags,
+		buildTime:            time.Now(),
+		awsSession:           spartaAWS.NewSession(logger),
+		templateWriter:       templateWriter,
+		workflowHooks:        workflowHooks,
+		workflowHooksContext: make(map[string]interface{}, 0),
+		logger:               logger,
 	}
 	ctx.cfTemplate.Description = serviceDescription
 
