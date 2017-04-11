@@ -193,9 +193,9 @@ var _escData = map[string]*_escFile{
 	"/resources/awsbinary/README.md": {
 		local:   "./resources/awsbinary/README.md",
 		size:    104,
-		modtime: 1480682138,
+		modtime: 1485095106,
 		compressed: `
-H4sIAAAJbogA/yTLQQrCMBAF0L2n+BfQOxQ3CloXE3Ap0+QXA0mndMZFby/oAV56V8dcG1EdtrQdH2dB
+H4sIAAAAAAAA/yTLQQrCMBAF0L2n+BfQOxQ3CloXE3Ap0+QXA0mndMZFby/oAV56V8dcG1EdtrQdH2dB
 GPJGDUJBz8dsfdWoUyPOj1HSMCZ5yeV6lz/+odk2DE/BTftUFIVrs71ziRMO3wAAAP//AOMpDWgAAAA=
 `,
 	},
