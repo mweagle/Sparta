@@ -1,0 +1,106 @@
+{
+    "memo": "",
+    "projects": [
+        {
+            "name": "github.com/Sirupsen/logrus",
+            "revision": "10f801ebc38b33738c9d17d50860f484a0988ff5",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/asaskevich/govalidator",
+            "revision": "fdf19785fd3558d619ef81212f5edf1d6c2a5911",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/aws/aws-sdk-go",
+            "branch": "master",
+            "revision": "c555a87c32af3840e6ab7c106e7aee3dac87f99e",
+            "packages": [
+                "aws",
+                "aws/request",
+                "aws/session",
+                "service/apigateway",
+                "service/cloudformation",
+                "service/dynamodb",
+                "service/ecr",
+                "service/iam",
+                "service/lambda",
+                "service/s3",
+                "service/s3/s3manager",
+                "service/sts",
+                "service/cloudwatchlogs",
+                "service/ses",
+                "service/sns"
+            ]
+        },
+        {
+            "name": "github.com/crewjam/go-cloudformation",
+            "revision": "dc036ed324b195833581cf6b102c8a8cf5d2fbb8",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/go-ini/ini",
+            "version": "v1.21.1",
+            "revision": "6e4869b434bd001f6983749881c7ead3545887d8",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/inconshreveable/mousetrap",
+            "revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/jmespath/go-jmespath",
+            "revision": "bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/mweagle/cloudformationresources",
+            "revision": "85a82b74b42d73aaa09da7505617c342d49a00b1",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/cobra",
+            "revision": "5deb57bbca49eb370538fc295ba4b2988f9f5e09",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "github.com/spf13/pflag",
+            "revision": "9a906f17374922ed0f74e1b2f593d3723f2ffb00",
+            "packages": [
+                "."
+            ]
+        },
+        {
+            "name": "golang.org/x/sys",
+            "revision": "d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03",
+            "packages": [
+                "unix"
+            ]
+        },
+        {
+            "name": "golang.org/x/tools",
+            "branch": "master",
+            "revision": "3d92dd60033c312e3ae7cac319c792271cf67e37",
+            "packages": [
+                "go/ast/astutil"
+            ]
+        }
+    ]
+}
