@@ -65,6 +65,7 @@ type finalizerFunction func(logger *logrus.Logger)
 // full URL or just the valid S3 Keyname
 type s3UploadURL struct {
 	location string
+	version  string
 }
 
 func (s3URL *s3UploadURL) url() string {
@@ -77,7 +78,20 @@ func (s3URL *s3UploadURL) keyName() string {
 }
 
 func newS3UploadURL(s3URL string) *s3UploadURL {
-	return &s3UploadURL{location: s3URL}
+	urlParts, urlPartsErr := url.Parse(s3URL)
+	if nil != urlPartsErr {
+		return nil
+	}
+	queryParams, queryParamsErr := url.ParseQuery(urlParts.RawQuery)
+	if nil != queryParamsErr {
+		return nil
+	}
+	versionIDValues := queryParams["versionId"]
+	version := ""
+	if len(versionIDValues) == 1 {
+		version = versionIDValues[0]
+	}
+	return &s3UploadURL{location: s3URL, version: version}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1010,6 +1024,7 @@ func ensureCloudFormationStack() workflowStep {
 				lambdaRuntime,
 				ctx.s3Bucket,
 				ctx.s3CodeZipURL.keyName(),
+				ctx.s3CodeZipURL.version,
 				ctx.buildID,
 				ctx.lambdaIAMRoleNameMap,
 				ctx.cfTemplate,
@@ -1030,6 +1045,7 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.awsSession,
 				ctx.s3Bucket,
 				ctx.s3CodeZipURL.keyName(),
+				ctx.s3CodeZipURL.version,
 				ctx.lambdaIAMRoleNameMap,
 				apiGatewayTemplate,
 				ctx.noop,

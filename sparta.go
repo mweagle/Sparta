@@ -743,6 +743,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	lambdaRuntime string,
 	S3Bucket string,
 	S3Key string,
+	S3Version string,
 	buildID string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
@@ -782,6 +783,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Runtime:     gocf.String(lambdaRuntime),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
+	}
+	if "" != S3Version {
+		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}
 	if "" != info.Options.KmsKeyArn {
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
