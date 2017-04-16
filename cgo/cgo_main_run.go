@@ -5,13 +5,16 @@ package cgo
 import (
 	"bytes"
 	"fmt"
-	"github.com/mweagle/Sparta"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"golang.org/x/tools/go/ast/astutil"
 	"os"
+
+	"strings"
+
+	"github.com/mweagle/Sparta"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 func cgoMain(callerFile string,
@@ -22,8 +25,22 @@ func cgoMain(callerFile string,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
 
-	// So this depends on being able to rewrite the main() function...
+	// We can short circuit a lot of this if we're just
+	// trying to do a unit test or export.
+	subCommand := os.Args[1]
+	if subCommand != "provision" {
+		return sparta.MainEx(serviceName,
+			serviceDescription,
+			lambdaAWSInfos,
+			api,
+			site,
+			workflowHooks,
+			true)
+	}
 
+	// This is the provision workflow, which depends on being able
+	// to rewrite the main() function so that the main() contents
+	// happen in the context of an init() statement
 	// Read the main() input
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, callerFile, nil, 0)
@@ -56,7 +73,7 @@ func cgoMain(callerFile string,
 		updatedSource = transformedSource
 	}
 	// The temporary file is the input file, with a suffix
-	rewrittenFilepath := fmt.Sprintf("%s.rewritten.go", callerFile)
+	rewrittenFilepath := fmt.Sprintf("%s.sparta-cgo.go", callerFile)
 	swappedFilepath := fmt.Sprintf("%s.sparta.og", callerFile)
 	renameErr := os.Rename(callerFile, swappedFilepath)
 	if nil != renameErr {
@@ -70,16 +87,16 @@ func cgoMain(callerFile string,
 		fmt.Printf("Failed to create output file: %s", outputFileErr.Error())
 		return outputFileErr
 	}
-	defer outputFile.Close()
-	defer os.Remove(rewrittenFilepath)
 
 	// Save the updated contents
 	_, writtenErr := outputFile.WriteString(updatedSource)
 	if nil != writtenErr {
 		return writtenErr
 	}
+	outputFile.Close()
+
 	// Great, let's go ahead and do the build.
-	mainErr := sparta.MainEx(serviceName,
+	spartaErr := sparta.MainEx(serviceName,
 		serviceDescription,
 		lambdaAWSInfos,
 		api,
@@ -87,8 +104,11 @@ func cgoMain(callerFile string,
 		workflowHooks,
 		true)
 
-	// TODO - if there's an error, rename the
-	// file to something we can debug
-
-	return mainErr
+	if nil == spartaErr {
+		os.Remove(rewrittenFilepath)
+	} else {
+		preservedOutput := strings.TrimSuffix(rewrittenFilepath, ".go")
+		os.Rename(rewrittenFilepath, preservedOutput)
+	}
+	return spartaErr
 }
