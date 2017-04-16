@@ -2,10 +2,16 @@ from __future__ import print_function
 import pprint
 import json
 import sys
+import os
 from ctypes import *
+from botocore.credentials import get_credentials
+from botocore.session import get_session
 
 lib = cdll.LoadLibrary("{{ .LibraryName }}")
 lib.Lambda.argtypes = [c_char_p,
+                        c_char_p,
+                        c_char_p,
+                        c_char_p,
                         c_char_p,
                         POINTER(c_int),
                         c_char_p,
@@ -65,8 +71,13 @@ def lambda_handler(funcName, event, context):
         memset(response_buffer, 0, MAX_RESPONSE_SIZE)
         memset(response_content_type_buffer, 0, MAX_RESPONSE_CONTENT_TYPE_SIZE)
         exitCode = c_int()
+
+        credentials = get_credentials(get_session())
         bytesWritten = lib.Lambda(funcName.encode('utf-8'),
                                     json.dumps(request),
+                                    credentials.access_key,
+                                    credentials.secret_key,
+                                    credentials.token,
                                     byref(exitCode),
                                     response_content_type_buffer,
                                     MAX_RESPONSE_CONTENT_TYPE_SIZE,
