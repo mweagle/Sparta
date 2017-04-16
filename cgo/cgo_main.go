@@ -2,17 +2,10 @@ package cgo
 
 import (
 	"fmt"
-	"github.com/mweagle/Sparta"
 	"runtime"
+
+	"github.com/mweagle/Sparta"
 )
-
-/*
-
-
-TODO: How to support non `main` invocation?
-
-
-*/
 
 // Main defines the primary handler for transforming an application into a Sparta package.  The
 // serviceName is used to uniquely identify your service within a region and will
@@ -39,6 +32,9 @@ func Main(serviceName string,
 		nil)
 }
 
+// MainEx is the CGO enabled signature compatible version sparta.MainEx
+// function that will attempt to rewrite the input source to be a CGO
+// compliant library
 func MainEx(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*sparta.LambdaAWSInfo,
@@ -51,6 +47,8 @@ func MainEx(serviceName string,
 		return fmt.Errorf("Failed to determine caller site for CGO")
 	}
 
+	// If this is a "normal" execution, let's try and
+	// use the existing golang functions
 	return cgoMain(file,
 		serviceName,
 		serviceDescription,
