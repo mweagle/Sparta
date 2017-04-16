@@ -44,6 +44,7 @@ type LambdaPermissionExporter interface {
 	// interface represents the Fn::GetAtt "Arn" JSON value
 	// of the parent Lambda target
 	export(serviceName string,
+		useCGO bool,
 		lambdaFunctionDisplayName string,
 		lambdaLogicalCFResourceName string,
 		template *gocf.Template,
@@ -222,6 +223,7 @@ type S3Permission struct {
 }
 
 func (perm S3Permission) export(serviceName string,
+	useCGO bool,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
@@ -245,6 +247,7 @@ func (perm S3Permission) export(serviceName string,
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
 	sourceArnExpression := perm.BasePermission.sourceArnExpr(s3SourceArnParts...)
 	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		useCGO,
 		cloudformationresources.S3LambdaEventSource,
 		sourceArnExpression,
 		[]string{},
@@ -256,7 +259,6 @@ func (perm S3Permission) export(serviceName string,
 	if nil != err {
 		return "", err
 	}
-
 	// Add a custom resource invocation for this configuration
 	//////////////////////////////////////////////////////////////////////////////
 	newResource, newResourceError := newCloudFormationResource(cloudformationresources.S3LambdaEventSource, logger)
@@ -316,6 +318,7 @@ type SNSPermission struct {
 }
 
 func (perm SNSPermission) export(serviceName string,
+	useCGO bool,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
@@ -338,6 +341,7 @@ func (perm SNSPermission) export(serviceName string,
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
 	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		useCGO,
 		cloudformationresources.SNSLambdaEventSource,
 		sourceArnExpression,
 		[]string{},
@@ -642,6 +646,7 @@ func (perm *SESPermission) NewMessageBodyStorageReference(prexistingBucketName s
 }
 
 func (perm SESPermission) export(serviceName string,
+	useCGO bool,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
@@ -683,6 +688,7 @@ func (perm SESPermission) export(serviceName string,
 
 	// Make sure the custom lambda that manages SNS notifications is provisioned.
 	configuratorResName, err := ensureCustomResourceHandler(serviceName,
+		useCGO,
 		cloudformationresources.SESLambdaEventSource,
 		sourceArnExpression,
 		dependsOn,
@@ -837,6 +843,7 @@ type CloudWatchEventsPermission struct {
 }
 
 func (perm CloudWatchEventsPermission) export(serviceName string,
+	useCGO bool,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
@@ -979,6 +986,7 @@ type CloudWatchLogsPermission struct {
 }
 
 func (perm CloudWatchLogsPermission) export(serviceName string,
+	useCGO bool,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
 	template *gocf.Template,
@@ -1043,6 +1051,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			gocf.String(":log-stream:*"))
 
 		lastConfigurationResourceName, ensureCustomHandlerError := ensureCustomResourceHandler(serviceName,
+			useCGO,
 			cloudformationresources.CloudWatchLogsLambdaEventSource,
 			cloudWatchLogsArn,
 			[]string{},

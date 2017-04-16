@@ -7,10 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	gocf "github.com/crewjam/go-cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	"github.com/mweagle/cloudformationresources"
 	"io"
 	"os"
 	"os/exec"
@@ -19,6 +15,11 @@ import (
 	"runtime"
 	"strings"
 	"text/template"
+
+	"github.com/Sirupsen/logrus"
+	gocf "github.com/crewjam/go-cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	"github.com/mweagle/cloudformationresources"
 )
 
 const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
@@ -110,15 +111,12 @@ func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	return cmd.Run()
 }
 
-func nodeJSHandlerName(jsBaseFilename string) string {
-	return fmt.Sprintf("index.%sConfiguration", jsBaseFilename)
-}
-
 func awsPrincipalToService(awsPrincipalName string) string {
 	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
 }
 
 func ensureCustomResourceHandler(serviceName string,
+	useCGO bool,
 	customResourceTypeName string,
 	sourceArn *gocf.StringExpr,
 	dependsOn []string,
@@ -141,12 +139,15 @@ func ensureCustomResourceHandler(serviceName string,
 		logger.Error("Failed to create configurator resource name: ", err.Error())
 		return "", err
 	}
-	subscriberHandlerName := CloudFormationResourceName(fmt.Sprintf("%sCustomResource", awsServiceName),
-		string(keyName))
+	resourceBaseName := fmt.Sprintf("%sCustomResource", awsServiceName)
+	subscriberHandlerName := CloudFormationResourceName(resourceBaseName, string(keyName))
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
-	iamResourceName, err := ensureIAMRoleForCustomResource(customResourceTypeName, sourceArn, template, logger)
+	iamResourceName, err := ensureIAMRoleForCustomResource(customResourceTypeName,
+		sourceArn,
+		template,
+		logger)
 	if nil != err {
 		return "", err
 	}
@@ -167,7 +168,7 @@ func ensureCustomResourceHandler(serviceName string,
 		handlerName := lambdaExportNameForCustomResourceType(customResourceTypeName)
 		logger.WithFields(logrus.Fields{
 			"CustomResourceType": customResourceTypeName,
-			"NodeJSExport":       handlerName,
+			"ScriptExport":       handlerName,
 		}).Debug("Sparta CloudFormation custom resource handler info")
 
 		customResourceHandlerDef := gocf.LambdaFunction{
@@ -178,10 +179,13 @@ func ensureCustomResourceHandler(serviceName string,
 			Description: gocf.String(configuratorDescription),
 			Handler:     gocf.String(handlerName),
 			Role:        iamRoleRef,
-			Runtime:     gocf.String(NodeJSVersion),
 			Timeout:     gocf.Integer(30),
 		}
-
+		if useCGO {
+			customResourceHandlerDef.Runtime = gocf.String(PythonVersion)
+		} else {
+			customResourceHandlerDef.Runtime = gocf.String(NodeJSVersion)
+		}
 		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
 		if nil != dependsOn && (len(dependsOn) > 0) {
 			cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
