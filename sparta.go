@@ -447,7 +447,10 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
 			switch awsService {
 			case "dynamodb":
-				statements = append(statements, CommonIAMStatements.DynamoDB...)
+				for _, statement := range CommonIAMStatements.DynamoDB {
+					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
+					statements = append(statements, statement)
+				}
 			case "kinesis":
 				for _, statement := range CommonIAMStatements.Kinesis {
 					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
