@@ -8,8 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"math/rand"
 	"net/http"
 	"os"
@@ -18,6 +16,9 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/crewjam/go-cloudformation"
@@ -424,11 +425,12 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 
 	statements := CommonIAMStatements.Core
 	for _, eachPrivilege := range roleDefinition.Privileges {
-		statements = append(statements, spartaIAM.PolicyStatement{
+		policyStatement := spartaIAM.PolicyStatement{
 			Effect:   "Allow",
 			Action:   eachPrivilege.Actions,
 			Resource: eachPrivilege.resourceExpr(),
-		})
+		}
+		statements = append(statements, policyStatement)
 	}
 
 	// Add VPC permissions iff needed
@@ -743,6 +745,7 @@ func (info *LambdaAWSInfo) logicalName() string {
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
 func (info *LambdaAWSInfo) export(serviceName string,
+	useCGO bool,
 	lambdaRuntime string,
 	S3Bucket string,
 	S3Key string,
@@ -815,6 +818,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Permissions
 	for _, eachPermission := range info.Permissions {
 		_, err := eachPermission.export(serviceName,
+			useCGO,
 			info.lambdaFunctionName(),
 			info.logicalName(),
 			template,
