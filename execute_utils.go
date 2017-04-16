@@ -3,12 +3,17 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mweagle/cloudformationresources"
 	"net/http"
 
+	"github.com/mweagle/cloudformationresources"
+
 	"expvar"
-	"github.com/Sirupsen/logrus"
 	"strings"
+
+	"sync"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 // Dispatch map for user defined CloudFormation CustomResources to
@@ -17,6 +22,20 @@ type dispatchMap map[string]*LambdaAWSInfo
 
 // Dispatch map for normal AWS Lambda to user defined Sparta lambda functions
 type customResourceDispatchMap map[string]*customResourceInfo
+
+func expvarHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	fmt.Fprintf(w, "{\n")
+	first := true
+	expvar.Do(func(kv expvar.KeyValue) {
+		if !first {
+			fmt.Fprintf(w, ",\n")
+		}
+		first = false
+		fmt.Fprintf(w, "%q: %s", kv.Key, kv.Value)
+	})
+	fmt.Fprintf(w, "\n}\n")
+}
 
 func userDefinedCustomResourceForwarder(customResource *customResourceInfo,
 	event *json.RawMessage,
@@ -80,7 +99,8 @@ func userDefinedCustomResourceForwarder(customResource *customResourceInfo,
 }
 
 // Extract the fields and forward the event to the resource
-func spartaCustomResourceForwarder(event *json.RawMessage,
+func spartaCustomResourceForwarder(creds credentials.Value,
+	event *json.RawMessage,
 	context *LambdaContext,
 	w http.ResponseWriter,
 	logger *logrus.Logger) {
@@ -117,7 +137,7 @@ func spartaCustomResourceForwarder(event *json.RawMessage,
 		customResourceRequest.PhysicalResourceID = fmt.Sprintf("LogStreamName: %s", context.LogStreamName)
 	}
 
-	requestErr := cloudformationresources.Handle(customResourceRequest, logger)
+	requestErr := cloudformationresources.Handle(customResourceRequest, creds, logger)
 	if requestErr != nil {
 		http.Error(w, requestErr.Error(), http.StatusInternalServerError)
 	} else {
@@ -129,22 +149,18 @@ func spartaCustomResourceForwarder(event *json.RawMessage,
 // ServeHTTP
 type LambdaHTTPHandler struct {
 	LambdaDispatchMap         dispatchMap
+	muValue                   sync.Mutex
+	customCreds               credentials.Value
 	customResourceDispatchMap customResourceDispatchMap
 	logger                    *logrus.Logger
 }
 
-func expvarHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	fmt.Fprintf(w, "{\n")
-	first := true
-	expvar.Do(func(kv expvar.KeyValue) {
-		if !first {
-			fmt.Fprintf(w, ",\n")
-		}
-		first = false
-		fmt.Fprintf(w, "%q: %s", kv.Key, kv.Value)
-	})
-	fmt.Fprintf(w, "\n}\n")
+// Credentials allows the user to supply a custom Credentials value
+// object for any internal calls
+func (handler *LambdaHTTPHandler) Credentials(creds credentials.Value) {
+	handler.muValue.Lock()
+	defer handler.muValue.Unlock()
+	handler.customCreds = creds
 }
 
 func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
@@ -181,18 +197,17 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	}).Debug("Dispatching")
 
 	lambdaAWSInfo := handler.LambdaDispatchMap[lambdaFunc]
-	var lambdaFn LambdaFunction
 	if nil != lambdaAWSInfo {
-		lambdaFn = lambdaAWSInfo.lambdaFn
+		lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
 	} else if strings.Contains(lambdaFunc, "::") {
 		// Not the most exhaustive guard, but the CloudFormation custom resources
 		// all have "::" delimiters in their type field.  Even if there is a false
 		// positive, the spartaCustomResourceForwarder will simply error out.
-		lambdaFn = spartaCustomResourceForwarder
-	}
-
-	if nil != lambdaFn {
-		lambdaFn(&request.Event, &request.Context, w, handler.logger)
+		spartaCustomResourceForwarder(handler.customCreds,
+			&request.Event,
+			&request.Context,
+			w,
+			handler.logger)
 	} else {
 		// Final check for user-defined resource
 		customResource, exists := handler.customResourceDispatchMap[lambdaFunc]
