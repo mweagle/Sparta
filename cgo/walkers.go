@@ -11,6 +11,8 @@ var cgoImports = `// #include <stdio.h>
 // #include <string.h>
 // #include <stdio.h>
 import "C"
+
+import "github.com/aws/aws-sdk-go/aws/credentials"
 `
 
 const cgoExports = `
@@ -18,6 +20,9 @@ const cgoExports = `
 //export Lambda
 func Lambda(functionName *C.char,
 	requestJSON *C.char,
+	accessKeyID *C.char,
+	secretKey *C.char,
+	token *C.char,
 	exitCode *C.int,
 	responseContentTypeBuffer *C.char,
 	responseContentTypeLen int,
@@ -26,7 +31,11 @@ func Lambda(functionName *C.char,
 
 	inputFunction := C.GoString(functionName)
 	inputRequest := C.GoString(requestJSON)
-	spartaResp, spartaRespHeaders, responseErr := cgo.LambdaHandler(inputFunction, inputRequest)
+	awsCreds := credentials.NewStaticCredentials(C.GoString(accessKeyID),
+		C.GoString(secretKey),
+		C.GoString(token))
+
+	spartaResp, spartaRespHeaders, responseErr := spartaCGO.LambdaHandler(inputFunction, inputRequest, awsCreds)
 	lambdaExitCode := 0
 	var pyResponseBufer []byte
 	if nil != responseErr {
@@ -35,7 +44,6 @@ func Lambda(functionName *C.char,
 	} else {
 		pyResponseBufer = spartaResp
 	}
-
 
 	// Copy content type
 	contentTypeHeader := spartaRespHeaders.Get("Content-Type")
