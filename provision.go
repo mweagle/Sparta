@@ -10,15 +10,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iam"
-	gocf "github.com/crewjam/go-cloudformation"
-	spartaAWS "github.com/mweagle/Sparta/aws"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaS3 "github.com/mweagle/Sparta/aws/s3"
-	spartaZip "github.com/mweagle/Sparta/zip"
 	"io"
 	"net/url"
 	"os"
@@ -30,6 +21,16 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/iam"
+	gocf "github.com/crewjam/go-cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/aws"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaS3 "github.com/mweagle/Sparta/aws/s3"
+	spartaZip "github.com/mweagle/Sparta/zip"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -547,34 +548,48 @@ func buildGoBinary(executableOutput string,
 		packagePath := strings.TrimPrefix(currentDir, gopath)
 		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
-		dockerBuildArgs := []string{
-			"run",
-			"--rm",
-			"-v",
-			volumeMountMapping,
-			"-w",
-			containerSourcePath,
+
+		// Pass any SPARTA_* prefixed environment variables to the docker build
+		spartaEnvVars := []string{
 			"-e",
 			fmt.Sprintf("GOPATH=%s", containerGoPath),
 			"-e",
 			"GOOS=linux",
 			"-e",
 			"GOARCH=amd64",
+		}
+		// User vars
+		for _, eachPair := range os.Environ() {
+			if strings.HasPrefix(eachPair, "SPARTA_") {
+				spartaEnvVars = append(spartaEnvVars, "-e", eachPair)
+			}
+		}
+
+		dockerBuildArgs := []string{
+			"run",
+			"--rm",
+			"-v",
+			volumeMountMapping,
+			"-w",
+			containerSourcePath}
+		dockerBuildArgs = append(dockerBuildArgs, spartaEnvVars...)
+		dockerBuildArgs = append(dockerBuildArgs,
 			fmt.Sprintf("golang:%s", gopathVersion),
 			"go",
 			"build",
 			"-o",
 			executableOutput,
+			"-tags",
+			"lambdabinary linux",
 			"-buildmode=c-shared",
-		}
-
+		)
 		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
 		cmd = exec.Command("docker", dockerBuildArgs...)
 		cmd.Env = os.Environ()
 		logger.WithFields(logrus.Fields{
 			"Name": executableOutput,
 			"Args": dockerBuildArgs,
-		}).Info("Building CGO library in Docker")
+		}).Info("Building `cgo` library in Docker")
 		cmdError = runOSCommand(cmd, logger)
 	} else {
 		buildArgs := []string{
@@ -1021,6 +1036,7 @@ func ensureCloudFormationStack() workflowStep {
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.serviceName,
+				ctx.useCGO,
 				lambdaRuntime,
 				ctx.s3Bucket,
 				ctx.s3CodeZipURL.keyName(),
