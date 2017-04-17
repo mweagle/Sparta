@@ -29,15 +29,15 @@ googleAnalytics = "UA-70794971-1"
 	"jquery/jquery-2.2.0.min.js"]
 
 	# Syntax highlighting theme
-	highlight_css  = "highlights_js/styles/vs.css"
+	highlight_css  = "highlights_js/styles/xcode.css"
 
-	[params.palette]
-    	primary = "grey"
-    	accent  = "blue"
+[params.palette]
+		primary = "grey"
+		accent  = "blue"
 
-	[params.font]
-		text = "Source Sans Pro"
-		code = "Source Code Pro"
+[params.font]
+	text = "Source Sans Pro"
+	code = "Source Code Pro"
 
 [social]
 	twitter = "mweagle"
@@ -46,7 +46,7 @@ googleAnalytics = "UA-70794971-1"
 
 [[menu.main]]
 	name   = "Sparta"
-	url    = "/landing"
+	url    = "/"
 	weight = 1
 
 [[menu.main]]

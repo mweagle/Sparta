@@ -1,7 +1,6 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: API Gateway - User Input
-type: index
 weight: 10
 ---
 

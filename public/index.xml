@@ -389,10 +389,10 @@ Sparta makes CORS support a single CORSEnabled field of the API struct:
     
     <item>
       <title>Sparta</title>
-      <link>http://gosparta.io/landing/</link>
+      <link>http://gosparta.io/index/</link>
       <pubDate>Tue, 08 Mar 2016 21:07:13 +0100</pubDate>
       
-      <guid>http://gosparta.io/landing/</guid>
+      <guid>http://gosparta.io/index/</guid>
       <description>A Go framework for AWS Lambda microservices  Unified Language Use a single Go codebase to define your microservice&#39;s:  Application logic AWS infrastructure Operational metrics Alert conditions Security policies   Complete AWS Ecosystem Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda event sources such as:  DynamoDB S3 Kinesis SNS SES CloudWatch Events CloudWatch Logs  Additionally, your service may provision any other CloudFormation supported resource and even your own CustomResources.</description>
     </item>
     

@@ -2,7 +2,6 @@
 date: 2016-03-09T19:56:50+01:00
 title: Application Customization
 weight: 10
-type: index
 weight: 10
 menu:
   main:
