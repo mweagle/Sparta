@@ -480,18 +480,20 @@
 		<div class="wrapper">
 			<h1>Event Sources </h1>
 
-			<p>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.</p>
+			
+
+<p>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.</p>
 
 <p>There are several <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> available.  They are grouped into Pull and Push types.  Pull based models use <code>sparta.EventSourceMapping</code> values, as the trigger configuration is stored in the AWS Lambda service.  Push based types use service specific <code>sparta.*Permission</code> types to denote the fact that the trigger logic is configured in the remote service.</p>
 
-<ul>
-<li>Pull Based
+<h2 id="pull-based">Pull Based</h2>
 
 <ul>
 <li><a href="http://gosparta.io/docs/eventsources/dynamodb">DynamoDB</a></li>
 <li><a href="http://gosparta.io/docs/eventsources/kinesis">Kinesis</a></li>
-</ul></li>
-<li>Pushed Based
+</ul>
+
+<h2 id="push-based">Push Based</h2>
 
 <ul>
 <li><a href="http://gosparta.io/docs/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
@@ -501,7 +503,6 @@
 <li><a href="http://gosparta.io/docs/eventsources/s3">S3</a></li>
 <li><a href="http://gosparta.io/docs/eventsources/ses">SES</a></li>
 <li><a href="http://gosparta.io/docs/eventsources/sns">SNS</a></li>
-</ul></li>
 </ul>
 
 
