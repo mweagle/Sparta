@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>API Gateway - Echo - Sparta</title>
+    <meta name="generator" content="Hugo 0.20.2" />
+
+    
+    <meta name="description" content="Sparta - Go framework for AWS Lambda">
+    
+    <link rel="canonical" href="http://gosparta.io/docs/apigateway/example1/">
+    
+    <meta name="author" content="Matt Weagle">
+    
+
+    <meta property="og:url" content="http://gosparta.io/docs/apigateway/example1/">
+    <meta property="og:title" content="Sparta">
+    <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
+    <meta name="apple-mobile-web-app-title" content="Sparta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://gosparta.io/fonts/icon.eot');
+        src: url('http://gosparta.io/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('http://gosparta.io/fonts/icon.woff')
+               format('woff'),
+             url('http://gosparta.io/fonts/icon.ttf')
+               format('truetype'),
+             url('http://gosparta.io/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://gosparta.io/highlights_js/styles/vs.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source%20Sans%20Pro:400,700|Source&#43;Code&#43;Pro">
+    <style>
+      body, input {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Source Code Pro', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="http://gosparta.io/mermaid_dist/mermaid.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/font-awesome-4.7.0/css/font-awesome.min.css">
+    
+    <script src="http://gosparta.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-grey palette-accent-blue">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        API Gateway - Echo
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/mweagle" title="@mweagle on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/mweagle" title="@mweagle on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/mweagle/Sparta" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://gosparta.io/images/SpartaHelmet.png">
+        </div>
+      
+      <div class="name">
+        <strong>Sparta <span class="version">1.0.0</span></strong>
+        
+          <br>
+          mweagle/Sparta
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/mweagle/Sparta/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/mweagle/Sparta/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Sparta" href="http://gosparta.io/landing">
+	
+	Sparta
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Overview" href="http://gosparta.io/docs/overview">
+	
+	Overview
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Documentation</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="API Gateway" href="http://gosparta.io/docs/apigateway/apigateway/">
+	
+	API Gateway
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+	
+	Alternative Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="CGO" href="http://gosparta.io/docs/cgo/">
+	
+	CGO
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
+	
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
+	
+	Dynamic Infrastructure
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+	
+	Event Sources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations/">
+	
+	Limitations
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
+	
+	Local Testing
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
+	
+	S3 Sites with CORS
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/">
+	
+	Sample Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service - Details" href="http://gosparta.io/docs/intro_examples_details/">
+	
+	Sample Service - Details
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ" href="http://gosparta.io/docs/faq">
+	
+	FAQ
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/mweagle" target="_blank" title="@mweagle on Twitter">
+              @mweagle on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/mweagle" target="_blank" title="@mweagle on GitHub">
+              @mweagle on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:mweagle@gmail.com" title="Email of mweagle@gmail.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>API Gateway - Echo </h1>
+
+			
+
+<p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaApplication">SpartaApplication</a>.</p>
+
+<p>For reference, the <code>echoS3Event</code> function is below.</p>
+
+<pre><code class="go">func echoS3Event(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger) {
+
+  logger.WithFields(logrus.Fields{
+    &#34;RequestID&#34;: context.AWSRequestID,
+    &#34;Event&#34;:     string(*event),
+  }).Info(&#34;Request received&#34;)
+
+  fmt.Fprintf(w, string(*event))
+}</code></pre>
+
+
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
+
+<p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
+
+<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)</code></pre>
+
+
+<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
+
+<h1 id="create-a-resource">Create a Resource</h1>
+
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <strong>Go</strong> function:</p>
+
+<pre><code class="go">apiGatewayResource, _ := api.NewResource(&#34;/hello/world/test&#34;, lambdaFn)
+apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)</code></pre>
+
+
+<p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
+
+<h1 id="provision">Provision</h1>
+
+<p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
+
+<pre><code class="go">stage := sparta.NewStage(&#34;prod&#34;)
+apiGateway := sparta.NewAPIGateway(&#34;MySpartaAPI&#34;, stage)
+stackName := &#34;SpartaApplication&#34;
+sparta.Main(stackName,
+  &#34;Simple Sparta application&#34;,
+  spartaLambdaData(apiGateway),
+  apiGateway,
+  nil)</code></pre>
+
+
+<p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
+
+<pre><code class="javascript">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
+
+
+<p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
+
+<h1 id="querying">Querying</h1>
+
+<p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
+
+<pre><code class="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
+*   Trying 54.240.188.223...
+* Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&gt; GET /prod/hello/world/test HTTP/1.1
+&gt; Host: 7ljn63rysd.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 708
+&lt; Connection: keep-alive
+&lt; Date: Sat, 05 Dec 2015 21:24:44 GMT
+&lt; x-amzn-RequestId: 99dfd15d-9b96-11e5-9705-fdd3a4d9c8bf
+&lt; X-Cache: Miss from cloudfront
+&lt; Via: 1.1 7a0918c01bce16cc9b165fd895f7dc87.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
+&lt;
+* Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
+{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.211&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;bmik0opc3l&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,&#34;resourceId&#34;:&#34;mp2mrk&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}</code></pre>
+
+
+<p>Pretty-printing the response body to make things more readable:</p>
+
+<pre><code class="json">{
+  &#34;method&#34;: &#34;GET&#34;,
+  &#34;body&#34;: {},
+  &#34;headers&#34;: {
+    &#34;Accept&#34;: &#34;*/*&#34;,
+    &#34;CloudFront-Forwarded-Proto&#34;: &#34;https&#34;,
+    &#34;CloudFront-Is-Desktop-Viewer&#34;: &#34;true&#34;,
+    &#34;CloudFront-Is-Mobile-Viewer&#34;: &#34;false&#34;,
+    &#34;CloudFront-Is-SmartTV-Viewer&#34;: &#34;false&#34;,
+    &#34;CloudFront-Is-Tablet-Viewer&#34;: &#34;false&#34;,
+    &#34;CloudFront-Viewer-Country&#34;: &#34;US&#34;,
+    &#34;Via&#34;: &#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,
+    &#34;X-Amz-Cf-Id&#34;: &#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,
+    &#34;X-Forwarded-For&#34;: &#34;50.135.43.1, 54.240.158.211&#34;,
+    &#34;X-Forwarded-Port&#34;: &#34;443&#34;,
+    &#34;X-Forwarded-Proto&#34;: &#34;https&#34;
+  },
+  &#34;queryParams&#34;: {},
+  &#34;pathParams&#34;: {},
+  &#34;context&#34;: {
+    &#34;apiId&#34;: &#34;bmik0opc3l&#34;,
+    &#34;method&#34;: &#34;GET&#34;,
+    &#34;requestId&#34;: &#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,
+    &#34;resourceId&#34;: &#34;mp2mrk&#34;,
+    &#34;resourcePath&#34;: &#34;/hello/world/test&#34;,
+    &#34;stage&#34;: &#34;prod&#34;,
+    &#34;identity&#34;: {
+      &#34;accountId&#34;: &#34;&#34;,
+      &#34;apiKey&#34;: &#34;&#34;,
+      &#34;caller&#34;: &#34;&#34;,
+      &#34;cognitoAuthenticationProvider&#34;: &#34;&#34;,
+      &#34;cognitoAuthenticationType&#34;: &#34;&#34;,
+      &#34;cognitoIdentityId&#34;: &#34;&#34;,
+      &#34;cognitoIdentityPoolId&#34;: &#34;&#34;,
+      &#34;sourceIp&#34;: &#34;50.135.43.1&#34;,
+      &#34;user&#34;: &#34;&#34;,
+      &#34;userAgent&#34;: &#34;curl/7.43.0&#34;,
+      &#34;userArn&#34;: &#34;&#34;
+    }
+  }
+}</code></pre>
+
+
+<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
+
+<h1 id="mapping-templates">Mapping Templates</h1>
+
+<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> is the complete HTTP response body.  This content is what the API Gateway sends to our lambda function, which is defined by  the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any  whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields (<code>queryParams</code>, <code>pathParams</code>) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
+
+<p>Sparta uses a pass-through template that passes all valid data, with minor <strong>Body</strong> differences based on the inbound <em>Content-Type</em>:</p>
+
+<ul>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">application/json</a></li>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">*</a></li>
+</ul>
+
+<p>The <code>application/json</code> template is copied below:</p>
+
+<pre><code class="nohighlight">#*
+Provide an automatic pass through template that transforms all inputs
+into the JSON payload sent to a golang function
+
+See
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
+  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+*#
+{
+  &#34;method&#34;: &#34;$context.httpMethod&#34;,
+  &#34;body&#34; : $input.json(&#39;$&#39;),
+  &#34;headers&#34;: {
+    #foreach($param in $input.params().header.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().header.get($param))&#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &#34;queryParams&#34;: {
+    #foreach($param in $input.params().querystring.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().querystring.get($param))&#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &#34;pathParams&#34;: {
+    #foreach($param in $input.params().path.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().path.get($param))&#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &#34;context&#34; : {
+    &#34;apiId&#34; : &#34;$util.escapeJavaScript($context.apiId)&#34;,
+    &#34;method&#34; : &#34;$util.escapeJavaScript($context.httpMethod)&#34;,
+    &#34;requestId&#34; : &#34;$util.escapeJavaScript($context.requestId)&#34;,
+    &#34;resourceId&#34; : &#34;$util.escapeJavaScript($context.resourceId)&#34;,
+    &#34;resourcePath&#34; : &#34;$util.escapeJavaScript($context.resourcePath)&#34;,
+    &#34;stage&#34; : &#34;$util.escapeJavaScript($context.stage)&#34;,
+    &#34;identity&#34; : {
+      &#34;accountId&#34; : &#34;$util.escapeJavaScript($context.identity.accountId)&#34;,
+      &#34;apiKey&#34; : &#34;$util.escapeJavaScript($context.identity.apiKey)&#34;,
+      &#34;caller&#34; : &#34;$util.escapeJavaScript($context.identity.caller)&#34;,
+      &#34;cognitoAuthenticationProvider&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&#34;,
+      &#34;cognitoAuthenticationType&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&#34;,
+      &#34;cognitoIdentityId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&#34;,
+      &#34;cognitoIdentityPoolId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&#34;,
+      &#34;sourceIp&#34; : &#34;$util.escapeJavaScript($context.identity.sourceIp)&#34;,
+      &#34;user&#34; : &#34;$util.escapeJavaScript($context.identity.user)&#34;,
+      &#34;userAgent&#34; : &#34;$util.escapeJavaScript($context.identity.userAgent)&#34;,
+      &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
+    }
+  }
+}</code></pre>
+
+
+<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
+
+<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
+
+<h1 id="proxying-envelope">Proxying Envelope</h1>
+
+<p>Because the integration request returned a successful response, the API Gateway response body contains only our lambda&rsquo;s output.</p>
+
+<p>If there were an error, the response would include additional fields (<code>code</code>, <code>status</code>, <code>headers</code>).  Those fields are injected by the NodeJS proxying tier as part of translating the <strong>Go</strong> HTTP response to a Lambda compatible result.</p>
+
+<p>A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
+
+<p><img src="http://gosparta.io/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
+
+<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to <code>context.done()</code>, into API Gateway Method responses.  Sparta annotates your lambda functions response with <strong>Go</strong>&rsquo;s <a href="https://golang.org/src/net/http/status.go">HTTP StatusText</a> values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+
+<p><img src="http://gosparta.io/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
+
+<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
+
+<ul>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
+</ul>
+
+<h1 id="cleaning-up">Cleaning Up</h1>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<pre><code class="nohighlight">go run application.go delete</code></pre>
+
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
+
+<h1 id="other-resources">Other Resources</h1>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">Mapping Template Reference</a></li>
+</ul>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://gosparta.io/docs/apigateway/apigateway/" title="API Gateway">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              API Gateway
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://gosparta.io/docs/apigateway/example3/" title="API Gateway - Request Context">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              API Gateway - Request Context
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+    <script>
+    
+      var base_url = 'http:\/\/gosparta.io\/';
+      var repo_id  = 'mweagle\/Sparta';
+    
+    </script>
+
+    <script src="http://gosparta.io/javascripts/application.js"></script>
+    
+    <script src="http://gosparta.io/mermaid_dist/mermaid.min.js"></script>
+    
+    <script src="http://gosparta.io/jquery/jquery-2.2.0.min.js"></script>
+    
+
+    
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', '//www.google-analytics.com/analytics.js', 'ga');
+         
+        ga('create', 'UA-70794971-1', 'auto');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+         
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+         
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

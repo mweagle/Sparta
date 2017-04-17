@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>API Gateway - Request Context - Sparta</title>
+    <meta name="generator" content="Hugo 0.20.2" />
+
+    
+    <meta name="description" content="Sparta - Go framework for AWS Lambda">
+    
+    <link rel="canonical" href="http://gosparta.io/docs/apigateway/example3/">
+    
+    <meta name="author" content="Matt Weagle">
+    
+
+    <meta property="og:url" content="http://gosparta.io/docs/apigateway/example3/">
+    <meta property="og:title" content="Sparta">
+    <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
+    <meta name="apple-mobile-web-app-title" content="Sparta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://gosparta.io/fonts/icon.eot');
+        src: url('http://gosparta.io/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('http://gosparta.io/fonts/icon.woff')
+               format('woff'),
+             url('http://gosparta.io/fonts/icon.ttf')
+               format('truetype'),
+             url('http://gosparta.io/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://gosparta.io/highlights_js/styles/vs.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source%20Sans%20Pro:400,700|Source&#43;Code&#43;Pro">
+    <style>
+      body, input {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Source Code Pro', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="http://gosparta.io/mermaid_dist/mermaid.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/font-awesome-4.7.0/css/font-awesome.min.css">
+    
+    <script src="http://gosparta.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-grey palette-accent-blue">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        API Gateway - Request Context
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/mweagle" title="@mweagle on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/mweagle" title="@mweagle on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/mweagle/Sparta" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://gosparta.io/images/SpartaHelmet.png">
+        </div>
+      
+      <div class="name">
+        <strong>Sparta <span class="version">1.0.0</span></strong>
+        
+          <br>
+          mweagle/Sparta
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/mweagle/Sparta/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/mweagle/Sparta/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Sparta" href="http://gosparta.io/landing">
+	
+	Sparta
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Overview" href="http://gosparta.io/docs/overview">
+	
+	Overview
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Documentation</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="API Gateway" href="http://gosparta.io/docs/apigateway/apigateway/">
+	
+	API Gateway
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+	
+	Alternative Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="CGO" href="http://gosparta.io/docs/cgo/">
+	
+	CGO
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
+	
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
+	
+	Dynamic Infrastructure
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+	
+	Event Sources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations/">
+	
+	Limitations
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
+	
+	Local Testing
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
+	
+	S3 Sites with CORS
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/">
+	
+	Sample Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service - Details" href="http://gosparta.io/docs/intro_examples_details/">
+	
+	Sample Service - Details
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ" href="http://gosparta.io/docs/faq">
+	
+	FAQ
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/mweagle" target="_blank" title="@mweagle on Twitter">
+              @mweagle on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/mweagle" target="_blank" title="@mweagle on GitHub">
+              @mweagle on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:mweagle@gmail.com" title="Email of mweagle@gmail.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>API Gateway - Request Context </h1>
+
+			
+
+<p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">APIGatewayLambdaJSONEvent</a> event.  The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
+
+<h1 id="define-the-lambda-function">Define the Lambda Function</h1>
+
+<p>Our function will examine the inbound request, lookup the user&rsquo;s IP address in the <a href="http://dev.maxmind.com/geoip/geoip2/geolite2/">GeoLite2 Database</a> and return any information to the client.</p>
+
+<p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
+
+<pre><code class="go">func ipGeoLambda(event *json.RawMessage,
+                  context *sparta.LambdaContext,
+                  w http.ResponseWriter,
+                  logger *logrus.Logger) {
+var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
+if err != nil {
+	logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
+	http.Error(w, err.Error(), http.StatusInternalServerError)
+	return
+}</code></pre>
+
+
+<p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
+
+<pre><code class="go">parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
+record, err := dbHandle.City(parsedIP)
+if err != nil {
+  logger.Error(&#34;Failed to find city: &#34;, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+  return
+}</code></pre>
+
+
+<p>Finally, marshal the data or error result and we&rsquo;re done:</p>
+
+<pre><code class="go">// Return the Info
+httpResponse := map[string]interface{}{
+  &#34;info&#34;: record,
+}
+responseBody, err := json.Marshal(httpResponse)
+if err != nil {
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+} else {
+  w.Header().Set(&#34;Content-Type&#34;, &#34;application/json&#34;)
+  fmt.Fprint(w, string(responseBody))
+}</code></pre>
+
+
+<h1 id="sparta-integration">Sparta Integration</h1>
+
+<p>The next steps are to:</p>
+
+<ol>
+<li>Create the <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> value</li>
+<li>Create an associated API Gateway</li>
+<li>Create an API Gateway resource that invokes our lambda function</li>
+<li>Add a Method name to the resource.</li>
+</ol>
+
+<p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
+
+<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	stage := sparta.NewStage(&#34;ipgeo&#34;)
+	apiGateway := sparta.NewAPIGateway(&#34;SpartaGeoIPService&#34;, stage)
+	stackName := &#34;SpartaGeoIP&#34;
+
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
+	apiGatewayResource, _ := apiGateway.NewResource(&#34;/info&#34;, lambdaFn)
+	apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	sparta.Main(stackName,
+		&#34;Sparta app supporting ip-&gt;geo mapping&#34;,
+		lambdaFunctions,
+		apiGateway,
+    nil)
+}</code></pre>
+
+
+<h1 id="provision">Provision</h1>
+
+<p>The next step is to provision the stack:</p>
+
+<pre><code class="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre>
+
+
+<p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
+
+<pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
+
+
+<h1 id="query">Query</h1>
+
+<p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
+
+<pre><code class="nohighlight">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+
+*   Trying 54.192.70.206...
+* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Symantec Class 3 Secure Server CA - G4
+* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+&gt; GET /ipgeo/info HTTP/1.1
+&gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 1129
+&lt; Connection: keep-alive
+&lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
+&lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
+&lt; X-Cache: Miss from cloudfront
+&lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
+&lt;
+* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
+{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}</code></pre>
+
+
+<p>Pretty-printing the response body:</p>
+
+<pre><code class="language-json">{
+  &quot;code&quot;: 200,
+  &quot;status&quot;: &quot;OK&quot;,
+  &quot;headers&quot;: {
+    &quot;content-type&quot;: &quot;application/json&quot;,
+    &quot;date&quot;: &quot;Sun, 06 Dec 2015 17:50:15 GMT&quot;,
+    &quot;content-length&quot;: &quot;984&quot;
+  },
+  &quot;results&quot;: {
+    &quot;info&quot;: {
+      &quot;City&quot;: {
+        &quot;GeoNameID&quot;: 0,
+        &quot;Names&quot;: null
+      },
+      &quot;Continent&quot;: {
+        &quot;Code&quot;: &quot;NA&quot;,
+        &quot;GeoNameID&quot;: 6255149,
+        &quot;Names&quot;: {
+          &quot;de&quot;: &quot;Nordamerika&quot;,
+          &quot;en&quot;: &quot;North America&quot;,
+          &quot;es&quot;: &quot;Norteamérica&quot;,
+          &quot;fr&quot;: &quot;Amérique du Nord&quot;,
+          &quot;ja&quot;: &quot;北アメリカ&quot;,
+          &quot;pt-BR&quot;: &quot;América do Norte&quot;,
+          &quot;ru&quot;: &quot;Северная Америка&quot;,
+          &quot;zh-CN&quot;: &quot;北美洲&quot;
+        }
+      },
+      &quot;Country&quot;: {
+        &quot;GeoNameID&quot;: 6252001,
+        &quot;IsoCode&quot;: &quot;US&quot;,
+        &quot;Names&quot;: {
+          &quot;de&quot;: &quot;USA&quot;,
+          &quot;en&quot;: &quot;United States&quot;,
+          &quot;es&quot;: &quot;Estados Unidos&quot;,
+          &quot;fr&quot;: &quot;États-Unis&quot;,
+          &quot;ja&quot;: &quot;アメリカ合衆国&quot;,
+          &quot;pt-BR&quot;: &quot;Estados Unidos&quot;,
+          &quot;ru&quot;: &quot;США&quot;,
+          &quot;zh-CN&quot;: &quot;美国&quot;
+        }
+      },
+      &quot;Location&quot;: {
+        &quot;Latitude&quot;: 0,
+        &quot;Longitude&quot;: 0,
+        &quot;MetroCode&quot;: 0,
+        &quot;TimeZone&quot;: &quot;&quot;
+      },
+      &quot;Postal&quot;: {
+        &quot;Code&quot;: &quot;&quot;
+      },
+      &quot;RegisteredCountry&quot;: {
+        &quot;GeoNameID&quot;: 6252001,
+        &quot;IsoCode&quot;: &quot;US&quot;,
+        &quot;Names&quot;: {
+          &quot;de&quot;: &quot;USA&quot;,
+          &quot;en&quot;: &quot;United States&quot;,
+          &quot;es&quot;: &quot;Estados Unidos&quot;,
+          &quot;fr&quot;: &quot;États-Unis&quot;,
+          &quot;ja&quot;: &quot;アメリカ合衆国&quot;,
+          &quot;pt-BR&quot;: &quot;Estados Unidos&quot;,
+          &quot;ru&quot;: &quot;США&quot;,
+          &quot;zh-CN&quot;: &quot;美国&quot;
+        }
+      },
+      &quot;RepresentedCountry&quot;: {
+        &quot;GeoNameID&quot;: 0,
+        &quot;IsoCode&quot;: &quot;&quot;,
+        &quot;Names&quot;: null,
+        &quot;Type&quot;: &quot;&quot;
+      },
+      &quot;Subdivisions&quot;: null,
+      &quot;Traits&quot;: {
+        &quot;IsAnonymousProxy&quot;: false,
+        &quot;IsSatelliteProvider&quot;: false
+      }
+    }
+  }
+}
+</code></pre>
+
+<p>Please see the <a href="http://gosparta.io/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
+
+<h1 id="cleaning-up">Cleaning Up</h1>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<p><pre><code class="nohighlight">go run main.go delete</code></pre>
+</p>
+
+<h1 id="notes">Notes</h1>
+
+<ul>
+<li>The <em>GeoLite2-Country.mmdb</em> content is embedded in the go binary via <a href="https://github.com/mjibson/esc">esc</a> as part of the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27">go generate</a> phase.</li>
+<li>This is a port of Tom Maiaroto&rsquo;s <a href="https://github.com/tmaiaroto/go-lambda-geoip">https://github.com/tmaiaroto/go-lambda-geoip</a> implementation.</li>
+</ul>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://gosparta.io/docs/apigateway/example1/" title="API Gateway - Echo">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              API Gateway - Echo
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://gosparta.io/docs/apigateway/slack/" title="API Gateway - Slack SlashCommand">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              API Gateway - Slack SlashCommand
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+    <script>
+    
+      var base_url = 'http:\/\/gosparta.io\/';
+      var repo_id  = 'mweagle\/Sparta';
+    
+    </script>
+
+    <script src="http://gosparta.io/javascripts/application.js"></script>
+    
+    <script src="http://gosparta.io/mermaid_dist/mermaid.min.js"></script>
+    
+    <script src="http://gosparta.io/jquery/jquery-2.2.0.min.js"></script>
+    
+
+    
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', '//www.google-analytics.com/analytics.js', 'ga');
+         
+        ga('create', 'UA-70794971-1', 'auto');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+         
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+         
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

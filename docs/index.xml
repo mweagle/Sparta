@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docs on Sparta</title>
+    <link>http://gosparta.io/docs/</link>
+    <description>Recent content in Docs on Sparta</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Copyright 2015-2017 Matt Weagle</copyright>
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    
+	<atom:link href="http://gosparta.io/docs/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>API Gateway</title>
+      <link>http://gosparta.io/docs/apigateway/apigateway/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/apigateway/</guid>
+      <description>Examples One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS. This is accomplished by connecting the AWS Lambda function with the API Gateway. In this section we&amp;rsquo;ll start with a simple &amp;ldquo;echo&amp;rdquo; example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
+ Example 1 - Echo Event Example 2 - User Input &amp;amp; JSON Response Example 3 - Request Context Example 4 - Slack SlashCommand Example 5 - CORS  Concepts Before moving on to the examples, it&amp;rsquo;s suggested you familiarize yourself with the API Gateway concepts.</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - Echo</title>
+      <link>http://gosparta.io/docs/apigateway/example1/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/example1/</guid>
+      <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaApplication.
+For reference, the echoS3Event function is below.
+func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) { logger.WithFields(logrus.Fields{ &amp;#34;RequestID&amp;#34;: context.AWSRequestID, &amp;#34;Event&amp;#34;: string(*event), }).Info(&amp;#34;Request received&amp;#34;) fmt.Fprintf(w, string(*event)) } Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - Request Context</title>
+      <link>http://gosparta.io/docs/apigateway/example3/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/example3/</guid>
+      <description>This example demonstrates how to use the Context struct provided as part of the APIGatewayLambdaJSONEvent event. The SpartaGeoIP service will return Geo information based on the inbound request&amp;rsquo;s IP address.
+Define the Lambda Function Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the GeoLite2 Database and return any information to the client.
+As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - Slack SlashCommand</title>
+      <link>http://gosparta.io/docs/apigateway/slack/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/slack/</guid>
+      <description>In this example, we&amp;rsquo;ll walk through creating a Slack Slash Command service. The source for this is the SpartaSlackbot repo.
+Our initial command handler won&amp;rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.
+Define the Lambda Function This lambda handler is a bit more complicated than the other examples, primarily because of the Slack Integration requirements. The full source is:</description>
+    </item>
+    
+    <item>
+      <title>API Gateway - User Input</title>
+      <link>http://gosparta.io/docs/apigateway/example2/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/example2/</guid>
+      <description>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content. The source for this is the s3ItemInfo function defined as part of the SpartaApplication.
+Define the Lambda Function Our function will accept two params:
+ bucketName : The S3 bucket name storing the asset keyName : The S3 item key  Those params will be passed as part of the URL query string.</description>
+    </item>
+    
+    <item>
+      <title>Alternative Topologies</title>
+      <link>http://gosparta.io/docs/alternative_topologies/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/alternative_topologies/</guid>
+      <description>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
+However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
+    </item>
+    
+    <item>
+      <title>Application Customization</title>
+      <link>http://gosparta.io/docs/application/application/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/application/</guid>
+      <description>Customization Options Sparta-based applications use the Cobra package to expose a rich set of command line options. This section describes:
+ Default options Adding flags Adding commands Managing Environments Workflow Hooks  Adding custom flags or commands is typically a prerequisite to supporting alternative topologies.</description>
+    </item>
+    
+    <item>
+      <title>CGO</title>
+      <link>http://gosparta.io/docs/cgo/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/cgo/</guid>
+      <description> Introduction COMING SOON
+
+ </description>
+    </item>
+    
+    <item>
+      <title>Command Line Options</title>
+      <link>http://gosparta.io/docs/application/commandline/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/commandline/</guid>
+      <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
+var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil) A compiled application provides several command line options which are available by providing the -h/--help option as in:
+$ ./SpartaHelloWorld --help Test HelloWorld resource command Usage: SpartaHelloWorld [command] Available Commands: version Sparta framework version provision Provision service delete Delete service execute Execute describe Describe service explore Interactively explore service Flags: -l, --level string Log level [panic, fatal, error, warn, info, debug]&amp;#39; (default &amp;#34;info&amp;#34;) -n, --noop Dry-run behavior only (do not perform mutations) Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information about a command.</description>
+    </item>
+    
+    <item>
+      <title>Custom Application Commands</title>
+      <link>http://gosparta.io/docs/application/custom_commands/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/custom_commands/</guid>
+      <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
+To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` &amp;#43; HTTPServerPort, RunE: func(cmd *cobra.</description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>http://gosparta.io/docs/application/custom_flags/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/custom_flags/</guid>
+      <description>Introduction Some commands (eg: provision) may require additional options. For instance, your application&amp;rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
+The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
+Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
+For example:</description>
+    </item>
+    
+    <item>
+      <title>Custom Resources</title>
+      <link>http://gosparta.io/docs/custom_resources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/custom_resources/</guid>
+      <description>Introduction In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&amp;rsquo;s lifecycle.
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers a user-supplied CustomResourceFunction with the larger CloudFormation resource lifecycle.
+In this section we&amp;rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&amp;rsquo;s outputs can be propagated to an application-level Sparta lambda function.</description>
+    </item>
+    
+    <item>
+      <title>Discovery Service</title>
+      <link>http://gosparta.io/docs/discovery/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/discovery/</guid>
+      <description>Introduction The ability to provision dynamic infrastructure (see also the SES Event Source Example) as part of a Sparta application creates a need to discover those resources at lambda execution time.
+Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling Go lambda function.
+The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>http://gosparta.io/docs/docker/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/docker/</guid>
+      <description>Introduction TODO</description>
+    </item>
+    
+    <item>
+      <title>Dynamic Infrastructure</title>
+      <link>http://gosparta.io/docs/dynamic_infrastructure/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/dynamic_infrastructure/</guid>
+      <description>Introduction In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
+For instance, consider the case where two developers are working in the same AWS account.
+ Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3.</description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudFormation</title>
+      <link>http://gosparta.io/docs/eventsources/cloudformation/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/cloudformation/</guid>
+      <description>NOT YET IMPLEMENTED
+TODO: CloudFormation source documentation
+ </description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudWatch Events</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchevents/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started Our lambda function is relatively small:</description>
+    </item>
+    
+    <item>
+      <title>Event Source - CloudWatch Logs</title>
+      <link>http://gosparta.io/docs/eventsources/cloudwatchlogs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/cloudwatchlogs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CloudWatch Logs. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.
+Getting Started Our lambda function is relatively short:</description>
+    </item>
+    
+    <item>
+      <title>Event Source - Cognito</title>
+      <link>http://gosparta.io/docs/eventsources/cognito/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/cognito/</guid>
+      <description>NOT YET IMPLEMENTED
+TODO: Cognito source documentation</description>
+    </item>
+    
+    <item>
+      <title>Event Source - DynamoDB</title>
+      <link>http://gosparta.io/docs/eventsources/dynamodb/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/dynamodb/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details on how to create the stream. We&amp;rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.</description>
+    </item>
+    
+    <item>
+      <title>Event Source - S3</title>
+      <link>http://gosparta.io/docs/eventsources/s3/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/s3/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events. This overview is based on the SpartaImager sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</description>
+    </item>
+    
+    <item>
+      <title>Event Source - SES</title>
+      <link>http://gosparta.io/docs/eventsources/ses/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/ses/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to inbound email. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have already verified our email domain with AWS. This allows our domain&amp;rsquo;s email to be handled by SES.
+We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.</description>
+    </item>
+    
+    <item>
+      <title>Event Source - SNS</title>
+      <link>http://gosparta.io/docs/eventsources/sns/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/sns/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have an SNS topic that broadcasts notifications. We&amp;rsquo;ve been asked to write a lambda function that logs the Subject and Message text to CloudWatch logs for later processing.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>Event Sources</title>
+      <link>http://gosparta.io/docs/eventsources/eventsources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/eventsources/</guid>
+      <description>The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions. Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.
+There are several event sources available. They are grouped into Pull and Push types. Pull based models use sparta.EventSourceMapping values, as the trigger configuration is stored in the AWS Lambda service.</description>
+    </item>
+    
+    <item>
+      <title>Event Sources - Kinesis</title>
+      <link>http://gosparta.io/docs/eventsources/kinesis/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/eventsources/kinesis/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to Amazon Kinesis streams. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>FAQ</title>
+      <link>http://gosparta.io/docs/faq/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/faq/</guid>
+      <description>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
+During development, configuration is typically done through environment variables:
+ AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What flags are defined during AWS AMI compilation?  TAGS: -tags lambdabinary ENVIRONMENT: GOOS=linux GOARCH=amd64  What working directory should I use? Your working directory should be the root of your Sparta application.</description>
+    </item>
+    
+    <item>
+      <title>Limitations</title>
+      <link>http://gosparta.io/docs/limitations/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/limitations/</guid>
+      <description>Sparta Limitations  Go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, there is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome. Once Go is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.</description>
+    </item>
+    
+    <item>
+      <title>Local Testing</title>
+      <link>http://gosparta.io/docs/local_testing/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/local_testing/</guid>
+      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. Sparta supports localhost testing in two different ways:
+ The explore command line option httptest.NewServer for go test style testing  Example For this example, let&amp;rsquo;s define a simple Sparta application:
+package main import ( &amp;#34;encoding/json&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;github.com/Sirupsen/logrus&amp;#34; sparta &amp;#34;github.com/mweagle/Sparta&amp;#34; ) //////////////////////////////////////////////////////////////////////////////// // Hello world event handler // func helloWorld(event *json.</description>
+    </item>
+    
+    <item>
+      <title>Managing Environments</title>
+      <link>http://gosparta.io/docs/application/environments/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/environments/</guid>
+      <description>Introduction It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
+ Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
+To support this, Sparta uses Go&amp;rsquo;s conditional compliation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+This example will work through the SpartaConfig sample.</description>
+    </item>
+    
+    <item>
+      <title>S3 Sites with CORS</title>
+      <link>http://gosparta.io/docs/s3site/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/s3site/</guid>
+      <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
+func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) { logger.Info(&amp;#34;Hello World: &amp;#34;, string(*event)) fmt.</description>
+    </item>
+    
+    <item>
+      <title>Sample Service</title>
+      <link>http://gosparta.io/docs/intro_example/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/intro_example/</guid>
+      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Pricing
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+    </item>
+    
+    <item>
+      <title>Sample Service - Details</title>
+      <link>http://gosparta.io/docs/intro_examples_details/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/intro_examples_details/</guid>
+      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+Provisioning Flow The provisioning workflow is defined in provision.go, with a singular goal of encapsulating all AWS mutations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta injects Lambda-backed Custom Resources into the template definition.</description>
+    </item>
+    
+    <item>
+      <title>Workflow Hooks</title>
+      <link>http://gosparta.io/docs/application/workflow_hooks/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/application/workflow_hooks/</guid>
+      <description>Introduction While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.
+To support this, Sparta allows you to customize the build pipeline via WorkflowHooks structure. These hooks are called at specific points in the provision lifecycle and support augmenting the standard pipeline:
+graph TD iam[Verify Static IAM Roles] preBuild[WorkflowHook - PreBuild] style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px; compile[Cross Compile for AWS Linux AMI] postBuild[WorkflowHook - PostBuild] style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px; proxyShims[Create NodeJS-Go HTTP Proxies] package[ZIP archive] userArchive[WorkflowHook - Archive] style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] preMarshall[WorkflowHook - PreMarshall] style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px; generate[Marshal to CloudFormation] decorate[Call Lambda Decorators - Dynamic AWS Resources] serviceDecorator[Service Decorator] style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px; postMarshall[WorkflowHook - PostMarshall] style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px; uploadTemplate[Upload Template to S3] converge[Create/Update Stack] wait[Wait for Complete/Failure Result] iam--preBuild preBuild--compile compile--postBuild postBuild--proxyShims proxyShims--package proxyShims--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--converge converge--wait  This diagram is rendered with Mermaid.</description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>http://gosparta.io/docs/overview/</link>
+      <pubDate>Tue, 08 Mar 2016 21:07:13 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/overview/</guid>
+      <description>This is a brief overview of Sparta&amp;rsquo;s core concepts. Additional information regarding specific features is available from the menu.
+Terms and Concepts At a high level, Sparta transforms a single Go binary&amp;rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</description>
+    </item>
+    
+    <item>
+      <title>API Gateway &amp; CORS</title>
+      <link>http://gosparta.io/docs/apigateway/cors/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/apigateway/cors/</guid>
+      <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
+Sparta makes CORS support a single CORSEnabled field of the API struct:
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+    </item>
+    
+  </channel>
+</rss>
