@@ -11,5 +11,6 @@ menu:
 
 ## Introduction
 
-{{< note title="COMING SOON" >}}
+{{< note title="NEARLY READY" >}}
+Performance is a feature
 {{< /note >}}
