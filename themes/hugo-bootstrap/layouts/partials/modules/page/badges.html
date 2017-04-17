@@ -1,5 +1,0 @@
-{{ range .Params.badges }}
-<a class="badge" href="{{ .url }}">
-  <img title="{{ if .title }}{{ .title }}{{ else }}{{ .alt }}{{ end }}" alt="{{ .alt }}" src="{{ .img }}">
-</a>
-{{ end }}

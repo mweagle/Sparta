@@ -1,69 +1,77 @@
-# hostname (and path) to the root eg. http://spf13.com/
-baseurl = "http://gosparta.io"
-
-# Site title
+baseurl = "http://gosparta.io/"
+languageCode = "en-us"
 title = "Sparta"
+theme = "hugo-material-docs"
+canonifyurls = true
+# Enable Google Analytics by entering your tracking id
+googleAnalytics = "UA-70794971-1"
 
-# Copyright
-# copyright = "(c) 2015 Matt Wealge"
-
-# Language
-languageCode = "en-EN"
-
-# Metadata format
-# "yaml", "toml", "json"
-metaDataFormat = "toml"
-
-# Theme to use (located in /themes/THEMENAME/)
-theme = "hugo-bootstrap"
-
-# Pagination
-paginate = 10
-paginatePath = "page"
-
-# Enable Disqus integration
-disqusShortname = "mweagle"
-
-[permalinks]
-    post = "/:year/:month/:day/:slug/"
-    code = "/:slug/"
-
-[taxonomies]
-    tag = "tags"
-    topic = "topics"
-
-[author]
-    name = "Matt Weagle"
-    email = "mweagle@gmail.com"
-#
-# All parameters below here are optional and can be mixed and matched.
-#
 [params]
-    # You can use markdown here.
-    brand = "Sparta"
-    topline = "A **Go** Framework for AWS Lambda"
-    footline = "Sparta 0.9.3"
+	# General information
+	author = "Matt Weagle"
+	description = "Sparta - Go framework for AWS Lambda"
+	copyright = "Copyright 2015-2017 Matt Weagle"
 
-    # Select a syntax highight.
-    # Check the static/css/highlight directory for options.
-    highlight = "xcode"
+	# Repository
+	provider = "GitHub"
+	repo_url = "https://github.com/mweagle/Sparta"
 
-    [params.theme]
-    name = "lumen"
+	version = "1.0.0"
+	logo = "images/SpartaHelmet.png"
+	favicon = ""
 
-    # Text for the top menu link, which goes the root URL for the site.
-    # Default (if omitted) is "Home".
-    home = "Sparta"
+	permalink = "#"
 
-    # Google Analytics.
-    googleAnalytics = "UA-70794971-1"
+	# Custom assets
+	custom_css = ["mermaid_dist/mermaid.css",
+	"font-awesome-4.7.0/css/font-awesome.min.css"]
+	custom_js  = ["mermaid_dist/mermaid.min.js",
+	"jquery/jquery-2.2.0.min.js"]
 
-    # Sidebar social links.
-    github = "https://github.com/mweagle" # Your Github profile ID
-    bitbucket = "" # Your Bitbucket profile ID
-    linkedin = "https://www.linkedin.com/in/mweagle" # Your LinkedIn profile ID (from public URL)
-    googleplus = "" # Your Google+ profile ID
-    facebook = "" # Your Facebook profile ID
-    twitter = "mweagle" # Your Twitter profile ID
-    youtube = ""  # Your Youtube channel ID
-    flattr = ""  # populate with your flattr uid
+	# Syntax highlighting theme
+	highlight_css  = "highlights_js/styles/vs.css"
+
+	[params.palette]
+    	primary = "grey"
+    	accent  = "blue"
+
+	[params.font]
+		text = "Source Sans Pro"
+		code = "Source Code Pro"
+
+[social]
+	twitter = "mweagle"
+	github  = "mweagle"
+	email   = "mweagle@gmail.com"
+
+[[menu.main]]
+	name   = "Sparta"
+	url    = "/landing"
+	weight = 1
+
+[[menu.main]]
+	name   = "Overview"
+	url    = "/docs/overview"
+	weight = 10
+
+[[menu.main]]
+	name   = "Documentation"
+	weight = 20
+
+
+# [[menu.main]]
+# 	name   = "Roadmap"
+# 	url    = "roadmap/"
+# 	weight = 30
+
+[[menu.main]]
+	name   = "FAQ"
+	url    = "/docs/faq"
+	weight = 999
+
+
+[blackfriday]
+	smartypants	= true
+	fractions = true
+	smartDashes = true
+	plainIDAnchors = true

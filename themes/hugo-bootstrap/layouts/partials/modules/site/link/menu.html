@@ -1,3 +1,0 @@
-{{ range .Site.Data.Menu }}
-<a href="{{ .URL | absURL }}"{{ if and ( isset . "Title" ) ( ne .Title "" ) }} title="{{ .Title }}"{{ end }}>{{ .Name }}</a>
-{{ end }}
