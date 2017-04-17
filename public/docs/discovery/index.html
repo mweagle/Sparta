@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>Discovery Service - Sparta</title>
+    <meta name="generator" content="Hugo 0.20.2" />
+
+    
+    <meta name="description" content="Sparta - Go framework for AWS Lambda">
+    
+    <link rel="canonical" href="http://gosparta.io/docs/discovery/">
+    
+    <meta name="author" content="Matt Weagle">
+    
+
+    <meta property="og:url" content="http://gosparta.io/docs/discovery/">
+    <meta property="og:title" content="Sparta">
+    <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
+    <meta name="apple-mobile-web-app-title" content="Sparta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://gosparta.io/fonts/icon.eot');
+        src: url('http://gosparta.io/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('http://gosparta.io/fonts/icon.woff')
+               format('woff'),
+             url('http://gosparta.io/fonts/icon.ttf')
+               format('truetype'),
+             url('http://gosparta.io/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://gosparta.io/highlights_js/styles/vs.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source%20Sans%20Pro:400,700|Source&#43;Code&#43;Pro">
+    <style>
+      body, input {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Source Code Pro', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="http://gosparta.io/mermaid_dist/mermaid.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/font-awesome-4.7.0/css/font-awesome.min.css">
+    
+    <script src="http://gosparta.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-grey palette-accent-blue">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        Discovery Service
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/mweagle" title="@mweagle on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/mweagle" title="@mweagle on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/mweagle/Sparta" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://gosparta.io/images/SpartaHelmet.png">
+        </div>
+      
+      <div class="name">
+        <strong>Sparta <span class="version">1.0.0</span></strong>
+        
+          <br>
+          mweagle/Sparta
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/mweagle/Sparta/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/mweagle/Sparta/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Sparta" href="http://gosparta.io/landing">
+	
+	Sparta
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Overview" href="http://gosparta.io/docs/overview">
+	
+	Overview
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Documentation</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="API Gateway" href="http://gosparta.io/docs/apigateway/apigateway/">
+	
+	API Gateway
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+	
+	Alternative Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="CGO" href="http://gosparta.io/docs/cgo/">
+	
+	CGO
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a class="current" title="Discovery Service" href="http://gosparta.io/docs/discovery/">
+	
+	Discovery Service
+</a>
+
+
+<ul id="scrollspy">
+</ul>
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
+	
+	Dynamic Infrastructure
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+	
+	Event Sources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations/">
+	
+	Limitations
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
+	
+	Local Testing
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
+	
+	S3 Sites with CORS
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/">
+	
+	Sample Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service - Details" href="http://gosparta.io/docs/intro_examples_details/">
+	
+	Sample Service - Details
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ" href="http://gosparta.io/docs/faq">
+	
+	FAQ
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/mweagle" target="_blank" title="@mweagle on Twitter">
+              @mweagle on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/mweagle" target="_blank" title="@mweagle on GitHub">
+              @mweagle on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:mweagle@gmail.com" title="Email of mweagle@gmail.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>Discovery Service </h1>
+
+			
+
+<h1 id="introduction">Introduction</h1>
+
+<p>The ability to provision <a href="http://gosparta.io/docs/dynamic_infrastructure">dynamic infrastructure</a> (see also the <a href="http://gosparta.io/docs/eventsources/ses/#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba">SES Event Source Example</a>) as part of a Sparta application creates a need to discover those resources at lambda execution time.</p>
+
+<p>Sparta exposes this functionality via <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover</a>.  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling <strong>Go</strong> lambda function.</p>
+
+<p>The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.  It is extracted from <code>appendDynamicS3BucketLambda</code> in the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">SpartaApplication</a> source.</p>
+
+<p>If you haven&rsquo;t already done so, please review the <a href="http://gosparta.io/docs/dynamic_infrastructure">Dynamic Infrastructure</a> section for background on dynamic infrastructure provisioning.</p>
+
+<h1 id="discovery">Discovery</h1>
+
+<p>For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our <code>gocf.S3Bucket{}</code> struct uses a zero-length <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">BucketName</a> property, CloudFormation will dynamically assign one.</p>
+
+<pre><code class="language-go">s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;)
+
+lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: gocf.Ref(s3BucketResourceName),
+  },
+  Events: []string{&quot;s3:ObjectCreated:*&quot;,
+                    &quot;s3:ObjectRemoved:*&quot;},
+})
+
+lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
+
+// Add permission s.t. the lambda function could read from the S3 bucket
+lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{&quot;s3:GetObject&quot;,
+                       &quot;s3:HeadObject&quot;},
+    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
+  })
+
+// Add the S3 resource to our template
+lambdaFn.Decorator = func(lambdaResourceName string,
+  lambdaResource gocf.LambdaFunction,
+  template *gocf.Template,
+  logger *logrus.Logger) error {
+  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
+    AccessControl: gocf.String(&quot;PublicRead&quot;),
+  })
+  cfResource.DeletionPolicy = &quot;Delete&quot;
+  return nil
+}
+</code></pre>
+
+<p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
+
+<h1 id="template-marshaling-decoration">Template Marshaling &amp; Decoration</h1>
+
+<p>Sparta only uses CloudFormation to update service state.  Each CloudFormation resource may be annotated with a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html">Metadata</a> property.  This is unstructured, application-defined data.</p>
+
+<p>During template marshaling, Sparta scans for <code>DependsOn</code> relationships and propagates information (immediate-children only) across CloudFormation resource definitions.  Most importantly, this information includes <code>Ref</code> and any other <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go#L24">outputs</a> of referred resources.  This information then becomes available as a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DisocveryInfo</a> value returned by <code>sparta.Discovery()</code>.</p>
+
+<h1 id="sample-discoveryinfo">Sample DiscoveryInfo</h1>
+
+<p>In our example, a <code>DiscoveryInfo</code> from a sample stack might be:</p>
+
+<pre><code class="language-json">{
+  &quot;Region&quot;: &quot;us-west-2&quot;,
+  &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&quot;,
+  &quot;StackName&quot;: &quot;SpartaApplication&quot;,
+  &quot;Resources&quot;: {
+    &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;: {
+      &quot;ResourceID&quot;: &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;,
+      &quot;Properties&quot;: {
+        &quot;DomainName&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&quot;,
+        &quot;Ref&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&quot;,
+        &quot;WebsiteURL&quot;: &quot;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&quot;,
+        &quot;sparta:cloudformation:restype&quot;: &quot;AWS::S3::Bucket&quot;
+      },
+      &quot;Tags&quot;: {}
+    }
+  }
+}
+</code></pre>
+
+<p>With this, our lambda function can discover the dynamically assigned bucket name using non-production ready code similar to:</p>
+
+<pre><code class="language-go">configuration, _ := sparta.Discover()
+bucketName := &quot;&quot;
+for _, eachResource := range configuration.Resources {
+  if eachResource.Properties[sparta.TagResourceType] == &quot;AWS::S3::Bucket&quot; {
+    bucketName = eachResource.Properties[&quot;Ref&quot;]
+  }
+}
+</code></pre>
+
+<p>The <code>Properties</code> map includes the CloudFormation <code>Ref</code> and other outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set) as well as the actual resource type (keyed by <code>sparta.TagResourceType</code>).</p>
+
+<p>Multiple dependencies can be disambiguated by annotating the CloudFormation resource&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html">Tags</a> slice.  Tag key-values are published as a key-value map as part of each <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource">DiscoveryResource</a>.  For example:</p>
+
+<pre><code class="language-go">cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
+  AccessControl: gocf.String(&quot;PublicRead&quot;),
+  Tags: []gocf.ResourceTag{
+    gocf.ResourceTag{
+      Key:   gocf.String(&quot;SomeUserKey&quot;),
+      Value: gocf.String(&quot;MyMagicValue&quot;),
+    },
+  },
+})
+</code></pre>
+
+<h1 id="special-considerations">Special Considerations</h1>
+
+<p>You may have noticed that <code>sparta.Discover()</code> doesn&rsquo;t accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant <strong>Go</strong> function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> values and enables unique discovery.</p>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>Combined with <a href="http://gosparta.io/docs/dynamic_infrastructure">dynamic infrastructure</a>, <code>sparta.Discover()</code> enables a Sparta service to define its entire AWS infrastructure requirements.  Coupling application logic with infrastructure requirements moves a service towards being completely self-contained and in the direction of <a href="https://fugue.co/oreilly/">immutable infrastructure</a>.</p>
+
+<h1 id="notes">Notes</h1>
+
+<ul>
+<li><code>sparta.Discovery()</code> <strong>only</strong> succeeds within a Sparta-compliant lambda function call block.
+
+<ul>
+<li>Call-site restrictions are validated in the <a href="https://github.com/mweagle/Sparta/blob/master/discovery_test.go">discovery_tests.go</a> tests.</li>
+</ul></li>
+</ul>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://gosparta.io/docs/custom_resources/" title="Custom Resources">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Custom Resources
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://gosparta.io/docs/docker/" title="Docker">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              Docker
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+    <script>
+    
+      var base_url = 'http:\/\/gosparta.io\/';
+      var repo_id  = 'mweagle\/Sparta';
+    
+    </script>
+
+    <script src="http://gosparta.io/javascripts/application.js"></script>
+    
+    <script src="http://gosparta.io/mermaid_dist/mermaid.min.js"></script>
+    
+    <script src="http://gosparta.io/jquery/jquery-2.2.0.min.js"></script>
+    
+
+    
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', '//www.google-analytics.com/analytics.js', 'ga');
+         
+        ga('create', 'UA-70794971-1', 'auto');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+         
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+         
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

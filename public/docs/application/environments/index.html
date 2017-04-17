@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>Managing Environments - Sparta</title>
+    <meta name="generator" content="Hugo 0.20.2" />
+
+    
+    <meta name="description" content="Sparta - Go framework for AWS Lambda">
+    
+    <link rel="canonical" href="http://gosparta.io/docs/application/environments/">
+    
+    <meta name="author" content="Matt Weagle">
+    
+
+    <meta property="og:url" content="http://gosparta.io/docs/application/environments/">
+    <meta property="og:title" content="Sparta">
+    <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
+    <meta name="apple-mobile-web-app-title" content="Sparta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://gosparta.io/fonts/icon.eot');
+        src: url('http://gosparta.io/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('http://gosparta.io/fonts/icon.woff')
+               format('woff'),
+             url('http://gosparta.io/fonts/icon.ttf')
+               format('truetype'),
+             url('http://gosparta.io/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://gosparta.io/highlights_js/styles/vs.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source%20Sans%20Pro:400,700|Source&#43;Code&#43;Pro">
+    <style>
+      body, input {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Source Code Pro', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="http://gosparta.io/mermaid_dist/mermaid.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/font-awesome-4.7.0/css/font-awesome.min.css">
+    
+    <script src="http://gosparta.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-grey palette-accent-blue">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        Managing Environments
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/mweagle" title="@mweagle on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/mweagle" title="@mweagle on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/mweagle/Sparta" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://gosparta.io/images/SpartaHelmet.png">
+        </div>
+      
+      <div class="name">
+        <strong>Sparta <span class="version">1.0.0</span></strong>
+        
+          <br>
+          mweagle/Sparta
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/mweagle/Sparta/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/mweagle/Sparta/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Sparta" href="http://gosparta.io/landing">
+	
+	Sparta
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Overview" href="http://gosparta.io/docs/overview">
+	
+	Overview
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Documentation</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="API Gateway" href="http://gosparta.io/docs/apigateway/apigateway/">
+	
+	API Gateway
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+	
+	Alternative Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="CGO" href="http://gosparta.io/docs/cgo/">
+	
+	CGO
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
+	
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
+	
+	Dynamic Infrastructure
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+	
+	Event Sources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations/">
+	
+	Limitations
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
+	
+	Local Testing
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
+	
+	S3 Sites with CORS
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/">
+	
+	Sample Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service - Details" href="http://gosparta.io/docs/intro_examples_details/">
+	
+	Sample Service - Details
+</a>
+
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ" href="http://gosparta.io/docs/faq">
+	
+	FAQ
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/mweagle" target="_blank" title="@mweagle on Twitter">
+              @mweagle on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/mweagle" target="_blank" title="@mweagle on GitHub">
+              @mweagle on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:mweagle@gmail.com" title="Email of mweagle@gmail.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>Managing Environments </h1>
+
+			
+
+<h1 id="introduction">Introduction</h1>
+
+<p>It&rsquo;s common for a single Sparta application to target multiple <em>environments</em>. For example:</p>
+
+<ul>
+<li>Development</li>
+<li>Staging</li>
+<li>Production</li>
+</ul>
+
+<p>Each environment is largely similar, but the application may need slightly different configuration in each context.</p>
+
+<p>To support this, Sparta uses Go&rsquo;s <a href="http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">conditional compliation</a> support to ensure that configuration information is validated at build time.  Conditional compilation is supported via the <code>--tags/-t</code> command line argument.</p>
+
+<p>This example will work through the <a href="https://github.com/mweagle/SpartaConfig">SpartaConfig</a> sample. The requirement is that each environment declare it&rsquo;s <code>Name</code> and also add that value as a Stack <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html">Output</a>.</p>
+
+<h2 id="default-configuration">Default Configuration</h2>
+
+<p>To start with, create the <em>default</em> configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.</p>
+
+<pre><code class="language-golang">// +build !staging,!production
+// file: environments/default.go
+
+package environments
+
+import (
+	&quot;fmt&quot;
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the default configuration
+const Name = &quot;&quot;
+</code></pre>
+
+<p>The important part is the set of excluded tags at the top of the file:</p>
+
+<pre><code class="language-golang">// +build !staging,!production
+</code></pre>
+
+<p>This ensures that the configuration is only eligible for compilation when Sparta goes to <code>provision</code> the service.</p>
+
+<h2 id="environment-configuration">Environment Configuration</h2>
+
+<p>The next steps are to define the environment-specific configuration files:</p>
+
+<pre><code class="language-golang">// +build staging
+// file: environments/staging.go
+
+package environments
+
+import (
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the production configuration
+const Name = &quot;staging&quot;
+
+</code></pre>
+
+<pre><code class="language-golang">// +build production
+// file: environments/production.go
+
+package environments
+
+import (
+	&quot;github.com/Sirupsen/logrus&quot;
+	&quot;github.com/aws/aws-sdk-go/aws/session&quot;
+	gocf &quot;github.com/crewjam/go-cloudformation&quot;
+	sparta &quot;github.com/mweagle/Sparta&quot;
+)
+
+// Name is the production configuration
+const Name = &quot;production&quot;
+
+</code></pre>
+
+<p>These three files define the set of compile-time mutually-exclusive sources that represent environment targets.</p>
+
+<h2 id="segregating-services">Segregating Services</h2>
+
+<p>The <code>serviceName</code> argument supplied to <a href="https://godoc.org/github.com/mweagle/Sparta#Main">sparta.Main</a> defines the AWS CloudFormation stack that supports your application.  While the previous files represent different environments, they will collide at <code>provision</code> time since they share the same service name.</p>
+
+<p>The <code>serviceName</code> can be specialized by using the <code>buildTags</code> in the service name definition as in:</p>
+
+<pre><code class="language-golang">fmt.Sprintf(&quot;SpartaHelloWorld-%s&quot;, sparta.OptionsGlobal.BuildTags),
+</code></pre>
+
+<p>Each time you run <code>provision</code> with a unique <code>--tags</code> value, a new CloudFormation stack will be created.</p>
+
+<p><em>NOTE</em>: This isn&rsquo;t something suitable for production use as there could be multiple <code>BuildTags</code> values.</p>
+
+<h2 id="enforcing-environments">Enforcing Environments</h2>
+
+<p>The final requirement is to add the environment name as a Stack Output. To annotate the stack with the output value, we&rsquo;ll register a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecorator</a> and use the same conditional compilation support to compile the environment-specific version.</p>
+
+<p>The <em>main.go</em> source file registers the workflow hook via:</p>
+
+<pre><code class="language-golang">hooks := &amp;sparta.WorkflowHooks{
+	Context:          map[string]interface{}{},
+	ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
+}
+</code></pre>
+
+<p>Both <em>environments/staging.go</em> and <em>environments/production.go</em> define the same hook function:</p>
+
+<pre><code class="language-golang">func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		template.Outputs[&quot;Environment&quot;] = &amp;gocf.Output{
+			Description: &quot;Sparta Config target environment&quot;,
+			Value:       Name,
+		}
+		return nil
+	}
+}
+</code></pre>
+
+<p>The <em>environments/default.go</em> definition is slightly different. The &ldquo;default&rdquo; environment isn&rsquo;t one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile.  Build tags are applied to the <em>AWS Lambda</em> compiled binary that Sparta generates.</p>
+
+<p>To prevent users from accidentally deploying to the &ldquo;default&rdquo; environment, the <code>BuildTags</code> are valdiated in the hook definition:</p>
+
+<pre><code class="language-golang">func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
+	return func(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+		if len(buildTags) &lt;= 0 {
+			return fmt.Errorf(&quot;Please provide a --tags value for environment target&quot;)
+		}
+		return nil
+	}
+}
+</code></pre>
+
+<h2 id="provisioning">Provisioning</h2>
+
+<p>Putting everything together, the <code>SpartaConfig</code> service can deploy to either environment:</p>
+
+<p><strong>staging</strong></p>
+
+<pre><code>    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
+</code></pre>
+
+<p><strong>production</strong></p>
+
+<pre><code>    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
+</code></pre>
+
+<p>Attempting to deploy to &ldquo;default&rdquo; generates an error:</p>
+
+<pre><code class="language-bash">INFO[0000] Welcome to SpartaConfig-                      Go=go1.7.1 Option=provision SpartaVersion=0.9.2 UTC=2016-10-12T04:07:35Z
+INFO[0000] Provisioning service                          BuildID=550c9e360426f48201c885c0abeb078dfc000a0a NOOP=true Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=SpartaConfig_.lambda.amd64
+INFO[0008] Executable binary size                        KB=15309 MB=14
+INFO[0008] Creating ZIP archive for upload               TempName=/Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaConfig/SpartaConfig_104207098
+INFO[0009] Registering Sparta function                   FunctionName=main.helloWorld
+INFO[0009] Lambda function deployment package size       KB=4262 MB=4
+INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=weagle
+INFO[0009] Bypassing S3 upload due to -n/-noop command line argument  Bucket=weagle Key=SpartaConfig-/SpartaConfig_104207098
+INFO[0009] Calling WorkflowHook                          WorkflowHook=github.com/mweagle/SpartaConfig/environments.ServiceDecoratorHook.func1 WorkflowHookContext=map[]
+INFO[0009] Invoking rollback functions                   RollbackCount=0
+ERRO[0009] Please provide a --tags value for environment target
+Error: Please provide a --tags value for environment target
+Usage:
+  main provision [flags]
+
+Flags:
+  -i, --buildID string    Optional BuildID to use
+  -s, --s3Bucket string   S3 Bucket to use for Lambda source
+  -t, --tags string       Optional build tags to use for compilation
+
+Global Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default &quot;info&quot;)
+  -n, --noop           Dry-run behavior only (do not perform mutations)
+
+ERRO[0009] Please provide a --tags value for environment target
+exit status 1
+</code></pre>
+
+<h2 id="notes">Notes</h2>
+
+<ul>
+<li>Call <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> to initialize  <code>sparta.OptionsGlobal.BuildTags</code> field for use in a service name definition.</li>
+<li>An alternative approach is to define a custom <a href="https://godoc.org/github.com/mweagle/Sparta#ArchiveHook">ArchiveHook</a> and inject custom configuration into the ZIP archive. This data is available at <code>Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)</code>
+
+<ul>
+<li>See <a href="https://github.com/tmaiaroto/discfg">discfg</a>, <a href="https://github.com/coreos/etcd">etcd</a>, <a href="https://www.consul.io/">Consul</a> (among others) for alternative, more dynamic discovery services.</li>
+</ul></li>
+</ul>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://gosparta.io/docs/local_testing/" title="Local Testing">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Local Testing
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://gosparta.io/docs/s3site/" title="S3 Sites with CORS">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              S3 Sites with CORS
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+    <script>
+    
+      var base_url = 'http:\/\/gosparta.io\/';
+      var repo_id  = 'mweagle\/Sparta';
+    
+    </script>
+
+    <script src="http://gosparta.io/javascripts/application.js"></script>
+    
+    <script src="http://gosparta.io/mermaid_dist/mermaid.min.js"></script>
+    
+    <script src="http://gosparta.io/jquery/jquery-2.2.0.min.js"></script>
+    
+
+    
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', '//www.google-analytics.com/analytics.js', 'ga');
+         
+        ga('create', 'UA-70794971-1', 'auto');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+         
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+         
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

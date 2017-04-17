@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>Sample Service - Details - Sparta</title>
+    <meta name="generator" content="Hugo 0.20.2" />
+
+    
+    <meta name="description" content="Sparta - Go framework for AWS Lambda">
+    
+    <link rel="canonical" href="http://gosparta.io/docs/intro_examples_details/">
+    
+    <meta name="author" content="Matt Weagle">
+    
+
+    <meta property="og:url" content="http://gosparta.io/docs/intro_examples_details/">
+    <meta property="og:title" content="Sparta">
+    <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
+    <meta name="apple-mobile-web-app-title" content="Sparta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="http://gosparta.io/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('http://gosparta.io/fonts/icon.eot');
+        src: url('http://gosparta.io/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('http://gosparta.io/fonts/icon.woff')
+               format('woff'),
+             url('http://gosparta.io/fonts/icon.ttf')
+               format('truetype'),
+             url('http://gosparta.io/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
+    <link rel="stylesheet" href="http://gosparta.io/highlights_js/styles/vs.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Source%20Sans%20Pro:400,700|Source&#43;Code&#43;Pro">
+    <style>
+      body, input {
+        font-family: 'Source Sans Pro', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Source Code Pro', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="http://gosparta.io/mermaid_dist/mermaid.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/font-awesome-4.7.0/css/font-awesome.min.css">
+    
+    <script src="http://gosparta.io/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-grey palette-accent-blue">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        Sample Service - Details
+      </div>
+    </div>
+
+    
+    <div class="button button-twitter" role="button" aria-label="Twitter">
+       <a href="https://twitter.com/mweagle" title="@mweagle on Twitter" target="_blank" class="toggle-button icon icon-twitter"></a>
+    </div>
+    
+
+    
+    <div class="button button-github" role="button" aria-label="GitHub">
+      <a href="https://github.com/mweagle" title="@mweagle on GitHub" target="_blank" class="toggle-button icon icon-github"></a>
+    </div>
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/mweagle/Sparta" class="project">
+    <div class="banner">
+      
+        <div class="logo">
+          <img src="http://gosparta.io/images/SpartaHelmet.png">
+        </div>
+      
+      <div class="name">
+        <strong>Sparta <span class="version">1.0.0</span></strong>
+        
+          <br>
+          mweagle/Sparta
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/mweagle/Sparta/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+          <li class="repo-stars">
+            <a href="https://github.com/mweagle/Sparta/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Sparta" href="http://gosparta.io/landing">
+	
+	Sparta
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Overview" href="http://gosparta.io/docs/overview">
+	
+	Overview
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    <span class="section">Documentation</span>
+    <ul>
+      
+        
+        
+
+
+
+<a  title="API Gateway" href="http://gosparta.io/docs/apigateway/apigateway/">
+	
+	API Gateway
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+	
+	Alternative Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="CGO" href="http://gosparta.io/docs/cgo/">
+	
+	CGO
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
+	
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
+	
+	Dynamic Infrastructure
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+	
+	Event Sources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations/">
+	
+	Limitations
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
+	
+	Local Testing
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
+	
+	S3 Sites with CORS
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/">
+	
+	Sample Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a class="current" title="Sample Service - Details" href="http://gosparta.io/docs/intro_examples_details/">
+	
+	Sample Service - Details
+</a>
+
+
+<ul id="scrollspy">
+</ul>
+
+
+      
+    </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="FAQ" href="http://gosparta.io/docs/faq">
+	
+	FAQ
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+          <li>
+            <a href="https://twitter.com/mweagle" target="_blank" title="@mweagle on Twitter">
+              @mweagle on Twitter
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://github.com/mweagle" target="_blank" title="@mweagle on GitHub">
+              @mweagle on GitHub
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="mailto:mweagle@gmail.com" title="Email of mweagle@gmail.com">
+              Contact via email
+            </a>
+          </li>
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>Sample Service - Details </h1>
+
+			
+
+<p>The <a href="http://gosparta.io/docs/intro_example">Overview</a> walked through a simple &ldquo;Hello World&rdquo; example.  In this section we&rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the <code>provision</code> command line argument, so this section will outline exactly what that entails.</p>
+
+<h1 id="provisioning-flow">Provisioning Flow</h1>
+
+<p>The provisioning workflow is defined in <a href="https://github.com/mweagle/Sparta/blob/master/provision.go">provision.go</a>, with a singular goal of encapsulating all AWS mutations into a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> template.  Where CloudFormation does not support a given service, Sparta injects <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> into the template definition.</p>
+
+<p>At a high level, provisioning uses the flow below.  We&rsquo;ll dive a bit deeper into each stage in the following sections.</p>
+
+<div class="mermaid">
+graph TD
+  iam[Verify Static IAM Roles]
+  preBuild[WorkflowHook - PreBuild]
+  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  compile[Cross Compile for AWS Linux AMI]
+  postBuild[WorkflowHook - PostBuild]
+  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  proxyShims[Create NodeJS-Go HTTP Proxies]
+  package[ZIP archive]
+  userArchive[WorkflowHook - Archive]
+  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  upload[Upload Archive to S3]
+  packageAssets[Conditionally ZIP S3 Site Assets]
+  uploadAssets[Upload S3 Assets]
+  preMarshall[WorkflowHook - PreMarshall]
+  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  generate[Marshal to CloudFormation]
+  decorate[Call Lambda Decorators - Dynamic AWS Resources]
+
+  serviceDecorator[Service Decorator]
+  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  postMarshall[WorkflowHook - PostMarshall]
+  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+
+  uploadTemplate[Upload Template to S3]
+  converge[Create/Update Stack]
+  wait[Wait for Complete/Failure Result]
+
+  iam-->preBuild
+  preBuild-->compile
+  compile-->postBuild
+  postBuild-->proxyShims
+  proxyShims-->package
+  proxyShims-->packageAssets
+  package-->userArchive
+  userArchive-->upload
+  packageAssets-->uploadAssets
+  uploadAssets-->generate
+  upload-->generate
+
+  generate-->preMarshall
+  preMarshall-->decorate
+  decorate-->serviceDecorator
+  serviceDecorator-->postMarshall
+  postMarshall-->uploadTemplate
+  uploadTemplate-->converge
+  converge-->wait
+</div>
+<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
+<hr />
+
+
+<h2 id="verify-static-iam-roles">Verify Static IAM Roles</h2>
+
+<p>The <code>NewLambda</code> function accepts either a <code>string</code> or a <code>sparta.IAMRoleDefinition</code> value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns">IAM Role ARN</a> is cached to minimize AWS calls during template generation.</p>
+
+<h2 id="compile">Compile</h2>
+
+<p>The next step is to cross compile the application to a binary that can be executed on an AWS Lambda instance.  The compile flags are:</p>
+
+<ul>
+<li><strong>TAGS</strong>:         <code>-tags lambdabinary</code></li>
+<li><strong>ENVIRONMENT</strong>:  <code>GOOS=linux GOARCH=amd64</code></li>
+</ul>
+
+<p>The binary is built in the current directory with a <em>.lambda.amd64</em> suffix.</p>
+
+<h2 id="package">Package</h2>
+
+<p>The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
+This includes the NodeJS proxy entries that forward AWS Lambda requests to your <strong>Go</strong> binary HTTP-based handler.  The packaging step also includes NodeJS code to support CloudFormation custom resources for services such as
+API Gateway configuration and S3 push source configuration.  Finally, a known version of the AWS SDK is included (that&rsquo;s the <em>node-modules</em> copying you&rsquo;ll see if you enable <code>debug</code> verbosity) that&rsquo;s likely newer than the one included in the <a href="https://aws.amazon.com/releasenotes/AWS-Lambda">AWS Lambda runtime</a>.</p>
+
+<p>Over time it&rsquo;s expected that CloudFormation grows to support additional services and capabilities, at which point much of the NodeJS code can be eliminated.</p>
+
+<p>Everything is ZIP&rsquo;d up and ready for S3 upload.</p>
+
+<h2 id="upload-archive-to-s3">Upload Archive To S3</h2>
+
+<p>Uploads the archive to S3.  There&rsquo;s not much else to see here.</p>
+
+<h2 id="generate-cloudformation-template">Generate CloudFormation Template</h2>
+
+<p>Once the archive is uploaded and the S3 Item key is available, the  CloudFormation template is generated by marshaling the <code>sparta.LambdaAWSInfo</code> objects into CloudFormation JSON representations.</p>
+
+<p>The AWS Lambda marshaling is automatically handled.  This is also the point at which the optional <a href="https://github.com/mweagle/Sparta/blob/master/sparta.go#L192">TemplateDecorator</a> functions are called to annotate the automatically generated template with additional resources.</p>
+
+<h2 id="upload-cloudformation-template-to-s3">Upload CloudFormation Template to S3</h2>
+
+<p>Uploads the template to S3 to maximize <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html">template size</a>.  There&rsquo;s not much else to see here.</p>
+
+<h2 id="create-update-stack">Create/Update Stack</h2>
+
+<p>Finally, the provisioning workflow determines whether the Sparta <code>serviceName</code> exists and either creates or updates as appropriate.</p>
+
+<h1 id="next-steps">Next Steps</h1>
+
+<p>Now that we&rsquo;ve covered how Sparta handles provisioning your stack, we&rsquo;re ready to expand functionality to leverge more of the AWS ecosystem in the <a href="http://gosparta.io/docs/eventsources/">next section</a>.</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="http://gosparta.io/docs/intro_example/" title="Sample Service">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Sample Service
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="http://gosparta.io/docs/application/workflow_hooks/" title="Workflow Hooks">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              Workflow Hooks
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+
+    <script>
+    
+      var base_url = 'http:\/\/gosparta.io\/';
+      var repo_id  = 'mweagle\/Sparta';
+    
+    </script>
+
+    <script src="http://gosparta.io/javascripts/application.js"></script>
+    
+    <script src="http://gosparta.io/mermaid_dist/mermaid.min.js"></script>
+    
+    <script src="http://gosparta.io/jquery/jquery-2.2.0.min.js"></script>
+    
+
+    
+    <script>mermaid.initialize({startOnLoad:true});</script>
+
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+      <script>
+        (function(i,s,o,g,r,a,m){
+          i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||
+          []).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;
+          m.parentNode.insertBefore(a,m)
+        })(window, document,
+          'script', '//www.google-analytics.com/analytics.js', 'ga');
+         
+        ga('create', 'UA-70794971-1', 'auto');
+        ga('set', 'anonymizeIp', true);
+        ga('send', 'pageview');
+         
+        var buttons = document.querySelectorAll('a');
+        Array.prototype.map.call(buttons, function(item) {
+          if (item.host != document.location.host) {
+            item.addEventListener('click', function() {
+              var action = item.getAttribute('data-action') || 'follow';
+              ga('send', 'event', 'outbound', action, item.href);
+            });
+          }
+        });
+         
+        var query = document.querySelector('.query');
+        query.addEventListener('blur', function() {
+          if (this.value) {
+            var path = document.location.pathname;
+            ga('send', 'pageview', path + '?q=' + this.value);
+          }
+        });
+      </script>
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+

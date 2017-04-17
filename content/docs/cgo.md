@@ -12,4 +12,4 @@ menu:
 ## Introduction
 
 {{< note title="COMING SOON" >}}
-{{< /warning >}}
+{{< /note >}}
