@@ -2,11 +2,6 @@
 date: 2016-03-09T19:56:50+01:00
 title: Sample Service
 weight: 10
-menu:
-  main:
-    parent: Documentation
-    identifier: introductory-example
-    weight: 0
 ---
 
 Sparta is a framework for developing and deploying **Go** based AWS Lambda-backed microservices.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.

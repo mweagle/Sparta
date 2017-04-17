@@ -1,12 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Sample Service - Details
-weight: 10
-menu:
-  main:
-    parent: Documentation
-    identifier: introductory-example-details
-    weight: 0
+weight: 20
 ---
 
 The [Overview](/docs/intro_example) walked through a simple "Hello World" example.  In this section we'll cover how Sparta works in preparation for moving on to more advanced usages.  Most development will use the `provision` command line argument, so this section will outline exactly what that entails.

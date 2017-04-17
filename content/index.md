@@ -1,12 +1,12 @@
 ---
 date: 2016-03-08T21:07:13+01:00
-title: Sparta
+title:
 type: index
 weight: 0
 ---
 
 <br />
-<img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128">
+<img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="192">
 <br />
 
 A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a> microservices

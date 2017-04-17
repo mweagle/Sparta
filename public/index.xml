@@ -336,23 +336,23 @@ func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.Re
     
     <item>
       <title>Sample Service</title>
-      <link>http://gosparta.io/docs/intro_example/</link>
+      <link>http://gosparta.io/docs/intro_example/intro/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>http://gosparta.io/docs/intro_example/</guid>
-      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Pricing
-Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+      <guid>http://gosparta.io/docs/intro_example/intro/</guid>
+      <description> Examples Walkthrough of a sample Sparta based service:
+ Step 1 - Walkthrough Step 2 - Details  </description>
     </item>
     
     <item>
-      <title>Sample Service - Details</title>
-      <link>http://gosparta.io/docs/intro_examples_details/</link>
+      <title>Sample Service</title>
+      <link>http://gosparta.io/docs/intro_example/step1/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>http://gosparta.io/docs/intro_examples_details/</guid>
-      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages. Most development will use the provision command line argument, so this section will outline exactly what that entails.
-Provisioning Flow The provisioning workflow is defined in provision.go, with a singular goal of encapsulating all AWS mutations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta injects Lambda-backed Custom Resources into the template definition.</description>
+      <guid>http://gosparta.io/docs/intro_example/step1/</guid>
+      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Pricing
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
     </item>
     
     <item>
@@ -388,7 +388,17 @@ Sparta makes CORS support a single CORSEnabled field of the API struct:
     </item>
     
     <item>
-      <title>Sparta</title>
+      <title>Sample Service - Details</title>
+      <link>http://gosparta.io/docs/intro_example/step2/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/intro_example/step2/</guid>
+      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+Provisioning Flow The provisioning workflow is defined in provision.go, with a singular goal of encapsulating all AWS mutations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta injects Lambda-backed Custom Resources into the template definition.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>http://gosparta.io/index/</link>
       <pubDate>Tue, 08 Mar 2016 21:07:13 +0100</pubDate>
       
