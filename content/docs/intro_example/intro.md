@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: intro_example
-    weight: 0
+    weight: 5
 ---
 
 ## Examples

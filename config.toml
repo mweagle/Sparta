@@ -55,8 +55,13 @@ googleAnalytics = "UA-70794971-1"
 	weight = 10
 
 [[menu.main]]
-	name   = "Documentation"
+	name   = "Sample Service"
+	url    = "/docs/intro_example/intro"
 	weight = 20
+
+[[menu.main]]
+	name   = "Documentation"
+	weight = 30
 
 
 # [[menu.main]]
