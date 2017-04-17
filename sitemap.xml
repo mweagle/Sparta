@@ -152,12 +152,12 @@
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/intro_example/</loc>
+    <loc>http://gosparta.io/docs/intro_example/intro/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/intro_examples_details/</loc>
+    <loc>http://gosparta.io/docs/intro_example/step1/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
@@ -173,6 +173,11 @@
   
   <url>
     <loc>http://gosparta.io/docs/apigateway/cors/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://gosparta.io/docs/intro_example/step2/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   

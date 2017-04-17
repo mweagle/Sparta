@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Workflow Hooks - Sparta</title>
+    <title>Sample Service - Sparta</title>
     <meta name="generator" content="Hugo 0.20.2" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
     
-    <link rel="canonical" href="http://gosparta.io/docs/application/workflow_hooks/">
+    <link rel="canonical" href="http://gosparta.io/docs/intro_example/intro/">
     
     <meta name="author" content="Matt Weagle">
     
 
-    <meta property="og:url" content="http://gosparta.io/docs/application/workflow_hooks/">
+    <meta property="og:url" content="http://gosparta.io/docs/intro_example/intro/">
     <meta property="og:title" content="Sparta">
     <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
     <meta name="apple-mobile-web-app-title" content="Sparta">
@@ -101,7 +101,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Workflow Hooks
+        Sample Service
       </div>
     </div>
 
@@ -384,11 +384,14 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a class="current" title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
 	
 	Sample Service
 </a>
 
+
+<ul id="scrollspy">
+</ul>
 
 
       
@@ -457,139 +460,17 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Workflow Hooks </h1>
+			<h1>Sample Service </h1>
 
 			
 
-<h1 id="introduction">Introduction</h1>
+<h2 id="examples">Examples</h2>
 
-<p>While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.</p>
-
-<p>To support this, Sparta allows you to customize the build pipeline via <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHooks</a> structure.  These hooks are called at specific points in the <em>provision</em> lifecycle and support augmenting the standard pipeline:</p>
-
-<div class="mermaid">
-graph TD
-  iam[Verify Static IAM Roles]
-  preBuild[WorkflowHook - PreBuild]
-  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  compile[Cross Compile for AWS Linux AMI]
-  postBuild[WorkflowHook - PostBuild]
-  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  proxyShims[Create NodeJS-Go HTTP Proxies]
-  package[ZIP archive]
-  userArchive[WorkflowHook - Archive]
-  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  upload[Upload Archive to S3]
-  packageAssets[Conditionally ZIP S3 Site Assets]
-  uploadAssets[Upload S3 Assets]
-  preMarshall[WorkflowHook - PreMarshall]
-  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  generate[Marshal to CloudFormation]
-  decorate[Call Lambda Decorators - Dynamic AWS Resources]
-
-  serviceDecorator[Service Decorator]
-  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  postMarshall[WorkflowHook - PostMarshall]
-  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
-
-  uploadTemplate[Upload Template to S3]
-  converge[Create/Update Stack]
-  wait[Wait for Complete/Failure Result]
-
-  iam-->preBuild
-  preBuild-->compile
-  compile-->postBuild
-  postBuild-->proxyShims
-  proxyShims-->package
-  proxyShims-->packageAssets
-  package-->userArchive
-  userArchive-->upload
-  packageAssets-->uploadAssets
-  uploadAssets-->generate
-  upload-->generate
-
-  generate-->preMarshall
-  preMarshall-->decorate
-  decorate-->serviceDecorator
-  serviceDecorator-->postMarshall
-  postMarshall-->uploadTemplate
-  uploadTemplate-->converge
-  converge-->wait
-</div>
-<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
-<hr />
-
-
-<p>The following sections describe the three types of WorkflowHooks available.  All hooks accept a <code>context map[string]interface{}</code> as their first parameter.  Sparta treats this as an opaque property bag that enables hooks to communicate state.</p>
-
-<h1 id="workflowhook-types">WorkflowHook Types</h1>
-
-<h2 id="builder-hooks">Builder Hooks</h2>
-
-<p>BuilderHooks share the <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> signature:</p>
-
-<pre><code>type WorkflowHook func(context map[string]interface{},
-    serviceName string,
-    S3Bucket string,
-    buildID string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error
-
-</code></pre>
-
-<p>These functions include:</p>
+<p>Walkthrough of a sample Sparta based service:</p>
 
 <ul>
-<li>PreBuild</li>
-<li>PostBuild</li>
-<li>PreMarshall</li>
-<li>PostMarshall</li>
-</ul>
-
-<h2 id="archive-hook">Archive Hook</h2>
-
-<p>The <code>ArchiveHook</code> allows a service to add custom resources to the ZIP archive and have the signature:</p>
-
-<pre><code>type ArchiveHook func(context map[string]interface{},
-    serviceName string,
-    zipWriter *zip.Writer,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error
-</code></pre>
-
-<p>This function is called <em>after</em> Sparta has written the standard resources to the <code>*zip.Writer</code> stream.</p>
-
-<h2 id="rollback-hook">Rollback Hook</h2>
-
-<p>The <code>RollbackHook</code> is called <em>iff</em> the <em>provision</em> operation fails and has the signature:</p>
-
-<pre><code>type RollbackHook func(context map[string]interface{},
-    serviceName string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger)
-</code></pre>
-
-<h1 id="using-workflowhooks">Using WorkflowHooks</h1>
-
-<p>To use the Workflow Hooks feature, initialize a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHooks</a> structure with 1 or more hook functions and call <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">sparta.MainEx</a>.</p>
-
-<h1 id="notes">Notes</h1>
-
-<ul>
-<li>Workflow hooks can be used to support <a href="https://github.com/mweagle/SpartaDocker">Dockerizing</a> your application
-
-<ul>
-<li>You may need to add <a href="http://gosparta.io/docs/application/custom_commands">custom CLI commands</a> to fully support Docker</li>
-</ul></li>
-<li>Enable <code>--level debug</code> for detailed workflow hook debugging information</li>
+<li><a href="http://gosparta.io/docs/intro_example/step1">Step 1 - Walkthrough</a></li>
+<li><a href="http://gosparta.io/docs/intro_example/step2">Step 2 - Details</a></li>
 </ul>
 
 
@@ -609,7 +490,7 @@ graph TD
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://gosparta.io/docs/intro_example/step1/" title="Sample Service">
+      <a href="http://gosparta.io/docs/s3site/" title="S3 Sites with CORS">
         <span class="direction">
           Previous
         </span>
@@ -619,7 +500,7 @@ graph TD
           </div>
           <div class="stretch">
             <div class="title">
-              Sample Service
+              S3 Sites with CORS
             </div>
           </div>
         </div>
@@ -629,14 +510,14 @@ graph TD
 
   <div class="next">
   
-      <a href="http://gosparta.io/docs/overview/" title="Overview">
+      <a href="http://gosparta.io/docs/intro_example/step1/" title="Sample Service">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Overview
+              Sample Service
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">
