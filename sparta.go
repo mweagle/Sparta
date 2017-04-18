@@ -38,7 +38,7 @@ const (
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
-	PythonVersion = "python2.7"
+	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 )
