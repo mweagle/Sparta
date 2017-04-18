@@ -166,7 +166,7 @@ var CommonIAMStatements = struct {
 }
 
 // RE for sanitizing golang/JS layer
-var reSanitize = regexp.MustCompile("[:\\.\\-\\s]+")
+var reSanitize = regexp.MustCompile("[[:^alpha:]]+")
 
 // RE to ensure CloudFormation compatible resource names
 // Issue: https://github.com/mweagle/Sparta/issues/8
