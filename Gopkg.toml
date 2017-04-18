@@ -1,0 +1,28 @@
+
+[[dependencies]]
+  name = "github.com/Sirupsen/logrus"
+  revision = "10f801ebc38b33738c9d17d50860f484a0988ff5"
+
+[[dependencies]]
+  name = "github.com/asaskevich/govalidator"
+  revision = "fdf19785fd3558d619ef81212f5edf1d6c2a5911"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/aws/aws-sdk-go"
+
+[[dependencies]]
+  name = "github.com/crewjam/go-cloudformation"
+  revision = "dc036ed324b195833581cf6b102c8a8cf5d2fbb8"
+
+[[dependencies]]
+  branch = "master"
+  name = "github.com/mweagle/cloudformationresources"
+
+[[dependencies]]
+  name = "github.com/spf13/cobra"
+  revision = "5deb57bbca49eb370538fc295ba4b2988f9f5e09"
+
+[[dependencies]]
+  branch = "master"
+  name = "golang.org/x/tools"

@@ -1,0 +1,66 @@
+memo = "a28928207bcf7d803193eaf2dec44e578f488b8b5b4d93bc14ae97f6aef6c7e3"
+
+[[projects]]
+  name = "github.com/Sirupsen/logrus"
+  packages = ["."]
+  revision = "10f801ebc38b33738c9d17d50860f484a0988ff5"
+
+[[projects]]
+  name = "github.com/asaskevich/govalidator"
+  packages = ["."]
+  revision = "fdf19785fd3558d619ef81212f5edf1d6c2a5911"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/aws/aws-sdk-go"
+  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
+  revision = "baba9e786eae5ba978f2007f8e718557b29157c8"
+
+[[projects]]
+  name = "github.com/crewjam/go-cloudformation"
+  packages = ["."]
+  revision = "dc036ed324b195833581cf6b102c8a8cf5d2fbb8"
+
+[[projects]]
+  name = "github.com/go-ini/ini"
+  packages = ["."]
+  revision = "6e4869b434bd001f6983749881c7ead3545887d8"
+  version = "v1.21.1"
+
+[[projects]]
+  name = "github.com/inconshreveable/mousetrap"
+  packages = ["."]
+  revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+
+[[projects]]
+  name = "github.com/jmespath/go-jmespath"
+  packages = ["."]
+  revision = "bd40a432e4c76585ef6b72d3fd96fb9b6dc7b68d"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/mweagle/cloudformationresources"
+  packages = ["."]
+  revision = "e567068bb6d79d69e0a98a73f477f5638c9db27e"
+
+[[projects]]
+  name = "github.com/spf13/cobra"
+  packages = ["."]
+  revision = "5deb57bbca49eb370538fc295ba4b2988f9f5e09"
+
+[[projects]]
+  name = "github.com/spf13/pflag"
+  packages = ["."]
+  revision = "e453343e6260b4a3a89f1f0e10a2fbb07f8d9750"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "f3918c30c5c2cb527c0b071a27c35120a6c0719a"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/tools"
+  packages = ["go/ast/astutil"]
+  revision = "7ee420f17d7525d013c72c05ed371361a29895d3"
