@@ -193,7 +193,7 @@ var _escData = map[string]*_escFile{
 	"/resources/awsbinary/README.md": {
 		local:   "resources/awsbinary/README.md",
 		size:    104,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/yTLQQrCMBAF0L2n+BfQOxQ3CloXE3Ap0+QXA0mndMZFby/oAV56V8dcG1EdtrQdH2dB
 GPJGDUJBz8dsfdWoUyPOj1HSMCZ5yeV6lz/+odk2DE/BTftUFIVrs71ziRMO3wAAAP//AOMpDWgAAAA=
@@ -203,7 +203,7 @@ GPJGDUJBz8dsfdWoUyPOj1HSMCZ5yeV6lz/+odk2DE/BTftUFIVrs71ziRMO3wAAAP//AOMpDWgAAAA=
 	"/resources/awsbinary/insertTags.go": {
 		local:   "resources/awsbinary/insertTags.go",
 		size:    984,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/4ySQWvbQBCFz9pf8SoIkamQ2hJ6MPgQCumxoSn0kIQylkbyEml32R03CSH/vczGcdzk
 kouRtfO+N/68bYufTL11I8j1uI1W9HmwEydQZKwp2Q5C6SbBMffcY/DRtC1mcvf47hGiHyPNqcGZjUlw
@@ -220,7 +220,7 @@ rf6OVvhQa43L6/W9cPWqdVHj09eTk3dYfzT/AgAA//9V3wRy2AMAAA==
 	"/resources/bootstrap/css/bootstrap.min.css": {
 		local:   "resources/bootstrap/css/bootstrap.min.css",
 		size:    122540,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/+y9XbPjuLEg+L6/gq6Oiq5yiSqS+jqSos/6rmdiriPGfhk/TES7dgMiIYldFEmT1Plo
 jea3bxBfBBIJktI5bXtjfSuuWweZSCQSiUwgCSS+/v53/4f3e+//KoqmbipSek+z6Wy68D4dm6bcfP16
@@ -559,7 +559,7 @@ biKPWoxhHR+aEQAbqP4N7QxOGhT//n7dM7sEIaFvvbp0/X8DAAD//1Tb67us3gEA
 	"/resources/bootstrap/js/bootstrap.min.js": {
 		local:   "resources/bootstrap/js/bootstrap.min.js",
 		size:    36816,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/+R9XXfjuJXge36FxPSwgBZEy1XTMxOqaJ3qqsrZ2u1093ZXT86uoiQgCX64aFJN0nY5
 lvLb9+CTAAhKdmUmL/tiiyQAXlzc73sBXnw9/83s69m3TdN3fYv3s7tXwavgmxko+n4fXlzkpI/lsyBp
@@ -730,7 +730,7 @@ QmKKW98yLLGDSEUxPMeb1QBa3T42e71P3+z1R8rSo8rMCESs/18AAAD//16/SW7QjwAA
 	"/resources/bootstrap/lumen/bootstrap.min.css": {
 		local:   "resources/bootstrap/lumen/bootstrap.min.css",
 		size:    130806,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/+y9bY/jOJIg/P1+hTYbha7qstSSnHZm2ui82Zs73A5wsxhg5sMBPfU8oCXaVpcsaSQ5
 X9rn++0H8UUkg0FJdmY1eoCp3J3OJIPBYEQwggyRwT9kh6qsW+9Y5x9v9m1bNasff9yWRdsEu7Lc5ZRU
@@ -1091,7 +1091,7 @@ R53MN2YW/78AAAD//9UFgn72/gEA
 	"/resources/describe/template.html": {
 		local:   "resources/describe/template.html",
 		size:    7663,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6xZbW/jNhL+vPkVU+11Y6O2dFdcD4VjG0idpM02b5e47YfFoqDFsc0uTQoUZa/r+r8f
 SIkSJctZF7hdwBHJh8+8cIYcUcOvqIz1NkFY6hUfnw3zPwDDJRJqHgCGmmmO490OwhdUaxbjA1kh7PfD
@@ -1139,7 +1139,7 @@ Gcgu6o8ZUr8cbCzQ8ts6zH7za+ZIrcTykyVafnvq8v4do46kzf/RwHH9wIcq5161CMC8OTckmBdLJ8O+
 	"/resources/highlights/highlight.pack.js": {
 		local:   "resources/highlights/highlight.pack.js",
 		size:    9438,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6Ra/3ciN5L/V9raBEuD3ODbe3ubZmTe2OtcfGt7cjizyVuaZEVTgMaNulctDA7q+9vv
 lfoLzYz3frn3xiCVpFJVqepTJTFny61OrMo0BXYgW72ApdKwIGfCvuaQLQPY55mxxRho3WIR3Sm9yHbh
@@ -1221,7 +1221,7 @@ gTMjp76Sekv7H4HYcdnxfbT+7bj5PyV8yBOu0XsqZdoVJRv9bwAAAP//n0VgpN4kAAA=
 	"/resources/highlights/styles/vs.css": {
 		local:   "resources/highlights/styles/vs.css",
 		size:    1543,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/2xTT2/bPgy9+1MI6K2IU/f3Q4cuHYYB62nXFbsWlETbimnJlagkXrHvPij+m6zJRaSf
 3iOpx7vbLPtlQgQSPzlq43IyDYrAPaGQEFALZ4XzpjIWSHy/EcqR88ZWQvbiBwRnxbOB1lktvuxT+E0P
@@ -1241,7 +1241,7 @@ YP+tPQcGAAA=
 	"/resources/index.js": {
 		local:   "resources/index.js",
 		size:    10236,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/9Ra63PbNpD/rr9i+8El2cik09c0ulE7iqOm7vg1ktz0Js14YHIlISYBBgAt61L/7zd4
 8E3lkun1Zk5fRAKLxe7itw8AfCACCkVTmILADwUV6Hv63QtGumstmx1r6Zq3SuXNDv3uunKits0u/e66
@@ -1300,36 +1300,36 @@ XgBdhLULat+L3JdksySh2pNJWp5kuoMac17Z+VKL5DmyBBO4w5TvRv8dAAD//0Hs9x/8JwAA
 
 	"/resources/index.template.py": {
 		local:   "resources/index.template.py",
-		size:    4346,
-		modtime: 1492479581,
+		size:    4196,
+		modtime: 1492550840,
 		compressed: `
-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
+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
 `,
 	},
 
 	"/resources/jquery/jquery-2.1.4.min.js": {
 		local:   "resources/jquery/jquery-2.1.4.min.js",
 		size:    84345,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/8z9e5ejNrY4DP//+xRlpg9B7W2X3UnmPYNbxcp1kpnOZdI9k8zB9CwBAlOFwYWpruoY
 5rO/S1sSCIw7mfN7nrWe1avLIHTX1r5p763r57Or27898Or91bsXy/Xyk6vmyonI1YvV6lO4erFaf6o/
@@ -1833,7 +1833,7 @@ AjZluSfm9j8lZfWZWd6D43HrHusSap2DLv7t/wYAAP//EhM4zHlJAQA=
 	"/resources/mermaid/mermaid.css": {
 		local:   "resources/mermaid/mermaid.css",
 		size:    3969,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6wX227bNvTdX3EWP7Q1fJHkBHOVp829vATYsOUHaPJIIkyTGkkndov++0DqRslKnXZL
 AOscnvuV0moGn4R6pgXRFp6I5mQn0MBsNVnN4G/854iSInzgJNfkcMHwmUhrYUR4eUB9IJzBUpAdCvg6
@@ -1861,7 +1861,7 @@ AAD//6oXmbeBDwAA
 	"/resources/mermaid/mermaid.dark.css": {
 		local:   "resources/mermaid/mermaid.dark.css",
 		size:    4200,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6wX227buPLdXzEneWhjxBdJdZOqT02d9CXAWezmB2hyLBGhSS1JJ3aL/vuC1I2SZcft
 LgxYM+TcZzgczsbwINQrzYm28EI0JyuBBsaz0WwMf+HfW5QUYclJpsnmgOAbkdbCAPN0g3pDOIOpICsU
@@ -1889,7 +1889,7 @@ ODs9+JbkE00Y35rGuqo2J/iC0pp2APg+4ZLhLoVo7keHfwIAAP//9IigKWgQAAA=
 	"/resources/mermaid/mermaid.forest.css": {
 		local:   "resources/mermaid/mermaid.forest.css",
 		size:    5208,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6wYXW/bNvDdv+IWP3Qz4g/JSeeqT1vb9SXAhjV/gCbPMhGa1Eg6sVvkvw+URImUlDip
 AwPWkbzvO96RnE/gL6Ee6JZoC/dEc7IWaGAyH80n8A3/26OkCJ85yTXZ9RC+EmktDBDPdqh3hDOYCbJG
@@ -1919,7 +1919,7 @@ Gl3qHjnFe5TWtHXu+5RLhocMkkV5U/k/AAD//2fbcCtYFAAA
 	"/resources/mermaid/mermaid.js": {
 		local:   "resources/mermaid/mermaid.js",
 		size:    2094104,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/+T9/XbbONIgjP/9y1VUtDMOGdEyKclfctQ+mSQ97Z3E6V/snpl+FLWXEiGJMUWqScqW
 0vFznuecvaXnBt4L2Lml96DwQQCEZKW7Z3bPvn1OOyI+CoVCVaFQKABPJ8t0XMZZ6hD3l3jiNLLRJzIu
@@ -9189,7 +9189,7 @@ tfVk12fX7V+v26eD3eFZqznYHbbuXbcO/3cAAAD//7smr6oY9B8A
 	"/resources/mermaid/mermaid.min.js": {
 		local:   "resources/mermaid/mermaid.min.js",
 		size:    627813,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/7z9e3fbNtYoDv//+xQ2T6sDkJsUKdtJSgXScpN02nmcNM1lelFVL0qCJNQUqIKgLdXS
 89nfBYAXUJaTzMw6b9aKRYK4bgD7hr03TucFn0qWcSTxPZsjJ5v8SafSIURu1zSbn9DNOhMy73Scgs/o
@@ -12565,7 +12565,7 @@ uIGR7Tpj07Bdx9yYw/8bAAD//9n3/qRllAkA
 	"/resources/provision/apigateway/inputmapping_default.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_default.vtl",
 		size:    2336,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6SV0WrjOhBA3/0VgxNu4tI4pVy4ECiXwr60y3YD6Q9M7YmlrS2p0iitd+m/L5KdNDS0
 G2/eRDLnzIxmEo3OkqXVG1kSoAL0rBtkWYBB54CF1b4SwNSYGpmABTKwReXW2jYOsK5BKuPZJVKxBhYE
@@ -12584,7 +12584,7 @@ nWIvRf+jMMOsW2pP5N3QWQbineC6IsXDLRF7r7LqL0RWZWm0vIb/y+Q1+R0AAP//D5iMNCAJAAA=
 	"/resources/provision/apigateway/inputmapping_formencoded.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_formencoded.vtl",
 		size:    4419,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6RW32/bwA1+119ByEZjdYmcpEXXBfCGAC3adP1hLAb2UPSBlijpltOdekfZ1Yr878Od
 ZNm1ncRegiCITuTHj+THowYDSLRakGH4OPvyGabfbmeQIiNoAx9nsyl8eD+DnzWZBiwboXJgDZ9uv30N
@@ -12616,7 +12616,7 @@ HsW7bUMZ9X8AGRWFHuXe3ZfBfRD8LwAA///kKh7kQxEAAA==
 	"/resources/provision/apigateway/inputmapping_json.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_json.vtl",
 		size:    2374,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/6SVYWvbPBCAv/tXHE54G5fGKeWFQaCMwj6sHesCyQ/o1b5Y6mxJlc5pvdH/PiTbaWho
 Fy/f7Pie5+50F3t0Gi2s3sicABVgzbpClhkYdA5YWF0XApgqUyITsEAGtqjcWtvKAZYlSGVqdpFUrIEF
@@ -12636,7 +12636,7 @@ l9FL9CcAAP//kKBtdEYJAAA=
 	"/resources/provision/golang-constants.json": {
 		local:   "resources/provision/golang-constants.json",
 		size:    1421,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/3RUQXPaPBC98yt2fPku+WZisNM0N5ohCdOQMGA6vWUUawFNZcmV1xC3k//ekYSRKOn1
 7a72vbfP/j0ASB6KYv6yLMbFavlSTL4XyQ1YHCBJLy+TG0hutSKhWkwueji18HIvqNwKtYG50aRLLZvk
@@ -12655,7 +12655,7 @@ npD22vz4Z44HAO+D98GfAAAA//8sAYVojQUAAA==
 	"/resources/provision/package.json": {
 		local:   "resources/provision/package.json",
 		size:    292,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/0yPP0/DMBDF93yKpxs6QdSu2RkYmICti2Uf5FB6tnxHVQnluyPHjdTR78/P9/4GgDRc
 mCaQlVA9PJear2KSVfSbnlrgyrW9W+Y4HsdTVxNbrFL87ny6LOLCBs+Yg6aF8YjC+4ZHKGWRGFrNOugS
@@ -12667,7 +12667,7 @@ ZCOIJr6NP3e1w40mtCMBcjZvMY5zxpleas11gmY0A1Y4ypdwOhMOB/BNHCcagHWjhV+fc231Tl8ksto2
 	"/resources/provision/sparta_utils.js": {
 		local:   "resources/provision/sparta_utils.js",
 		size:    1553,
-		modtime: 1492479581,
+		modtime: 1492545605,
 		compressed: `
 H4sIAAAAAAAA/4RUTW/bMAy951fwZhswnO5qLAO2tMU6FM2wrLsrCp26lSVDpNsGbf77YMsfkpdthyQS
 RT6S75F5FhZK2rIt9QFWUDRacmk0xM9CNZjA2wLAIjdWAx9rNAV0D7BarSCiLixanBaLyuwbhRm+1sYy
@@ -12685,71 +12685,71 @@ FjsRBgAA
 
 	"/": {
 		isDir: true,
-		local: "/",
+		local: "",
 	},
 
 	"/resources": {
 		isDir: true,
-		local: "/resources",
+		local: "resources",
 	},
 
 	"/resources/awsbinary": {
 		isDir: true,
-		local: "/resources/awsbinary",
+		local: "resources/awsbinary",
 	},
 
 	"/resources/bootstrap": {
 		isDir: true,
-		local: "/resources/bootstrap",
+		local: "resources/bootstrap",
 	},
 
 	"/resources/bootstrap/css": {
 		isDir: true,
-		local: "/resources/bootstrap/css",
+		local: "resources/bootstrap/css",
 	},
 
 	"/resources/bootstrap/js": {
 		isDir: true,
-		local: "/resources/bootstrap/js",
+		local: "resources/bootstrap/js",
 	},
 
 	"/resources/bootstrap/lumen": {
 		isDir: true,
-		local: "/resources/bootstrap/lumen",
+		local: "resources/bootstrap/lumen",
 	},
 
 	"/resources/describe": {
 		isDir: true,
-		local: "/resources/describe",
+		local: "resources/describe",
 	},
 
 	"/resources/highlights": {
 		isDir: true,
-		local: "/resources/highlights",
+		local: "resources/highlights",
 	},
 
 	"/resources/highlights/styles": {
 		isDir: true,
-		local: "/resources/highlights/styles",
+		local: "resources/highlights/styles",
 	},
 
 	"/resources/jquery": {
 		isDir: true,
-		local: "/resources/jquery",
+		local: "resources/jquery",
 	},
 
 	"/resources/mermaid": {
 		isDir: true,
-		local: "/resources/mermaid",
+		local: "resources/mermaid",
 	},
 
 	"/resources/provision": {
 		isDir: true,
-		local: "/resources/provision",
+		local: "resources/provision",
 	},
 
 	"/resources/provision/apigateway": {
 		isDir: true,
-		local: "/resources/provision/apigateway",
+		local: "resources/provision/apigateway",
 	},
 }
