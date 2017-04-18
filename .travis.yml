@@ -1,6 +1,6 @@
 language: go
 go:
-- 1.7.4
+- 1.8.1
 - tip
 before_install:
 - nvm install 6.9.4
