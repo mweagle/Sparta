@@ -15,7 +15,7 @@ import "C"
 import "github.com/aws/aws-sdk-go/aws/credentials"
 `
 
-const cgoExports = `
+const cgoExportsTemplate = `
 
 //export Lambda
 func Lambda(functionName *C.char,
@@ -35,7 +35,7 @@ func Lambda(functionName *C.char,
 		C.GoString(secretKey),
 		C.GoString(token))
 
-	spartaResp, spartaRespHeaders, responseErr := spartaCGO.LambdaHandler(inputFunction, inputRequest, awsCreds)
+	spartaResp, spartaRespHeaders, responseErr := %s.LambdaHandler(inputFunction, inputRequest, awsCreds)
 	lambdaExitCode := 0
 	var pyResponseBufer []byte
 	if nil != responseErr {
@@ -106,22 +106,25 @@ func visitors() []ast.Visitor {
 	}
 }
 
-type transformer func(inputText string) (string, error)
+type transformer func(inputSource string, cgoPackageAlias string) (string, error)
 
-func cgoImportsTransformer(inputText string) (string, error) {
-	matchIndex := packageRegexp.FindStringIndex(inputText)
+func cgoImportsTransformer(inputSource string, cgoPackageAlias string) (string, error) {
+	matchIndex := packageRegexp.FindStringIndex(inputSource)
 	if nil == matchIndex {
 		return "", fmt.Errorf("Failed to find package statement")
 	}
 	// Great, append the cgo header
 	return fmt.Sprintf("%s%s%s",
-		inputText[0:matchIndex[1]],
+		inputSource[0:matchIndex[1]],
 		cgoImports,
-		inputText[matchIndex[1]:]), nil
+		inputSource[matchIndex[1]:]), nil
 }
 
-func cgoExportsTransformer(inputText string) (string, error) {
-	return fmt.Sprintf("%s\n%s", inputText, cgoExports), nil
+func cgoExportsTransformer(inputSource string, cgoPackageAlias string) (string, error) {
+	return fmt.Sprintf("%s\n%s",
+			inputSource,
+			fmt.Sprintf(cgoExportsTemplate, cgoPackageAlias)),
+		nil
 }
 
 func transformers() []transformer {

@@ -1,4 +1,4 @@
-// +build !lambdabinary
+// +build !lambdabinary,!noop
 
 package cgo
 
@@ -52,6 +52,16 @@ func cgoMain(callerFile string,
 	// Add the imports that we need in the walkers text
 	astutil.AddImport(fset, file, "unsafe")
 
+	// Did the user supply a cgo alias?
+	cgoPackageAlias := "cgo"
+	for _, eachImport := range astutil.Imports(fset, file) {
+		for _, eachImportEntry := range eachImport {
+			if "github.com/mweagle/Sparta/cgo" == eachImportEntry.Path.Value && nil != eachImportEntry.Name {
+				cgoPackageAlias = eachImportEntry.Name.String()
+				break
+			}
+		}
+	}
 	// Great, now change main to init()
 	for _, eachVisitor := range visitors() {
 		ast.Walk(eachVisitor, file)
@@ -66,7 +76,7 @@ func cgoMain(callerFile string,
 	}
 	updatedSource := byteWriter.String()
 	for _, eachTransformer := range transformers() {
-		transformedSource, transformedSourceErr := eachTransformer(updatedSource)
+		transformedSource, transformedSourceErr := eachTransformer(updatedSource, cgoPackageAlias)
 		if nil != transformedSourceErr {
 			return transformedSourceErr
 		}

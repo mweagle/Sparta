@@ -508,6 +508,7 @@ func buildGoBinary(executableOutput string,
 	useCGO bool,
 	buildTags string,
 	linkFlags string,
+	noop bool,
 	logger *logrus.Logger) error {
 	// Go generate
 	cmd := exec.Command("go", "generate")
@@ -523,13 +524,19 @@ func buildGoBinary(executableOutput string,
 	}
 	// TODO: Smaller binaries via linker flags
 	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
+	noopTag := ""
+	if noop {
+		noopTag = "noop "
+	}
 	userBuildFlags := []string{"-tags",
-		fmt.Sprintf("lambdabinary %s", buildTags)}
+		fmt.Sprintf("lambdabinary %s%s", noopTag, buildTags)}
 	// Append all the linker flags
 	if len(linkFlags) != 0 {
 		userBuildFlags = append(userBuildFlags, "-ldflags", linkFlags)
 	}
-	// If this is CGO, do the Docker build
+	// If this is CGO, do the Docker build if we're doing an actual
+	// provision. Otherwise use the "normal" build to keep things
+	// a bit faster.
 	var cmdError error
 	if useCGO {
 		currentDir, currentDirErr := os.Getwd()
@@ -580,7 +587,7 @@ func buildGoBinary(executableOutput string,
 			"-o",
 			executableOutput,
 			"-tags",
-			"lambdabinary linux",
+			"lambdabinary linux ",
 			"-buildmode=c-shared",
 		)
 		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
@@ -591,7 +598,30 @@ func buildGoBinary(executableOutput string,
 			"Args": dockerBuildArgs,
 		}).Info("Building `cgo` library in Docker")
 		cmdError = runOSCommand(cmd, logger)
+
+		// If this succeeded, let's find the .h file and move it into the scratch
+		// Try to keep things tidy...
+		if nil == cmdError {
+			soExtension := filepath.Ext(executableOutput)
+			headerFilepath := fmt.Sprintf("%s.h", strings.TrimSuffix(executableOutput, soExtension))
+			_, headerFileErr := os.Stat(headerFilepath)
+			if nil == headerFileErr {
+				targetPath, targetPathErr := temporaryFile(filepath.Base(headerFilepath))
+				if nil != targetPathErr {
+					headerFileErr = targetPathErr
+				} else {
+					headerFileErr = os.Rename(headerFilepath, targetPath.Name())
+				}
+			}
+			if nil != headerFileErr {
+				logger.WithFields(logrus.Fields{
+					"Path": headerFilepath,
+				}).Warn("Failed to move .h file to scratch directory")
+
+			}
+		}
 	} else {
+		// Build the NodeJS version
 		buildArgs := []string{
 			"build",
 			"-o",
@@ -632,6 +662,7 @@ func createPackageStep() workflowStep {
 			ctx.useCGO,
 			ctx.buildTags,
 			ctx.linkFlags,
+			ctx.noop,
 			ctx.logger)
 		if nil != buildErr {
 			return nil, buildErr
