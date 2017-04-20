@@ -110,3 +110,31 @@ func main() {
 }
 ```
 
+You should see log output that includes a statement similar to:
+
+```shell
+INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e GOPATH=/usr/src/gopath -e GOOS=linux -e GOARCH=amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode=c-shared -tags lambdabinary ] Name=SpartaHelloPythonCGOUSEast.lambda.so
+```
+
+## Questions
+
+### How does Sparta determine the Docker image for the CGO build?
+
+Sparta parses the output from your host machine to determine the container tag.
+
+```shell
+$ go version
+go version go1.8.1 darwin/amd64
+```
+
+### How can I pass environment variables to the Docker build
+
+All host environment variables with a `SPARTA_` prefix will be passed via the `-e` flag to the Docker run command.
+
+### How can I see what Sparta built?
+
+Add a `--noop` command line argument to your `provision` command and examine the artifacts in the _/.sparta_ workspace directory. You can also enable debug logging via `--level debug` for more verbose runtime logging.
+
+### How much of a performance increase should I expect?
+
+Significant, particuarly at cold start times. In very limited testing I've seen times drop from 1500-2000ms to ~500ms.  See also https://twitter.com/mweagle/status/854178789814882304 which was a comparison through an API-GW exposed function exercised by a load testing service.
