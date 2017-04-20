@@ -36,8 +36,8 @@ googleAnalytics = "UA-70794971-1"
 		accent  = "blue"
 
 [params.font]
-	text = "Source Sans Pro"
-	code = "Source Code Pro"
+	text = "Open Sans"
+	code = "Inconsolata"
 
 [social]
 	twitter = "mweagle"
