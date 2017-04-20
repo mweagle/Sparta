@@ -343,6 +343,7 @@ func createUserCustomResourceEntry(customResource *customResourceInfo, logger *l
 func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
 		"FunctionName": lambdaInfo.lambdaFunctionName(),
+		"ScriptName":   lambdaInfo.scriptExportHandlerName(),
 	}).Info("Registering Sparta JS function")
 
 	// We do know the CF resource name here - could write this into
