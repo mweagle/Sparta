@@ -16,7 +16,7 @@ googleAnalytics = "UA-70794971-1"
 	provider = "GitHub"
 	repo_url = "https://github.com/mweagle/Sparta"
 
-	version = "0.10.2"
+	version = "0.11.0"
 	logo = "images/SpartaHelmet.png"
 	favicon = ""
 
