@@ -18,12 +18,13 @@ With Sparta [v0.11.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v
 ## Requirements
 
 - Docker - Tested on OSX:
+
   ```
   $ docker -v
   Docker version 17.03.1-ce, build c6d412)
   ```
 - Ability to build [CGO](https://blog.golang.org/c-go-cgo) libraries
-- You *MUST* call `cgo.Main()` from your application's `main` package. The CGO step temporarily rewrites your application code into a CGO-compliant source file, and proper Sparta initialization depends on being able to transform your application's `main()` into a library-equivalent `init()` function.
+- You *MUST* call `cgo.Main(...)` from your application's `main` package. The CGO functionality depends on being able to rewrite your application code into a CGO-compabible [source](https://golang.org/cmd/cgo/).  This enables Sparta to transform your application's `main()` into a library-equivalent `init()` function to initialize the internal function registry.
 
 ## Usage
 
@@ -139,3 +140,8 @@ Add a `--noop` command line argument to your `provision` command and examine the
 ### How much of a performance increase should I expect?
 
 Significant, particuarly at cold start times. In very limited testing I've seen times drop from 1500-2000ms to ~500ms.  See also https://twitter.com/mweagle/status/854178789814882304 which was a comparison through an API-GW exposed function exercised by a load testing service.
+
+### What transformations are applied to my source?
+
+See [cgo_main_run.go](https://github.com/mweagle/Sparta/blob/master/cgo/cgo_main_run.go#L44) for the set of changes applied to the input. If there is an error compiling the source, Sparta leaves the input file (with a `sparta-cgo` suffix) in the working directory for debugging.
+
