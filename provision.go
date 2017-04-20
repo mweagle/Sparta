@@ -75,7 +75,7 @@ func (s3URL *s3UploadURL) url() string {
 func (s3URL *s3UploadURL) keyName() string {
 	// Find the hostname in the URL, then strip it out
 	urlParts, _ := url.Parse(s3URL.location)
-	return strings.SplitN(strings.TrimPrefix(urlParts.Path, "/"), "/", 2)[1]
+	return strings.TrimPrefix(urlParts.Path, "/")
 }
 
 func newS3UploadURL(s3URL string) *s3UploadURL {
