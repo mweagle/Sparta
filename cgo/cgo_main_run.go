@@ -17,6 +17,9 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
+// cgoMain is the internal handler for the cgo.Main*() functions. It's responsible
+// for rewriting the incoming source file s.t. it can be compiled
+// as a CGO library
 func cgoMain(callerFile string,
 	serviceName string,
 	serviceDescription string,

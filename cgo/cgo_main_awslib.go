@@ -105,44 +105,6 @@ func cgoMain(callerFile string,
 	return nil
 }
 
-// LambdaHandler is the public handler that's called by the transformed
-// CGO compliant userinput. Users should not need to call this function
-// directly
-func LambdaHandler(functionName string,
-	eventJSON string,
-	awsCredentials *credentials.Credentials) ([]byte, http.Header, error) {
-	startTime := time.Now()
-	readableBody := ioutil.NopCloser(strings.NewReader(eventJSON))
-
-	// Update the credentials
-	muCredentials.Lock()
-	value, valueErr := awsCredentials.Get()
-	if nil != valueErr {
-		muCredentials.Unlock()
-		return nil, nil, valueErr
-	}
-	pythonCredentialsValue.AccessKeyID = value.AccessKeyID
-	pythonCredentialsValue.SecretAccessKey = value.SecretAccessKey
-	pythonCredentialsValue.SessionToken = value.SessionToken
-	pythonCredentialsValue.ProviderName = "PythonCGO"
-	muCredentials.Unlock()
-
-	// Update the credentials in the HTTP handler
-	// in case we're ultimately forwarding to a custom
-	// resource provider
-	cgoLambdaHTTPAdapter.lambdaHTTPHandlerInstance.Credentials(pythonCredentialsValue)
-
-	// We have to get these credentials into the HTTP server s.t. we can
-	// update the session used for any CustomResource calls...
-
-	// Make the request...
-	response, header, err := makeRequest(functionName, readableBody, int64(len(eventJSON)))
-
-	// TODO: Consider go routine
-	postMetrics(awsCredentials, functionName, len(response), time.Since(startTime))
-	return response, header, err
-}
-
 func makeRequest(functionName string,
 	eventBody io.ReadCloser,
 	eventBodySize int64) ([]byte, http.Header, error) {
@@ -235,8 +197,43 @@ func postMetrics(awsCredentials *credentials.Credentials,
 	awsCloudWatchService.PutMetricData(params)
 }
 
+// LambdaHandler is the public handler that's called by the transformed
+// CGO compliant userinput. Users should not need to call this function
+// directly
+func LambdaHandler(functionName string,
+	eventJSON string,
+	awsCredentials *credentials.Credentials) ([]byte, http.Header, error) {
+	startTime := time.Now()
+	readableBody := ioutil.NopCloser(strings.NewReader(eventJSON))
+
+	// Update the credentials
+	muCredentials.Lock()
+	value, valueErr := awsCredentials.Get()
+	if nil != valueErr {
+		muCredentials.Unlock()
+		return nil, nil, valueErr
+	}
+	pythonCredentialsValue.AccessKeyID = value.AccessKeyID
+	pythonCredentialsValue.SecretAccessKey = value.SecretAccessKey
+	pythonCredentialsValue.SessionToken = value.SessionToken
+	pythonCredentialsValue.ProviderName = "PythonCGO"
+	muCredentials.Unlock()
+
+	// Update the credentials in the HTTP handler
+	// in case we're ultimately forwarding to a custom
+	// resource provider
+	cgoLambdaHTTPAdapter.lambdaHTTPHandlerInstance.Credentials(pythonCredentialsValue)
+
+	// Make the request...
+	response, header, err := makeRequest(functionName, readableBody, int64(len(eventJSON)))
+
+	// TODO: Consider go routine
+	postMetrics(awsCredentials, functionName, len(response), time.Since(startTime))
+	return response, header, err
+}
+
 // NewSession returns a CGO-aware AWS session that uses the Python
-// credentials provided by the CGO interface
+// credentials provided by the CGO interface.
 func NewSession() *session.Session {
 	muCredentials.Lock()
 	defer muCredentials.Unlock()
