@@ -34,7 +34,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.10.0"
+	SpartaVersion = "0.11.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
@@ -166,7 +166,7 @@ var CommonIAMStatements = struct {
 }
 
 // RE for sanitizing golang/JS layer
-var reSanitize = regexp.MustCompile("[[:^alpha:]]+")
+var reSanitize = regexp.MustCompile("\\W+")
 
 // RE to ensure CloudFormation compatible resource names
 // Issue: https://github.com/mweagle/Sparta/issues/8
