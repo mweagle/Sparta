@@ -33,7 +33,7 @@ To enable CGO packaging , choose either `Sparta/cgo.Main` or `Sparta/cgo.MainEx`
 
 ### Before
 
-```golang
+{{< highlight go >}}
 // File main.go
 package main
 import (
@@ -69,11 +69,11 @@ func main() {
   // ================================================== //
 
 }
-```
+{{< /highlight >}}
 
 ### After
 
-```golang
+{{< highlight go >}}
 // File main.go
 package main
 import (
@@ -108,13 +108,14 @@ func main() {
   // ================================================== //
 
 }
-```
+{{< /highlight >}}
+
 
 You should see log output that includes a statement similar to:
 
-```shell
+{{< highlight bash >}}
 INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e GOPATH=/usr/src/gopath -e GOOS=linux -e GOARCH=amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode=c-shared -tags lambdabinary ] Name=SpartaHelloPythonCGOUSEast.lambda.so
-```
+{{< /highlight >}}
 
 ## Questions
 
