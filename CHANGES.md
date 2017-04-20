@@ -4,6 +4,9 @@
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - :tada: Python CGO support added. See the https://github.com/mweagle/SpartaPython project for example usage!
+    - In preliminary testing, the Python CGO package provides significant cold start and hot-execution performance benefits.
+  - Migrated dependency management to [dep](https://github.com/golang/dep)
 - :bug: **FIXED**
   - Fixed latent bug where DynamoDB EventSource mappings ResourceARNs weren't properly serialized.
   - Fixed latent bug where code pushed to S3 version-enabled buckets didn't use the latest `VersionID` in the AWS [Lambda Code](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html) value.
