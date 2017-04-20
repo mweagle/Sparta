@@ -538,6 +538,12 @@ func insertPythonProxyResources(serviceName string,
 	if nil != pyTemplateErr {
 		return pyTemplateErr
 	}
+
+	// Log the Python handler...
+	logger.WithFields(logrus.Fields{
+		"index.py": pyDoc.String(),
+	}).Debug("Dynamically generated Python ctypes adapter")
+
 	_, copyErr := io.WriteString(pythonWriter, pyDoc.String())
 	return copyErr
 }
