@@ -544,6 +544,7 @@ func insertPythonProxyResources(serviceName string,
 	return copyErr
 }
 
+// TODO - replace this with https://golang.org/pkg/runtime/#Version
 func systemGoVersion(logger *logrus.Logger) (string, error) {
 	// Go generate
 	cmd := exec.Command("go", "version")
