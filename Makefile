@@ -37,8 +37,8 @@ docs:
 	godoc -v -http=:8090 -index=true
 
 travis-depends:
-	go get -u github.com/tools/godep
-	godep restore
+	go get -u github.com/golang/dep/...
+	dep ensure
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo

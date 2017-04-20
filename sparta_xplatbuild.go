@@ -1,4 +1,4 @@
-// +build  !lambdabinary
+// +build !lambdabinary
 
 package sparta
 

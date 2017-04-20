@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"net/http"
 	"os"
 	"testing"
+
+	"github.com/Sirupsen/logrus"
 )
 
 type StructHandler1 struct {
@@ -82,6 +83,7 @@ func TestStruct(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",
@@ -104,6 +106,7 @@ func TestDoubleRefStruct(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",
@@ -138,6 +141,7 @@ func TestCustomResource(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",
@@ -169,6 +173,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",
@@ -204,6 +209,7 @@ func SignatureVersion(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",
@@ -239,6 +245,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		nil,
 		nil,
 		os.Getenv("S3_BUCKET"),
+		false,
 		"testBuildID",
 		"",
 		"",

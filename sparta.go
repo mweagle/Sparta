@@ -8,8 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"math/rand"
 	"net/http"
 	"os"
@@ -18,6 +16,9 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/crewjam/go-cloudformation"
@@ -33,9 +34,11 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.10.0"
+	SpartaVersion = "0.11.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
+	// PythonVersion is the Python version used for CGO support
+	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 )
@@ -163,7 +166,7 @@ var CommonIAMStatements = struct {
 }
 
 // RE for sanitizing golang/JS layer
-var reSanitize = regexp.MustCompile("[:\\.\\-\\s]+")
+var reSanitize = regexp.MustCompile("\\W+")
 
 // RE to ensure CloudFormation compatible resource names
 // Issue: https://github.com/mweagle/Sparta/issues/8
@@ -422,11 +425,12 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 
 	statements := CommonIAMStatements.Core
 	for _, eachPrivilege := range roleDefinition.Privileges {
-		statements = append(statements, spartaIAM.PolicyStatement{
+		policyStatement := spartaIAM.PolicyStatement{
 			Effect:   "Allow",
 			Action:   eachPrivilege.Actions,
 			Resource: eachPrivilege.resourceExpr(),
-		})
+		}
+		statements = append(statements, policyStatement)
 	}
 
 	// Add VPC permissions iff needed
@@ -445,7 +449,10 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
 			switch awsService {
 			case "dynamodb":
-				statements = append(statements, CommonIAMStatements.DynamoDB...)
+				for _, statement := range CommonIAMStatements.DynamoDB {
+					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
+					statements = append(statements, statement)
+				}
 			case "kinesis":
 				for _, statement := range CommonIAMStatements.Kinesis {
 					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
@@ -543,7 +550,7 @@ type customResourceInfo struct {
 
 // Returns a JavaScript compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
-func (resourceInfo *customResourceInfo) jsHandlerName() string {
+func (resourceInfo *customResourceInfo) scriptExportHandlerName() string {
 	// The JS handler name must take into account the
 	return sanitizedName(resourceInfo.userFunctionName)
 }
@@ -563,6 +570,7 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 
 func (resourceInfo *customResourceInfo) export(serviceName string,
 	targetLambda *gocf.StringExpr,
+	runtime string,
 	S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]*gocf.StringExpr,
@@ -590,10 +598,10 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 			S3Key:    gocf.String(S3Key),
 		},
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(fmt.Sprintf("index.%s", resourceInfo.jsHandlerName())),
+		Handler:     gocf.String(fmt.Sprintf("index.%s", resourceInfo.scriptExportHandlerName())),
 		MemorySize:  gocf.Integer(resourceInfo.options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(NodeJSVersion),
+		Runtime:     gocf.String(runtime),
 		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
 		VpcConfig:   resourceInfo.options.VpcConfig,
 	}
@@ -659,8 +667,8 @@ type LambdaAWSInfo struct {
 	customResources []*customResourceInfo
 }
 
-// URLPath returns the URL path that can be used as an argument
-// to NewLambdaRequest or NewAPIGatewayRequest
+// lambdaFunctionName returns the internal script-sanitized
+// function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
 	lambdaFuncName := lambdaPtr.Name()
@@ -713,9 +721,9 @@ func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition int
 	return resourceInfo.logicalName(), nil
 }
 
-// Returns a JavaScript compatible function name for the golang function name.  This
+// Returns a script compatible function name for the golang function name.  This
 // value will be used as the URL path component for the HTTP proxying layer.
-func (info *LambdaAWSInfo) jsHandlerName() string {
+func (info *LambdaAWSInfo) scriptExportHandlerName() string {
 	return sanitizedName(info.lambdaFunctionName())
 }
 
@@ -737,8 +745,11 @@ func (info *LambdaAWSInfo) logicalName() string {
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
 func (info *LambdaAWSInfo) export(serviceName string,
+	useCGO bool,
+	lambdaRuntime string,
 	S3Bucket string,
 	S3Key string,
+	S3Version string,
 	buildID string,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
@@ -772,12 +783,15 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			S3Key:    gocf.String(S3Key),
 		},
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(fmt.Sprintf("index.%s", info.jsHandlerName())),
+		Handler:     gocf.String(fmt.Sprintf("index.%s", info.scriptExportHandlerName())),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(NodeJSVersion),
+		Runtime:     gocf.String(lambdaRuntime),
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VpcConfig:   info.Options.VpcConfig,
+	}
+	if "" != S3Version {
+		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}
 	if "" != info.Options.KmsKeyArn {
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
@@ -804,6 +818,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Permissions
 	for _, eachPermission := range info.Permissions {
 		_, err := eachPermission.export(serviceName,
+			useCGO,
 			info.lambdaFunctionName(),
 			info.logicalName(),
 			template,
@@ -832,6 +847,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	for _, eachCustomResource := range info.customResources {
 		resourceErr := eachCustomResource.export(serviceName,
 			functionAttr,
+			lambdaRuntime,
 			S3Bucket,
 			S3Key,
 			roleNameMap,
@@ -1019,5 +1035,6 @@ func NewLogger(level string) (*logrus.Logger, error) {
 	if "" != os.Getenv("CI") {
 		logger.Level = logrus.DebugLevel
 	}
+	logger.Out = os.Stdout
 	return logger, nil
 }

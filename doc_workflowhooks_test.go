@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"net/http"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 const userdataResourceContents = `
@@ -57,5 +58,6 @@ func ExampleWorkflowHooks() {
 		lambdaFunctions,
 		nil,
 		nil,
-		&workflowHooks)
+		&workflowHooks,
+		false)
 }
