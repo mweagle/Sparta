@@ -449,12 +449,8 @@ func pythonFunctionEntry(scriptExportName string,
 func createNewPythonProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
 		"FunctionName": lambdaInfo.lambdaFunctionName(),
+		"ScriptName":   lambdaInfo.scriptExportHandlerName(),
 	}).Info("Registering Sparta Python function")
-
-	// We do know the CF resource name here - could write this into
-	// index.js and expose a GET localhost:9000/lambdaMetadata
-	// which wraps up DescribeStackResource for the running
-	// lambda function
 
 	primaryEntry := fmt.Sprintf(`def %s(event, context):
 		return lambda_handler(%s, event, context)
