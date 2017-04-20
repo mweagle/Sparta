@@ -508,14 +508,14 @@ Docker version 17.03.1-ce, build c6d412)
 
 <h3 id="before">Before</h3>
 
-<pre><code class="language-golang">// File main.go
+<pre><code class="go">// File main.go
 package main
 import (
   // ================================================== //
-	sparta &quot;github.com/mweagle/Sparta&quot;
+	sparta &#34;github.com/mweagle/Sparta&#34;
   // ================================================== //
 
-	&quot;github.com/mweagle/SpartaPython&quot;
+	&#34;github.com/mweagle/SpartaPython&#34;
 )
 // HelloWorld is a standard Sparta AWS λ function
 func HelloWorld(event *json.RawMessage,
@@ -535,25 +535,25 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
-	sparta.Main(&quot;SpartaHelloNodeJSProcess&quot;,
-		fmt.Sprintf(&quot;Test HelloWorld resource command&quot;),
+	sparta.Main(&#34;SpartaHelloNodeJSProcess&#34;,
+		fmt.Sprintf(&#34;Test HelloWorld resource command&#34;),
 		lambdaFunctions,
 		nil,
 		nil)
   // ================================================== //
 
-}
-</code></pre>
+}</code></pre>
+
 
 <h3 id="after">After</h3>
 
-<pre><code class="language-golang">// File main.go
+<pre><code class="go">// File main.go
 package main
 import (
   // ================================================== //
-	spartaCGO &quot;github.com/mweagle/Sparta/cgo&quot;
+	spartaCGO &#34;github.com/mweagle/Sparta/cgo&#34;
   // ================================================== //
-	&quot;github.com/mweagle/SpartaPython&quot;
+	&#34;github.com/mweagle/SpartaPython&#34;
 )
 // HelloWorld is a standard Sparta AWS λ function
 func HelloWorld(event *json.RawMessage,
@@ -573,20 +573,20 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
-	spartaCGO.Main(&quot;SpartaHelloPythonCGO&quot;,
-		fmt.Sprintf(&quot;Test HelloWorld resource command&quot;),
+	spartaCGO.Main(&#34;SpartaHelloPythonCGO&#34;,
+		fmt.Sprintf(&#34;Test HelloWorld resource command&#34;),
 		lambdaFunctions,
 		nil,
 		nil)
   // ================================================== //
 
-}
-</code></pre>
+}</code></pre>
+
 
 <p>You should see log output that includes a statement similar to:</p>
 
-<pre><code class="language-shell">INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e GOPATH=/usr/src/gopath -e GOOS=linux -e GOARCH=amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode=c-shared -tags lambdabinary ] Name=SpartaHelloPythonCGOUSEast.lambda.so
-</code></pre>
+<pre><code class="bash">INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e GOPATH=/usr/src/gopath -e GOOS=linux -e GOARCH=amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode=c-shared -tags lambdabinary ] Name=SpartaHelloPythonCGOUSEast.lambda.so</code></pre>
+
 
 <h2 id="questions">Questions</h2>
 
