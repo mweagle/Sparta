@@ -491,13 +491,16 @@
 <h2 id="requirements">Requirements</h2>
 
 <ul>
-<li>Docker - Tested on OSX:
-<code>
-$ docker -v
-Docker version 17.03.1-ce, build c6d412)
-</code></li>
+<li>Docker - Tested on OSX:</li>
+</ul>
+
+<pre><code>  $ docker -v
+  Docker version 17.03.1-ce, build c6d412)
+</code></pre>
+
+<ul>
 <li>Ability to build <a href="https://blog.golang.org/c-go-cgo">CGO</a> libraries</li>
-<li>You <em>MUST</em> call <code>cgo.Main()</code> from your application&rsquo;s <code>main</code> package. The CGO step temporarily rewrites your application code into a CGO-compliant source file, and proper Sparta initialization depends on being able to transform your application&rsquo;s <code>main()</code> into a library-equivalent <code>init()</code> function.</li>
+<li>You <em>MUST</em> call <code>cgo.Main(...)</code> from your application&rsquo;s <code>main</code> package. The CGO functionality depends on being able to rewrite your application code into a CGO-compabible <a href="https://golang.org/cmd/cgo/">source</a>.  This enables Sparta to transform your application&rsquo;s <code>main()</code> into a library-equivalent <code>init()</code> function to initialize the internal function registry.</li>
 </ul>
 
 <h2 id="usage">Usage</h2>
@@ -609,6 +612,10 @@ go version go1.8.1 darwin/amd64
 <h3 id="how-much-of-a-performance-increase-should-i-expect">How much of a performance increase should I expect?</h3>
 
 <p>Significant, particuarly at cold start times. In very limited testing I&rsquo;ve seen times drop from 1500-2000ms to ~500ms.  See also <a href="https://twitter.com/mweagle/status/854178789814882304">https://twitter.com/mweagle/status/854178789814882304</a> which was a comparison through an API-GW exposed function exercised by a load testing service.</p>
+
+<h3 id="what-transformations-are-applied-to-my-source">What transformations are applied to my source?</h3>
+
+<p>See <a href="https://github.com/mweagle/Sparta/blob/master/cgo/cgo_main_run.go#L44">cgo_main_run.go</a> for the set of changes applied to the input. If there is an error compiling the source, Sparta leaves the input file (with a <code>sparta-cgo</code> suffix) in the working directory for debugging.</p>
 
 
 			<aside class="copyright" role="note">
