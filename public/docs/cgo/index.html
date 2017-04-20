@@ -484,10 +484,104 @@
 
 <h2 id="introduction">Introduction</h2>
 
-<div class="admonition note">
-<p class="admonition-title">NEARLY READY</p>
-<p>Performance is a feature</p>
-</div>
+<p>The initial Sparta release supported running a normal Go binary <a href="https://aws.amazon.com/blogs/compute/running-executables-in-aws-lambda/">alongside</a> a NodeJS HTTP-based proxy.</p>
+
+<p>With Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0110">v0.11.0</a> it&rsquo;s possible to transform your Sparta application into a CGO-library proxied by a Python 3.6 ctypes interface. This provides significant cold-start &amp; hot exeecution performance improvements.</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<ul>
+<li>Docker - Tested on OSX:
+<code>
+$ docker -v
+Docker version 17.03.1-ce, build c6d412)
+</code></li>
+<li>Ability to build <a href="https://blog.golang.org/c-go-cgo">CGO</a> libraries</li>
+<li>You <em>MUST</em> call <code>cgo.Main()</code> from your application&rsquo;s <code>main</code> package. The CGO step temporarily rewrites your application code into a CGO-compliant source file, and proper Sparta initialization depends on being able to transform your application&rsquo;s <code>main()</code> into a library-equivalent <code>init()</code> function.</li>
+</ul>
+
+<h2 id="usage">Usage</h2>
+
+<p>To enable CGO packaging , choose either <code>Sparta/cgo.Main</code> or <code>Sparta/cgo.MainEx</code> functions. These functions are signature compatible with the existing <code>Main*</code> functions that produce in a NodeJS package.</p>
+
+<h2 id="example">Example</h2>
+
+<h3 id="before">Before</h3>
+
+<pre><code class="language-golang">// File main.go
+package main
+import (
+  // ================================================== //
+	sparta &quot;github.com/mweagle/Sparta&quot;
+  // ================================================== //
+
+	&quot;github.com/mweagle/SpartaPython&quot;
+)
+// HelloWorld is a standard Sparta AWS λ function
+func HelloWorld(event *json.RawMessage,
+	context *sparta.LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+...
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	lambdaFn, _ := sparta.Lambda(sparta.IAMRoleDefinition{},
+		HelloWorld,
+		nil)
+
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+  // ================================================== //
+	sparta.Main(&quot;SpartaHelloNodeJSProcess&quot;,
+		fmt.Sprintf(&quot;Test HelloWorld resource command&quot;),
+		lambdaFunctions,
+		nil,
+		nil)
+  // ================================================== //
+
+}
+</code></pre>
+
+<h3 id="after">After</h3>
+
+<pre><code class="language-golang">// File main.go
+package main
+import (
+  // ================================================== //
+	spartaCGO &quot;github.com/mweagle/Sparta/cgo&quot;
+  // ================================================== //
+	&quot;github.com/mweagle/SpartaPython&quot;
+)
+// HelloWorld is a standard Sparta AWS λ function
+func HelloWorld(event *json.RawMessage,
+	context *sparta.LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+...
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	lambdaFn, _ := sparta.Lambda(sparta.IAMRoleDefinition{},
+		HelloWorld,
+		nil)
+
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+  // ================================================== //
+	spartaCGO.Main(&quot;SpartaHelloPythonCGO&quot;,
+		fmt.Sprintf(&quot;Test HelloWorld resource command&quot;),
+		lambdaFunctions,
+		nil,
+		nil)
+  // ================================================== //
+
+}
+</code></pre>
 
 
 			<aside class="copyright" role="note">

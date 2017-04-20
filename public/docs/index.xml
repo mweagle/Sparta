@@ -92,9 +92,9 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/cgo/</guid>
-      <description> Introduction NEARLY READY
-Performance is a feature
- </description>
+      <description>Introduction The initial Sparta release supported running a normal Go binary alongside a NodeJS HTTP-based proxy.
+With Sparta v0.11.0 it&amp;rsquo;s possible to transform your Sparta application into a CGO-library proxied by a Python 3.6 ctypes interface. This provides significant cold-start &amp;amp; hot exeecution performance improvements.
+Requirements  Docker - Tested on OSX:  $ docker -v Docker version 17.03.1-ce, build c6d412)  Ability to build CGO libraries You MUST call cgo.</description>
     </item>
     
     <item>
