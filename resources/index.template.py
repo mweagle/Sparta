@@ -84,12 +84,8 @@ def lambda_handler(funcName, event, context):
         lowercase_content_type = response_content_type_buffer.value.lower()
         if "json" in lowercase_content_type.decode('utf-8'):
             return json.loads(response_buffer.value)
-        elif "octet-stream" in lowercase_content_type.decode('utf-8'):
-            return bytearray(response_buffer.value)
-        elif "binary" in lowercase_content_type.decode('utf-8'):
-            return bytearray(response_buffer.value)
         else:
-            return response_buffer.value
+            return response_buffer.value.decode('utf-8')
     except:
         traceback.print_exc()
         print("Unexpected error:", sys.exc_info()[0])
