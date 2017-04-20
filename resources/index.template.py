@@ -2,6 +2,7 @@ from __future__ import print_function
 import pprint
 import json
 import sys
+import traceback
 import os
 from ctypes import *
 from botocore.credentials import get_credentials
@@ -35,36 +36,33 @@ def lambda_handler(funcName, event, context):
         # Go universe, so for that we can just get a struct
         # with the context. The event content can be passed in as a
         # raw char pointer.
-        request = {
-            "event" : event,
-            "context" : {}
-        }
-        contextDict = {}
-        contextDict["functionName"] = context.function_name
-        contextDict["functionVersion"] = context.function_version
-        contextDict["invokedFunctionArn"] = context.invoked_function_arn
-        contextDict["memoryLimitInMB"] = context.memory_limit_in_mb
-        contextDict["awsRequestId"] = context.aws_request_id
-        contextDict["logGroupName"] = context.log_group_name
-        contextDict["logStreamName"] = context.log_stream_name
+        request = dict(event=event)
+        contextDict = dict(
+            functionName=context.function_name,
+            functionVersion=context.function_version,
+            invokedFunctionArn=context.invoked_function_arn,
+            memoryLimitInMB=context.memory_limit_in_mb,
+            awsRequestId=context.aws_request_id,
+            logGroupName=context.log_group_name,
+            logStreamName=context.log_stream_name
+        )
 
         # Identity check...
-        if context.identity is not None:
-            contextDict["identity"] = {
-                "cognitoIdentityId" : context.identity.cognito_identity_id,
-                "cognitoIdentityPoolId" : context.identity.cognito_identity_pool_id
-            }
+        if getattr(context, "identity", None):
+            contextDict["identity"] = dict(
+                cognitoIdentityId=context.identity.cognito_identity_id,
+                cognitoIdentityPoolId=context.identity.cognito_identity_pool_id
+            )
         # Client context
-        if context.client_context is not None:
-            destClientContext = {}
-            srcClientContext = context.client_context
-            destClientContext["installation_id"] = context.client_context.installation_id
-            destClientContext["app_title"] = context.client_context.app_title
-            destClientContext["app_version_name"] = context.client_context.app_version_name
-            destClientContext["app_version_code"] = context.client_context.app_version_code
-            destClientContext["Custom"] = context.client_context.custom
-            destClientContext["env"] = context.client_context.env
-            contextDict["client_context"] = destClientContext
+        if getattr(context, "client_context", None):
+            contextDict["client_context"] = dict(
+                installation_id=context.client_context.installation_id,
+                app_title=context.client_context.app_title,
+                app_version_name=context.client_context.app_version_name,
+                app_version_code=context.client_context.app_version_code,
+                Custom=context.client_context.custom,
+                env=context.client_context.env
+            )
 
         # Update it
         request["context"] = contextDict
@@ -73,26 +71,27 @@ def lambda_handler(funcName, event, context):
         exitCode = c_int()
 
         credentials = get_credentials(get_session())
-        bytesWritten = lib.Lambda(funcName.encode('utf-8'),
-                                    json.dumps(request),
-                                    credentials.access_key,
-                                    credentials.secret_key,
-                                    credentials.token,
+        bytesWritten = lib.Lambda(funcName.encode('ascii'),
+                                    json.dumps(request).encode('ascii'),
+                                    credentials.access_key.encode('ascii'),
+                                    credentials.secret_key.encode('ascii'),
+                                    credentials.token.encode('ascii'),
                                     byref(exitCode),
                                     response_content_type_buffer,
                                     MAX_RESPONSE_CONTENT_TYPE_SIZE,
                                     response_buffer,
                                     MAX_RESPONSE_SIZE-1)
         lowercase_content_type = response_content_type_buffer.value.lower()
-        if "json" in lowercase_content_type:
+        if "json" in lowercase_content_type.decode('utf-8'):
             return json.loads(response_buffer.value)
-        elif "octet-stream" in lowercase_content_type:
+        elif "octet-stream" in lowercase_content_type.decode('utf-8'):
             return bytearray(response_buffer.value)
-        elif "binary" in lowercase_content_type:
+        elif "binary" in lowercase_content_type.decode('utf-8'):
             return bytearray(response_buffer.value)
         else:
             return response_buffer.value
     except:
+        traceback.print_exc()
         print("Unexpected error:", sys.exc_info()[0])
 
 ## Insert auto generated code here...
