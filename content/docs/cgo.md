@@ -120,6 +120,21 @@ INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /User
 
 ## Questions
 
+### How do I initialize other AWS services?
+
+The `cgo` variant of your Sparta application is proxied by a Python 3.6 handler. This handler provides access to the lambda credentials via:
+
+```python
+from botocore.credentials import get_credentials
+```
+
+Sparta makes these credentials available via `cgo.NewSession()` which returns a [*session.Session](http://docs.aws.amazon.com/sdk-for-go/api/aws/session/) instance. This value can be supplied to AWS service `New` functions as in:
+
+{{< highlight go >}}
+// Create a APIGateway client from just a session.
+svc := apigateway.New(cgo.NewSession())
+{{< /highlight >}}
+
 ### How does Sparta determine the Docker image for the CGO build?
 
 Sparta parses the output from your host machine to determine the container tag.
