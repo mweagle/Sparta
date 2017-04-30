@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+
 	"github.com/Sirupsen/logrus"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -534,11 +535,11 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 				// Find the existing resource...
 				versionResourceName := lambdaVersionResourceName(versionIndex)
 				if nil == existingStackDefinition {
-					return nil, fmt.Errorf("Unable to find exising Version resource in nil Template")
+					return nil, fmt.Errorf("Unable to find existing Version resource in nil Template")
 				}
 				cfResourceDefinition, cfResourceDefinitionExists := existingStackDefinition.Resources[versionResourceName]
 				if !cfResourceDefinitionExists {
-					return nil, fmt.Errorf("Unable to find exising Version resource (Resource: %s, Version: %d) in template",
+					return nil, fmt.Errorf("Unable to find existing Version resource (Resource: %s, Version: %d) in template",
 						versionResourceName,
 						versionIndex)
 				}
@@ -825,7 +826,7 @@ func ConvergeStackState(serviceName string,
 
 		stackID = *createStackResponse.StackId
 	}
-	// Wait for the operation to succeeed
+	// Wait for the operation to succeed
 	pollingMessage := "Waiting for CloudFormation operation to complete"
 	convergeResult, convergeErr := WaitForStackOperationComplete(stackID,
 		pollingMessage,
