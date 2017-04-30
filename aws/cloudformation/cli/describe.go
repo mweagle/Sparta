@@ -23,6 +23,8 @@ type optionsLinkStruct struct {
 
 var optionsLink optionsLinkStruct
 
+// RootCmd represents the root Cobra command invoked for the discovery
+// and serialization of an existing CloudFormation stack
 var RootCmd = &cobra.Command{
 	Use:   "link",
 	Short: "Link is a tool to discover and serialize a prexisting CloudFormation stack",
