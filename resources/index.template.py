@@ -71,14 +71,14 @@ def lambda_handler(funcName, event, context):
         exitCode = c_int()
 
         credentials = get_credentials(get_session())
-        bytesWritten = lib.Lambda(funcName.encode('ascii'),
-                                    json.dumps(request).encode('ascii'),
-                                    credentials.access_key.encode('ascii'),
-                                    credentials.secret_key.encode('ascii'),
-                                    credentials.token.encode('ascii'),
+        bytesWritten = lib.Lambda(funcName.encode('utf-8'),
+                                    json.dumps(request).encode('utf-8'),
+                                    credentials.access_key.encode('utf-8'),
+                                    credentials.secret_key.encode('utf-8'),
+                                    credentials.token.encode('utf-8'),
                                     byref(exitCode),
                                     response_content_type_buffer,
-                                    MAX_RESPONSE_CONTENT_TYPE_SIZE,
+                                    MAX_RESPONSE_CONTENT_TYPE_SIZE-1,
                                     response_buffer,
                                     MAX_RESPONSE_SIZE-1)
         lowercase_content_type = response_content_type_buffer.value.lower()
