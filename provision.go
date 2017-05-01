@@ -326,7 +326,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			"Bucket": ctx.s3Bucket,
 			"Key":    s3ObjectKey,
 			"File":   filepath.Base(localPath),
-		}).Info("Bypassing S3 upload due to --noop")
+		}).Info("Bypassing S3 upload due to --noop flag")
 		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s", ctx.s3Bucket, s3ObjectKey)
 	} else {
 		// Make sure we mark things for cleanup in case there's a problem
@@ -434,18 +434,27 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 
 // Verify that everything is setup in AWS before we start building things
 func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
-	// Get the S3 bucket and see if it has versioning enabled
-	isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.awsSession, ctx.s3Bucket, ctx.logger)
-	if nil != versioningPolicyErr {
-		return nil, versioningPolicyErr
-	}
-	ctx.logger.WithFields(logrus.Fields{
-		"VersioningEnabled": isEnabled,
-		"Bucket":            ctx.s3Bucket,
-	}).Info("Checking S3 versioning")
-	ctx.s3BucketVersioningEnabled = isEnabled
-	if "" != ctx.codePipelineTrigger && !isEnabled {
-		return nil, fmt.Errorf("Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.s3Bucket)
+
+	// If this a NOOP, assume that versioning is not enabled
+	if ctx.noop {
+		ctx.logger.WithFields(logrus.Fields{
+			"VersioningEnabled": false,
+			"Bucket":            ctx.s3Bucket,
+		}).Info("Bypassing S3 upload due to --noop flag. Assuming disabled")
+	} else {
+		// Get the S3 bucket and see if it has versioning enabled
+		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.awsSession, ctx.s3Bucket, ctx.logger)
+		if nil != versioningPolicyErr {
+			return nil, versioningPolicyErr
+		}
+		ctx.logger.WithFields(logrus.Fields{
+			"VersioningEnabled": isEnabled,
+			"Bucket":            ctx.s3Bucket,
+		}).Info("Checking S3 versioning")
+		ctx.s3BucketVersioningEnabled = isEnabled
+		if "" != ctx.codePipelineTrigger && !isEnabled {
+			return nil, fmt.Errorf("Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.s3Bucket)
+		}
 	}
 
 	// If there are codePipeline environments defined, warn if they don't include
