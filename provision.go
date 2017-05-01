@@ -256,6 +256,17 @@ func (ctx *workflowContext) rollback() {
 // Private - START
 //
 
+// userGoPath returns either $GOPATH or the new $HOME/go path
+// introduced with Go 1.8
+func userGoPath() string {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		home := os.Getenv("HOME")
+		gopath = filepath.Join(home, "go")
+	}
+	return gopath
+}
+
 // Encapsulate calling a workflow hook
 func callWorkflowHook(hook WorkflowHook, ctx *workflowContext) error {
 	if nil == hook {
@@ -557,7 +568,7 @@ func buildGoBinary(executableOutput string,
 			return gopathVersionErr
 		}
 
-		gopath := os.ExpandEnv("$GOPATH")
+		gopath := userGoPath()
 		containerGoPath := "/usr/src/gopath"
 		// Get the package path in the current directory
 		// so that we can it to the container path
