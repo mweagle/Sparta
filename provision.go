@@ -626,7 +626,6 @@ func buildGoBinary(executableOutput string,
 				logger.WithFields(logrus.Fields{
 					"Path": headerFilepath,
 				}).Warn("Failed to move .h file to scratch directory")
-
 			}
 		}
 	} else {
