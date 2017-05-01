@@ -22,11 +22,16 @@ import (
 	"github.com/mweagle/cloudformationresources"
 )
 
-const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
+const (
+	// ScratchDirectory is the cwd relative path component
+	// where intermediate build artifacts are created
+	ScratchDirectory = ".sparta"
 
-// The relative path of the custom scripts that is used
-// to create the filename relative path when creating the custom archive
-const provisioningResourcesRelPath = "/resources/provision"
+	salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
+	// The relative path of the custom scripts that is used
+	// to create the filename relative path when creating the custom archive
+	provisioningResourcesRelPath = "/resources/provision"
+)
 
 // The basename of the scripts that are embedded into CONSTANTS.go
 // by `esc` during the generate phase.  In order to export these, there
