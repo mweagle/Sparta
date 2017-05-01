@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -549,38 +548,18 @@ func insertPythonProxyResources(serviceName string,
 	return copyErr
 }
 
-// TODO - replace this with https://golang.org/pkg/runtime/#Version
 func systemGoVersion(logger *logrus.Logger) (string, error) {
-	// Go generate
-	cmd := exec.Command("go", "version")
-	cmd.Env = os.Environ()
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
-
-	var byteSink bytes.Buffer
-	bytesWriter := bufio.NewWriter(&byteSink)
-	cmd.Stdout = bytesWriter
-	cmd.Stderr = bytesWriter
-	runErr := cmd.Run()
-	if nil != runErr {
-		return "", runErr
-	}
-
+	runtimeVersion := runtime.Version()
 	// Get the golang version from the output:
 	// Matts-MBP:Sparta mweagle$ go version
 	// go version go1.8.1 darwin/amd64
 	golangVersionRE := regexp.MustCompile(`go(\d+\.\d+(\.\d+)?)`)
-	matches := golangVersionRE.FindStringSubmatch(byteSink.String())
+	matches := golangVersionRE.FindStringSubmatch(runtimeVersion)
 	if len(matches) > 2 {
 		return matches[1], nil
 	}
 	logger.WithFields(logrus.Fields{
-		"Output": byteSink.String(),
+		"Output": runtimeVersion,
 	}).Warn("Unable to find Golang version using RegExp - using current version")
-	return runtime.Version(), nil
-
+	return runtimeVersion, nil
 }
