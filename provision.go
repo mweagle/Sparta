@@ -108,6 +108,11 @@ type s3SiteContext struct {
 // workflow should stop.
 type workflowStep func(ctx *workflowContext) (workflowStep, error)
 
+type workflowStepDuration struct {
+	name     string
+	duration time.Duration
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Workflow context
 // The workflow context is created by `provision` and provided to all
@@ -167,6 +172,18 @@ type workflowContext struct {
 	// Optional finalizer functions that are unconditionally executed following
 	// workflow completion, success or failure
 	finalizerFunctions []finalizerFunction
+	// Timings that measure how long things actually took
+	stepDurations []*workflowStepDuration
+}
+
+// recordDuration is a utility function to record how long
+func recordDuration(start time.Time, name string, ctx *workflowContext) {
+	elapsed := time.Since(start)
+	ctx.stepDurations = append(ctx.stepDurations,
+		&workflowStepDuration{
+			name:     name,
+			duration: elapsed,
+		})
 }
 
 // Register a rollback function in the event that the provisioning
@@ -207,6 +224,8 @@ func (ctx *workflowContext) registerFileCleanupFinalizer(localPath string) {
 
 // Run any provided rollback functions
 func (ctx *workflowContext) rollback() {
+	defer recordDuration(time.Now(), "Rollback", ctx)
+
 	// Run each cleanup function concurrently.  If there's an error
 	// all we're going to do is log it as a warning, since at this
 	// point there's nothing to do...
@@ -366,6 +385,8 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
+	defer recordDuration(time.Now(), "Verifying IAM Roles", ctx)
+
 	// The map is either a literal Arn from a pre-existing role name
 	// or a gocf.RefFunc() value.
 	// Don't verify them, just create them...
@@ -445,6 +466,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 
 // Verify that everything is setup in AWS before we start building things
 func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
+	defer recordDuration(time.Now(), "Verifying AWS Preconditions", ctx)
 
 	// If this a NOOP, assume that versioning is not enabled
 	if ctx.noop {
@@ -663,6 +685,7 @@ func buildGoBinary(executableOutput string,
 func createPackageStep() workflowStep {
 
 	return func(ctx *workflowContext) (workflowStep, error) {
+		defer recordDuration(time.Now(), "Creating code bundle", ctx)
 
 		// PreBuild Hook
 		if ctx.workflowHooks != nil {
@@ -779,6 +802,8 @@ func createPackageStep() workflowStep {
 // and optional S3 site resources iff they're defined.
 func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
+		defer recordDuration(time.Now(), "Uploading code", ctx)
+
 		var uploadErrors []error
 		var wg sync.WaitGroup
 
@@ -948,8 +973,9 @@ func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContex
 	return uploadLocalFileToS3(tmpFile.Name(), ctx.codePipelineTrigger, ctx)
 }
 
+// applyCloudFormationOperation is responsible for taking the current template
+// and applying that operation to the stack
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
-
 	stackTags := map[string]string{
 		SpartaTagHomeKey:    "http://gosparta.io",
 		SpartaTagVersionKey: SpartaVersion,
@@ -1006,7 +1032,6 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			if nil != uploadURLErr {
 				return nil, uploadURLErr
 			}
-
 			stack, stackErr := spartaCF.ConvergeStackState(ctx.serviceName,
 				ctx.cfTemplate,
 				uploadURL,
@@ -1058,6 +1083,8 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 
 func ensureCloudFormationStack() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
+		defer recordDuration(time.Now(), "Ensuring CloudFormation stack", ctx)
+
 		// PreMarshall Hook
 		if ctx.workflowHooks != nil {
 			preMarshallErr := callWorkflowHook(ctx.workflowHooks.PreMarshall, ctx)
@@ -1280,10 +1307,17 @@ func Provision(noop bool,
 			return err
 		}
 		if next == nil {
+			ctx.logger.Info(strings.Repeat("-", 40))
+			for _, eachEntry := range ctx.stepDurations {
+				ctx.logger.WithFields(logrus.Fields{
+					"Duration (s)": eachEntry.duration.Seconds(),
+				}).Info(eachEntry.name)
+			}
 			elapsed := time.Since(startTime)
 			ctx.logger.WithFields(logrus.Fields{
-				"Seconds": fmt.Sprintf("%.f", elapsed.Seconds()),
-			}).Info("Elapsed time")
+				"Duration (s)": elapsed.Seconds(),
+			}).Info("Total elapsed time")
+			ctx.logger.Info(strings.Repeat("-", 40))
 			break
 		} else {
 			step = next
