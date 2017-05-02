@@ -66,7 +66,7 @@ func cgoMain(callerMainInputFilepath string,
 	// Did the user supply a cgo alias?
 	for _, eachImport := range astutil.Imports(fset, file) {
 		for _, eachImportEntry := range eachImport {
-			if "github.com/mweagle/Sparta/cgo" == eachImportEntry.Path.Value && nil != eachImportEntry.Name {
+			if "\"github.com/mweagle/Sparta/cgo\"" == eachImportEntry.Path.Value && nil != eachImportEntry.Name {
 				cgoPackageAlias = eachImportEntry.Name.String()
 				break
 			}
