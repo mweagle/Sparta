@@ -364,11 +364,6 @@ func createNewSpartaNodeJSCustomResourceEntry(resourceName string, logger *logru
 	// The resource name is a :: delimited one, so let's sanitize that
 	// to make it a valid JS identifier
 	jsName := scriptExportNameForCustomResourceType(resourceName)
-	logger.WithFields(logrus.Fields{
-		"Resource":           resourceName,
-		"NodeJSFunctionName": jsName,
-	}).Debug("Registering Sparta CustomResource function")
-
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		jsName,
 		resourceName)
@@ -468,11 +463,6 @@ func createNewSpartaPythonCustomResourceEntry(resourceName string, logger *logru
 	// The resource name is a :: delimited one, so let's sanitize that
 	// to make it a valid JS identifier
 	pyName := scriptExportNameForCustomResourceType(resourceName)
-	logger.WithFields(logrus.Fields{
-		"Resource":   resourceName,
-		"PythonName": pyName,
-	}).Debug("Registering Sparta CustomResource function")
-
 	return pythonFunctionEntry(pyName, resourceName, logger)
 }
 
