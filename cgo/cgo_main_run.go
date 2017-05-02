@@ -17,6 +17,7 @@ import (
 	"path"
 
 	"github.com/mweagle/Sparta"
+	"github.com/spf13/cobra"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -31,10 +32,21 @@ func cgoMain(callerMainInputFilepath string,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
 
+	// We need to parse the command line args and get the subcommand...
+	cgoCommandName := ""
+	validationHook := func(command *cobra.Command) error {
+		cgoCommandName = command.Name()
+		return nil
+	}
+	// Extract & validate the SSH Key
+	parseErr := sparta.ParseOptions(validationHook)
+	if nil != parseErr {
+		return fmt.Errorf("Failed to parse command line")
+	}
+
 	// We can short circuit a lot of this if we're just
 	// trying to do a unit test or export.
-	subCommand := os.Args[1]
-	if subCommand != "provision" {
+	if cgoCommandName != "provision" {
 		return sparta.MainEx(serviceName,
 			serviceDescription,
 			lambdaAWSInfos,
