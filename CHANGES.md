@@ -13,8 +13,10 @@
   ```bash
   mweagle/SpartaPython.HelloWorld
   ```
+  - Upgrade to Mermaid [7.0.0](https://github.com/knsv/mermaid/releases/tag/7.0.0)
 - :bug: **FIXED**
   - Fixed latent bug where S3 bucket version check didn't respect `--noop` mode.
+  - Fixed latent `cgo` bug where command line arguments weren't properly parsed
 
 ## v0.11.0
 - :warning: **BREAKING**
