@@ -1129,6 +1129,7 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.s3Bucket,
 				ctx.s3CodeZipURL.keyName(),
 				ctx.s3SiteContext.s3UploadURL.keyName(),
+				ctx.useCGO,
 				apiGatewayTemplate.Outputs,
 				ctx.lambdaIAMRoleNameMap,
 				ctx.cfTemplate,
