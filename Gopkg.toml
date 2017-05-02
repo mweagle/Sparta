@@ -8,8 +8,8 @@
   revision = "fdf19785fd3558d619ef81212f5edf1d6c2a5911"
 
 [[dependencies]]
-  branch = "master"
   name = "github.com/aws/aws-sdk-go"
+  revision = "0dbc446aca87aebb6e0a24509b59bafc0e3ec0ae"
 
 [[dependencies]]
   name = "github.com/crewjam/go-cloudformation"
