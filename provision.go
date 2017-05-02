@@ -385,7 +385,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
-	defer recordDuration(time.Now(), "Verifying IAM Roles", ctx)
+	defer recordDuration(time.Now(), "Verifying IAM roles", ctx)
 
 	// The map is either a literal Arn from a pre-existing role name
 	// or a gocf.RefFunc() value.
@@ -466,7 +466,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 
 // Verify that everything is setup in AWS before we start building things
 func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
-	defer recordDuration(time.Now(), "Verifying AWS Preconditions", ctx)
+	defer recordDuration(time.Now(), "Verifying AWS preconditions", ctx)
 
 	// If this a NOOP, assume that versioning is not enabled
 	if ctx.noop {
@@ -1306,16 +1306,17 @@ func Provision(noop bool,
 			ctx.logger.Error(err)
 			return err
 		}
+
 		if next == nil {
 			ctx.logger.Info(strings.Repeat("-", 40))
 			for _, eachEntry := range ctx.stepDurations {
 				ctx.logger.WithFields(logrus.Fields{
-					"Duration (s)": eachEntry.duration.Seconds(),
+					"Duration (s)": fmt.Sprintf("%.f", eachEntry.duration.Seconds()),
 				}).Info(eachEntry.name)
 			}
 			elapsed := time.Since(startTime)
 			ctx.logger.WithFields(logrus.Fields{
-				"Duration (s)": elapsed.Seconds(),
+				"Duration (s)": fmt.Sprintf("%.f", elapsed.Seconds()),
 			}).Info("Total elapsed time")
 			ctx.logger.Info(strings.Repeat("-", 40))
 			break
