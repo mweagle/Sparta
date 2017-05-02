@@ -470,7 +470,7 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			"Version":   "2012-10-17",
 			"Statement": statements,
 		},
-		PolicyName: gocf.String(CloudFormationResourceName("LambdaPolicy")),
+		PolicyName: gocf.String("LambdaPolicy"),
 	})
 	return gocf.IAMRole{
 		AssumeRolePolicyDocument: AssumePolicyDocument,
