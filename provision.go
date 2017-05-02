@@ -337,7 +337,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			"Bucket": ctx.s3Bucket,
 			"Key":    s3ObjectKey,
 			"File":   filepath.Base(localPath),
-		}).Info("Bypassing S3 upload due to --noop flag")
+		}).Info("Bypassing S3 upload due to -n/-noop command line argument")
 		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s", ctx.s3Bucket, s3ObjectKey)
 	} else {
 		// Make sure we mark things for cleanup in case there's a problem
@@ -451,7 +451,7 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		ctx.logger.WithFields(logrus.Fields{
 			"VersioningEnabled": false,
 			"Bucket":            ctx.s3Bucket,
-		}).Info("Bypassing S3 upload due to --noop flag. Assuming disabled")
+		}).Info("Bypassing S3 upload due to -n/-noop command line argument.")
 	} else {
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.awsSession, ctx.s3Bucket, ctx.logger)
