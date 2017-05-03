@@ -10,17 +10,21 @@ import (
 	"go/printer"
 	"go/token"
 	"os"
+	"path/filepath"
 
 	"strings"
 
+	"path"
+
 	"github.com/mweagle/Sparta"
+	"github.com/spf13/cobra"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 // cgoMain is the internal handler for the cgo.Main*() functions. It's responsible
 // for rewriting the incoming source file s.t. it can be compiled
 // as a CGO library
-func cgoMain(callerFile string,
+func cgoMain(callerMainInputFilepath string,
 	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*sparta.LambdaAWSInfo,
@@ -28,10 +32,21 @@ func cgoMain(callerFile string,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
 
+	// We need to parse the command line args and get the subcommand...
+	cgoCommandName := ""
+	validationHook := func(command *cobra.Command) error {
+		cgoCommandName = command.Name()
+		return nil
+	}
+	// Extract & validate the SSH Key
+	parseErr := sparta.ParseOptions(validationHook)
+	if nil != parseErr {
+		return fmt.Errorf("Failed to parse command line")
+	}
+
 	// We can short circuit a lot of this if we're just
 	// trying to do a unit test or export.
-	subCommand := os.Args[1]
-	if subCommand != "provision" {
+	if cgoCommandName != "provision" {
 		return sparta.MainEx(serviceName,
 			serviceDescription,
 			lambdaAWSInfos,
@@ -41,12 +56,15 @@ func cgoMain(callerFile string,
 			true)
 	}
 
-	// This is the provision workflow, which depends on being able
+	// This is the provision workflow, which to make CGO
+	// compatible in a C-lib context depends on being able
 	// to rewrite the main() function so that the main() contents
-	// happen in the context of an init() statement
+	// happen in the context of an init() statement. That init()
+	// statement will handle initializing the HTTP dispatch
+	// map that's accessed as part of the Python caller
 	// Read the main() input
 	fset := token.NewFileSet()
-	file, err := parser.ParseFile(fset, callerFile, nil, 0)
+	file, err := parser.ParseFile(fset, callerMainInputFilepath, nil, 0)
 	if err != nil {
 		fmt.Printf("ParseFileErr: %s", err.Error())
 		return err
@@ -55,11 +73,12 @@ func cgoMain(callerFile string,
 	// Add the imports that we need in the walkers text
 	astutil.AddImport(fset, file, "unsafe")
 
-	// Did the user supply a cgo alias?
+	// default cgo package alias
 	cgoPackageAlias := "cgo"
+	// Did the user supply a cgo alias?
 	for _, eachImport := range astutil.Imports(fset, file) {
 		for _, eachImportEntry := range eachImport {
-			if "github.com/mweagle/Sparta/cgo" == eachImportEntry.Path.Value && nil != eachImportEntry.Name {
+			if "\"github.com/mweagle/Sparta/cgo\"" == eachImportEntry.Path.Value && nil != eachImportEntry.Name {
 				cgoPackageAlias = eachImportEntry.Name.String()
 				break
 			}
@@ -86,14 +105,14 @@ func cgoMain(callerFile string,
 		updatedSource = transformedSource
 	}
 	// The temporary file is the input file, with a suffix
-	rewrittenFilepath := fmt.Sprintf("%s.sparta-cgo.go", callerFile)
-	swappedFilepath := fmt.Sprintf("%s.sparta.og", callerFile)
-	renameErr := os.Rename(callerFile, swappedFilepath)
+	rewrittenFilepath := fmt.Sprintf("%s.sparta-cgo.go", callerMainInputFilepath)
+	originalInputRenamedFilepath := fmt.Sprintf("%s.sparta.og", callerMainInputFilepath)
+	renameErr := os.Rename(callerMainInputFilepath, originalInputRenamedFilepath)
 	if nil != renameErr {
 		fmt.Printf("Failed to backup source: %s", renameErr.Error())
 		return renameErr
 	}
-	defer os.Rename(swappedFilepath, callerFile)
+	defer os.Rename(originalInputRenamedFilepath, callerMainInputFilepath)
 
 	outputFile, outputFileErr := os.Create(rewrittenFilepath)
 	if nil != outputFileErr {
@@ -118,7 +137,17 @@ func cgoMain(callerFile string,
 		true)
 
 	if nil == spartaErr {
-		os.Remove(rewrittenFilepath)
+		// Move it to the scratch location s.t. users can see what
+		// was generated
+		workingDir, err := os.Getwd()
+		if nil != err {
+			os.Remove(rewrittenFilepath)
+		} else {
+			originalInputFilename := path.Base(callerMainInputFilepath)
+			scratchPath := filepath.Join(workingDir, sparta.ScratchDirectory, originalInputFilename)
+			os.Rename(rewrittenFilepath, scratchPath)
+		}
+
 	} else {
 		preservedOutput := strings.TrimSuffix(rewrittenFilepath, ".go")
 		os.Rename(rewrittenFilepath, preservedOutput)

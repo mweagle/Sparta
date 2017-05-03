@@ -50,6 +50,7 @@ func (s3Site *S3Site) export(serviceName string,
 	S3Bucket string,
 	S3Key string,
 	S3ResourcesKey string,
+	useCGO bool,
 	apiGatewayOutputs map[string]*gocf.Output,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
@@ -184,8 +185,13 @@ func (s3Site *S3Site) export(serviceName string,
 	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
 	logger.WithFields(logrus.Fields{
 		"CustomResourceType": cloudformationresources.ZipToS3Bucket,
-		"NodeJSExport":       handlerName,
+		"ScriptExport":       handlerName,
 	}).Debug("Sparta CloudFormation custom resource handler info")
+
+	runtimeName := gocf.String(NodeJSVersion)
+	if useCGO {
+		runtimeName = gocf.String(PythonVersion)
+	}
 
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
@@ -195,7 +201,7 @@ func (s3Site *S3Site) export(serviceName string,
 		Description: gocf.String(customResourceDescription(serviceName, "S3 static site")),
 		Handler:     gocf.String(handlerName),
 		Role:        iamRoleRef,
-		Runtime:     gocf.String(NodeJSVersion),
+		Runtime:     runtimeName,
 		MemorySize:  gocf.Integer(256),
 		Timeout:     gocf.Integer(180),
 	}

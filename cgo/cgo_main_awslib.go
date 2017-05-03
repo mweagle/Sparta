@@ -56,7 +56,7 @@ func (spartaResp *spartaMockHTTPResponse) WriteHeader(statusCode int) {
 	spartaResp.statusCode = statusCode
 }
 
-func newspartaMockHTTPResponse() *spartaMockHTTPResponse {
+func newSpartaMockHTTPResponse() *spartaMockHTTPResponse {
 	resp := &spartaMockHTTPResponse{
 		statusCode: 200,
 		headers:    make(map[string][]string, 0),
@@ -108,9 +108,9 @@ func cgoMain(callerFile string,
 func makeRequest(functionName string,
 	eventBody io.ReadCloser,
 	eventBodySize int64) ([]byte, http.Header, error) {
-	spartaResp := newspartaMockHTTPResponse()
 
 	// Create an http.Request object with this data...
+	spartaResp := newSpartaMockHTTPResponse()
 	spartaReq := &http.Request{
 		Method: "POST",
 		URL: &url.URL{
@@ -143,7 +143,7 @@ func makeRequest(functionName string,
 		if nil != jsonBytesErr {
 			return nil, nil, jsonBytesErr
 		} else {
-			errResponse := newspartaMockHTTPResponse()
+			errResponse := newSpartaMockHTTPResponse()
 			errResponse.Write(jsonBytes)
 			errResponse.Header().Set("content-length", strconv.Itoa(len(jsonBytes)))
 			errResponse.Header().Set("content-type", "application/json")

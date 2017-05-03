@@ -1,4 +1,4 @@
-memo = "a28928207bcf7d803193eaf2dec44e578f488b8b5b4d93bc14ae97f6aef6c7e3"
+memo = "de7d2248c44e004a28f0c8f9754c2c52337ce2b4def7d43d31f0190be0b8adce"
 
 [[projects]]
   name = "github.com/Sirupsen/logrus"
@@ -11,10 +11,9 @@ memo = "a28928207bcf7d803193eaf2dec44e578f488b8b5b4d93bc14ae97f6aef6c7e3"
   revision = "fdf19785fd3558d619ef81212f5edf1d6c2a5911"
 
 [[projects]]
-  branch = "master"
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "baba9e786eae5ba978f2007f8e718557b29157c8"
+  revision = "0dbc446aca87aebb6e0a24509b59bafc0e3ec0ae"
 
 [[projects]]
   name = "github.com/crewjam/go-cloudformation"

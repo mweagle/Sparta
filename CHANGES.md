@@ -1,7 +1,25 @@
 # Change Notes
 
-## v0.11.0
+## v0.11.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Support Go 1.8 newly optional _GOPATH_ environment variable
+  - Python proxied `cgo` builds now preserve the transformed source in the _./sparta_ scratch space directory.
+  - Sparta assigned AWS Lambda function names now strip the leading SCM prefix. Example:
+  ```bash
+  github.com/mweagle/SpartaPython.HelloWorld
+  ```
+  becomes:
+  ```bash
+  mweagle/SpartaPython.HelloWorld
+  ```
+  - Upgrade to Mermaid [7.0.0](https://github.com/knsv/mermaid/releases/tag/7.0.0)
+  - Use stable _PolicyName_ in `IAM::Role` definitions to minimize CloudFormation resource update churn
+- :bug: **FIXED**
+  - Fixed latent bug where S3 bucket version check didn't respect `--noop` mode.
+  - Fixed latent `cgo` bug where command line arguments weren't properly parsed
 
+## v0.11.0
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - :tada: Python CGO support added. See the https://github.com/mweagle/SpartaPython project for example usage!

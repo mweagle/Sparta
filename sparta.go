@@ -470,7 +470,7 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 			"Version":   "2012-10-17",
 			"Statement": statements,
 		},
-		PolicyName: gocf.String(CloudFormationResourceName("LambdaPolicy")),
+		PolicyName: gocf.String("LambdaPolicy"),
 	})
 	return gocf.IAMRole{
 		AssumeRolePolicyDocument: AssumePolicyDocument,
@@ -676,6 +676,15 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		nil != info.Options.SpartaOptions &&
 		"" != info.Options.SpartaOptions.Name {
 		lambdaFuncName = info.Options.SpartaOptions.Name
+	} else {
+		// Using the default name, let's at least remove the
+		// first prefix, since that's the SCM provider and
+		// doesn't provide a lot of value...
+		lambdaFuncNameParts := strings.Split(lambdaFuncName, "/")
+		// If there are at least three parts, then slice and join it...
+		if len(lambdaFuncNameParts) >= 3 {
+			lambdaFuncName = strings.Join(lambdaFuncNameParts[1:], "/")
+		}
 	}
 	return lambdaFuncName
 }
@@ -973,6 +982,7 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	fn LambdaFunction,
 	lambdaOptions *LambdaFunctionOptions) *LambdaAWSInfo {
+
 	if nil == lambdaOptions {
 		lambdaOptions = defaultLambdaFunctionOptions()
 	}

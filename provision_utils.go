@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -22,11 +21,16 @@ import (
 	"github.com/mweagle/cloudformationresources"
 )
 
-const salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
+const (
+	// ScratchDirectory is the cwd relative path component
+	// where intermediate build artifacts are created
+	ScratchDirectory = ".sparta"
 
-// The relative path of the custom scripts that is used
-// to create the filename relative path when creating the custom archive
-const provisioningResourcesRelPath = "/resources/provision"
+	salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
+	// The relative path of the custom scripts that is used
+	// to create the filename relative path when creating the custom archive
+	provisioningResourcesRelPath = "/resources/provision"
+)
 
 // The basename of the scripts that are embedded into CONSTANTS.go
 // by `esc` during the generate phase.  In order to export these, there
@@ -360,11 +364,6 @@ func createNewSpartaNodeJSCustomResourceEntry(resourceName string, logger *logru
 	// The resource name is a :: delimited one, so let's sanitize that
 	// to make it a valid JS identifier
 	jsName := scriptExportNameForCustomResourceType(resourceName)
-	logger.WithFields(logrus.Fields{
-		"Resource":           resourceName,
-		"NodeJSFunctionName": jsName,
-	}).Debug("Registering Sparta CustomResource function")
-
 	primaryEntry := fmt.Sprintf("exports[\"%s\"] = createForwarder(\"/%s\");\n",
 		jsName,
 		resourceName)
@@ -464,11 +463,6 @@ func createNewSpartaPythonCustomResourceEntry(resourceName string, logger *logru
 	// The resource name is a :: delimited one, so let's sanitize that
 	// to make it a valid JS identifier
 	pyName := scriptExportNameForCustomResourceType(resourceName)
-	logger.WithFields(logrus.Fields{
-		"Resource":   resourceName,
-		"PythonName": pyName,
-	}).Debug("Registering Sparta CustomResource function")
-
 	return pythonFunctionEntry(pyName, resourceName, logger)
 }
 
@@ -544,38 +538,18 @@ func insertPythonProxyResources(serviceName string,
 	return copyErr
 }
 
-// TODO - replace this with https://golang.org/pkg/runtime/#Version
 func systemGoVersion(logger *logrus.Logger) (string, error) {
-	// Go generate
-	cmd := exec.Command("go", "version")
-	cmd.Env = os.Environ()
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
-
-	var byteSink bytes.Buffer
-	bytesWriter := bufio.NewWriter(&byteSink)
-	cmd.Stdout = bytesWriter
-	cmd.Stderr = bytesWriter
-	runErr := cmd.Run()
-	if nil != runErr {
-		return "", runErr
-	}
-
+	runtimeVersion := runtime.Version()
 	// Get the golang version from the output:
 	// Matts-MBP:Sparta mweagle$ go version
 	// go version go1.8.1 darwin/amd64
 	golangVersionRE := regexp.MustCompile(`go(\d+\.\d+(\.\d+)?)`)
-	matches := golangVersionRE.FindStringSubmatch(byteSink.String())
+	matches := golangVersionRE.FindStringSubmatch(runtimeVersion)
 	if len(matches) > 2 {
 		return matches[1], nil
 	}
 	logger.WithFields(logrus.Fields{
-		"Output": byteSink.String(),
+		"Output": runtimeVersion,
 	}).Warn("Unable to find Golang version using RegExp - using current version")
-	return runtime.Version(), nil
-
+	return runtimeVersion, nil
 }
