@@ -273,6 +273,8 @@ type LambdaFunctionOptions struct {
 	Environment map[string]*gocf.StringExpr
 	// KMS Key Arn used to encrypt environment variables
 	KmsKeyArn string
+	// Tags to associate with the Lambda function
+	Tags map[string]string
 	// Additional params
 	SpartaOptions *SpartaOptions
 }
@@ -804,6 +806,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	}
 	if "" != info.Options.KmsKeyArn {
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
+	}
+	if nil != info.Options.Tags {
+		// TODO: Add TAGS
 	}
 	if nil != info.Options.Environment {
 		lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
