@@ -58,6 +58,53 @@ Initial _SpartaRuleSet_ will make it the active ruleset, but Sparta assumes that
 # Operations
 <hr />
 
+## How can I monitor my Lambda function?
+
+If you plan on using your Lambdas in production, you'll probably want to be made aware of any excessive errors.
+
+You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.
+
+This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there. 
+
+```golang
+func lambdaDecorator(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
+
+	// setup CloudWatch alarm
+	var alarmDimensions gocf.CloudWatchMetricDimensionList
+	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String("FunctionName"), Value: gocf.Ref(lambdaResourceName).String()}
+	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
+
+	lambdaErrorsAlarm := &gocf.CloudWatchAlarm{
+		ActionsEnabled:     gocf.Bool(true),
+		AlarmActions:       gocf.StringList(gocf.String("arn:aws:sns:us-east-1:123456789:SNSToNotifyMe")),
+		AlarmName:          gocf.String("LambdaErrorAlarm"),
+		ComparisonOperator: gocf.String("GreaterThanOrEqualToThreshold"),
+		Dimensions:         &alarmDimensions,
+		EvaluationPeriods:  gocf.String("1"),
+		Period:             gocf.String("300"),
+		MetricName:         gocf.String("Errors"),
+		Namespace:          gocf.String("AWS/Lambda"),
+		Statistic:          gocf.String("Sum"),
+		Threshold:          gocf.String("3.0"),
+		Unit:               gocf.String("Count"),
+	}
+	cfTemplate.AddResource("LambdaErrorAlaram", lambdaErrorsAlarm)
+
+	return nil
+
+}
+
+```
+
 ## Where can I view my function's `*logger` output?
 
 Each lambda function includes privileges to write to [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home).  The `*logrus.logger` output is written (with a brief delay) to a lambda-specific log group.
