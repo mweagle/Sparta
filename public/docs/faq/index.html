@@ -538,6 +538,52 @@
 
 <hr />
 
+<h2 id="how-can-i-monitor-my-lambda-function">How can I monitor my Lambda function?</h2>
+
+<p>If you plan on using your Lambdas in production, you&rsquo;ll probably want to be made aware of any excessive errors.</p>
+
+<p>You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.</p>
+
+<p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
+
+<pre><code class="language-golang">func lambdaDecorator(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
+
+	// setup CloudWatch alarm
+	var alarmDimensions gocf.CloudWatchMetricDimensionList
+	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(&quot;FunctionName&quot;), Value: gocf.Ref(lambdaResourceName).String()}
+	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
+
+	lambdaErrorsAlarm := &amp;gocf.CloudWatchAlarm{
+		ActionsEnabled:     gocf.Bool(true),
+		AlarmActions:       gocf.StringList(gocf.String(&quot;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&quot;)),
+		AlarmName:          gocf.String(&quot;LambdaErrorAlarm&quot;),
+		ComparisonOperator: gocf.String(&quot;GreaterThanOrEqualToThreshold&quot;),
+		Dimensions:         &amp;alarmDimensions,
+		EvaluationPeriods:  gocf.String(&quot;1&quot;),
+		Period:             gocf.String(&quot;300&quot;),
+		MetricName:         gocf.String(&quot;Errors&quot;),
+		Namespace:          gocf.String(&quot;AWS/Lambda&quot;),
+		Statistic:          gocf.String(&quot;Sum&quot;),
+		Threshold:          gocf.String(&quot;3.0&quot;),
+		Unit:               gocf.String(&quot;Count&quot;),
+	}
+	cfTemplate.AddResource(&quot;LambdaErrorAlaram&quot;, lambdaErrorsAlarm)
+
+	return nil
+
+}
+
+</code></pre>
+
 <h2 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h2>
 
 <p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
