@@ -522,13 +522,13 @@
 
 <p>Your working directory should be the root of your Sparta application.  Eg, use</p>
 
-<pre><code>go run main.go provision --level info --s3Bucket $S3_BUCKET
-</code></pre>
+<pre><code class="go">go run main.go provision --level info --s3Bucket $S3_BUCKET</code></pre>
+
 
 <p>rather than</p>
 
-<pre><code>go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
-</code></pre>
+<pre><code class="go">go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET</code></pre>
+
 
 <p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 
@@ -562,7 +562,7 @@
 
 <p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
 
-<pre><code class="language-golang">func lambdaDecorator(serviceName string,
+<pre><code class="go">func lambdaDecorator(serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
 	resourceMetadata map[string]interface{},
@@ -575,30 +575,28 @@
 
 	// setup CloudWatch alarm
 	var alarmDimensions gocf.CloudWatchMetricDimensionList
-	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(&quot;FunctionName&quot;), Value: gocf.Ref(lambdaResourceName).String()}
+	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(&#34;FunctionName&#34;), Value: gocf.Ref(lambdaResourceName).String()}
 	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
 
 	lambdaErrorsAlarm := &amp;gocf.CloudWatchAlarm{
 		ActionsEnabled:     gocf.Bool(true),
-		AlarmActions:       gocf.StringList(gocf.String(&quot;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&quot;)),
-		AlarmName:          gocf.String(&quot;LambdaErrorAlarm&quot;),
-		ComparisonOperator: gocf.String(&quot;GreaterThanOrEqualToThreshold&quot;),
+		AlarmActions:       gocf.StringList(gocf.String(&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;)),
+		AlarmName:          gocf.String(&#34;LambdaErrorAlarm&#34;),
+		ComparisonOperator: gocf.String(&#34;GreaterThanOrEqualToThreshold&#34;),
 		Dimensions:         &amp;alarmDimensions,
-		EvaluationPeriods:  gocf.String(&quot;1&quot;),
-		Period:             gocf.String(&quot;300&quot;),
-		MetricName:         gocf.String(&quot;Errors&quot;),
-		Namespace:          gocf.String(&quot;AWS/Lambda&quot;),
-		Statistic:          gocf.String(&quot;Sum&quot;),
-		Threshold:          gocf.String(&quot;3.0&quot;),
-		Unit:               gocf.String(&quot;Count&quot;),
+		EvaluationPeriods:  gocf.String(&#34;1&#34;),
+		Period:             gocf.String(&#34;300&#34;),
+		MetricName:         gocf.String(&#34;Errors&#34;),
+		Namespace:          gocf.String(&#34;AWS/Lambda&#34;),
+		Statistic:          gocf.String(&#34;Sum&#34;),
+		Threshold:          gocf.String(&#34;3.0&#34;),
+		Unit:               gocf.String(&#34;Count&#34;),
 	}
-	cfTemplate.AddResource(&quot;LambdaErrorAlaram&quot;, lambdaErrorsAlarm)
+	cfTemplate.AddResource(&#34;LambdaErrorAlaram&#34;, lambdaErrorsAlarm)
 
 	return nil
+}</code></pre>
 
-}
-
-</code></pre>
 
 <h3 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
 
@@ -635,23 +633,23 @@
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
 
-<pre><code class="language-golang">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+<pre><code class="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
   lambdaResourceName,
   cfTemplate,
-  logger)
-</code></pre>
+  logger)</code></pre>
+
 
 <p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
 
-<pre><code class="language-go">// Add an alias to the version we're publishing as part of this `provision` operation
-aliasResourceName := sparta.CloudFormationResourceName(&quot;Alias&quot;, lambdaResourceName)
+<pre><code class="go">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+aliasResourceName := sparta.CloudFormationResourceName(&#34;Alias&#34;, lambdaResourceName)
 aliasResource := &amp;gocf.LambdaAlias{
-    Name:            gocf.String(&quot;MostRecentVersion&quot;),
+    Name:            gocf.String(&#34;MostRecentVersion&#34;),
     FunctionName:    gocf.Ref(lambdaResourceName).String(),
-    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, &quot;Version&quot;).String(),
+    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, &#34;Version&#34;).String(),
 }
-cfTemplate.AddResource(aliasResourceName, aliasResource)
-</code></pre>
+cfTemplate.AddResource(aliasResourceName, aliasResource)</code></pre>
+
 
 <h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
 

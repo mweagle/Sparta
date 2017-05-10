@@ -31,15 +31,15 @@ During development, configuration is typically done through environment variable
 
 Your working directory should be the root of your Sparta application.  Eg, use
 
-```
+{{< highlight go >}}
 go run main.go provision --level info --s3Bucket $S3_BUCKET
-```
+{{< /highlight >}}
 
 rather than
 
-```
+{{< highlight go >}}
 go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
-```
+{{< /highlight >}}
 
 See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
 
@@ -71,7 +71,7 @@ You can easily do this by adding a CloudWatch alarm to your Lambda, in the decor
 
 This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.
 
-```golang
+{{< highlight go >}}
 func lambdaDecorator(serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
@@ -105,10 +105,9 @@ func lambdaDecorator(serviceName string,
 	cfTemplate.AddResource("LambdaErrorAlaram", lambdaErrorsAlarm)
 
 	return nil
-
 }
+{{< /highlight >}}
 
-```
 
 ### Where can I view my function's `*logger` output?
 
@@ -143,16 +142,16 @@ Yes.
 
 Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with an [AutoIncrementingLambdaVersionInfo](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo) resource. During each `provision` operation, the `AutoIncrementingLambdaVersionInfo` resource will dynamically update the CloudFormation template with a new version.
 
-```golang
+{{< highlight go >}}
 autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
   lambdaResourceName,
   cfTemplate,
   logger)
-```
+{{< /highlight >}}
 
 You can also move the "alias pointer" by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:
 
-```go
+{{< highlight go >}}
 // Add an alias to the version we're publishing as part of this `provision` operation
 aliasResourceName := sparta.CloudFormationResourceName("Alias", lambdaResourceName)
 aliasResource := &gocf.LambdaAlias{
@@ -161,7 +160,7 @@ aliasResource := &gocf.LambdaAlias{
     FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, "Version").String(),
 }
 cfTemplate.AddResource(aliasResourceName, aliasResource)
-```
+{{< /highlight >}}
 
 ### How do I forward additional metrics?
 
