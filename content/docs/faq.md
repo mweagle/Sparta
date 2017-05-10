@@ -2,12 +2,17 @@
 date: 2016-03-09T19:56:50+01:00
 title: FAQ
 weight: 10
+menu:
+  main:
+    parent: Documentation
+    identifier: faq
+    weight: 0
 ---
 
-# Development
+## Development
 <hr />
 
-## How do I setup AWS SDK credentials and region?
+### How do I setup AWS SDK credentials and region?
 
 Sparta relies on standard AWS SDK configuration settings. See the [official documentation](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) for more information.
 
@@ -17,12 +22,12 @@ During development, configuration is typically done through environment variable
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_REGION`
 
-## What flags are defined during AWS AMI compilation?
+### What flags are defined during AWS AMI compilation?
 
 * **TAGS**:         `-tags lambdabinary`
 * **ENVIRONMENT**:  `GOOS=linux GOARCH=amd64`
 
-## What working directory should I use?
+### What working directory should I use?
 
 Your working directory should be the root of your Sparta application.  Eg, use
 
@@ -38,33 +43,33 @@ go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
 
 See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
 
-## How can I test locally?
+### How can I test locally?
 
 Local testing is available via the [explore](/docs/local_testing/) command.
 
-# Event Sources - SES
+## Event Sources - SES
 <hr />
 
-## Where does the _SpartaRuleSet_ come from?
+### Where does the _SpartaRuleSet_ come from?
 
 SES only permits a single [active receipt rule](http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html).  Additionally, it's possible that multiple Sparta-based services are handing different SES recipients.
 
 All Sparta-based services share the _SpartaRuleSet_ SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES [ReceiptRule](http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html).
 
-## Why does `provision` not always enable the _SpartaRuleSet_?
+### Why does `provision` not always enable the _SpartaRuleSet_?
 
 Initial _SpartaRuleSet_ will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn't attempt to override the user setting.
 
-# Operations
+## Operations
 <hr />
 
-## How can I monitor my Lambda function?
+### How can I monitor my Lambda function?
 
 If you plan on using your Lambdas in production, you'll probably want to be made aware of any excessive errors.
 
 You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.
 
-This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there. 
+This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.
 
 ```golang
 func lambdaDecorator(serviceName string,
@@ -105,13 +110,13 @@ func lambdaDecorator(serviceName string,
 
 ```
 
-## Where can I view my function's `*logger` output?
+### Where can I view my function's `*logger` output?
 
 Each lambda function includes privileges to write to [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home).  The `*logrus.logger` output is written (with a brief delay) to a lambda-specific log group.
 
 The CloudWatch log group name includes a sanitized version of your **Go** function name & owning service name.
 
-## Where can I view Sparta's golang spawn metrics?
+### Where can I view Sparta's golang spawn metrics?
 
 Visit the [CloudWatch Metrics](https://aws.amazon.com/cloudwatch/) AWS console page and select the `Sparta/{SERVICE_NAME}` namespace:
 
@@ -122,17 +127,17 @@ Sparta publishes two counters:
   * `ProcessSpawned`: A new **Go** process was spawned to handle requests
   * `ProcessReused`: An existing **Go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
 
-## How can I include additional AWS resources as part of my Sparta application?
+### How can I include additional AWS resources as part of my Sparta application?
 
 Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with additional AWS resources.
 
 For more flexibility, use a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks).
 
-## How can I provide environment variables to lambda functions?
+### How can I provide environment variables to lambda functions?
 
 Sparta uses conditional compilation rather than environment variables. See [Managing Environments](/docs/application/environments/) for more information.
 
-## Does Sparta support Versioning & Aliasing?
+### Does Sparta support Versioning & Aliasing?
 
 Yes.
 
@@ -158,16 +163,16 @@ aliasResource := &gocf.LambdaAlias{
 cfTemplate.AddResource(aliasResourceName, aliasResource)
 ```
 
-## How do I forward additional metrics?
+### How do I forward additional metrics?
 
 Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics `putMetric` privileges.  Your lambda code can call `putMetric` with application-specific data.
 
-## How do I setup alerts on additional metrics?
+### How do I setup alerts on additional metrics?
 
 Define a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) function and annotate the `*gocf.Template` with the needed [AWS::CloudWatch::Alarm](https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm) values.  Use [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to help generate unique resource names.
 
-## How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?
+### How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?
 
 The list of registered output provider types is defined by `cloudformationTypeMapDiscoveryOutputs` in [cloudformation_resources.go](https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go).  See the [CloudFormation Resource Types Reference](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for information on interpreting the values.
 
-# Future
+## Future
