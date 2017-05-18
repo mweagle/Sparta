@@ -1,5 +1,11 @@
 # Change Notes
 
+## v0.11.2
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Prefer [NewRecorder](https://golang.org/pkg/net/http/httptest/#NewRecorder) to internal type for CGO marshalling
+- :bug: **FIXED**
+
 ## v0.11.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
