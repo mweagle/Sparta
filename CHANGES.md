@@ -3,8 +3,18 @@
 ## v0.11.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added `--inplace/-c` command line option to support safe, concurrent updating of Lambda code packages
+    - If enabled *AND* the stack update [changeset](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) reports _only_ modifications to Lambda functions, then Sparta will use the AWS Lambda API to [update the function code](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode).
+    - If enabled *AND* additional mutations are reported, you'll see an error as in:
+    ```
+    ERRO[0022] Unsupported in-place operations detected:
+      Add for IAMRole9fd267df3a3d0a144ae11a64c7fb9b7ffff3fb6c (ResourceType: AWS::IAM::Role),
+      Add for mainhelloWorld2Lambda32fcf388f6b20e86feb93e990fa8decc5b3f9095 (ResourceType: AWS::Lambda::Function)
+    ```
   - Prefer [NewRecorder](https://golang.org/pkg/net/http/httptest/#NewRecorder) to internal type for CGO marshalling
+  - Added `--format/-f` command line flag `[text, txt, json]` to specify logfile output format. Default is `text`.
 - :bug: **FIXED**
+  - https://github.com/mweagle/Sparta/issues/45
 
 ## v0.11.1
 - :warning: **BREAKING**
