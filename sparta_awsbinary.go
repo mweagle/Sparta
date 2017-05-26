@@ -7,9 +7,10 @@ package sparta
 
 import (
 	"errors"
-	"github.com/Sirupsen/logrus"
 	"io"
 	"syscall"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // Delete is not available in the AWS Lambda binary
@@ -27,6 +28,7 @@ func Provision(noop bool,
 	site *S3Site,
 	s3Bucket string,
 	useCGO bool,
+	inplace bool,
 	buildID string,
 	codePipelineTrigger string,
 	buildTags string,
