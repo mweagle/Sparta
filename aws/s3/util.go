@@ -2,16 +2,17 @@ package s3
 
 import (
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"mime"
 	"net/url"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 )
 
 // RollbackFunction called in the event of a stack provisioning failure
@@ -72,7 +73,7 @@ func UploadLocalFileToS3(localPath string,
 	}
 	logger.WithFields(logrus.Fields{
 		"Path": localPath,
-	}).Info("Uploading to S3")
+	}).Info("Uploading local file to S3")
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
 	if nil != err {
