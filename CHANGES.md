@@ -13,6 +13,7 @@
     ```
   - Prefer [NewRecorder](https://golang.org/pkg/net/http/httptest/#NewRecorder) to internal type for CGO marshalling
   - Added `--format/-f` command line flag `[text, txt, json]` to specify logfile output format. Default is `text`.
+    - See [logrus.Formatters](https://github.com/sirupsen/logrus#formatters)
 - :bug: **FIXED**
   - https://github.com/mweagle/Sparta/issues/45
 
