@@ -1,9 +1,9 @@
-memo = "de7d2248c44e004a28f0c8f9754c2c52337ce2b4def7d43d31f0190be0b8adce"
+memo = ""
 
 [[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
-  revision = "10f801ebc38b33738c9d17d50860f484a0988ff5"
+  revision = "5e5dc898656f695e2a086b8e12559febbfc01562"
 
 [[projects]]
   name = "github.com/asaskevich/govalidator"
@@ -11,14 +11,16 @@ memo = "de7d2248c44e004a28f0c8f9754c2c52337ce2b4def7d43d31f0190be0b8adce"
   revision = "fdf19785fd3558d619ef81212f5edf1d6c2a5911"
 
 [[projects]]
+  branch = "master"
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "0dbc446aca87aebb6e0a24509b59bafc0e3ec0ae"
+  packages = ["aws","aws/credentials","aws/request","aws/session","service/apigateway","service/cloudformation","service/cloudwatch","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3manager","service/sts","service/cloudwatchlogs","service/ses","service/sns"]
+  revision = "26d4122e877bd86f43d528ad7fbde237dbbd3fa9"
 
 [[projects]]
+  branch = "master"
   name = "github.com/crewjam/go-cloudformation"
   packages = ["."]
-  revision = "dc036ed324b195833581cf6b102c8a8cf5d2fbb8"
+  revision = "d3183a4759da92da1e846521444ad08216b7f20e"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -45,12 +47,12 @@ memo = "de7d2248c44e004a28f0c8f9754c2c52337ce2b4def7d43d31f0190be0b8adce"
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "5deb57bbca49eb370538fc295ba4b2988f9f5e09"
+  revision = "ca57f0f5dba473a8a58765d16d7e811fb8027add"
 
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "e453343e6260b4a3a89f1f0e10a2fbb07f8d9750"
+  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
 
 [[projects]]
   branch = "master"
@@ -62,4 +64,4 @@ memo = "de7d2248c44e004a28f0c8f9754c2c52337ce2b4def7d43d31f0190be0b8adce"
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "7ee420f17d7525d013c72c05ed371361a29895d3"
+  revision = "bf4b54dc687c73b6ef63de8b8abf0ad3951e3edc"
