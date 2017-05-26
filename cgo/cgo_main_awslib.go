@@ -63,6 +63,7 @@ func cgoMain(callerFile string,
 	api *sparta.API,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
+
 	logger, loggerErr := sparta.NewLogger("info")
 	if nil != loggerErr {
 		panic("Failed to initialize logger")
