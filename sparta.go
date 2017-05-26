@@ -43,6 +43,14 @@ const (
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 )
 
+var (
+	// internal logging header
+	headerDivider = strings.Repeat("=", 40)
+
+	// internal logging subheader
+	subheaderDivider = strings.Repeat("-", 40)
+)
+
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
 // See also
 // http://docs.aws.amazon.com/general/latest/gr/rande.html
