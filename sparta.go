@@ -1037,27 +1037,34 @@ func NewNamedLambda(roleNameOrIAMRoleDefinition interface{},
 	if functionName == "" {
 		return nil, errors.New("Invalid 'functionName' parameter, cannot be nil or empty")
 	}
-
 	lambda := NewLambda(roleNameOrIAMRoleDefinition, fn, lambdaOptions)
 	lambda.functionName = functionName
 
 	return lambda, nil
 }
 
-// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
-// to set the formatter if needed.
-func NewLogger(level string) (*logrus.Logger, error) {
+// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
+// is nil, a TTY-aware formatter is used
+func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
 	logger := logrus.New()
 	logLevel, err := logrus.ParseLevel(level)
 	if err != nil {
 		return nil, err
 	}
 	logger.Level = logLevel
-
 	// Running in CI?
 	if "" != os.Getenv("CI") {
 		logger.Level = logrus.DebugLevel
 	}
+	if nil != formatter {
+		logger.Formatter = formatter
+	}
 	logger.Out = os.Stdout
 	return logger, nil
+}
+
+// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
+// to set the formatter if needed.
+func NewLogger(level string) (*logrus.Logger, error) {
+	return NewLoggerWithFormatter(level, nil)
 }
