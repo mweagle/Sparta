@@ -5,14 +5,14 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/asaskevich/govalidator"
-	"github.com/spf13/cobra"
 	"os"
 	"path"
 	"runtime"
-	"strings"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/asaskevich/govalidator"
+	"github.com/spf13/cobra"
 )
 
 // CommandLineOptions defines the commands available via the Sparta command
@@ -34,6 +34,7 @@ var CommandLineOptions = struct {
 type optionsGlobalStruct struct {
 	Noop        bool           `valid:"-"`
 	LogLevel    string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
+	LogFormat   string         `valid:"matches(txt|text|json)"`
 	Logger      *logrus.Logger `valid:"-"`
 	Command     string         `valid:"-"`
 	BuildTags   string         `valid:"-"`
@@ -50,6 +51,7 @@ type optionsProvisionStruct struct {
 	S3Bucket        string `valid:"required,matches(\\w+)"`
 	BuildID         string `valid:"matches(\\S+)"` // non-whitespace
 	PipelineTrigger string `valid:"-"`
+	InPlace         bool   `valid:"-"`
 }
 
 var optionsProvision optionsProvisionStruct
@@ -114,6 +116,11 @@ func init() {
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.LogFormat,
+		"format",
+		"f",
+		"text",
+		"Log format [text, json]")
 	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
 		"tags",
 		"t",
@@ -155,6 +162,11 @@ func init() {
 		"p",
 		"",
 		"Provision for CodePipeline integration")
+	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
+		"inplace",
+		"c",
+		false,
+		"If the provision operation results in *only* function updates, bypass CloudFormation")
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
@@ -237,6 +249,11 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		"l",
 		"info",
 		"Log level [panic, fatal, error, warn, info, debug]")
+	parseCmdRoot.PersistentFlags().StringVarP(&OptionsGlobal.LogFormat,
+		"format",
+		"f",
+		"text",
+		"Log format [text, json]")
 	parseCmdRoot.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
 		"tags",
 		"t",
@@ -255,7 +272,15 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 			if nil != validateErr {
 				return validateErr
 			}
-			logger, loggerErr := NewLogger(OptionsGlobal.LogLevel)
+			// Format?
+			var formatter logrus.Formatter
+			switch OptionsGlobal.LogFormat {
+			case "text", "txt":
+				formatter = &logrus.TextFormatter{}
+			case "json":
+				formatter = &logrus.JSONFormatter{}
+			}
+			logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 			if nil != loggerErr {
 				return loggerErr
 			}
@@ -391,15 +416,22 @@ func MainEx(serviceName string,
 		if nil != validateErr {
 			return validateErr
 		}
-		logger, loggerErr := NewLogger(OptionsGlobal.LogLevel)
+		// Format?
+		var formatter logrus.Formatter
+		switch OptionsGlobal.LogFormat {
+		case "text", "txt":
+			formatter = &logrus.TextFormatter{}
+		case "json":
+			formatter = &logrus.JSONFormatter{}
+		}
+		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
 			return loggerErr
 		}
 		OptionsGlobal.Logger = logger
 
 		welcomeMessage := fmt.Sprintf("Welcome to %s", serviceName)
-		welcomeDivider := strings.Repeat("=", len(welcomeMessage))
-		logger.Info(welcomeDivider)
+		logger.Info(headerDivider)
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
@@ -407,7 +439,7 @@ func MainEx(serviceName string,
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 			"LinkFlags":     OptionsGlobal.LinkerFlags,
 		}).Info(welcomeMessage)
-		logger.Info(welcomeDivider)
+		logger.Info(headerDivider)
 		return nil
 	}
 
@@ -442,6 +474,7 @@ func MainEx(serviceName string,
 				site,
 				optionsProvision.S3Bucket,
 				useCGO,
+				optionsProvision.InPlace,
 				buildID,
 				optionsProvision.PipelineTrigger,
 				OptionsGlobal.BuildTags,
