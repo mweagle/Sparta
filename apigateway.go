@@ -394,7 +394,6 @@ func apiStageInfo(apiName string, stageName string, session *session.Session, no
 	} else {
 		logger.Info("APIGateway stage has not been deployed")
 	}
-
 	return matchingStageOutput, nil
 }
 
@@ -572,7 +571,6 @@ func (api *API) export(serviceName string,
 			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
 			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
 		}
-
 		template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
 			Description: "API Gateway URL",
 			Value: gocf.Join("",

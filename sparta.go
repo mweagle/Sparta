@@ -34,13 +34,21 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.11.1"
+	SpartaVersion = "0.11.2"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
 	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
+)
+
+var (
+	// internal logging header
+	headerDivider = strings.Repeat("=", 40)
+
+	// internal logging subheader
+	subheaderDivider = strings.Repeat("-", 40)
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -1029,27 +1037,34 @@ func NewNamedLambda(roleNameOrIAMRoleDefinition interface{},
 	if functionName == "" {
 		return nil, errors.New("Invalid 'functionName' parameter, cannot be nil or empty")
 	}
-
 	lambda := NewLambda(roleNameOrIAMRoleDefinition, fn, lambdaOptions)
 	lambda.functionName = functionName
 
 	return lambda, nil
 }
 
-// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
-// to set the formatter if needed.
-func NewLogger(level string) (*logrus.Logger, error) {
+// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
+// is nil, a TTY-aware formatter is used
+func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
 	logger := logrus.New()
 	logLevel, err := logrus.ParseLevel(level)
 	if err != nil {
 		return nil, err
 	}
 	logger.Level = logLevel
-
 	// Running in CI?
 	if "" != os.Getenv("CI") {
 		logger.Level = logrus.DebugLevel
 	}
+	if nil != formatter {
+		logger.Formatter = formatter
+	}
 	logger.Out = os.Stdout
 	return logger, nil
+}
+
+// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
+// to set the formatter if needed.
+func NewLogger(level string) (*logrus.Logger, error) {
+	return NewLoggerWithFormatter(level, nil)
 }

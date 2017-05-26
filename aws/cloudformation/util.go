@@ -192,71 +192,25 @@ func existingStackTemplate(serviceName string,
 }
 
 func updateStackViaChangeSet(serviceName string,
+	cfTemplate *gocf.Template,
 	cfTemplateURL string,
-	capabilities []*string,
 	awsTags []*cloudformation.Tag,
 	awsCloudFormation *cloudformation.CloudFormation,
 	logger *logrus.Logger) error {
 
 	// Create a change set name...
 	changeSetRequestName := CloudFormationResourceName(fmt.Sprintf("%sChangeSet", serviceName))
-	changeSetInput := &cloudformation.CreateChangeSetInput{
-		Capabilities:  capabilities,
-		ChangeSetName: aws.String(changeSetRequestName),
-		ClientToken:   aws.String(changeSetRequestName),
-		Description:   aws.String(fmt.Sprintf("Change set for service: %s", serviceName)),
-		StackName:     aws.String(serviceName),
-		TemplateURL:   aws.String(cfTemplateURL),
-	}
-	if len(awsTags) != 0 {
-		changeSetInput.Tags = awsTags
-	}
-	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
-	if nil != changeSetError {
-		return changeSetError
+	_, changesErr := CreateStackChangeSet(changeSetRequestName,
+		serviceName,
+		cfTemplate,
+		cfTemplateURL,
+		awsTags,
+		awsCloudFormation,
+		logger)
+	if nil != changesErr {
+		return changesErr
 	}
 
-	logger.WithFields(logrus.Fields{
-		"StackName": serviceName,
-	}).Info("Issued CreateChangeSet request")
-
-	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
-		ChangeSetName: aws.String(changeSetRequestName),
-		StackName:     aws.String(serviceName),
-	}
-
-	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
-	for waitComplete := false; !waitComplete; {
-		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
-		time.Sleep(sleepDuration)
-
-		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
-
-		if nil != describeChangeSetError {
-			return describeChangeSetError
-		}
-		describeChangeSetOutput = changeSetOutput
-		waitComplete = (nil != describeChangeSetOutput)
-	}
-	logger.WithFields(logrus.Fields{
-		"DescribeChangeSetOutput": describeChangeSetOutput,
-	}).Debug("DescribeChangeSet result")
-
-	//////////////////////////////////////////////////////////////////////////////
-	// If there aren't any changes, then skip it...
-	if len(describeChangeSetOutput.Changes) <= 0 {
-		logger.WithFields(logrus.Fields{
-			"StackName": serviceName,
-		}).Info("No changes detected for service")
-
-		// Delete it...
-		deleteChangeSetInput := cloudformation.DeleteChangeSetInput{
-			ChangeSetName: aws.String(changeSetRequestName),
-			StackName:     aws.String(serviceName),
-		}
-		_, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
-		return deleteChangeSetResultErr
-	}
 	//////////////////////////////////////////////////////////////////////////////
 	// Apply the change
 	executeChangeSetInput := cloudformation.ExecuteChangeSetInput{
@@ -763,6 +717,111 @@ func StackExists(stackNameOrID string, awsSession *session.Session, logger *logr
 	return exists, nil
 }
 
+// CreateStackChangeSet returns the DescribeChangeSetOutput
+// for a given stack transformation
+func CreateStackChangeSet(changeSetRequestName string,
+	serviceName string,
+	cfTemplate *gocf.Template,
+	templateURL string,
+	awsTags []*cloudformation.Tag,
+	awsCloudFormation *cloudformation.CloudFormation,
+	logger *logrus.Logger) (*cloudformation.DescribeChangeSetOutput, error) {
+
+	capabilities := stackCapabilities(cfTemplate)
+	changeSetInput := &cloudformation.CreateChangeSetInput{
+		Capabilities:  capabilities,
+		ChangeSetName: aws.String(changeSetRequestName),
+		ClientToken:   aws.String(changeSetRequestName),
+		Description:   aws.String(fmt.Sprintf("Change set for service: %s", serviceName)),
+		StackName:     aws.String(serviceName),
+		TemplateURL:   aws.String(templateURL),
+	}
+	if len(awsTags) != 0 {
+		changeSetInput.Tags = awsTags
+	}
+	_, changeSetError := awsCloudFormation.CreateChangeSet(changeSetInput)
+	if nil != changeSetError {
+		return nil, changeSetError
+	}
+
+	logger.WithFields(logrus.Fields{
+		"StackName": serviceName,
+	}).Info("Issued CreateChangeSet request")
+
+	describeChangeSetInput := cloudformation.DescribeChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(serviceName),
+	}
+
+	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
+	for i := 0; i != 5; i++ {
+		sleepDuration := time.Duration(3+rand.Int31n(5)) * time.Second
+		time.Sleep(sleepDuration)
+
+		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
+
+		if nil != describeChangeSetError {
+			return nil, describeChangeSetError
+		}
+		describeChangeSetOutput = changeSetOutput
+		if nil != describeChangeSetOutput &&
+			*describeChangeSetOutput.Status == "CREATE_COMPLETE" {
+			break
+		}
+	}
+	if nil == describeChangeSetOutput {
+		return nil, fmt.Errorf("ChangeSet failed to stabilize: %s", changeSetRequestName)
+	}
+	logger.WithFields(logrus.Fields{
+		"DescribeChangeSetOutput": describeChangeSetOutput,
+	}).Debug("DescribeChangeSet result")
+
+	//////////////////////////////////////////////////////////////////////////////
+	// If there aren't any changes, then skip it...
+	if len(describeChangeSetOutput.Changes) <= 0 {
+		logger.WithFields(logrus.Fields{
+			"StackName": serviceName,
+		}).Info("No changes detected for service")
+
+		// Delete it...
+		_, deleteChangeSetResultErr := DeleteChangeSet(serviceName,
+			changeSetRequestName,
+			awsCloudFormation)
+		return nil, deleteChangeSetResultErr
+	}
+	return describeChangeSetOutput, nil
+}
+
+// DeleteChangeSet is a utility function that attempts to delete
+// an existing CloudFormation change set, with a bit of retry
+// logic in case of EC
+func DeleteChangeSet(stackName string,
+	changeSetRequestName string,
+	awsCloudFormation *cloudformation.CloudFormation) (*cloudformation.DeleteChangeSetOutput, error) {
+
+	// Delete request...
+	deleteChangeSetInput := cloudformation.DeleteChangeSetInput{
+		ChangeSetName: aws.String(changeSetRequestName),
+		StackName:     aws.String(stackName),
+	}
+
+	var delChangeSetResultErr error
+	for i := 0; i != 5; i++ {
+		deleteChangeSetResults, deleteChangeSetResultErr :=
+			awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
+		if nil == deleteChangeSetResultErr {
+			return deleteChangeSetResults, nil
+		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
+			delChangeSetResultErr = deleteChangeSetResultErr
+			sleepDuration := time.Duration(1+rand.Int31n(5)) * time.Second
+			time.Sleep(sleepDuration)
+		} else {
+			return nil, deleteChangeSetResultErr
+		}
+	}
+	return nil, delChangeSetResultErr
+}
+
 // ConvergeStackState ensures that the serviceName converges to the template
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
@@ -786,7 +845,6 @@ func ConvergeStackState(serviceName string,
 				})
 		}
 	}
-
 	exists, existsErr := StackExists(serviceName, awsSession, logger)
 	if nil != existsErr {
 		return nil, existsErr
@@ -794,8 +852,8 @@ func ConvergeStackState(serviceName string,
 	stackID := ""
 	if exists {
 		updateErr := updateStackViaChangeSet(serviceName,
+			cfTemplate,
 			templateURL,
-			stackCapabilities(cfTemplate),
 			awsTags,
 			awsCloudFormation,
 			logger)

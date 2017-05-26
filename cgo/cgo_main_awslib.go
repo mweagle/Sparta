@@ -7,12 +7,12 @@ package cgo
 import "C"
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"os"
 	"strconv"
@@ -33,36 +33,6 @@ import (
 // Lock to update CGO related config
 var muCredentials sync.Mutex
 var pythonCredentialsValue credentials.Value
-
-////////////////////////////////////////////////////////////////////////////////
-// spartaMockHTTPResponse is the buffered response to handle the HTTP
-// response provided by the underlying function
-type spartaMockHTTPResponse struct {
-	// Private vars
-	statusCode int
-	headers    http.Header
-	bytes      bytes.Buffer
-}
-
-func (spartaResp *spartaMockHTTPResponse) Header() http.Header {
-	return spartaResp.headers
-}
-
-func (spartaResp *spartaMockHTTPResponse) Write(data []byte) (int, error) {
-	return spartaResp.bytes.Write(data)
-}
-
-func (spartaResp *spartaMockHTTPResponse) WriteHeader(statusCode int) {
-	spartaResp.statusCode = statusCode
-}
-
-func newSpartaMockHTTPResponse() *spartaMockHTTPResponse {
-	resp := &spartaMockHTTPResponse{
-		statusCode: 200,
-		headers:    make(map[string][]string, 0),
-	}
-	return resp
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // lambdaFunctionErrResponse is the struct used to return a CGO error response
@@ -93,6 +63,7 @@ func cgoMain(callerFile string,
 	api *sparta.API,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
+
 	logger, loggerErr := sparta.NewLogger("info")
 	if nil != loggerErr {
 		panic("Failed to initialize logger")
@@ -110,7 +81,7 @@ func makeRequest(functionName string,
 	eventBodySize int64) ([]byte, http.Header, error) {
 
 	// Create an http.Request object with this data...
-	spartaResp := newSpartaMockHTTPResponse()
+	spartaResp := httptest.NewRecorder()
 	spartaReq := &http.Request{
 		Method: "POST",
 		URL: &url.URL{
@@ -130,12 +101,12 @@ func makeRequest(functionName string,
 	// If there was an HTTP error, transform that into a stable
 	// error payload and continue. This is the same format that's
 	// used by the NodeJS proxying tier at /resources/index.js
-	if spartaResp.statusCode >= 400 {
+	if spartaResp.Code >= 400 {
 		errResponseBody := lambdaFunctionErrResponse{
-			Code:    spartaResp.statusCode,
-			Status:  http.StatusText(spartaResp.statusCode),
+			Code:    spartaResp.Code,
+			Status:  http.StatusText(spartaResp.Code),
 			Headers: spartaResp.Header(),
-			Error:   spartaResp.bytes.String(),
+			Error:   spartaResp.Body.String(),
 		}
 
 		// Replace the response with a new one
@@ -143,14 +114,14 @@ func makeRequest(functionName string,
 		if nil != jsonBytesErr {
 			return nil, nil, jsonBytesErr
 		} else {
-			errResponse := newSpartaMockHTTPResponse()
+			errResponse := httptest.NewRecorder()
 			errResponse.Write(jsonBytes)
 			errResponse.Header().Set("content-length", strconv.Itoa(len(jsonBytes)))
 			errResponse.Header().Set("content-type", "application/json")
 			spartaResp = errResponse
 		}
 	}
-	return spartaResp.bytes.Bytes(), spartaResp.headers, nil
+	return spartaResp.Body.Bytes(), spartaResp.HeaderMap, nil
 }
 
 func postMetrics(awsCredentials *credentials.Credentials,
