@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Sample Service - Details - Sparta</title>
-    <meta name="generator" content="Hugo 0.20.2" />
+    <meta name="generator" content="Hugo 0.21" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -146,7 +146,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.11.1</span></strong>
+        <strong>Sparta <span class="version">0.11.2</span></strong>
         
           <br>
           mweagle/Sparta
@@ -504,42 +504,53 @@
 graph TD
   iam[Verify Static IAM Roles]
   preBuild[WorkflowHook - PreBuild]
-  style preBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style preBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
 
-  compile[Cross Compile for AWS Linux AMI]
+  compile[Cross Compile for AWS AMI]
+  cgoCompile[CGO Docker Compile for AWS AMI]
   postBuild[WorkflowHook - PostBuild]
-  style postBuild fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style postBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
 
-  proxyShims[Create NodeJS-Go HTTP Proxies]
+  nodeJSProxyShims[Create NodeJS-Go HTTP Proxies]
+  pythonJSProxyShims[Create Python-CGO HTTP Proxies]
   package[ZIP archive]
   userArchive[WorkflowHook - Archive]
-  style userArchive fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style userArchive fill:#61B6EB,stroke:#000,stroke-width:4px;
 
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
   preMarshall[WorkflowHook - PreMarshall]
-  style preMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style preMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
 
   generate[Marshal to CloudFormation]
   decorate[Call Lambda Decorators - Dynamic AWS Resources]
 
   serviceDecorator[Service Decorator]
-  style serviceDecorator fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style serviceDecorator fill:#61B6EB,stroke:#000,stroke-width:4px;
 
   postMarshall[WorkflowHook - PostMarshall]
-  style postMarshall fill:#1A98E7,stroke:#000,stroke-width:4px;
+  style postMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
 
   uploadTemplate[Upload Template to S3]
-  converge[Create/Update Stack]
+  updateStack[Create/Update Stack]
+  inplaceUpdates[In-place λ code updates]
   wait[Wait for Complete/Failure Result]
 
   iam-->preBuild
-  preBuild-->compile
+  preBuild-->|go|compile
+  preBuild-->|cgo|cgoCompile
   compile-->postBuild
-  postBuild-->proxyShims
-  proxyShims-->package
-  proxyShims-->packageAssets
+  cgoCompile-->postBuild
+  postBuild-->|go|nodeJSProxyShims
+
+  nodeJSProxyShims-->package
+  nodeJSProxyShims-->packageAssets
+
+  postBuild-->|cgo|pythonJSProxyShims
+  pythonJSProxyShims-->package
+  pythonJSProxyShims-->packageAssets
+
   package-->userArchive
   userArchive-->upload
   packageAssets-->uploadAssets
@@ -551,8 +562,9 @@ graph TD
   decorate-->serviceDecorator
   serviceDecorator-->postMarshall
   postMarshall-->uploadTemplate
-  uploadTemplate-->converge
-  converge-->wait
+  uploadTemplate-->|standard|updateStack
+  uploadTemplate-->|inplace|inplaceUpdates
+  updateStack-->wait
 </div>
 <h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
 <hr />
@@ -642,7 +654,7 @@ API Gateway configuration and S3 push source configuration.  Finally, a known ve
 
   <div class="next">
   
-      <a href="http://gosparta.io/index/" title="">
+      <a href="http://gosparta.io/" title="">
         <span class="direction">
           Next
         </span>
