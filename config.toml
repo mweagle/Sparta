@@ -18,7 +18,7 @@ googleAnalytics = "UA-70794971-1"
 
 	version = "0.11.2"
 	logo = "images/SpartaHelmet.png"
-	favicon = ""
+	favicon = "favicons/favicon.ico"
 
 	permalink = "#"
 
