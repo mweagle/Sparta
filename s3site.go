@@ -7,8 +7,8 @@ import (
 
 	"github.com/mweagle/cloudformationresources"
 
-	gocf "github.com/crewjam/go-cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	gocf "github.com/mweagle/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
@@ -75,7 +75,7 @@ func (s3Site *S3Site) export(serviceName string,
 		}
 	}
 
-	s3WebsiteConfig := &gocf.S3WebsiteConfigurationProperty{
+	s3WebsiteConfig := &gocf.S3BucketWebsiteConfiguration{
 		ErrorDocument: gocf.String(aws.StringValue(websiteConfig.ErrorDocument.Key)),
 		IndexDocument: gocf.String(aws.StringValue(websiteConfig.IndexDocument.Suffix)),
 	}
@@ -154,9 +154,9 @@ func (s3Site *S3Site) export(serviceName string,
 			gocf.String(S3ResourcesKey)),
 	})
 
-	iamPolicyList := gocf.IAMPoliciesList{}
+	iamPolicyList := gocf.IAMRolePolicyList{}
 	iamPolicyList = append(iamPolicyList,
-		gocf.IAMPolicies{
+		gocf.IAMRolePolicy{
 			PolicyDocument: ArbitraryJSONObject{
 				"Version":   "2012-10-17",
 				"Statement": statements,

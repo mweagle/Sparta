@@ -28,11 +28,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/lambda"
-	gocf "github.com/crewjam/go-cloudformation"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaZip "github.com/mweagle/Sparta/zip"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

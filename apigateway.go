@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/apigateway"
-	gocf "github.com/crewjam/go-cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 /*
@@ -257,9 +257,9 @@ func corsIntegrationResponseParams() map[string]string {
 }
 
 func integrationResponses(userResponses map[int]*IntegrationResponse,
-	corsEnabled bool) *gocf.APIGatewayMethodIntegrationIntegrationResponseList {
+	corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
 
-	var integrationResponses gocf.APIGatewayMethodIntegrationIntegrationResponseList
+	var integrationResponses gocf.APIGatewayMethodIntegrationResponseList
 
 	// We've already populated this entire map in the NewMethod call
 	for eachHTTPStatusCode, eachMethodIntegrationResponse := range userResponses {
@@ -271,7 +271,7 @@ func integrationResponses(userResponses map[int]*IntegrationResponse,
 			}
 		}
 
-		integrationResponse := gocf.APIGatewayMethodIntegrationIntegrationResponse{
+		integrationResponse := gocf.APIGatewayMethodIntegrationResponse{
 			ResponseTemplates: eachMethodIntegrationResponse.Templates,
 			SelectionPattern:  gocf.String(eachMethodIntegrationResponse.SelectionPattern),
 			StatusCode:        gocf.String(strconv.Itoa(eachHTTPStatusCode)),
@@ -294,13 +294,13 @@ func defaultRequestTemplates() map[string]string {
 	}
 }
 
-func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.ApiGatewayMethod {
+func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.APIGatewayMethod {
 	methodResponse := gocf.APIGatewayMethodMethodResponse{
 		StatusCode:         gocf.String("200"),
 		ResponseParameters: corsMethodResponseParams(),
 	}
 
-	integrationResponse := gocf.APIGatewayMethodIntegrationIntegrationResponse{
+	integrationResponse := gocf.APIGatewayMethodIntegrationResponse{
 		ResponseTemplates: map[string]string{
 			"application/*": "",
 			"text/*":        "",
@@ -309,17 +309,17 @@ func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringa
 		ResponseParameters: corsIntegrationResponseParams(),
 	}
 
-	methodIntegrationIntegrationResponseList := gocf.APIGatewayMethodIntegrationIntegrationResponseList{}
+	methodIntegrationIntegrationResponseList := gocf.APIGatewayMethodIntegrationResponseList{}
 	methodIntegrationIntegrationResponseList = append(methodIntegrationIntegrationResponseList,
 		integrationResponse)
 	methodResponseList := gocf.APIGatewayMethodMethodResponseList{}
 	methodResponseList = append(methodResponseList, methodResponse)
 
-	corsMethod := &gocf.ApiGatewayMethod{
-		HttpMethod:        gocf.String("OPTIONS"),
+	corsMethod := &gocf.APIGatewayMethod{
+		HTTPMethod:        gocf.String("OPTIONS"),
 		AuthorizationType: gocf.String("NONE"),
-		RestApiId:         restAPIID.String(),
-		ResourceId:        resourceID.String(),
+		RestAPIID:         restAPIID.String(),
+		ResourceID:        resourceID.String(),
 		Integration: &gocf.APIGatewayMethodIntegration{
 			Type: gocf.String("MOCK"),
 			RequestTemplates: map[string]string{
@@ -415,7 +415,7 @@ func (api *API) export(serviceName string,
 	apiGatewayResName := CloudFormationResourceName("APIGateway", api.name)
 
 	// Create an API gateway entry
-	apiGatewayRes := &gocf.ApiGatewayRestApi{
+	apiGatewayRes := &gocf.APIGatewayRestAPI{
 		Description:    gocf.String(api.Description),
 		FailOnWarnings: gocf.Bool(false),
 		Name:           gocf.String(api.name),
@@ -446,14 +446,14 @@ func (api *API) export(serviceName string,
 			pathAccumulator = append(pathAccumulator, eachPathPart)
 			resourcePathName := apiGatewayResourceNameForPath(strings.Join(pathAccumulator, "/"))
 			if _, exists := template.Resources[resourcePathName]; !exists {
-				cfResource := &gocf.ApiGatewayResource{
-					RestApiId: apiGatewayRestAPIID.String(),
+				cfResource := &gocf.APIGatewayResource{
+					RestAPIID: apiGatewayRestAPIID.String(),
 					PathPart:  gocf.String(eachPathPart),
 				}
 				if index <= 0 {
-					cfResource.ParentId = gocf.GetAtt(apiGatewayResName, "RootResourceId")
+					cfResource.ParentID = gocf.GetAtt(apiGatewayResName, "RootResourceId")
 				} else {
-					cfResource.ParentId = parentResource
+					cfResource.ParentID = parentResource
 				}
 				template.AddResource(resourcePathName, cfResource)
 			}
@@ -487,16 +487,16 @@ func (api *API) export(serviceName string,
 		// BEGIN - user defined verbs
 		for eachMethodName, eachMethodDef := range eachResourceDef.Methods {
 
-			apiGatewayMethod := &gocf.ApiGatewayMethod{
-				HttpMethod:        gocf.String(eachMethodName),
+			apiGatewayMethod := &gocf.APIGatewayMethod{
+				HTTPMethod:        gocf.String(eachMethodName),
 				AuthorizationType: gocf.String("NONE"),
-				ResourceId:        parentResource.String(),
-				RestApiId:         apiGatewayRestAPIID.String(),
+				ResourceID:        parentResource.String(),
+				RestAPIID:         apiGatewayRestAPIID.String(),
 				Integration: &gocf.APIGatewayMethodIntegration{
-					IntegrationHttpMethod: gocf.String("POST"),
+					IntegrationHTTPMethod: gocf.String("POST"),
 					Type:             gocf.String("AWS"),
 					RequestTemplates: defaultRequestTemplates(),
-					Uri: gocf.Join("",
+					URI: gocf.Join("",
 						gocf.String("arn:aws:apigateway:"),
 						gocf.Ref("AWS::Region"),
 						gocf.String(":lambda:path/2015-03-31/functions/"),
@@ -539,9 +539,9 @@ func (api *API) export(serviceName string,
 		if nil == stageInfo {
 			// Use a stable identifier so that we can update the existing deployment
 			apiDeploymentResName := CloudFormationResourceName("APIGatewayDeployment", serviceName)
-			apiDeployment := &gocf.ApiGatewayDeployment{
+			apiDeployment := &gocf.APIGatewayDeployment{
 				Description: gocf.String(api.stage.Description),
-				RestApiId:   apiGatewayRestAPIID.String(),
+				RestAPIID:   apiGatewayRestAPIID.String(),
 				StageName:   gocf.String(stageName),
 				StageDescription: &gocf.APIGatewayDeploymentStageDescription{
 					StageName:   gocf.String(api.stage.name),
@@ -559,9 +559,9 @@ func (api *API) export(serviceName string,
 			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
 			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
 		} else {
-			newDeployment := &gocf.ApiGatewayDeployment{
+			newDeployment := &gocf.APIGatewayDeployment{
 				Description: gocf.String("Sparta deploy"),
-				RestApiId:   apiGatewayRestAPIID.String(),
+				RestAPIID:   apiGatewayRestAPIID.String(),
 				StageName:   gocf.String(stageName),
 			}
 			// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this

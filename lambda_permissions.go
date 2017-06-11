@@ -7,7 +7,7 @@ import (
 
 	"github.com/mweagle/cloudformationresources"
 
-	gocf "github.com/crewjam/go-cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -259,6 +259,7 @@ func (perm S3Permission) export(serviceName string,
 	if nil != err {
 		return "", err
 	}
+
 	// Add a custom resource invocation for this configuration
 	//////////////////////////////////////////////////////////////////////////////
 	newResource, newResourceError := newCloudFormationResource(cloudformationresources.S3LambdaEventSource, logger)
@@ -457,8 +458,8 @@ func (storage *MessageBodyStorage) export(serviceName string,
 
 	if "" != storage.cloudFormationS3BucketResourceName {
 		s3Bucket := &gocf.S3Bucket{
-			Tags: []gocf.ResourceTag{
-				{
+			Tags: &gocf.TagList{
+				gocf.Tag{
 					Key:   gocf.String("sparta:logicalBucketName"),
 					Value: gocf.String(storage.logicalBucketName),
 				},
@@ -899,11 +900,11 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 			return "", exportErr
 		}
 
-		cwEventsRuleTargetList := gocf.CloudWatchEventsRuleTargetList{}
+		cwEventsRuleTargetList := gocf.EventsRuleTargetList{}
 		cwEventsRuleTargetList = append(cwEventsRuleTargetList,
-			gocf.CloudWatchEventsRuleTarget{
+			gocf.EventsRuleTarget{
 				Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-				Id:  gocf.String(uniqueRuleName),
+				ID:  gocf.String(uniqueRuleName),
 			},
 		)
 
