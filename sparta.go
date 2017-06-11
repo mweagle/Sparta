@@ -111,7 +111,6 @@ var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudfor
 // for names.
 // http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html
 // for more information.
-
 var CommonIAMStatements = struct {
 	Core     []spartaIAM.PolicyStatement
 	VPC      []spartaIAM.PolicyStatement
