@@ -23,13 +23,13 @@ googleAnalytics = "UA-70794971-1"
 	permalink = "#"
 
 	# Custom assets
-	custom_css = ["_resources/mermaid_dist/mermaid.forest.css",
-	"_resources/font-awesome-4.7.0/css/font-awesome.min.css"]
-	custom_js  = ["_resources/mermaid_dist/mermaid.min.js",
-	"_resources/jquery/jquery-2.2.0.min.js"]
+	custom_css = ["mermaid_dist/mermaid.forest.css",
+	"font-awesome-4.7.0/css/font-awesome.min.css"]
+	custom_js  = ["mermaid_dist/mermaid.min.js",
+	"jquery/jquery-2.2.0.min.js"]
 
 	# Syntax highlighting theme
-	highlight_css  = "_resources/highlights_js/styles/xcode.css"
+	highlight_css  = "highlights_js/styles/xcode.css"
 
 [params.palette]
 		primary = "grey"
