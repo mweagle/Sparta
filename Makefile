@@ -44,7 +44,7 @@ travis-depends:
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
 	git clone --depth=1 https://github.com/fzipp/gocyclo $(GOPATH)/src/github.com/fzipp/gocyclo
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
-	mv -v ./vendor/* $(GOPATH)/src/
+	rsync -a --progress --remove-source-files ./vendor/ $(GOPATH)/src
 
 travis-ci-test: travis-depends build
 	go test -v .
