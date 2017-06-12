@@ -8,6 +8,7 @@
     need to update the types used to create [alternative topologies](http://gosparta.io/docs/alternative_topologies/).
 - :checkered_flag: **CHANGES**
 - :bug: **FIXED**
+  - Fixed latent issue where CGO-enabled services that reference `cgo.NewSession()` would not build properly
 
 ## v0.11.2
 - :warning: **BREAKING**
