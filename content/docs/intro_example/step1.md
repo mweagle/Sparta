@@ -21,7 +21,6 @@ Note that you must use an AWS region that supports Lambda.  Consult the [Global 
 The first place to start is with the lambda function definition.
 
 {{< highlight go >}}
-
 func helloWorld(event *json.RawMessage,
                 context *sparta.LambdaContext,
                 w http.ResponseWriter,
