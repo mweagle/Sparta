@@ -83,7 +83,12 @@ def lambda_handler(funcName, event, context):
                                     MAX_RESPONSE_SIZE-1)
         lowercase_content_type = response_content_type_buffer.value.lower()
         if "json" in lowercase_content_type.decode('utf-8'):
-            return json.loads(response_buffer.value)
+            try:
+                json_object = json.loads(response_buffer.value)
+                return json_object
+            except:
+                # They claim it's JSON, but it's not. Be nice
+                return response_buffer.value.decode('utf-8')
         else:
             return response_buffer.value.decode('utf-8')
     except:
