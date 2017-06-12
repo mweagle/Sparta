@@ -1,3 +1,61 @@
+## Version 9.12.0
+
+New language:
+
+- *MikroTik* RouterOS Scripting language by [Ivan Dementev][].
+
+New style:
+
+- *VisualStudio 2015 Dark* by [Nicolas LLOBERA][]
+
+Improvements:
+
+- *Crystal* updated with new keywords and syntaxes by [Tsuyusato Kitsune][].
+- *Julia* updated to the modern definitions by [Alex Arslan][].
+- *julia-repl* added by [Morten Piibeleht][].
+- [Stanislav Belov][] wrote a new definition for *1C*, replacing the one that
+  has not been updated for more than 8 years. The new version supports syntax
+  for versions 7.7 and 8.
+- [Nicolas LLOBERA][] improved C# definition fixing edge cases with function
+  titles detection and added highlighting of `[Attributes]`.
+- [nnnik][] provided a few correctness fixes for *Autohotkey*.
+- [Martin Clausen][] made annotation collections in *Clojure* to look
+  consistently with other kinds.
+- [Alejandro Alonso][] updated *Swift* keywords.
+
+[Tsuyusato Kitsune]: https://github.com/MakeNowJust
+[Alex Arslan]: https://github.com/ararslan
+[Morten Piibeleht]: https://github.com/mortenpi
+[Stanislav Belov]: https://github.com/4ppl
+[Ivan Dementev]: https://github.com/DiVAN1x
+[Nicolas LLOBERA]: https://github.com/Nicolas01
+[nnnik]: https://github.com/nnnik
+[Martin Clausen]: https://github.com/maacl
+[Alejandro Alonso]: https://github.com/Azoy
+
+
+## Version 9.11.0
+
+New languages:
+
+- *Shell* by [Tsuyusato Kitsune][]
+- *jboss-cli* by [Raphaël Parrëe][]
+
+Improvements:
+
+- [Joël Porquet] has [greatly improved the definition of *makefile*][5b3e0e6].
+- *C++* class titles are now highlighted as in other languages with classes.
+- [Jordi Petit][] added rarely used `or`, `and` and `not` keywords to *C++*.
+- [Pieter Vantorre][] fixed highlighting of negative floating point values.
+
+
+[Tsuyusato Kitsune]: https://github.com/MakeNowJust
+[Jordi Petit]: https://github.com/jordi-petit
+[Raphaël Parrëe]: https://github.com/rparree
+[Pieter Vantorre]: https://github.com/NuclearCookie
+[5b3e0e6]: https://github.com/isagalaev/highlight.js/commit/5b3e0e68bfaae282faff6697d6a490567fa9d44b
+
+
 ## Version 9.10.0
 
 Apologies for missing the previous release cycle. Some thing just can't be
