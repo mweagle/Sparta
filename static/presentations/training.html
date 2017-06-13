@@ -40,9 +40,6 @@
 
 		<div class="reveal">
 
-
-
-
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 
@@ -52,6 +49,7 @@
 						#### A Go Framework for AWS Lambda
 					</textarea>
 				</section>
+				<!-- Introduction -->
 
 				<section data-markdown>
 					<textarea data-template>
@@ -80,6 +78,7 @@
 					</textarea>
 				</section>
 
+				<!-- Setup -->
 				<section data-markdown>
 					<textarea data-template>
 						### Machine Setup
@@ -93,6 +92,7 @@
 					</textarea>
 				</section>
 
+				<!-- Hello World -->
 				<section data-markdown>
 					<textarea data-template>
 						### Hello World
@@ -107,18 +107,156 @@
 						$ cd $GOPATH/src/github.com/mweagle/SpartaHelloWorld
 						$ go get -u -v ./...
 						$ go run main.go help
-
-
 						```
 					</textarea>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
-						## Thanks
+						#### Options
+						```bash
+							$ go run main.go help
+							Sparta HelloWorld stack for mweagle
+
+							Usage:
+								main [command]
+
+							Available Commands:
+								delete      Delete service
+								describe    Describe service
+								execute     Execute
+								explore     Interactively explore service
+								help        Help about any command
+								provision   Provision service
+								version     Sparta framework version
+
+							Flags:
+								-f, --format string    Log format [text, json] (default "text")
+								-h, --help             help for main
+									--ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+								-l, --level string     Log level [panic, fatal, error, warn, info, debug] (default "info")
+								-n, --noop             Dry-run behavior only (do not perform mutations)
+								-t, --tags string      Optional build tags for conditional compilation
+
+							Use "main [command] --help" for more information about a command.
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Demo
+						# λ
+					</textarea>
+				</section>
+				<!-- S3 Event Sources -->
+				<section data-markdown>
+					<textarea data-template>
+						### S3 Event Sources
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```bash
+						$ go get -u -v https://github.com/mweagle/SpartaImager
+						$ cd $GOPATH/src/github.com/mweagle/SpartaImager
+						$ go run main.go provision --level info --s3Bucket weagle
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### IAM Role
+						```golang
+						// Provision an IAM::Role as part of this application
+						var iamRole = sparta.IAMRoleDefinition{}
+						// Setup the ARN that includes all child keys
+						resourceArn := fmt.Sprintf("%s/*", s3EventBroadcasterBucket)
+						iamRole.Privileges = append(iamRole.Privileges,
+							sparta.IAMRolePrivilege{
+								Actions: []string{"s3:GetObject",
+									"s3:PutObject",
+								},
+								Resource: resourceArn,
+							})
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### Lambda & Permissions
+						```golang
+						var lambdaFunctions []*sparta.LambdaAWSInfo
+						// The default timeout is 3 seconds - increase that to 30
+						// transform lambda doesn't fail early.
+						transformOptions := &sparta.LambdaFunctionOptions{
+							Description: "Stamp assets in S3",
+							MemorySize:  128,
+							Timeout:     30,
+						}
+						lambdaFn := sparta.NewLambda(iamRole,
+							transformImage,
+							transformOptions)
+						// S3 configuration
+						lambdaFn.Permissions = append(lambdaFn.Permissions,
+							sparta.S3Permission{
+							BasePermission: sparta.BasePermission{
+								SourceArn: s3EventBroadcasterBucket,
+								},
+								Events: []string{"s3:ObjectCreated:*",
+																	"s3:ObjectRemoved:*"},
+							})
+						lambdaFunctions = append(lambdaFunctions, lambdaFn)
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Walkthrough
+						# λ
+					</textarea>
+				</section>
+
+
+				<!-- API Gateway -->
+				<!-- Sparta Imager -->
+
+				<!-- Static Site with CORS -->
+				<!-- Sparta HTML -->
+
+				<!-- Performance -->
+				<!-- SpartaPython -->
+
+				<!-- Visualization/testing/developer experience -->
+				<!-- Describe, explore_test in Sparta.go -->
+
+				<!-- Observability/monitoring -->
+				<!-- CloudWatch Metrics, CustomMetrics, http://gosparta.io/docs/faq/#operations -->
+				<!-- https://github.com/mweagle/SpartaHoneycomb -->
+				<!-- SpartaVault  for Keys -->
+
+				<!-- Alternative Topologies -->
+				<!-- SpartaOmega -->
+
+
+
+				<!-- CONCLUSION -->
+				<!-- Pros/Cons -->
+
+				<!-- THE END -->
+				<section data-markdown>
+					<textarea data-template>
+						# Thanks
 						![Sparta Helmet](/images/SpartaHelmet.png "Sparta")
 					</textarea>
 				</section>
+
+
+
 
 			</div>
 
