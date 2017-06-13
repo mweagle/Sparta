@@ -31,6 +31,18 @@
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
 
+	custom_css = ["external/mermaid_dist/mermaid.forest.css",
+	"external/font-awesome-4.7.0/css/font-awesome.min.css"]
+	custom_js  = ["external/mermaid_dist/mermaid.min.js",
+	"external/jquery/jquery-2.2.0.min.js"]
+
+		<!-- Mermaid .JS -->
+		<script src="/external/jquery/jquery-2.2.0.min.js"></script>
+		<script src="/external/mermaid_dist/mermaid.js"></script>
+		<link rel="stylesheet" href="/external/mermaid_dist/mermaid.forest.css">
+		<link rel="stylesheet" href="/css/mermaid-overrides.css">
+		<script>mermaid.initialize({startOnLoad:true});</script>
+
 		<!--[if lt IE 9]>
 		<script src="lib/js/html5shiv.js"></script>
 		<![endif]-->
@@ -76,6 +88,25 @@
 						* **Permissions** : Configure AWS event broadcaster (eg: S3)
 						* **Dynamic Resources** : Non-Lambda resources provisioned by a Sparta Application
 					</textarea>
+				</section>
+
+
+				<section>
+					<h3>Opinions</h3>
+					<p class="fragment grow">Serverless is the PaaS endgame</p>
+					<i><p class="fragment fade-in">...but does not suit all workloads</p></i>
+					<p class="fragment fade-up">Repository is the unit of collaboration</p>
+					<p class="fragment fade-up">Repository commit is the unit of promotion</p>
+					<p class="fragment fade-up">Responsibilities rather than Roles</p>
+					<p class="fragment fade-up">Go is awesome</p>
+
+					<aside class="notes">
+						PaaS: Abstraction over infrastructure, service as first glass
+						Workloads: long running, resource intensive, stable load
+						Responsibilities over roles: Serverless leads to microservices http://philcalcado.com/2017/06/11/calcados_microservices_prerequisites.html and the hierarchy of needs is independent of compute layer: https://thenewstack.io/introducing-microservices-hierarchy-needs/
+
+						Go: 'nough said. [Ben Kehoe on what's missing](https://www.youtube.com/watch?v=AqhDFbL6Nb4)
+					</aside>
 				</section>
 
 				<!-- Setup -->
@@ -145,10 +176,27 @@
 
 				<section data-markdown>
 					<textarea data-template>
-						## Demo
+						## Trust
 						# λ
 					</textarea>
+					<aside class="notes">
+						Everyone run with the --noop flag
+						go run main.go provision --level info --s3Bucket weagle --noop
+					</aside>
 				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Verify
+
+						![Sparta Helmet](./training/executionSucceeded.jpg "Execution Succeeded")
+
+						* Login to AWS Console
+						* Navigate to Lambda view, test function
+						* View CloudFormation Log output
+					</textarea>
+				</section>
+
 				<!-- S3 Event Sources -->
 				<section data-markdown>
 					<textarea data-template>
@@ -223,6 +271,17 @@
 
 
 				<!-- API Gateway -->
+				<section data-markdown>
+					<textarea data-template>
+						### API Gateway
+
+						<img src="./training/APIGateway.png" alt="Drawing" style="width: 75%"/>
+
+						<small>
+							Source: <a target="_blank" href="https://www.slideshare.net/devopsdaysaustin/2016-serverless-microservices-on-aws-with-api-gateway-and-lambda">Serverless Microservices on AWS</a>
+					</textarea>
+				</section>
+
 				<!-- Sparta Imager -->
 
 				<!-- Static Site with CORS -->
@@ -238,7 +297,10 @@
 				<!-- CloudWatch Metrics, CustomMetrics, http://gosparta.io/docs/faq/#operations -->
 				<!-- https://github.com/mweagle/SpartaHoneycomb -->
 				<!-- SpartaVault  for Keys -->
-
+				<!-- IOPipe -->
+				<!-- https://blog.symphonia.io/the-occasional-chaos-of-aws-lambda-runtime-performance-880773620a7e -->
+				<!-- https://read.acloud.guru/lambda-for-alexa-skills-7-tips-from-the-trenches-684c963e6ad1 -->
+				<!-- https://github.com/Nordstrom/serverless-artillery -->
 				<!-- Alternative Topologies -->
 				<!-- SpartaOmega -->
 
