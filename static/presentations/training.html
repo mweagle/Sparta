@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="./reveal.js/reveal.js-3.5.0/css/reveal.css">
-		<link rel="stylesheet" href="./reveal.js/reveal.js-3.5.0/css/theme/blood.css" id="theme">
+		<link rel="stylesheet" href="./theme.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="./reveal.js/reveal.js-3.5.0/lib/css/zenburn.css">
@@ -30,11 +30,6 @@
 			'./reveal.js/reveal.js-3.5.0/css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
-
-	custom_css = ["external/mermaid_dist/mermaid.forest.css",
-	"external/font-awesome-4.7.0/css/font-awesome.min.css"]
-	custom_js  = ["external/mermaid_dist/mermaid.min.js",
-	"external/jquery/jquery-2.2.0.min.js"]
 
 		<!-- Mermaid .JS -->
 		<script src="/external/jquery/jquery-2.2.0.min.js"></script>
@@ -82,11 +77,11 @@
 				<section data-markdown>
 					<textarea data-template>
 						### Concepts
-						* **ServiceName** : Stable, logical service identifier
-						* **Sparta Function** : `(*json.RawMessage, *sparta.LambdaContext, http.ResponseWriter, *logrus.Logger)`
-						* **Privileges** : Lambda IAM Role Privilege
-						* **Permissions** : Configure AWS event broadcaster (eg: S3)
-						* **Dynamic Resources** : Non-Lambda resources provisioned by a Sparta Application
+						* **ServiceName**: Stable, logical service identifier
+						* **Sparta Function**: `(*json.RawMessage, *sparta.LambdaContext, http.ResponseWriter, *logrus.Logger)`
+						* **Privileges**: Lambda IAM Role Privilege
+						* **Permissions**: Configure AWS event broadcaster (eg: S3)
+						* **Dynamic Resources**: Non-Lambda resources provisioned by a Sparta Application
 					</textarea>
 				</section>
 
