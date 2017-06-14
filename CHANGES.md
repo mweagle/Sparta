@@ -9,6 +9,7 @@
 - :checkered_flag: **CHANGES**
 - :bug: **FIXED**
   - Fixed latent issue where CGO-enabled services that reference `cgo.NewSession()` would not build properly
+  - Fixed latent issue where S3 backed sites (eg: [SpartaHugo](https://github.com/mweagle/SpartaHugo)) would not refresh on update.
   - https://github.com/mweagle/Sparta/issues/55
 
 ## v0.11.2
