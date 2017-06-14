@@ -705,7 +705,7 @@ func buildGoBinary(executableOutput string,
 		}
 		// Debug flags?
 		if logger.Level == logrus.DebugLevel {
-			buildArgs = append(buildArgs, "-v", "-race")
+			buildArgs = append(buildArgs, "-v")
 		}
 		buildArgs = append(buildArgs, userBuildFlags...)
 		buildArgs = append(buildArgs, ".")
