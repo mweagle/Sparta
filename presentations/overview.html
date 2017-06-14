@@ -279,6 +279,14 @@
 						## Walkthrough
 						# λ
 					</textarea>
+					<aside class="notes">
+						* Provision the stack: `go run main.go provision --s3Bucket ${S3_BUCKET}`
+						* Use `aws s3 cp` to upload the ben file to the bucket: `aws s3 cp ./site/ben.jpg s3://$(SPARTA_S3_TEST_BUCKET)/ben.jpg`
+						* Fetch the item JSON info with the /info route: `/info?bucketName=$(SPARTA_S3_TEST_BUCKET)&keyName=xformed_ben.jpg" | jq .`
+						* Download the stamped item using the pre-signed URL
+						Reference: https://github.com/mweagle/SpartaImager/blob/master/README.md
+					</aside>
+
 				</section>
 
 				<!-- API Gateway -->
@@ -466,7 +474,6 @@
 						```
 					</textarea>
 				</section>
-
 
 				<section data-markdown>
 					<textarea data-template>
