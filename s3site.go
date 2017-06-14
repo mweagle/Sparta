@@ -212,7 +212,7 @@ func (s3Site *S3Site) export(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
 	// actually populate the S3 with content
-	customResourceName := stableCloudformationResourceName("S3SiteBuilder")
+	customResourceName := CloudFormationResourceName("S3SiteBuilder")
 	newResource, err := newCloudFormationResource(cloudformationresources.ZipToS3Bucket, logger)
 	if nil != err {
 		return err
