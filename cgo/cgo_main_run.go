@@ -16,7 +16,9 @@ import (
 
 	"path"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/mweagle/Sparta"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/spf13/cobra"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -153,4 +155,10 @@ func cgoMain(callerMainInputFilepath string,
 		os.Rename(rewrittenFilepath, preservedOutput)
 	}
 	return spartaErr
+}
+
+// NewSession returns an AWS Session when running locally
+func NewSession() *session.Session {
+	logger, _ := sparta.NewLogger("info")
+	return spartaAWS.NewSession(logger)
 }

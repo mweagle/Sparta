@@ -11,7 +11,7 @@ import (
 	_ "github.com/mweagle/cloudformationresources"
 
 	"github.com/Sirupsen/logrus"
-	gocf "github.com/crewjam/go-cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 // See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html

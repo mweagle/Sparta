@@ -21,7 +21,7 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/crewjam/go-cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 
 	"github.com/Sirupsen/logrus"
 	_ "github.com/aws/aws-sdk-go/service/ecr"  // Ref to have Glide include depends
@@ -34,7 +34,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.11.2"
+	SpartaVersion = "0.12.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
@@ -474,8 +474,8 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 		}
 	}
 
-	iamPolicies := gocf.IAMPoliciesList{}
-	iamPolicies = append(iamPolicies, gocf.IAMPolicies{
+	iamPolicies := gocf.IAMRolePolicyList{}
+	iamPolicies = append(iamPolicies, gocf.IAMRolePolicy{
 		PolicyDocument: ArbitraryJSONObject{
 			"Version":   "2012-10-17",
 			"Statement": statements,
@@ -613,7 +613,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		Role:        roleNameMap[iamRoleArnName],
 		Runtime:     gocf.String(runtime),
 		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
-		VpcConfig:   resourceInfo.options.VpcConfig,
+		VPCConfig:   resourceInfo.options.VpcConfig,
 	}
 
 	lambdaFunctionCFName := CloudFormationResourceName("CustomResourceLambda",
@@ -807,7 +807,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Role:        roleNameMap[iamRoleArnName],
 		Runtime:     gocf.String(lambdaRuntime),
 		Timeout:     gocf.Integer(info.Options.Timeout),
-		VpcConfig:   info.Options.VpcConfig,
+		VPCConfig:   info.Options.VpcConfig,
 	}
 	if "" != S3Version {
 		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)

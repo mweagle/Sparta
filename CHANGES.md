@@ -1,5 +1,17 @@
 # Change Notes
 
+
+## v0.12.0
+- :warning: **BREAKING**
+  - Replaced all https://github.com/crewjam/go-cloudformation references with https://github.com/mweagle/go-cloudformation references
+    - This is mostly internal facing, but impacts advanced usage via [ServiceDecoratorHook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) users. Clients may
+    need to update the types used to create [alternative topologies](http://gosparta.io/docs/alternative_topologies/).
+- :checkered_flag: **CHANGES**
+- :bug: **FIXED**
+  - Fixed latent issue where CGO-enabled services that reference `cgo.NewSession()` would not build properly
+  - Fixed latent issue where S3 backed sites (eg: [SpartaHugo](https://github.com/mweagle/SpartaHugo)) would not refresh on update.
+  - https://github.com/mweagle/Sparta/issues/55
+
 ## v0.11.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**

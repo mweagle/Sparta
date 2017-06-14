@@ -16,9 +16,9 @@ import (
 	"text/template"
 
 	"github.com/Sirupsen/logrus"
-	gocf "github.com/crewjam/go-cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	"github.com/mweagle/cloudformationresources"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 const (
@@ -241,9 +241,9 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 		// to make sure that the sourceARN we have is in the list
 		statements := CommonIAMStatements.Core
 
-		iamPolicyList := gocf.IAMPoliciesList{}
+		iamPolicyList := gocf.IAMRolePolicyList{}
 		iamPolicyList = append(iamPolicyList,
-			gocf.IAMPolicies{
+			gocf.IAMRolePolicy{
 				PolicyDocument: ArbitraryJSONObject{
 					"Version":   "2012-10-17",
 					"Statement": statements,
@@ -265,6 +265,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	} else {
 		existingIAMRole = existingResource.Properties.(*gocf.IAMRole)
 	}
+
 	// Walk the existing statements
 	if nil != existingIAMRole.Policies {
 		for _, eachPolicy := range *existingIAMRole.Policies {

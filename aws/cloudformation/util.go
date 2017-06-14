@@ -14,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	gocf "github.com/crewjam/go-cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
 
 	"io"
 	"io/ioutil"
