@@ -9,6 +9,7 @@
 - :checkered_flag: **CHANGES**
 - :bug: **FIXED**
   - Fixed latent issue where CGO-enabled services that reference `cgo.NewSession()` would not build properly
+  - https://github.com/mweagle/Sparta/issues/55
 
 ## v0.11.2
 - :warning: **BREAKING**
