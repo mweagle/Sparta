@@ -59,3 +59,4 @@ _Thanks to all Sparta contributors (alphabetical)_
   - [sdbeard](https://github.com/sdbeard)
   - [Paul Seiffert](https://github.com/seiffert)
   - [Thom Shutt](https://github.com/thomshutt)
+
