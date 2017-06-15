@@ -170,7 +170,7 @@
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Trust
 						# λ
@@ -181,11 +181,12 @@
 						<small class="fragment fade-up">
 						`go run main.go provision --level info --s3Bucket $S3BUCKET`
 						</small>
-					</textarea>
-					<aside class="notes">
+
+						Note:
 						First run with the --noop flag
 						go run main.go provision --level info --s3Bucket weagle --noop
-					</aside>
+
+					</textarea>
 				</section>
 
 
@@ -273,23 +274,22 @@
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
 						# λ
-					</textarea>
-					<aside class="notes">
+
+						Note:
 						* Provision the stack: `go run main.go provision --s3Bucket ${S3_BUCKET}`
 						* Use `aws s3 cp` to upload the ben file to the bucket: `aws s3 cp ./site/ben.jpg s3://$(SPARTA_S3_TEST_BUCKET)/ben.jpg`
 						* Fetch the item JSON info with the /info route: `/info?bucketName=$(SPARTA_S3_TEST_BUCKET)&keyName=xformed_ben.jpg" | jq .`
 						* Download the stamped item using the pre-signed URL
 						Reference: https://github.com/mweagle/SpartaImager/blob/master/README.md
-					</aside>
-
+					</textarea>
 				</section>
 
 				<!-- API Gateway -->
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						### API Gateway
 
@@ -298,6 +298,10 @@
 						<small>
 							Source: <a target="_blank" href="https://www.slideshare.net/devopsdaysaustin/2016-serverless-microservices-on-aws-with-api-gateway-and-lambda">Serverless Microservices on AWS</a>
 						</small>
+
+						Note:
+						API Gateway is resource->method->integration->lambda and then back out
+
 					</textarea>
 				</section>
 
@@ -348,16 +352,21 @@
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
 						# λ
+
+						Note:
+						Follow the Repo steps [README](https://github.com/mweagle/SpartaImager/blob/master/README.md) has an overview of what's going on.
+							- Build the stack
+							- list the bucket: `s3ls $SPARTA_S3_TEST_BUCKET`
+							- Upload the file with aws cp: `aws s3 cp ./site/ben.jpg s3://$SPARTA_S3_TEST_BUCKET/ben.jpg`
+							-  `s3ls $SPARTA_S3_TEST_BUCKET`
+							- Hit the API Gateway endpoint to get the presigned URL: `/info?bucketName=$SPARTA_S3_TEST_BUCKET&keyName=xformed_ben.jpg" | jq .`
+							- Download the item with curl
+							- Open it up
 					</textarea>
-
-					<aside class="notes">
-						The repo README (https://github.com/mweagle/SpartaImager/blob/master/README.md) has an overview of what's going on
-					</aside>
-
 				</section>
 
 				<!-- Static Site with CORS -->
@@ -436,18 +445,17 @@
 				</section>
 
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
 						# λ
-					</textarea>
 
-					<aside class="notes">
+						Note:
 						Use the SpartaHelloWorld app with and without the --inplace argument. Add a new function, try to do an inplace update.
-					</aside>
+					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						### Runtime
 
@@ -457,13 +465,13 @@
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						<span style="font-size: 512">😱</span>
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						```bash
 						$ go get -u -v https://github.com/mweagle/SpartaPython
@@ -474,7 +482,7 @@
 					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						### Migrating to CGO
 						```go
@@ -489,38 +497,36 @@
 						<small>
 							More information: <a target="_blank" href="https://medium.com/@mweagle/see-lambda-go-e39b526c1020">See Lambda Go</a>
 						</small>
-					</textarea>
-					<aside class="notes">
+
+						Note:
 						Open up two new terminal windows and provision each stack. Test the warmed performance of each function. There are also
 						platform issues to be aware of: https://blog.symphonia.io/the-occasional-chaos-of-aws-lambda-runtime-performance-880773620a7e,
 						 https://read.acloud.guru/lambda-for-alexa-skills-7-tips-from-the-trenches-684c963e6ad1,
-					</aside>
+					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
 						# λ
-					</textarea>
 
-					<aside class="notes">
+						Note:
 						Build the https://github.com/mweagle/SpartaPython cgo version with `make provisionCGO`
-					</aside>
+					</textarea>
 				</section>
 
-				<section data-markdown>
+				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						### Testing
 
 						* Use [httptest](https://golang.org/pkg/net/http/httptest/) to test your lambda functions.
 							* See [explore_test.go](https://github.com/mweagle/Sparta/blob/master/explore_test.go)
 							* Mock arbitrary event input
-					</textarea>
 
-					<aside class="notes">
+						Note:
 						Sparta shows a sample of this at the root: `go test -v -run TestExplore* .`
-					</aside>
 
+					</textarea>
 				</section>
 
 
