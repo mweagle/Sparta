@@ -53,7 +53,7 @@ See the [Limitations](http://gosparta.io/docs/limitations/) page for the most up
 
 _Thanks to all Sparta contributors (alphabetical)_
 
-  - [Kyle Anderson](Kyle Anderson)
+  - **Kyle Anderson**
   - [James Brook](https://github.com/jbrook)
   - [Ryan Brown](https://github.com/ryansb)
   - [sdbeard](https://github.com/sdbeard)
