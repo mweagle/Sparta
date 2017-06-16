@@ -1,5 +1,10 @@
 # Change Notes
 
+## v0.12.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - added _Sparta/aws/cloudformation.UserScopedStackName()_ to generate username-suffixed CloudFormation StackNames
+- :bug: **FIXED**
 
 ## v0.12.0
 - :warning: **BREAKING**
