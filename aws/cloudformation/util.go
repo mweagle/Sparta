@@ -19,6 +19,7 @@ import (
 	"io"
 	"io/ioutil"
 	"math/rand"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -928,4 +929,30 @@ func ConvergeStackState(serviceName string,
 		}
 	}
 	return convergeResult.stackInfo, nil
+}
+
+// If the platform specific implementation of user.Current()
+// isn't available, go get something that's a "stable" user
+// name
+func defaultUserName() string {
+	userName := os.Getenv("USER")
+	if "" == userName {
+		userName = os.Getenv("USERNAME")
+	}
+	if "" == userName {
+		userName = fmt.Sprintf("user%d", os.Getuid())
+	}
+	return userName
+}
+
+// UserScopedStackName returns a CloudFormation stack
+// name that takes into account the current username
+/*
+A stack name can contain only alphanumeric characters
+(case sensitive) and hyphens. It must start with an alphabetic
+\character and cannot be longer than 128 characters.
+*/
+func UserScopedStackName(basename string) string {
+	userName := strings.Replace(platformUserName(), " ", "-", -1)
+	return fmt.Sprintf("%s-%s", basename, userName)
 }
