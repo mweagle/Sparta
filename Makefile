@@ -14,10 +14,6 @@ generate:
 	@echo "Generate complete: `date`"
 
 validate:
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 20 *.go
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 20 ./aws
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 20 ./docker
-	go run $(GOPATH)/src/github.com/fzipp/gocyclo/gocyclo.go -over 20 ./explore
 	go tool vet *.go
 	go tool vet ./explore
 	go tool vet ./aws/
