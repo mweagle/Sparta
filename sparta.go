@@ -34,7 +34,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.12.0"
+	SpartaVersion = "0.12.2"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
@@ -140,6 +140,13 @@ var CommonIAMStatements = struct {
 			Action: []string{"cloudformation:DescribeStacks",
 				"cloudformation:DescribeStackResource"},
 			Resource: gocf.Join("", cloudFormationThisStackArn...),
+		},
+		// http://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html#enabling-x-ray
+		{
+			Effect: "Allow",
+			Action: []string{"xray:PutTraceSegments",
+				"xray:PutTelemetryRecords"},
+			Resource: gocf.String("*"),
 		},
 	},
 	VPC: []spartaIAM.PolicyStatement{
@@ -283,6 +290,8 @@ type LambdaFunctionOptions struct {
 	KmsKeyArn string
 	// Tags to associate with the Lambda function
 	Tags map[string]string
+	// Tracing options for XRay
+	TracingConfig *gocf.LambdaFunctionTracingConfig
 	// Additional params
 	SpartaOptions *SpartaOptions
 }
@@ -816,8 +825,19 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
 	}
 	if nil != info.Options.Tags {
-		// TODO: Add TAGS
+		tagList := gocf.TagList{}
+		for eachKey, eachValue := range info.Options.Tags {
+			tagList = append(tagList, gocf.Tag{
+				Key:   gocf.String(eachKey),
+				Value: gocf.String(eachValue),
+			})
+		}
+		lambdaResource.Tags = &tagList
 	}
+	if nil != info.Options.TracingConfig {
+		lambdaResource.TracingConfig = info.Options.TracingConfig
+	}
+
 	if nil != info.Options.Environment {
 		lambdaResource.Environment = &gocf.LambdaFunctionEnvironment{
 			Variables: info.Options.Environment,
