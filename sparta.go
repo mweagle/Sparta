@@ -34,7 +34,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.12.2"
+	SpartaVersion = "0.13.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs4.3"
 	// PythonVersion is the Python version used for CGO support
@@ -309,7 +309,10 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 
 // SpartaOptions allow the passing in of additional options during the creation of a Lambda Function
 type SpartaOptions struct {
-	// Function Name
+	// User supplied function name to use for
+	// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname
+	// value. If this is not supplied, a reflection-based
+	// name will be automatically used.
 	Name string
 }
 
@@ -654,9 +657,6 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 type LambdaAWSInfo struct {
 	// pointer to lambda function
 	lambdaFn LambdaFunction
-	// User defined name used in the CloudFormation template to define a function name that is
-	// easily known and doesn't change between deployments
-	functionName string
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
 	// the FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 	// docs for more info.
@@ -689,8 +689,7 @@ type LambdaAWSInfo struct {
 // lambdaFunctionName returns the internal script-sanitized
 // function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
-	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
-	lambdaFuncName := lambdaPtr.Name()
+	lambdaFuncName := ""
 	if nil != info.Options &&
 		nil != info.Options.SpartaOptions &&
 		"" != info.Options.SpartaOptions.Name {
@@ -699,6 +698,8 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		// Using the default name, let's at least remove the
 		// first prefix, since that's the SCM provider and
 		// doesn't provide a lot of value...
+		lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
+		lambdaFuncName = lambdaPtr.Name()
 		lambdaFuncNameParts := strings.Split(lambdaFuncName, "/")
 		// If there are at least three parts, then slice and join it...
 		if len(lambdaFuncNameParts) >= 3 {
@@ -761,10 +762,7 @@ func (info *LambdaAWSInfo) logicalName() string {
 	// we can only use alphanumeric, so we'll take the sanitized name and
 	// remove all underscores
 	// Prefer the user-supplied stable name to the internal one.
-	baseName := info.functionName
-	if "" == baseName {
-		baseName = info.lambdaFunctionName()
-	}
+	baseName := info.lambdaFunctionName()
 	resourceName := strings.Replace(sanitizedName(baseName), "_", "", -1)
 	prefix := fmt.Sprintf("%sLambda", resourceName)
 	return CloudFormationResourceName(prefix, info.lambdaFunctionName())
@@ -846,9 +844,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Need to check if a functionName exists in the LambdaAwsInfo struct
 	// If an empty string is passed, the template will error with invalid
 	// function name.
-	if "" != info.functionName {
-		lambdaResource.FunctionName = gocf.String(info.functionName)
-	}
+	lambdaResource.FunctionName = gocf.String(info.lambdaFunctionName())
 
 	cfResource := template.AddResource(info.logicalName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
@@ -1044,23 +1040,6 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 		lambda.Options.Timeout = 3
 	}
 	return lambda
-}
-
-// NewNamedLambda returns a LambdaAWSInfo value with a declared function name that can be provisioned
-// via CloudFormation. The `functionName` value must be a non-empty string, otherwise CloudFormation
-// will error out as "" is not a valid function name. The roleNameOrIAMRoleDefinition must either be
-// a `string` or `IAMRoleDefinition` type
-func NewNamedLambda(roleNameOrIAMRoleDefinition interface{},
-	fn LambdaFunction,
-	functionName string,
-	lambdaOptions *LambdaFunctionOptions) (*LambdaAWSInfo, error) {
-	if functionName == "" {
-		return nil, errors.New("Invalid 'functionName' parameter, cannot be nil or empty")
-	}
-	lambda := NewLambda(roleNameOrIAMRoleDefinition, fn, lambdaOptions)
-	lambda.functionName = functionName
-
-	return lambda, nil
 }
 
 // NewLoggerWithFormatter returns a logger with the given formatter. If formatter
