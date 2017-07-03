@@ -1,5 +1,21 @@
 # Change Notes
 
+https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions
+
+## v0.13.0
+- :warning: **BREAKING**
+  - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
+- :checkered_flag: **CHANGES**
+  - [XRay](http://docs.aws.amazon.com/xray/latest/devguide/xray-services-lambda.html) support
+    - added`_LambdaFunctionOptions.TracingConfig` for configuration
+    - added XRay IAM privileges to default IAM role settings:
+      - _xray:PutTraceSegments_
+      - _xray:PutTelemetryRecords_
+    - See [AWS blog](https://aws.amazon.com/blogs/aws/aws-lambda-support-for-aws-x-ray/) for more information
+  - added _LambdaFunctionOptions.Tags_ to support tagging lambda functions
+- :bug: **FIXED**
+  - Fixed latent issue where `SpartaOptions.Name` field wasn't consistently used for function names.
+
 ## v0.12.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
