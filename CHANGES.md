@@ -6,6 +6,22 @@ https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions
 - :warning: **BREAKING**
   - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
 - :checkered_flag: **CHANGES**
+  - [CloudWatch Dashboard Support!](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)
+    - You can provision a CloudWatch dashboard that provides a single overview and link portal for your Lambda-based service. Use the new `sparta.DashboardDecorator` function to automatically create a dashboard. This leverages the existing [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) functionality.
+    - Example:
+    ```
+    // Setup the DashboardDecorator lambda hook
+    workflowHooks := &sparta.WorkflowHooks{
+      ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+    }
+    ```
+    - Where the `60` value is the CloudWatch time series [period](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html).
+    - The CloudWatch Dashboard URL will be included in your stack's Outputs as in:
+    ```
+    INFO[0064] Stack output                                  Description="CloudWatch Dashboard URL" Key=CloudWatchDashboardURL Value="https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:name=SpartaXRay-mweagle"
+    ```
+    - For more info, see the [AWS Blog Post](https://aws.amazon.com/blogs/aws/new-api-cloudformation-support-for-amazon-cloudwatch-dashboards/)
+    - The [SpartaXRay](https://github.com/mweagle/SpartaXRay) sample application has additional code samples.
   - [XRay](http://docs.aws.amazon.com/xray/latest/devguide/xray-services-lambda.html) support
     - added`_LambdaFunctionOptions.TracingConfig` for configuration
     - added XRay IAM privileges to default IAM role settings:
