@@ -61,6 +61,7 @@ var SpartaTagBuildIDKey = spartaTagName("buildId")
 // that stores the optional user-supplied golang build tags
 var SpartaTagBuildTagsKey = spartaTagName("buildTags")
 
+// finalizerFunction is the type of function pushed onto the cleanup stack
 type finalizerFunction func(logger *logrus.Logger)
 
 ////////////////////////////////////////////////////////////////////////////////
