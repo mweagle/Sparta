@@ -1,28 +1,42 @@
 
-[[dependencies]]
+# Gopkg.toml example
+#
+# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# for detailed Gopkg.toml documentation.
+#
+# required = ["github.com/user/thing/cmd/thing"]
+# ignored = ["github.com/user/project/pkgX", "bitbucket.org/user/project/pkgA/pkgY"]
+#
+# [[constraint]]
+#   name = "github.com/user/project"
+#   version = "1.0.0"
+#
+# [[constraint]]
+#   name = "github.com/user/project2"
+#   branch = "dev"
+#   source = "github.com/myfork/project2"
+#
+# [[override]]
+#  name = "github.com/x/y"
+#  version = "2.4.0"
+
+
+[[constraint]]
   name = "github.com/Sirupsen/logrus"
-  revision = "7f976d3a76720c4c27af2ba716b85d2e0a7e38b1"
+  version = "1.0.1"
 
-[[dependencies]]
+[[constraint]]
   name = "github.com/asaskevich/govalidator"
-  revision = "4918b99a7cb949bb295f3c7bbaf24b577d806e35"
+  version = "6.0.0"
 
-[[dependencies]]
-  revision = "b709581f82a77c0ff00790d1446c05719fed714d"
-  name = "github.com/aws/aws-sdk-go"
-
-[[dependencies]]
-  branch = "master"
-  name = "github.com/mweagle/go-cloudformation"
-
-[[dependencies]]
+[[constraint]]
   branch = "master"
   name = "github.com/mweagle/cloudformationresources"
 
-[[dependencies]]
-  name = "github.com/spf13/cobra"
-  revision = "c46add8a652801b61513ad36c56759f302fbb028"
-
-[[dependencies]]
+[[constraint]]
   branch = "master"
-  name = "golang.org/x/tools"
+  name = "github.com/mweagle/go-cloudformation"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/spf13/cobra"
