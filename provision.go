@@ -52,6 +52,10 @@ var SpartaTagHomeKey = spartaTagName("home")
 // @enum OutputKey
 var SpartaTagVersionKey = spartaTagName("version")
 
+// SpartaTagHashKey is the keyname used in the CloudFormation Output
+// that stores the Sparta commit ID used to provision/update the service
+var SpartaTagHashKey = spartaTagName("sha")
+
 // SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
 // that stores the user-supplied or automatically generated BuildID
 // for this run
@@ -1134,6 +1138,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	stackTags := map[string]string{
 		SpartaTagHomeKey:    "http://gosparta.io",
 		SpartaTagVersionKey: SpartaVersion,
+		SpartaTagHashKey:    SpartaGitHash,
 		SpartaTagBuildIDKey: ctx.userdata.buildID,
 	}
 	if len(ctx.userdata.buildTags) != 0 {

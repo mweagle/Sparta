@@ -435,6 +435,7 @@ func MainEx(serviceName string,
 		logger.WithFields(logrus.Fields{
 			"Option":        cmd.Name(),
 			"SpartaVersion": SpartaVersion,
+			"SpartaSHA":     SpartaGitHash[0:7],
 			"GoVersion":     runtime.Version(),
 			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 			"LinkFlags":     OptionsGlobal.LinkerFlags,

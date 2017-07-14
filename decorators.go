@@ -53,7 +53,8 @@ type DashboardTemplateData struct {
 	LambdaFunctions []*LambdaTemplateData
 	// SpartaVersion is the Sparta library used to provision this service
 	SpartaVersion string
-
+	// SpartaGitHash is the commit hash of this version of the library
+	SpartaGitHash    string
 	TimeSeriesPeriod int
 	Extents          widgetExtents
 }
@@ -73,7 +74,7 @@ var dashboardTemplate = `
 * ☁️ [CloudFormation Stack](https://{ "Ref" : "AWS::Region" }.console.aws.amazon.com/cloudformation/home?region={ "Ref" : "AWS::Region" }#/stack/detail?stackId={"Ref" : "AWS::StackId"})\n
 * ☢️ [XRay](https://{ "Ref" : "AWS::Region" }.console.aws.amazon.com/xray/home?region={ "Ref" : "AWS::Region" }#/service-map)\n
 * **Lambda Count** : << len .LambdaFunctions >>\n
-* **Sparta Version** : << .SpartaVersion >>\n
+* **Sparta Version** : << .SpartaVersion >> ( [<< .SpartaGitHash >>](https://github.com/mweagle/Sparta/commit/<< .SpartaGitHash >>) )\n
   * 🔗 [Sparta Documentation](https://gosparta.io)\n"
 		}
     },
@@ -147,6 +148,7 @@ func DashboardDecorator(lambdaAWSInfo []*LambdaAWSInfo, timeSeriesPeriod int) Se
 		}
 		dashboardTemplateData := &DashboardTemplateData{
 			SpartaVersion:    SpartaVersion,
+			SpartaGitHash:    SpartaGitHash,
 			LambdaFunctions:  lambdaFunctions,
 			TimeSeriesPeriod: timeSeriesPeriod,
 			Extents: widgetExtents{
