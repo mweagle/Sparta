@@ -2,11 +2,12 @@ package sparta
 
 import (
 	"fmt"
-	"github.com/Sirupsen/logrus"
 	"net/http"
 	"os"
 	"path"
 	"time"
+
+	"github.com/Sirupsen/logrus"
 )
 
 // Port used for HTTP proxying communication
