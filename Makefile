@@ -14,10 +14,10 @@ generate:
 	@echo "Generate complete: `date`"
 
 validate:
-	go tool vet *.go
-	go tool vet ./explore
-	go tool vet ./aws/
-	go tool vet ./docker/
+	goimports -d *.go
+	goimports -d ./explore
+	goimports -d ./aws/
+	goimports -d ./docker/
 
 format:
 	go fmt .
@@ -35,6 +35,7 @@ docs:
 travis-depends:
 	go get -u github.com/golang/dep/...
 	dep ensure
+	go get -u golang.org/x/tools/cmd/goimports
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
