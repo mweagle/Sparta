@@ -1,4 +1,5 @@
-// TODO: make `go generate` work on windows
+//
+//go:generate ./stamp.sh
 
 // Embed the custom service handlers
 // TODO: Once AWS lambda supports golang as first class, move the
