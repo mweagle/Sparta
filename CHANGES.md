@@ -2,7 +2,7 @@
 
 https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions
 
-## v0.13.0
+## v0.13.0 -
 - :warning: **BREAKING**
   - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
 - :checkered_flag: **CHANGES**
@@ -20,15 +20,18 @@ https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions
     ```
     INFO[0064] Stack output                                  Description="CloudWatch Dashboard URL" Key=CloudWatchDashboardURL Value="https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:name=SpartaXRay-mweagle"
     ```
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/0.13.0/dashboard.jpg" />
+    </div>
     - For more info, see the [AWS Blog Post](https://aws.amazon.com/blogs/aws/new-api-cloudformation-support-for-amazon-cloudwatch-dashboards/)
     - The [SpartaXRay](https://github.com/mweagle/SpartaXRay) sample application has additional code samples.
   - [XRay](http://docs.aws.amazon.com/xray/latest/devguide/xray-services-lambda.html) support
-    - added`_LambdaFunctionOptions.TracingConfig` for configuration
+    - added `LambdaFunctionOptions.TracingConfig` for configuration
     - added XRay IAM privileges to default IAM role settings:
       - _xray:PutTraceSegments_
       - _xray:PutTelemetryRecords_
     - See [AWS blog](https://aws.amazon.com/blogs/aws/aws-lambda-support-for-aws-x-ray/) for more information
   - added _LambdaFunctionOptions.Tags_ to support tagging lambda functions
+  - added _SpartaGitHash_ output to both CLI and CloudWatch Dashboard output. This is in addition to the _SpartaVersion_ value (which I occassionally have failed to update).
 - :bug: **FIXED**
   - Fixed latent issue where `SpartaOptions.Name` field wasn't consistently used for function names.
 
