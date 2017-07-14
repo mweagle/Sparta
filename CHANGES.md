@@ -1,6 +1,6 @@
 # Change Notes
 
-## v0.13.0 -
+## v0.13.0 
 - :warning: **BREAKING**
   - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
 - :checkered_flag: **CHANGES**
@@ -20,6 +20,7 @@
     ```
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/0.13.0/dashboard.jpg" />
     </div>
+    
     - For more info, see the [AWS Blog Post](https://aws.amazon.com/blogs/aws/new-api-cloudformation-support-for-amazon-cloudwatch-dashboards/)
     - The [SpartaXRay](https://github.com/mweagle/SpartaXRay) sample application has additional code samples.
   - [XRay](http://docs.aws.amazon.com/xray/latest/devguide/xray-services-lambda.html) support added
