@@ -705,6 +705,9 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		if len(lambdaFuncNameParts) >= 3 {
 			lambdaFuncName = strings.Join(lambdaFuncNameParts[1:], "/")
 		}
+		// Replace periods with hyphens
+		// Issue: https://github.com/mweagle/Sparta/issues/63
+		lambdaFuncName = strings.Replace(lambdaFuncName, ".", "-", -1)
 	}
 	return lambdaFuncName
 }
