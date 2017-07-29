@@ -71,8 +71,18 @@ func UploadLocalFileToS3(localPath string,
 		ContentType: aws.String(mime.TypeByExtension(path.Ext(localPath))),
 		Body:        reader,
 	}
+	// If we can get the current working directory, let's try and strip
+	// it from the path just to keep the log statement a bit shorter
+	logPath := localPath
+	cwd, cwdErr := os.Getwd()
+	if cwdErr == nil {
+		logPath = strings.TrimPrefix(logPath, cwd)
+		if logPath != localPath {
+			logPath = fmt.Sprintf(".%s", logPath)
+		}
+	}
 	logger.WithFields(logrus.Fields{
-		"Path": localPath,
+		"Path": logPath,
 	}).Info("Uploading local file to S3")
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
