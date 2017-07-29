@@ -910,9 +910,9 @@ func ConvergeStackState(serviceName string,
 				cloudformation.ResourceStatusDeleteFailed,
 				cloudformation.ResourceStatusUpdateFailed:
 				errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
-					*eachEvent.ResourceType,
-					*eachEvent.LogicalResourceId,
-					*eachEvent.ResourceStatusReason)
+					aws.StringValue(eachEvent.ResourceType),
+					aws.StringValue(eachEvent.LogicalResourceId),
+					aws.StringValue(eachEvent.ResourceStatusReason))
 				logger.Error(errMsg)
 			default:
 				// NOP
@@ -922,9 +922,9 @@ func ConvergeStackState(serviceName string,
 	} else if nil != convergeResult.stackInfo.Outputs {
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.WithFields(logrus.Fields{
-				"Key":         *eachOutput.OutputKey,
-				"Value":       *eachOutput.OutputValue,
-				"Description": *eachOutput.Description,
+				"Key":         aws.StringValue(eachOutput.OutputKey),
+				"Value":       aws.StringValue(eachOutput.OutputValue),
+				"Description": aws.StringValue(eachOutput.Description),
 			}).Info("Stack output")
 		}
 	}
