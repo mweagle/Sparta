@@ -701,13 +701,13 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
 		lambdaFuncName = lambdaPtr.Name()
 		lambdaFuncNameParts := strings.Split(lambdaFuncName, "/")
-		// If there are at least three parts, then slice and join it...
-		if len(lambdaFuncNameParts) >= 3 {
-			lambdaFuncName = strings.Join(lambdaFuncNameParts[1:], "/")
-		}
+
+		// Grab the name of the function...
+		lambdaFuncName = lambdaFuncNameParts[len(lambdaFuncNameParts)-1]
+
 		// Replace periods with hyphens
 		// Issue: https://github.com/mweagle/Sparta/issues/63
-		lambdaFuncName = strings.Replace(lambdaFuncName, ".", "-", -1)
+		lambdaFuncName = sanitizedName(lambdaFuncName)
 	}
 	return lambdaFuncName
 }
@@ -847,8 +847,9 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Need to check if a functionName exists in the LambdaAwsInfo struct
 	// If an empty string is passed, the template will error with invalid
 	// function name.
-	lambdaResource.FunctionName = gocf.String(info.lambdaFunctionName())
-
+	lambdaResource.FunctionName = gocf.Join("-",
+		gocf.Ref("AWS::StackName"),
+		gocf.String(info.lambdaFunctionName()))
 	cfResource := template.AddResource(info.logicalName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
 	safeMetadataInsert(cfResource, "golangFunc", info.lambdaFunctionName())
@@ -1034,7 +1035,6 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	default:
 		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
 	}
-
 	// Defaults
 	if lambda.Options.MemorySize <= 0 {
 		lambda.Options.MemorySize = 128
