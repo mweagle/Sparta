@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
-  revision = "7f976d3a76720c4c27af2ba716b85d2e0a7e38b1"
-  version = "v1.0.1"
+  revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
+  version = "1.0.2"
 
 [[projects]]
   name = "github.com/asaskevich/govalidator"
@@ -16,8 +16,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "b709581f82a77c0ff00790d1446c05719fed714d"
-  version = "v1.10.9"
+  revision = "5e436e55ac5eddc739f26a2a209b3f4248ee8e0e"
+  version = "v1.10.18"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -59,31 +59,31 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "f9851eb78325a0e116fa5c9a0c9b42e08471e4d7"
+  revision = "53be8e2195c471c72d69c1e956ec9bcc6a6677ec"
 
 [[projects]]
   branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "c46add8a652801b61513ad36c56759f302fbb028"
+  revision = "34594c771f2c18301dc152640ad40ece28795373"
 
 [[projects]]
-  branch = "master"
   name = "github.com/spf13/pflag"
   packages = ["."]
   revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "abf9c25f54453410d0c6668e519582a9e1115027"
+  revision = "0f826bdd13b500be0f1d4004938ad978fcc6031e"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "6f1996fdfe16ee1642cf6f4876ed3648e2f66969"
+  revision = "ac1e4b1998e6a311e006d9629b9283295dee36a3"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
@@ -94,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "446ce357e472405913ea39a669fb6e809f6ffb6f9dc79ff2513d08acceac678d"
+  inputs-digest = "4b9a97ef5040b2881e2b71a4dbccc3577ff56de451910e577efdb5d1a884a570"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,6 +1,15 @@
 # Change Notes
 
-## v0.13.0 
+## v0.13.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Changed how Lambda [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) values are defined so that same-named functions provisioned across multiple stacks remain unique. This is done by prefixing the function name with the CloudFormation StackName.
+  - Cleaned up S3 upload log statements to prefer relative paths iff applicable
+- :bug: **FIXED**
+  - [Cloudformation lambda function name validation error](https://github.com/mweagle/Sparta/issues/63)
+  - [Python error with cgo lambda ](https://github.com/mweagle/Sparta/issues/64)
+
+## v0.13.0
 - :warning: **BREAKING**
   - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
 - :checkered_flag: **CHANGES**
@@ -20,7 +29,7 @@
     ```
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/0.13.0/dashboard.jpg" />
     </div>
-    
+
     - For more info, see the [AWS Blog Post](https://aws.amazon.com/blogs/aws/new-api-cloudformation-support-for-amazon-cloudwatch-dashboards/)
     - The [SpartaXRay](https://github.com/mweagle/SpartaXRay) sample application has additional code samples.
   - [XRay](http://docs.aws.amazon.com/xray/latest/devguide/xray-services-lambda.html) support added
