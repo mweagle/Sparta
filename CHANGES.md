@@ -1,5 +1,11 @@
 # Change Notes
 
+## v0.13.2
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Changed how Lambda [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) values are defined so that function name uniqueness is preserved for free, imported free, and struct-defined functions
+- :bug: **FIXED**
+
 ## v0.13.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
