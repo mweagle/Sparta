@@ -684,11 +684,17 @@ type LambdaAWSInfo struct {
 	// Slice of customResourceInfo pointers for any associated CloudFormation
 	// CustomResources associated with this lambda
 	customResources []*customResourceInfo
+	// Cached lambda name s.t. we only compute it once
+	cachedLambdaFunctionName string
 }
 
 // lambdaFunctionName returns the internal script-sanitized
 // function name for lambda export binding
 func (info *LambdaAWSInfo) lambdaFunctionName() string {
+	if info.cachedLambdaFunctionName != "" {
+		return info.cachedLambdaFunctionName
+	}
+
 	lambdaFuncName := ""
 	if nil != info.Options &&
 		nil != info.Options.SpartaOptions &&
@@ -700,16 +706,38 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		// doesn't provide a lot of value...
 		lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
 		lambdaFuncName = lambdaPtr.Name()
-		lambdaFuncNameParts := strings.Split(lambdaFuncName, "/")
+
+		// Split
+		// cwd: /Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld
+		// anonymous: github.com/mweagle/Sparta.(*StructHandler1).(github.com/mweagle/Sparta.handler)-fm
+		//	RE==> var reSplit = regexp.MustCompile("[\\(\\)\\.\\*]+")
+		// 	RESULT ==> Hello,[github com/mweagle/Sparta StructHandler1 github com/mweagle/Sparta handler -fm]
+		// Same package: main.helloWorld
+		// Other package, free function: github.com/mweagle/SpartaPython.HelloWorld
 
 		// Grab the name of the function...
-		lambdaFuncName = lambdaFuncNameParts[len(lambdaFuncNameParts)-1]
-
-		// Replace periods with hyphens
+		structDefined := strings.Contains(lambdaFuncName, "(") || strings.Contains(lambdaFuncName, ")")
+		otherPackage := strings.Contains(lambdaFuncName, "/")
+		canonicalName := lambdaFuncName
+		if structDefined {
+			var reCapture = regexp.MustCompile(`\(([^\(\)]+)\)`)
+			parts := reCapture.FindAllString(lambdaFuncName, -1)
+			// (*StructHandler1),(github.com/mweagle/Sparta.handler)
+			funcNameParts := strings.Split(parts[1], "/")
+			intermediateName := fmt.Sprintf("%s-%s", parts[0], funcNameParts[len(funcNameParts)-1])
+			reClean := regexp.MustCompile(`[\*\(\)]+`)
+			canonicalName = reClean.ReplaceAllString(intermediateName, "")
+		} else if otherPackage {
+			parts := strings.Split(lambdaFuncName, "/")
+			canonicalName = parts[len(parts)-1]
+		}
+		// Final sanitization
 		// Issue: https://github.com/mweagle/Sparta/issues/63
-		lambdaFuncName = sanitizedName(lambdaFuncName)
+		lambdaFuncName = sanitizedName(canonicalName)
 	}
-	return lambdaFuncName
+	// Cache it so we only do this once
+	info.cachedLambdaFunctionName = lambdaFuncName
+	return info.cachedLambdaFunctionName
 }
 
 // URLPath returns the URL path that can be used as an argument
