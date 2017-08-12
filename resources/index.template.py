@@ -8,18 +8,25 @@ from ctypes import *
 from botocore.credentials import get_credentials
 from botocore.session import get_session
 
-lib = cdll.LoadLibrary("{{ .LibraryName }}")
-lib.Lambda.argtypes = [c_char_p,
-                        c_char_p,
-                        c_char_p,
-                        c_char_p,
-                        c_char_p,
-                        POINTER(c_int),
-                        c_char_p,
-                        c_int,
-                        c_char_p,
-                        c_int]
-lib.Lambda.restype = c_int
+libHandle = None
+try:
+    libHandle = cdll.LoadLibrary("{{ .LibraryName }}")
+    libHandle.Lambda.argtypes = [c_char_p,
+                            c_char_p,
+                            c_char_p,
+                            c_char_p,
+                            c_char_p,
+                            POINTER(c_int),
+                            c_char_p,
+                            c_int,
+                            c_char_p,
+                            c_int]
+    libHandle.Lambda.restype = c_int
+except:
+    traceback.print_exc()
+    message = "Unexpected error: " + sys.exc_info()[0]
+    print(message)
+    raise RuntimeError(message)
 
 ################################################################################
 # AWS Lambda limits
@@ -71,7 +78,7 @@ def lambda_handler(funcName, event, context):
         exitCode = c_int()
 
         credentials = get_credentials(get_session())
-        bytesWritten = lib.Lambda(funcName.encode('utf-8'),
+        bytesWritten = libHandle.Lambda(funcName.encode('utf-8'),
                                     json.dumps(request).encode('utf-8'),
                                     credentials.access_key.encode('utf-8'),
                                     credentials.secret_key.encode('utf-8'),

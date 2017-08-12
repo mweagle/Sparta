@@ -64,6 +64,13 @@ func cgoMain(callerFile string,
 	site *sparta.S3Site,
 	workflowHooks *sparta.WorkflowHooks) error {
 
+	// Add a panic handler
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Failed to initialize `cgo` library: %+v", r)
+		}
+	}()
+
 	logger, loggerErr := sparta.NewLogger("info")
 	if nil != loggerErr {
 		panic("Failed to initialize logger")
@@ -79,6 +86,13 @@ func cgoMain(callerFile string,
 func makeRequest(functionName string,
 	eventBody io.ReadCloser,
 	eventBodySize int64) ([]byte, http.Header, error) {
+
+	// Add a panic handler
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Failed to handle request in `cgo` library: %+v", r)
+		}
+	}()
 
 	// Create an http.Request object with this data...
 	spartaResp := httptest.NewRecorder()
