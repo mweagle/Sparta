@@ -571,9 +571,9 @@ requested update operation.</p>
 
 <h3 id="how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</h3>
 
-<p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> supports the creation of a
-CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s function. The dashboard
-is attached the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
+<p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> adds support for the provisioning of a
+CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
+is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
 
 <pre><code class="golang">// Setup the DashboardDecorator lambda hook
 workflowHooks := &amp;sparta.WorkflowHooks{
@@ -581,8 +581,7 @@ workflowHooks := &amp;sparta.WorkflowHooks{
 }</code></pre>
 
 
-<p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning
-a dashboard as below:</p>
+<p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
 
 <p><img src="http://gosparta.io/images/faq/CloudWatchDashboard.jpg" alt="CloudWatchDashboard" /></p>
 

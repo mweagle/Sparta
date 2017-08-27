@@ -74,9 +74,9 @@ Initial _SpartaRuleSet_ will make it the active ruleset, but Sparta assumes that
 
 ### How can I provision a service dashboard?
 
-Sparta [v0.13.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130) supports the creation of a
-CloudWatch Dashboard that's dynamically created based on your service's function. The dashboard
-is attached the standard Sparta workflow via a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHook) as in:
+Sparta [v0.13.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130) adds support for the provisioning of a
+CloudWatch Dashboard that's dynamically created based on your service's topology. The dashboard
+is attached to the standard Sparta workflow via a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHook) as in:
 
 {{< highlight golang>}}
 // Setup the DashboardDecorator lambda hook
@@ -85,8 +85,7 @@ workflowHooks := &sparta.WorkflowHooks{
 }
 {{< /highlight >}}
 
-See the [SpartaXRay](https://github.com/mweagle/SpartaXRay) project for a complete example of provisioning
-a dashboard as below:
+See the [SpartaXRay](https://github.com/mweagle/SpartaXRay) project for a complete example of provisioning a dashboard as below:
 
 ![CloudWatchDashboard](/images/faq/CloudWatchDashboard.jpg)
 
