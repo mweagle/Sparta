@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Limitations - Sparta</title>
-    <meta name="generator" content="Hugo 0.21" />
+    <meta name="generator" content="Hugo 0.26" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -146,7 +146,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.12.0</span></strong>
+        <strong>Sparta <span class="version">0.13.2</span></strong>
         
           <br>
           mweagle/Sparta
@@ -376,19 +376,6 @@
 
 
 
-<a  title="FAQ" href="http://gosparta.io/docs/faq/">
-	
-	FAQ
-</a>
-
-
-
-      
-        
-        
-
-
-
 <a class="current" title="Limitations" href="http://gosparta.io/docs/limitations/">
 	
 	Limitations
@@ -427,6 +414,24 @@
 
       
     </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations">
+	
+	Limitations
+</a>
+
+
+
   
 </li>
 
@@ -502,7 +507,7 @@
 
 <ul>
 <li>But, you can <a href="https://twitter.com/awscloud/status/659795641204260864">vote</a> to make <em>golang</em> officially supported.</li>
-<li>Because of this, there is a per-container initialization cost of:
+<li>Because of this, for the default NodeJS proxying is a per-container initialization cost of:
 
 <ul>
 <li>Copying the embedded binary to <em>/tmp</em></li>
@@ -511,8 +516,8 @@
 <li>See the <a href="https://forums.aws.amazon.com/message.jspa?messageID=583910">AWS Forum</a> for more background</li>
 </ul></li>
 <li>Depending on <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>, this initialization penalty (~<code>700ms</code>) may prove burdensome.</li>
-<li>Once <strong>Go</strong> is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp; lower execution costs.</li>
 </ul></li>
+<li>Alternatively, look at leveraging Sparta&rsquo;s <a href="https://medium.com/@mweagle/see-lambda-go-e39b526c1020">cgo</a> option to package your service into a shared library that&rsquo;s proxied by Python for significantly improved performance</li>
 </ul>
 
 <h1 id="aws-lambda-limitations">AWS Lambda Limitations</h1>

@@ -159,7 +159,7 @@ The following sections walk through provisioning a S3 bucket, declaring an expli
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/docker/</guid>
-      <description>Introduction TODO</description>
+      <description>Introduction Document SpartaGrafana project.</description>
     </item>
     
     <item>
@@ -296,7 +296,7 @@ During development, configuration is typically done through environment variable
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/limitations/</guid>
-      <description>Sparta Limitations  Go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, there is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome. Once Go is officially supported, Sparta will eliminate the NodeJS proxying tier to improve performance &amp;amp; lower execution costs.</description>
+      <description>Sparta Limitations  Go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome.</description>
     </item>
     
     <item>

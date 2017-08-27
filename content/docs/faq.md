@@ -2,11 +2,6 @@
 date: 2016-03-09T19:56:50+01:00
 title: FAQ
 weight: 10
-menu:
-  main:
-    parent: Documentation
-    identifier: faq
-    weight: 0
 ---
 
 ## Development
@@ -47,6 +42,20 @@ See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
 
 Local testing is available via the [explore](/docs/local_testing/) command.
 
+
+### How can I make `provision` faster?
+
+Starting with Sparta [v0.11.2](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112), you can supply an optional
+_--inplace_ argument to the `provision` command. If this is set when provisioning updates to an existing stack,
+your Sparta application will verify that the *only* updates to the CloudFormation stack are code-level updates. If
+only code updates are detected, your Sparta application will parallelize [UpdateFunctionCode](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode) API calls directly to update the
+application code.
+
+Whether _--inplace_ is valid is based on evaluating the [ChangeSet](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) results of the
+requested update operation.
+
+*NOTE*: The _inplace_ argument implies that your service state is not reflected in CloudFormation.
+
 ## Event Sources - SES
 <hr />
 
@@ -62,6 +71,24 @@ Initial _SpartaRuleSet_ will make it the active ruleset, but Sparta assumes that
 
 ## Operations
 <hr />
+
+### How can I provision a service dashboard?
+
+Sparta [v0.13.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130) supports the creation of a
+CloudWatch Dashboard that's dynamically created based on your service's function. The dashboard
+is attached the standard Sparta workflow via a [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHook) as in:
+
+{{< highlight golang>}}
+// Setup the DashboardDecorator lambda hook
+workflowHooks := &sparta.WorkflowHooks{
+	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+}
+{{< /highlight >}}
+
+See the [SpartaXRay](https://github.com/mweagle/SpartaXRay) project for a complete example of provisioning
+a dashboard as below:
+
+![CloudWatchDashboard](/images/faq/CloudWatchDashboard.jpg)
 
 ### How can I monitor my Lambda function?
 

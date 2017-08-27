@@ -9,8 +9,6 @@ menu:
     weight: 0
 ---
 
-
-
 # Introduction
 
-TODO
+Document [SpartaGrafana](https://github.com/mweagle/SpartaGrafana) project.

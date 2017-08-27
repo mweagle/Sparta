@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>FAQ - Sparta</title>
-    <meta name="generator" content="Hugo 0.21" />
+    <meta name="generator" content="Hugo 0.26" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -146,7 +146,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.12.0</span></strong>
+        <strong>Sparta <span class="version">0.13.2</span></strong>
         
           <br>
           mweagle/Sparta
@@ -376,22 +376,6 @@
 
 
 
-<a class="current" title="FAQ" href="http://gosparta.io/docs/faq/">
-	
-	FAQ
-</a>
-
-
-<ul id="scrollspy">
-</ul>
-
-
-      
-        
-        
-
-
-
 <a  title="Limitations" href="http://gosparta.io/docs/limitations/">
 	
 	Limitations
@@ -427,6 +411,24 @@
 
       
     </ul>
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Limitations" href="http://gosparta.io/docs/limitations">
+	
+	Limitations
+</a>
+
+
+
   
 </li>
 
@@ -536,6 +538,19 @@
 
 <p>Local testing is available via the <a href="http://gosparta.io/docs/local_testing/">explore</a> command.</p>
 
+<h3 id="how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</h3>
+
+<p>Starting with Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112">v0.11.2</a>, you can supply an optional
+<em>&ndash;inplace</em> argument to the <code>provision</code> command. If this is set when provisioning updates to an existing stack,
+your Sparta application will verify that the <em>only</em> updates to the CloudFormation stack are code-level updates. If
+only code updates are detected, your Sparta application will parallelize <a href="http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode">UpdateFunctionCode</a> API calls directly to update the
+application code.</p>
+
+<p>Whether <em>&ndash;inplace</em> is valid is based on evaluating the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html">ChangeSet</a> results of the
+requested update operation.</p>
+
+<p><em>NOTE</em>: The <em>inplace</em> argument implies that your service state is not reflected in CloudFormation.</p>
+
 <h2 id="event-sources-ses">Event Sources - SES</h2>
 
 <hr />
@@ -553,6 +568,23 @@
 <h2 id="operations">Operations</h2>
 
 <hr />
+
+<h3 id="how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</h3>
+
+<p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> supports the creation of a
+CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s function. The dashboard
+is attached the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
+
+<pre><code class="golang">// Setup the DashboardDecorator lambda hook
+workflowHooks := &amp;sparta.WorkflowHooks{
+	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+}</code></pre>
+
+
+<p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning
+a dashboard as below:</p>
+
+<p><img src="http://gosparta.io/images/faq/CloudWatchDashboard.jpg" alt="CloudWatchDashboard" /></p>
 
 <h3 id="how-can-i-monitor-my-lambda-function">How can I monitor my Lambda function?</h3>
 
