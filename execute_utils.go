@@ -23,6 +23,8 @@ type dispatchMap map[string]*LambdaAWSInfo
 // Dispatch map for normal AWS Lambda to user defined Sparta lambda functions
 type customResourceDispatchMap map[string]*customResourceInfo
 
+// This is a copy of the expvarHandler implementation from
+// https://golang.org/src/expvar/expvar.go
 func expvarHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprintf(w, "{\n")
@@ -164,16 +166,7 @@ func (handler *LambdaHTTPHandler) Credentials(creds credentials.Value) {
 }
 
 func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// If this is the expvar handler then skip it
-	if "/golang/expvar" == req.URL.Path {
-		expvarHandler(w, req)
-		return
-	}
-
-	// Remove the leading slash and dispatch it to the golang handler
-	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
-	decoder := json.NewDecoder(req.Body)
-	var request lambdaRequest
+	// Handle panics
 	defer func() {
 		if r := recover(); r != nil {
 			err, ok := r.(error)
@@ -184,6 +177,17 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 			http.Error(w, errorString, http.StatusBadRequest)
 		}
 	}()
+
+	// If this is the expvar handler then skip it
+	if "/golang/expvar" == req.URL.Path {
+		expvarHandler(w, req)
+		return
+	}
+
+	// Remove the leading slash and dispatch it to the golang handler
+	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
+	decoder := json.NewDecoder(req.Body)
+	var request lambdaRequest
 
 	err := decoder.Decode(&request)
 	if nil != err {

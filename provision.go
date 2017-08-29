@@ -387,6 +387,7 @@ func versionAwareS3KeyName(s3DefaultKey string, s3VersioningEnabled bool, logger
 // uploaded. If the target bucket does not have versioning enabled,
 // this function will automatically make a new key to ensure uniqueness
 func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowContext) (string, error) {
+
 	// If versioning is enabled, use a stable name, otherwise use a name
 	// that's dynamically created. By default assume that the bucket is
 	// enabled for versioning
@@ -953,11 +954,15 @@ func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
 // the config files in the package, and the
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
-	sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-	tmpFile, err := temporaryFile(fmt.Sprintf("%s-pipeline.zip", sanitizedServiceName))
+	tmpFile, err := temporaryFile(ctx.userdata.codePipelineTrigger)
 	if err != nil {
 		return "", err
 	}
+
+	ctx.logger.WithFields(logrus.Fields{
+		"PipelineName": tmpFile.Name(),
+	}).Info("Creating pipeline archive")
+
 	templateArchive := zip.NewWriter(tmpFile)
 	ctx.logger.WithFields(logrus.Fields{
 		"Path": tmpFile.Name(),
@@ -1013,7 +1018,13 @@ func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContex
 	if nil != tempfileCloseErr {
 		return "", tempfileCloseErr
 	}
-	return uploadLocalFileToS3(tmpFile.Name(), ctx.userdata.codePipelineTrigger, ctx)
+	// Leave it here...
+	ctx.logger.WithFields(logrus.Fields{
+		"File": filepath.Base(tmpFile.Name()),
+	}).Info("Created CodePipeline archive")
+	return tmpFile.Name(), nil
+	// The key is the name + the pipeline name
+	//return uploadLocalFileToS3(tmpFile.Name(), "", ctx)
 }
 
 // If the only detected changes to a stack are Lambda code updates,
@@ -1179,7 +1190,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 		}
 	}
 
-	// If this is a codePipelineTrigger update, create all that
+	// If this isn't a codePipelineTrigger, then do that
 	if "" == ctx.userdata.codePipelineTrigger {
 		if ctx.userdata.noop {
 			ctx.logger.WithFields(logrus.Fields{
@@ -1218,7 +1229,8 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			}).Info("Stack provisioned")
 		}
 	} else {
-		// Cleanup the template...
+		ctx.logger.Info("Creating pipeline package")
+
 		ctx.registerFileCleanupFinalizer(templateFile.Name())
 		_, urlErr := createCodePipelineTriggerPackage(cfTemplate, ctx)
 		if nil != urlErr {
