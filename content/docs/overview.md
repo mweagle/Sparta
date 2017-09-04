@@ -125,4 +125,4 @@ At runtime, Sparta uses [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/pro
 
 # Next Steps
 
-Writing a simple [Sparta Application](/docs/intro_example).
+Writing a simple [Sparta Application](/docs/intro_example/intro/).
