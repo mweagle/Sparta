@@ -77,7 +77,7 @@ sparta.Main("MyHelloWorldStack",
   * `serviceDescription`: An optional string used to describe the stack.
   * `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` to provision
   * `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
-    - We'll walk through how to do that in [another section](/docs/apigateway), but for now our lambda function will only be accessible via the AWS SDK or Console.
+    - We'll walk through how to do that in [another section](/docs/apigateway/apigateway/), but for now our lambda function will only be accessible via the AWS SDK or Console.
   * `*S3Site` : Optional pointer to data if you would like to provision an [static website on S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html), initialized with local resources.
     - We'll walk through how to do that in [another section](/docs/s3site), but for now our lambda function will only be accessible via the AWS SDK or Console.
 
