@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package proxy;
+
+// CognitoIdentity is the identity information from a Cognito auth
+// See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
+message CognitoIdentity {
+  string CognitoIdentityId = 1;
+  string CognitoIdentityPoolId = 2;
+}
+
+// LambdaContext defines the AWS Lambda Context object provided by the AWS Lambda runtime.
+// See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
+// for more information on field values.  Note that the golang version doesn't functions
+// defined on the Context object.
+message LambdaContext  {
+	string FunctionName         = 1;
+	string FunctionVersion      = 2;
+	string InvokedFunctionARN   = 3;
+	string MemoryLimitInMB      = 4;
+	string AWSRequestId         = 5;
+	string LogGroupName         = 6;
+	string LogStreamName        = 7;
+  string InvokeId             = 8;
+  CognitoIdentity Identity    = 9;
+}
+
+
+// ProxyRequest is the request made by the NodeJS layer to the
+// golang process
+message ProxyRequest {
+	LambdaContext Context =  1;
+	bytes Event = 2;
+}
+
+// ProxyResponse is what the Go process sends back
+message ProxyResponse {
+	bytes Body = 1;
+}
