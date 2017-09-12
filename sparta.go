@@ -270,6 +270,9 @@ type LambdaContext struct {
 // response/Error value provided to AWS Lambda.
 type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)
 
+// HTTPLambdaFunction is a more Go-friendly HTTP handler definition
+type HTTPLambdaFunction func(http.ResponseWriter, *http.Request)
+
 // LambdaFunctionOptions defines additional AWS Lambda execution params.  See the
 // AWS Lambda FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 // docs for more information. Note that the "Runtime" field will be automatically set
@@ -657,6 +660,8 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 type LambdaAWSInfo struct {
 	// pointer to lambda function
 	lambdaFn LambdaFunction
+	// HTTP handler function
+	httpHandler http.Handler
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
 	// the FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
 	// docs for more info.
@@ -704,8 +709,10 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		// Using the default name, let's at least remove the
 		// first prefix, since that's the SCM provider and
 		// doesn't provide a lot of value...
-		lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
-		lambdaFuncName = lambdaPtr.Name()
+		if info.lambdaFn != nil {
+			lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
+			lambdaFuncName = lambdaPtr.Name()
+		}
 
 		// Split
 		// cwd: /Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld
@@ -1069,6 +1076,29 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 	}
 	if lambda.Options.Timeout <= 0 {
 		lambda.Options.Timeout = 3
+	}
+	return lambda
+}
+
+// HandleAWSLambda registers lambdaHandler with the given functionName
+// using the default lambdaFunctionOptions
+func HandleAWSLambda(functionName string,
+	lambdaHandler http.Handler,
+	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
+	lambda := &LambdaAWSInfo{
+		httpHandler:         lambdaHandler,
+		Options:             defaultLambdaFunctionOptions(),
+		Permissions:         make([]LambdaPermissionExporter, 0),
+		EventSourceMappings: make([]*EventSourceMapping, 0),
+	}
+	switch v := roleNameOrIAMRoleDefinition.(type) {
+	case string:
+		lambda.RoleName = roleNameOrIAMRoleDefinition.(string)
+	case IAMRoleDefinition:
+		definition := roleNameOrIAMRoleDefinition.(IAMRoleDefinition)
+		lambda.RoleDefinition = &definition
+	default:
+		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
 	}
 	return lambda
 }
