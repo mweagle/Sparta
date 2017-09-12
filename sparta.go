@@ -34,9 +34,9 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.13.2"
+	SpartaVersion = "0.20.0"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
-	NodeJSVersion = "nodejs4.3"
+	NodeJSVersion = "nodejs6.10"
 	// PythonVersion is the Python version used for CGO support
 	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
