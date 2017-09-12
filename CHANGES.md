@@ -1,5 +1,17 @@
 # Change Notes
 
+## v0.20.0
+- :warning: **BREAKING**
+  - Changed `NewLambdaHTTPHandler` to `NewServeMuxLambda`
+- :checkered_flag: **CHANGES**
+  - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
+    - Prior to this release, the NodeJS proxying ship would copy the embedded binary to _/tmp_, and add the executable flag. This had a noticable performance penalty for startup.
+    - This release embeds the library in a _./bin_ directory with the file permissions set so that no additional startup is necessary. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
+  - Added `sparta.HandleAWSLambda`
+    - `sparta.HandleAWSLambda` functions enable Lambda-specific middleware chains.
+  - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
+- :bug: **FIXED**
+
 ## v0.13.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
