@@ -10,7 +10,7 @@ from botocore.session import get_session
 
 libHandle = None
 try:
-    libHandle = cdll.LoadLibrary("{{ .LibraryName }}")
+    libHandle = cdll.LoadLibrary("./bin/{{ .LibraryName }}")
     libHandle.Lambda.argtypes = [c_char_p,
                             c_char_p,
                             c_char_p,

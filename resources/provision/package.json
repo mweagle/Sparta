@@ -9,5 +9,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "google-protobuf": "^3.4.0"
   }
 }

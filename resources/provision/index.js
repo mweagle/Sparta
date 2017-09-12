@@ -9,18 +9,21 @@ var spartaUtils = require('./sparta_utils')
 var AWS = require('aws-sdk')
 var awsConfig = new AWS.Config({})
 var GOLANG_CONSTANTS = require('./golang-constants.json')
+var proto = require('./proto/proxy_pb')
 
 // TODO: See if https://forums.aws.amazon.com/message.jspa?messageID=633802
 // has been updated with new information
-process.env.PATH = process.env.PATH + ':/var/task'
+process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT']
 
-// These two names will be dynamically reassigned during archive creation
+// Use the same binary name
 var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64'
+
+// This name will be rewritten as part of the archive creation
 var SPARTA_SERVICE_NAME = 'SpartaService'
 // End dynamic reassignment
 
 // This is where the binary will be extracted
-var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME)
+var SPARTA_BINARY_PATH = util.format('./bin/%s', SPARTA_BINARY_NAME)
 var MAXIMUM_RESPAWN_COUNT = 5
 
 // Handle to the active golang process.
@@ -115,6 +118,10 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   var socketDuration = null
   var writeCompleteDuration = null
   var responseEndDuration = null
+
+  // Let's go and turn the request into a proto
+  var proxyRequest = new proto.ProxyRequest();
+  var lambdaContext = new proto.LambdaContext()
 
   var requestBody = {
     event: event,
@@ -224,90 +231,52 @@ var postMetricCounter = function (metricName, userCallback) {
   cloudwatch.putMetricData(params, onResult)
 }
 
-// Move the file to /tmp to temporarily work around
-// https://forums.aws.amazon.com/message.jspa?messageID=583910
-var ensureGoLangBinary = function (callback) {
-  try {
-    fs.statSync(SPARTA_BINARY_PATH)
-    setImmediate(callback, null)
-  } catch (e) {
-    var command = util.format('cp ./%s %s; chmod +x %s',
-      SPARTA_BINARY_NAME,
-      SPARTA_BINARY_PATH,
-      SPARTA_BINARY_PATH)
-    childProcess.exec(command, function (err, stdout) {
-      if (err) {
-        console.error(err)
-        process.exit(1)
-      } else {
-        var stdoutMsg = stdout.toString('utf-8')
-        if (stdoutMsg.length !== 0) {
-          spartaUtils.log(stdoutMsg)
-        }
-      // Post the
-      }
-      callback(err, stdout)
-    })
-  }
-}
-
 var createForwarder = function (path) {
   var forwardToGolangProcess = function (event, context, callback, metricName, startRemainingCountMillisParam) {
     var startRemainingCountMillis = startRemainingCountMillisParam || context.getRemainingTimeInMillis()
     if (!golangProcess) {
-      ensureGoLangBinary(function () {
-        spartaUtils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid))
-        golangProcess = childProcess.spawn(SPARTA_BINARY_PATH, ['execute', '--signal', process.pid], {})
-
-        golangProcess.stdout.on('data', function (buf) {
-          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            spartaUtils.log(eachLine)
-          })
+      spartaUtils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid))
+      golangProcess = childProcess.spawn(SPARTA_BINARY_PATH,
+        ['execute', '--signal', process.pid], {
+          'stdio': 'inherit'
         })
-        golangProcess.stderr.on('data', function (buf) {
-          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            spartaUtils.log(eachLine)
-          })
-        })
-
-        var terminationHandler = function (eventName) {
-          return function (value) {
-            var onPosted = function () {
-              console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)))
-              failCount += 1
-              if (failCount > MAXIMUM_RESPAWN_COUNT) {
-                process.exit(1)
-              }
-              golangProcess = null
-              forwardToGolangProcess(null,
-                null,
-                callback,
-                METRIC_NAMES.TERMINATED,
-                startRemainingCountMillis)
+      var terminationHandler = function (eventName) {
+        return function (value) {
+          var onPosted = function () {
+            console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)))
+            failCount += 1
+            if (failCount > MAXIMUM_RESPAWN_COUNT) {
+              process.exit(1)
             }
-            postMetricCounter(METRIC_NAMES.TERMINATED, onPosted)
+            golangProcess = null
+            forwardToGolangProcess(null,
+              null,
+              callback,
+              METRIC_NAMES.TERMINATED,
+              startRemainingCountMillis)
           }
+          postMetricCounter(METRIC_NAMES.TERMINATED, onPosted)
         }
-        golangProcess.on('error', terminationHandler('error'))
-        golangProcess.on('exit', terminationHandler('exit'))
-        process.on('exit', function () {
-          spartaUtils.log('Go process exited')
-          if (golangProcess) {
-            golangProcess.kill()
-          }
-        })
-        var golangProcessReadyHandler = function () {
-          spartaUtils.log('SIGUSR2 signal received')
-          process.removeListener('SIGUSR2', golangProcessReadyHandler)
-          forwardToGolangProcess(event,
-            context,
-            callback,
-            METRIC_NAMES.CREATED,
-            startRemainingCountMillis)
+      }
+      golangProcess.on('error', terminationHandler('error'))
+      golangProcess.on('exit', terminationHandler('exit'))
+      process.on('exit', function () {
+        spartaUtils.log('Go process exited')
+        if (golangProcess) {
+          golangProcess.kill()
         }
-        spartaUtils.log('Waiting for SIGUSR2 signal')
-        process.on('SIGUSR2', golangProcessReadyHandler)
       })
+      var golangProcessReadyHandler = function () {
+        spartaUtils.log('SIGUSR2 signal received')
+        process.removeListener('SIGUSR2', golangProcessReadyHandler)
+        forwardToGolangProcess(event,
+          context,
+          callback,
+          METRIC_NAMES.CREATED,
+          startRemainingCountMillis)
+      }
+      spartaUtils.log('Waiting for SIGUSR2 signal')
+      process.on('SIGUSR2', golangProcessReadyHandler)
     }
     else if (event && context) {
       postMetricCounter(metricName || METRIC_NAMES.REUSED)
