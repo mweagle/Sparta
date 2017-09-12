@@ -173,6 +173,11 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 			if !ok {
 				err = fmt.Errorf("%v", r)
 			}
+			stackTrace := debug.Stack()
+			stackLines := strings.Split(string(stackTrace), "\n")
+			handler.logger.WithFields(logrus.Fields{
+				"Stack": strings.Join(stackLines, "\n"),
+			}).Error("PANIC")
 			errorString := fmt.Sprintf("Lambda handler panic: %#v", err)
 			http.Error(w, errorString, http.StatusBadRequest)
 		}
