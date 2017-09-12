@@ -1,19 +1,20 @@
 package sparta
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"expvar"
 	"fmt"
 	"net/http"
-
-	"github.com/mweagle/cloudformationresources"
-
-	"expvar"
+	"net/http/httptest"
+	"runtime/debug"
 	"strings"
-
 	"sync"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/mweagle/cloudformationresources"
 )
 
 // Dispatch map for user defined CloudFormation CustomResources to
@@ -147,9 +148,9 @@ func spartaCustomResourceForwarder(creds credentials.Value,
 	}
 }
 
-// LambdaHTTPHandler is an HTTP compliant handler that implements
+// ServeMuxLambda is an HTTP compliant handler that implements
 // ServeHTTP
-type LambdaHTTPHandler struct {
+type ServeMuxLambda struct {
 	LambdaDispatchMap         dispatchMap
 	muValue                   sync.Mutex
 	customCreds               credentials.Value
@@ -159,13 +160,13 @@ type LambdaHTTPHandler struct {
 
 // Credentials allows the user to supply a custom Credentials value
 // object for any internal calls
-func (handler *LambdaHTTPHandler) Credentials(creds credentials.Value) {
+func (handler *ServeMuxLambda) Credentials(creds credentials.Value) {
 	handler.muValue.Lock()
 	defer handler.muValue.Unlock()
 	handler.customCreds = creds
 }
 
-func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	// Handle panics
 	defer func() {
 		if r := recover(); r != nil {
@@ -207,7 +208,18 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 
 	lambdaAWSInfo := handler.LambdaDispatchMap[lambdaFunc]
 	if nil != lambdaAWSInfo {
-		lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
+		if lambdaAWSInfo.httpHandler != nil {
+			// Setup the request
+			reqBody := bytes.NewReader(request.Event)
+			spartaReq := httptest.NewRequest(req.Method, req.URL.Path, reqBody)
+			spartaReqContext := context.WithValue(req.Context(), ContextKeyLogger, handler.logger)
+			spartaReqContext = context.WithValue(spartaReqContext, ContextKeyLambdaContext, &request.Context)
+
+			// Call the normal HTTP handler
+			lambdaAWSInfo.httpHandler.ServeHTTP(w, spartaReq.WithContext(spartaReqContext))
+		} else {
+			lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
+		}
 	} else if strings.Contains(lambdaFunc, "::") {
 		// Not the most exhaustive guard, but the CloudFormation custom resources
 		// all have "::" delimiters in their type field.  Even if there is a false
@@ -237,10 +249,11 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	}
 }
 
-// NewLambdaHTTPHandler returns an initialized LambdaHTTPHandler instance.  The returned value
+// NewServeMuxLambda returns an initialized ServeMuxLambda instance.  The returned value
 // can be provided to https://golang.org/pkg/net/http/httptest/#NewServer to perform
 // localhost testing.
-func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) *LambdaHTTPHandler {
+func NewServeMuxLambda(lambdaAWSInfos []*LambdaAWSInfo,
+	logger *logrus.Logger) *ServeMuxLambda {
 	lookupMap := make(dispatchMap, 0)
 	customResourceMap := make(customResourceDispatchMap, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
@@ -258,7 +271,7 @@ func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger
 		}
 	}
 
-	return &LambdaHTTPHandler{
+	return &ServeMuxLambda{
 		LambdaDispatchMap:         lookupMap,
 		customResourceDispatchMap: customResourceMap,
 		logger: logger,
