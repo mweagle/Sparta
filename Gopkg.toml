@@ -23,15 +23,19 @@
 
 [[constraint]]
   name = "github.com/Sirupsen/logrus"
-  version = "1.0.2"
+  version = "1.0.3"
 
 [[constraint]]
   name = "github.com/asaskevich/govalidator"
-  version = "6.0.0"
+  version = "7.0.0"
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "1.10.18"
+  version = "1.10.42"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/golang/protobuf"
 
 [[constraint]]
   branch = "master"
