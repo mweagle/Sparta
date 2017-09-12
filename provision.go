@@ -163,7 +163,7 @@ type userdata struct {
 }
 
 // context is data that is mutated during the provisioning workflow
-type context struct {
+type provisionContext struct {
 	// Information about the ZIP archive that contains the LambdaCode source
 	s3CodeZipURL *s3UploadURL
 	// AWS Session to be used for all API calls made in the process of provisioning
@@ -205,7 +205,7 @@ type workflowContext struct {
 	// User supplied data that's Lambda specific
 	userdata userdata
 	// Context that's mutated across the workflow steps
-	context context
+	context provisionContext
 	// Transaction-scoped information thats mutated across the workflow
 	// steps
 	transaction transaction
@@ -743,7 +743,7 @@ func createPackageStep() workflowStep {
 			binarySuffix = "lambda.so"
 		}
 		sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-		executableOutput := fmt.Sprintf("%s.%s", sanitizedServiceName, binarySuffix)
+		executableOutput := fmt.Sprintf("Sparta.%s", binarySuffix)
 		buildErr := buildGoBinary(executableOutput,
 			ctx.userdata.useCGO,
 			ctx.userdata.buildTags,
@@ -800,7 +800,7 @@ func createPackageStep() workflowStep {
 		// File info for the binary executable
 		readerErr := spartaZip.AddToZip(lambdaArchive,
 			executableOutput,
-			"",
+			"bin",
 			ctx.logger)
 		if nil != readerErr {
 			return nil, readerErr
@@ -1295,6 +1295,12 @@ func ensureCloudFormationStack() workflowStep {
 			lambdaRuntime = PythonVersion
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
+			// If this is a legacy Sparta lambda function, let the user know
+			if eachEntry.lambdaFn != nil {
+				ctx.logger.WithFields(logrus.Fields{
+					"Name": eachEntry.lambdaFunctionName(),
+				}).Warn("DEPRECATED: legacy sparta.LambdaFunc() signature detected. Migrate to http.HandlerFunc()")
+			}
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
@@ -1447,7 +1453,7 @@ func Provision(noop bool,
 			codePipelineTrigger: codePipelineTrigger,
 			workflowHooks:       workflowHooks,
 		},
-		context: context{
+		context: provisionContext{
 			cfTemplate:                gocf.NewTemplate(),
 			s3BucketVersioningEnabled: false,
 			awsSession:                spartaAWS.NewSession(logger),
