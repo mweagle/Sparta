@@ -10,7 +10,9 @@ reset:
 		git clean -f -d
 
 generate:
-	go generate -x
+	go generate -x . ./proto
+	./stamp.sh
+	./embed.sh
 	@echo "Generate complete: `date`"
 
 validate:
