@@ -70,14 +70,21 @@ func cgoMain(callerFile string,
 			fmt.Printf("Failed to initialize `cgo` library: %+v", r)
 		}
 	}()
-
-	logger, loggerErr := sparta.NewLogger("info")
+	logger, loggerErr := sparta.NewLoggerWithFormatter("info", &logrus.JSONFormatter{})
 	if nil != loggerErr {
 		panic("Failed to initialize logger")
 	}
+	// Log the latest - duplicate of sparta.platformLogSysInfo
+	var si sysinfo.SysInfo
+	si.GetSysInfo()
+	logger.WithFields(logrus.Fields{
+		"systemInfo": si,
+	}).Info("SystemInfo")
+
+	// Startup the server
 	cgoLambdaHTTPAdapter = cgoLambdaHTTPAdapterStruct{
 		serviceName:               serviceName,
-		lambdaHTTPHandlerInstance: sparta.NewLambdaHTTPHandler(lambdaAWSInfos, logger),
+		lambdaHTTPHandlerInstance: sparta.NewServeMuxLambda(lambdaAWSInfos, logger),
 		logger: logger,
 	}
 	return nil
