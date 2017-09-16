@@ -18,7 +18,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
     - Provisioning with `--level debug` will log `logger.Debug` *AND* API API calls
   - HTTP handler `panic` events are now recovered and the traceback logged
   - Added `sparta.HandleAWSLambda`
-    - `sparta.HandleAWSLambda` support standard `http.RequestFunc` signatures as in:
+    - `sparta.HandleAWSLambda` supports standard `http.RequestFunc` signatures as in:
     - Example:
       ```
       func helloWorld(w http.ResponseWriter, r *http.Request) {
@@ -29,6 +29,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
 		    http.HandlerFunc(helloWorld),
 		    sparta.IAMRoleDefinition{})
       ```
+    - This allows you to [chain middleware](https://github.com/justinas/alice) for a lambda function as if it were a stnadard HTTP handler.
     - _LambdaContext_ and _*logrus.Logger_ are available in the context via `sparta.Context*` variables
   - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
   - Parity between NodeJS and Python/cgo initial log output
