@@ -83,7 +83,6 @@ func NewLambdaRequest(lambdaName string, eventData interface{}, testingURL strin
 
 	context := map[string]interface{}{
 		"AWSRequestID":       "12341234-1234-1234-1234-123412341234",
-		"InvokeID":           fmt.Sprintf("%d-12341234-1234-1234-1234-123412341234", nowTime.Unix()),
 		"LogGroupName":       "/aws/lambda/SpartaApplicationMockLogGroup-9ZX7FITHEAG8",
 		"LogStreamName":      fmt.Sprintf("%d/%d/%d/[$LATEST]%d", nowTime.Year(), nowTime.Month(), nowTime.Day(), nowTime.Unix()),
 		"FunctionName":       "SpartaFunction",
