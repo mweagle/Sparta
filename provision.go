@@ -252,7 +252,7 @@ func (ctx *workflowContext) registerFileCleanupFinalizer(localPath string) {
 			}).Warn("Failed to cleanup intermediate artifact")
 		} else {
 			logger.WithFields(logrus.Fields{
-				"Path": localPath,
+				"Path": relativePath(localPath),
 			}).Debug("Build artifact deleted")
 		}
 	}
@@ -639,13 +639,22 @@ func buildGoBinary(executableOutput string,
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
 		// Pass any SPARTA_* prefixed environment variables to the docker build
+		//
+		goosTarget := os.Getenv("SPARTA_GOOS")
+		if goosTarget == "" {
+			goosTarget = "linux"
+		}
+		goArch := os.Getenv("SPARTA_GOARCH")
+		if goArch == "" {
+			goArch = "amd64"
+		}
 		spartaEnvVars := []string{
 			"-e",
 			fmt.Sprintf("GOPATH=%s", containerGoPath),
 			"-e",
-			"GOOS=linux",
+			fmt.Sprintf("GOOS=%s", goosTarget),
 			"-e",
-			"GOARCH=amd64",
+			fmt.Sprintf("GOARCH=%s", goArch),
 		}
 		// User vars
 		for _, eachPair := range os.Environ() {
@@ -778,8 +787,10 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, err
 		}
+		// Strip the local directory in case it's in there...
+
 		ctx.logger.WithFields(logrus.Fields{
-			"TempName": tmpFile.Name(),
+			"TempName": relativePath(tmpFile.Name()),
 		}).Info("Creating code ZIP archive for upload")
 
 		lambdaArchive := zip.NewWriter(tmpFile)
@@ -1299,7 +1310,7 @@ func ensureCloudFormationStack() workflowStep {
 			if eachEntry.lambdaFn != nil {
 				ctx.logger.WithFields(logrus.Fields{
 					"Name": eachEntry.lambdaFunctionName(),
-				}).Warn("DEPRECATED: legacy sparta.LambdaFunc() signature detected. Migrate to http.HandlerFunc()")
+				}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
 			}
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
@@ -1494,8 +1505,11 @@ func Provision(noop bool,
 		}
 
 		if next == nil {
+			summaryLine := fmt.Sprintf("Summary (%s)", time.Now().Local().String())
+			subheaderDivider := strings.Repeat("-", len(summaryLine)+len(summaryLine)/5)
+
 			ctx.logger.Info(subheaderDivider)
-			ctx.logger.Info("Summary")
+			ctx.logger.Info(summaryLine)
 			ctx.logger.Info(subheaderDivider)
 			for _, eachEntry := range ctx.transaction.stepDurations {
 				ctx.logger.WithFields(logrus.Fields{
