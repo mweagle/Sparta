@@ -457,6 +457,7 @@ func insertNodeJSProxyResources(serviceName string,
 
 	// And the service name
 	nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", serviceName)
+	nodeJSSource += fmt.Sprintf("SPARTA_LOG_LEVEL='%s';\n", logger.Level.String())
 	logger.WithFields(logrus.Fields{
 		"index.js": nodeJSSource,
 	}).Debug("Dynamically generated NodeJS adapter")
@@ -564,9 +565,11 @@ func insertPythonProxyResources(serviceName string,
 	// the Go template engine so that we can substitute the
 	// library name and the python functions we've built up...
 	data := struct {
+		LogLevel        string
 		LibraryName     string
 		PythonFunctions string
 	}{
+		logger.Level.String(),
 		executableOutput,
 		pythonSource,
 	}
