@@ -1,27 +1,38 @@
 # Change Notes
 
 ## v0.20.0
+
+### :star: Deprecation Notice
+
+The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.HandlerFunc` and will be removed in an upcoming release. See below for more information
+
+
 - :warning: **BREAKING**
   - Changed `NewLambdaHTTPHandler` to `NewServeMuxLambda`
+  - Remove obsolete `InvokeID` from [LambdaContext](https://godoc.org/github.com/mweagle/Sparta#LambdaContext)
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
     - Prior to this release, the NodeJS proxying ship would copy the embedded binary to _/tmp_, and add the executable flag. This had a noticable performance penalty for startup.
-    - Client side log level (eg: `--level debug`) is carried into the deployed code.
     - This release embeds the library in a _./bin_ directory with the file permissions set so that no additional startup is necessary. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
-    - Ensure Python-`cgo` logger uses JSON log formatter in AWS
-    - HTTP handler `panic` events are now recovered and the traceback logged
-    - Added `sparta.HandleAWSLambda`
-      - `sparta.HandleAWSLambda` functions enable Lambda-specific middleware chains.
-      - Example:
+  - Client side log level (eg: `--level debug`) is carried into the deployed code.
+    - Provisioning with `--level debug` will log `logger.Debug` *AND* API API calls
+  - HTTP handler `panic` events are now recovered and the traceback logged
+  - Added `sparta.HandleAWSLambda`
+    - `sparta.HandleAWSLambda` support standard `http.RequestFunc` signatures as in:
+    - Example:
       ```
-      // Setup the DashboardDecorator lambda hook
-      workflowHooks := &sparta.WorkflowHooks{
-        ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+      func helloWorld(w http.ResponseWriter, r *http.Request) {
+        ...
       }
+
+      lambdaFn := sparta.HandleAWSLambda("Hello HTTP World",
+		    http.HandlerFunc(helloWorld),
+		    sparta.IAMRoleDefinition{})
       ```
-    - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
-    - Remove `InvokeID` from [LambdaContext](https://godoc.org/github.com/mweagle/Sparta#LambdaContext)
-    - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
+    - _LambdaContext_ and _*logrus.Logger_ are available in the context via `sparta.Context*` variables
+  - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
+  - Parity between NodeJS and Python/cgo initial log output
+  - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
       - Example:
       ```
       {
@@ -65,6 +76,7 @@
     }
     ```
 - :bug: **FIXED**
+  - There were a few
 
 ## v0.13.2
 - :warning: **BREAKING**
