@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"expvar"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"runtime/debug"
@@ -14,6 +15,9 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
+	"github.com/mweagle/Sparta/proxy"
 	"github.com/mweagle/cloudformationresources"
 )
 
@@ -175,9 +179,8 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 				err = fmt.Errorf("%v", r)
 			}
 			stackTrace := debug.Stack()
-			stackLines := strings.Split(string(stackTrace), "\n")
 			handler.logger.WithFields(logrus.Fields{
-				"Stack": strings.Join(stackLines, "\n"),
+				"Stack": string(stackTrace),
 			}).Error("PANIC")
 			errorString := fmt.Sprintf("Lambda handler panic: %#v", err)
 			http.Error(w, errorString, http.StatusBadRequest)
@@ -189,31 +192,75 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 		expvarHandler(w, req)
 		return
 	}
-
-	// Remove the leading slash and dispatch it to the golang handler
-	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
-	decoder := json.NewDecoder(req.Body)
-	var request lambdaRequest
-
-	err := decoder.Decode(&request)
-	if nil != err {
-		errorString := fmt.Sprintf("Failed to decode proxy request: %s", err.Error())
+	// Read the request and unmarshal the right version
+	defer req.Body.Close()
+	bodyData, bodyDataErr := ioutil.ReadAll(req.Body)
+	if bodyDataErr != nil {
+		errorString := fmt.Sprintf("Failed to read proxy request: %s",
+			bodyDataErr.Error())
 		http.Error(w, errorString, http.StatusBadRequest)
 		return
 	}
-	handler.logger.WithFields(logrus.Fields{
-		"Request":    request,
-		"LookupName": lambdaFunc,
-	}).Debug("Dispatching")
 
+	var proxyRequest proxy.ProxyRequest
+	var unmarshalErr error
+	switch req.Header.Get("Content-Type") {
+	case "application/x-protobuf":
+		unmarshalErr = proto.Unmarshal(bodyData, &proxyRequest)
+	case "application/json":
+		unmarshalErr = jsonpb.Unmarshal(bytes.NewReader(bodyData), &proxyRequest)
+	default:
+		unmarshalErr = fmt.Errorf("Unsupported proxy request Content-Type: %s",
+			req.Header.Get("Content-Type"))
+	}
+	if unmarshalErr != nil {
+		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Remove the leading slash and dispatch it to the golang handler
+	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
+	if proxyRequest.GetEvent() != nil {
+		var rawMessage json.RawMessage
+		unmarshalErr := rawMessage.UnmarshalJSON(proxyRequest.GetEvent())
+		if unmarshalErr != nil {
+			errorString := fmt.Sprintf("Failed to decode event data: %s", unmarshalErr.Error())
+			http.Error(w, errorString, http.StatusBadRequest)
+			return
+		}
+	}
+	handler.logger.WithFields(logrus.Fields{
+		"LookupName":   lambdaFunc,
+		"ProtoMessage": true,
+	}).Debug("Dispatching")
+	proxyContext := proxyRequest.GetContext()
+	request := lambdaRequest{
+		Context: LambdaContext{
+			AWSRequestID:       proxyContext.GetAwsRequestId(),
+			LogGroupName:       proxyContext.GetLogGroupName(),
+			LogStreamName:      proxyContext.GetLogStreamName(),
+			FunctionName:       proxyContext.GetFunctionName(),
+			MemoryLimitInMB:    proxyContext.GetMemoryLimitInMb(),
+			FunctionVersion:    proxyContext.GetFunctionVersion(),
+			InvokedFunctionARN: proxyContext.GetInvokedFunctionArn(),
+		},
+		Event: proxyRequest.GetEvent(),
+	}
 	lambdaAWSInfo := handler.LambdaDispatchMap[lambdaFunc]
 	if nil != lambdaAWSInfo {
 		if lambdaAWSInfo.httpHandler != nil {
+
 			// Setup the request
-			reqBody := bytes.NewReader(request.Event)
-			spartaReq := httptest.NewRequest(req.Method, req.URL.Path, reqBody)
-			spartaReqContext := context.WithValue(req.Context(), ContextKeyLogger, handler.logger)
-			spartaReqContext = context.WithValue(spartaReqContext, ContextKeyLambdaContext, &request.Context)
+			reqBody := bytes.NewReader(proxyRequest.GetEvent())
+			spartaReq := httptest.NewRequest(req.Method,
+				req.URL.Path,
+				reqBody)
+			spartaReqContext := context.WithValue(req.Context(),
+				ContextKeyLogger,
+				handler.logger)
+			spartaReqContext = context.WithValue(spartaReqContext,
+				ContextKeyLambdaContext,
+				&request.Context)
 
 			// Call the normal HTTP handler
 			lambdaAWSInfo.httpHandler.ServeHTTP(w, spartaReq.WithContext(spartaReqContext))
