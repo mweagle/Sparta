@@ -24,6 +24,8 @@ var SPARTA_SERVICE_NAME = 'SpartaService'
 
 // This is where the binary will be extracted
 var SPARTA_BINARY_PATH = util.format('./bin/%s', SPARTA_BINARY_NAME)
+var SPARTA_LOG_LEVEL = 'info'
+
 var MAXIMUM_RESPAWN_COUNT = 5
 
 // Handle to the active golang process.
@@ -121,30 +123,45 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
 
   // Let's go and turn the request into a proto
   var proxyRequest = new proto.ProxyRequest();
-  var lambdaContext = new proto.LambdaContext()
 
-  var requestBody = {
-    event: event,
-    context: context
-  }
-  // If there is a request.event.body element, try and parse it to make
+  // If there is a event.body element, try and parse it to make
   // interacting with API Gateway a bit simpler.  The .body property
   // corresponds to the data shape set by the *.vtl templates
-  if (requestBody && requestBody.event && requestBody.event.body) {
+  if (event && event.body) {
     try {
-      requestBody.event.body = JSON.parse(requestBody.event.body)
+      event.body = JSON.parse(event.body)
     } catch (e) {}
   }
-  var stringified = JSON.stringify(requestBody)
-  var contentLength = Buffer.byteLength(stringified, 'utf-8')
+  // Set payload event
+  stringifiedContent = JSON.stringify(event)
+  proxyRequest.setEvent(Buffer.from(stringifiedContent).toString('base64'))
+  // Set LambdaContext
+  var lambdaContext = new proto.LambdaContext()
+  lambdaContext.setFunctionName(context.functionName)
+  lambdaContext.setFunctionVersion(context.functionVersion)
+  lambdaContext.setInvokedFunctionArn(context.invokedFunctionArn)
+  lambdaContext.setMemoryLimitInMb(context.memoryLimitInMB)
+  lambdaContext.setAwsRequestId(context.awsRequestId)
+  lambdaContext.setLogGroupName(context.logGroupName)
+  lambdaContext.setLogStreamName(context.logStreamName)
+  if (context.identity) {
+    cognitoIdentity = new proto.CognitoIdentity()
+    cognitoIdentity.setCognitoIdentityId(context.identity.cognitoIdentityId)
+    cognitoIdentity.setCognitoIdentityPoolId(context.identity.cognitoIdentityPoolId)
+    lambdaContext.setIdentity(cognitoIdentity)
+  }
+  proxyRequest.setContext(lambdaContext)
+
+  // Setup request bytes
+  var requestBytes = Buffer.from(proxyRequest.serializeBinary().buffer)
   var options = {
     host: 'localhost',
     port: 9999,
     path: path,
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': contentLength
+      'Content-Type': 'application/x-protobuf',
+      'Content-Length': requestBytes.byteLength
     }
   }
 
@@ -205,7 +222,7 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   req.once('error', function (e) {
     onProxyComplete(e, null)
   })
-  req.write(stringified)
+  req.write(requestBytes)
   req.end()
 }
 
@@ -237,7 +254,11 @@ var createForwarder = function (path) {
     if (!golangProcess) {
       spartaUtils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid))
       golangProcess = childProcess.spawn(SPARTA_BINARY_PATH,
-        ['execute', '--signal', process.pid], {
+        ['execute',
+          '--level',
+          SPARTA_LOG_LEVEL,
+          '--signal',
+          process.pid], {
           'stdio': 'inherit'
         })
       var terminationHandler = function (eventName) {
@@ -288,16 +309,8 @@ var createForwarder = function (path) {
 
 // Log the outputs
 var envSettings = {
-  aws_sdk: AWS.VERSION,
-  node_js: process.version,
-  os: {
-    platform: os.platform(),
-    release: os.release(),
-    type: os.type(),
-    uptime: os.uptime(),
-    cpus: os.cpus(),
-    totalmem: os.totalmem()
-  }
+  AWS_SDK_Version: AWS.VERSION,
+  NodeJSVersion: process.version
 }
 spartaUtils.log(envSettings)
 
