@@ -7,6 +7,7 @@ package cgo
 import "C"
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,8 +16,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"os"
+	"runtime/debug"
 	"strconv"
-	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -28,6 +29,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
+	"github.com/zcalusic/sysinfo"
 )
 
 // Lock to update CGO related config
@@ -48,7 +50,7 @@ type lambdaFunctionErrResponse struct {
 // supplied to the LambdaHandler
 type cgoLambdaHTTPAdapterStruct struct {
 	serviceName               string
-	lambdaHTTPHandlerInstance *sparta.LambdaHTTPHandler
+	lambdaHTTPHandlerInstance *sparta.ServeMuxLambda
 	logger                    *logrus.Logger
 }
 
@@ -97,7 +99,11 @@ func makeRequest(functionName string,
 	// Add a panic handler
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("Failed to handle request in `cgo` library: %+v", r)
+			// Log the stack track
+			stackTrace := debug.Stack()
+			cgoLambdaHTTPAdapter.logger.WithFields(logrus.Fields{
+				"Stack": string(stackTrace),
+			}).Error("PANIC: Failed to handle request in `cgo` library: ", r)
 		}
 	}()
 
@@ -105,6 +111,9 @@ func makeRequest(functionName string,
 	spartaResp := httptest.NewRecorder()
 	spartaReq := &http.Request{
 		Method: "POST",
+		Header: map[string][]string{
+			"Content-Type": []string{"application/json"},
+		},
 		URL: &url.URL{
 			Scheme: "http",
 			Path:   fmt.Sprintf("/%s", functionName),
@@ -117,6 +126,7 @@ func makeRequest(functionName string,
 		TransferEncoding: make([]string, 0),
 		Host:             "localhost",
 	}
+
 	cgoLambdaHTTPAdapter.lambdaHTTPHandlerInstance.ServeHTTP(spartaResp, spartaReq)
 
 	// If there was an HTTP error, transform that into a stable
@@ -193,11 +203,13 @@ func postMetrics(awsCredentials *credentials.Credentials,
 // CGO compliant userinput. Users should not need to call this function
 // directly
 func LambdaHandler(functionName string,
+	logLevel string,
 	eventJSON string,
 	awsCredentials *credentials.Credentials) ([]byte, http.Header, error) {
 	startTime := time.Now()
-	readableBody := ioutil.NopCloser(strings.NewReader(eventJSON))
 
+	readableBody := bytes.NewReader([]byte(eventJSON))
+	readbleBodyCloser := ioutil.NopCloser(readableBody)
 	// Update the credentials
 	muCredentials.Lock()
 	value, valueErr := awsCredentials.Get()
@@ -211,16 +223,33 @@ func LambdaHandler(functionName string,
 	pythonCredentialsValue.ProviderName = "PythonCGO"
 	muCredentials.Unlock()
 
+	// Unpack the JSON request, turn it into a proto here and pass it
+	// into the handler...
+
 	// Update the credentials in the HTTP handler
 	// in case we're ultimately forwarding to a custom
 	// resource provider
 	cgoLambdaHTTPAdapter.lambdaHTTPHandlerInstance.Credentials(pythonCredentialsValue)
+	logrusLevel, logrusLevelErr := logrus.ParseLevel(logLevel)
+	if logrusLevelErr == nil {
+		cgoLambdaHTTPAdapter.logger.SetLevel(logrusLevel)
+	}
+	cgoLambdaHTTPAdapter.logger.WithFields(logrus.Fields{
+		"Resource": functionName,
+		"Request":  eventJSON,
+	}).Debug("Making request")
 
 	// Make the request...
-	response, header, err := makeRequest(functionName, readableBody, int64(len(eventJSON)))
+	response, header, err := makeRequest(functionName, readbleBodyCloser, int64(len(eventJSON)))
 
 	// TODO: Consider go routine
 	postMetrics(awsCredentials, functionName, len(response), time.Since(startTime))
+
+	cgoLambdaHTTPAdapter.logger.WithFields(logrus.Fields{
+		"Header": header,
+		"Error":  err,
+	}).Debug("Request response")
+
 	return response, header, err
 }
 
