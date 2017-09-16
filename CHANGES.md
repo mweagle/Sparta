@@ -6,10 +6,64 @@
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
     - Prior to this release, the NodeJS proxying ship would copy the embedded binary to _/tmp_, and add the executable flag. This had a noticable performance penalty for startup.
+    - Client side log level (eg: `--level debug`) is carried into the deployed code.
     - This release embeds the library in a _./bin_ directory with the file permissions set so that no additional startup is necessary. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
-  - Added `sparta.HandleAWSLambda`
-    - `sparta.HandleAWSLambda` functions enable Lambda-specific middleware chains.
-  - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
+    - Ensure Python-`cgo` logger uses JSON log formatter in AWS
+    - HTTP handler `panic` events are now recovered and the traceback logged
+    - Added `sparta.HandleAWSLambda`
+      - `sparta.HandleAWSLambda` functions enable Lambda-specific middleware chains.
+      - Example:
+      ```
+      // Setup the DashboardDecorator lambda hook
+      workflowHooks := &sparta.WorkflowHooks{
+        ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+      }
+      ```
+    - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
+    - Remove `InvokeID` from [LambdaContext](https://godoc.org/github.com/mweagle/Sparta#LambdaContext)
+    - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
+      - Example:
+      ```
+      {
+        "level": "info",
+        "msg": "SystemInfo",
+        "systemInfo": {
+            "sysinfo": {
+                "version": "0.9.1",
+                "timestamp": "2017-09-16T17:07:34.491807588Z"
+            },
+            "node": {
+                "hostname": "ip-10-25-51-97",
+                "machineid": "0046d1358d2346adbf8851e664b30d25",
+                "hypervisor": "xenhvm",
+                "timezone": "UTC"
+            },
+            "os": {
+                "name": "Amazon Linux AMI 2017.03",
+                "vendor": "amzn",
+                "version": "2017.03",
+                "architecture": "amd64"
+            },
+            "kernel": {
+                "release": "4.9.43-17.38.amzn1.x86_64",
+                "version": "#1 SMP Thu Aug 17 00:20:39 UTC 2017",
+                "architecture": "x86_64"
+            },
+            "product": {},
+            "board": {},
+            "chassis": {},
+            "bios": {},
+            "cpu": {
+                "vendor": "GenuineIntel",
+                "model": "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+                "cache": 25600,
+                "threads": 2
+            },
+            "memory": {}
+        },
+        "time": "2017-09-16T17:07:34Z"
+    }
+    ```
 - :bug: **FIXED**
 
 ## v0.13.2
