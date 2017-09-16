@@ -17,15 +17,13 @@ import (
 	"strings"
 	"time"
 
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-
-	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/mweagle/go-cloudformation"
-
 	"github.com/Sirupsen/logrus"
-	_ "github.com/aws/aws-sdk-go/service/ecr"  // Ref to have Glide include depends
+	"github.com/aws/aws-sdk-go/aws/session"
+	_ "github.com/aws/aws-sdk-go/service/ecr" // Ref to have Glide include depends
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	_ "github.com/mweagle/Sparta/aws/dynamodb" // Ref to have Glide include depends
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,14 +39,13 @@ const (
 	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
+	// divider length is the length of a divider
+	dividerLength = 40
 )
 
 var (
 	// internal logging header
-	headerDivider = strings.Repeat("=", 40)
-
-	// internal logging subheader
-	subheaderDivider = strings.Repeat("-", 40)
+	headerDivider = strings.Repeat("=", dividerLength)
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -239,8 +236,8 @@ type ArbitraryJSONObject map[string]interface{}
 // Package private type to deserialize NodeJS proxied
 // Lambda Event and Context information
 type lambdaRequest struct {
-	Event   json.RawMessage `json:"event"`
-	Context LambdaContext   `json:"context"`
+	Event   json.RawMessage
+	Context LambdaContext
 }
 
 // LambdaContext defines the AWS Lambda Context object provided by the AWS Lambda runtime.
@@ -248,14 +245,13 @@ type lambdaRequest struct {
 // for more information on field values.  Note that the golang version doesn't functions
 // defined on the Context object.
 type LambdaContext struct {
-	AWSRequestID       string `json:"awsRequestId"`
-	InvokeID           string `json:"invokeid"`
-	LogGroupName       string `json:"logGroupName"`
-	LogStreamName      string `json:"logStreamName"`
 	FunctionName       string `json:"functionName"`
-	MemoryLimitInMB    string `json:"memoryLimitInMB"`
 	FunctionVersion    string `json:"functionVersion"`
 	InvokedFunctionARN string `json:"invokedFunctionArn"`
+	MemoryLimitInMB    string `json:"memoryLimitInMB"`
+	AWSRequestID       string `json:"awsRequestId"`
+	LogGroupName       string `json:"logGroupName"`
+	LogStreamName      string `json:"logStreamName"`
 }
 
 // LambdaFunction is the golang function signature required to support AWS Lambda execution.
@@ -699,7 +695,6 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	if info.cachedLambdaFunctionName != "" {
 		return info.cachedLambdaFunctionName
 	}
-
 	lambdaFuncName := ""
 	if nil != info.Options &&
 		nil != info.Options.SpartaOptions &&
@@ -1007,7 +1002,7 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus
 			logger.WithFields(logrus.Fields{
 				"CollisionCount": eachCount,
 				"Name":           eachLambdaName,
-			}).Error("Detected logically equivalent function associated with multiple structs")
+			}).Error("HandleAWSLambda")
 			errorText = append(errorText, fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
 		}
 	}
@@ -1085,12 +1080,19 @@ func NewLambda(roleNameOrIAMRoleDefinition interface{},
 func HandleAWSLambda(functionName string,
 	lambdaHandler http.Handler,
 	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
+
 	lambda := &LambdaAWSInfo{
 		httpHandler:         lambdaHandler,
 		Options:             defaultLambdaFunctionOptions(),
 		Permissions:         make([]LambdaPermissionExporter, 0),
 		EventSourceMappings: make([]*EventSourceMapping, 0),
 	}
+	if lambda.Options.SpartaOptions == nil {
+		lambda.Options.SpartaOptions = &SpartaOptions{
+			Name: sanitizedName(functionName),
+		}
+	}
+
 	switch v := roleNameOrIAMRoleDefinition.(type) {
 	case string:
 		lambda.RoleName = roleNameOrIAMRoleDefinition.(string)
