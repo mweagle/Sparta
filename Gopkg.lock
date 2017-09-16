@@ -16,8 +16,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "49cd7b4cfcfcae1eb815db0a9139f07340bf49c8"
-  version = "v1.10.42"
+  revision = "88849eea79e8e48241987b1f0a11a7a0dcbb7716"
+  version = "v1.10.46"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -40,7 +40,7 @@
 [[projects]]
   branch = "master"
   name = "github.com/golang/protobuf"
-  packages = ["proto"]
+  packages = ["jsonpb","proto","ptypes/struct"]
   revision = "17ce1425424ab154092bbb43af630bd647f3bb0d"
 
 [[projects]]
@@ -81,6 +81,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/zcalusic/sysinfo"
+  packages = ["."]
+  revision = "c932490cd5190cb14e9bf829a0c77492f33527b7"
+
+[[projects]]
+  branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   revision = "74b34b9dd60829a9fcaf56a59e81c3877a8ecd2c"
@@ -106,6 +112,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e94d1fcac6fc0ca62d08acbd19475aab23d8393e0757499cb6479e5cb9b2c754"
+  inputs-digest = "a185aae19eef13c6e91d4637090b8a1ff54aafabaff0fde87924b5623eea877f"
   solver-name = "gps-cdcl"
   solver-version = 1
