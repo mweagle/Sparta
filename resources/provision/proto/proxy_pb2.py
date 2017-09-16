@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='proxy.proto',
   package='proxy',
   syntax='proto3',
-  serialized_pb=_b('\n\x0bproxy.proto\x12\x05proxy\"K\n\x0f\x43ognitoIdentity\x12\x19\n\x11\x43ognitoIdentityId\x18\x01 \x01(\t\x12\x1d\n\x15\x43ognitoIdentityPoolId\x18\x02 \x01(\t\"\xf2\x01\n\rLambdaContext\x12\x14\n\x0c\x46unctionName\x18\x01 \x01(\t\x12\x17\n\x0f\x46unctionVersion\x18\x02 \x01(\t\x12\x1a\n\x12InvokedFunctionARN\x18\x03 \x01(\t\x12\x17\n\x0fMemoryLimitInMB\x18\x04 \x01(\t\x12\x14\n\x0c\x41WSRequestId\x18\x05 \x01(\t\x12\x14\n\x0cLogGroupName\x18\x06 \x01(\t\x12\x15\n\rLogStreamName\x18\x07 \x01(\t\x12\x10\n\x08InvokeId\x18\x08 \x01(\t\x12(\n\x08Identity\x18\t \x01(\x0b\x32\x16.proxy.CognitoIdentity\"D\n\x0cProxyRequest\x12%\n\x07\x43ontext\x18\x01 \x01(\x0b\x32\x14.proxy.LambdaContext\x12\r\n\x05\x45vent\x18\x02 \x01(\x0c\"\x1d\n\rProxyResponse\x12\x0c\n\x04\x42ody\x18\x01 \x01(\x0c\x62\x06proto3')
+  serialized_pb=_b('\n\x0bproxy.proto\x12\x05proxy\"P\n\x0f\x43ognitoIdentity\x12\x1b\n\x13\x63ognito_identity_id\x18\x01 \x01(\t\x12 \n\x18\x63ognito_identity_pool_id\x18\x02 \x01(\t\"\xed\x01\n\rLambdaContext\x12\x15\n\rfunction_name\x18\x01 \x01(\t\x12\x18\n\x10\x66unction_version\x18\x02 \x01(\t\x12\x1c\n\x14invoked_function_arn\x18\x03 \x01(\t\x12\x1a\n\x12memory_limit_in_mb\x18\x04 \x01(\t\x12\x16\n\x0e\x61ws_request_id\x18\x05 \x01(\t\x12\x16\n\x0elog_group_name\x18\x06 \x01(\t\x12\x17\n\x0flog_stream_name\x18\x07 \x01(\t\x12(\n\x08identity\x18\x08 \x01(\x0b\x32\x16.proxy.CognitoIdentity\"D\n\x0cProxyRequest\x12%\n\x07\x63ontext\x18\x01 \x01(\x0b\x32\x14.proxy.LambdaContext\x12\r\n\x05\x65vent\x18\x02 \x01(\x0c\"\x1d\n\rProxyResponse\x12\x0c\n\x04\x62ody\x18\x01 \x01(\x0c\x62\x06proto3')
 )
 
 
@@ -33,14 +33,14 @@ _COGNITOIDENTITY = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='CognitoIdentityId', full_name='proxy.CognitoIdentity.CognitoIdentityId', index=0,
+      name='cognito_identity_id', full_name='proxy.CognitoIdentity.cognito_identity_id', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='CognitoIdentityPoolId', full_name='proxy.CognitoIdentity.CognitoIdentityPoolId', index=1,
+      name='cognito_identity_pool_id', full_name='proxy.CognitoIdentity.cognito_identity_pool_id', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -59,7 +59,7 @@ _COGNITOIDENTITY = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=22,
-  serialized_end=97,
+  serialized_end=102,
 )
 
 
@@ -71,64 +71,57 @@ _LAMBDACONTEXT = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='FunctionName', full_name='proxy.LambdaContext.FunctionName', index=0,
+      name='function_name', full_name='proxy.LambdaContext.function_name', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='FunctionVersion', full_name='proxy.LambdaContext.FunctionVersion', index=1,
+      name='function_version', full_name='proxy.LambdaContext.function_version', index=1,
       number=2, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='InvokedFunctionARN', full_name='proxy.LambdaContext.InvokedFunctionARN', index=2,
+      name='invoked_function_arn', full_name='proxy.LambdaContext.invoked_function_arn', index=2,
       number=3, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='MemoryLimitInMB', full_name='proxy.LambdaContext.MemoryLimitInMB', index=3,
+      name='memory_limit_in_mb', full_name='proxy.LambdaContext.memory_limit_in_mb', index=3,
       number=4, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='AWSRequestId', full_name='proxy.LambdaContext.AWSRequestId', index=4,
+      name='aws_request_id', full_name='proxy.LambdaContext.aws_request_id', index=4,
       number=5, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='LogGroupName', full_name='proxy.LambdaContext.LogGroupName', index=5,
+      name='log_group_name', full_name='proxy.LambdaContext.log_group_name', index=5,
       number=6, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='LogStreamName', full_name='proxy.LambdaContext.LogStreamName', index=6,
+      name='log_stream_name', full_name='proxy.LambdaContext.log_stream_name', index=6,
       number=7, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=_b("").decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='InvokeId', full_name='proxy.LambdaContext.InvokeId', index=7,
-      number=8, type=9, cpp_type=9, label=1,
-      has_default_value=False, default_value=_b("").decode('utf-8'),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    _descriptor.FieldDescriptor(
-      name='Identity', full_name='proxy.LambdaContext.Identity', index=8,
-      number=9, type=11, cpp_type=10, label=1,
+      name='identity', full_name='proxy.LambdaContext.identity', index=7,
+      number=8, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -145,7 +138,7 @@ _LAMBDACONTEXT = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=100,
+  serialized_start=105,
   serialized_end=342,
 )
 
@@ -158,14 +151,14 @@ _PROXYREQUEST = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Context', full_name='proxy.ProxyRequest.Context', index=0,
+      name='context', full_name='proxy.ProxyRequest.context', index=0,
       number=1, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='Event', full_name='proxy.ProxyRequest.Event', index=1,
+      name='event', full_name='proxy.ProxyRequest.event', index=1,
       number=2, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -196,7 +189,7 @@ _PROXYRESPONSE = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='Body', full_name='proxy.ProxyResponse.Body', index=0,
+      name='body', full_name='proxy.ProxyResponse.body', index=0,
       number=1, type=12, cpp_type=9, label=1,
       has_default_value=False, default_value=_b(""),
       message_type=None, enum_type=None, containing_type=None,
@@ -218,8 +211,8 @@ _PROXYRESPONSE = _descriptor.Descriptor(
   serialized_end=443,
 )
 
-_LAMBDACONTEXT.fields_by_name['Identity'].message_type = _COGNITOIDENTITY
-_PROXYREQUEST.fields_by_name['Context'].message_type = _LAMBDACONTEXT
+_LAMBDACONTEXT.fields_by_name['identity'].message_type = _COGNITOIDENTITY
+_PROXYREQUEST.fields_by_name['context'].message_type = _LAMBDACONTEXT
 DESCRIPTOR.message_types_by_name['CognitoIdentity'] = _COGNITOIDENTITY
 DESCRIPTOR.message_types_by_name['LambdaContext'] = _LAMBDACONTEXT
 DESCRIPTOR.message_types_by_name['ProxyRequest'] = _PROXYREQUEST

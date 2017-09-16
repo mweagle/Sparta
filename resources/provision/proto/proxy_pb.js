@@ -59,8 +59,8 @@ proto.proxy.CognitoIdentity.prototype.toObject = function(opt_includeInstance) {
  */
 proto.proxy.CognitoIdentity.toObject = function(includeInstance, msg) {
   var f, obj = {
-    cognitoidentityid: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    cognitoidentitypoolid: jspb.Message.getFieldWithDefault(msg, 2, "")
+    cognitoIdentityId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    cognitoIdentityPoolId: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
   if (includeInstance) {
@@ -99,11 +99,11 @@ proto.proxy.CognitoIdentity.deserializeBinaryFromReader = function(msg, reader) 
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCognitoidentityid(value);
+      msg.setCognitoIdentityId(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setCognitoidentitypoolid(value);
+      msg.setCognitoIdentityPoolId(value);
       break;
     default:
       reader.skipField();
@@ -133,14 +133,14 @@ proto.proxy.CognitoIdentity.prototype.serializeBinary = function() {
  */
 proto.proxy.CognitoIdentity.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getCognitoidentityid();
+  f = message.getCognitoIdentityId();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getCognitoidentitypoolid();
+  f = message.getCognitoIdentityPoolId();
   if (f.length > 0) {
     writer.writeString(
       2,
@@ -151,31 +151,31 @@ proto.proxy.CognitoIdentity.serializeBinaryToWriter = function(message, writer) 
 
 
 /**
- * optional string CognitoIdentityId = 1;
+ * optional string cognito_identity_id = 1;
  * @return {string}
  */
-proto.proxy.CognitoIdentity.prototype.getCognitoidentityid = function() {
+proto.proxy.CognitoIdentity.prototype.getCognitoIdentityId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.CognitoIdentity.prototype.setCognitoidentityid = function(value) {
+proto.proxy.CognitoIdentity.prototype.setCognitoIdentityId = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 
 
 /**
- * optional string CognitoIdentityPoolId = 2;
+ * optional string cognito_identity_pool_id = 2;
  * @return {string}
  */
-proto.proxy.CognitoIdentity.prototype.getCognitoidentitypoolid = function() {
+proto.proxy.CognitoIdentity.prototype.getCognitoIdentityPoolId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.CognitoIdentity.prototype.setCognitoidentitypoolid = function(value) {
+proto.proxy.CognitoIdentity.prototype.setCognitoIdentityPoolId = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
@@ -226,14 +226,13 @@ proto.proxy.LambdaContext.prototype.toObject = function(opt_includeInstance) {
  */
 proto.proxy.LambdaContext.toObject = function(includeInstance, msg) {
   var f, obj = {
-    functionname: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    functionversion: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    invokedfunctionarn: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    memorylimitinmb: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    awsrequestid: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    loggroupname: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    logstreamname: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    invokeid: jspb.Message.getFieldWithDefault(msg, 8, ""),
+    functionName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    functionVersion: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    invokedFunctionArn: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    memoryLimitInMb: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    awsRequestId: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    logGroupName: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    logStreamName: jspb.Message.getFieldWithDefault(msg, 7, ""),
     identity: (f = msg.getIdentity()) && proto.proxy.CognitoIdentity.toObject(includeInstance, f)
   };
 
@@ -273,37 +272,33 @@ proto.proxy.LambdaContext.deserializeBinaryFromReader = function(msg, reader) {
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setFunctionname(value);
+      msg.setFunctionName(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setFunctionversion(value);
+      msg.setFunctionVersion(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setInvokedfunctionarn(value);
+      msg.setInvokedFunctionArn(value);
       break;
     case 4:
       var value = /** @type {string} */ (reader.readString());
-      msg.setMemorylimitinmb(value);
+      msg.setMemoryLimitInMb(value);
       break;
     case 5:
       var value = /** @type {string} */ (reader.readString());
-      msg.setAwsrequestid(value);
+      msg.setAwsRequestId(value);
       break;
     case 6:
       var value = /** @type {string} */ (reader.readString());
-      msg.setLoggroupname(value);
+      msg.setLogGroupName(value);
       break;
     case 7:
       var value = /** @type {string} */ (reader.readString());
-      msg.setLogstreamname(value);
+      msg.setLogStreamName(value);
       break;
     case 8:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setInvokeid(value);
-      break;
-    case 9:
       var value = new proto.proxy.CognitoIdentity;
       reader.readMessage(value,proto.proxy.CognitoIdentity.deserializeBinaryFromReader);
       msg.setIdentity(value);
@@ -336,66 +331,59 @@ proto.proxy.LambdaContext.prototype.serializeBinary = function() {
  */
 proto.proxy.LambdaContext.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getFunctionname();
+  f = message.getFunctionName();
   if (f.length > 0) {
     writer.writeString(
       1,
       f
     );
   }
-  f = message.getFunctionversion();
+  f = message.getFunctionVersion();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getInvokedfunctionarn();
+  f = message.getInvokedFunctionArn();
   if (f.length > 0) {
     writer.writeString(
       3,
       f
     );
   }
-  f = message.getMemorylimitinmb();
+  f = message.getMemoryLimitInMb();
   if (f.length > 0) {
     writer.writeString(
       4,
       f
     );
   }
-  f = message.getAwsrequestid();
+  f = message.getAwsRequestId();
   if (f.length > 0) {
     writer.writeString(
       5,
       f
     );
   }
-  f = message.getLoggroupname();
+  f = message.getLogGroupName();
   if (f.length > 0) {
     writer.writeString(
       6,
       f
     );
   }
-  f = message.getLogstreamname();
+  f = message.getLogStreamName();
   if (f.length > 0) {
     writer.writeString(
       7,
       f
     );
   }
-  f = message.getInvokeid();
-  if (f.length > 0) {
-    writer.writeString(
-      8,
-      f
-    );
-  }
   f = message.getIdentity();
   if (f != null) {
     writer.writeMessage(
-      9,
+      8,
       f,
       proto.proxy.CognitoIdentity.serializeBinaryToWriter
     );
@@ -404,138 +392,123 @@ proto.proxy.LambdaContext.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional string FunctionName = 1;
+ * optional string function_name = 1;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getFunctionname = function() {
+proto.proxy.LambdaContext.prototype.getFunctionName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setFunctionname = function(value) {
+proto.proxy.LambdaContext.prototype.setFunctionName = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 
 
 /**
- * optional string FunctionVersion = 2;
+ * optional string function_version = 2;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getFunctionversion = function() {
+proto.proxy.LambdaContext.prototype.getFunctionVersion = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setFunctionversion = function(value) {
+proto.proxy.LambdaContext.prototype.setFunctionVersion = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
 
 /**
- * optional string InvokedFunctionARN = 3;
+ * optional string invoked_function_arn = 3;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getInvokedfunctionarn = function() {
+proto.proxy.LambdaContext.prototype.getInvokedFunctionArn = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setInvokedfunctionarn = function(value) {
+proto.proxy.LambdaContext.prototype.setInvokedFunctionArn = function(value) {
   jspb.Message.setField(this, 3, value);
 };
 
 
 /**
- * optional string MemoryLimitInMB = 4;
+ * optional string memory_limit_in_mb = 4;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getMemorylimitinmb = function() {
+proto.proxy.LambdaContext.prototype.getMemoryLimitInMb = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setMemorylimitinmb = function(value) {
+proto.proxy.LambdaContext.prototype.setMemoryLimitInMb = function(value) {
   jspb.Message.setField(this, 4, value);
 };
 
 
 /**
- * optional string AWSRequestId = 5;
+ * optional string aws_request_id = 5;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getAwsrequestid = function() {
+proto.proxy.LambdaContext.prototype.getAwsRequestId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setAwsrequestid = function(value) {
+proto.proxy.LambdaContext.prototype.setAwsRequestId = function(value) {
   jspb.Message.setField(this, 5, value);
 };
 
 
 /**
- * optional string LogGroupName = 6;
+ * optional string log_group_name = 6;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getLoggroupname = function() {
+proto.proxy.LambdaContext.prototype.getLogGroupName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setLoggroupname = function(value) {
+proto.proxy.LambdaContext.prototype.setLogGroupName = function(value) {
   jspb.Message.setField(this, 6, value);
 };
 
 
 /**
- * optional string LogStreamName = 7;
+ * optional string log_stream_name = 7;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getLogstreamname = function() {
+proto.proxy.LambdaContext.prototype.getLogStreamName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setLogstreamname = function(value) {
+proto.proxy.LambdaContext.prototype.setLogStreamName = function(value) {
   jspb.Message.setField(this, 7, value);
 };
 
 
 /**
- * optional string InvokeId = 8;
- * @return {string}
- */
-proto.proxy.LambdaContext.prototype.getInvokeid = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
-};
-
-
-/** @param {string} value */
-proto.proxy.LambdaContext.prototype.setInvokeid = function(value) {
-  jspb.Message.setField(this, 8, value);
-};
-
-
-/**
- * optional CognitoIdentity Identity = 9;
+ * optional CognitoIdentity identity = 8;
  * @return {?proto.proxy.CognitoIdentity}
  */
 proto.proxy.LambdaContext.prototype.getIdentity = function() {
   return /** @type{?proto.proxy.CognitoIdentity} */ (
-    jspb.Message.getWrapperField(this, proto.proxy.CognitoIdentity, 9));
+    jspb.Message.getWrapperField(this, proto.proxy.CognitoIdentity, 8));
 };
 
 
 /** @param {?proto.proxy.CognitoIdentity|undefined} value */
 proto.proxy.LambdaContext.prototype.setIdentity = function(value) {
-  jspb.Message.setWrapperField(this, 9, value);
+  jspb.Message.setWrapperField(this, 8, value);
 };
 
 
@@ -549,7 +522,7 @@ proto.proxy.LambdaContext.prototype.clearIdentity = function() {
  * @return {!boolean}
  */
 proto.proxy.LambdaContext.prototype.hasIdentity = function() {
-  return jspb.Message.getField(this, 9) != null;
+  return jspb.Message.getField(this, 8) != null;
 };
 
 
@@ -693,7 +666,7 @@ proto.proxy.ProxyRequest.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional LambdaContext Context = 1;
+ * optional LambdaContext context = 1;
  * @return {?proto.proxy.LambdaContext}
  */
 proto.proxy.ProxyRequest.prototype.getContext = function() {
@@ -723,16 +696,16 @@ proto.proxy.ProxyRequest.prototype.hasContext = function() {
 
 
 /**
- * optional bytes Event = 2;
- * @return {string}
+ * optional bytes event = 2;
+ * @return {!(string|Uint8Array)}
  */
 proto.proxy.ProxyRequest.prototype.getEvent = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /**
- * optional bytes Event = 2;
+ * optional bytes event = 2;
  * This is a type-conversion wrapper around `getEvent()`
  * @return {string}
  */
@@ -743,7 +716,7 @@ proto.proxy.ProxyRequest.prototype.getEvent_asB64 = function() {
 
 
 /**
- * optional bytes Event = 2;
+ * optional bytes event = 2;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getEvent()`
@@ -887,16 +860,16 @@ proto.proxy.ProxyResponse.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional bytes Body = 1;
- * @return {string}
+ * optional bytes body = 1;
+ * @return {!(string|Uint8Array)}
  */
 proto.proxy.ProxyResponse.prototype.getBody = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /**
- * optional bytes Body = 1;
+ * optional bytes body = 1;
  * This is a type-conversion wrapper around `getBody()`
  * @return {string}
  */
@@ -907,7 +880,7 @@ proto.proxy.ProxyResponse.prototype.getBody_asB64 = function() {
 
 
 /**
- * optional bytes Body = 1;
+ * optional bytes body = 1;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
  * This is a type-conversion wrapper around `getBody()`
