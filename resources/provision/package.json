@@ -1,6 +1,10 @@
 {
   "name": "sparta-provisioning",
-  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://https://github.com/mweagle/Sparta.git"
+  },
+  "version": "0.0.2",
   "description": "Utilities to handle provisioning Sparta applications",
   "main": "index.js",
   "scripts": {
