@@ -27,6 +27,7 @@ func cgoMain(callerFile string,
 // CGO compliant userinput. Users should not need to call this function
 // directly
 func LambdaHandler(functionName string,
+	logLevel string,
 	eventJSON string,
 	awsCredentials *credentials.Credentials) ([]byte, http.Header, error) {
 	// NOOP
