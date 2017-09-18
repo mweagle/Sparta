@@ -24,7 +24,7 @@ validate:
 format:
 	go fmt .
 
-build: format generate validate
+build: format validate
 	go build .
 	@echo "Build complete"
 
