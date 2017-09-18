@@ -1,12 +1,16 @@
 package explore
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/golang/protobuf/proto"
+	"github.com/mweagle/Sparta/proxy"
 )
 
 type mockAPIGatewayIdentity struct {
@@ -46,25 +50,25 @@ type mockAPIGatewayRequest struct {
 // the golang lambda handler running on localhost.  Most clients should use NewLambdaRequest or
 // NewAPIGatewayRequest to create mock data. This function is available for
 // advanced test cases who need more control over the mock request.
-func NewRawRequest(lambdaName string, context interface{}, eventData interface{}, testingURL string) (*http.Response, error) {
-	requestBody := map[string]interface{}{
-		"context": context,
+func NewRawRequest(lambdaName string, context *proxy.LambdaContext, eventData interface{}, testingURL string) (*http.Response, error) {
+	// Marshal the event data to a byte stream
+	marshaledData, marshaledDataErr := json.Marshal(eventData)
+	if marshaledDataErr != nil {
+		return nil, marshaledDataErr
 	}
-	if nil != eventData {
-		requestBody["event"] = eventData
+	proxyRequest := proxy.ProxyRequest{
+		Context: context,
+		Event:   marshaledData,
 	}
-	// Marshal the request to JSON.  This request shape mirrors what the NodeJS layer
-	// proxies to the HTTP handler.
-	// TODO - update this once golang is officially supported, since the proxying
-	// envelope will be unnecessary
-	jsonRequestBody, err := json.Marshal(requestBody)
-	if err != nil {
-		return nil, fmt.Errorf("Failed to Marshal request body: %s", err.Error())
+	proxyBytes, proxyBytesErr := proto.Marshal(&proxyRequest)
+	if proxyBytesErr != nil {
+		return nil, proxyBytesErr
 	}
+
 	// POST IT...
 	var host = fmt.Sprintf("%s/%s", testingURL, lambdaName)
-	req, err := http.NewRequest("POST", host, strings.NewReader(string(jsonRequestBody)))
-	req.Header.Set("Content-Type", "application/json")
+	req, err := http.NewRequest("POST", host, bytes.NewReader(proxyBytes))
+	req.Header.Set("Content-Type", "application/x-protobuf")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -81,14 +85,14 @@ func NewRawRequest(lambdaName string, context interface{}, eventData interface{}
 func NewLambdaRequest(lambdaName string, eventData interface{}, testingURL string) (*http.Response, error) {
 	nowTime := time.Now()
 
-	context := map[string]interface{}{
-		"AWSRequestID":       "12341234-1234-1234-1234-123412341234",
-		"LogGroupName":       "/aws/lambda/SpartaApplicationMockLogGroup-9ZX7FITHEAG8",
-		"LogStreamName":      fmt.Sprintf("%d/%d/%d/[$LATEST]%d", nowTime.Year(), nowTime.Month(), nowTime.Day(), nowTime.Unix()),
-		"FunctionName":       "SpartaFunction",
-		"MemoryLimitInMB":    "128",
-		"FunctionVersion":    "[LATEST]",
-		"InvokedFunctionARN": fmt.Sprintf("arn:aws:lambda:us-west-2:123412341234:function:SpartaMockFunction-%d", nowTime.Unix()),
+	context := &proxy.LambdaContext{
+		AwsRequestId:       "12341234-1234-1234-1234-123412341234",
+		LogGroupName:       "/aws/lambda/SpartaApplicationMockLogGroup-9ZX7FITHEAG8",
+		LogStreamName:      fmt.Sprintf("%d/%d/%d/[$LATEST]%d", nowTime.Year(), nowTime.Month(), nowTime.Day(), nowTime.Unix()),
+		FunctionName:       "SpartaFunction",
+		MemoryLimitInMb:    "128",
+		FunctionVersion:    "[LATEST]",
+		InvokedFunctionArn: fmt.Sprintf("arn:aws:lambda:us-west-2:123412341234:function:SpartaMockFunction-%d", nowTime.Unix()),
 	}
 
 	return NewRawRequest(lambdaName, context, eventData, testingURL)
@@ -100,6 +104,7 @@ func NewLambdaRequest(lambdaName string, eventData interface{}, testingURL strin
 // data, and the testingURL is the URL returned by httptest.NewServer().  The optional event data is
 // embedded in the Sparta input mapping templates.
 func NewAPIGatewayRequest(lambdaName string, httpMethod string, whitelistParamValues map[string]string, eventData interface{}, testingURL string) (*http.Response, error) {
+
 	mockAPIGatewayRequest := mockAPIGatewayRequest{
 		Method:      httpMethod,
 		Body:        eventData,

@@ -217,7 +217,6 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
 		return
 	}
-
 	// Remove the leading slash and dispatch it to the golang handler
 	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
 	if proxyRequest.GetEvent() != nil {

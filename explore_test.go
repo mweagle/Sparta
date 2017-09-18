@@ -8,9 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/mweagle/Sparta/explore"
-
 	"github.com/Sirupsen/logrus"
+	"github.com/mweagle/Sparta/explore"
 )
 
 func exploreTestHelloWorld(event *json.RawMessage,
@@ -159,7 +158,6 @@ func TestNewAPIGatewayRequest(t *testing.T) {
 
 	// test unmarshalling mock to APIGatewayLambdaJSONEvent
 	var testlambdaevent APIGatewayLambdaJSONEvent
-
 	err = json.Unmarshal(body, &testlambdaevent)
 	if err != nil {
 		t.Fatal(err.Error())
