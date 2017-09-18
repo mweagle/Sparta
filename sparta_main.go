@@ -160,10 +160,10 @@ func init() {
 		"",
 		"Optional BuildID to use")
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
-		"codePipeline",
+		"codePipelinePackage",
 		"p",
 		"",
-		"Provision for CodePipeline integration")
+		"Name of CodePipelin package that includes cloduformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
