@@ -6,10 +6,10 @@
 
 The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.HandlerFunc` and will be removed in an upcoming release. See below for more information
 
-
 - :warning: **BREAKING**
   - Changed `NewLambdaHTTPHandler` to `NewServeMuxLambda`
   - Remove obsolete `InvokeID` from [LambdaContext](https://godoc.org/github.com/mweagle/Sparta#LambdaContext)
+  - Changed `codePipelineTrigger` CLI arg name to `codePipelinePackage`
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
     - Prior to this release, the NodeJS proxying ship would copy the embedded binary to _/tmp_, and add the executable flag. This had a noticable performance penalty for startup.
