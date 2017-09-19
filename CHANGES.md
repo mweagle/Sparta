@@ -16,8 +16,9 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
     - This release embeds the application or library in a _./bin_ directory with the file permissions set so that there is no additional filesystem overhead on cold-start. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
   - Migrated all IPC calls to [protocolBuffers](https://developers.google.com/protocol-buffers/).
     - Message definitions are in the [proxy](https://github.com/mweagle/Sparta/tree/master/proxy) directory.
-  - Client side log level (eg: `--level debug`) is carried into the deployed code.
-    - Provisioning with `--level debug` will log `logger.Debug` *and* API API calls during `provision` and AWS Lambda execution time.
+  - The client-side log level (eg: `--level debug`) is carried into the AWS Lambda Code package.
+    - Provisioning a service with `--level debug` will log everything at `logger.Debug` level and higher **including all AWS API** calls made both at `provision` and Lambda execution time.
+    - Help resolve "Works on My Stack" syndrome.
   - HTTP handler `panic` events are now recovered and the traceback logged for both NodeJS and `cgo` deployments
   - Introduced `sparta.HandleAWSLambda`
     - `sparta.HandleAWSLambda` accepts standard `http.RequestFunc` signatures as in:
