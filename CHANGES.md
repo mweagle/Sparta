@@ -12,14 +12,15 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Changed `codePipelineTrigger` CLI arg name to `codePipelinePackage`
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
-    - Prior to this release, the NodeJS proxying ship would copy the embedded binary to _/tmp_, and add the executable flag. This had a noticable performance penalty for startup.
-    - This release embeds the library in a _./bin_ directory with the file permissions set so that no additional startup is necessary. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
+    - Prior to this release, the NodeJS proxying code would copy the embedded binary to _/tmp_ and add the executable flag prior to actually launching the binary. This had a noticable performance penalty for startup.
+    - This release embeds the application or library in a _./bin_ directory with the file permissions set so that there is no additional filesystem overhead on cold-start. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
+  - Migrated all IPC calls to [protocolBuffers](https://developers.google.com/protocol-buffers/).
+    - Message definitions are in the [proxy](https://github.com/mweagle/Sparta/tree/master/proxy) directory.
   - Client side log level (eg: `--level debug`) is carried into the deployed code.
-    - Provisioning with `--level debug` will log `logger.Debug` *AND* API API calls
-  - HTTP handler `panic` events are now recovered and the traceback logged
-  - Added `sparta.HandleAWSLambda`
-    - `sparta.HandleAWSLambda` supports standard `http.RequestFunc` signatures as in:
-    - Example:
+    - Provisioning with `--level debug` will log `logger.Debug` *and* API API calls during `provision` and AWS Lambda execution time.
+  - HTTP handler `panic` events are now recovered and the traceback logged for both NodeJS and `cgo` deployments
+  - Introduced `sparta.HandleAWSLambda`
+    - `sparta.HandleAWSLambda` accepts standard `http.RequestFunc` signatures as in:
       ```
       func helloWorld(w http.ResponseWriter, r *http.Request) {
         ...
@@ -29,10 +30,20 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
 		    http.HandlerFunc(helloWorld),
 		    sparta.IAMRoleDefinition{})
       ```
-    - This allows you to [chain middleware](https://github.com/justinas/alice) for a lambda function as if it were a stnadard HTTP handler.
-    - _LambdaContext_ and _*logrus.Logger_ are available in the context via `sparta.Context*` variables
-  - Upgrade NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
-  - Parity between NodeJS and Python/cgo initial log output
+    - This allows you to [chain middleware](https://github.com/justinas/alice) for a lambda function as if it were a standard HTTP handler. Say, for instance: [X-Ray](https://github.com/aws/aws-xray-sdk-go).
+    - The legacy [sparta.LambdaFunction](https://godoc.org/github.com/mweagle/Sparta#LambdaFunction) is still supported, but marked for deprecation. You will see a log warning as in:
+      ```
+      WARN[0045] DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()
+      ```
+    - _LambdaContext_ and _*logrus.Logger_ are now available in the [requext.Context()](https://golang.org/pkg/net/http/#Request.Context) via:
+      * `sparta.ContextKeyLogger` => `*logrus.Logger`
+      * `ContextKeyLambdaContext` => `*sparta.LambdaContext`
+    - Example:
+      - `loggerVal, loggerValOK := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)`
+  - Added support for [Codepipeline](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
+    - See the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) project for a complete example
+  - Upgraded NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
+  - Parity between NodeJS and Python/`cgo` startup output
   - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
       - Example:
       ```
@@ -77,7 +88,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
     }
     ```
 - :bug: **FIXED**
-  - There were a few
+  - There were more than a few
 
 ## v0.13.2
 - :warning: **BREAKING**
