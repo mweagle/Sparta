@@ -202,7 +202,7 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	var proxyRequest proxy.ProxyRequest
+	var proxyRequest proxy.AWSProxyRequest
 	var unmarshalErr error
 	switch req.Header.Get("Content-Type") {
 	case "application/x-protobuf":
@@ -219,19 +219,11 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 	}
 	// Remove the leading slash and dispatch it to the golang handler
 	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
-	if proxyRequest.GetEvent() != nil {
-		var rawMessage json.RawMessage
-		unmarshalErr := rawMessage.UnmarshalJSON(proxyRequest.GetEvent())
-		if unmarshalErr != nil {
-			errorString := fmt.Sprintf("Failed to decode event data: %s", unmarshalErr.Error())
-			http.Error(w, errorString, http.StatusBadRequest)
-			return
-		}
-	}
 	handler.logger.WithFields(logrus.Fields{
 		"LookupName":   lambdaFunc,
 		"ProtoMessage": true,
 	}).Debug("Dispatching")
+
 	proxyContext := proxyRequest.GetContext()
 	request := lambdaRequest{
 		Context: LambdaContext{
