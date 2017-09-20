@@ -122,7 +122,7 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   var responseEndDuration = null
 
   // Let's go and turn the request into a proto
-  var proxyRequest = new proto.ProxyRequest();
+  var proxyRequest = new proto.AWSProxyRequest();
 
   // If there is a event.body element, try and parse it to make
   // interacting with API Gateway a bit simpler.  The .body property
@@ -136,7 +136,7 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   stringifiedContent = JSON.stringify(event)
   proxyRequest.setEvent(Buffer.from(stringifiedContent).toString('base64'))
   // Set LambdaContext
-  var lambdaContext = new proto.LambdaContext()
+  var lambdaContext = new proto.AWSLambdaContext()
   lambdaContext.setFunctionName(context.functionName)
   lambdaContext.setFunctionVersion(context.functionVersion)
   lambdaContext.setInvokedFunctionArn(context.invokedFunctionArn)
@@ -145,10 +145,29 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   lambdaContext.setLogGroupName(context.logGroupName)
   lambdaContext.setLogStreamName(context.logStreamName)
   if (context.identity) {
-    cognitoIdentity = new proto.CognitoIdentity()
+    cognitoIdentity = new proto.AWSCognitoIdentity()
     cognitoIdentity.setCognitoIdentityId(context.identity.cognitoIdentityId)
     cognitoIdentity.setCognitoIdentityPoolId(context.identity.cognitoIdentityPoolId)
     lambdaContext.setIdentity(cognitoIdentity)
+  }
+  if (context.clientContext) {
+    clientContext = context.clientContext
+    proxyClientContext = new proto.AWSClientContext()
+    proxyClientContext.setInstallationId(clientContext.installation_id)
+    proxyClientContext.setAppTitle(clientContext.app_title)
+    proxyClientContext.setAppVersionName(clientContext.app_version_name)
+    proxyClientContext.setAppVersionCode(clientContext.app_version_code)
+    proxyClientContext.setAppPackageName(clientContext.app_package_name)
+    if (clientContext.env) {
+      clientContextEnv = clientContext.env
+      proxyClientContextEnv = new proto.AWSClientContextEnv()
+      proxyClientContextEnv.setPlatformVersion(clientContextEnv.platform_version)
+      proxyClientContextEnv.setPlatform(clientContextEnv.platform)
+      proxyClientContextEnv.setMake(clientContextEnv.make)
+      proxyClientContextEnv.setModel(clientContextEnv.model)
+      proxyClientContextEnv.setLocale(clientContextEnv.locale)
+      proxyClientContext.setEnv(proxyClientContextEnv)
+    }
   }
   proxyRequest.setContext(lambdaContext)
 
