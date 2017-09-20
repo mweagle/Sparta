@@ -50,13 +50,13 @@ type mockAPIGatewayRequest struct {
 // the golang lambda handler running on localhost.  Most clients should use NewLambdaRequest or
 // NewAPIGatewayRequest to create mock data. This function is available for
 // advanced test cases who need more control over the mock request.
-func NewRawRequest(lambdaName string, context *proxy.LambdaContext, eventData interface{}, testingURL string) (*http.Response, error) {
+func NewRawRequest(lambdaName string, context *proxy.AWSLambdaContext, eventData interface{}, testingURL string) (*http.Response, error) {
 	// Marshal the event data to a byte stream
 	marshaledData, marshaledDataErr := json.Marshal(eventData)
 	if marshaledDataErr != nil {
 		return nil, marshaledDataErr
 	}
-	proxyRequest := proxy.ProxyRequest{
+	proxyRequest := proxy.AWSProxyRequest{
 		Context: context,
 		Event:   marshaledData,
 	}
@@ -85,7 +85,7 @@ func NewRawRequest(lambdaName string, context *proxy.LambdaContext, eventData in
 func NewLambdaRequest(lambdaName string, eventData interface{}, testingURL string) (*http.Response, error) {
 	nowTime := time.Now()
 
-	context := &proxy.LambdaContext{
+	context := &proxy.AWSLambdaContext{
 		AwsRequestId:       "12341234-1234-1234-1234-123412341234",
 		LogGroupName:       "/aws/lambda/SpartaApplicationMockLogGroup-9ZX7FITHEAG8",
 		LogStreamName:      fmt.Sprintf("%d/%d/%d/[$LATEST]%d", nowTime.Year(), nowTime.Month(), nowTime.Day(), nowTime.Unix()),
