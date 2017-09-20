@@ -9,9 +9,11 @@ var jspb = require('google-protobuf');
 var goog = jspb;
 var global = Function('return this')();
 
-goog.exportSymbol('proto.proxy.CognitoIdentity', null, global);
-goog.exportSymbol('proto.proxy.LambdaContext', null, global);
-goog.exportSymbol('proto.proxy.ProxyRequest', null, global);
+goog.exportSymbol('proto.proxy.AWSClientContext', null, global);
+goog.exportSymbol('proto.proxy.AWSClientContextEnv', null, global);
+goog.exportSymbol('proto.proxy.AWSCognitoIdentity', null, global);
+goog.exportSymbol('proto.proxy.AWSLambdaContext', null, global);
+goog.exportSymbol('proto.proxy.AWSProxyRequest', null, global);
 goog.exportSymbol('proto.proxy.ProxyResponse', null, global);
 
 /**
@@ -24,12 +26,12 @@ goog.exportSymbol('proto.proxy.ProxyResponse', null, global);
  * @extends {jspb.Message}
  * @constructor
  */
-proto.proxy.CognitoIdentity = function(opt_data) {
+proto.proxy.AWSCognitoIdentity = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.proxy.CognitoIdentity, jspb.Message);
+goog.inherits(proto.proxy.AWSCognitoIdentity, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.proxy.CognitoIdentity.displayName = 'proto.proxy.CognitoIdentity';
+  proto.proxy.AWSCognitoIdentity.displayName = 'proto.proxy.AWSCognitoIdentity';
 }
 
 
@@ -44,8 +46,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.proxy.CognitoIdentity.prototype.toObject = function(opt_includeInstance) {
-  return proto.proxy.CognitoIdentity.toObject(opt_includeInstance, this);
+proto.proxy.AWSCognitoIdentity.prototype.toObject = function(opt_includeInstance) {
+  return proto.proxy.AWSCognitoIdentity.toObject(opt_includeInstance, this);
 };
 
 
@@ -54,10 +56,10 @@ proto.proxy.CognitoIdentity.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.proxy.CognitoIdentity} msg The msg instance to transform.
+ * @param {!proto.proxy.AWSCognitoIdentity} msg The msg instance to transform.
  * @return {!Object}
  */
-proto.proxy.CognitoIdentity.toObject = function(includeInstance, msg) {
+proto.proxy.AWSCognitoIdentity.toObject = function(includeInstance, msg) {
   var f, obj = {
     cognitoIdentityId: jspb.Message.getFieldWithDefault(msg, 1, ""),
     cognitoIdentityPoolId: jspb.Message.getFieldWithDefault(msg, 2, "")
@@ -74,23 +76,23 @@ proto.proxy.CognitoIdentity.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.proxy.CognitoIdentity}
+ * @return {!proto.proxy.AWSCognitoIdentity}
  */
-proto.proxy.CognitoIdentity.deserializeBinary = function(bytes) {
+proto.proxy.AWSCognitoIdentity.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.proxy.CognitoIdentity;
-  return proto.proxy.CognitoIdentity.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.proxy.AWSCognitoIdentity;
+  return proto.proxy.AWSCognitoIdentity.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.proxy.CognitoIdentity} msg The message object to deserialize into.
+ * @param {!proto.proxy.AWSCognitoIdentity} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.proxy.CognitoIdentity}
+ * @return {!proto.proxy.AWSCognitoIdentity}
  */
-proto.proxy.CognitoIdentity.deserializeBinaryFromReader = function(msg, reader) {
+proto.proxy.AWSCognitoIdentity.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -118,9 +120,9 @@ proto.proxy.CognitoIdentity.deserializeBinaryFromReader = function(msg, reader) 
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.proxy.CognitoIdentity.prototype.serializeBinary = function() {
+proto.proxy.AWSCognitoIdentity.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.proxy.CognitoIdentity.serializeBinaryToWriter(this, writer);
+  proto.proxy.AWSCognitoIdentity.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -128,10 +130,10 @@ proto.proxy.CognitoIdentity.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.proxy.CognitoIdentity} message
+ * @param {!proto.proxy.AWSCognitoIdentity} message
  * @param {!jspb.BinaryWriter} writer
  */
-proto.proxy.CognitoIdentity.serializeBinaryToWriter = function(message, writer) {
+proto.proxy.AWSCognitoIdentity.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getCognitoIdentityId();
   if (f.length > 0) {
@@ -154,13 +156,13 @@ proto.proxy.CognitoIdentity.serializeBinaryToWriter = function(message, writer) 
  * optional string cognito_identity_id = 1;
  * @return {string}
  */
-proto.proxy.CognitoIdentity.prototype.getCognitoIdentityId = function() {
+proto.proxy.AWSCognitoIdentity.prototype.getCognitoIdentityId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.CognitoIdentity.prototype.setCognitoIdentityId = function(value) {
+proto.proxy.AWSCognitoIdentity.prototype.setCognitoIdentityId = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 
@@ -169,13 +171,13 @@ proto.proxy.CognitoIdentity.prototype.setCognitoIdentityId = function(value) {
  * optional string cognito_identity_pool_id = 2;
  * @return {string}
  */
-proto.proxy.CognitoIdentity.prototype.getCognitoIdentityPoolId = function() {
+proto.proxy.AWSCognitoIdentity.prototype.getCognitoIdentityPoolId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.CognitoIdentity.prototype.setCognitoIdentityPoolId = function(value) {
+proto.proxy.AWSCognitoIdentity.prototype.setCognitoIdentityPoolId = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
@@ -191,12 +193,12 @@ proto.proxy.CognitoIdentity.prototype.setCognitoIdentityPoolId = function(value)
  * @extends {jspb.Message}
  * @constructor
  */
-proto.proxy.LambdaContext = function(opt_data) {
+proto.proxy.AWSClientContextEnv = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.proxy.LambdaContext, jspb.Message);
+goog.inherits(proto.proxy.AWSClientContextEnv, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.proxy.LambdaContext.displayName = 'proto.proxy.LambdaContext';
+  proto.proxy.AWSClientContextEnv.displayName = 'proto.proxy.AWSClientContextEnv';
 }
 
 
@@ -211,8 +213,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.proxy.LambdaContext.prototype.toObject = function(opt_includeInstance) {
-  return proto.proxy.LambdaContext.toObject(opt_includeInstance, this);
+proto.proxy.AWSClientContextEnv.prototype.toObject = function(opt_includeInstance) {
+  return proto.proxy.AWSClientContextEnv.toObject(opt_includeInstance, this);
 };
 
 
@@ -221,19 +223,16 @@ proto.proxy.LambdaContext.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.proxy.LambdaContext} msg The msg instance to transform.
+ * @param {!proto.proxy.AWSClientContextEnv} msg The msg instance to transform.
  * @return {!Object}
  */
-proto.proxy.LambdaContext.toObject = function(includeInstance, msg) {
+proto.proxy.AWSClientContextEnv.toObject = function(includeInstance, msg) {
   var f, obj = {
-    functionName: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    functionVersion: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    invokedFunctionArn: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    memoryLimitInMb: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    awsRequestId: jspb.Message.getFieldWithDefault(msg, 5, ""),
-    logGroupName: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    logStreamName: jspb.Message.getFieldWithDefault(msg, 7, ""),
-    identity: (f = msg.getIdentity()) && proto.proxy.CognitoIdentity.toObject(includeInstance, f)
+    platformVersion: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    platform: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    make: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    model: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    locale: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -247,23 +246,567 @@ proto.proxy.LambdaContext.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.proxy.LambdaContext}
+ * @return {!proto.proxy.AWSClientContextEnv}
  */
-proto.proxy.LambdaContext.deserializeBinary = function(bytes) {
+proto.proxy.AWSClientContextEnv.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.proxy.LambdaContext;
-  return proto.proxy.LambdaContext.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.proxy.AWSClientContextEnv;
+  return proto.proxy.AWSClientContextEnv.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.proxy.LambdaContext} msg The message object to deserialize into.
+ * @param {!proto.proxy.AWSClientContextEnv} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.proxy.LambdaContext}
+ * @return {!proto.proxy.AWSClientContextEnv}
  */
-proto.proxy.LambdaContext.deserializeBinaryFromReader = function(msg, reader) {
+proto.proxy.AWSClientContextEnv.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPlatformVersion(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPlatform(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setMake(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setModel(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLocale(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.proxy.AWSClientContextEnv.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.proxy.AWSClientContextEnv.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.proxy.AWSClientContextEnv} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.proxy.AWSClientContextEnv.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getPlatformVersion();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = message.getPlatform();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getMake();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getModel();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getLocale();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string platform_version = 1;
+ * @return {string}
+ */
+proto.proxy.AWSClientContextEnv.prototype.getPlatformVersion = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContextEnv.prototype.setPlatformVersion = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * optional string platform = 2;
+ * @return {string}
+ */
+proto.proxy.AWSClientContextEnv.prototype.getPlatform = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContextEnv.prototype.setPlatform = function(value) {
+  jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * optional string make = 3;
+ * @return {string}
+ */
+proto.proxy.AWSClientContextEnv.prototype.getMake = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContextEnv.prototype.setMake = function(value) {
+  jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * optional string model = 4;
+ * @return {string}
+ */
+proto.proxy.AWSClientContextEnv.prototype.getModel = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContextEnv.prototype.setModel = function(value) {
+  jspb.Message.setField(this, 4, value);
+};
+
+
+/**
+ * optional string locale = 5;
+ * @return {string}
+ */
+proto.proxy.AWSClientContextEnv.prototype.getLocale = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContextEnv.prototype.setLocale = function(value) {
+  jspb.Message.setField(this, 5, value);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.proxy.AWSClientContext = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.proxy.AWSClientContext, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.proxy.AWSClientContext.displayName = 'proto.proxy.AWSClientContext';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.proxy.AWSClientContext.prototype.toObject = function(opt_includeInstance) {
+  return proto.proxy.AWSClientContext.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.proxy.AWSClientContext} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.proxy.AWSClientContext.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    installationId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    appTitle: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    appVersionName: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    appVersionCode: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    appPackageName: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    env: (f = msg.getEnv()) && proto.proxy.AWSClientContextEnv.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.proxy.AWSClientContext}
+ */
+proto.proxy.AWSClientContext.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.proxy.AWSClientContext;
+  return proto.proxy.AWSClientContext.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.proxy.AWSClientContext} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.proxy.AWSClientContext}
+ */
+proto.proxy.AWSClientContext.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setInstallationId(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAppTitle(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAppVersionName(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAppVersionCode(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setAppPackageName(value);
+      break;
+    case 6:
+      var value = new proto.proxy.AWSClientContextEnv;
+      reader.readMessage(value,proto.proxy.AWSClientContextEnv.deserializeBinaryFromReader);
+      msg.setEnv(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.proxy.AWSClientContext.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.proxy.AWSClientContext.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.proxy.AWSClientContext} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.proxy.AWSClientContext.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getInstallationId();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = message.getAppTitle();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getAppVersionName();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getAppVersionCode();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getAppPackageName();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
+      f
+    );
+  }
+  f = message.getEnv();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      proto.proxy.AWSClientContextEnv.serializeBinaryToWriter
+    );
+  }
+};
+
+
+/**
+ * optional string installation_id = 1;
+ * @return {string}
+ */
+proto.proxy.AWSClientContext.prototype.getInstallationId = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContext.prototype.setInstallationId = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * optional string app_title = 2;
+ * @return {string}
+ */
+proto.proxy.AWSClientContext.prototype.getAppTitle = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContext.prototype.setAppTitle = function(value) {
+  jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * optional string app_version_name = 3;
+ * @return {string}
+ */
+proto.proxy.AWSClientContext.prototype.getAppVersionName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContext.prototype.setAppVersionName = function(value) {
+  jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * optional string app_version_code = 4;
+ * @return {string}
+ */
+proto.proxy.AWSClientContext.prototype.getAppVersionCode = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContext.prototype.setAppVersionCode = function(value) {
+  jspb.Message.setField(this, 4, value);
+};
+
+
+/**
+ * optional string app_package_name = 5;
+ * @return {string}
+ */
+proto.proxy.AWSClientContext.prototype.getAppPackageName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/** @param {string} value */
+proto.proxy.AWSClientContext.prototype.setAppPackageName = function(value) {
+  jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * optional AWSClientContextEnv env = 6;
+ * @return {?proto.proxy.AWSClientContextEnv}
+ */
+proto.proxy.AWSClientContext.prototype.getEnv = function() {
+  return /** @type{?proto.proxy.AWSClientContextEnv} */ (
+    jspb.Message.getWrapperField(this, proto.proxy.AWSClientContextEnv, 6));
+};
+
+
+/** @param {?proto.proxy.AWSClientContextEnv|undefined} value */
+proto.proxy.AWSClientContext.prototype.setEnv = function(value) {
+  jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+proto.proxy.AWSClientContext.prototype.clearEnv = function() {
+  this.setEnv(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.proxy.AWSClientContext.prototype.hasEnv = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
+proto.proxy.AWSLambdaContext = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+};
+goog.inherits(proto.proxy.AWSLambdaContext, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.proxy.AWSLambdaContext.displayName = 'proto.proxy.AWSLambdaContext';
+}
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.proxy.AWSLambdaContext.prototype.toObject = function(opt_includeInstance) {
+  return proto.proxy.AWSLambdaContext.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.proxy.AWSLambdaContext} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.proxy.AWSLambdaContext.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    functionName: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    functionVersion: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    invokedFunctionArn: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    memoryLimitInMb: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    awsRequestId: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    logGroupName: jspb.Message.getFieldWithDefault(msg, 6, ""),
+    logStreamName: jspb.Message.getFieldWithDefault(msg, 7, ""),
+    identity: (f = msg.getIdentity()) && proto.proxy.AWSCognitoIdentity.toObject(includeInstance, f),
+    clientContext: (f = msg.getClientContext()) && proto.proxy.AWSClientContext.toObject(includeInstance, f)
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.proxy.AWSLambdaContext}
+ */
+proto.proxy.AWSLambdaContext.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.proxy.AWSLambdaContext;
+  return proto.proxy.AWSLambdaContext.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.proxy.AWSLambdaContext} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.proxy.AWSLambdaContext}
+ */
+proto.proxy.AWSLambdaContext.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -299,9 +842,14 @@ proto.proxy.LambdaContext.deserializeBinaryFromReader = function(msg, reader) {
       msg.setLogStreamName(value);
       break;
     case 8:
-      var value = new proto.proxy.CognitoIdentity;
-      reader.readMessage(value,proto.proxy.CognitoIdentity.deserializeBinaryFromReader);
+      var value = new proto.proxy.AWSCognitoIdentity;
+      reader.readMessage(value,proto.proxy.AWSCognitoIdentity.deserializeBinaryFromReader);
       msg.setIdentity(value);
+      break;
+    case 9:
+      var value = new proto.proxy.AWSClientContext;
+      reader.readMessage(value,proto.proxy.AWSClientContext.deserializeBinaryFromReader);
+      msg.setClientContext(value);
       break;
     default:
       reader.skipField();
@@ -316,9 +864,9 @@ proto.proxy.LambdaContext.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.proxy.LambdaContext.prototype.serializeBinary = function() {
+proto.proxy.AWSLambdaContext.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.proxy.LambdaContext.serializeBinaryToWriter(this, writer);
+  proto.proxy.AWSLambdaContext.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -326,10 +874,10 @@ proto.proxy.LambdaContext.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.proxy.LambdaContext} message
+ * @param {!proto.proxy.AWSLambdaContext} message
  * @param {!jspb.BinaryWriter} writer
  */
-proto.proxy.LambdaContext.serializeBinaryToWriter = function(message, writer) {
+proto.proxy.AWSLambdaContext.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getFunctionName();
   if (f.length > 0) {
@@ -385,7 +933,15 @@ proto.proxy.LambdaContext.serializeBinaryToWriter = function(message, writer) {
     writer.writeMessage(
       8,
       f,
-      proto.proxy.CognitoIdentity.serializeBinaryToWriter
+      proto.proxy.AWSCognitoIdentity.serializeBinaryToWriter
+    );
+  }
+  f = message.getClientContext();
+  if (f != null) {
+    writer.writeMessage(
+      9,
+      f,
+      proto.proxy.AWSClientContext.serializeBinaryToWriter
     );
   }
 };
@@ -395,13 +951,13 @@ proto.proxy.LambdaContext.serializeBinaryToWriter = function(message, writer) {
  * optional string function_name = 1;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getFunctionName = function() {
+proto.proxy.AWSLambdaContext.prototype.getFunctionName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setFunctionName = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setFunctionName = function(value) {
   jspb.Message.setField(this, 1, value);
 };
 
@@ -410,13 +966,13 @@ proto.proxy.LambdaContext.prototype.setFunctionName = function(value) {
  * optional string function_version = 2;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getFunctionVersion = function() {
+proto.proxy.AWSLambdaContext.prototype.getFunctionVersion = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setFunctionVersion = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setFunctionVersion = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 
@@ -425,13 +981,13 @@ proto.proxy.LambdaContext.prototype.setFunctionVersion = function(value) {
  * optional string invoked_function_arn = 3;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getInvokedFunctionArn = function() {
+proto.proxy.AWSLambdaContext.prototype.getInvokedFunctionArn = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setInvokedFunctionArn = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setInvokedFunctionArn = function(value) {
   jspb.Message.setField(this, 3, value);
 };
 
@@ -440,13 +996,13 @@ proto.proxy.LambdaContext.prototype.setInvokedFunctionArn = function(value) {
  * optional string memory_limit_in_mb = 4;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getMemoryLimitInMb = function() {
+proto.proxy.AWSLambdaContext.prototype.getMemoryLimitInMb = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setMemoryLimitInMb = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setMemoryLimitInMb = function(value) {
   jspb.Message.setField(this, 4, value);
 };
 
@@ -455,13 +1011,13 @@ proto.proxy.LambdaContext.prototype.setMemoryLimitInMb = function(value) {
  * optional string aws_request_id = 5;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getAwsRequestId = function() {
+proto.proxy.AWSLambdaContext.prototype.getAwsRequestId = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setAwsRequestId = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setAwsRequestId = function(value) {
   jspb.Message.setField(this, 5, value);
 };
 
@@ -470,13 +1026,13 @@ proto.proxy.LambdaContext.prototype.setAwsRequestId = function(value) {
  * optional string log_group_name = 6;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getLogGroupName = function() {
+proto.proxy.AWSLambdaContext.prototype.getLogGroupName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setLogGroupName = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setLogGroupName = function(value) {
   jspb.Message.setField(this, 6, value);
 };
 
@@ -485,34 +1041,34 @@ proto.proxy.LambdaContext.prototype.setLogGroupName = function(value) {
  * optional string log_stream_name = 7;
  * @return {string}
  */
-proto.proxy.LambdaContext.prototype.getLogStreamName = function() {
+proto.proxy.AWSLambdaContext.prototype.getLogStreamName = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
 };
 
 
 /** @param {string} value */
-proto.proxy.LambdaContext.prototype.setLogStreamName = function(value) {
+proto.proxy.AWSLambdaContext.prototype.setLogStreamName = function(value) {
   jspb.Message.setField(this, 7, value);
 };
 
 
 /**
- * optional CognitoIdentity identity = 8;
- * @return {?proto.proxy.CognitoIdentity}
+ * optional AWSCognitoIdentity identity = 8;
+ * @return {?proto.proxy.AWSCognitoIdentity}
  */
-proto.proxy.LambdaContext.prototype.getIdentity = function() {
-  return /** @type{?proto.proxy.CognitoIdentity} */ (
-    jspb.Message.getWrapperField(this, proto.proxy.CognitoIdentity, 8));
+proto.proxy.AWSLambdaContext.prototype.getIdentity = function() {
+  return /** @type{?proto.proxy.AWSCognitoIdentity} */ (
+    jspb.Message.getWrapperField(this, proto.proxy.AWSCognitoIdentity, 8));
 };
 
 
-/** @param {?proto.proxy.CognitoIdentity|undefined} value */
-proto.proxy.LambdaContext.prototype.setIdentity = function(value) {
+/** @param {?proto.proxy.AWSCognitoIdentity|undefined} value */
+proto.proxy.AWSLambdaContext.prototype.setIdentity = function(value) {
   jspb.Message.setWrapperField(this, 8, value);
 };
 
 
-proto.proxy.LambdaContext.prototype.clearIdentity = function() {
+proto.proxy.AWSLambdaContext.prototype.clearIdentity = function() {
   this.setIdentity(undefined);
 };
 
@@ -521,8 +1077,38 @@ proto.proxy.LambdaContext.prototype.clearIdentity = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.proxy.LambdaContext.prototype.hasIdentity = function() {
+proto.proxy.AWSLambdaContext.prototype.hasIdentity = function() {
   return jspb.Message.getField(this, 8) != null;
+};
+
+
+/**
+ * optional AWSClientContext client_context = 9;
+ * @return {?proto.proxy.AWSClientContext}
+ */
+proto.proxy.AWSLambdaContext.prototype.getClientContext = function() {
+  return /** @type{?proto.proxy.AWSClientContext} */ (
+    jspb.Message.getWrapperField(this, proto.proxy.AWSClientContext, 9));
+};
+
+
+/** @param {?proto.proxy.AWSClientContext|undefined} value */
+proto.proxy.AWSLambdaContext.prototype.setClientContext = function(value) {
+  jspb.Message.setWrapperField(this, 9, value);
+};
+
+
+proto.proxy.AWSLambdaContext.prototype.clearClientContext = function() {
+  this.setClientContext(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {!boolean}
+ */
+proto.proxy.AWSLambdaContext.prototype.hasClientContext = function() {
+  return jspb.Message.getField(this, 9) != null;
 };
 
 
@@ -537,12 +1123,12 @@ proto.proxy.LambdaContext.prototype.hasIdentity = function() {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.proxy.ProxyRequest = function(opt_data) {
+proto.proxy.AWSProxyRequest = function(opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
-goog.inherits(proto.proxy.ProxyRequest, jspb.Message);
+goog.inherits(proto.proxy.AWSProxyRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
-  proto.proxy.ProxyRequest.displayName = 'proto.proxy.ProxyRequest';
+  proto.proxy.AWSProxyRequest.displayName = 'proto.proxy.AWSProxyRequest';
 }
 
 
@@ -557,8 +1143,8 @@ if (jspb.Message.GENERATE_TO_OBJECT) {
  *     for transitional soy proto support: http://goto/soy-param-migration
  * @return {!Object}
  */
-proto.proxy.ProxyRequest.prototype.toObject = function(opt_includeInstance) {
-  return proto.proxy.ProxyRequest.toObject(opt_includeInstance, this);
+proto.proxy.AWSProxyRequest.prototype.toObject = function(opt_includeInstance) {
+  return proto.proxy.AWSProxyRequest.toObject(opt_includeInstance, this);
 };
 
 
@@ -567,12 +1153,12 @@ proto.proxy.ProxyRequest.prototype.toObject = function(opt_includeInstance) {
  * @param {boolean|undefined} includeInstance Whether to include the JSPB
  *     instance for transitional soy proto support:
  *     http://goto/soy-param-migration
- * @param {!proto.proxy.ProxyRequest} msg The msg instance to transform.
+ * @param {!proto.proxy.AWSProxyRequest} msg The msg instance to transform.
  * @return {!Object}
  */
-proto.proxy.ProxyRequest.toObject = function(includeInstance, msg) {
+proto.proxy.AWSProxyRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-    context: (f = msg.getContext()) && proto.proxy.LambdaContext.toObject(includeInstance, f),
+    context: (f = msg.getContext()) && proto.proxy.AWSLambdaContext.toObject(includeInstance, f),
     event: msg.getEvent_asB64()
   };
 
@@ -587,23 +1173,23 @@ proto.proxy.ProxyRequest.toObject = function(includeInstance, msg) {
 /**
  * Deserializes binary data (in protobuf wire format).
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
- * @return {!proto.proxy.ProxyRequest}
+ * @return {!proto.proxy.AWSProxyRequest}
  */
-proto.proxy.ProxyRequest.deserializeBinary = function(bytes) {
+proto.proxy.AWSProxyRequest.deserializeBinary = function(bytes) {
   var reader = new jspb.BinaryReader(bytes);
-  var msg = new proto.proxy.ProxyRequest;
-  return proto.proxy.ProxyRequest.deserializeBinaryFromReader(msg, reader);
+  var msg = new proto.proxy.AWSProxyRequest;
+  return proto.proxy.AWSProxyRequest.deserializeBinaryFromReader(msg, reader);
 };
 
 
 /**
  * Deserializes binary data (in protobuf wire format) from the
  * given reader into the given message object.
- * @param {!proto.proxy.ProxyRequest} msg The message object to deserialize into.
+ * @param {!proto.proxy.AWSProxyRequest} msg The message object to deserialize into.
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
- * @return {!proto.proxy.ProxyRequest}
+ * @return {!proto.proxy.AWSProxyRequest}
  */
-proto.proxy.ProxyRequest.deserializeBinaryFromReader = function(msg, reader) {
+proto.proxy.AWSProxyRequest.deserializeBinaryFromReader = function(msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
@@ -611,8 +1197,8 @@ proto.proxy.ProxyRequest.deserializeBinaryFromReader = function(msg, reader) {
     var field = reader.getFieldNumber();
     switch (field) {
     case 1:
-      var value = new proto.proxy.LambdaContext;
-      reader.readMessage(value,proto.proxy.LambdaContext.deserializeBinaryFromReader);
+      var value = new proto.proxy.AWSLambdaContext;
+      reader.readMessage(value,proto.proxy.AWSLambdaContext.deserializeBinaryFromReader);
       msg.setContext(value);
       break;
     case 2:
@@ -632,9 +1218,9 @@ proto.proxy.ProxyRequest.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.proxy.ProxyRequest.prototype.serializeBinary = function() {
+proto.proxy.AWSProxyRequest.prototype.serializeBinary = function() {
   var writer = new jspb.BinaryWriter();
-  proto.proxy.ProxyRequest.serializeBinaryToWriter(this, writer);
+  proto.proxy.AWSProxyRequest.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
 };
 
@@ -642,17 +1228,17 @@ proto.proxy.ProxyRequest.prototype.serializeBinary = function() {
 /**
  * Serializes the given message to binary data (in protobuf wire
  * format), writing to the given BinaryWriter.
- * @param {!proto.proxy.ProxyRequest} message
+ * @param {!proto.proxy.AWSProxyRequest} message
  * @param {!jspb.BinaryWriter} writer
  */
-proto.proxy.ProxyRequest.serializeBinaryToWriter = function(message, writer) {
+proto.proxy.AWSProxyRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
   f = message.getContext();
   if (f != null) {
     writer.writeMessage(
       1,
       f,
-      proto.proxy.LambdaContext.serializeBinaryToWriter
+      proto.proxy.AWSLambdaContext.serializeBinaryToWriter
     );
   }
   f = message.getEvent_asU8();
@@ -666,22 +1252,22 @@ proto.proxy.ProxyRequest.serializeBinaryToWriter = function(message, writer) {
 
 
 /**
- * optional LambdaContext context = 1;
- * @return {?proto.proxy.LambdaContext}
+ * optional AWSLambdaContext context = 1;
+ * @return {?proto.proxy.AWSLambdaContext}
  */
-proto.proxy.ProxyRequest.prototype.getContext = function() {
-  return /** @type{?proto.proxy.LambdaContext} */ (
-    jspb.Message.getWrapperField(this, proto.proxy.LambdaContext, 1));
+proto.proxy.AWSProxyRequest.prototype.getContext = function() {
+  return /** @type{?proto.proxy.AWSLambdaContext} */ (
+    jspb.Message.getWrapperField(this, proto.proxy.AWSLambdaContext, 1));
 };
 
 
-/** @param {?proto.proxy.LambdaContext|undefined} value */
-proto.proxy.ProxyRequest.prototype.setContext = function(value) {
+/** @param {?proto.proxy.AWSLambdaContext|undefined} value */
+proto.proxy.AWSProxyRequest.prototype.setContext = function(value) {
   jspb.Message.setWrapperField(this, 1, value);
 };
 
 
-proto.proxy.ProxyRequest.prototype.clearContext = function() {
+proto.proxy.AWSProxyRequest.prototype.clearContext = function() {
   this.setContext(undefined);
 };
 
@@ -690,7 +1276,7 @@ proto.proxy.ProxyRequest.prototype.clearContext = function() {
  * Returns whether this field is set.
  * @return {!boolean}
  */
-proto.proxy.ProxyRequest.prototype.hasContext = function() {
+proto.proxy.AWSProxyRequest.prototype.hasContext = function() {
   return jspb.Message.getField(this, 1) != null;
 };
 
@@ -699,7 +1285,7 @@ proto.proxy.ProxyRequest.prototype.hasContext = function() {
  * optional bytes event = 2;
  * @return {!(string|Uint8Array)}
  */
-proto.proxy.ProxyRequest.prototype.getEvent = function() {
+proto.proxy.AWSProxyRequest.prototype.getEvent = function() {
   return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -709,7 +1295,7 @@ proto.proxy.ProxyRequest.prototype.getEvent = function() {
  * This is a type-conversion wrapper around `getEvent()`
  * @return {string}
  */
-proto.proxy.ProxyRequest.prototype.getEvent_asB64 = function() {
+proto.proxy.AWSProxyRequest.prototype.getEvent_asB64 = function() {
   return /** @type {string} */ (jspb.Message.bytesAsB64(
       this.getEvent()));
 };
@@ -722,14 +1308,14 @@ proto.proxy.ProxyRequest.prototype.getEvent_asB64 = function() {
  * This is a type-conversion wrapper around `getEvent()`
  * @return {!Uint8Array}
  */
-proto.proxy.ProxyRequest.prototype.getEvent_asU8 = function() {
+proto.proxy.AWSProxyRequest.prototype.getEvent_asU8 = function() {
   return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
       this.getEvent()));
 };
 
 
 /** @param {!(string|Uint8Array)} value */
-proto.proxy.ProxyRequest.prototype.setEvent = function(value) {
+proto.proxy.AWSProxyRequest.prototype.setEvent = function(value) {
   jspb.Message.setField(this, 2, value);
 };
 

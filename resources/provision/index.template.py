@@ -87,13 +87,14 @@ def lambda_handler(funcName, event, context):
 
         # Client context
         if getattr(context, "client_context", None):
+            awsClientContext = context.client_context
             contextDict["client_context"] = dict(
-                installation_id=context.client_context.installation_id,
-                app_title=context.client_context.app_title,
-                app_version_name=context.client_context.app_version_name,
-                app_version_code=context.client_context.app_version_code,
-                Custom=context.client_context.custom,
-                env=context.client_context.env
+                installation_id=awsClientContext.installation_id,
+                app_title=awsClientContext.app_title,
+                app_version_name=awsClientContext.app_version_name,
+                app_version_code=awsClientContext.app_version_code,
+                Custom=awsClientContext.custom,
+                env=awsClientContext.env
             )
 
         # Update it
