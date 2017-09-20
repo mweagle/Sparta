@@ -1505,7 +1505,7 @@ func Provision(noop bool,
 		}
 
 		if next == nil {
-			summaryLine := fmt.Sprintf("Summary (%s)", time.Now().Local().String())
+			summaryLine := fmt.Sprintf("Summary (%s)", time.Now().Format(time.RFC3339))
 			subheaderDivider := strings.Repeat("-", len(summaryLine)+len(summaryLine)/5)
 
 			ctx.logger.Info(subheaderDivider)
