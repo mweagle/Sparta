@@ -82,8 +82,11 @@ func UploadLocalFileToS3(localPath string,
 		}
 	}
 	logger.WithFields(logrus.Fields{
-		"Path": logPath,
+		"Path":   logPath,
+		"Bucket": S3Bucket,
+		"Key":    S3KeyName,
 	}).Info("Uploading local file to S3")
+
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
 	if nil != err {

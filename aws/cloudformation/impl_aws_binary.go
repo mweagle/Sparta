@@ -1,7 +1,7 @@
-// +build linux,!lambdabinary
+// +build lambdabinary
 
 package cloudformation
 
 func platformUserName() string {
-	return defaultUserName()
+	return ""
 }

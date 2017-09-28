@@ -1,4 +1,4 @@
-// +build !linux
+// +build !linux,!lambdabinary
 
 package cloudformation
 

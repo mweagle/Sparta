@@ -9,18 +9,23 @@ var spartaUtils = require('./sparta_utils')
 var AWS = require('aws-sdk')
 var awsConfig = new AWS.Config({})
 var GOLANG_CONSTANTS = require('./golang-constants.json')
+var proto = require('./proto/proxy_pb')
 
 // TODO: See if https://forums.aws.amazon.com/message.jspa?messageID=633802
 // has been updated with new information
-process.env.PATH = process.env.PATH + ':/var/task'
+process.env['PATH'] = process.env['PATH'] + ':' + process.env['LAMBDA_TASK_ROOT']
 
-// These two names will be dynamically reassigned during archive creation
+// Use the same binary name
 var SPARTA_BINARY_NAME = 'Sparta.lambda.amd64'
+
+// This name will be rewritten as part of the archive creation
 var SPARTA_SERVICE_NAME = 'SpartaService'
 // End dynamic reassignment
 
 // This is where the binary will be extracted
-var SPARTA_BINARY_PATH = path.join('/tmp', SPARTA_BINARY_NAME)
+var SPARTA_BINARY_PATH = util.format('./bin/%s', SPARTA_BINARY_NAME)
+var SPARTA_LOG_LEVEL = 'info'
+
 var MAXIMUM_RESPAWN_COUNT = 5
 
 // Handle to the active golang process.
@@ -116,28 +121,66 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   var writeCompleteDuration = null
   var responseEndDuration = null
 
-  var requestBody = {
-    event: event,
-    context: context
-  }
-  // If there is a request.event.body element, try and parse it to make
+  // Let's go and turn the request into a proto
+  var proxyRequest = new proto.AWSProxyRequest();
+
+  // If there is a event.body element, try and parse it to make
   // interacting with API Gateway a bit simpler.  The .body property
   // corresponds to the data shape set by the *.vtl templates
-  if (requestBody && requestBody.event && requestBody.event.body) {
+  if (event && event.body) {
     try {
-      requestBody.event.body = JSON.parse(requestBody.event.body)
+      event.body = JSON.parse(event.body)
     } catch (e) {}
   }
-  var stringified = JSON.stringify(requestBody)
-  var contentLength = Buffer.byteLength(stringified, 'utf-8')
+  // Set payload event
+  stringifiedContent = JSON.stringify(event)
+  proxyRequest.setEvent(Buffer.from(stringifiedContent).toString('base64'))
+  // Set LambdaContext
+  var lambdaContext = new proto.AWSLambdaContext()
+  lambdaContext.setFunctionName(context.functionName)
+  lambdaContext.setFunctionVersion(context.functionVersion)
+  lambdaContext.setInvokedFunctionArn(context.invokedFunctionArn)
+  lambdaContext.setMemoryLimitInMb(context.memoryLimitInMB)
+  lambdaContext.setAwsRequestId(context.awsRequestId)
+  lambdaContext.setLogGroupName(context.logGroupName)
+  lambdaContext.setLogStreamName(context.logStreamName)
+  if (context.identity) {
+    cognitoIdentity = new proto.AWSCognitoIdentity()
+    cognitoIdentity.setCognitoIdentityId(context.identity.cognitoIdentityId)
+    cognitoIdentity.setCognitoIdentityPoolId(context.identity.cognitoIdentityPoolId)
+    lambdaContext.setIdentity(cognitoIdentity)
+  }
+  if (context.clientContext) {
+    clientContext = context.clientContext
+    proxyClientContext = new proto.AWSClientContext()
+    proxyClientContext.setInstallationId(clientContext.installation_id)
+    proxyClientContext.setAppTitle(clientContext.app_title)
+    proxyClientContext.setAppVersionName(clientContext.app_version_name)
+    proxyClientContext.setAppVersionCode(clientContext.app_version_code)
+    proxyClientContext.setAppPackageName(clientContext.app_package_name)
+    if (clientContext.env) {
+      clientContextEnv = clientContext.env
+      proxyClientContextEnv = new proto.AWSClientContextEnv()
+      proxyClientContextEnv.setPlatformVersion(clientContextEnv.platform_version)
+      proxyClientContextEnv.setPlatform(clientContextEnv.platform)
+      proxyClientContextEnv.setMake(clientContextEnv.make)
+      proxyClientContextEnv.setModel(clientContextEnv.model)
+      proxyClientContextEnv.setLocale(clientContextEnv.locale)
+      proxyClientContext.setEnv(proxyClientContextEnv)
+    }
+  }
+  proxyRequest.setContext(lambdaContext)
+
+  // Setup request bytes
+  var requestBytes = Buffer.from(proxyRequest.serializeBinary().buffer)
   var options = {
     host: 'localhost',
     port: 9999,
     path: path,
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': contentLength
+      'Content-Type': 'application/x-protobuf',
+      'Content-Length': requestBytes.byteLength
     }
   }
 
@@ -198,7 +241,7 @@ function makeRequest (path, startRemainingCountMillis, event, context, lambdaCal
   req.once('error', function (e) {
     onProxyComplete(e, null)
   })
-  req.write(stringified)
+  req.write(requestBytes)
   req.end()
 }
 
@@ -224,90 +267,56 @@ var postMetricCounter = function (metricName, userCallback) {
   cloudwatch.putMetricData(params, onResult)
 }
 
-// Move the file to /tmp to temporarily work around
-// https://forums.aws.amazon.com/message.jspa?messageID=583910
-var ensureGoLangBinary = function (callback) {
-  try {
-    fs.statSync(SPARTA_BINARY_PATH)
-    setImmediate(callback, null)
-  } catch (e) {
-    var command = util.format('cp ./%s %s; chmod +x %s',
-      SPARTA_BINARY_NAME,
-      SPARTA_BINARY_PATH,
-      SPARTA_BINARY_PATH)
-    childProcess.exec(command, function (err, stdout) {
-      if (err) {
-        console.error(err)
-        process.exit(1)
-      } else {
-        var stdoutMsg = stdout.toString('utf-8')
-        if (stdoutMsg.length !== 0) {
-          spartaUtils.log(stdoutMsg)
-        }
-      // Post the
-      }
-      callback(err, stdout)
-    })
-  }
-}
-
 var createForwarder = function (path) {
   var forwardToGolangProcess = function (event, context, callback, metricName, startRemainingCountMillisParam) {
     var startRemainingCountMillis = startRemainingCountMillisParam || context.getRemainingTimeInMillis()
     if (!golangProcess) {
-      ensureGoLangBinary(function () {
-        spartaUtils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid))
-        golangProcess = childProcess.spawn(SPARTA_BINARY_PATH, ['execute', '--signal', process.pid], {})
-
-        golangProcess.stdout.on('data', function (buf) {
-          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            spartaUtils.log(eachLine)
-          })
+      spartaUtils.log(util.format('Launching %s with args: execute --signal %d', SPARTA_BINARY_PATH, process.pid))
+      golangProcess = childProcess.spawn(SPARTA_BINARY_PATH,
+        ['execute',
+          '--level',
+          SPARTA_LOG_LEVEL,
+          '--signal',
+          process.pid], {
+          'stdio': 'inherit'
         })
-        golangProcess.stderr.on('data', function (buf) {
-          buf.toString('utf-8').split('\n').forEach(function (eachLine) {
-            spartaUtils.log(eachLine)
-          })
-        })
-
-        var terminationHandler = function (eventName) {
-          return function (value) {
-            var onPosted = function () {
-              console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)))
-              failCount += 1
-              if (failCount > MAXIMUM_RESPAWN_COUNT) {
-                process.exit(1)
-              }
-              golangProcess = null
-              forwardToGolangProcess(null,
-                null,
-                callback,
-                METRIC_NAMES.TERMINATED,
-                startRemainingCountMillis)
+      var terminationHandler = function (eventName) {
+        return function (value) {
+          var onPosted = function () {
+            console.error(util.format('Sparta %s: %s\n', eventName.toUpperCase(), JSON.stringify(value)))
+            failCount += 1
+            if (failCount > MAXIMUM_RESPAWN_COUNT) {
+              process.exit(1)
             }
-            postMetricCounter(METRIC_NAMES.TERMINATED, onPosted)
+            golangProcess = null
+            forwardToGolangProcess(null,
+              null,
+              callback,
+              METRIC_NAMES.TERMINATED,
+              startRemainingCountMillis)
           }
+          postMetricCounter(METRIC_NAMES.TERMINATED, onPosted)
         }
-        golangProcess.on('error', terminationHandler('error'))
-        golangProcess.on('exit', terminationHandler('exit'))
-        process.on('exit', function () {
-          spartaUtils.log('Go process exited')
-          if (golangProcess) {
-            golangProcess.kill()
-          }
-        })
-        var golangProcessReadyHandler = function () {
-          spartaUtils.log('SIGUSR2 signal received')
-          process.removeListener('SIGUSR2', golangProcessReadyHandler)
-          forwardToGolangProcess(event,
-            context,
-            callback,
-            METRIC_NAMES.CREATED,
-            startRemainingCountMillis)
+      }
+      golangProcess.on('error', terminationHandler('error'))
+      golangProcess.on('exit', terminationHandler('exit'))
+      process.on('exit', function () {
+        spartaUtils.log('Go process exited')
+        if (golangProcess) {
+          golangProcess.kill()
         }
-        spartaUtils.log('Waiting for SIGUSR2 signal')
-        process.on('SIGUSR2', golangProcessReadyHandler)
       })
+      var golangProcessReadyHandler = function () {
+        spartaUtils.log('SIGUSR2 signal received')
+        process.removeListener('SIGUSR2', golangProcessReadyHandler)
+        forwardToGolangProcess(event,
+          context,
+          callback,
+          METRIC_NAMES.CREATED,
+          startRemainingCountMillis)
+      }
+      spartaUtils.log('Waiting for SIGUSR2 signal')
+      process.on('SIGUSR2', golangProcessReadyHandler)
     }
     else if (event && context) {
       postMetricCounter(metricName || METRIC_NAMES.REUSED)
@@ -319,16 +328,8 @@ var createForwarder = function (path) {
 
 // Log the outputs
 var envSettings = {
-  aws_sdk: AWS.VERSION,
-  node_js: process.version,
-  os: {
-    platform: os.platform(),
-    release: os.release(),
-    type: os.type(),
-    uptime: os.uptime(),
-    cpus: os.cpus(),
-    totalmem: os.totalmem()
-  }
+  AWS_SDK_Version: AWS.VERSION,
+  NodeJSVersion: process.version
 }
 spartaUtils.log(envSettings)
 

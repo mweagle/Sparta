@@ -953,6 +953,10 @@ A stack name can contain only alphanumeric characters
 \character and cannot be longer than 128 characters.
 */
 func UserScopedStackName(basename string) string {
-	userName := strings.Replace(platformUserName(), " ", "-", -1)
+	platformUserName := platformUserName()
+	if platformUserName == "" {
+		return basename
+	}
+	userName := strings.Replace(platformUserName, " ", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName)
 }

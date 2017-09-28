@@ -8,9 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/mweagle/Sparta/explore"
-
 	"github.com/Sirupsen/logrus"
+	"github.com/mweagle/Sparta/explore"
 )
 
 func exploreTestHelloWorld(event *json.RawMessage,
@@ -20,6 +19,47 @@ func exploreTestHelloWorld(event *json.RawMessage,
 	logger.Info("Hello World: ", string(*event))
 
 	fmt.Fprint(w, string(*event))
+}
+
+func exploreTestHelloWorldHTTP(w http.ResponseWriter, r *http.Request) {
+	lambdaContext, lambdaContextOk := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
+	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
+	logger.WithFields(logrus.Fields{
+		"Context":   lambdaContext,
+		"ContextOk": lambdaContextOk,
+	}).Warn("Checking context")
+
+	fmt.Printf("Hello World 🌍")
+	fmt.Fprint(w, "Done!")
+}
+
+func TestExplore(t *testing.T) {
+	// Create the function to test
+	var lambdaFunctions []*LambdaAWSInfo
+	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	// Mock event specific data to send to the lambda function
+	eventData := ArbitraryJSONObject{
+		"key1": "value1",
+		"key2": "value2",
+		"key3": "value3"}
+
+	// Make the request and confirm
+	logger, _ := NewLogger("warning")
+	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
+	defer ts.Close()
+	resp, err := explore.NewLambdaRequest(lambdaFn.URLPath(), eventData, ts.URL)
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+
+	defer resp.Body.Close()
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	t.Log("Status: ", resp.Status)
+	t.Log("Headers: ", resp.Header)
+	t.Log("Body: ", string(body))
 }
 
 func TestExploreAPIGateway(t *testing.T) {
@@ -36,7 +76,7 @@ func TestExploreAPIGateway(t *testing.T) {
 
 	// Make the request and confirm
 	logger, _ := NewLogger("warning")
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
 	defer ts.Close()
 	var emptyWhitelist map[string]string
 	resp, err := explore.NewAPIGatewayRequest(lambdaFn.URLPath(),
@@ -56,45 +96,12 @@ func TestExploreAPIGateway(t *testing.T) {
 	t.Log("Body: ", string(body))
 }
 
-func TestExplore(t *testing.T) {
-	// Create the function to test
-	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	// Mock event specific data to send to the lambda function
-	eventData := ArbitraryJSONObject{
-		"key1": "value1",
-		"key2": "value2",
-		"key3": "value3"}
-
-	// Make the request and confirm
-	logger, _ := NewLogger("warning")
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
-	defer ts.Close()
-	resp, err := explore.NewLambdaRequest(lambdaFn.URLPath(), eventData, ts.URL)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	t.Log("Status: ", resp.Status)
-	t.Log("Headers: ", resp.Header)
-	t.Log("Body: ", string(body))
-}
-
 func TestExploreUserName(t *testing.T) {
 	// Create the function to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{},
-		exploreTestHelloWorld,
-		&LambdaFunctionOptions{
-			SpartaOptions: &SpartaOptions{
-				Name: "testExportOverridenName",
-			},
-		})
+	lambdaFn := HandleAWSLambda("exploreTestHelloWorld",
+		http.HandlerFunc(exploreTestHelloWorldHTTP),
+		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	// Mock event specific data to send to the lambda function
@@ -105,7 +112,7 @@ func TestExploreUserName(t *testing.T) {
 
 	// Make the request and confirm
 	logger, _ := NewLogger("warning")
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
 	defer ts.Close()
 	resp, err := explore.NewLambdaRequest(lambdaFn.URLPath(), eventData, ts.URL)
 	if err != nil {
@@ -134,7 +141,7 @@ func TestNewAPIGatewayRequest(t *testing.T) {
 
 	// Make the request and confirm
 	logger, _ := NewLogger("warning")
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
 	defer ts.Close()
 	var emptyWhitelist map[string]string
 	resp, err := explore.NewAPIGatewayRequest(lambdaFn.URLPath(),
@@ -151,7 +158,6 @@ func TestNewAPIGatewayRequest(t *testing.T) {
 
 	// test unmarshalling mock to APIGatewayLambdaJSONEvent
 	var testlambdaevent APIGatewayLambdaJSONEvent
-
 	err = json.Unmarshal(body, &testlambdaevent)
 	if err != nil {
 		t.Fatal(err.Error())

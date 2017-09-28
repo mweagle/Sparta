@@ -31,8 +31,17 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		if "" != rootSource {
 			zipEntryName = fmt.Sprintf("%s/%s", linuxZipName(rootSource), info.Name())
 		}
+		// Create a header for this zipFile, basically let's see
+		// if we can get the executable bits to travel along..
+		fileHeader, fileHeaderErr := zip.FileInfoHeader(info)
+		if fileHeaderErr != nil {
+			return fileHeaderErr
+		}
+		// Update the name to the proper thing...
+		fileHeader.Name = zipEntryName
+
 		// File info for the binary executable
-		binaryWriter, binaryWriterErr := zipWriter.Create(zipEntryName)
+		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)
 		if binaryWriterErr != nil {
 			return binaryWriterErr
 		}

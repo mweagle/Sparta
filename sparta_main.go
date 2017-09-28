@@ -32,13 +32,15 @@ var CommandLineOptions = struct {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	Noop        bool           `valid:"-"`
-	LogLevel    string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
-	LogFormat   string         `valid:"matches(txt|text|json)"`
-	Logger      *logrus.Logger `valid:"-"`
-	Command     string         `valid:"-"`
-	BuildTags   string         `valid:"-"`
-	LinkerFlags string         `valid:"-"` // no requirements
+	ServiceName        string         `valid:"required"`
+	ServiceDescription string         `valid:"-"`
+	Noop               bool           `valid:"-"`
+	LogLevel           string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
+	LogFormat          string         `valid:"matches(txt|text|json)"`
+	Logger             *logrus.Logger `valid:"-"`
+	Command            string         `valid:"-"`
+	BuildTags          string         `valid:"-"`
+	LinkerFlags        string         `valid:"-"` // no requirements
 }
 
 // OptionsGlobal stores the global command line options
@@ -158,10 +160,10 @@ func init() {
 		"",
 		"Optional BuildID to use")
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.PipelineTrigger,
-		"codePipeline",
+		"codePipelinePackage",
 		"p",
 		"",
-		"Provision for CodePipeline integration")
+		"Name of CodePipelin package that includes cloduformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
@@ -412,6 +414,10 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
 	CommandLineOptions.Root.Long = serviceDescription
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+		// Save the ServiceName in case a custom command wants it
+		OptionsGlobal.ServiceName = serviceName
+		OptionsGlobal.ServiceDescription = serviceDescription
+
 		_, validateErr := govalidator.ValidateStruct(OptionsGlobal)
 		if nil != validateErr {
 			return validateErr

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 )
 
 // Main defines the primary handler for transforming an application into a Sparta package.  The

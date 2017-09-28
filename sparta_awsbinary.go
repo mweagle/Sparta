@@ -11,6 +11,7 @@ import (
 	"syscall"
 
 	"github.com/Sirupsen/logrus"
+	"github.com/zcalusic/sysinfo"
 )
 
 // Delete is not available in the AWS Lambda binary
@@ -69,6 +70,14 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo,
 // include the lambdabinary flag
 func platformKill(parentProcessPID int) {
 	syscall.Kill(parentProcessPID, syscall.SIGUSR2)
+}
+
+func platformLogSysInfo(logger *logrus.Logger) {
+	var si sysinfo.SysInfo
+	si.GetSysInfo()
+	logger.WithFields(logrus.Fields{
+		"systemInfo": si,
+	}).Info("SystemInfo")
 }
 
 // RegisterCodePipelineEnvironment is not available during lambda execution

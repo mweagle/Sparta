@@ -19,6 +19,7 @@ const cgoExportsTemplate = `
 
 //export Lambda
 func Lambda(functionName *C.char,
+	logLevel *C.char,
 	requestJSON *C.char,
 	accessKeyID *C.char,
 	secretKey *C.char,
@@ -30,12 +31,13 @@ func Lambda(functionName *C.char,
 	responseBufferContentLen int) int {
 
 	inputFunction := C.GoString(functionName)
+	golangLogLevel := C.GoString(logLevel)
 	inputRequest := C.GoString(requestJSON)
 	awsCreds := credentials.NewStaticCredentials(C.GoString(accessKeyID),
 		C.GoString(secretKey),
 		C.GoString(token))
 
-	spartaResp, spartaRespHeaders, responseErr := %s.LambdaHandler(inputFunction, inputRequest, awsCreds)
+	spartaResp, spartaRespHeaders, responseErr := %s.LambdaHandler(inputFunction, golangLogLevel, inputRequest, awsCreds)
 	lambdaExitCode := 0
 	var pyResponseBufer []byte
 	if nil != responseErr {

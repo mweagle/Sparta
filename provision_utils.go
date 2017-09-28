@@ -36,7 +36,9 @@ const (
 // by `esc` during the generate phase.  In order to export these, there
 // MUST be a corresponding PROXIED_MODULES entry for the base filename
 // in resources/index.js
-var customResourceScripts = []string{"sparta_utils.js",
+var customResourceScripts = []string{
+	"sparta_utils.js",
+	"proto/proxy_pb.js",
 	"golang-constants.json"}
 
 var golangCustomResourceTypes = []string{
@@ -371,6 +373,46 @@ func createNewSpartaNodeJSCustomResourceEntry(resourceName string, logger *logru
 	return primaryEntry
 }
 
+func insertNodeModulesArchive(provisioningResourcesRelPath string,
+	zipWriter *zip.Writer,
+	logger *logrus.Logger) error {
+
+	nodeModulesZipRelName := fmt.Sprintf("%s/node_modules.zip", provisioningResourcesRelPath)
+	nodeModuleBytes, err := _escFSByte(false, nodeModulesZipRelName)
+	if nil == err {
+		nodeModuleReader, errReader := zip.NewReader(bytes.NewReader(nodeModuleBytes), int64(len(nodeModuleBytes)))
+		if errReader != nil {
+			return errReader
+		}
+		logger.WithFields(logrus.Fields{
+			"Name": nodeModulesZipRelName,
+		}).Debug("Embedding CustomResource node_modules.zip")
+
+		for _, zipFile := range nodeModuleReader.File {
+			logger.WithFields(logrus.Fields{
+				"FileName": zipFile.Name,
+			}).Debug("node_modules file")
+
+			embedWriter, errCreate := zipWriter.Create(zipFile.Name)
+			if nil != errCreate {
+				return errCreate
+			}
+
+			sourceReader, errOpen := zipFile.Open()
+			if errOpen != nil {
+				return errOpen
+			}
+			io.Copy(embedWriter, sourceReader)
+		}
+	} else {
+		logger.WithFields(logrus.Fields{
+			"Name":  nodeModulesZipRelName,
+			"Error": err,
+		}).Warn("Failed to load node_modules.zip for embedding")
+	}
+	return nil
+}
+
 func insertNodeJSProxyResources(serviceName string,
 	executableOutput string,
 	lambdaAWSInfos []*LambdaAWSInfo,
@@ -385,7 +427,7 @@ func insertNodeJSProxyResources(serviceName string,
 	if err != nil {
 		return errors.New("Failed to create ZIP entry: index.js")
 	}
-	nodeJSSource := _escFSMustString(false, "/resources/index.js")
+	nodeJSSource := _escFSMustString(false, "/resources/provision/index.js")
 	nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 
 	handlerNames := make(map[string]bool, 0)
@@ -411,9 +453,11 @@ func insertNodeJSProxyResources(serviceName string,
 	// Finally, replace
 	// 	SPARTA_BINARY_NAME = 'Sparta.lambda.amd64';
 	// with the service binary name
-	nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
+	//nodeJSSource += fmt.Sprintf("SPARTA_BINARY_NAME='%s';\n", executableOutput)
+
 	// And the service name
 	nodeJSSource += fmt.Sprintf("SPARTA_SERVICE_NAME='%s';\n", serviceName)
+	nodeJSSource += fmt.Sprintf("SPARTA_LOG_LEVEL='%s';\n", logger.Level.String())
 	logger.WithFields(logrus.Fields{
 		"index.js": nodeJSSource,
 	}).Debug("Dynamically generated NodeJS adapter")
@@ -422,6 +466,13 @@ func insertNodeJSProxyResources(serviceName string,
 	_, copyErr := io.Copy(nodeJSWriter, stringReader)
 	if nil != copyErr {
 		return copyErr
+	}
+	// Embed any node_modules
+	insertErr := insertNodeModulesArchive("/resources/provision",
+		zipWriter,
+		logger)
+	if insertErr != nil {
+		return insertErr
 	}
 
 	// Next embed the custom resource scripts into the package.
@@ -477,7 +528,7 @@ func insertPythonProxyResources(serviceName string,
 		return errors.New("Failed to create ZIP entry: index.py")
 	}
 
-	pythonTemplate := _escFSMustString(false, "/resources/index.template.py")
+	pythonTemplate := _escFSMustString(false, "/resources/provision/index.template.py")
 	pythonSource := "\n#DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 
 	// Great, let's assemble all the Python function names, then
@@ -514,9 +565,11 @@ func insertPythonProxyResources(serviceName string,
 	// the Go template engine so that we can substitute the
 	// library name and the python functions we've built up...
 	data := struct {
+		LogLevel        string
 		LibraryName     string
 		PythonFunctions string
 	}{
+		logger.Level.String(),
 		executableOutput,
 		pythonSource,
 	}

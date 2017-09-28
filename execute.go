@@ -25,9 +25,13 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 		port = defaultHTTPPort
 	}
 
+	// Log any info when we start up...
+	platformLogSysInfo(logger)
+
+	// Startup the server...
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      NewLambdaHTTPHandler(lambdaAWSInfos, logger),
+		Handler:      NewServeMuxLambda(lambdaAWSInfos, logger),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}

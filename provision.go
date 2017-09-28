@@ -163,7 +163,7 @@ type userdata struct {
 }
 
 // context is data that is mutated during the provisioning workflow
-type context struct {
+type provisionContext struct {
 	// Information about the ZIP archive that contains the LambdaCode source
 	s3CodeZipURL *s3UploadURL
 	// AWS Session to be used for all API calls made in the process of provisioning
@@ -205,7 +205,7 @@ type workflowContext struct {
 	// User supplied data that's Lambda specific
 	userdata userdata
 	// Context that's mutated across the workflow steps
-	context context
+	context provisionContext
 	// Transaction-scoped information thats mutated across the workflow
 	// steps
 	transaction transaction
@@ -252,7 +252,7 @@ func (ctx *workflowContext) registerFileCleanupFinalizer(localPath string) {
 			}).Warn("Failed to cleanup intermediate artifact")
 		} else {
 			logger.WithFields(logrus.Fields{
-				"Path": localPath,
+				"Path": relativePath(localPath),
 			}).Debug("Build artifact deleted")
 		}
 	}
@@ -387,6 +387,7 @@ func versionAwareS3KeyName(s3DefaultKey string, s3VersioningEnabled bool, logger
 // uploaded. If the target bucket does not have versioning enabled,
 // this function will automatically make a new key to ensure uniqueness
 func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowContext) (string, error) {
+
 	// If versioning is enabled, use a stable name, otherwise use a name
 	// that's dynamically created. By default assume that the bucket is
 	// enabled for versioning
@@ -638,13 +639,22 @@ func buildGoBinary(executableOutput string,
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
 		// Pass any SPARTA_* prefixed environment variables to the docker build
+		//
+		goosTarget := os.Getenv("SPARTA_GOOS")
+		if goosTarget == "" {
+			goosTarget = "linux"
+		}
+		goArch := os.Getenv("SPARTA_GOARCH")
+		if goArch == "" {
+			goArch = "amd64"
+		}
 		spartaEnvVars := []string{
 			"-e",
 			fmt.Sprintf("GOPATH=%s", containerGoPath),
 			"-e",
-			"GOOS=linux",
+			fmt.Sprintf("GOOS=%s", goosTarget),
 			"-e",
-			"GOARCH=amd64",
+			fmt.Sprintf("GOARCH=%s", goArch),
 		}
 		// User vars
 		for _, eachPair := range os.Environ() {
@@ -742,7 +752,7 @@ func createPackageStep() workflowStep {
 			binarySuffix = "lambda.so"
 		}
 		sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-		executableOutput := fmt.Sprintf("%s.%s", sanitizedServiceName, binarySuffix)
+		executableOutput := fmt.Sprintf("Sparta.%s", binarySuffix)
 		buildErr := buildGoBinary(executableOutput,
 			ctx.userdata.useCGO,
 			ctx.userdata.buildTags,
@@ -777,8 +787,10 @@ func createPackageStep() workflowStep {
 		if err != nil {
 			return nil, err
 		}
+		// Strip the local directory in case it's in there...
+
 		ctx.logger.WithFields(logrus.Fields{
-			"TempName": tmpFile.Name(),
+			"TempName": relativePath(tmpFile.Name()),
 		}).Info("Creating code ZIP archive for upload")
 
 		lambdaArchive := zip.NewWriter(tmpFile)
@@ -799,7 +811,7 @@ func createPackageStep() workflowStep {
 		// File info for the binary executable
 		readerErr := spartaZip.AddToZip(lambdaArchive,
 			executableOutput,
-			"",
+			"bin",
 			ctx.logger)
 		if nil != readerErr {
 			return nil, readerErr
@@ -953,11 +965,15 @@ func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
 // the config files in the package, and the
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
-	sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-	tmpFile, err := temporaryFile(fmt.Sprintf("%s-pipeline.zip", sanitizedServiceName))
+	tmpFile, err := temporaryFile(ctx.userdata.codePipelineTrigger)
 	if err != nil {
 		return "", err
 	}
+
+	ctx.logger.WithFields(logrus.Fields{
+		"PipelineName": tmpFile.Name(),
+	}).Info("Creating pipeline archive")
+
 	templateArchive := zip.NewWriter(tmpFile)
 	ctx.logger.WithFields(logrus.Fields{
 		"Path": tmpFile.Name(),
@@ -1013,7 +1029,13 @@ func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContex
 	if nil != tempfileCloseErr {
 		return "", tempfileCloseErr
 	}
-	return uploadLocalFileToS3(tmpFile.Name(), ctx.userdata.codePipelineTrigger, ctx)
+	// Leave it here...
+	ctx.logger.WithFields(logrus.Fields{
+		"File": filepath.Base(tmpFile.Name()),
+	}).Info("Created CodePipeline archive")
+	return tmpFile.Name(), nil
+	// The key is the name + the pipeline name
+	//return uploadLocalFileToS3(tmpFile.Name(), "", ctx)
 }
 
 // If the only detected changes to a stack are Lambda code updates,
@@ -1179,7 +1201,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 		}
 	}
 
-	// If this is a codePipelineTrigger update, create all that
+	// If this isn't a codePipelineTrigger, then do that
 	if "" == ctx.userdata.codePipelineTrigger {
 		if ctx.userdata.noop {
 			ctx.logger.WithFields(logrus.Fields{
@@ -1218,7 +1240,8 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			}).Info("Stack provisioned")
 		}
 	} else {
-		// Cleanup the template...
+		ctx.logger.Info("Creating pipeline package")
+
 		ctx.registerFileCleanupFinalizer(templateFile.Name())
 		_, urlErr := createCodePipelineTriggerPackage(cfTemplate, ctx)
 		if nil != urlErr {
@@ -1283,6 +1306,12 @@ func ensureCloudFormationStack() workflowStep {
 			lambdaRuntime = PythonVersion
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
+			// If this is a legacy Sparta lambda function, let the user know
+			if eachEntry.lambdaFn != nil {
+				ctx.logger.WithFields(logrus.Fields{
+					"Name": eachEntry.lambdaFunctionName(),
+				}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
+			}
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
@@ -1435,7 +1464,7 @@ func Provision(noop bool,
 			codePipelineTrigger: codePipelineTrigger,
 			workflowHooks:       workflowHooks,
 		},
-		context: context{
+		context: provisionContext{
 			cfTemplate:                gocf.NewTemplate(),
 			s3BucketVersioningEnabled: false,
 			awsSession:                spartaAWS.NewSession(logger),
@@ -1476,8 +1505,11 @@ func Provision(noop bool,
 		}
 
 		if next == nil {
+			summaryLine := fmt.Sprintf("Summary (%s)", time.Now().Format(time.RFC3339))
+			subheaderDivider := strings.Repeat("-", len(summaryLine)+len(summaryLine)/5)
+
 			ctx.logger.Info(subheaderDivider)
-			ctx.logger.Info("Summary")
+			ctx.logger.Info(summaryLine)
 			ctx.logger.Info(subheaderDivider)
 			for _, eachEntry := range ctx.transaction.stepDurations {
 				ctx.logger.WithFields(logrus.Fields{

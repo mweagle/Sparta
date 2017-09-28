@@ -1,19 +1,24 @@
 package sparta
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
-	"fmt"
-	"net/http"
-
-	"github.com/mweagle/cloudformationresources"
-
 	"expvar"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"runtime/debug"
 	"strings"
-
 	"sync"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/golang/protobuf/jsonpb"
+	"github.com/golang/protobuf/proto"
+	"github.com/mweagle/Sparta/proxy"
+	"github.com/mweagle/cloudformationresources"
 )
 
 // Dispatch map for user defined CloudFormation CustomResources to
@@ -23,6 +28,8 @@ type dispatchMap map[string]*LambdaAWSInfo
 // Dispatch map for normal AWS Lambda to user defined Sparta lambda functions
 type customResourceDispatchMap map[string]*customResourceInfo
 
+// This is a copy of the expvarHandler implementation from
+// https://golang.org/src/expvar/expvar.go
 func expvarHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	fmt.Fprintf(w, "{\n")
@@ -145,9 +152,9 @@ func spartaCustomResourceForwarder(creds credentials.Value,
 	}
 }
 
-// LambdaHTTPHandler is an HTTP compliant handler that implements
+// ServeMuxLambda is an HTTP compliant handler that implements
 // ServeHTTP
-type LambdaHTTPHandler struct {
+type ServeMuxLambda struct {
 	LambdaDispatchMap         dispatchMap
 	muValue                   sync.Mutex
 	customCreds               credentials.Value
@@ -157,48 +164,100 @@ type LambdaHTTPHandler struct {
 
 // Credentials allows the user to supply a custom Credentials value
 // object for any internal calls
-func (handler *LambdaHTTPHandler) Credentials(creds credentials.Value) {
+func (handler *ServeMuxLambda) Credentials(creds credentials.Value) {
 	handler.muValue.Lock()
 	defer handler.muValue.Unlock()
 	handler.customCreds = creds
 }
 
-func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	// If this is the expvar handler then skip it
-	if "/golang/expvar" == req.URL.Path {
-		expvarHandler(w, req)
-		return
-	}
-
-	// Remove the leading slash and dispatch it to the golang handler
-	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
-	decoder := json.NewDecoder(req.Body)
-	var request lambdaRequest
+func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	// Handle panics
 	defer func() {
 		if r := recover(); r != nil {
 			err, ok := r.(error)
 			if !ok {
 				err = fmt.Errorf("%v", r)
 			}
+			stackTrace := debug.Stack()
+			handler.logger.WithFields(logrus.Fields{
+				"Stack": string(stackTrace),
+			}).Error("PANIC")
 			errorString := fmt.Sprintf("Lambda handler panic: %#v", err)
 			http.Error(w, errorString, http.StatusBadRequest)
 		}
 	}()
 
-	err := decoder.Decode(&request)
-	if nil != err {
-		errorString := fmt.Sprintf("Failed to decode proxy request: %s", err.Error())
+	// If this is the expvar handler then skip it
+	if "/golang/expvar" == req.URL.Path {
+		expvarHandler(w, req)
+		return
+	}
+	// Read the request and unmarshal the right version
+	defer req.Body.Close()
+	bodyData, bodyDataErr := ioutil.ReadAll(req.Body)
+	if bodyDataErr != nil {
+		errorString := fmt.Sprintf("Failed to read proxy request: %s",
+			bodyDataErr.Error())
 		http.Error(w, errorString, http.StatusBadRequest)
 		return
 	}
+
+	var proxyRequest proxy.AWSProxyRequest
+	var unmarshalErr error
+	switch req.Header.Get("Content-Type") {
+	case "application/x-protobuf":
+		unmarshalErr = proto.Unmarshal(bodyData, &proxyRequest)
+	case "application/json":
+		unmarshalErr = jsonpb.Unmarshal(bytes.NewReader(bodyData), &proxyRequest)
+	default:
+		unmarshalErr = fmt.Errorf("Unsupported proxy request Content-Type: %s",
+			req.Header.Get("Content-Type"))
+	}
+	if unmarshalErr != nil {
+		http.Error(w, unmarshalErr.Error(), http.StatusBadRequest)
+		return
+	}
+	// Remove the leading slash and dispatch it to the golang handler
+	lambdaFunc := strings.TrimLeft(req.URL.Path, "/")
 	handler.logger.WithFields(logrus.Fields{
-		"Request":    request,
-		"LookupName": lambdaFunc,
+		"LookupName":   lambdaFunc,
+		"ProtoMessage": true,
 	}).Debug("Dispatching")
 
+	proxyContext := proxyRequest.GetContext()
+	request := lambdaRequest{
+		Context: LambdaContext{
+			AWSRequestID:       proxyContext.GetAwsRequestId(),
+			LogGroupName:       proxyContext.GetLogGroupName(),
+			LogStreamName:      proxyContext.GetLogStreamName(),
+			FunctionName:       proxyContext.GetFunctionName(),
+			MemoryLimitInMB:    proxyContext.GetMemoryLimitInMb(),
+			FunctionVersion:    proxyContext.GetFunctionVersion(),
+			InvokedFunctionARN: proxyContext.GetInvokedFunctionArn(),
+		},
+		Event: proxyRequest.GetEvent(),
+	}
 	lambdaAWSInfo := handler.LambdaDispatchMap[lambdaFunc]
 	if nil != lambdaAWSInfo {
-		lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
+		if lambdaAWSInfo.httpHandler != nil {
+
+			// Setup the request
+			reqBody := bytes.NewReader(proxyRequest.GetEvent())
+			spartaReq := httptest.NewRequest(req.Method,
+				req.URL.Path,
+				reqBody)
+			spartaReqContext := context.WithValue(req.Context(),
+				ContextKeyLogger,
+				handler.logger)
+			spartaReqContext = context.WithValue(spartaReqContext,
+				ContextKeyLambdaContext,
+				&request.Context)
+
+			// Call the normal HTTP handler
+			lambdaAWSInfo.httpHandler.ServeHTTP(w, spartaReq.WithContext(spartaReqContext))
+		} else {
+			lambdaAWSInfo.lambdaFn(&request.Event, &request.Context, w, handler.logger)
+		}
 	} else if strings.Contains(lambdaFunc, "::") {
 		// Not the most exhaustive guard, but the CloudFormation custom resources
 		// all have "::" delimiters in their type field.  Even if there is a false
@@ -228,10 +287,11 @@ func (handler *LambdaHTTPHandler) ServeHTTP(w http.ResponseWriter, req *http.Req
 	}
 }
 
-// NewLambdaHTTPHandler returns an initialized LambdaHTTPHandler instance.  The returned value
+// NewServeMuxLambda returns an initialized ServeMuxLambda instance.  The returned value
 // can be provided to https://golang.org/pkg/net/http/httptest/#NewServer to perform
 // localhost testing.
-func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) *LambdaHTTPHandler {
+func NewServeMuxLambda(lambdaAWSInfos []*LambdaAWSInfo,
+	logger *logrus.Logger) *ServeMuxLambda {
 	lookupMap := make(dispatchMap, 0)
 	customResourceMap := make(customResourceDispatchMap, 0)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
@@ -249,7 +309,7 @@ func NewLambdaHTTPHandler(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger
 		}
 	}
 
-	return &LambdaHTTPHandler{
+	return &ServeMuxLambda{
 		LambdaDispatchMap:         lookupMap,
 		customResourceDispatchMap: customResourceMap,
 		logger: logger,
