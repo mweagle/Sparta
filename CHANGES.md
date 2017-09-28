@@ -38,11 +38,11 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
       ```
     - _LambdaContext_ and _*logrus.Logger_ are now available in the [requext.Context()](https://golang.org/pkg/net/http/#Request.Context) via:
       * `sparta.ContextKeyLogger` => `*logrus.Logger`
-      * `ContextKeyLambdaContext` => `*sparta.LambdaContext`
+      * `sparta.ContextKeyLambdaContext` => `*sparta.LambdaContext`
     - Example:
       - `loggerVal, loggerValOK := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)`
-  - Added support for [Codepipeline](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
-    - See the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) project for a complete example
+  - Added support for [CodePipeline](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
+    - See the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) project for a complete example and the related [post](https://medium.com/@mweagle/serverless-serverfull-and-weaving-pipelines-c9f83eec9227).
   - Upgraded NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
   - Parity between NodeJS and Python/`cgo` startup output
   - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
