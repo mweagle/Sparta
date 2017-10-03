@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Overview - Sparta</title>
-    <meta name="generator" content="Hugo 0.26" />
+    <meta name="generator" content="Hugo 0.29" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -75,7 +75,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-indigo">
+  <body class="palette-primary-grey palette-accent-grey">
 
 
 
@@ -146,7 +146,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.13.2</span></strong>
+        <strong>Sparta <span class="version">0.20.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -488,7 +488,7 @@
 
 <h1 id="terms-and-concepts">Terms and Concepts</h1>
 
-<p>At a high level, Sparta transforms a single <strong>Go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
+<p>At a high level, Sparta transforms a <strong>Go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
 
 <p>The table below summarizes some of the primary Sparta terminology.</p>
 
@@ -511,12 +511,9 @@
   <tr>
       <td>
       <h2>Sparta Lambda Function</h2>
-A Sparta-compatible lambda is a <b>Go</b> function with a specific signature. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
-<pre><code class="go">func mySpartaLambdaFunction(event *json.RawMessage,
-                      context *sparta.LambdaContext,
-                      w http.ResponseWriter,
-                      logger *logrus.Logger) {
-
+A Sparta-compatible lambda is a standard <a href="https://golang.org/pkg/net/http/">https://golang.org/pkg/net/http/#HandlerFunc</a> function. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
+<pre><code class="go">func mySpartaHandler(w http.ResponseWriter,
+                      r *http.Request) {
   // Lambda code
 }</code></pre>
 
@@ -588,44 +585,61 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
   </tr>
 </table>
 
-<p>Given a set of Sparta lambda functions, during a <code>provision</code> build Sparta follows this workflow:</p>
+<p>Given a set of registered Sparta lambda function, a typical <code>provision</code> build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.</p>
 
 <div class="mermaid">
 graph TD
+  classDef stdOp fill:#B5B468,stroke:#A00,stroke-width:2px;
+  classDef userHook fill:#F2F18C,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+
   iam[Verify Static IAM Roles]
+  class iam stdOp;
+
   preBuild[WorkflowHook - PreBuild]
-  style preBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class preBuild userHook;
 
   compile[Cross Compile for AWS AMI]
   cgoCompile[CGO Docker Compile for AWS AMI]
+  class compile,cgoCompile stdOp;
+
   postBuild[WorkflowHook - PostBuild]
-  style postBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class postBuild userHook;
 
   nodeJSProxyShims[Create NodeJS-Go HTTP Proxies]
   pythonJSProxyShims[Create Python-CGO HTTP Proxies]
   package[ZIP archive]
+  class nodeJSProxyShims,pythonJSProxyShims,package stdOp;
+
   userArchive[WorkflowHook - Archive]
-  style userArchive fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class userArchive userHook;
 
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  class upload,packageAssets,uploadAssets stdOp;
+
   preMarshall[WorkflowHook - PreMarshall]
-  style preMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class preMarshall userHook;
 
   generate[Marshal to CloudFormation]
+  class generate stdOp;
+
   decorate[Call Lambda Decorators - Dynamic AWS Resources]
+  class decorate stdOp;
 
   serviceDecorator[Service Decorator]
-  style serviceDecorator fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class serviceDecorator userHook;
 
   postMarshall[WorkflowHook - PostMarshall]
-  style postMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class postMarshall stdOp;
 
   uploadTemplate[Upload Template to S3]
   updateStack[Create/Update Stack]
   inplaceUpdates[In-place λ code updates]
   wait[Wait for Complete/Failure Result]
+
+  class uploadTemplate,updateStack,inplaceUpdates,wait stdOp;
+
 
   iam-->preBuild
   preBuild-->|go|compile

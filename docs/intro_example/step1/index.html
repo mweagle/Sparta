@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Sample Service - Sparta</title>
-    <meta name="generator" content="Hugo 0.26" />
+    <meta name="generator" content="Hugo 0.29" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -75,7 +75,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-indigo">
+  <body class="palette-primary-grey palette-accent-grey">
 
 
 
@@ -146,7 +146,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.13.2</span></strong>
+        <strong>Sparta <span class="version">0.20.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -501,45 +501,68 @@
 
 <p>The first place to start is with the lambda function definition.</p>
 
-<pre><code class="go">func helloWorld(event *json.RawMessage,
-                context *sparta.LambdaContext,
-                w http.ResponseWriter,
-                logger *logrus.Logger) {
+<pre><code class="go">func helloWorld(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, &#34;Hello World!&#34;)
 }</code></pre>
 
 
-<p>All Sparta lambda functions have the same function signature that is composed of:</p>
+<p>This is a standard <a href="https://golang.org/pkg/net/http/#HandlerFunc">http.HandlerFunc</a> signature.</p>
+
+<p>The <code>http.Request</code> Body is the raw event input and the <code>http.ResponseWriter</code> results are used to return a success/fail message to AWS lambda via a is published back via via the <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">callback</a>. In the case of an HTTP error, the response body is used as the error text.</p>
+
+<p>The <a href="https://golang.org/pkg/context/">request context</a> object contains two additional objects that provide parity with the existing AWS lambda programming model:</p>
 
 <ul>
-<li><code>json.RawMessage</code> :  The arbitrary <code>json.RawMessage</code> event data provided to the function. Implementations may further unmarshal this data into event specific representations for events such as S3 item changes, API Gateway requests, etc.</li>
-<li><code>LambdaContext</code> : <strong>Go</strong> compatible representation of the AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">Context</a>. This struct includes fields such as <code>AWSRequestID</code>, CloudWatch&rsquo;s <code>LogGroupName</code>, and the provisioned AWS lambda&rsquo;s ARN (<code>InvokedFunctionARN</code>).</li>
-<li><code>http.ResponseWriter</code> : The writer for any response data. Sparta uses the HTTP status code to determine the functions success or failure status, and any data written to the <code>responseWriter</code> is published back via <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">context.done()</a>.</li>
-<li><code>logrus.Logger</code> : A <a href="https://github.com/Sirupsen/logrus">logrus</a> logger preconfigured to produce JSON output.  Content written to this logger will be available in CloudWatch logs.</li>
+<li>The AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html">Context</a> object is available via:
+
+<ul>
+<li><code>lambdaContext, lambdaContextOk := r.Context().Value(sparta.ContextKeyLambdaContext).(*LambdaContext)</code></li>
+<li>This struct includes fields such as <code>AWSRequestID</code>, CloudWatch&rsquo;s <code>LogGroupName</code>, and the provisioned AWS lambda&rsquo;s ARN (<code>InvokedFunctionARN</code>).</li>
+</ul></li>
+<li>A <a href="https://github.com/sirupsen/logrus">*logrus.Logger</a> instance preconfigured to produce JSON output that consumed by CloudWatch. Available via:
+
+<ul>
+<li><code>loggerVal, loggerValOK := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)</code></li>
+</ul></li>
 </ul>
+
+<p>All Sparta lambda functions shouuld use this signature starting with version 0.20.0.</p>
+
+<div class="admonition note">
+<p class="admonition-title">Deprecation Notice</p>
+<p><p>Sparta versions prior to 0.20.0 supported a legacy function signature as in:</p>
+
+<pre><code>helloWorld(event *json.RawMessage,
+                context *sparta.LambdaContext,
+                w http.ResponseWriter,
+                logger *logrus.Logger)
+</code></pre>
+
+<p>This is officially deprecated and will be removed in a subsequent release.</p>
+</p>
+</div>
 
 <h1 id="creation">Creation</h1>
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
 <pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
-
-helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
-                                helloWorld,
-                                nil)
+helloWorldFn := sparta.HandleAWSLambda(&#34;Hello HTTP World&#34;,
+  http.HandlerFunc(helloWorld),
+  sparta.IAMRoleDefinition{})
 lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 
-<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to create a new lambda function via <code>NewLambda</code>.  <code>NewLambda</code> accepts three parameters:</p>
+<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to register a new lambda target via <code>HandleAWSLambda</code>.  <code>HandleAWSLambda</code> accepts three parameters:</p>
 
 <ul>
+<li><code>string</code>: The function name. A sanitized version of this value is used as the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname">FunctionName</a>.</li>
+<li><code>http.HandlerFunc</code>: The <strong>Go</strong> function to execute.</li>
 <li><code>string|IAMRoleDefinition</code> : <em>Either</em> a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
 
 <ul>
 <li>In this example, we&rsquo;re defining a new <code>IAMRoleDefinition</code> as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn&rsquo;t access any additional AWS services that&rsquo;s all we need.</li>
 </ul></li>
-<li><code>LambdaFunction</code>: The <strong>Go</strong> function to execute.</li>
-<li><code>*LambdaFunctionOptions</code>: A pointer to any additional execution settings (eg, timeout, memory settings, etc).</li>
 </ul>
 
 <h1 id="delegation">Delegation</h1>
@@ -560,9 +583,10 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <ul>
 <li>The <code>serviceName</code> is used as the stable identifier to determine when updates should be applied rather than new stacks provisioned, as well as the target of a <code>delete</code> command line request.</li>
+<li>Consider using <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#UserScopedStackName">UserScopedStackName</a> to generate unique, stable names across a team.</li>
 </ul></li>
 <li><code>serviceDescription</code>: An optional string used to describe the stack.</li>
-<li><code>[]*LambdaAWSInfo</code> : Slice of <code>sparta.lambdaAWSInfo</code> to provision</li>
+<li><code>[]*LambdaAWSInfo</code> : Slice of <code>sparta.lambdaAWSInfo</code> that define a service</li>
 <li><code>*API</code> : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
 
 <ul>
@@ -585,7 +609,6 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 package main
 
 import (
-  &#34;encoding/json&#34;
   &#34;fmt&#34;
   &#34;net/http&#34;
 
@@ -593,16 +616,16 @@ import (
   sparta &#34;github.com/mweagle/Sparta&#34;
 )
 
-func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) {
+// Standard AWS λ function
+func helloWorld(w http.ResponseWriter, r *http.Request) {
   fmt.Fprintf(w, &#34;Hello World!&#34;)
 }
 
 func main() {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-
-  helloWorldFn := sparta.NewLambda(sparta.IAMRoleDefinition{},
-    helloWorld,
-    nil)
+	helloWorldFn := sparta.HandleAWSLambda(&#34;Hello World&#34;,
+		http.HandlerFunc(helloWorld),
+		sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, helloWorldFn)
   sparta.Main(&#34;MyHelloWorldStack&#34;,
     &#34;Simple Sparta application that demonstrates core functionality&#34;,
