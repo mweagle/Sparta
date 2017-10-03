@@ -8,7 +8,7 @@ This is a brief overview of Sparta's core concepts.  Additional information rega
 
 # Terms and Concepts
 
-At a high level, Sparta transforms a single **Go** binary's registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).
+At a high level, Sparta transforms a **Go** binary's registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).
 
 The table below summarizes some of the primary Sparta terminology.
 
@@ -32,13 +32,10 @@ The table below summarizes some of the primary Sparta terminology.
   <tr>
       <td>
       <h2>Sparta Lambda Function</h2>
-A Sparta-compatible lambda is a <b>Go</b> function with a specific signature. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
+A Sparta-compatible lambda is a standard <a href="https://golang.org/pkg/net/http/">https://golang.org/pkg/net/http/#HandlerFunc</a> function. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
 {{< highlight go >}}
-func mySpartaLambdaFunction(event *json.RawMessage,
-                      context *sparta.LambdaContext,
-                      w http.ResponseWriter,
-                      logger *logrus.Logger) {
-
+func mySpartaHandler(w http.ResponseWriter,
+                      r *http.Request) {
   // Lambda code
 }
 {{< /highlight >}}
@@ -114,7 +111,7 @@ func echoS3DynamicBucketEvent(event *json.RawMessage,
   </tr>
 </table>
 
-Given a set of Sparta lambda functions, during a `provision` build Sparta follows this workflow:
+Given a set of registered Sparta lambda function, a typical `provision` build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.
 
 {{< spartaflow >}}
 

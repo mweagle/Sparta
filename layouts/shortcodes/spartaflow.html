@@ -1,39 +1,56 @@
 <div class="mermaid">
 graph TD
+  classDef stdOp fill:#B5B468,stroke:#A00,stroke-width:2px;
+  classDef userHook fill:#F2F18C,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+
   iam[Verify Static IAM Roles]
+  class iam stdOp;
+
   preBuild[WorkflowHook - PreBuild]
-  style preBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class preBuild userHook;
 
   compile[Cross Compile for AWS AMI]
   cgoCompile[CGO Docker Compile for AWS AMI]
+  class compile,cgoCompile stdOp;
+
   postBuild[WorkflowHook - PostBuild]
-  style postBuild fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class postBuild userHook;
 
   nodeJSProxyShims[Create NodeJS-Go HTTP Proxies]
   pythonJSProxyShims[Create Python-CGO HTTP Proxies]
   package[ZIP archive]
+  class nodeJSProxyShims,pythonJSProxyShims,package stdOp;
+
   userArchive[WorkflowHook - Archive]
-  style userArchive fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class userArchive userHook;
 
   upload[Upload Archive to S3]
   packageAssets[Conditionally ZIP S3 Site Assets]
   uploadAssets[Upload S3 Assets]
+  class upload,packageAssets,uploadAssets stdOp;
+
   preMarshall[WorkflowHook - PreMarshall]
-  style preMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class preMarshall userHook;
 
   generate[Marshal to CloudFormation]
+  class generate stdOp;
+
   decorate[Call Lambda Decorators - Dynamic AWS Resources]
+  class decorate stdOp;
 
   serviceDecorator[Service Decorator]
-  style serviceDecorator fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class serviceDecorator userHook;
 
   postMarshall[WorkflowHook - PostMarshall]
-  style postMarshall fill:#61B6EB,stroke:#000,stroke-width:4px;
+  class postMarshall stdOp;
 
   uploadTemplate[Upload Template to S3]
   updateStack[Create/Update Stack]
   inplaceUpdates[In-place λ code updates]
   wait[Wait for Complete/Failure Result]
+
+  class uploadTemplate,updateStack,inplaceUpdates,wait stdOp;
+
 
   iam-->preBuild
   preBuild-->|go|compile
