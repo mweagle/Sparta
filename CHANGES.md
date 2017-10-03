@@ -1,5 +1,11 @@
 # Change Notes
 
+## v0.20.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+- :bug:
+  * Fixed issue with `--describe` not rendering CloudFormation template properly
+
 ## v0.20.0
 
 ### :star: Deprecation Notice
