@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,11 +274,14 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a class="current" title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
+	S3 Sites with CORS
 </a>
 
+
+<ul id="scrollspy">
+</ul>
 
 
       
@@ -285,35 +290,9 @@
 
 
 
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
 	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
+	Dynamic Infrastructure
 </a>
 
 
@@ -337,35 +316,61 @@
 
 
 
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
-	
-	Dynamic Infrastructure
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
-	
-	Event Sources
 </a>
 
 
@@ -381,22 +386,6 @@
 	Local Testing
 </a>
 
-
-
-      
-        
-        
-
-
-
-<a class="current" title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
-</a>
-
-
-<ul id="scrollspy">
-</ul>
 
 
       
@@ -495,14 +484,14 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<pre><code class="go">func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-	logger.Info(&#34;Hello World: &#34;, string(*event))
-	fmt.Fprint(w, string(*event))
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World: &#34;</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="http://gosparta.io/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
 
@@ -510,32 +499,32 @@
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
-<pre><code class="go">apiStage := sparta.NewStage(&#34;v1&#34;)
-apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">apiGateway</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewAPIGateway</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHTML&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">apiStage</span><span style="">)</span></code></pre>
+</div>
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
-<pre><code class="go">// Enable CORS s.t. the S3 site can access the resources
-apiGateway.CORSEnabled = true</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Enable CORS s.t. the S3 site can access the resources
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">apiGateway</span><span style="">.</span><span style="color:#a6e22e">CORSEnabled</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span></code></pre>
+</div>
 
 <p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
 
-<pre><code class="go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
-
-	if nil != api {
-		apiGatewayResource, _ := api.NewResource(&#34;/hello&#34;, lambdaFn)
-		_, err := apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
-		if nil != err {
-			panic(&#34;Failed to create /hello resource&#34;)
-		}
-	}
-	return append(lambdaFunctions, lambdaFn)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">spartaLambdaFunctions</span><span style="">(</span><span style="color:#a6e22e">api</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">API</span><span style="">)</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">apiGatewayResource</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style="">.</span><span style="color:#a6e22e">NewResource</span><span style="">(</span><span style="color:#e6db74">&#34;/hello&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">apiGatewayResource</span><span style="">.</span><span style="color:#a6e22e">NewMethod</span><span style="">(</span><span style="color:#e6db74">&#34;GET&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusOK</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">			</span><span style="">panic</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to create /hello resource&#34;</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="define-the-s3-site">Define the S3 Site</h1>
 
@@ -552,38 +541,38 @@ typically points to a directory, which will be:</p>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
-<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	// Register the function with the API Gateway
-	apiStage := sparta.NewStage(&#34;v1&#34;)
-	apiGateway := sparta.NewAPIGateway(&#34;SpartaHTML&#34;, apiStage)
-	// Enable CORS s.t. the S3 site can access the resources
-	apiGateway.CORSEnabled = true
-
-	// Provision a new S3 bucket with the resources in the supplied subdirectory
-	s3Site, _ := sparta.NewS3Site(&#34;./resources&#34;)
-
-	// Deploy it
-	sparta.Main(&#34;SpartaHTML&#34;,
-		fmt.Sprintf(&#34;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&#34;),
-		spartaLambdaFunctions(apiGateway),
-		apiGateway,
-		s3Site)
-}</code></pre>
-
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Main
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Register the function with the API Gateway
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">apiGateway</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewAPIGateway</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHTML&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">apiStage</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Enable CORS s.t. the S3 site can access the resources
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">apiGateway</span><span style="">.</span><span style="color:#a6e22e">CORSEnabled</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">true</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Provision a new S3 bucket with the resources in the supplied subdirectory
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">s3Site</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewS3Site</span><span style="">(</span><span style="color:#e6db74">&#34;./resources&#34;</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Deploy it
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHTML&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&#34;</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">spartaLambdaFunctions</span><span style="">(</span><span style="color:#a6e22e">apiGateway</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">apiGateway</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">s3Site</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></p>
 
 <p>which can be provisioned using the standard <a href="http://gosparta.io/docs/commandline">command line</a> option.</p>
 
 <p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
 
-<pre><code class="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
-INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
-INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
-INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114</code></pre>
-
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+</span><span style="">INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
+</span><span style="">INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+</span><span style="">INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
+</span><span style="">INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
+</span><span style="">INFO[0114] Elapsed time        Seconds=114</span></code></pre>
+</div></p>
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
 
@@ -595,13 +584,13 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
 
 <ol>
 <li><strong>MANIFEST.json</strong>
-<pre><code class="json">{
- &#34;APIGatewayURL&#34;: {
-  &#34;Description&#34;: &#34;API Gateway URL&#34;,
-  &#34;Value&#34;: &#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;
- }
-}</code></pre>
-</li>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style=""> </span><span style="color:#f92672">&#34;APIGatewayURL&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Description&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;API Gateway URL&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Value&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;</span><span style="">
+</span><span style=""> </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></li>
 </ol>
 
 
@@ -609,7 +598,7 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -621,7 +610,7 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://gosparta.io/docs/application/environments/" title="Managing Environments">
+      <a href="http://gosparta.io/docs/cgo/" title="Python/cgo Support">
         <span class="direction">
           Previous
         </span>
@@ -631,7 +620,7 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
           </div>
           <div class="stretch">
             <div class="title">
-              Managing Environments
+              Python/cgo Support
             </div>
           </div>
         </div>
@@ -769,8 +758,6 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,74 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
-	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
-	
-	Discovery Service
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Docker" href="http://gosparta.io/docs/docker/">
-	
-	Docker
+	S3 Sites with CORS
 </a>
 
 
@@ -363,9 +300,74 @@
 
 
 
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
 	
-	Event Sources
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
 </a>
 
 
@@ -379,19 +381,6 @@
 <a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
 	
 	Local Testing
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
 </a>
 
 
@@ -492,44 +481,44 @@
 
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
 
-<pre><code class="go">func ipGeoLambda(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger) {
-var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
-if err != nil {
-	logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-	return
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">ipGeoLambda</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">APIGatewayLambdaJSONEvent</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">Unmarshal</span><span style="">([]</span><span style="">byte</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">),</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
 
-<pre><code class="go">parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
-record, err := dbHandle.City(parsedIP)
-if err != nil {
-  logger.Error(&#34;Failed to find city: &#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">parsedIP</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">ParseIP</span><span style="">(</span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">.</span><span style="color:#a6e22e">Identity</span><span style="">.</span><span style="color:#a6e22e">SourceIP</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">record</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">dbHandle</span><span style="">.</span><span style="color:#a6e22e">City</span><span style="">(</span><span style="color:#a6e22e">parsedIP</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to find city: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>Finally, marshal the data or error result and we&rsquo;re done:</p>
 
-<pre><code class="go">// Return the Info
-httpResponse := map[string]interface{}{
-  &#34;info&#34;: record,
-}
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set(&#34;Content-Type&#34;, &#34;application/json&#34;)
-  fmt.Fprint(w, string(responseBody))
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Return the Info
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">httpResponse</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{}{</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;info&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">record</span><span style="">,</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">responseBody</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">Marshal</span><span style="">(</span><span style="color:#a6e22e">httpResponse</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Header</span><span style="">().</span><span style="color:#a6e22e">Set</span><span style="">(</span><span style="color:#e6db74">&#34;Content-Type&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;application/json&#34;</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#a6e22e">responseBody</span><span style="">))</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="sparta-integration">Sparta Integration</h1>
 
@@ -544,71 +533,71 @@ if err != nil {
 
 <p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
 
-<pre><code class="go">////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	stage := sparta.NewStage(&#34;ipgeo&#34;)
-	apiGateway := sparta.NewAPIGateway(&#34;SpartaGeoIPService&#34;, stage)
-	stackName := &#34;SpartaGeoIP&#34;
-
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
-	apiGatewayResource, _ := apiGateway.NewResource(&#34;/info&#34;, lambdaFn)
-	apiGatewayResource.NewMethod(&#34;GET&#34;, http.StatusOK)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	sparta.Main(stackName,
-		&#34;Sparta app supporting ip-&gt;geo mapping&#34;,
-		lambdaFunctions,
-		apiGateway,
-    nil)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Main
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;ipgeo&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">apiGateway</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewAPIGateway</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaGeoIPService&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">stage</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stackName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#e6db74">&#34;SpartaGeoIP&#34;</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">ipGeoLambda</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">apiGatewayResource</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">apiGateway</span><span style="">.</span><span style="color:#a6e22e">NewResource</span><span style="">(</span><span style="color:#e6db74">&#34;/info&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">apiGatewayResource</span><span style="">.</span><span style="color:#a6e22e">NewMethod</span><span style="">(</span><span style="color:#e6db74">&#34;GET&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusOK</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#a6e22e">stackName</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;Sparta app supporting ip-&gt;geo mapping&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">apiGateway</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="provision">Provision</h1>
 
 <p>The next step is to provision the stack:</p>
 
-<pre><code class="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</span></code></pre>
+</div>
 
 <p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
 
-<pre><code class="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
-INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+</span><span style="">INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+</span><span style="">INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</span></code></pre>
+</div>
 
 <h1 id="query">Query</h1>
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
-<pre><code class="nohighlight">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
-
-*   Trying 54.192.70.206...
-* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
-* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-* Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class 3 Secure Server CA - G4
-* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
-&gt; GET /ipgeo/info HTTP/1.1
-&gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
-&gt; User-Agent: curl/7.43.0
-&gt; Accept: */*
-&gt;
-&lt; HTTP/1.1 200 OK
-&lt; Content-Type: application/json
-&lt; Content-Length: 1129
-&lt; Connection: keep-alive
-&lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
-&lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
-&lt; X-Cache: Miss from cloudfront
-&lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-&lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
-&lt;
-* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+</span><span style="">
+</span><span style="">*   Trying 54.192.70.206...
+</span><span style="">* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
+</span><span style="">* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+</span><span style="">* Server certificate: *.execute-api.us-west-2.amazonaws.com
+</span><span style="">* Server certificate: Symantec Class 3 Secure Server CA - G4
+</span><span style="">* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+</span><span style="">&gt; GET /ipgeo/info HTTP/1.1
+</span><span style="">&gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
+</span><span style="">&gt; User-Agent: curl/7.43.0
+</span><span style="">&gt; Accept: */*
+</span><span style="">&gt;
+</span><span style="">&lt; HTTP/1.1 200 OK
+</span><span style="">&lt; Content-Type: application/json
+</span><span style="">&lt; Content-Length: 1129
+</span><span style="">&lt; Connection: keep-alive
+</span><span style="">&lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
+</span><span style="">&lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
+</span><span style="">&lt; X-Cache: Miss from cloudfront
+</span><span style="">&lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
+</span><span style="">&lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
+</span><span style="">&lt;
+</span><span style="">* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
+</span><span style="">{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}</span></code></pre>
+</div>
 
 <p>Pretty-printing the response body:</p>
 
@@ -699,8 +688,8 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><pre><code class="nohighlight">go run main.go delete</code></pre>
-</p>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">go run main.go delete</span></code></pre>
+</div></p>
 
 <h1 id="notes">Notes</h1>
 
@@ -714,7 +703,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -874,8 +863,6 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

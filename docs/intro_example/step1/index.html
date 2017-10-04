@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,74 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
-	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
-	
-	Discovery Service
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Docker" href="http://gosparta.io/docs/docker/">
-	
-	Docker
+	S3 Sites with CORS
 </a>
 
 
@@ -363,9 +300,74 @@
 
 
 
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
 	
-	Event Sources
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
 </a>
 
 
@@ -379,19 +381,6 @@
 <a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
 	
 	Local Testing
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
 </a>
 
 
@@ -501,10 +490,10 @@
 
 <p>The first place to start is with the lambda function definition.</p>
 
-<pre><code class="go">func helloWorld(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, &#34;Hello World!&#34;)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprintf</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;Hello World!&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>This is a standard <a href="https://golang.org/pkg/net/http/#HandlerFunc">http.HandlerFunc</a> signature.</p>
 
@@ -546,12 +535,12 @@
 
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
-<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
-helloWorldFn := sparta.HandleAWSLambda(&#34;Hello HTTP World&#34;,
-  http.HandlerFunc(helloWorld),
-  sparta.IAMRoleDefinition{})
-lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">helloWorldFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">helloWorldFn</span><span style="">)</span></code></pre>
+</div>
 
 <p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to register a new lambda target via <code>HandleAWSLambda</code>.  <code>HandleAWSLambda</code> accepts three parameters:</p>
 
@@ -569,12 +558,12 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>The final step is to define a Sparta service under your application&rsquo;s <code>main</code> package and provide the non-empty slice of lambda functions:</p>
 
-<pre><code class="go">sparta.Main(&#34;MyHelloWorldStack&#34;,
-            &#34;Simple Sparta application that demonstrates core functionality&#34;,
-            lambdaFunctions,
-            nil,
-            nil)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;MyHelloWorldStack&#34;</span><span style="">,</span><span style="">
+</span><span style="">            </span><span style="color:#e6db74">&#34;Simple Sparta application that demonstrates core functionality&#34;</span><span style="">,</span><span style="">
+</span><span style="">            </span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
+</span><span style="">            </span><span style="color:#66d9ef">nil</span><span style="">)</span></code></pre>
+</div>
 
 <p><code>sparta.Main</code> accepts five parameters:</p>
 
@@ -605,83 +594,104 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)</code></pre>
 
 <p>Putting everything together, and including the necessary imports, we have:</p>
 
-<pre><code class="go">// File: main.go
-package main
-
-import (
-  &#34;fmt&#34;
-  &#34;net/http&#34;
-
-  &#34;github.com/Sirupsen/logrus&#34;
-  sparta &#34;github.com/mweagle/Sparta&#34;
-)
-
-// Standard AWS λ function
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-  fmt.Fprintf(w, &#34;Hello World!&#34;)
-}
-
-func main() {
-  var lambdaFunctions []*sparta.LambdaAWSInfo
-	helloWorldFn := sparta.HandleAWSLambda(&#34;Hello World&#34;,
-		http.HandlerFunc(helloWorld),
-		sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, helloWorldFn)
-  sparta.Main(&#34;MyHelloWorldStack&#34;,
-    &#34;Simple Sparta application that demonstrates core functionality&#34;,
-    lambdaFunctions,
-    nil,
-    nil)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// File: main.go
+</span><span style="color:#75715e"></span><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;net/http&#34;</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;github.com/Sirupsen/logrus&#34;</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style=""> </span><span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Standard AWS λ function
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprintf</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;Hello World!&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">helloWorldFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">helloWorldFn</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;MyHelloWorldStack&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Simple Sparta application that demonstrates core functionality&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="running-it">Running It</h1>
 
-<p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command:</p>
+<p>Next download the Sparta dependencies via <code>go get ./...</code> in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command (replacing <code>$S3_BUCKET</code> with an S3 bucket you own):</p>
 
-<pre><code class="nohighlight">go run main.go --level info describe --out ./graph.html
-
-INFO[0000] Welcome to Sparta                             Option=describe TS=2016-01-21T14:59:29Z Version=0.2.0
-INFO[0000] --------------------------------------------------------------------------------
-INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified                    Count=1
-INFO[0000] Compiling binary                      Name=MyHelloWorldStack.lambda.amd64
-INFO[0008] Executable binary size                KB=12086 MB=11
-INFO[0008] Creating ZIP archive for upload       TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack251171669
-INFO[0009] Registering Sparta function           FunctionName=main.helloWorld
-INFO[0009] Bypassing bucket expiration policy check due to -n/-noop command line argument  BucketName=S3Bucket
-INFO[0009] Bypassing S3 ZIP upload due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack251171669
-INFO[0009] Bypassing template upload &amp; creation due to -n/-noop command line argument  Bucket=S3Bucket Key=MyHelloWorldStack-714035529a63e80d3b2f756bd51e68c58ccd9a5e-cf.json
-INFO[0009] Elapsed time                          Seconds=9</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">run</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">level</span><span style=""> </span><span style="color:#a6e22e">info</span><span style=""> </span><span style="color:#a6e22e">describe</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">out</span><span style=""> </span><span style="">.</span><span style="color:#f92672">/</span><span style="color:#a6e22e">graph</span><span style="">.</span><span style="color:#a6e22e">html</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#f92672">========================================</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Welcome</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="">                  </span><span style="color:#a6e22e">GoVersion</span><span style="">=</span><span style="color:#a6e22e">go1</span><span style="color:#ae81ff">.8.3</span><span style=""> </span><span style="color:#a6e22e">LinkFlags</span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Option</span><span style="">=</span><span style="color:#a6e22e">describe</span><span style=""> </span><span style="color:#a6e22e">SpartaSHA</span><span style="">=</span><span style="color:#a6e22e">d3479d7</span><span style=""> </span><span style="color:#a6e22e">SpartaVersion</span><span style="">=</span><span style="color:#ae81ff">0.20.1</span><span style=""> </span><span style="color:#a6e22e">UTC</span><span style="">=</span><span style="color:#e6db74">&#34;2017-10-03T13:14:34Z&#34;</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#f92672">========================================</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Provisioning</span><span style=""> </span><span style="color:#a6e22e">service</span><span style="">                          </span><span style="color:#a6e22e">BuildID</span><span style="">=</span><span style="color:#a6e22e">N</span><span style="color:#f92672">/</span><span style="color:#a6e22e">A</span><span style=""> </span><span style="color:#a6e22e">CodePipelineTrigger</span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">InPlaceUpdates</span><span style="">=</span><span style="color:#66d9ef">false</span><span style=""> </span><span style="color:#a6e22e">NOOP</span><span style="">=</span><span style="color:#66d9ef">true</span><span style=""> </span><span style="color:#a6e22e">Tags</span><span style="">=</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">Lambda</span><span style=""> </span><span style="color:#a6e22e">execution</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style=""> </span><span style="color:#a6e22e">verified</span><span style="">                            </span><span style="color:#a6e22e">Count</span><span style="">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Bypassing</span><span style=""> </span><span style="color:#a6e22e">S3</span><span style=""> </span><span style="color:#a6e22e">upload</span><span style=""> </span><span style="color:#a6e22e">due</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">n</span><span style="color:#f92672">/-</span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#a6e22e">command</span><span style=""> </span><span style="color:#a6e22e">line</span><span style=""> </span><span style="color:#a6e22e">argument</span><span style="">.</span><span style="">  </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">VersioningEnabled</span><span style="">=</span><span style="color:#66d9ef">false</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Running</span><span style=""> </span><span style="color:#e6db74">`go generate`</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Compiling</span><span style=""> </span><span style="color:#a6e22e">binary</span><span style="">                              </span><span style="color:#a6e22e">Name</span><span style="">=</span><span style="color:#a6e22e">Sparta</span><span style="">.</span><span style="color:#a6e22e">lambda</span><span style="">.</span><span style="color:#a6e22e">amd64</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Executable</span><span style=""> </span><span style="color:#a6e22e">binary</span><span style=""> </span><span style="color:#a6e22e">size</span><span style="">                        </span><span style="color:#a6e22e">KB</span><span style="">=</span><span style="color:#ae81ff">22144</span><span style=""> </span><span style="color:#a6e22e">MB</span><span style="">=</span><span style="color:#ae81ff">21</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Creating</span><span style=""> </span><span style="color:#a6e22e">code</span><span style=""> </span><span style="color:#a6e22e">ZIP</span><span style=""> </span><span style="color:#a6e22e">archive</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">upload</span><span style="">          </span><span style="color:#a6e22e">TempName</span><span style="">=.</span><span style="color:#f92672">/</span><span style="">.</span><span style="color:#a6e22e">sparta</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Registering</span><span style=""> </span><span style="color:#a6e22e">Sparta</span><span style=""> </span><span style="color:#a6e22e">JS</span><span style=""> </span><span style="color:#a6e22e">function</span><span style="">                </span><span style="color:#a6e22e">FunctionName</span><span style="">=</span><span style="color:#a6e22e">Hello_World</span><span style=""> </span><span style="color:#a6e22e">ScriptName</span><span style="">=</span><span style="color:#a6e22e">Hello_World</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Lambda</span><span style=""> </span><span style="color:#a6e22e">function</span><span style=""> </span><span style="color:#a6e22e">deployment</span><span style=""> </span><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">size</span><span style="">       </span><span style="color:#a6e22e">KB</span><span style="">=</span><span style="color:#ae81ff">22243</span><span style=""> </span><span style="color:#a6e22e">MB</span><span style="">=</span><span style="color:#ae81ff">21</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Bypassing</span><span style=""> </span><span style="color:#a6e22e">S3</span><span style=""> </span><span style="color:#a6e22e">upload</span><span style=""> </span><span style="color:#a6e22e">due</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">n</span><span style="color:#f92672">/-</span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#a6e22e">command</span><span style=""> </span><span style="color:#a6e22e">line</span><span style=""> </span><span style="color:#a6e22e">argument</span><span style="">  </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">File</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style=""> </span><span style="color:#a6e22e">Key</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="color:#f92672">-</span><span style="color:#ae81ff">3421</span><span style="color:#a6e22e">c386f41a765e8d6abc8820e2b435de5fb827</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Bypassing</span><span style=""> </span><span style="color:#a6e22e">Stack</span><span style=""> </span><span style="color:#a6e22e">creation</span><span style=""> </span><span style="color:#a6e22e">due</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">n</span><span style="color:#f92672">/-</span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#a6e22e">command</span><span style=""> </span><span style="color:#a6e22e">line</span><span style=""> </span><span style="color:#a6e22e">argument</span><span style="">  </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">TemplateName</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cftemplate</span><span style="">.</span><span style="color:#a6e22e">json</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Summary</span><span style=""> </span><span style="">(</span><span style="color:#ae81ff">2017</span><span style="color:#f92672">-</span><span style="color:#ae81ff">10</span><span style="color:#f92672">-</span><span style="color:#ae81ff">03</span><span style="color:#a6e22e">T06</span><span style="">:</span><span style="color:#ae81ff">14</span><span style="">:</span><span style="color:#ae81ff">45</span><span style="color:#f92672">-</span><span style="color:#ae81ff">07</span><span style="">:</span><span style="color:#ae81ff">00</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style="">                           </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">AWS</span><span style=""> </span><span style="color:#a6e22e">preconditions</span><span style="">                   </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Creating</span><span style=""> </span><span style="color:#a6e22e">code</span><span style=""> </span><span style="color:#a6e22e">bundle</span><span style="">                          </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">10</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Uploading</span><span style=""> </span><span style="color:#a6e22e">code</span><span style="">                                </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Ensuring</span><span style=""> </span><span style="color:#a6e22e">CloudFormation</span><span style=""> </span><span style="color:#a6e22e">stack</span><span style="">                 </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Total</span><span style=""> </span><span style="color:#a6e22e">elapsed</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">                            </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">10</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span></code></pre>
+</div>
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="http://gosparta.io/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
 <p>Since everything looks good, we&rsquo;ll provision the stack via <code>provision</code> and verify the lambda function.  Note that the <code>$S3_BUCKET</code> value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.</p>
 
-<pre><code class="nohighlight">go run main.go provision --s3Bucket $S3_BUCKET
-
-INFO[0000] Welcome to Sparta                      Option=provision TS=2016-01-21T14:57:13Z Version=0.2.0
-INFO[0000] --------------------------------------------------------------------------------
-INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified                     Count=1
-INFO[0000] Compiling binary                       Name=MyHelloWorldStack.lambda.amd64
-INFO[0008] Executable binary size                 KB=12086 MB=11
-INFO[0008] Creating ZIP archive for upload        TempName=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack213158762
-INFO[0009] Registering Sparta function            FunctionName=main.helloWorld
-INFO[0009] Uploading local file to S3             Source=/Users/mweagle/Documents/golang/workspace/src/SpartaApplication/MyHelloWorldStack213158762
-INFO[0012] Upload complete                        URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack213158762
-INFO[0012] Uploading CloudFormation template
-INFO[0012] Template uploaded                      URL=https://weagle.s3-us-west-2.amazonaws.com/MyHelloWorldStack-a020f2be8aa89d3071620c2daf581ec1177ce546-cf.json
-INFO[0013] Creating stack                         StackID=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56
-INFO[0024] Waiting for CreateStack to complete
-INFO[0039] Waiting for CreateStack to complete
-INFO[0058] Stack output                           Description=Sparta Home Key=SpartaHome Value=http://gosparta.io
-INFO[0058] Stack output                           Description=Sparta Version Key=SpartaVersion Value=0.2.0
-INFO[0058] Stack provisioned                      CreationTime=2016-01-21 14:57:26.859 &#43;0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/4931ad90-c04f-11e5-b065-503f2a2cee56 StackName=MyHelloWorldStack
-INFO[0058] Elapsed time                           Seconds=58
-}</code></pre>
-
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">run</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">provision</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#f92672">========================================</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Welcome</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="">                  </span><span style="color:#a6e22e">GoVersion</span><span style="">=</span><span style="color:#a6e22e">go1</span><span style="color:#ae81ff">.8.3</span><span style=""> </span><span style="color:#a6e22e">LinkFlags</span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">Option</span><span style="">=</span><span style="color:#a6e22e">provision</span><span style=""> </span><span style="color:#a6e22e">SpartaSHA</span><span style="">=</span><span style="color:#a6e22e">d3479d7</span><span style=""> </span><span style="color:#a6e22e">SpartaVersion</span><span style="">=</span><span style="color:#ae81ff">0.20.1</span><span style=""> </span><span style="color:#a6e22e">UTC</span><span style="">=</span><span style="color:#e6db74">&#34;2017-10-03T13:19:22Z&#34;</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#f92672">========================================</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Provisioning</span><span style=""> </span><span style="color:#a6e22e">service</span><span style="">                          </span><span style="color:#a6e22e">BuildID</span><span style="">=</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">ad5fea31a524e8eb4e9fb2ecce8cf784c8a7a12</span><span style=""> </span><span style="color:#a6e22e">CodePipelineTrigger</span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">InPlaceUpdates</span><span style="">=</span><span style="color:#66d9ef">false</span><span style=""> </span><span style="color:#a6e22e">NOOP</span><span style="">=</span><span style="color:#66d9ef">false</span><span style=""> </span><span style="color:#a6e22e">Tags</span><span style="">=</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">Lambda</span><span style=""> </span><span style="color:#a6e22e">execution</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style=""> </span><span style="color:#a6e22e">verified</span><span style="">                            </span><span style="color:#a6e22e">Count</span><span style="">=</span><span style="color:#ae81ff">1</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Checking</span><span style=""> </span><span style="color:#a6e22e">S3</span><span style=""> </span><span style="color:#a6e22e">versioning</span><span style="">                        </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">VersioningEnabled</span><span style="">=</span><span style="color:#66d9ef">true</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Running</span><span style=""> </span><span style="color:#e6db74">`go generate`</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Compiling</span><span style=""> </span><span style="color:#a6e22e">binary</span><span style="">                              </span><span style="color:#a6e22e">Name</span><span style="">=</span><span style="color:#a6e22e">Sparta</span><span style="">.</span><span style="color:#a6e22e">lambda</span><span style="">.</span><span style="color:#a6e22e">amd64</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Executable</span><span style=""> </span><span style="color:#a6e22e">binary</span><span style=""> </span><span style="color:#a6e22e">size</span><span style="">                        </span><span style="color:#a6e22e">KB</span><span style="">=</span><span style="color:#ae81ff">22144</span><span style=""> </span><span style="color:#a6e22e">MB</span><span style="">=</span><span style="color:#ae81ff">21</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Creating</span><span style=""> </span><span style="color:#a6e22e">code</span><span style=""> </span><span style="color:#a6e22e">ZIP</span><span style=""> </span><span style="color:#a6e22e">archive</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">upload</span><span style="">          </span><span style="color:#a6e22e">TempName</span><span style="">=.</span><span style="color:#f92672">/</span><span style="">.</span><span style="color:#a6e22e">sparta</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Registering</span><span style=""> </span><span style="color:#a6e22e">Sparta</span><span style=""> </span><span style="color:#a6e22e">JS</span><span style=""> </span><span style="color:#a6e22e">function</span><span style="">                </span><span style="color:#a6e22e">FunctionName</span><span style="">=</span><span style="color:#a6e22e">Hello_World</span><span style=""> </span><span style="color:#a6e22e">ScriptName</span><span style="">=</span><span style="color:#a6e22e">Hello_World</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Lambda</span><span style=""> </span><span style="color:#a6e22e">function</span><span style=""> </span><span style="color:#a6e22e">deployment</span><span style=""> </span><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">size</span><span style="">       </span><span style="color:#a6e22e">KB</span><span style="">=</span><span style="color:#ae81ff">22243</span><span style=""> </span><span style="color:#a6e22e">MB</span><span style="">=</span><span style="color:#ae81ff">21</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0010</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Uploading</span><span style=""> </span><span style="color:#a6e22e">local</span><span style=""> </span><span style="color:#a6e22e">file</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">S3</span><span style="">                    </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">Key</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style=""> </span><span style="color:#a6e22e">Path</span><span style="">=.</span><span style="color:#f92672">/</span><span style="">.</span><span style="color:#a6e22e">sparta</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">code</span><span style="">.</span><span style="color:#a6e22e">zip</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0026</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Uploading</span><span style=""> </span><span style="color:#a6e22e">local</span><span style=""> </span><span style="color:#a6e22e">file</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">S3</span><span style="">                    </span><span style="color:#a6e22e">Bucket</span><span style="">=</span><span style="color:#a6e22e">weagle</span><span style=""> </span><span style="color:#a6e22e">Key</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cftemplate</span><span style="">.</span><span style="color:#a6e22e">json</span><span style=""> </span><span style="color:#a6e22e">Path</span><span style="">=.</span><span style="color:#f92672">/</span><span style="">.</span><span style="color:#a6e22e">sparta</span><span style="color:#f92672">/</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="color:#f92672">-</span><span style="color:#a6e22e">cftemplate</span><span style="">.</span><span style="color:#a6e22e">json</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0027</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Creating</span><span style=""> </span><span style="color:#a6e22e">stack</span><span style="">                                </span><span style="color:#a6e22e">StackID</span><span style="">=</span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/88863e20-a83d-11e7-87a1-500c32c86c29&#34;</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">003</span><span style="color:#ae81ff">9</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Waiting</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">CloudFormation</span><span style=""> </span><span style="color:#a6e22e">operation</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">complete</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Stack</span><span style=""> </span><span style="color:#a6e22e">provisioned</span><span style="">                             </span><span style="color:#a6e22e">CreationTime</span><span style="">=</span><span style="color:#e6db74">&#34;2017-10-03 13:19:49.578 +0000 UTC&#34;</span><span style=""> </span><span style="color:#a6e22e">StackId</span><span style="">=</span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/88863e20-a83d-11e7-87a1-500c32c86c29&#34;</span><span style=""> </span><span style="color:#a6e22e">StackName</span><span style="">=</span><span style="color:#a6e22e">MyHelloWorldStack</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Summary</span><span style=""> </span><span style="">(</span><span style="color:#ae81ff">2017</span><span style="color:#f92672">-</span><span style="color:#ae81ff">10</span><span style="color:#f92672">-</span><span style="color:#ae81ff">03</span><span style="color:#a6e22e">T06</span><span style="">:</span><span style="color:#ae81ff">20</span><span style="">:</span><span style="color:#ae81ff">20</span><span style="color:#f92672">-</span><span style="color:#ae81ff">07</span><span style="">:</span><span style="color:#ae81ff">00</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">IAM</span><span style=""> </span><span style="color:#a6e22e">roles</span><span style="">                           </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Verifying</span><span style=""> </span><span style="color:#a6e22e">AWS</span><span style=""> </span><span style="color:#a6e22e">preconditions</span><span style="">                   </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Creating</span><span style=""> </span><span style="color:#a6e22e">code</span><span style=""> </span><span style="color:#a6e22e">bundle</span><span style="">                          </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">10</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Uploading</span><span style=""> </span><span style="color:#a6e22e">code</span><span style="">                                </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">16</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Ensuring</span><span style=""> </span><span style="color:#a6e22e">CloudFormation</span><span style=""> </span><span style="color:#a6e22e">stack</span><span style="">                 </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">32</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Total</span><span style=""> </span><span style="color:#a6e22e">elapsed</span><span style=""> </span><span style="color:#a6e22e">time</span><span style="">                            </span><span style="color:#a6e22e">Duration</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">s</span><span style="">)=</span><span style="color:#ae81ff">58</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">005</span><span style="color:#ae81ff">8</span><span style="">]</span><span style=""> </span><span style="color:#f92672">------------------------------------------</span></code></pre>
+</div></p>
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
 
@@ -703,15 +713,14 @@ INFO[0058] Elapsed time                           Seconds=58
 
 <p>To prevent unauthorized usage and potential charges, make sure to <code>delete</code> your stack before moving on:</p>
 
-<pre><code class="nohighlight">go run main.go delete
-
-INFO[0000] Welcome to Sparta                             Option=delete TS=2016-01-21T15:00:40Z Version=0.2.0
-INFO[0000] --------------------------------------------------------------------------------
-INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
-INFO[0000] Delete request submitted                      Response={
-
-}</code></pre>
-
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">go run main.go delete
+</span><span style="">
+</span><span style="">INFO[0000] ========================================
+</span><span style="">INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.8.3 LinkFlags= Option=delete SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC=&#34;2017-10-03T13:21:19Z&#34;
+</span><span style="">INFO[0000] ========================================
+</span><span style="">INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
+</span><span style="">INFO[0000] Delete request submitted                      Response=&#34;{\n\n}&#34;</span></code></pre>
+</div></p>
 
 <h1 id="conclusion">Conclusion</h1>
 
@@ -719,14 +728,14 @@ INFO[0000] Delete request submitted                      Response={
 
 <h1 id="next-steps">Next Steps</h1>
 
-<p>Walkthrough what Sparta actually does to deploy your application in the <a href="http://gosparta.io/docs/intro_example_details">next section</a>.</p>
+<p>Walkthrough what Sparta actually does to deploy your application in the <a href="http://gosparta.io/docs/intro_example/step2/">next section</a>.</p>
 
 
 			<aside class="copyright" role="note">
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -738,34 +747,18 @@ INFO[0000] Delete request submitted                      Response={
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://gosparta.io/docs/intro_example/intro/" title="Sample Service">
-        <span class="direction">
-          Previous
-        </span>
-        <div class="page">
-          <div class="button button-previous" role="button" aria-label="Previous">
-            <i class="icon icon-back"></i>
-          </div>
-          <div class="stretch">
-            <div class="title">
-              Sample Service
-            </div>
-          </div>
-        </div>
-      </a>
-  
   </div>
 
   <div class="next">
   
-      <a href="http://gosparta.io/docs/application/workflow_hooks/" title="Workflow Hooks">
+      <a href="http://gosparta.io/docs/apigateway/apigateway/" title="API Gateway">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Workflow Hooks
+              API Gateway
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">
@@ -886,8 +879,6 @@ INFO[0000] Delete request submitted                      Response={
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

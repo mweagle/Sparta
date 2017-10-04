@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,74 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
-	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
-	
-	Discovery Service
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Docker" href="http://gosparta.io/docs/docker/">
-	
-	Docker
+	S3 Sites with CORS
 </a>
 
 
@@ -363,9 +300,74 @@
 
 
 
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
 	
-	Event Sources
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
 </a>
 
 
@@ -379,19 +381,6 @@
 <a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
 	
 	Local Testing
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
 </a>
 
 
@@ -488,38 +477,38 @@
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<pre><code class="go">var lambdaFunctions []*sparta.LambdaAWSInfo
-lambdaFunctions = append(lambdaFunctions, lambdaFn)
-err := sparta.Main(&#34;SpartaHelloWorld&#34;,
-  fmt.Sprintf(&#34;Test HelloWorld resource command&#34;),
-  lambdaFunctions,
-  nil,
-  nil)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHelloWorld&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;Test HelloWorld resource command&#34;</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">nil</span><span style="">)</span></code></pre>
+</div>
 
 <p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<pre><code class="nohighlight">$ ./SpartaHelloWorld --help
-
-Test HelloWorld resource command
-
-Usage:
-  SpartaHelloWorld [command]
-
-Available Commands:
-  version     Sparta framework version
-  provision   Provision service
-  delete      Delete service
-  execute     Execute
-  describe    Describe service
-  explore     Interactively explore service
-
-Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&#39; (default &#34;info&#34;)
-  -n, --noop           Dry-run behavior only (do not perform mutations)
-
-Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a command.</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">$ ./SpartaHelloWorld --help
+</span><span style="">
+</span><span style="">Test HelloWorld resource command
+</span><span style="">
+</span><span style="">Usage:
+</span><span style="">  SpartaHelloWorld [command]
+</span><span style="">
+</span><span style="">Available Commands:
+</span><span style="">  version     Sparta framework version
+</span><span style="">  provision   Provision service
+</span><span style="">  delete      Delete service
+</span><span style="">  execute     Execute
+</span><span style="">  describe    Describe service
+</span><span style="">  explore     Interactively explore service
+</span><span style="">
+</span><span style="">Flags:
+</span><span style="">  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&#39; (default &#34;info&#34;)
+</span><span style="">  -n, --noop           Dry-run behavior only (do not perform mutations)
+</span><span style="">
+</span><span style="">Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a command.</span></code></pre>
+</div>
 
 <p>It&rsquo;s also possible to add <a href="http://gosparta.io/docs/application/custom_flags">custom flags</a> and/or <a href="http://gosparta.io/docs/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
 
@@ -558,7 +547,7 @@ Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a com
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -570,7 +559,7 @@ Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a com
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://gosparta.io/docs/cgo/" title="CGO">
+      <a href="http://gosparta.io/docs/application/application/" title="Application Customization">
         <span class="direction">
           Previous
         </span>
@@ -580,7 +569,7 @@ Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a com
           </div>
           <div class="stretch">
             <div class="title">
-              CGO
+              Application Customization
             </div>
           </div>
         </div>
@@ -718,8 +707,6 @@ Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a com
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

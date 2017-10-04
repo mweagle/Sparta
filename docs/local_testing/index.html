@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,74 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
-	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
-	
-	Discovery Service
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Docker" href="http://gosparta.io/docs/docker/">
-	
-	Docker
+	S3 Sites with CORS
 </a>
 
 
@@ -363,9 +300,74 @@
 
 
 
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
 	
-	Event Sources
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
 </a>
 
 
@@ -384,19 +386,6 @@
 
 <ul id="scrollspy">
 </ul>
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
-</a>
-
 
 
       
@@ -498,92 +487,73 @@
 
 <p>For this example, let&rsquo;s define a simple Sparta application:</p>
 
-<pre><code class="go">package main
-
-import (
-	&#34;encoding/json&#34;
-	&#34;fmt&#34;
-	&#34;net/http&#34;
-
-	&#34;github.com/Sirupsen/logrus&#34;
-	sparta &#34;github.com/mweagle/Sparta&#34;
-)
-
-////////////////////////////////////////////////////////////////////////////////
-// Hello world event handler
-//
-func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
-	fmt.Fprint(w, &#34;Hello World&#34;)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-	// Deploy it
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	sparta.Main(&#34;SpartaExplore&#34;,
-		fmt.Sprintf(&#34;Test explore command&#34;),
-		lambdaFunctions,
-		nil,
-		nil)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;encoding/json&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;net/http&#34;</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#e6db74">&#34;github.com/Sirupsen/logrus&#34;</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style=""> </span><span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span><span style="">
+</span><span style=""></span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Hello world event handler
+</span><span style="color:#75715e">//
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Main
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Deploy it
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaExplore&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;Test explore command&#34;</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="command-line-testing">Command Line Testing</h1>
 
 <p>With our application defined, let&rsquo;s run it:</p>
 
-<pre><code class="nohighlight">go run main.go explore
-
-INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
-INFO[0000] --------------------------------------------------------------------------------
-INFO[0000] The following URLs are available for testing.
-INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
-INFO[0000] Functions can be invoked via application/json over POST
-INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
-INFO[0000] 	{context: {}, event: {}}
-INFO[0000] Starting Sparta server                        URL=http://localhost:9999</code></pre>
-
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">go run main.go explore
+</span><span style="">
+</span><span style="">INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
+</span><span style="">INFO[0000] --------------------------------------------------------------------------------
+</span><span style="">INFO[0000] The following URLs are available for testing.
+</span><span style="">INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
+</span><span style="">INFO[0000] Functions can be invoked via application/json over POST
+</span><span style="">INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
+</span><span style="">INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
+</span><span style="">INFO[0000] 	{context: {}, event: {}}
+</span><span style="">INFO[0000] Starting Sparta server                        URL=http://localhost:9999</span></code></pre>
+</div></p>
 
 <p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>Go</strong> binary that is used in the AWS Lambda execution environment.</p>
 
 <p>Per the instructions, let&rsquo;s create a <em>testEvent.json</em> file with the required structure:</p>
 
-<pre><code class="json">{
-  &#34;context&#34; : {},
-  &#34;event&#34; : {}
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;context&#34;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">{},</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;event&#34;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">{}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>and post it:</p>
 
-<pre><code class="">curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-
-*   Trying ::1...
-* Connected to localhost (::1) port 9999 (#0)
-&gt; POST /main.helloWorld HTTP/1.1
-&gt; Host: localhost:9999
-&gt; User-Agent: curl/7.43.0
-&gt; Accept: */*
-&gt; Content-Type: application/json
-&gt; Content-Length: 33
-&gt;
-* upload completely sent off: 33 out of 33 bytes
-&lt; HTTP/1.1 200 OK
-&lt; Date: Mon, 21 Dec 2015 03:13:33 GMT
-&lt; Content-Length: 11
-&lt; Content-Type: text/plain; charset=utf-8
-&lt;
-* Connection #0 to host localhost left intact
-Hello World</code></pre>
 
 
 <p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
@@ -601,35 +571,35 @@ Hello World</code></pre>
 
 <p>To show this in action, let&rsquo;s walk through how Sparta <a href="https://github.com/mweagle/Sparta/blob/master/explore_test.go">does this</a>:</p>
 
-<pre><code class="golang">func TestExplore(t *testing.T) {
-	// 1. Create the function(s) we want to test
-	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-	// 2. Mock event specific data to send to the lambda function
-	eventData := ArbitraryJSONObject{
-		&#34;key1&#34;: &#34;value1&#34;,
-		&#34;key2&#34;: &#34;value2&#34;,
-		&#34;key3&#34;: &#34;value3&#34;}
-
-	// 3. Make the request and confirm
-	logger, _ := NewLogger(&#34;warning&#34;)
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
-	defer ts.Close()
-	resp, err := explore.NewRequest(lambdaFn.URLPath(), eventData, ts.URL)
-	if err != nil {
-		t.Fatal(err.Error())
-	}
-
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	t.Log(&#34;Status: &#34;, resp.Status)
-	t.Log(&#34;Headers: &#34;, resp.Header)
-	t.Log(&#34;Body: &#34;, string(body))
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">TestExplore</span><span style="">(</span><span style="color:#a6e22e">t</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span><span style="">.</span><span style="color:#a6e22e">T</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// 1. Create the function(s) we want to test
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">exploreTestHelloWorld</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// 2. Mock event specific data to send to the lambda function
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">eventData</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">ArbitraryJSONObject</span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;key1&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;value1&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;key2&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;value2&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;key3&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;value3&#34;</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// 3. Make the request and confirm
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">NewLogger</span><span style="">(</span><span style="color:#e6db74">&#34;warning&#34;</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">ts</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">httptest</span><span style="">.</span><span style="color:#a6e22e">NewServer</span><span style="">(</span><span style="color:#a6e22e">NewLambdaHTTPHandler</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">logger</span><span style="">))</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">ts</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">resp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">explore</span><span style="">.</span><span style="color:#a6e22e">NewRequest</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">URLPath</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">eventData</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">ts</span><span style="">.</span><span style="color:#a6e22e">URL</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">t</span><span style="">.</span><span style="color:#a6e22e">Fatal</span><span style="">(</span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">body</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">ioutil</span><span style="">.</span><span style="color:#a6e22e">ReadAll</span><span style="">(</span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">t</span><span style="">.</span><span style="color:#a6e22e">Log</span><span style="">(</span><span style="color:#e6db74">&#34;Status: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">Status</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">t</span><span style="">.</span><span style="color:#a6e22e">Log</span><span style="">(</span><span style="color:#e6db74">&#34;Headers: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">.</span><span style="color:#a6e22e">Header</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">t</span><span style="">.</span><span style="color:#a6e22e">Log</span><span style="">(</span><span style="color:#e6db74">&#34;Body: &#34;</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#a6e22e">body</span><span style="">))</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>The test function above has the following features:</p>
 
@@ -665,7 +635,7 @@ Hello World</code></pre>
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -825,8 +795,6 @@ Hello World</code></pre>
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

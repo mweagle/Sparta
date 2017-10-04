@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,74 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
-	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
-	
-	Discovery Service
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Docker" href="http://gosparta.io/docs/docker/">
-	
-	Docker
+	S3 Sites with CORS
 </a>
 
 
@@ -363,9 +300,74 @@
 
 
 
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
+<a  title="Discovery Service" href="http://gosparta.io/docs/discovery/">
 	
-	Event Sources
+	Discovery Service
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Docker" href="http://gosparta.io/docs/docker/">
+	
+	Docker
 </a>
 
 
@@ -379,19 +381,6 @@
 <a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
 	
 	Local Testing
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
 </a>
 
 
@@ -494,38 +483,38 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="go">func echoSNSEvent(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-    &#34;RequestID&#34;: context.AWSRequestID,
-  }).Info(&#34;Request received&#34;)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">echoSNSEvent</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
+</span><span style="">                  </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;RequestID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">context</span><span style="">.</span><span style="color:#a6e22e">AWSRequestID</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Request received&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="unmarshalling-the-sns-event">Unmarshalling the SNS Event</h1>
 
 <p>Since the <code>echoSNSEvent</code> is expected to be triggered by SNS notifications, we will unmarshal the <code>*json.RawMessage</code> data into an SNS-specific event provided by Sparta via:</p>
 
-<pre><code class="go">var lambdaEvent spartaSNS.Event
-err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
-if err != nil {
-  logger.Error(&#34;Failed to unmarshal event data: &#34;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">spartaSNS</span><span style="">.</span><span style="color:#a6e22e">Event</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">Unmarshal</span><span style="">([]</span><span style="">byte</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">),</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>SNS events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<pre><code class="go">for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    &#34;Subject&#34;: eachRecord.Sns.Subject,
-    &#34;Message&#34;: eachRecord.Sns.Message,
-  }).Info(&#34;SNS Event&#34;)
-}</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Records</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Subject&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">Sns</span><span style="">.</span><span style="color:#a6e22e">Subject</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Message&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">Sns</span><span style="">.</span><span style="color:#a6e22e">Message</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;SNS Event&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
 
@@ -533,20 +522,20 @@ if err != nil {
 
 <p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <strong>Go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<pre><code class="go">lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">echoSNSEvent</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span></code></pre>
+</div>
 
 <h1 id="event-source-registration">Event Source Registration</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoSNSEvent</code> function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<pre><code class="go">lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: snsTopic,
-  },
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">SNSPermission</span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">snsTopic</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">},</span><span style="">
+</span><span style=""></span><span style="">})</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span></code></pre>
+</div>
 
 <p>The <code>snsTopic</code> param is the ARN of the SNS topic that will notify your lambda function (eg: _arn:aws:sns:us-west-2:000000000000:myTopicName).</p>
 
@@ -574,7 +563,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -734,8 +723,6 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 
