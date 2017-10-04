@@ -656,6 +656,8 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 type LambdaAWSInfo struct {
 	// pointer to lambda function
 	lambdaFn LambdaFunction
+	// The user supplied internal name
+	userSuppliedFunctionName string
 	// HTTP handler function
 	httpHandler http.Handler
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
@@ -695,7 +697,7 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	if info.cachedLambdaFunctionName != "" {
 		return info.cachedLambdaFunctionName
 	}
-	lambdaFuncName := ""
+	lambdaFuncName := info.userSuppliedFunctionName
 	if nil != info.Options &&
 		nil != info.Options.SpartaOptions &&
 		"" != info.Options.SpartaOptions.Name {
@@ -1039,6 +1041,13 @@ func CloudFormationResourceName(prefix string, parts ...string) string {
 	return spartaCF.CloudFormationResourceName(prefix, parts...)
 }
 
+// LambdaName returns the Go-reflection discovered name for a given
+// function
+func LambdaName(handlerFunc http.HandlerFunc) string {
+	lambdaPtr := runtime.FuncForPC(reflect.ValueOf(handlerFunc).Pointer())
+	return lambdaPtr.Name()
+}
+
 // NewLambda returns a LambdaAWSInfo value that can be provisioned via CloudFormation. The
 // roleNameOrIAMRoleDefinition must either be a `string` or `IAMRoleDefinition`
 // type
@@ -1082,15 +1091,11 @@ func HandleAWSLambda(functionName string,
 	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
 
 	lambda := &LambdaAWSInfo{
-		httpHandler:         lambdaHandler,
-		Options:             defaultLambdaFunctionOptions(),
-		Permissions:         make([]LambdaPermissionExporter, 0),
-		EventSourceMappings: make([]*EventSourceMapping, 0),
-	}
-	if lambda.Options.SpartaOptions == nil {
-		lambda.Options.SpartaOptions = &SpartaOptions{
-			Name: sanitizedName(functionName),
-		}
+		userSuppliedFunctionName: functionName,
+		httpHandler:              lambdaHandler,
+		Options:                  defaultLambdaFunctionOptions(),
+		Permissions:              make([]LambdaPermissionExporter, 0),
+		EventSourceMappings:      make([]*EventSourceMapping, 0),
 	}
 
 	switch v := roleNameOrIAMRoleDefinition.(type) {

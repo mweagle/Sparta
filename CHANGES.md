@@ -3,6 +3,7 @@
 ## v0.20.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Add `sparta.LambdaName` to return the reflection-discovered name of an `http.HandleFunc` instance
 - :bug:
   * Fixed issue with `--describe` not rendering CloudFormation template properly
 
