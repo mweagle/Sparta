@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: discovery
-    weight: 0
+    weight: 55
 ---
 
 # Introduction
@@ -24,7 +24,8 @@ If you haven't already done so, please review the [Dynamic Infrastructure](/docs
 
 For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our `gocf.S3Bucket{}` struct uses a zero-length [BucketName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name) property, CloudFormation will dynamically assign one.
 
-```go
+{{< highlight go >}}
+
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
 
 lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
@@ -57,7 +58,8 @@ lambdaFn.Decorator = func(lambdaResourceName string,
   cfResource.DeletionPolicy = "Delete"
   return nil
 }
-```
+{{< /highlight >}}
+
 
 The key to `sparta.Discovery` is the `DependsOn` slice value.
 

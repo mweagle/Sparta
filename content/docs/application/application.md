@@ -7,7 +7,7 @@ menu:
   main:
     parent: Documentation
     identifier: application-customization
-    weight: 0
+    weight: 60
 ---
 
 ## Customization Options

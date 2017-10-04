@@ -16,28 +16,33 @@ googleAnalytics = "UA-70794971-1"
 	provider = "GitHub"
 	repo_url = "https://github.com/mweagle/Sparta"
 
-	version = "0.20.0"
+	version = "0.20.1"
 	logo = "images/SpartaHelmet.png"
 	favicon = "favicons/favicon.ico"
 
 	permalink = "#"
 
+	# Code highlighting
+	# https://gohugo.io/content-management/syntax-highlighting
+
+
 	# Custom assets
-	custom_css = ["external/mermaid_dist/mermaid.forest.css",
+	custom_css = ["css/sparta.css",
+	"external/mermaid_dist/mermaid.css",
 	"external/font-awesome-4.7.0/css/font-awesome.min.css"]
 	custom_js  = ["external/mermaid_dist/mermaid.min.js",
 	"external/jquery/jquery-2.2.0.min.js"]
 
 	# Syntax highlighting theme
-	highlight_css  = "external/highlights_js/styles/github.css"
+	highlight_css  = ""
 
 [params.palette]
 		primary = "grey"
-		accent  = "grey"
+		accent  = "indigo"
 
 [params.font]
-    text = "Ubuntu"
-    code = "Ubuntu Mono"
+    text = "Roboto"
+    code = "Roboto Mono"
 
 [social]
 	twitter = "mweagle"

@@ -1,12 +1,12 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title: CGO
+title: Python/cgo Support
 weight: 10
 menu:
   main:
     parent: Documentation
     identifier: cgo
-    weight: 0
+    weight: 100
 ---
 
 ## Introduction

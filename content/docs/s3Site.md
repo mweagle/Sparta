@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: s3-site-with-cors
-    weight: 0
+    weight: 30
 ---
 
 Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.

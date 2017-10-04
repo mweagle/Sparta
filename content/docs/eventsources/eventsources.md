@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: eventsources-overview
-    weight: 0
+    weight: 10
 ---
 
 The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.

@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: apigateway
-    weight: 0
+    weight: 20
 ---
 
 ## Examples

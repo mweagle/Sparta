@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: custom-resources
-    weight: 0
+    weight: 80
 ---
 
 # Introduction

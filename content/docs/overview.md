@@ -21,7 +21,7 @@ The table below summarizes some of the primary Sparta terminology.
         {{< highlight go >}}
     stackName := "MyUniqueServiceName"
     sparta.Main(stackName,
-      "Simple Sparta application,
+      "Simple Sparta application",
       myLambdaFunctions,
       nil,
       nil)
@@ -32,7 +32,7 @@ The table below summarizes some of the primary Sparta terminology.
   <tr>
       <td>
       <h2>Sparta Lambda Function</h2>
-A Sparta-compatible lambda is a standard <a href="https://golang.org/pkg/net/http/">https://golang.org/pkg/net/http/#HandlerFunc</a> function. Sparta uses the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
+A Sparta-compatible lambda is a standard <a href="https://golang.org/pkg/net/http/">http.HandlerFunc</a> instance. Sparta translates the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
 {{< highlight go >}}
 func mySpartaHandler(w http.ResponseWriter,
                       r *http.Request) {

@@ -122,7 +122,7 @@ To integrate with the existing [go test](https://golang.org/pkg/testing/) comman
 
 To show this in action, let's walk through how Sparta [does this](https://github.com/mweagle/Sparta/blob/master/explore_test.go):
 
-{{< highlight golang>}}
+{{< highlight go>}}
 
 func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test

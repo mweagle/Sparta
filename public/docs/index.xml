@@ -7,10 +7,21 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright 2015-2017 Matt Weagle</copyright>
-    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    <lastBuildDate>Tue, 03 Oct 2017 07:15:40 +0000</lastBuildDate>
     
 	<atom:link href="http://gosparta.io/docs/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Sample Service</title>
+      <link>http://gosparta.io/docs/intro_example/step1/</link>
+      <pubDate>Tue, 03 Oct 2017 07:15:40 +0000</pubDate>
+      
+      <guid>http://gosparta.io/docs/intro_example/step1/</guid>
+      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Pricing
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+    </item>
     
     <item>
       <title>API Gateway</title>
@@ -30,7 +41,8 @@
       <guid>http://gosparta.io/docs/apigateway/example1/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaApplication.
 For reference, the echoS3Event function is below.
-func echoS3Event(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) { logger.WithFields(logrus.Fields{ &amp;#34;RequestID&amp;#34;: context.AWSRequestID, &amp;#34;Event&amp;#34;: string(*event), }).Info(&amp;#34;Request received&amp;#34;) fmt.Fprintf(w, string(*event)) } Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()</description>
+funcechoS3Event(event*json.RawMessage,context*sparta.LambdaContext,whttp.ResponseWriter,logger*logrus.Logger){logger.WithFields(logrus.Fields{&amp;#34;RequestID&amp;#34;:context.AWSRequestID,&amp;#34;Event&amp;#34;:string(*event),}).Info(&amp;#34;Request received&amp;#34;)fmt.Fprintf(w,string(*event))}  Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()
+stage:=sparta.NewStage(&amp;#34;prod&amp;#34;)apiGateway:=sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;,stage)  In the example above, we&amp;rsquo;re also including a Stage value. A non-nil Stage value will cause the registered API to be deployed.</description>
     </item>
     
     <item>
@@ -67,16 +79,6 @@ Define the Lambda Function Our function will accept two params:
     </item>
     
     <item>
-      <title>Alternative Topologies</title>
-      <link>http://gosparta.io/docs/alternative_topologies/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>http://gosparta.io/docs/alternative_topologies/</guid>
-      <description>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
-However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
-    </item>
-    
-    <item>
       <title>Application Customization</title>
       <link>http://gosparta.io/docs/application/application/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -87,24 +89,13 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
     </item>
     
     <item>
-      <title>CGO</title>
-      <link>http://gosparta.io/docs/cgo/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>http://gosparta.io/docs/cgo/</guid>
-      <description>Introduction The initial Sparta release supported running a normal Go binary alongside a NodeJS HTTP-based proxy.
-With Sparta v0.11.0 it&amp;rsquo;s possible to transform your Sparta application into a CGO-library proxied by a Python 3.6 ctypes interface. This provides significant cold-start &amp;amp; hot exeecution performance improvements.
-Requirements  Docker - Tested on OSX:   $ docker -v Docker version 17.03.1-ce, build c6d412)   Ability to build CGO libraries You MUST call cgo.</description>
-    </item>
-    
-    <item>
       <title>Command Line Options</title>
       <link>http://gosparta.io/docs/application/commandline/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/application/commandline/</guid>
       <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
-var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil) A compiled application provides several command line options which are available by providing the -h/--help option as in:
+varlambdaFunctions[]*sparta.LambdaAWSInfolambdaFunctions=append(lambdaFunctions,lambdaFn)err:=sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;,fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;),lambdaFunctions,nil,nil)  A compiled application provides several command line options which are available by providing the -h/--help option as in:
 $ ./SpartaHelloWorld --help Test HelloWorld resource command Usage: SpartaHelloWorld [command] Available Commands: version Sparta framework version provision Provision service delete Delete service execute Execute describe Describe service explore Interactively explore service Flags: -l, --level string Log level [panic, fatal, error, warn, info, debug]&amp;#39; (default &amp;#34;info&amp;#34;) -n, --noop Dry-run behavior only (do not perform mutations) Use &amp;#34;SpartaHelloWorld [command] --help&amp;#34; for more information about a command.</description>
     </item>
     
@@ -116,7 +107,7 @@ $ ./SpartaHelloWorld --help Test HelloWorld resource command Usage: SpartaHelloW
       <guid>http://gosparta.io/docs/application/custom_commands/</guid>
       <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
 To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
-httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` &amp;#43; HTTPServerPort, RunE: func(cmd *cobra.</description>
+httpServerCommand:=&amp;amp;cobra.Command{Use:&amp;#34;httpServer&amp;#34;,Short:&amp;#34;Sample HelloWorld HTTP server&amp;#34;,Long:`Sample HelloWorld HTTP server that binds to port: `+HTTPServerPort,RunE:func(cmd*cobra.</description>
     </item>
     
     <item>
@@ -291,6 +282,16 @@ During development, configuration is typically done through environment variable
     </item>
     
     <item>
+      <title>Hybrid Topologies</title>
+      <link>http://gosparta.io/docs/hybrid_topologies/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/hybrid_topologies/</guid>
+      <description>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
+However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
+    </item>
+    
+    <item>
       <title>Limitations</title>
       <link>http://gosparta.io/docs/limitations/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -307,7 +308,7 @@ During development, configuration is typically done through environment variable
       <guid>http://gosparta.io/docs/local_testing/</guid>
       <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. Sparta supports localhost testing in two different ways:
  The explore command line option httptest.NewServer for go test style testing  Example For this example, let&amp;rsquo;s define a simple Sparta application:
-package main import ( &amp;#34;encoding/json&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;github.com/Sirupsen/logrus&amp;#34; sparta &amp;#34;github.com/mweagle/Sparta&amp;#34; ) //////////////////////////////////////////////////////////////////////////////// // Hello world event handler // func helloWorld(event *json.</description>
+packagemainimport(&amp;#34;encoding/json&amp;#34;&amp;#34;fmt&amp;#34;&amp;#34;net/http&amp;#34;&amp;#34;github.com/Sirupsen/logrus&amp;#34;sparta&amp;#34;github.com/mweagle/Sparta&amp;#34;)//////////////////////////////////////////////////////////////////////////////// // Hello world event handler // funchelloWorld(event*json.RawMessage,context*sparta.LambdaContext,whttp.ResponseWriter,logger*logrus.Logger){fmt.Fprint(w,&amp;#34;Hello World&amp;#34;)}//////////////////////////////////////////////////////////////////////////////// // Main funcmain(){// Deploy it lambdaFn:=sparta.NewLambda(sparta.IAMRoleDefinition{},helloWorld,nil)varlambdaFunctions[]*sparta.LambdaAWSInfolambdaFunctions=append(lambdaFunctions,lambdaFn)sparta.Main(&amp;#34;SpartaExplore&amp;#34;,fmt.Sprintf(&amp;#34;Test explore command&amp;#34;),lambdaFunctions,nil,nil)}  Command Line Testing With our application defined, let&amp;rsquo;s run it:</description>
     </item>
     
     <item>
@@ -323,6 +324,17 @@ This example will work through the SpartaConfig sample.</description>
     </item>
     
     <item>
+      <title>Python/cgo Support</title>
+      <link>http://gosparta.io/docs/cgo/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/cgo/</guid>
+      <description>Introduction The initial Sparta release supported running a normal Go binary alongside a NodeJS HTTP-based proxy.
+With Sparta v0.11.0 it&amp;rsquo;s possible to transform your Sparta application into a CGO-library proxied by a Python 3.6 ctypes interface. This provides significant cold-start &amp;amp; hot exeecution performance improvements.
+Requirements  Docker - Tested on OSX:   $ docker -v Docker version 17.03.1-ce, build c6d412)   Ability to build CGO libraries You MUST call cgo.</description>
+    </item>
+    
+    <item>
       <title>S3 Sites with CORS</title>
       <link>http://gosparta.io/docs/s3site/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -331,7 +343,7 @@ This example will work through the SpartaConfig sample.</description>
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-func helloWorld(event *json.RawMessage, context *sparta.LambdaContext, w http.ResponseWriter, logger *logrus.Logger) { logger.Info(&amp;#34;Hello World: &amp;#34;, string(*event)) fmt.</description>
+funchelloWorld(event*json.RawMessage,context*sparta.LambdaContext,whttp.ResponseWriter,logger*logrus.Logger){logger.Info(&amp;#34;Hello World: &amp;#34;,string(*event))fmt.Fprint(w,string(*event))}  This lambda function simply sends back the content of the inbound event.</description>
     </item>
     
     <item>
@@ -346,17 +358,6 @@ Walkthrough of a sample Sparta based service:
     </item>
     
     <item>
-      <title>Sample Service</title>
-      <link>http://gosparta.io/docs/intro_example/step1/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>http://gosparta.io/docs/intro_example/step1/</guid>
-      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Pricing
-Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
-    </item>
-    
-    <item>
       <title>Workflow Hooks</title>
       <link>http://gosparta.io/docs/application/workflow_hooks/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -364,7 +365,7 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
       <guid>http://gosparta.io/docs/application/workflow_hooks/</guid>
       <description>Introduction While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.
 To support this, Sparta allows you to customize the build pipeline via WorkflowHooks structure. These hooks are called at specific points in the provision lifecycle and support augmenting the standard pipeline:
-graph TD classDef stdOp fill:#B5B468,stroke:#A00,stroke-width:2px; classDef userHook fill:#F2F18C,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] cgoCompile[CGO Docker Compile for AWS AMI] class compile,cgoCompile stdOp; postBuild[WorkflowHook - PostBuild] class postBuild userHook; nodeJSProxyShims[Create NodeJS-Go HTTP Proxies] pythonJSProxyShims[Create Python-CGO HTTP Proxies] package[ZIP archive] class nodeJSProxyShims,pythonJSProxyShims,package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile preBuild--|cgo|cgoCompile compile--postBuild cgoCompile--postBuild postBuild--|go|nodeJSProxyShims nodeJSProxyShims--package nodeJSProxyShims--packageAssets postBuild--|cgo|pythonJSProxyShims pythonJSProxyShims--package pythonJSProxyShims--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
+graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] cgoCompile[CGO Docker Compile for AWS AMI] class compile,cgoCompile stdOp; postBuild[WorkflowHook - PostBuild] class postBuild userHook; nodeJSProxyShims[Create NodeJS-Go HTTP Proxies] pythonJSProxyShims[Create Python-CGO HTTP Proxies] package[ZIP archive] class nodeJSProxyShims,pythonJSProxyShims,package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile preBuild--|cgo|cgoCompile compile--postBuild cgoCompile--postBuild postBuild--|go|nodeJSProxyShims nodeJSProxyShims--package nodeJSProxyShims--packageAssets postBuild--|cgo|pythonJSProxyShims pythonJSProxyShims--package pythonJSProxyShims--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
     </item>
     
     <item>
@@ -385,7 +386,7 @@ Terms and Concepts At a high level, Sparta transforms a Go binary&amp;rsquo;s re
       <guid>http://gosparta.io/docs/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage:=sparta.NewStage(&amp;#34;v1&amp;#34;)apiGateway:=sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;,apiStage)// Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled=true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>
@@ -394,7 +395,7 @@ Sparta makes CORS support a single CORSEnabled field of the API struct:
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/intro_example/step2/</guid>
-      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced usages. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced use. Most development will use the provision command line argument, so this section will outline exactly what that entails.
 Provisioning Flow The provisioning workflow is defined in provision.go, with a singular goal of encapsulating all AWS mutations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta injects Lambda-backed Custom Resources into the template definition.</description>
     </item>
     

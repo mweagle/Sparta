@@ -14,27 +14,25 @@ Assume that we're given a DynamoDB stream.  See [below](http://localhost:1313/do
 
 We'll start with an empty lambda function and build up the needed functionality.
 
-{{< highlight go >}}
-
-func echoDynamoDBEvent(event *json.RawMessage,
-                       context *sparta.LambdaContext,
-                       w http.ResponseWriter,
-                      logger *logrus.Logger)
+{{< highlight go "linenos=inline" >}}
+func echoDynamoDBEvent(w http.ResponseWriter, r *http.Request)
 {
+  logger, loggerOk := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  lambdaContext, lambdaContextOk := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
   logger.WithFields(logrus.Fields{
-    "RequestID": context.AWSRequestID,
+    "RequestID": lambdaContext.AWSRequestID,
   }).Info("Request received")
 }
 {{< /highlight >}}
 
 # <a href="{{< relref "#unmarshalDynamoDBEvent" >}}">Unmarshalling the DynamoDB Event</a>
 
-Since the `echoDynamoDBEvent` is expected to be triggered by DynamoDB events, we will unmarshal the `*json.RawMessage` data into an DynamoDB-specific event provided by Sparta via:
+Since the `echoDynamoDBEvent` is expected to be triggered by DynamoDB events, we will unmarshal the `req.Body` data into an DynamoDB-specific event provided by Sparta via:
 
 {{< highlight go >}}
-
-var lambdaEvent spartaDynamoDB.Event
-err := json.Unmarshal([]byte(*event), &lambdaEvent)
+decoder := json.NewDecoder(r.Body)
+var ddbEvent spartaDynamoDB.Event
+err := decoder.Decode(&ddbEvent)
 if err != nil {
   logger.Error("Failed to unmarshal event data: ", err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -45,7 +43,7 @@ DynamoDB events are delivered in batches, via lists of [EventRecords](https://go
 ), so we'll need to process each record.
 
 {{< highlight go >}}
-for _, eachRecord := range lambdaEvent.Records {
+for _, eachRecord := range ddbEvent.Records {
   logger.WithFields(logrus.Fields{
     "Keys":     eachRecord.DynamoDB.Keys,
     "NewImage": eachRecord.DynamoDB.NewImage,

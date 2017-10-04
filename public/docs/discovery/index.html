@@ -50,23 +50,25 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/external/highlights_js/styles/github.css">
+    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
     
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Ubuntu:400,700|Ubuntu&#43;Mono">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
     <style>
       body, input {
-        font-family: 'Ubuntu', Helvetica, Arial, sans-serif;
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
       }
       pre, code {
-        font-family: 'Ubuntu Mono', 'Courier New', 'Courier', monospace;
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
       }
     </style>
 
     
-    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.forest.css">
+    <link rel="stylesheet" href="http://gosparta.io/css/sparta.css">
+    
+    <link rel="stylesheet" href="http://gosparta.io/external/mermaid_dist/mermaid.css">
     
     <link rel="stylesheet" href="http://gosparta.io/external/font-awesome-4.7.0/css/font-awesome.min.css">
     
@@ -75,7 +77,7 @@
     
 
   </head>
-  <body class="palette-primary-grey palette-accent-grey">
+  <body class="palette-primary-grey palette-accent-indigo">
 
 
 
@@ -146,7 +148,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.20.0</span></strong>
+        <strong>Sparta <span class="version">0.20.1</span></strong>
         
           <br>
           mweagle/Sparta
@@ -246,9 +248,9 @@
 
 
 
-<a  title="Sample Service" href="http://gosparta.io/docs/intro_example/intro/">
+<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
 	
-	Sample Service
+	Event Sources
 </a>
 
 
@@ -272,9 +274,9 @@
 
 
 
-<a  title="Alternative Topologies" href="http://gosparta.io/docs/alternative_topologies/">
+<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
 	
-	Alternative Topologies
+	S3 Sites with CORS
 </a>
 
 
@@ -285,35 +287,9 @@
 
 
 
-<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
 	
-	Application Customization
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="CGO" href="http://gosparta.io/docs/cgo/">
-	
-	CGO
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
-	
-	Custom Resources
+	Dynamic Infrastructure
 </a>
 
 
@@ -340,6 +316,58 @@
 
 
 
+<a  title="Application Customization" href="http://gosparta.io/docs/application/application/">
+	
+	Application Customization
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Custom Resources" href="http://gosparta.io/docs/custom_resources/">
+	
+	Custom Resources
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Python/cgo Support" href="http://gosparta.io/docs/cgo/">
+	
+	Python/cgo Support
+</a>
+
+
+
+      
+        
+        
+
+
+
+<a  title="Hybrid Topologies" href="http://gosparta.io/docs/hybrid_topologies/">
+	
+	Hybrid Topologies
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -353,48 +381,9 @@
 
 
 
-<a  title="Dynamic Infrastructure" href="http://gosparta.io/docs/dynamic_infrastructure/">
-	
-	Dynamic Infrastructure
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="Event Sources" href="http://gosparta.io/docs/eventsources/eventsources/">
-	
-	Event Sources
-</a>
-
-
-
-      
-        
-        
-
-
-
 <a  title="Local Testing" href="http://gosparta.io/docs/local_testing/">
 	
 	Local Testing
-</a>
-
-
-
-      
-        
-        
-
-
-
-<a  title="S3 Sites with CORS" href="http://gosparta.io/docs/s3site/">
-	
-	S3 Sites with CORS
 </a>
 
 
@@ -501,39 +490,39 @@
 
 <p>For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our <code>gocf.S3Bucket{}</code> struct uses a zero-length <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">BucketName</a> property, CloudFormation will dynamically assign one.</p>
 
-<pre><code class="language-go">s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;)
-
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{&quot;s3:ObjectCreated:*&quot;,
-                    &quot;s3:ObjectRemoved:*&quot;},
-})
-
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-
-// Add permission s.t. the lambda function could read from the S3 bucket
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&quot;s3:GetObject&quot;,
-                       &quot;s3:HeadObject&quot;},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
-
-// Add the S3 resource to our template
-lambdaFn.Decorator = func(lambdaResourceName string,
-  lambdaResource gocf.LambdaFunction,
-  template *gocf.Template,
-  logger *logrus.Logger) error {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-    AccessControl: gocf.String(&quot;PublicRead&quot;),
-  })
-  cfResource.DeletionPolicy = &quot;Delete&quot;
-  return nil
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">s3BucketResourceName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">CloudFormationResourceName</span><span style="">(</span><span style="color:#e6db74">&#34;S3DynamicBucket&#34;</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">echoS3DynamicBucketEvent</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">S3Permission</span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="">},</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">Events</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span><span style="">,</span><span style="">
+</span><span style="">                    </span><span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span><span style="">},</span><span style="">
+</span><span style=""></span><span style="">})</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">DependsOn</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">DependsOn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Add permission s.t. the lambda function could read from the S3 bucket
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">RoleDefinition</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">RoleDefinition</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRolePrivilege</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Actions</span><span style="">:</span><span style="">  </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:GetObject&#34;</span><span style="">,</span><span style="">
+</span><span style="">                       </span><span style="color:#e6db74">&#34;s3:HeadObject&#34;</span><span style="">},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Resource</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">spartaCF</span><span style="">.</span><span style="color:#a6e22e">S3AllKeysArnForBucket</span><span style="">(</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">)),</span><span style="">
+</span><span style="">  </span><span style="">})</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Add the S3 resource to our template
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Decorator</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">lambdaResourceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">lambdaResource</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">LambdaFunction</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">template</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Template</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">cfResource</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">template</span><span style="">.</span><span style="color:#a6e22e">AddResource</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">S3Bucket</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">AccessControl</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;PublicRead&#34;</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="">})</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">cfResource</span><span style="">.</span><span style="color:#a6e22e">DeletionPolicy</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#e6db74">&#34;Delete&#34;</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
 
@@ -615,7 +604,7 @@ for _, eachResource := range configuration.Resources {
 				
 				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
 				
-				Documentation built with
+				Last built at <b>2017-10-03 07:15:40 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
 				using the
 				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
@@ -775,8 +764,6 @@ for _, eachResource := range configuration.Resources {
       </script>
     
 
-    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
-    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
 

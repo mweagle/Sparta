@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: dynamic-infrastructure
-    weight: 0
+    weight: 50
 ---
 
 # Introduction
