@@ -171,7 +171,7 @@ func TestNewAPIGatewayRequest(t *testing.T) {
 	}
 
 	t.Log("Method:", testlambdaevent.Method)
-	t.Log("Body:", testlambdaevent.Body)
+	t.Log("Body:", string(testlambdaevent.Body))
 	t.Log("Headers:", testlambdaevent.Headers)
 	t.Log("QueryParams:", testlambdaevent.QueryParams)
 	t.Log("PathParams:", testlambdaevent.PathParams)
