@@ -1,6 +1,7 @@
 .DEFAULT_GOAL=build
 
 GO_LINT := $(GOPATH)/bin/golint
+GO_STATICCHECK := $(GOPATH)/bin/staticcheck
 
 ################################################################################
 # Meta
@@ -29,7 +30,7 @@ install_requirements:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/fzipp/gocyclo
 	go get -u honnef.co/go/tools/cmd/staticcheck
-	go get -u github.com/golang/lint
+	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
 
 .PHONY: vet
@@ -55,7 +56,7 @@ fmtcheck:install_requirements
 
 .PHONY: analyze
 analyze: install_requirements
-	staticcheck .
+	$(GO_STATICCHECK) .
 
 .PHONY: validate
 validate: vet lint fmtcheck analyze
