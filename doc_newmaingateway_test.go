@@ -1,8 +1,8 @@
 package sparta
 
 import (
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
@@ -11,15 +11,15 @@ import (
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func echoAPIGatewayEvent(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func echoAPIGatewayEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
+	bodyData, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
 	logger.WithFields(logrus.Fields{
-		"RequestID": context.AWSRequestID,
-		"Event":     string(*event),
+		"RequestID": lambdaContext.AWSRequestID,
+		"Event":     string(bodyData),
 	}).Debug("Request received")
-
 	fmt.Fprintf(w, "Hello World!")
 }
 
@@ -32,7 +32,9 @@ func ExampleMain_apiGateway() {
 	apiGateway := NewAPIGateway("MyEchoAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := NewLambda(IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
+	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayEvent),
+		http.HandlerFunc(echoAPIGatewayEvent),
+		IAMRoleDefinition{})
 
 	// Associate a URL path component with the Lambda function
 	apiGatewayResource, _ := apiGateway.NewResource("/echoHelloWorld", echoAPIGatewayLambdaFn)

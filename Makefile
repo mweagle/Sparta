@@ -34,13 +34,13 @@ install_requirements:
 	go get -u github.com/mjibson/esc
 
 .PHONY: vet
-vet:
+vet: install_requirements
 	for file in $(shell $(GO_SOURCE_FILES)); do \
 		go tool vet "$${file}" || exit 1 ;\
 	done
 
 .PHONY: lint
-lint:
+lint: install_requirements
 	for file in $(shell $(GO_SOURCE_FILES)); do \
 		$(GO_LINT) "$${file}" || exit 1 ;\
 	done

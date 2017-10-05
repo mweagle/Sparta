@@ -28,7 +28,9 @@ func ExampleMain_s3Site() {
 	apiGateway.CORSEnabled = true
 
 	// Create a lambda function
-	echoS3SiteAPIGatewayEventLambdaFn := NewLambda(IAMRoleDefinition{}, echoAPIGatewayEvent, nil)
+	echoS3SiteAPIGatewayEventLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayEvent),
+		http.HandlerFunc(echoAPIGatewayEvent),
+		IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource("/hello", echoS3SiteAPIGatewayEventLambdaFn)
 	_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)
 	if nil != err {
