@@ -1,32 +1,60 @@
 .DEFAULT_GOAL=build
-.PHONY: build test run tags clean reset
 
-clean:
-	go clean .
-	go env
-
+################################################################################
+# Meta
+################################################################################
 reset:
 		git reset --hard
 		git clean -f -d
 
+################################################################################
+# Code generation
+################################################################################
 generate:
 	go generate -x . ./proxy
 	./stamp.sh
 	./embed.sh
 	@echo "Generate complete: `date`"
 
-validate:
-	goimports -d *.go
-	goimports -d ./explore
-	goimports -d ./aws/
-	goimports -d ./docker/
+################################################################################
+# Hygiene checks
+################################################################################
 
-format:
-	go fmt .
+GO_SOURCE_FILES := find . -type f -name '*.go' \
+	! -path './vendor/*' \
 
-build: format validate
-	go build .
-	@echo "Build complete"
+install_requirements:
+	go get -u golang.org/x/tools/cmd/goimports
+	go get -u github.com/fzipp/gocyclo
+	go get -u honnef.co/go/tools/cmd/staticcheck
+
+.PHONY: vet
+vet:
+	for file in $(shell $(GO_SOURCE_FILES)); do \
+		go tool vet "$${file}" || exit 1 ;\
+	done
+
+.PHONY: lint
+lint:
+	for file in $(shell $(GO_SOURCE_FILES)); do \
+		golint "$${file}" || exit 1 ;\
+	done
+
+.PHONY: fmt
+fmt: install_requirements
+	$(GO_SOURCE_FILES) -exec goimports -w {} \;
+
+.PHONY: fmtcheck
+fmtcheck:install_requirements
+	@ export output="$$($(GO_SOURCE_FILES) -exec goimports -d {} \;)"; \
+		test -z "$${output}" || (echo "$${output}" && exit 1)
+
+.PHONY: analyze
+analyze: install_requirements
+	staticcheck .
+
+.PHONY: validate
+validate: vet lint fmtcheck analyze
 
 docs:
 	@echo ""
@@ -34,10 +62,13 @@ docs:
 	@echo
 	godoc -v -http=:8090 -index=true
 
+################################################################################
+# Travis
+################################################################################
 travis-depends:
-	go get -u github.com/golang/dep/...
+	go get -u -v github.com/golang/dep/...
 	dep ensure
-	go get -u golang.org/x/tools/cmd/goimports
+	go get -u -v golang.org/x/tools/cmd/goimports
 	rm -rf $(GOPATH)/src/github.com/mjibson/esc
 	git clone --depth=1 https://github.com/mjibson/esc $(GOPATH)/src/github.com/mjibson/esc
 	rm -rf $(GOPATH)/src/github.com/fzipp/gocyclo
@@ -45,20 +76,14 @@ travis-depends:
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
 	rsync -a --quiet --remove-source-files ./vendor/ $(GOPATH)/src
 
-travis-ci-test: travis-depends build
+.PHONY: travis-ci-test
+travis-ci-test: travis-depends test build
 	go test -v .
 	go test -v ./aws/...
 
-test: build
-	go test -v .
-	go test -v ./aws/...
-
-run: build
-	./sparta
-
-tags:
-	gotags -tag-relative=true -R=true -sort=true -f="tags" -fields=+l .
-
+################################################################################
+# Sparta commands
+################################################################################
 provision: build
 	go run ./applications/hello_world.go --level info provision --s3Bucket $(S3_BUCKET)
 
@@ -69,6 +94,25 @@ describe: build
 	rm -rf ./graph.html
 	go test -v -run TestDescribe
 
+################################################################################
+# ALM commands
+################################################################################
+.PHONY: clean
+clean:
+	go clean .
+	go env
+
+.PHONY: test
+test: build
+	go test -v .
+	go test -v ./aws/...
+
+.PHONY: build
+build: validate
+	go build .
+	@echo "Build complete"
+
+.PHONY: publish
 publish:
 	$(info Checking Git tree status)
 	git diff --exit-code
