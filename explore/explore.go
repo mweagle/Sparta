@@ -68,12 +68,15 @@ func NewRawRequest(lambdaName string, context *proxy.AWSLambdaContext, eventData
 	// POST IT...
 	var host = fmt.Sprintf("%s/%s", testingURL, lambdaName)
 	req, err := http.NewRequest("POST", host, bytes.NewReader(proxyBytes))
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Content-Type", "application/x-protobuf")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	return resp, nil
 }
