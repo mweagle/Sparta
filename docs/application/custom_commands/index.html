@@ -50,7 +50,6 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
@@ -492,53 +491,53 @@
 
 <p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">httpServerCommand</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Use</span><span style="">:</span><span style="">   </span><span style="color:#e6db74">&#34;httpServer&#34;</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Short</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Sample HelloWorld HTTP server&#34;</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Long</span><span style="">:</span><span style="">  </span><span style="color:#e6db74">`Sample HelloWorld HTTP server that binds to port: `</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="color:#a6e22e">HTTPServerPort</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">RunE</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">cmd</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">cobra</span><span style="">.</span><span style="color:#a6e22e">Command</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">args</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandleFunc</span><span style="">(</span><span style="color:#e6db74">&#34;/&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">helloWorldResource</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ListenAndServe</span><span style="">(</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;:%d&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">HTTPServerPort</span><span style="">),</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style="">  </span><span style="">},</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">CommandLineOptions</span><span style="">.</span><span style="color:#a6e22e">Root</span><span style="">.</span><span style="color:#a6e22e">AddCommand</span><span style="">(</span><span style="color:#a6e22e">httpServerCommand</span><span style="">)</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">httpServerCommand := &amp;cobra.Command{
+  Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
+  Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
+  Long:  <span style="color:#a31515">`Sample HelloWorld HTTP server that binds to port: `</span> + HTTPServerPort,
+  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
+    http.HandleFunc(<span style="color:#a31515">&#34;/&#34;</span>, helloWorldResource)
+    <span style="color:#00f">return</span> http.ListenAndServe(fmt.Sprintf(<span style="color:#a31515">&#34;:%d&#34;</span>, HTTPServerPort), <span style="color:#00f">nil</span>)
+  },
+}
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
 </div>
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ./SpartaOmega --help
-</span><span style="">Provision AWS Lambda and EC2 instance with same code
-</span><span style="">
-</span><span style="">Usage:
-</span><span style="">  SpartaOmega </span><span style="color:#f92672">[</span><span style="">command</span><span style="color:#f92672">]</span><span style="">
-</span><span style="">
-</span><span style="">Available Commands:
-</span><span style="">  httpServer  Sample HelloWorld HTTP server
-</span><span style="">  version     Sparta framework version
-</span><span style="">  provision   Provision service
-</span><span style="">  delete      Delete service
-</span><span style="">  execute     Execute
-</span><span style="">  describe    Describe service
-</span><span style="">  explore     Interactively explore service
-</span><span style="">
-</span><span style="">Flags:
-</span><span style="">  -l, --level string   Log level </span><span style="color:#f92672">[</span><span style="">panic, fatal, error, warn, info, debug</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#f92672">(</span><span style="">default </span><span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  -n, --noop           Dry-run behavior only </span><span style="color:#f92672">(</span><span style="color:#66d9ef">do</span><span style=""> not perform mutations</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">
-</span><span style="">Use </span><span style="color:#e6db74">&#34;SpartaOmega [command] --help&#34;</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> more information about a command.</span></code></pre>
+<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega --help
+Provision AWS Lambda and EC2 instance with same code
+
+Usage:
+  SpartaOmega [command]
+
+Available Commands:
+  httpServer  Sample HelloWorld HTTP server
+  version     Sparta framework version
+  provision   Provision service
+  delete      Delete service
+  execute     Execute
+  describe    Describe service
+  explore     Interactively explore service
+
+Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
+  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
+
+Use <span style="color:#a31515">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#00f">for</span> more information about a command.</code></pre>
 </div></p>
 
 <p>And you can query for user-command specific usage as in:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ ./SpartaOmega httpServer --help
-</span><span style="">Custom </span><span style="">command</span><span style="">
-</span><span style="">
-</span><span style="">Usage:
-</span><span style="">  SpartaOmega httpServer </span><span style="color:#f92672">[</span><span style="">flags</span><span style="color:#f92672">]</span><span style="">
-</span><span style="">
-</span><span style="">Global Flags:
-</span><span style="">  -l, --level string   Log level </span><span style="color:#f92672">[</span><span style="">panic, fatal, error, warn, info, debug</span><span style="color:#f92672">]</span><span style=""> </span><span style="color:#f92672">(</span><span style="">default </span><span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  -n, --noop           Dry-run behavior only </span><span style="color:#f92672">(</span><span style="color:#66d9ef">do</span><span style=""> not perform mutations</span><span style="color:#f92672">)</span></code></pre>
+<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega httpServer --help
+Custom command
+
+Usage:
+  SpartaOmega httpServer [flags]
+
+Global Flags:
+  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
+  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)</code></pre>
 </div></p>
 
 

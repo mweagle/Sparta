@@ -50,7 +50,6 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
@@ -513,12 +512,12 @@
 
 <p>Your working directory should be the root of your Sparta application.  Eg, use</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">run</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">provision</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">level</span><span style=""> </span><span style="color:#a6e22e">info</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET</code></pre>
 </div>
 
 <p>rather than</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">run</span><span style=""> </span><span style="">.</span><span style="color:#f92672">/</span><span style="color:#a6e22e">some</span><span style="color:#f92672">/</span><span style="color:#a6e22e">child</span><span style="color:#f92672">/</span><span style="color:#a6e22e">path</span><span style="color:#f92672">/</span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">provision</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">level</span><span style=""> </span><span style="color:#a6e22e">info</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run ./some/child/path/main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET</code></pre>
 </div>
 
 <p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
@@ -564,10 +563,10 @@ requested update operation.</p>
 CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
 is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// Setup the DashboardDecorator lambda hook
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">workflowHooks</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">WorkflowHooks</span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">ServiceDecorator</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">DashboardDecorator</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">60</span><span style="">),</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#008000">// Setup the DashboardDecorator lambda hook
+</span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
+	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
+}</code></pre>
 </div>
 
 <p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
@@ -582,40 +581,40 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 <p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">lambdaDecorator</span><span style="">(</span><span style="color:#a6e22e">serviceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaResourceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaResource</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">LambdaFunction</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">resourceMetadata</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">S3Bucket</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">S3Key</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">buildID</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cfTemplate</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Template</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#75715e">// setup CloudWatch alarm
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">alarmDimensions</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">CloudWatchMetricDimensionList</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">alarmDimension</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">CloudWatchMetricDimension</span><span style="">{</span><span style="color:#a6e22e">Name</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;FunctionName&#34;</span><span style="">),</span><span style=""> </span><span style="color:#a6e22e">Value</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">lambdaResourceName</span><span style="">).</span><span style="color:#a6e22e">String</span><span style="">()}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">alarmDimensions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">[]</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">CloudWatchMetricDimension</span><span style="">{</span><span style="color:#a6e22e">alarmDimension</span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaErrorsAlarm</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">CloudWatchAlarm</span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">ActionsEnabled</span><span style="">:</span><span style="">     </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Bool</span><span style="">(</span><span style="color:#66d9ef">true</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">AlarmActions</span><span style="">:</span><span style="">       </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">StringList</span><span style="">(</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span><span style="">)),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">AlarmName</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;LambdaErrorAlarm&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">ComparisonOperator</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;GreaterThanOrEqualToThreshold&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Dimensions</span><span style="">:</span><span style="">         </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">alarmDimensions</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">EvaluationPeriods</span><span style="">:</span><span style="">  </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;1&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Period</span><span style="">:</span><span style="">             </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;300&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">MetricName</span><span style="">:</span><span style="">         </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;Errors&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Namespace</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;AWS/Lambda&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Statistic</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;Sum&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Threshold</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;3.0&#34;</span><span style="">),</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">Unit</span><span style="">:</span><span style="">               </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;Count&#34;</span><span style="">),</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">cfTemplate</span><span style="">.</span><span style="color:#a6e22e">AddResource</span><span style="">(</span><span style="color:#e6db74">&#34;LambdaErrorAlaram&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaErrorsAlarm</span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> lambdaDecorator(serviceName <span style="color:#2b91af">string</span>,
+	lambdaResourceName <span style="color:#2b91af">string</span>,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
+	S3Bucket <span style="color:#2b91af">string</span>,
+	S3Key <span style="color:#2b91af">string</span>,
+	buildID <span style="color:#2b91af">string</span>,
+	cfTemplate *gocf.Template,
+	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
+	logger *logrus.Logger) <span style="color:#2b91af">error</span> {
+
+	<span style="color:#008000">// setup CloudWatch alarm
+</span><span style="color:#008000"></span>	<span style="color:#00f">var</span> alarmDimensions gocf.CloudWatchMetricDimensionList
+	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(<span style="color:#a31515">&#34;FunctionName&#34;</span>), Value: gocf.Ref(lambdaResourceName).String()}
+	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
+
+	lambdaErrorsAlarm := &amp;gocf.CloudWatchAlarm{
+		ActionsEnabled:     gocf.Bool(<span style="color:#00f">true</span>),
+		AlarmActions:       gocf.StringList(gocf.String(<span style="color:#a31515">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span>)),
+		AlarmName:          gocf.String(<span style="color:#a31515">&#34;LambdaErrorAlarm&#34;</span>),
+		ComparisonOperator: gocf.String(<span style="color:#a31515">&#34;GreaterThanOrEqualToThreshold&#34;</span>),
+		Dimensions:         &amp;alarmDimensions,
+		EvaluationPeriods:  gocf.String(<span style="color:#a31515">&#34;1&#34;</span>),
+		Period:             gocf.String(<span style="color:#a31515">&#34;300&#34;</span>),
+		MetricName:         gocf.String(<span style="color:#a31515">&#34;Errors&#34;</span>),
+		Namespace:          gocf.String(<span style="color:#a31515">&#34;AWS/Lambda&#34;</span>),
+		Statistic:          gocf.String(<span style="color:#a31515">&#34;Sum&#34;</span>),
+		Threshold:          gocf.String(<span style="color:#a31515">&#34;3.0&#34;</span>),
+		Unit:               gocf.String(<span style="color:#a31515">&#34;Count&#34;</span>),
+	}
+	cfTemplate.AddResource(<span style="color:#a31515">&#34;LambdaErrorAlaram&#34;</span>, lambdaErrorsAlarm)
+
+	<span style="color:#00f">return</span> <span style="color:#00f">nil</span>
+}</code></pre>
 </div>
 
 <h3 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
@@ -653,22 +652,22 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">autoIncrementingInfo</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">autoIncrementingInfoErr</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">spartaCF</span><span style="">.</span><span style="color:#a6e22e">AddAutoIncrementingLambdaVersionResource</span><span style="">(</span><span style="color:#a6e22e">serviceName</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">lambdaResourceName</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">cfTemplate</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">)</span></code></pre>
-</div></p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+  lambdaResourceName,
+  cfTemplate,
+  logger)</code></pre>
+</div>
 
 <p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">aliasResourceName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">CloudFormationResourceName</span><span style="">(</span><span style="color:#e6db74">&#34;Alias&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaResourceName</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">aliasResource</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">LambdaAlias</span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">Name</span><span style="">:</span><span style="">            </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;MostRecentVersion&#34;</span><span style="">),</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">FunctionName</span><span style="">:</span><span style="">    </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">lambdaResourceName</span><span style="">).</span><span style="color:#a6e22e">String</span><span style="">(),</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">FunctionVersion</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">GetAtt</span><span style="">(</span><span style="color:#a6e22e">autoIncrementingInfo</span><span style="">.</span><span style="color:#a6e22e">CurrentVersionResourceName</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;Version&#34;</span><span style="">).</span><span style="color:#a6e22e">String</span><span style="">(),</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">cfTemplate</span><span style="">.</span><span style="color:#a6e22e">AddResource</span><span style="">(</span><span style="color:#a6e22e">aliasResourceName</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">aliasResource</span><span style="">)</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+</span><span style="color:#008000"></span>aliasResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;Alias&#34;</span>, lambdaResourceName)
+aliasResource := &amp;gocf.LambdaAlias{
+    Name:            gocf.String(<span style="color:#a31515">&#34;MostRecentVersion&#34;</span>),
+    FunctionName:    gocf.Ref(lambdaResourceName).String(),
+    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, <span style="color:#a31515">&#34;Version&#34;</span>).String(),
+}
+cfTemplate.AddResource(aliasResourceName, aliasResource)</code></pre>
 </div>
 
 <h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
