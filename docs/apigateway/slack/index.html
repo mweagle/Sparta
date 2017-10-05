@@ -365,6 +365,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -486,14 +499,14 @@
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#75715e">// Hello world event handler
 </span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloSlackbot</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloSlackbot</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#75715e">// 1. Unmarshal the primary event
-</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">slackLambdaJSONEvent</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">Unmarshal</span><span style="">([]</span><span style="">byte</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">),</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">slackLambdaJSONEvent</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
 </span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
@@ -536,7 +549,7 @@
 </span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to marshal response: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
 </span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
 </span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#a6e22e">responseBody</span><span style="">))</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Write</span><span style="">(</span><span style="color:#a6e22e">responseBody</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
 
@@ -548,17 +561,19 @@
 <ul>
 <li><p>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  However, our <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">integration mapping</a> mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw <code>POST</code> body with the mapping envelope (so that we can access <a href="http://gosparta.io/docs/apigateway/example1">identity information, HTTP headers, etc.</a>), which produces an inbound JSON request that includes a <strong>Body</strong> parameter.  The <strong>Body</strong> string value is the raw inbound <code>POST</code> data.  Since it&rsquo;s <code>application/x-www-form-urlencoded</code>, to get the actual parameters we need to parse it:</p>
 
-<pre><code class="language-javascript">if bodyData, ok := lambdaEvent.Body.(string); ok {
-  requestParams, err = url.ParseQuery(bodyData)
-</code></pre></li>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="">        </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">bodyData</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.(</span><span style="color:#66d9ef">string</span><span style="">);</span><span style=""> </span><span style="color:#a6e22e">ok</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#a6e22e">requestParams</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">url</span><span style="">.</span><span style="color:#a6e22e">ParseQuery</span><span style="">(</span><span style="color:#a6e22e">bodyData</span><span style="">)</span><span style="">
+</span><span style="">        </span></code></pre>
+</div></p></li>
 
 <li><p>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</p>
 
-<pre><code class="language-javascript">responseText := &quot;You talkin to me?&quot;
-for _, eachLine := range requestParams[&quot;text&quot;] {
-  responseText += fmt.Sprintf(&quot;\n&gt;&gt;&gt; %s&quot;, eachLine)
-}
-</code></pre></li>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="">        </span><span style="color:#a6e22e">responseText</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#e6db74">&#34;You talkin to me?&#34;</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachLine</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">requestParams</span><span style="">[</span><span style="color:#e6db74">&#34;text&#34;</span><span style="">]</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#a6e22e">responseText</span><span style=""> </span><span style="color:#f92672">+=</span><span style=""> </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;\n&gt;&gt;&gt; %s&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachLine</span><span style="">)</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">        </span></code></pre>
+</div></li>
 </ul></li>
 
 <li><p><strong>Custom Response</strong></p>
@@ -566,11 +581,12 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 <ul>
 <li><p>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</p>
 
-<pre><code class="language-javascript">responseData := sparta.ArbitraryJSONObject{
-    &quot;response_type&quot;: &quot;in_channel&quot;,
-    &quot;text&quot;:          responseText,
-}
-</code></pre></li>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="">        </span><span style="color:#a6e22e">responseData</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ArbitraryJSONObject</span><span style="">{</span><span style="">
+</span><span style="">      		</span><span style="color:#e6db74">&#34;response_type&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;in_channel&#34;</span><span style="">,</span><span style="">
+</span><span style="">      		</span><span style="color:#e6db74">&#34;text&#34;</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">responseText</span><span style="">,</span><span style="">
+</span><span style="">      	</span><span style="">}</span><span style="">
+</span><span style="">        </span></code></pre>
+</div></li>
 </ul></li>
 </ol>
 
@@ -578,9 +594,9 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#a6e22e">apiGateway</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewAPIGateway</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">apiStage</span><span style="">)</span></code></pre>
-</div></p>
+</div>
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
 
@@ -590,7 +606,9 @@ for _, eachLine := range requestParams[&quot;text&quot;] {
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">spartaLambdaFunctions</span><span style="">(</span><span style="color:#a6e22e">api</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">API</span><span style="">)</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">helloSlackbot</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">helloSlackbot</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">helloSlackbot</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">iamDynamicRole</span><span style="">)</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">		</span><span style="color:#a6e22e">apiGatewayResource</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style="">.</span><span style="color:#a6e22e">NewResource</span><span style="">(</span><span style="color:#e6db74">&#34;/slack&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">

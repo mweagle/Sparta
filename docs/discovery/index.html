@@ -368,6 +368,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -492,14 +505,18 @@
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">s3BucketResourceName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">CloudFormationResourceName</span><span style="">(</span><span style="color:#e6db74">&#34;S3DynamicBucket&#34;</span><span style="">)</span><span style="">
 </span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">echoS3DynamicBucketEvent</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">S3Permission</span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">),</span><span style="">
-</span><span style="">  </span><span style="">},</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Events</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span><span style="">,</span><span style="">
-</span><span style="">                    </span><span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span><span style="">},</span><span style="">
-</span><span style=""></span><span style="">})</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">echoS3DynamicBucketEvent</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">echoS3DynamicBucketEvent</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">S3Permission</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Ref</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="">},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Events</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span><span style="">,</span><span style="">
+</span><span style="">                      </span><span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span><span style="">},</span><span style="">
+</span><span style="">  </span><span style="">})</span><span style="">
 </span><span style="">
 </span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">DependsOn</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">DependsOn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">)</span><span style="">
 </span><span style="">
@@ -536,50 +553,50 @@
 
 <p>In our example, a <code>DiscoveryInfo</code> from a sample stack might be:</p>
 
-<pre><code class="language-json">{
-  &quot;Region&quot;: &quot;us-west-2&quot;,
-  &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&quot;,
-  &quot;StackName&quot;: &quot;SpartaApplication&quot;,
-  &quot;Resources&quot;: {
-    &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;: {
-      &quot;ResourceID&quot;: &quot;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&quot;,
-      &quot;Properties&quot;: {
-        &quot;DomainName&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&quot;,
-        &quot;Ref&quot;: &quot;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&quot;,
-        &quot;WebsiteURL&quot;: &quot;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&quot;,
-        &quot;sparta:cloudformation:restype&quot;: &quot;AWS::S3::Bucket&quot;
-      },
-      &quot;Tags&quot;: {}
-    }
-  }
-}
-</code></pre>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Region&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;us-west-2&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;StackID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;StackName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;SpartaApplication&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Resources&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;ResourceID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;</span><span style="">,</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Properties&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;DomainName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Ref&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;WebsiteURL&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;sparta:cloudformation:restype&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;AWS::S3::Bucket&#34;</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Tags&#34;</span><span style="">:</span><span style=""> </span><span style="">{}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></p>
 
 <p>With this, our lambda function can discover the dynamically assigned bucket name using non-production ready code similar to:</p>
 
-<pre><code class="language-go">configuration, _ := sparta.Discover()
-bucketName := &quot;&quot;
-for _, eachResource := range configuration.Resources {
-  if eachResource.Properties[sparta.TagResourceType] == &quot;AWS::S3::Bucket&quot; {
-    bucketName = eachResource.Properties[&quot;Ref&quot;]
-  }
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">configuration</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Discover</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">bucketName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">configuration</span><span style="">.</span><span style="color:#a6e22e">Resources</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style="">.</span><span style="color:#a6e22e">Properties</span><span style="">[</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">TagResourceType</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;AWS::S3::Bucket&#34;</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">bucketName</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style="">.</span><span style="color:#a6e22e">Properties</span><span style="">[</span><span style="color:#e6db74">&#34;Ref&#34;</span><span style="">]</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>The <code>Properties</code> map includes the CloudFormation <code>Ref</code> and other outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set) as well as the actual resource type (keyed by <code>sparta.TagResourceType</code>).</p>
 
 <p>Multiple dependencies can be disambiguated by annotating the CloudFormation resource&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html">Tags</a> slice.  Tag key-values are published as a key-value map as part of each <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource">DiscoveryResource</a>.  For example:</p>
 
-<pre><code class="language-go">cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-  AccessControl: gocf.String(&quot;PublicRead&quot;),
-  Tags: []gocf.ResourceTag{
-    gocf.ResourceTag{
-      Key:   gocf.String(&quot;SomeUserKey&quot;),
-      Value: gocf.String(&quot;MyMagicValue&quot;),
-    },
-  },
-})
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">cfResource</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">template</span><span style="">.</span><span style="color:#a6e22e">AddResource</span><span style="">(</span><span style="color:#a6e22e">s3BucketResourceName</span><span style="">,</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">S3Bucket</span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">AccessControl</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;PublicRead&#34;</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">Tags</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">ResourceTag</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">ResourceTag</span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#a6e22e">Key</span><span style="">:</span><span style="">   </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;SomeUserKey&#34;</span><span style="">),</span><span style="">
+</span><span style="">      </span><span style="color:#a6e22e">Value</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;MyMagicValue&#34;</span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="">},</span><span style="">
+</span><span style="">  </span><span style="">},</span><span style="">
+</span><span style=""></span><span style="">})</span></code></pre>
+</div>
 
 <h1 id="special-considerations">Special Considerations</h1>
 

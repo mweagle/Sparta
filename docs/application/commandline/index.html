@@ -365,6 +365,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -488,26 +501,30 @@
 
 <p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">$ ./SpartaHelloWorld --help
-</span><span style="">
-</span><span style="">Test HelloWorld resource command
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">$ go run main.go --help
+</span><span style="">Simple Sparta application that demonstrates core functionality
 </span><span style="">
 </span><span style="">Usage:
-</span><span style="">  SpartaHelloWorld [command]
+</span><span style="">  main [command]
 </span><span style="">
 </span><span style="">Available Commands:
-</span><span style="">  version     Sparta framework version
-</span><span style="">  provision   Provision service
 </span><span style="">  delete      Delete service
-</span><span style="">  execute     Execute
 </span><span style="">  describe    Describe service
+</span><span style="">  execute     Execute
 </span><span style="">  explore     Interactively explore service
+</span><span style="">  help        Help about any command
+</span><span style="">  provision   Provision service
+</span><span style="">  version     Sparta framework version
 </span><span style="">
 </span><span style="">Flags:
-</span><span style="">  -l, --level string   Log level [panic, fatal, error, warn, info, debug]&#39; (default &#34;info&#34;)
-</span><span style="">  -n, --noop           Dry-run behavior only (do not perform mutations)
+</span><span style="">  -f, --format string    Log format [text, json] (default &#34;text&#34;)
+</span><span style="">  -h, --help             help for main
+</span><span style="">      --ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+</span><span style="">  -l, --level string     Log level [panic, fatal, error, warn, info, debug] (default &#34;info&#34;)
+</span><span style="">  -n, --noop             Dry-run behavior only (do not perform mutations)
+</span><span style="">  -t, --tags string      Optional build tags for conditional compilation
 </span><span style="">
-</span><span style="">Use &#34;SpartaHelloWorld [command] --help&#34; for more information about a command.</span></code></pre>
+</span><span style="">Use &#34;main [command] --help&#34; for more information about a command.</span></code></pre>
 </div>
 
 <p>It&rsquo;s also possible to add <a href="http://gosparta.io/docs/application/custom_flags">custom flags</a> and/or <a href="http://gosparta.io/docs/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
