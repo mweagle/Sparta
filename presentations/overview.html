@@ -97,7 +97,7 @@
 					<textarea data-template>
 						### Concepts
 						* **ServiceName**: Stable, logical service identifier
-						* **Sparta Function**: `(*json.RawMessage, *sparta.LambdaContext, http.ResponseWriter, *logrus.Logger)`
+						* **Sparta Function**: `(http.ResponseWriter, *http.Request)`
 						* **Privileges**: Lambda IAM Role Privilege
 						* **Permissions**: Configure AWS event publishers (eg: S3, Kinesis)
 						* **Dynamic Resources**: Non-Lambda resources provisioned by a Sparta Application
@@ -257,9 +257,10 @@
 							MemorySize:  128,
 							Timeout:     30,
 						}
-						lambdaFn := sparta.NewLambda(iamRole,
-							transformImage,
-							transformOptions)
+						lambdaFn := sparta.HandleAWSLambda(
+							sparta.LambdaName(transformImage),
+							http.HandlerFunc(transformImage),
+							iamRole)
 						// S3 configuration
 						lambdaFn.Permissions = append(lambdaFn.Permissions,
 							sparta.S3Permission{
@@ -333,9 +334,11 @@
 					<textarea data-template>
 						#### HTTPS Route
 						```golang
-							s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole,
-								s3ItemInfo,
-								s3ItemInfoOptions)
+							s3ItemInfoLambdaFn := sparta.HandleAWSLambda(
+								sparta.LambdaName(s3ItemInfo),
+								http.HandlerFunc(s3ItemInfo),
+								iamDynamicRole)
+
 							// Register the function with the API Gateway
 							apiGatewayResource, _ := api.NewResource("/info",
 								s3ItemInfoLambdaFn)
@@ -540,6 +543,18 @@
 						* [AWS Lambda XRay](http://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html#lambda-x-ray-daemon)
 
 						<small><a href="https://speakerdeck.com/smithclay/faas-measurement-fundamentals">Lambda measurement fundamentals</a></small>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### ALM
+						* Produce a [CodePipeline package](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-action-reference.html) with an optional `--provision` option
+						* Build a CI/CD pipeline with:
+							* [CodePipeline](https://aws.amazon.com/codepipeline/)
+							* [CodeBuild](https://aws.amazon.com/codebuild/)
+							* CloudFormation
+						* See [Serverless, Serverfull, and Weaving Pipelines](https://medium.com/statuscode/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)
 					</textarea>
 				</section>
 
