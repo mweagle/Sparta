@@ -6,8 +6,6 @@ import (
 
 	"regexp"
 
-	"math"
-
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -121,7 +119,7 @@ var templateFuncMap = template.FuncMap{
 	},
 	"widgetY": func(lambdaIndex int) int {
 		xRow := 1
-		xRow += (int)(math.Floor((float64)(lambdaIndex % metricsPerRow)))
+		xRow += (int)((float64)(lambdaIndex % metricsPerRow))
 		// That's the row
 		return headerHeightUnits + (xRow * metricHeightUnits)
 	},

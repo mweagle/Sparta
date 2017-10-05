@@ -144,13 +144,12 @@ func makeRequest(functionName string,
 		jsonBytes, jsonBytesErr := json.Marshal(errResponseBody)
 		if nil != jsonBytesErr {
 			return nil, nil, jsonBytesErr
-		} else {
-			errResponse := httptest.NewRecorder()
-			errResponse.Write(jsonBytes)
-			errResponse.Header().Set("content-length", strconv.Itoa(len(jsonBytes)))
-			errResponse.Header().Set("content-type", "application/json")
-			spartaResp = errResponse
 		}
+		errResponse := httptest.NewRecorder()
+		errResponse.Write(jsonBytes)
+		errResponse.Header().Set("content-length", strconv.Itoa(len(jsonBytes)))
+		errResponse.Header().Set("content-type", "application/json")
+		spartaResp = errResponse
 	}
 	return spartaResp.Body.Bytes(), spartaResp.HeaderMap, nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func TestDescribe(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	output, err := os.Create("./graph.html")
 	if nil != err {
 		t.Fatalf(err.Error())

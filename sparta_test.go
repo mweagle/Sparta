@@ -74,9 +74,9 @@ func userDefinedCustomResource2(requestType string,
 }
 
 func TestStruct(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		testLambdaStructData(),
@@ -98,9 +98,9 @@ func TestStruct(t *testing.T) {
 }
 
 func TestDoubleRefStruct(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		testLambdaDoubleStructPtrData(),
@@ -123,7 +123,7 @@ func TestDoubleRefStruct(t *testing.T) {
 }
 
 func TestCustomResource(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource1,
@@ -136,7 +136,7 @@ func TestCustomResource(t *testing.T) {
 		nil)
 
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		lambdaFuncs,
@@ -159,7 +159,7 @@ func TestCustomResource(t *testing.T) {
 }
 
 func TestDoubleRefCustomResource(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 
 	for _, eachLambda := range lambdaFuncs {
@@ -169,7 +169,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 			nil)
 	}
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		lambdaFuncs,
@@ -192,7 +192,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 }
 
 func SignatureVersion(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	lambdaFunctions[0].Options = &LambdaFunctionOptions{
@@ -206,7 +206,7 @@ func SignatureVersion(t *testing.T) {
 		},
 	}
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"TestOverlappingLambdas",
 		"",
 		lambdaFunctions,
@@ -231,7 +231,7 @@ func SignatureVersion(t *testing.T) {
 }
 
 func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	for _, eachLambda := range lambdaFunctions {
@@ -243,7 +243,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 	}
 
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"TestOverlappingLambdas",
 		"",
 		lambdaFunctions,
