@@ -14,14 +14,14 @@ Assume that we're given a DynamoDB stream.  See [below](http://localhost:1313/do
 
 We'll start with an empty lambda function and build up the needed functionality.
 
-{{< highlight go "linenos=inline" >}}
+{{< highlight go >}}
 func echoDynamoDBEvent(w http.ResponseWriter, r *http.Request)
 {
-  logger, loggerOk := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-  lambdaContext, lambdaContextOk := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-  logger.WithFields(logrus.Fields{
-    "RequestID": lambdaContext.AWSRequestID,
-  }).Info("Request received")
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AWSRequestID,
+	}).Info("Request received")
 }
 {{< /highlight >}}
 
@@ -31,8 +31,9 @@ Since the `echoDynamoDBEvent` is expected to be triggered by DynamoDB events, we
 
 {{< highlight go >}}
 decoder := json.NewDecoder(r.Body)
-var ddbEvent spartaDynamoDB.Event
-err := decoder.Decode(&ddbEvent)
+defer r.Body.Close()
+var lambdaEvent spartaDynamoDB.Event
+err := decoder.Decode(&lambdaEvent)
 if err != nil {
   logger.Error("Failed to unmarshal event data: ", err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -43,7 +44,7 @@ DynamoDB events are delivered in batches, via lists of [EventRecords](https://go
 ), so we'll need to process each record.
 
 {{< highlight go >}}
-for _, eachRecord := range ddbEvent.Records {
+for _, eachRecord := range lambdaEvent.Records {
   logger.WithFields(logrus.Fields{
     "Keys":     eachRecord.DynamoDB.Keys,
     "NewImage": eachRecord.DynamoDB.NewImage,
@@ -55,7 +56,7 @@ That's enough to get the data into CloudWatch Logs.
 
 # <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 
-With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the **Go** function with Sparta.  This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the **go** function with Sparta.  This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
 lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)
@@ -66,11 +67,12 @@ lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)
 If we were to deploy this Sparta application, the `echoDynamoDBEvent` function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda's [EventSourceMappings](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources):
 
 {{< highlight go >}}
-  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &lambda.CreateEventSourceMappingInput{
-    EventSourceArn:   aws.String(dynamoTestStream),
-    StartingPosition: aws.String("TRIM_HORIZON"),
-    BatchSize:        aws.Int64(10),
-    Enabled:          aws.Bool(true),
+  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+    &lambda.CreateEventSourceMappingInput{
+      EventSourceArn:   aws.String(dynamoTestStream),
+      StartingPosition: aws.String("TRIM_HORIZON"),
+      BatchSize:        aws.Int64(10),
+      Enabled:          aws.Bool(true),
   })
 lambdaFunctions = append(lambdaFunctions, lambdaFn)
 {{< /highlight >}}

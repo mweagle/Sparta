@@ -28,7 +28,7 @@ The binary is built in the current directory with a _.lambda.amd64_ suffix.
 ## Package
 
 The end result of the package phase is a ZIP archive containing everything needed to deploy your service.
-This includes the NodeJS proxy entries that forward AWS Lambda requests to your **Go** binary HTTP-based handler. It also includes core [google-protobuf](https://www.npmjs.com/package/google-protobuf) to handle de/serializing events to your application. You can see these additional resources being included if you enable `--level debug` verbosity on the command line.
+This includes the NodeJS proxy entries that forward AWS Lambda requests to your **go** binary HTTP-based handler. It also includes core [google-protobuf](https://www.npmjs.com/package/google-protobuf) to handle de/serializing events to your application. You can see these additional resources being included if you enable `--level debug` verbosity on the command line.
 
 
 ## Upload Archive To S3

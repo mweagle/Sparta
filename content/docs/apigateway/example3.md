@@ -15,17 +15,19 @@ As this function is only expected to be invoked from the API Gateway, we'll unma
 
 
 {{< highlight go >}}
-func ipGeoLambda(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger) {
-var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &lambdaEvent)
-if err != nil {
-	logger.Error("Failed to unmarshal event data: ", err.Error())
-	http.Error(w, err.Error(), http.StatusInternalServerError)
-	return
-}
+func ipGeoLambda(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext) {
+
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	var lambdaEvent sparta.APIGatewayLambdaJSONEvent
+	err := decoder.Decode(&lambdaEvent)
+	if err != nil {
+		logger.Error("Failed to unmarshal event data: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 {{< /highlight >}}
 
 We'll then parse the inbound IP address from the [Context](https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext) and perform a lookup against the database handle opened in the [init](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19) block:
@@ -52,7 +54,7 @@ if err != nil {
   http.Error(w, err.Error(), http.StatusInternalServerError)
 } else {
   w.Header().Set("Content-Type", "application/json")
-  fmt.Fprint(w, string(responseBody))
+  w.Write(responseBody)
 }
 {{< /highlight >}}
 
@@ -109,7 +111,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 With the API Gateway provisioned, let's check the response:
 
-{{< highlight nohighlight >}}
+{{< highlight bash >}}
 curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 
 *   Trying 54.192.70.206...
@@ -141,7 +143,8 @@ curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 Pretty-printing the response body:
 
 
-```json
+{{< highlight json >}}
+
 {
   "code": 200,
   "status": "OK",
@@ -221,7 +224,8 @@ Pretty-printing the response body:
     }
   }
 }
-```
+{{< /highlight >}}
+
 
 Please see the [first example](/docs/apigateway/example1) for more information on the `code`, `status`, and `headers` keys.
 

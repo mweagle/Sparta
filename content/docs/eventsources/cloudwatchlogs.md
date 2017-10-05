@@ -14,14 +14,14 @@ Assume that we're supposed to write a simple "HelloWorld" CloudWatch Logs functi
 Our lambda function is relatively short:
 
 {{< highlight go >}}
-func echoCloudWatchLogsEvent(event *json.RawMessage,
-                        context *sparta.LambdaContext,
-                        w http.ResponseWriter,
-                        logger *logrus.Logger) {
+func echoCloudWatchLogsEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AWSRequestID,
+	}).Info("Request received")
 
-  // Note that we're not going to log in this lambda function, as
-  // we don't want to self DDOS
-  fmt.Fprintf(w, "Hello World!")
+	w.Write([]byte("CloudWatch event received!"))
 }
 {{< /highlight >}}
 
@@ -29,15 +29,16 @@ Our lambda function doesn't need to do much with the log message other than log 
 
 # Sparta Integration
 
-With `echoCloudWatchLogsEvent()` implemented, the next step is to integrate the **Go** function with Sparta.  This is done by the `appendCloudWatchLogsLambda` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
+With `echoCloudWatchLogsEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchLogsLambda` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
 Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty `sparta.IAMRoleDefinition` value:
 
 {{< highlight go >}}
-func appendCloudWatchLogsLambda(api *sparta.API,
+func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
-
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
+		http.HandlerFunc(echoCloudWatchLogsEvent),
+		sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
 The next step is to add a `CloudWatchLogsSubscriptionFilter` value that represents the [CloudWatch Lambda](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/Subscriptions.html#LambdaFunctionExample) subscription [filter information](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CreateSubscriptionFilter.html).
@@ -62,22 +63,23 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
 
 Our entire function is therefore:
 
-{{< highlight go >}}
-func appendCloudWatchLogsLambda(api *sparta.API,
+{{< highlight go>}}
+func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchLogsEvent, nil)
-
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
+		http.HandlerFunc(echoCloudWatchLogsEvent),
+		sparta.IAMRoleDefinition{})
 	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
 	cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
 	cloudWatchLogsPermission.Filters["MyFilter"] = sparta.CloudWatchLogsSubscriptionFilter{
-		LogGroupName: "/aws/lambda/versions",
+		FilterPattern: "",
+		LogGroupName:  "/aws/lambda/versions",
 	}
 	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
 	return append(lambdaFunctions, lambdaFn)
 }
 {{< /highlight >}}
-
 
 # Wrapping Up
 

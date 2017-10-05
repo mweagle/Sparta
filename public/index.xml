@@ -18,7 +18,7 @@
       <pubDate>Tue, 03 Oct 2017 07:15:40 +0000</pubDate>
       
       <guid>http://gosparta.io/docs/intro_example/step1/</guid>
-      <description>Sparta is a framework for developing and deploying Go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+      <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
 Pricing
 Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
     </item>
@@ -41,7 +41,7 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
       <guid>http://gosparta.io/docs/apigateway/example1/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaApplication.
 For reference, the echoS3Event function is below.
-funcechoS3Event(event*json.RawMessage,context*sparta.LambdaContext,whttp.ResponseWriter,logger*logrus.Logger){logger.WithFields(logrus.Fields{&amp;#34;RequestID&amp;#34;:context.AWSRequestID,&amp;#34;Event&amp;#34;:string(*event),}).Info(&amp;#34;Request received&amp;#34;)fmt.Fprintf(w,string(*event))}  Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()
+funcechoS3Event(whttp.ResponseWriter,r*http.Request){logger,_:=r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)lambdaContext,_:=r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)decoder:=json.NewDecoder(r.Body)deferr.Body.Close()varjsonMessagejson.RawMessageerr:=decoder.Decode(&amp;amp;jsonMessage)iferr!=nil{http.Error(w,err.Error(),http.StatusInternalServerError)return}logger.WithFields(logrus.Fields{&amp;#34;RequestID&amp;#34;:lambdaContext.AWSRequestID,&amp;#34;Event&amp;#34;:string(jsonMessage),}).Info(&amp;#34;Request received&amp;#34;)w.Header().Set(&amp;#34;Content-Type&amp;#34;,&amp;#34;application/json&amp;#34;)w.Write(jsonMessage)}  Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()
 stage:=sparta.NewStage(&amp;#34;prod&amp;#34;)apiGateway:=sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;,stage)  In the example above, we&amp;rsquo;re also including a Stage value. A non-nil Stage value will cause the registered API to be deployed.</description>
     </item>
     
@@ -140,7 +140,7 @@ In this section we&amp;rsquo;ll walk through a sample user-defined custom resour
       
       <guid>http://gosparta.io/docs/discovery/</guid>
       <description>Introduction The ability to provision dynamic infrastructure (see also the SES Event Source Example) as part of a Sparta application creates a need to discover those resources at lambda execution time.
-Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling Go lambda function.
+Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling go lambda function.
 The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.</description>
     </item>
     
@@ -183,7 +183,7 @@ TODO: CloudFormation source documentation
       <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
 Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
- Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started Our lambda function is relatively small:</description>
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small: funcechoCloudWatchEvent(whttp.</description>
     </item>
     
     <item>
@@ -297,7 +297,7 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>http://gosparta.io/docs/limitations/</guid>
-      <description>Sparta Limitations  Go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome.</description>
+      <description>Sparta Limitations  go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome.</description>
     </item>
     
     <item>
@@ -375,7 +375,7 @@ graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHoo
       
       <guid>http://gosparta.io/docs/overview/</guid>
       <description>This is a brief overview of Sparta&amp;rsquo;s core concepts. Additional information regarding specific features is available from the menu.
-Terms and Concepts At a high level, Sparta transforms a Go binary&amp;rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</description>
+Terms and Concepts At a high level, Sparta transforms a go binary&amp;rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</description>
     </item>
     
     <item>

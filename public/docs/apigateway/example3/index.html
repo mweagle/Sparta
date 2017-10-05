@@ -481,29 +481,31 @@
 
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">ipGeoLambda</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">                  </span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">                  </span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">                  </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">APIGatewayLambdaJSONEvent</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">Unmarshal</span><span style="">([]</span><span style="">byte</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">),</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">return</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">ipGeoLambda</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">APIGatewayLambdaJSONEvent</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style="">	</span><span style="">}</span></code></pre>
 </div>
 
 <p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">parsedIP</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">ParseIP</span><span style="">(</span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">.</span><span style="color:#a6e22e">Identity</span><span style="">.</span><span style="color:#a6e22e">SourceIP</span><span style="">)</span><span style="">
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">parsedIP</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">net</span><span style="">.</span><span style="color:#a6e22e">ParseIP</span><span style="">(</span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">.</span><span style="color:#a6e22e">Identity</span><span style="">.</span><span style="color:#a6e22e">SourceIP</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#a6e22e">record</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">dbHandle</span><span style="">.</span><span style="color:#a6e22e">City</span><span style="">(</span><span style="color:#a6e22e">parsedIP</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to find city: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
 </span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
 </span><span style="">  </span><span style="color:#66d9ef">return</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
-</div>
+</div></p>
 
 <p>Finally, marshal the data or error result and we&rsquo;re done:</p>
 
@@ -516,7 +518,7 @@
 </span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">  </span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Header</span><span style="">().</span><span style="color:#a6e22e">Set</span><span style="">(</span><span style="color:#e6db74">&#34;Content-Type&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;application/json&#34;</span><span style="">)</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#a6e22e">responseBody</span><span style="">))</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Write</span><span style="">(</span><span style="color:#a6e22e">responseBody</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
 
@@ -533,7 +535,7 @@
 
 <p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#75715e">// Main
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">	</span><span style="color:#a6e22e">stage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;ipgeo&#34;</span><span style="">)</span><span style="">
@@ -552,14 +554,14 @@
 </span><span style="">		</span><span style="color:#a6e22e">apiGateway</span><span style="">,</span><span style="">
 </span><span style="">    </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
-</div>
+</div></p>
 
 <h1 id="provision">Provision</h1>
 
 <p>The next step is to provision the stack:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</span></code></pre>
-</div>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</span></code></pre>
+</div></p>
 
 <p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
 
@@ -572,115 +574,115 @@
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 </span><span style="">
-</span><span style="">*   Trying 54.192.70.206...
-</span><span style="">* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com (54.192.70.206) port 443 (#0)
-</span><span style="">* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+</span><span style="">*   Trying </span><span style="color:#ae81ff">54</span><span style="">.192.70.206...
+</span><span style="">* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com </span><span style="color:#f92672">(</span><span style="color:#ae81ff">54</span><span style="">.192.70.206</span><span style="color:#f92672">)</span><span style=""> port </span><span style="color:#ae81ff">443</span><span style=""> </span><span style="color:#f92672">(</span><span style="color:#75715e">#0)
+</span><span style="color:#75715e"></span><span style="">* TLS </span><span style="color:#ae81ff">1</span><span style="">.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 </span><span style="">* Server certificate: *.execute-api.us-west-2.amazonaws.com
-</span><span style="">* Server certificate: Symantec Class 3 Secure Server CA - G4
-</span><span style="">* Server certificate: VeriSign Class 3 Public Primary Certification Authority - G5
+</span><span style="">* Server certificate: Symantec Class </span><span style="color:#ae81ff">3</span><span style=""> Secure Server CA - G4
+</span><span style="">* Server certificate: VeriSign Class </span><span style="color:#ae81ff">3</span><span style=""> Public Primary Certification Authority - G5
 </span><span style="">&gt; GET /ipgeo/info HTTP/1.1
 </span><span style="">&gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
 </span><span style="">&gt; User-Agent: curl/7.43.0
 </span><span style="">&gt; Accept: */*
 </span><span style="">&gt;
-</span><span style="">&lt; HTTP/1.1 200 OK
+</span><span style="">&lt; HTTP/1.1 </span><span style="color:#ae81ff">200</span><span style=""> OK
 </span><span style="">&lt; Content-Type: application/json
-</span><span style="">&lt; Content-Length: 1129
+</span><span style="">&lt; Content-Length: </span><span style="color:#ae81ff">1129</span><span style="">
 </span><span style="">&lt; Connection: keep-alive
-</span><span style="">&lt; Date: Sun, 06 Dec 2015 21:50:18 GMT
+</span><span style="">&lt; Date: Sun, </span><span style="color:#ae81ff">06</span><span style=""> Dec </span><span style="color:#ae81ff">2015</span><span style=""> </span><span style="color:#ae81ff">21</span><span style="">:50:18 GMT
 </span><span style="">&lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
 </span><span style="">&lt; X-Cache: Miss from cloudfront
-</span><span style="">&lt; Via: 1.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net (CloudFront)
-</span><span style="">&lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw==
+</span><span style="">&lt; Via: </span><span style="color:#ae81ff">1</span><span style="">.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net </span><span style="color:#f92672">(</span><span style="">CloudFront</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">&lt; X-Amz-Cf-Id: </span><span style="">5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw</span><span style=""></span><span style="color:#f92672">==</span><span style="">
 </span><span style="">&lt;
-</span><span style="">* Connection #0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-</span><span style="">{&#34;code&#34;:200,&#34;status&#34;:&#34;OK&#34;,&#34;headers&#34;:{&#34;content-type&#34;:&#34;application/json&#34;,&#34;date&#34;:&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;,&#34;content-length&#34;:&#34;984&#34;},&#34;results&#34;:{&#34;info&#34;:{&#34;City&#34;:{&#34;GeoNameID&#34;:0,&#34;Names&#34;:null},&#34;Continent&#34;:{&#34;Code&#34;:&#34;NA&#34;,&#34;GeoNameID&#34;:6255149,&#34;Names&#34;:{&#34;de&#34;:&#34;Nordamerika&#34;,&#34;en&#34;:&#34;North America&#34;,&#34;es&#34;:&#34;Norteamérica&#34;,&#34;fr&#34;:&#34;Amérique du Nord&#34;,&#34;ja&#34;:&#34;北アメリカ&#34;,&#34;pt-BR&#34;:&#34;América do Norte&#34;,&#34;ru&#34;:&#34;Северная Америка&#34;,&#34;zh-CN&#34;:&#34;北美洲&#34;}},&#34;Country&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;Location&#34;:{&#34;Latitude&#34;:0,&#34;Longitude&#34;:0,&#34;MetroCode&#34;:0,&#34;TimeZone&#34;:&#34;&#34;},&#34;Postal&#34;:{&#34;Code&#34;:&#34;&#34;},&#34;RegisteredCountry&#34;:{&#34;GeoNameID&#34;:6252001,&#34;IsoCode&#34;:&#34;US&#34;,&#34;Names&#34;:{&#34;de&#34;:&#34;USA&#34;,&#34;en&#34;:&#34;United States&#34;,&#34;es&#34;:&#34;Estados Unidos&#34;,&#34;fr&#34;:&#34;États-Unis&#34;,&#34;ja&#34;:&#34;アメリカ合衆国&#34;,&#34;pt-BR&#34;:&#34;Estados Unidos&#34;,&#34;ru&#34;:&#34;США&#34;,&#34;zh-CN&#34;:&#34;美国&#34;}},&#34;RepresentedCountry&#34;:{&#34;GeoNameID&#34;:0,&#34;IsoCode&#34;:&#34;&#34;,&#34;Names&#34;:null,&#34;Type&#34;:&#34;&#34;},&#34;Subdivisions&#34;:null,&#34;Traits&#34;:{&#34;IsAnonymousProxy&#34;:false,&#34;IsSatelliteProvider&#34;:false}}}}</span></code></pre>
+</span><span style="">* Connection </span><span style="color:#75715e">#0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
+</span><span style="color:#75715e"></span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;code&#34;</span><span style="">:200,</span><span style="color:#e6db74">&#34;status&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;OK&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;headers&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;content-type&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;application/json&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;date&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;content-length&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;984&#34;</span><span style="color:#f92672">}</span><span style="">,</span><span style="color:#e6db74">&#34;results&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;info&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;City&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span><span style="">:0,</span><span style="color:#e6db74">&#34;Names&#34;</span><span style="">:null</span><span style="color:#f92672">}</span><span style="">,</span><span style="color:#e6db74">&#34;Continent&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;NA&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span><span style="">:6255149,</span><span style="color:#e6db74">&#34;Names&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Nordamerika&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;en&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;North America&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;es&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Norteamérica&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;fr&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Amérique du Nord&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ja&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;北アメリカ&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;pt-BR&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;América do Norte&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ru&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Северная Америка&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;zh-CN&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;北美洲&#34;</span><span style="color:#f92672">}}</span><span style="">,</span><span style="color:#e6db74">&#34;Country&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span><span style="">:6252001,</span><span style="color:#e6db74">&#34;IsoCode&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;US&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;Names&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;USA&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;en&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;United States&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;es&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;fr&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;États-Unis&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ja&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;pt-BR&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ru&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;США&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;zh-CN&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span><span style="">,</span><span style="color:#e6db74">&#34;Location&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Latitude&#34;</span><span style="">:0,</span><span style="color:#e6db74">&#34;Longitude&#34;</span><span style="">:0,</span><span style="color:#e6db74">&#34;MetroCode&#34;</span><span style="">:0,</span><span style="color:#e6db74">&#34;TimeZone&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span><span style="">,</span><span style="color:#e6db74">&#34;Postal&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span><span style="">,</span><span style="color:#e6db74">&#34;RegisteredCountry&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span><span style="">:6252001,</span><span style="color:#e6db74">&#34;IsoCode&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;US&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;Names&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;USA&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;en&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;United States&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;es&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;fr&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;États-Unis&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ja&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;pt-BR&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;ru&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;США&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;zh-CN&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span><span style="">,</span><span style="color:#e6db74">&#34;RepresentedCountry&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span><span style="">:0,</span><span style="color:#e6db74">&#34;IsoCode&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;&#34;</span><span style="">,</span><span style="color:#e6db74">&#34;Names&#34;</span><span style="">:null,</span><span style="color:#e6db74">&#34;Type&#34;</span><span style="">:</span><span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span><span style="">,</span><span style="color:#e6db74">&#34;Subdivisions&#34;</span><span style="">:null,</span><span style="color:#e6db74">&#34;Traits&#34;</span><span style="">:</span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;IsAnonymousProxy&#34;</span><span style="">:false,</span><span style="color:#e6db74">&#34;IsSatelliteProvider&#34;</span><span style="">:false</span><span style="color:#f92672">}}}}</span></code></pre>
 </div>
 
 <p>Pretty-printing the response body:</p>
 
-<pre><code class="language-json">{
-  &quot;code&quot;: 200,
-  &quot;status&quot;: &quot;OK&quot;,
-  &quot;headers&quot;: {
-    &quot;content-type&quot;: &quot;application/json&quot;,
-    &quot;date&quot;: &quot;Sun, 06 Dec 2015 17:50:15 GMT&quot;,
-    &quot;content-length&quot;: &quot;984&quot;
-  },
-  &quot;results&quot;: {
-    &quot;info&quot;: {
-      &quot;City&quot;: {
-        &quot;GeoNameID&quot;: 0,
-        &quot;Names&quot;: null
-      },
-      &quot;Continent&quot;: {
-        &quot;Code&quot;: &quot;NA&quot;,
-        &quot;GeoNameID&quot;: 6255149,
-        &quot;Names&quot;: {
-          &quot;de&quot;: &quot;Nordamerika&quot;,
-          &quot;en&quot;: &quot;North America&quot;,
-          &quot;es&quot;: &quot;Norteamérica&quot;,
-          &quot;fr&quot;: &quot;Amérique du Nord&quot;,
-          &quot;ja&quot;: &quot;北アメリカ&quot;,
-          &quot;pt-BR&quot;: &quot;América do Norte&quot;,
-          &quot;ru&quot;: &quot;Северная Америка&quot;,
-          &quot;zh-CN&quot;: &quot;北美洲&quot;
-        }
-      },
-      &quot;Country&quot;: {
-        &quot;GeoNameID&quot;: 6252001,
-        &quot;IsoCode&quot;: &quot;US&quot;,
-        &quot;Names&quot;: {
-          &quot;de&quot;: &quot;USA&quot;,
-          &quot;en&quot;: &quot;United States&quot;,
-          &quot;es&quot;: &quot;Estados Unidos&quot;,
-          &quot;fr&quot;: &quot;États-Unis&quot;,
-          &quot;ja&quot;: &quot;アメリカ合衆国&quot;,
-          &quot;pt-BR&quot;: &quot;Estados Unidos&quot;,
-          &quot;ru&quot;: &quot;США&quot;,
-          &quot;zh-CN&quot;: &quot;美国&quot;
-        }
-      },
-      &quot;Location&quot;: {
-        &quot;Latitude&quot;: 0,
-        &quot;Longitude&quot;: 0,
-        &quot;MetroCode&quot;: 0,
-        &quot;TimeZone&quot;: &quot;&quot;
-      },
-      &quot;Postal&quot;: {
-        &quot;Code&quot;: &quot;&quot;
-      },
-      &quot;RegisteredCountry&quot;: {
-        &quot;GeoNameID&quot;: 6252001,
-        &quot;IsoCode&quot;: &quot;US&quot;,
-        &quot;Names&quot;: {
-          &quot;de&quot;: &quot;USA&quot;,
-          &quot;en&quot;: &quot;United States&quot;,
-          &quot;es&quot;: &quot;Estados Unidos&quot;,
-          &quot;fr&quot;: &quot;États-Unis&quot;,
-          &quot;ja&quot;: &quot;アメリカ合衆国&quot;,
-          &quot;pt-BR&quot;: &quot;Estados Unidos&quot;,
-          &quot;ru&quot;: &quot;США&quot;,
-          &quot;zh-CN&quot;: &quot;美国&quot;
-        }
-      },
-      &quot;RepresentedCountry&quot;: {
-        &quot;GeoNameID&quot;: 0,
-        &quot;IsoCode&quot;: &quot;&quot;,
-        &quot;Names&quot;: null,
-        &quot;Type&quot;: &quot;&quot;
-      },
-      &quot;Subdivisions&quot;: null,
-      &quot;Traits&quot;: {
-        &quot;IsAnonymousProxy&quot;: false,
-        &quot;IsSatelliteProvider&quot;: false
-      }
-    }
-  }
-}
-</code></pre>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;code&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">200</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;status&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;OK&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;headers&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;content-type&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;application/json&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;date&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Sun, 06 Dec 2015 17:50:15 GMT&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;content-length&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;984&#34;</span><span style="">
+</span><span style="">  </span><span style="">},</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;results&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;info&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;City&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;GeoNameID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Names&#34;</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">null</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Continent&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Code&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;NA&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;GeoNameID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">6255149</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Names&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;de&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Nordamerika&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;en&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;North America&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;es&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Norteamérica&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;fr&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Amérique du Nord&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ja&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;北アメリカ&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;pt-BR&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;América do Norte&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ru&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Северная Америка&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;zh-CN&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;北美洲&#34;</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Country&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;GeoNameID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">6252001</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;IsoCode&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;US&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Names&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;de&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;USA&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;en&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;United States&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;es&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;fr&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;États-Unis&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ja&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;pt-BR&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ru&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;США&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;zh-CN&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;美国&#34;</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Location&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Latitude&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Longitude&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;MetroCode&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;TimeZone&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Postal&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Code&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;RegisteredCountry&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;GeoNameID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">6252001</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;IsoCode&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;US&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Names&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;de&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;USA&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;en&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;United States&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;es&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;fr&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;États-Unis&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ja&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;pt-BR&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Estados Unidos&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ru&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;США&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;zh-CN&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;美国&#34;</span><span style="">
+</span><span style="">        </span><span style="">}</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;RepresentedCountry&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;GeoNameID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;IsoCode&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Names&#34;</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">null</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Type&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Subdivisions&#34;</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">null</span><span style="">,</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Traits&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;IsAnonymousProxy&#34;</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">false</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;IsSatelliteProvider&#34;</span><span style="">:</span><span style=""> </span><span style="color:#66d9ef">false</span><span style="">
+</span><span style="">      </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div></p>
 
 <p>Please see the <a href="http://gosparta.io/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 

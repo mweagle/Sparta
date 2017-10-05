@@ -19,8 +19,10 @@ Those params will be passed as part of the URL query string.  The function will 
 Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) is expected to be invoked by the API Gateway, we'll start by unmarshalling the event data:
 
 {{< highlight go >}}
+decoder := json.NewDecoder(r.Body)
+defer r.Body.Close()
 var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := json.Unmarshal([]byte(*event), &lambdaEvent)
+err := decoder.Decode(&lambdaEvent)
 if err != nil {
   logger.Error("Failed to unmarshal event data: ", err.Error())
   http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -86,17 +88,20 @@ apiGateway := sparta.NewAPIGateway("SpartaImagerAPI", apiStage)
 Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo` function:
 
 {{< highlight go >}}
-s3ItemInfoOptions := &sparta.LambdaFunctionOptions{
+var iamDynamicRole = sparta.IAMRoleDefinition{}
+iamDynamicRole.Privileges = append(iamDynamicRole.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{"s3:GetObject"},
+    Resource: resourceArn,
+  })
+s3ItemInfoLambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(s3ItemInfo),
+  http.HandlerFunc(s3ItemInfo),
+  iamDynamicRole)
+s3ItemInfoOptions.Options = &sparta.LambdaFunctionOptions{
   Description: "Get information about an item in S3 via querystring params",
   MemorySize:  128,
   Timeout:     10,
 }
-var iamDynamicRole = sparta.IAMRoleDefinition{}
-iamDynamicRole.Privileges = append(iamDynamicRole.Privileges, sparta.IAMRolePrivilege{
-  Actions:  []string{"s3:GetObject"},
-  Resource: resourceArn,
-})
-s3ItemInfoLambdaFn := sparta.NewLambda(iamDynamicRole, s3ItemInfo, s3ItemInfoOptions)
 {{< /highlight >}}
 
 A few items to note here:

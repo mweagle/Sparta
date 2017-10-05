@@ -4,7 +4,7 @@ title: Sample Service
 weight: 10
 ---
 
-Sparta is a framework for developing and deploying **Go** based AWS Lambda-backed microservices.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
+Sparta is a framework for developing and deploying **go** based AWS Lambda-backed microservices.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
 {{< warning title="Pricing" >}}
    Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.  It's likely that you'll be well under the free tier, but secondary AWS resources provisioned during development (eg, Kinesis streams) are not pay-per-invocation.
@@ -66,7 +66,7 @@ lambdaFunctions = append(lambdaFunctions, helloWorldFn)
 We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to register a new lambda target via `HandleAWSLambda`.  `HandleAWSLambda` accepts three parameters:
 
   * `string`: The function name. A sanitized version of this value is used as the [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname).
-  * `http.HandlerFunc`: The **Go** function to execute.
+  * `http.HandlerFunc`: The **go** function to execute.
   * `string|IAMRoleDefinition` : *Either* a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
     - In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
 

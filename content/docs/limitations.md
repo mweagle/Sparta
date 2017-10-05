@@ -6,7 +6,7 @@ weight: 10
 
 # Sparta Limitations
 
-  * **Go** isn't officially supported by AWS (yet)
+  * **go** isn't officially supported by AWS (yet)
     * But, you can [vote](https://twitter.com/awscloud/status/659795641204260864) to make _golang_ officially supported.
     * Because of this, for the default NodeJS proxying is a per-container initialization cost of:
         * Copying the embedded binary to _/tmp_

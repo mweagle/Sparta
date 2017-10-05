@@ -15,14 +15,11 @@ The goal of this example is to provision a Sparta lambda function that logs Amaz
 We'll start with an empty lambda function and build up the needed functionality.
 
 {{< highlight go >}}
-func echoKinesisEvent(event *json.RawMessage,
-                      context *sparta.LambdaContext,
-                      w http.ResponseWriter,
-                      logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-		"RequestID": context.AWSRequestID,
-		"Event":     string(*event),
+func echoKinesisEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AWSRequestID,
 	}).Info("Request received")
 
 {{< /highlight >}}
@@ -31,17 +28,19 @@ For this sample all we're going to do is unmarshal the Kinesis [event](http://do
 
 {{< highlight go >}}
 
-  var lambdaEvent spartaKinesis.Event
-  err := json.Unmarshal([]byte(*event), &lambdaEvent)
-  if err != nil {
-    logger.Error("Failed to unmarshal event data: ", err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-  for _, eachRecord := range lambdaEvent.Records {
-    logger.WithFields(logrus.Fields{
-      "EventID": eachRecord.EventID,
-    }).Info("Kinesis Event")
-  }
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	var lambdaEvent spartaKinesis.Event
+	err := decoder.Decode(&lambdaEvent)
+	if err != nil {
+		logger.Error("Failed to unmarshal event data: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	for _, eachRecord := range lambdaEvent.Records {
+		logger.WithFields(logrus.Fields{
+			"EventID": eachRecord.EventID,
+		}).Info("Kinesis Event")
+	}
 }
 {{< /highlight >}}
 
@@ -49,10 +48,12 @@ With the function defined let's register it with Sparta.
 
 # Sparta Integration
 
-First we wrap the **Go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
+First we wrap the **go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
 
 {{< highlight go >}}
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoKinesisEvent, nil)
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent),
+	http.HandlerFunc(echoKinesisEvent),
+	sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
 Since our lambda function doesn't access any other AWS Services, we can use an empty IAMRoleDefinition (`sparta.IAMRoleDefinition{}`).
@@ -62,12 +63,13 @@ Since our lambda function doesn't access any other AWS Services, we can use an e
 Then last step is to configure our AWS Lambda function with Kinesis as the [EventSource](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 
 {{< highlight go >}}
-lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, &lambda.CreateEventSourceMappingInput{
-  EventSourceArn:   aws.String(kinesisTestStream),
-  StartingPosition: aws.String("TRIM_HORIZON"),
-  BatchSize:        aws.Int64(100),
-  Enabled:          aws.Bool(true),
-})
+lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+  &lambda.CreateEventSourceMappingInput{
+    EventSourceArn:   aws.String(kinesisTestStream),
+    StartingPosition: aws.String("TRIM_HORIZON"),
+    BatchSize:        aws.Int64(100),
+    Enabled:          aws.Bool(true),
+  })
 {{< /highlight >}}
 
 The `kinesisTestStream` parameter is the Kinesis stream ARN (eg: _arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream_) whose events will trigger lambda execution.

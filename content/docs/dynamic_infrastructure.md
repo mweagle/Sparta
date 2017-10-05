@@ -80,7 +80,7 @@ Sparta supports Dynamic Resources via [TemplateDecorator](https://godoc.org/gith
 
 # Template Decorators
 
-A template decorator is a **Go** function with the following signature
+A template decorator is a **go** function with the following signature
 
 ```go
 type TemplateDecorator func(serviceName string,

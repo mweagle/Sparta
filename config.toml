@@ -24,7 +24,7 @@ googleAnalytics = "UA-70794971-1"
 
 	# Code highlighting
 	# https://gohugo.io/content-management/syntax-highlighting
-
+	pygmentsStyle = "vs"
 
 	# Custom assets
 	custom_css = ["css/sparta.css",

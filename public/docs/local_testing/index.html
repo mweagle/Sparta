@@ -529,32 +529,51 @@
 
 <p>With our application defined, let&rsquo;s run it:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight"><span style="">go run main.go explore
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">run</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#66d9ef">go</span><span style=""> </span><span style="color:#a6e22e">explore</span><span style="">
 </span><span style="">
-</span><span style="">INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
-</span><span style="">INFO[0000] --------------------------------------------------------------------------------
-</span><span style="">INFO[0000] The following URLs are available for testing.
-</span><span style="">INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
-</span><span style="">INFO[0000] Functions can be invoked via application/json over POST
-</span><span style="">INFO[0000] 	curl -vs -X POST -H &#34;Content-Type: application/json&#34; --data @testEvent.json http://localhost:9999/main.helloWorld
-</span><span style="">INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
-</span><span style="">INFO[0000] 	{context: {}, event: {}}
-</span><span style="">INFO[0000] Starting Sparta server                        URL=http://localhost:9999</span></code></pre>
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Welcome</span><span style=""> </span><span style="color:#a6e22e">to</span><span style=""> </span><span style="color:#a6e22e">Sparta</span><span style="">                             </span><span style="color:#a6e22e">Option</span><span style="">=</span><span style="color:#a6e22e">explore</span><span style=""> </span><span style="color:#a6e22e">TS</span><span style="">=</span><span style="color:#ae81ff">2016</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#f92672">-</span><span style="color:#ae81ff">31</span><span style="color:#a6e22e">T18</span><span style="">:</span><span style="color:#ae81ff">05</span><span style="">:</span><span style="color:#ae81ff">19</span><span style="color:#a6e22e">Z</span><span style=""> </span><span style="color:#a6e22e">Version</span><span style="">=</span><span style="color:#ae81ff">0.3.0</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#f92672">--------------------------------------------------------------------------------</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">The</span><span style=""> </span><span style="color:#a6e22e">following</span><span style=""> </span><span style="color:#a6e22e">URLs</span><span style=""> </span><span style="color:#a6e22e">are</span><span style=""> </span><span style="color:#a6e22e">available</span><span style=""> </span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">testing</span><span style="">.</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">.</span><span style="color:#a6e22e">helloWorld</span><span style="">                               </span><span style="color:#a6e22e">URL</span><span style="">=</span><span style="color:#a6e22e">http</span><span style="">:</span><span style="color:#75715e">//localhost:9999/main.helloWorld
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Functions</span><span style=""> </span><span style="color:#a6e22e">can</span><span style=""> </span><span style="color:#a6e22e">be</span><span style=""> </span><span style="color:#a6e22e">invoked</span><span style=""> </span><span style="color:#a6e22e">via</span><span style=""> </span><span style="color:#a6e22e">application</span><span style="color:#f92672">/</span><span style="color:#a6e22e">json</span><span style=""> </span><span style="color:#a6e22e">over</span><span style=""> </span><span style="color:#a6e22e">POST</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> 	</span><span style="color:#a6e22e">curl</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">vs</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">X</span><span style=""> </span><span style="color:#a6e22e">POST</span><span style=""> </span><span style="color:#f92672">-</span><span style="color:#a6e22e">H</span><span style=""> </span><span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span><span style=""> </span><span style="color:#f92672">--</span><span style="color:#a6e22e">data</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">testEvent</span><span style="">.</span><span style="color:#a6e22e">json</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">:</span><span style="color:#75715e">//localhost:9999/main.helloWorld
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Where</span><span style=""> </span><span style="color:#960050;background-color:#1e0010">@</span><span style="color:#a6e22e">testEvent</span><span style="">.</span><span style="color:#a6e22e">json</span><span style=""> </span><span style="color:#a6e22e">is</span><span style=""> </span><span style="color:#a6e22e">a</span><span style=""> </span><span style="color:#a6e22e">local</span><span style=""> </span><span style="color:#a6e22e">file</span><span style=""> </span><span style="color:#a6e22e">with</span><span style=""> </span><span style="color:#a6e22e">top</span><span style=""> </span><span style="color:#a6e22e">level</span><span style=""> </span><span style="color:#e6db74">`context`</span><span style=""> </span><span style="color:#a6e22e">and</span><span style=""> </span><span style="color:#e6db74">`event`</span><span style=""> </span><span style="color:#a6e22e">properties</span><span style="">:</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> 	</span><span style="">{</span><span style="color:#a6e22e">context</span><span style="">:</span><span style=""> </span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">event</span><span style="">:</span><span style=""> </span><span style="">{}}</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">INFO</span><span style="">[</span><span style="color:#ae81ff">0000</span><span style="">]</span><span style=""> </span><span style="color:#a6e22e">Starting</span><span style=""> </span><span style="color:#a6e22e">Sparta</span><span style=""> </span><span style="color:#a6e22e">server</span><span style="">                        </span><span style="color:#a6e22e">URL</span><span style="">=</span><span style="color:#a6e22e">http</span><span style="">:</span><span style="color:#f92672">//</span><span style="color:#a6e22e">localhost</span><span style="">:</span><span style="color:#ae81ff">9999</span></code></pre>
 </div></p>
 
-<p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>Go</strong> binary that is used in the AWS Lambda execution environment.</p>
+<p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>go</strong> binary that is used in the AWS Lambda execution environment.</p>
 
 <p>Per the instructions, let&rsquo;s create a <em>testEvent.json</em> file with the required structure:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
 </span><span style="">  </span><span style="color:#f92672">&#34;context&#34;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">{},</span><span style="">
 </span><span style="">  </span><span style="color:#f92672">&#34;event&#34;</span><span style=""> </span><span style="">:</span><span style=""> </span><span style="">{}</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
-</div>
+</div></p>
 
 <p>and post it:</p>
 
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">curl -vs -X POST -H </span><span style="color:#e6db74">&#34;Content-Type: application/json&#34;</span><span style=""> --data @testEvent.json http://localhost:9999/main.helloWorld
+</span><span style="">
+</span><span style="">*   Trying ::1...
+</span><span style="">* Connected to localhost </span><span style="color:#f92672">(</span><span style="">::1</span><span style="color:#f92672">)</span><span style=""> port </span><span style="color:#ae81ff">9999</span><span style=""> </span><span style="color:#f92672">(</span><span style="color:#75715e">#0)
+</span><span style="color:#75715e"></span><span style="">&gt; POST /main.helloWorld HTTP/1.1
+</span><span style="">&gt; Host: localhost:9999
+</span><span style="">&gt; User-Agent: curl/7.43.0
+</span><span style="">&gt; Accept: */*
+</span><span style="">&gt; Content-Type: application/json
+</span><span style="">&gt; Content-Length: </span><span style="color:#ae81ff">33</span><span style="">
+</span><span style="">&gt;
+</span><span style="">* upload completely sent off: </span><span style="color:#ae81ff">33</span><span style=""> out of </span><span style="color:#ae81ff">33</span><span style=""> bytes
+</span><span style="">&lt; HTTP/1.1 </span><span style="color:#ae81ff">200</span><span style=""> OK
+</span><span style="">&lt; Date: Mon, </span><span style="color:#ae81ff">21</span><span style=""> Dec </span><span style="color:#ae81ff">2015</span><span style=""> </span><span style="color:#ae81ff">03</span><span style="">:13:33 GMT
+</span><span style="">&lt; Content-Length: </span><span style="color:#ae81ff">11</span><span style="">
+</span><span style="">&lt; Content-Type: text/plain</span><span style="">;</span><span style=""> </span><span style="">charset</span><span style=""></span><span style="color:#f92672">=</span><span style="">utf-8
+</span><span style="">&lt;
+</span><span style="">* Connection </span><span style="color:#75715e">#0 to host localhost left intact
+</span><span style="color:#75715e"></span><span style="">Hello World</span></code></pre>
+</div>
 
 <p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
 

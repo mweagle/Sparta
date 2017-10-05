@@ -15,48 +15,43 @@ Assume that we're supposed to write a simple "HelloWorld" CloudWatch event funct
 
 # Getting Started
 
-Our lambda function is relatively small:
-
+The lambda function is relatively small:
 {{< highlight go >}}
-func echoCloudWatchEvent(event *json.RawMessage,
-                        context *sparta.LambdaContext,
-                        w http.ResponseWriter,
-                        logger *logrus.Logger) {
-
+func echoCloudWatchEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
 	logger.WithFields(logrus.Fields{
-		"RequestID": context.AWSRequestID,
+		"RequestID": lambdaContext.AWSRequestID,
 	}).Info("Request received")
 
 	config, _ := sparta.Discover()
 	logger.WithFields(logrus.Fields{
-		"RequestID":     context.AWSRequestID,
-		"Event":         string(*event),
+		"RequestID":     lambdaContext.AWSRequestID,
 		"Configuration": config,
 	}).Info("Request received")
-	fmt.Fprintf(w, "Hello World!")
+
+	w.Write([]byte("CloudWatch event received!"))
 }
 {{< /highlight >}}
-
 Our lambda function doesn't need to do much with the event other than log it.
 
 # Sparta Integration {#spartaIntegration}
 
-With `echoCloudWatchEvent()` implemented, the next step is to integrate the **Go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
+With `echoCloudWatchEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
 Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty `sparta.IAMRoleDefinition` value:
-
 {{< highlight go >}}
 func appendCloudWatchEventHandler(api *sparta.API,
-                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
+		http.HandlerFunc(echoCloudWatchEvent),
+		sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
-
 The next step is to add a `CloudWatchEventsPermission` value that includes the two rule triggers.
-
 {{< highlight go >}}
-  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
 cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
 {{< /highlight >}}
 
@@ -65,13 +60,11 @@ Our two rules will be inserted into the `Rules` map in the next steps.
 ## Cron Expression
 
 Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:
-
 {{< highlight go >}}
 cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
   ScheduleExpression: "rate(5 minutes)",
 }
 {{< /highlight >}}
-
 The `ScheduleExpression` value can either be a _rate_ or a _cron_ [expression](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html).  The map keyname is used when adding the [rule](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property) during stack provisioning.
 
 ## Event Pattern
@@ -87,7 +80,7 @@ cloudWatchEventsPermission.Rules["EC2Activity"] = sparta.CloudWatchEventsRule{
 }
 {{< /highlight >}}
 
-The EC2 event pattern is the **Go** JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.
+The EC2 event pattern is the **go** JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.
 
 {{< warning title="Validity Checks" >}}
  Sparta does <b>NOT</b> attempt to validate either <code>ScheduleExpression</code> or <code>EventPattern</code> values prior to calling CloudFormation.  Syntax errors in either value will be detected during provisioning when the Sparta CloudFormation CustomResource calls <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">putRule</a> to add the lambda target.  This error will cause the CloudFormation operation to fail.  Any API errors will be logged & are viewable in the <a href="https://blogs.aws.amazon.com/application-management/post/TxPYD8JT4CB5UY/View-CloudFormation-Logs-in-the-Console">CloudFormation Logs Console</a>.
@@ -107,24 +100,25 @@ Our entire function is therefore:
 
 {{< highlight go >}}
 func appendCloudWatchEventHandler(api *sparta.API,
-                                  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoCloudWatchEvent, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
+		http.HandlerFunc(echoCloudWatchEvent),
+		sparta.IAMRoleDefinition{})
 
-  cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-  cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
-  cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
-    ScheduleExpression: "rate(5 minutes)",
-  }
-  cloudWatchEventsPermission.Rules["EC2Activity"] = sparta.CloudWatchEventsRule{
-    EventPattern: map[string]interface{}{
-    	"source":      []string{"aws.ec2"},
-    	"detail-type": []string{"EC2 Instance State-change Notification"},
-    },
-  }
-  lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-
-  return append(lambdaFunctions, lambdaFn)
+	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
+	cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
+		ScheduleExpression: "rate(5 minutes)",
+	}
+	cloudWatchEventsPermission.Rules["EC2Activity"] = sparta.CloudWatchEventsRule{
+		EventPattern: map[string]interface{}{
+			"source":      []string{"aws.ec2"},
+			"detail-type": []string{"EC2 Instance state change"},
+		},
+	}
+	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+	return append(lambdaFunctions, lambdaFn)
 }
 {{< /highlight >}}
 

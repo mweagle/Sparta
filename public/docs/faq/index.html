@@ -609,7 +609,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 <p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
 
-<p>The CloudWatch log group name includes a sanitized version of your <strong>Go</strong> function name &amp; owning service name.</p>
+<p>The CloudWatch log group name includes a sanitized version of your <strong>go</strong> function name &amp; owning service name.</p>
 
 <h3 id="where-can-i-view-sparta-s-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</h3>
 
@@ -620,8 +620,8 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <p>Sparta publishes two counters:</p>
 
 <ul>
-<li><code>ProcessSpawned</code>: A new <strong>Go</strong> process was spawned to handle requests</li>
-<li><code>ProcessReused</code>: An existing <strong>Go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
+<li><code>ProcessSpawned</code>: A new <strong>go</strong> process was spawned to handle requests</li>
+<li><code>ProcessReused</code>: An existing <strong>go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
 </ul>
 
 <h3 id="how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</h3>

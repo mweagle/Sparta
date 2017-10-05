@@ -9,17 +9,25 @@ To start, we'll create a HTTPS accessible lambda function that simply echoes bac
 For reference, the `echoS3Event` function is below.
 
 {{< highlight go >}}
-func echoS3Event(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger) {
+func echoS3Event(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
 
-  logger.WithFields(logrus.Fields{
-    "RequestID": context.AWSRequestID,
-    "Event":     string(*event),
-  }).Info("Request received")
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	var jsonMessage json.RawMessage
+	err := decoder.Decode(&jsonMessage)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AWSRequestID,
+		"Event":     string(jsonMessage),
+	}).Info("Request received")
 
-  fmt.Fprintf(w, string(*event))
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonMessage)
 }
 {{< /highlight >}}
 
@@ -36,9 +44,12 @@ In the example above, we're also including a [Stage](https://godoc.org/github.co
 
 # Create a Resource
 
-The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the **Go** function:
+The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that encapsulates the **go** function:
 
 {{< highlight go >}}
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3Event),
+  http.HandlerFunc(echoS3Event),
+  sparta.IAMRoleDefinition{})
 apiGatewayResource, _ := api.NewResource("/hello/world/test", lambdaFn)
 apiGatewayResource.NewMethod("GET", http.StatusOK)
 {{< /highlight >}}
@@ -224,13 +235,13 @@ The next example will show how to unmarshal this data and perform request-specif
 
 Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output.
 
-If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the **Go** HTTP response to a Lambda compatible result.
+If there were an error, the response would include additional fields (`code`, `status`, `headers`).  Those fields are injected by the NodeJS proxying tier as part of translating the **go** HTTP response to a Lambda compatible result.
 
 A primary benefit of this envelope is to provide an automatic mapping from Integration Error Response Regular Expression mappings to Method Response codes.  If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
 ![API Gateway](/images/apigateway/IntegrationMapping.png)
 
-The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with **Go**'s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
+The regular expressions are used to translate the integration response, which is just a blob of text provided to `context.done()`, into API Gateway Method responses.  Sparta annotates your lambda functions response with **go**'s [HTTP StatusText](https://golang.org/src/net/http/status.go) values based on the HTTP status code your lambda function produced.  Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
 
 ![API Gateway](/images/apigateway/MethodResponse.png)
 
@@ -243,7 +254,7 @@ These mappings are defaults, and it's possible to override either one by providi
 
 Before moving on, remember to decommission the service via:
 
-{{< highlight nohighlight >}}
+{{< highlight bash >}}
 go run application.go delete
 {{< /highlight >}}
 

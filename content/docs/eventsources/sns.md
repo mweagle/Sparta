@@ -15,16 +15,13 @@ Assume that we have an SNS topic that broadcasts notifications.  We've been aske
 We'll start with an empty lambda function and build up the needed functionality.
 
 {{< highlight go >}}
+func echoSNSEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
 
-func echoSNSEvent(event *json.RawMessage,
-                  context *sparta.LambdaContext,
-                  w http.ResponseWriter,
-                  logger *logrus.Logger)
-{
-  logger.WithFields(logrus.Fields{
-    "RequestID": context.AWSRequestID,
-  }).Info("Request received")
-}
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AWSRequestID,
+	}).Info("Request received")
 {{< /highlight >}}
 
 # Unmarshalling the SNS Event
@@ -34,23 +31,26 @@ Since the `echoSNSEvent` is expected to be triggered by SNS notifications, we wi
 
 {{< highlight go >}}
 
-var lambdaEvent spartaSNS.Event
-err := json.Unmarshal([]byte(*event), &lambdaEvent)
-if err != nil {
-  logger.Error("Failed to unmarshal event data: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}
+  decoder := json.NewDecoder(r.Body)
+  defer r.Body.Close()
+  var lambdaEvent spartaSNS.Event
+  err := decoder.Decode(&lambdaEvent)
+  if err != nil {
+    logger.Error("Failed to unmarshal event data: ", err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
 {{< /highlight >}}
 
 SNS events are delivered in batches, via lists of [EventRecords](https://godoc.org/github.com/mweagle/Sparta/aws/sns#EventRecord
 ), so we'll need to process each record.
 
 {{< highlight go >}}
-for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    "Subject": eachRecord.Sns.Subject,
-    "Message": eachRecord.Sns.Message,
-  }).Info("SNS Event")
+	for _, eachRecord := range lambdaEvent.Records {
+		logger.WithFields(logrus.Fields{
+			"Subject": eachRecord.Sns.Subject,
+			"Message": eachRecord.Sns.Message,
+		}).Info("SNS Event")
+	}
 }
 {{< /highlight >}}
 
@@ -58,10 +58,12 @@ That's enough to get the data into CloudWatch Logs.
 
 # Sparta Integration
 
-With the core of the `echoSNSEvent` complete, the next step is to integrate the **Go** function with Sparta.  This is performed by the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
+With the core of the `echoSNSEvent` complete, the next step is to integrate the **go** function with Sparta.  This is performed by the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
-lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSNSEvent, nil)
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoSNSEvent),
+  http.HandlerFunc(echoSNSEvent),
+  sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
 # Event Source Registration

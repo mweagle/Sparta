@@ -13,7 +13,7 @@ menu:
 
 The ability to provision [dynamic infrastructure](/docs/dynamic_infrastructure) (see also the [SES Event Source Example](/docs/eventsources/ses/#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba)) as part of a Sparta application creates a need to discover those resources at lambda execution time.
 
-Sparta exposes this functionality via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover).  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling **Go** lambda function.
+Sparta exposes this functionality via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover).  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling **go** lambda function.
 
 The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.  It is extracted from `appendDynamicS3BucketLambda` in the  [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
@@ -123,7 +123,7 @@ cfResource := template.AddResource(s3BucketResourceName, &gocf.S3Bucket{
 
 # Special Considerations
 
-You may have noticed that `sparta.Discover()` doesn't accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant **Go** function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) values and enables unique discovery.
+You may have noticed that `sparta.Discover()` doesn't accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant **go** function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) values and enables unique discovery.
 
 # Wrapping Up
 

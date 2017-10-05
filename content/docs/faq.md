@@ -139,7 +139,7 @@ func lambdaDecorator(serviceName string,
 
 Each lambda function includes privileges to write to [CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home).  The `*logrus.logger` output is written (with a brief delay) to a lambda-specific log group.
 
-The CloudWatch log group name includes a sanitized version of your **Go** function name & owning service name.
+The CloudWatch log group name includes a sanitized version of your **go** function name & owning service name.
 
 ### Where can I view Sparta's golang spawn metrics?
 
@@ -149,8 +149,8 @@ Visit the [CloudWatch Metrics](https://aws.amazon.com/cloudwatch/) AWS console p
 
 Sparta publishes two counters:
 
-  * `ProcessSpawned`: A new **Go** process was spawned to handle requests
-  * `ProcessReused`: An existing **Go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
+  * `ProcessSpawned`: A new **go** process was spawned to handle requests
+  * `ProcessReused`: An existing **go** process was used to handle requests.  See also the discussion on AWS Lambda [container reuse](https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/).
 
 ### How can I include additional AWS resources as part of my Sparta application?
 

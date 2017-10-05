@@ -60,7 +60,7 @@ func main() {
 
 With our application defined, let's run it:
 
-{{< highlight nohighlight>}}
+{{< highlight go >}}
 go run main.go explore
 
 INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
@@ -74,7 +74,7 @@ INFO[0000] 	{context: {}, event: {}}
 INFO[0000] Starting Sparta server                        URL=http://localhost:9999
 {{< /highlight >}}
 
-The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **Go** binary that is used in the AWS Lambda execution environment.
+The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **go** binary that is used in the AWS Lambda execution environment.
 
 Per the instructions, let's create a _testEvent.json_ file with the required structure:
 
@@ -87,7 +87,7 @@ Per the instructions, let's create a _testEvent.json_ file with the required str
 
 and post it:
 
-{{< highlight >}}
+{{< highlight bash >}}
 curl -vs -X POST -H "Content-Type: application/json" --data @testEvent.json http://localhost:9999/main.helloWorld
 
 *   Trying ::1...
@@ -122,8 +122,7 @@ To integrate with the existing [go test](https://golang.org/pkg/testing/) comman
 
 To show this in action, let's walk through how Sparta [does this](https://github.com/mweagle/Sparta/blob/master/explore_test.go):
 
-{{< highlight go>}}
-
+{{< highlight go >}}
 func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test
 	var lambdaFunctions []*LambdaAWSInfo
