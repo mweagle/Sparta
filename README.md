@@ -57,6 +57,7 @@ _Thanks to all Sparta contributors (alphabetical)_
   - [James Brook](https://github.com/jbrook)
   - [Ryan Brown](https://github.com/ryansb)
   - [sdbeard](https://github.com/sdbeard)
+  - [Scott Raine](https://github.com/nylar)
   - [Paul Seiffert](https://github.com/seiffert)
   - [Thom Shutt](https://github.com/thomshutt)
 
