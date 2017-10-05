@@ -1119,10 +1119,6 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 		return nil, err
 	}
 	logger.Level = logLevel
-	// Running in CI?
-	if "" != os.Getenv("CI") {
-		logger.Level = logrus.DebugLevel
-	}
 	if nil != formatter {
 		logger.Formatter = formatter
 	}
