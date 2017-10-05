@@ -473,7 +473,7 @@
 
 			
 
-<p>Sparta is a framework for developing and deploying <strong>Go</strong> based AWS Lambda-backed microservices.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
+<p>Sparta is a framework for developing and deploying <strong>go</strong> based AWS Lambda-backed microservices.  To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS.  Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.</p>
 
 <div class="admonition warning">
 <p class="admonition-title">Pricing</p>
@@ -546,7 +546,7 @@
 
 <ul>
 <li><code>string</code>: The function name. A sanitized version of this value is used as the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname">FunctionName</a>.</li>
-<li><code>http.HandlerFunc</code>: The <strong>Go</strong> function to execute.</li>
+<li><code>http.HandlerFunc</code>: The <strong>go</strong> function to execute.</li>
 <li><code>string|IAMRoleDefinition</code> : <em>Either</em> a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, <em>OR</em> a <code>sparta.IAMRoleDefinition</code> value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
 
 <ul>

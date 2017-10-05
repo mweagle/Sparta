@@ -480,7 +480,7 @@
 
 <p>The ability to provision <a href="http://gosparta.io/docs/dynamic_infrastructure">dynamic infrastructure</a> (see also the <a href="http://gosparta.io/docs/eventsources/ses/#dynamic-resources:d680e8a854a7cbad6d490c445cba2eba">SES Event Source Example</a>) as part of a Sparta application creates a need to discover those resources at lambda execution time.</p>
 
-<p>Sparta exposes this functionality via <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover</a>.  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling <strong>Go</strong> lambda function.</p>
+<p>Sparta exposes this functionality via <a href="https://godoc.org/github.com/mweagle/Sparta#Discover">sparta.Discover</a>.  This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling <strong>go</strong> lambda function.</p>
 
 <p>The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.  It is extracted from <code>appendDynamicS3BucketLambda</code> in the  <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">SpartaApplication</a> source.</p>
 
@@ -583,7 +583,7 @@ for _, eachResource := range configuration.Resources {
 
 <h1 id="special-considerations">Special Considerations</h1>
 
-<p>You may have noticed that <code>sparta.Discover()</code> doesn&rsquo;t accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant <strong>Go</strong> function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> values and enables unique discovery.</p>
+<p>You may have noticed that <code>sparta.Discover()</code> doesn&rsquo;t accept any parameters.  Sparta distinguishes different invocations by using the enclosing Sparta-compliant <strong>go</strong> function name.  This name is discovered by reflection, which creates a 1-to-1 mapping with <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> values and enables unique discovery.</p>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 

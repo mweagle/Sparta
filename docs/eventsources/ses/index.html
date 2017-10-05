@@ -487,16 +487,13 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<pre><code class="language-go">func echoSESEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
-
-{
-  logger.WithFields(logrus.Fields{
-    &quot;RequestID&quot;: context.AWSRequestID,
-  }).Info(&quot;Request received&quot;)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">echoSESEvent</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;RequestID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">lambdaContext</span><span style="">.</span><span style="color:#a6e22e">AWSRequestID</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Request received&#34;</span><span style="">)</span></code></pre>
+</div>
 
 <h1 id="unmarshalling-the-ses-event">Unmarshalling the SES Event</h1>
 
@@ -522,7 +519,7 @@
 <li>As we need a new S3 bucket, we&rsquo;re relying on AWS to generate a <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">unique name</a>.  But this means that our lambda function doesn&rsquo;t know the S3 bucket name during provisioning.</li>
 <li>In fact, we shouldn&rsquo;t even create an AWS Lambda function if the S3 bucket can&rsquo;t be created.</li>
 </ul></li>
-<li>Include an IAMPrivilege so that our <strong>Go</strong> function can access the dynamically created bucket</li>
+<li>Include an IAMPrivilege so that our <strong>go</strong> function can access the dynamically created bucket</li>
 <li>Discover the S3 Bucket at lambda execution time</li>
 </ul>
 
@@ -530,33 +527,34 @@
 
 <p>Let&rsquo;s first take a look at how the SES lambda handler provisions a new S3 bucket via the <a href="https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage">MessageBodyStorage</a> type:</p>
 
-<pre><code class="language-go">
-func appendSESLambda(api *sparta.API,
-  lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-
-  // Setup options s.t. the lambda function has time to consume the message body
-  sesItemInfoOptions := &amp;sparta.LambdaFunctionOptions{
-    Description: &quot;&quot;,
-    MemorySize:  128,
-    Timeout:     10,
-  }
-  // Our lambda function will need to be able to read from the bucket, which
-  // will be handled by the S3MessageBodyBucketDecorator below
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoSESEvent, sesItemInfoOptions)
-
-  // Add a Permission s.t. the Lambda function automatically manages SES registration
-  sesPermission := sparta.SESPermission{
-    BasePermission: sparta.BasePermission{
-      // SES only supports wildcard ARNs
-      SourceArn: &quot;*&quot;,
-    },
-    InvocationType: &quot;Event&quot;,
-  }
-  // Store the message body
-  bodyStorage, _ := sesPermission.NewMessageBodyStorageResource(&quot;Special&quot;)
-  sesPermission.MessageBodyStorage = bodyStorage
-
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">appendSESLambda</span><span style="">(</span><span style="color:#a6e22e">api</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">API</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Our lambda function will need to be able to read from the bucket, which
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#75715e">// will be handled by the S3MessageBodyBucketDecorator below
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">echoSESEvent</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">echoSESEvent</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
+</span><span style="">	</span><span style="color:#75715e">// Setup options s.t. the lambda function has time to consume the message body
+</span><span style="color:#75715e"></span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Options</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaFunctionOptions</span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">Description</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">MemorySize</span><span style="">:</span><span style="">  </span><span style="color:#ae81ff">128</span><span style="">,</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">Timeout</span><span style="">:</span><span style="">     </span><span style="color:#ae81ff">10</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Add a Permission s.t. the Lambda function automatically manages SES registration
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#a6e22e">sesPermission</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">SESPermission</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#75715e">// SES only supports wildcard ARNs
+</span><span style="color:#75715e"></span><span style="">      </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;*&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="">},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">InvocationType</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Event&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Store the message body
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#a6e22e">bodyStorage</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">NewMessageBodyStorageResource</span><span style="">(</span><span style="color:#e6db74">&#34;Special&#34;</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">MessageBodyStorage</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">bodyStorage</span></code></pre>
+</div>
 
 <p>The <code>MessageBodyStorage</code> type (and the related <a href="https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions">MessageBodyStorageOptions</a> type) cause our SESPermission handler to  add an <a href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html">S3 ReceiptRule</a> at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.</p>
 
@@ -564,36 +562,38 @@ func appendSESLambda(api *sparta.API,
 
 <p>Our SES handler then adds two <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html">ReceiptRules</a>:</p>
 
-<pre><code class="language-go">sesPermission.ReceiptRules = make([]sparta.ReceiptRule, 0)
-sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-  Name:       &quot;Special&quot;,
-  Recipients: []string{&quot;sombody_special@gosparta.io&quot;},
-  TLSPolicy:  &quot;Optional&quot;,
-})
-sesPermission.ReceiptRules = append(sesPermission.ReceiptRules, sparta.ReceiptRule{
-  Name:       &quot;Default&quot;,
-  Recipients: []string{},
-  TLSPolicy:  &quot;Optional&quot;,
-})
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">ReceiptRules</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">make</span><span style="">([]</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ReceiptRule</span><span style="">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">ReceiptRules</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">ReceiptRules</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ReceiptRule</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Name</span><span style="">:</span><span style="">       </span><span style="color:#e6db74">&#34;Special&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Recipients</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;sombody_special@gosparta.io&#34;</span><span style="">},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">TLSPolicy</span><span style="">:</span><span style="">  </span><span style="color:#e6db74">&#34;Optional&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">})</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">ReceiptRules</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">ReceiptRules</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ReceiptRule</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Name</span><span style="">:</span><span style="">       </span><span style="color:#e6db74">&#34;Default&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Recipients</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">TLSPolicy</span><span style="">:</span><span style="">  </span><span style="color:#e6db74">&#34;Optional&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">})</span></code></pre>
+</div>
 
 <h2 id="dynamic-iamprivilege-arn">Dynamic IAMPrivilege Arn</h2>
 
 <p>Our lambda function is required to access the message body in the dynamically created <code>MessageBodyStorage</code> resource, but the S3 resource Arn is only defined <em>after</em> the service is provisioned.  The solution to this is to reference the dynamically generated <code>BucketArnAllKeys()</code> value in the <code>sparta.IAMRolePrivilege</code> initializer:</p>
 
-<pre><code class="language-go">// Then add the privilege to the Lambda function s.t. we can actually get at the data
-lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []string{&quot;s3:GetObject&quot;, &quot;s3:HeadObject&quot;},
-    Resource: sesPermission.MessageBodyStorage.BucketArnAllKeys(),
-})
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Then add the privilege to the Lambda function s.t. we can actually get at the data
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">RoleDefinition</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">RoleDefinition</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRolePrivilege</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Actions</span><span style="">:</span><span style="">  </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:GetObject&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;s3:HeadObject&#34;</span><span style="">},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Resource</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">MessageBodyStorage</span><span style="">.</span><span style="color:#a6e22e">BucketArnAllKeys</span><span style="">(),</span><span style="">
+</span><span style=""></span><span style="">})</span></code></pre>
+</div>
 
 <p>The last step is to register the <code>SESPermission</code> with the lambda info:</p>
 
-<pre><code class="language-go">// Finally add the SES permission to the lambda function
-lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Finally add the SES permission to the lambda function
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sesPermission</span><span style="">)</span></code></pre>
+</div>
 
 <p>At this point we&rsquo;ve implicitly created an S3 bucket via the <code>MessageBodyStorage</code> value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.</p>
 
@@ -601,13 +601,13 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)
 
 <p>Our <code>echoSESEvent</code> function needs to determine, at execution time, the <code>MessageBodyStorage</code> S3 bucket name.  This is done via <code>sparta.Discover()</code>:</p>
 
-<pre><code class="language-go">configuration, configErr := sparta.Discover()
-
-logger.WithFields(logrus.Fields{
-  &quot;Error&quot;:         configErr,
-  &quot;Configuration&quot;: configuration,
-}).Debug(&quot;Discovery results&quot;)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">configuration</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">configErr</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Discover</span><span style="">()</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;Error&#34;</span><span style="">:</span><span style="">         </span><span style="color:#a6e22e">configErr</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#e6db74">&#34;Configuration&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">configuration</span><span style="">,</span><span style="">
+</span><span style=""></span><span style="">}).</span><span style="color:#a6e22e">Debug</span><span style="">(</span><span style="color:#e6db74">&#34;Discovery results&#34;</span><span style="">)</span></code></pre>
+</div>
 
 <p>The <code>sparta.Discover()</code> function returns a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DiscoveryInfo</a> structure.  This structure is the unmarshaled CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html">Metadata</a> of the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html">Lambda::Function</a> resource.</p>
 
@@ -624,79 +624,81 @@ logger.WithFields(logrus.Fields{
 
 <p>A sample <code>DiscoveryInfo</code> for SES is below :</p>
 
-<pre><code class="language-json">{
-  &quot;Region&quot;: &quot;us-west-2&quot;,
-  &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/a94e1e70-cc2a-11e5-b38e-50d5ca789e4a&quot;,
-  &quot;StackName&quot;: &quot;SpartaApplication&quot;,
-  &quot;Resources&quot;: {
-    &quot;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&quot;: {
-      &quot;ResourceID&quot;: &quot;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&quot;,
-      &quot;Properties&quot;: {
-        &quot;DomainName&quot;: &quot;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3.amazonaws.com&quot;,
-        &quot;Ref&quot;: &quot;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp&quot;,
-        &quot;WebsiteURL&quot;: &quot;http://spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3-website-us-west-2.amazonaws.com&quot;,
-        &quot;sparta:cloudformation:restype&quot;: &quot;AWS::S3::Bucket&quot;
-      },
-      &quot;Tags&quot;: {
-        &quot;sparta:logicalBucketName&quot;: &quot;Special&quot;
-      }
-    }
-  }
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Region&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;us-west-2&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;StackID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/a94e1e70-cc2a-11e5-b38e-50d5ca789e4a&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;StackName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;SpartaApplication&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Resources&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;ResourceID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&#34;</span><span style="">,</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Properties&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;DomainName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3.amazonaws.com&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;Ref&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;WebsiteURL&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3-website-us-west-2.amazonaws.com&#34;</span><span style="">,</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;sparta:cloudformation:restype&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;AWS::S3::Bucket&#34;</span><span style="">
+</span><span style="">      </span><span style="">},</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;Tags&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">        </span><span style="color:#f92672">&#34;sparta:logicalBucketName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Special&#34;</span><span style="">
+</span><span style="">      </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>Note that the <code>Resources</code> map has an entry for the S3 bucket.  Our code just needs to root around a bit to find the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html">Ref</a> property which is the immediate dependencies bucket name output.  If there were multiple resources, we could have disambiguated by also filtering for the <em>Special</em> tag, which is the logical name we provided earlier:</p>
 
-<pre><code class="language-go">sesPermission.NewMessageBodyStorageResource(&quot;Special&quot;)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">sesPermission</span><span style="">.</span><span style="color:#a6e22e">NewMessageBodyStorageResource</span><span style="">(</span><span style="color:#e6db74">&#34;Special&#34;</span><span style="">)</span></code></pre>
+</div>
 
 <p>As we only have a single dependency, our discovery filter is:</p>
 
-<pre><code class="language-go">// The message bucket is an explicit `DependsOn` relationship, so it'll be in the
-// resources map.  We'll find it by looking for the dependent resource with the &quot;AWS::S3::Bucket&quot; type
-bucketName := &quot;&quot;
-for _, eachResource := range configuration.Resources {
-  if eachResource.Properties[sparta.TagResourceType] == &quot;AWS::S3::Bucket&quot; {
-    bucketName = eachResource.Properties[&quot;Ref&quot;]
-  }
-}
-if &quot;&quot; == bucketName {
-  logger.Error(&quot;Failed to discover SES bucket from sparta.Discovery&quot;)
-  http.Error(w, &quot;Failed to discovery SES MessageBodyBucket&quot;, http.StatusInternalServerError)
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// The message bucket is an explicit `DependsOn` relationship, so it&#39;ll be in the
+</span><span style="color:#75715e">// resources map.  We&#39;ll find it by looking for the dependent resource with the &#34;AWS::S3::Bucket&#34; type
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">bucketName</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">configuration</span><span style="">.</span><span style="color:#a6e22e">Resources</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style="">.</span><span style="color:#a6e22e">Properties</span><span style="">[</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">TagResourceType</span><span style="">]</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#e6db74">&#34;AWS::S3::Bucket&#34;</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">bucketName</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">eachResource</span><span style="">.</span><span style="color:#a6e22e">Properties</span><span style="">[</span><span style="color:#e6db74">&#34;Ref&#34;</span><span style="">]</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="color:#a6e22e">bucketName</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to discover SES bucket from sparta.Discovery&#34;</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;Failed to discovery SES MessageBodyBucket&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="sparta-integration">Sparta Integration</h1>
 
 <p>The rest of <code>echoSESEvent</code> satisfies the other requirements, with a bit of help from the SES <a href="https://godoc.org/github.com/mweagle/Sparta/aws/ses">event types</a>:</p>
 
-<pre><code class="language-go">var lambdaEvent spartaSES.Event
-err := json.Unmarshal([]byte(*event), &amp;lambdaEvent)
-if err != nil {
-  logger.Error(&quot;Failed to unmarshal event data: &quot;, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}
-
-// Get the metdata about the item...
-svc := s3.New(session.New())
-for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    &quot;Source&quot;:     eachRecord.SES.Mail.Source,
-    &quot;MessageID&quot;:  eachRecord.SES.Mail.MessageID,
-    &quot;BucketName&quot;: bucketName,
-  }).Info(&quot;SES Event&quot;)
-
-  params := &amp;s3.HeadObjectInput{
-    Bucket: aws.String(bucketName),
-    Key:    aws.String(eachRecord.SES.Mail.MessageID),
-  }
-  resp, err := svc.HeadObject(params)
-  logger.WithFields(logrus.Fields{
-    &quot;Error&quot;:    err,
-    &quot;Metadata&quot;: resp,
-  }).Info(&quot;SES MessageBody&quot;)
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">spartaSES</span><span style="">.</span><span style="color:#a6e22e">Event</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#75715e">// Get the metdata about the item...
+</span><span style="color:#75715e"></span><span style="color:#a6e22e">svc</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">s3</span><span style="">.</span><span style="color:#a6e22e">New</span><span style="">(</span><span style="color:#a6e22e">session</span><span style="">.</span><span style="color:#a6e22e">New</span><span style="">())</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Records</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Source&#34;</span><span style="">:</span><span style="">     </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">SES</span><span style="">.</span><span style="color:#a6e22e">Mail</span><span style="">.</span><span style="color:#a6e22e">Source</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;MessageID&#34;</span><span style="">:</span><span style="">  </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">SES</span><span style="">.</span><span style="color:#a6e22e">Mail</span><span style="">.</span><span style="color:#a6e22e">MessageID</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;BucketName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">bucketName</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;SES Event&#34;</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">params</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">s3</span><span style="">.</span><span style="color:#a6e22e">HeadObjectInput</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Bucket</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#a6e22e">bucketName</span><span style="">),</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">Key</span><span style="">:</span><span style="">    </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">SES</span><span style="">.</span><span style="color:#a6e22e">Mail</span><span style="">.</span><span style="color:#a6e22e">MessageID</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">resp</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">svc</span><span style="">.</span><span style="color:#a6e22e">HeadObject</span><span style="">(</span><span style="color:#a6e22e">params</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Error&#34;</span><span style="">:</span><span style="">    </span><span style="color:#a6e22e">err</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#e6db74">&#34;Metadata&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">resp</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;SES MessageBody&#34;</span><span style="">)</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
@@ -715,14 +717,14 @@ for _, eachRecord := range lambdaEvent.Records {
 <li>Create a new <code>sesPermission.NewMessageBodyStorageResource(&quot;Special&quot;)</code> value to store the message body</li>
 <li>Assign the value to the <code>sesPermission.MessageBodyStorage</code> field</li>
 <li>If your lambda function needs to consume the message body, add an entry to <code>sesPermission.[]IAMPrivilege</code> that includes the <code>sesPermission.MessageBodyStorage.BucketArnAllKeys()</code> Arn</li>
-<li>In your <strong>Go</strong> lambda function definition, discover the S3 bucketname via <code>sparta.Discover()</code></li>
+<li>In your <strong>go</strong> lambda function definition, discover the S3 bucketname via <code>sparta.Discover()</code></li>
 </ul>
 
 <h1 id="notes">Notes</h1>
 
 <ul>
 <li>The SES message (including headers) is stored in the <a href="http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3">raw format</a></li>
-<li><code>sparta.Discover()</code> uses <a href="https://golang.org/pkg/reflect/">reflection</a> to map from the current enclosing <strong>Go</strong> function name to the owning <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> CloudFormation. Therefore, calling <code>sparta.Discover()</code> from non-Sparta lambda functions (application helpers, function literals) will generate an error.</li>
+<li><code>sparta.Discover()</code> uses <a href="https://golang.org/pkg/reflect/">reflection</a> to map from the current enclosing <strong>go</strong> function name to the owning <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> CloudFormation. Therefore, calling <code>sparta.Discover()</code> from non-Sparta lambda functions (application helpers, function literals) will generate an error.</li>
 <li>More on Immutable Infrastructure:
 
 <ul>
