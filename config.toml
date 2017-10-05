@@ -5,6 +5,9 @@ theme = "hugo-material-docs"
 canonifyurls = true
 # Enable Google Analytics by entering your tracking id
 googleAnalytics = "UA-70794971-1"
+# Code highlighting
+# https://gohugo.io/content-management/syntax-highlighting
+pygmentsStyle="vs"
 
 [params]
 	# General information
@@ -22,10 +25,6 @@ googleAnalytics = "UA-70794971-1"
 
 	permalink = "#"
 
-	# Code highlighting
-	# https://gohugo.io/content-management/syntax-highlighting
-	pygmentsStyle = "vs"
-
 	# Custom assets
 	custom_css = ["css/sparta.css",
 	"external/mermaid_dist/mermaid.css",
@@ -33,8 +32,6 @@ googleAnalytics = "UA-70794971-1"
 	custom_js  = ["external/mermaid_dist/mermaid.min.js",
 	"external/jquery/jquery-2.2.0.min.js"]
 
-	# Syntax highlighting theme
-	highlight_css  = ""
 
 [params.palette]
 		primary = "grey"

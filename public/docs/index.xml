@@ -41,8 +41,7 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
       <guid>http://gosparta.io/docs/apigateway/example1/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaApplication.
 For reference, the echoS3Event function is below.
-funcechoS3Event(whttp.ResponseWriter,r*http.Request){logger,_:=r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)lambdaContext,_:=r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)decoder:=json.NewDecoder(r.Body)deferr.Body.Close()varjsonMessagejson.RawMessageerr:=decoder.Decode(&amp;amp;jsonMessage)iferr!=nil{http.Error(w,err.Error(),http.StatusInternalServerError)return}logger.WithFields(logrus.Fields{&amp;#34;RequestID&amp;#34;:lambdaContext.AWSRequestID,&amp;#34;Event&amp;#34;:string(jsonMessage),}).Info(&amp;#34;Request received&amp;#34;)w.Header().Set(&amp;#34;Content-Type&amp;#34;,&amp;#34;application/json&amp;#34;)w.Write(jsonMessage)}  Create the API Gateway The first requirement is to create a new API instance via sparta.NewAPIGateway()
-stage:=sparta.NewStage(&amp;#34;prod&amp;#34;)apiGateway:=sparta.NewAPIGateway(&amp;#34;MySpartaAPI&amp;#34;,stage)  In the example above, we&amp;rsquo;re also including a Stage value. A non-nil Stage value will cause the registered API to be deployed.</description>
+func echoS3Event(w http.ResponseWriter, r *http.Request) { logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger) lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext) decoder := json.NewDecoder(r.Body) defer r.Body.Close() var jsonMessage json.RawMessage err := decoder.Decode(&amp;amp;jsonMessage) if err != nil { http.Error(w, err.Error(), http.StatusInternalServerError) return } logger.WithFields(logrus.Fields{ &amp;#34;RequestID&amp;#34;: lambdaContext.</description>
     </item>
     
     <item>
@@ -95,7 +94,7 @@ Define the Lambda Function Our function will accept two params:
       
       <guid>http://gosparta.io/docs/application/commandline/</guid>
       <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
-varlambdaFunctions[]*sparta.LambdaAWSInfolambdaFunctions=append(lambdaFunctions,lambdaFn)err:=sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;,fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;),lambdaFunctions,nil,nil)  A compiled application provides several command line options which are available by providing the -h/--help option as in:
+var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil)  A compiled application provides several command line options which are available by providing the -h/--help option as in:
 $ go run main.go --help Simple Sparta application that demonstrates core functionality Usage: main [command] Available Commands: delete Delete service describe Describe service execute Execute explore Interactively explore service help Help about any command provision Provision service version Sparta framework version Flags: -f, --format string Log format [text, json] (default &amp;#34;text&amp;#34;) -h, --help help for main --ldflags string Go linker string definition flags (https://golang.</description>
     </item>
     
@@ -107,7 +106,7 @@ $ go run main.go --help Simple Sparta application that demonstrates core functio
       <guid>http://gosparta.io/docs/application/custom_commands/</guid>
       <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
 To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
-httpServerCommand:=&amp;amp;cobra.Command{Use:&amp;#34;httpServer&amp;#34;,Short:&amp;#34;Sample HelloWorld HTTP server&amp;#34;,Long:`Sample HelloWorld HTTP server that binds to port: `+HTTPServerPort,RunE:func(cmd*cobra.</description>
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
     </item>
     
     <item>
@@ -183,7 +182,7 @@ TODO: CloudFormation source documentation
       <guid>http://gosparta.io/docs/eventsources/cloudwatchevents/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
 Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
- Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small: funcechoCloudWatchEvent(whttp.</description>
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small: func echoCloudWatchEvent(w http.</description>
     </item>
     
     <item>
@@ -308,7 +307,7 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
       <guid>http://gosparta.io/docs/local_testing/</guid>
       <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. Sparta supports localhost testing in two different ways:
  The explore command line option httptest.NewServer for go test style testing  Example For this example, let&amp;rsquo;s define a simple Sparta application:
-packagemainimport(&amp;#34;encoding/json&amp;#34;&amp;#34;fmt&amp;#34;&amp;#34;net/http&amp;#34;&amp;#34;github.com/Sirupsen/logrus&amp;#34;sparta&amp;#34;github.com/mweagle/Sparta&amp;#34;)//////////////////////////////////////////////////////////////////////////////// // Hello world event handler // funchelloWorld(whttp.ResponseWriter,r*http.Request){w.Write([]byte(&amp;#34;Hello World&amp;#34;))}//////////////////////////////////////////////////////////////////////////////// // Main funcmain(){// Deploy it lambdaFn:=sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),http.HandlerFunc(helloWorld),sparta.IAMRoleDefinition{})varlambdaFunctions[]*sparta.LambdaAWSInfolambdaFunctions=append(lambdaFunctions,lambdaFn)sparta.Main(&amp;#34;SpartaExplore&amp;#34;,fmt.Sprintf(&amp;#34;Test explore command&amp;#34;),lambdaFunctions,nil,nil)}  Command Line Testing With our application defined, let&amp;rsquo;s run it:</description>
+package main import ( &amp;#34;encoding/json&amp;#34; &amp;#34;fmt&amp;#34; &amp;#34;net/http&amp;#34; &amp;#34;github.com/Sirupsen/logrus&amp;#34; sparta &amp;#34;github.com/mweagle/Sparta&amp;#34; ) //////////////////////////////////////////////////////////////////////////////// // Hello world event handler // func helloWorld(w http.</description>
     </item>
     
     <item>
@@ -343,7 +342,7 @@ Requirements  Docker - Tested on OSX:  $ docker -v Docker version 17.03.1-ce, bu
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-funchelloWorld(whttp.ResponseWriter,r*http.Request){logger,_:=r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)decoder:=json.NewDecoder(r.Body)deferr.Body.Close()varjsonMessagejson.RawMessageerr:=decoder.Decode(&amp;amp;jsonMessage)iferr!=nil{logger.Error(&amp;#34;Failed to decode request: &amp;#34;,err.Error())http.Error(w,err.Error(),http.StatusInternalServerError)return}logger.Info(&amp;#34;Hello World: &amp;#34;,string(*jsonMessage))w.Write(jsonMessage)}  This lambda function simply sends back the content of the inbound event.</description>
+func helloWorld(w http.ResponseWriter, r *http.Request) { logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger) decoder := json.NewDecoder(r.Body) defer r.</description>
     </item>
     
     <item>
@@ -386,7 +385,7 @@ Terms and Concepts At a high level, Sparta transforms a go binary&amp;rsquo;s re
       <guid>http://gosparta.io/docs/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage:=sparta.NewStage(&amp;#34;v1&amp;#34;)apiGateway:=sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;,apiStage)// Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled=true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>

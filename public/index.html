@@ -50,7 +50,6 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
@@ -563,43 +562,43 @@
 
 <h1 id="hello-lambda-world">Hello Lambda World</h1>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// File: application.go
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#f92672">import</span><span style=""> </span><span style="">(</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;encoding/json&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;fmt&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;net/http&#34;</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#e6db74">&#34;github.com/Sirupsen/logrus&#34;</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style=""> </span><span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span><span style="">
-</span><span style=""></span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Hello world event handler
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">              	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">              	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">              	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World: &#34;</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Main
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// Deploy it
-</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Main</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHelloWorld&#34;</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#e6db74">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
-</span><span style="">                </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// File: application.go
+</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
+
+<span style="color:#00f">import</span> (
+	<span style="color:#a31515">&#34;encoding/json&#34;</span>
+	<span style="color:#a31515">&#34;fmt&#34;</span>
+	<span style="color:#a31515">&#34;net/http&#34;</span>
+
+	<span style="color:#a31515">&#34;github.com/Sirupsen/logrus&#34;</span>
+	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
+)
+
+<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// Hello world event handler
+</span><span style="color:#008000">//
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(event *json.RawMessage,
+              	context *sparta.LambdaContext,
+              	w http.ResponseWriter,
+              	logger *logrus.Logger) {
+	logger.Info(<span style="color:#a31515">&#34;Hello World: &#34;</span>, string(*event))
+	fmt.Fprint(w, string(*event))
+}
+
+<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// Main
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
+  <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, <span style="color:#00f">nil</span>)
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+  <span style="color:#008000">// Deploy it
+</span><span style="color:#008000"></span>  sparta.Main(<span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
+		<span style="color:#a31515">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span>,
+		lambdaFunctions,
+                <span style="color:#00f">nil</span>,
+                <span style="color:#00f">nil</span>)
+}</code></pre>
 </div>
 
 <h1 id="getting-started">Getting Started</h1>

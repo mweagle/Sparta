@@ -50,7 +50,6 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
@@ -496,54 +495,54 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">transformImage</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style="">
-</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#e6db74">&#34;RequestID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">lambdaContext</span><span style="">.</span><span style="color:#a6e22e">AWSRequestID</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Request received 👍&#34;</span><span style="">)</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> transformImage(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+
+	logger.WithFields(logrus.Fields{
+		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
+	}).Info(<span style="color:#a31515">&#34;Request received 👍&#34;</span>)</code></pre>
 </div>
 
 <h1 id="unmarshalling-the-s3-event">Unmarshalling the S3 Event</h1>
 
 <p>Since the <code>transformImage</code> is expected to be triggered by S3 event changes, we will unmarshal the <code>*json.RawMessage</code> data into an S3-specific event provided by Sparta via:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">spartaS3</span><span style="">.</span><span style="color:#a6e22e">Event</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">decoder := json.NewDecoder(r.Body)
+<span style="color:#00f">defer</span> r.Body.Close()
+<span style="color:#00f">var</span> lambdaEvent spartaS3.Event
+err := decoder.Decode(&amp;lambdaEvent)
+<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+  logger.Error(<span style="color:#a31515">&#34;Failed to unmarshal event data: &#34;</span>, err.Error())
+  http.Error(w, err.Error(), http.StatusInternalServerError)
+}</code></pre>
 </div>
 
 <p>S3 events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Records</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">switch</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">EventName</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#e6db74">&#34;ObjectCreated:Put&#34;</span><span style="">:</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">stampImage</span><span style="">(</span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">S3</span><span style="">.</span><span style="color:#a6e22e">Bucket</span><span style="">.</span><span style="color:#a6e22e">Name</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">S3</span><span style="">.</span><span style="color:#a6e22e">Object</span><span style="">.</span><span style="color:#a6e22e">Key</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">logger</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#e6db74">&#34;s3:ObjectRemoved:Delete&#34;</span><span style="">:</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="color:#75715e">// Delete stamped image
-</span><span style="color:#75715e"></span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">default</span><span style="">:</span><span style="">
-</span><span style="">    </span><span style="">{</span><span style="">
-</span><span style="">      </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Unsupported event: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">EventName</span><span style="">)</span><span style="">
-</span><span style="">    </span><span style="">}</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style="">
-</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to process event: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
-</span><span style="">  </span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> lambdaEvent.Records {
+  err = <span style="color:#00f">nil</span>
+  <span style="color:#00f">switch</span> eachRecord.EventName {
+  <span style="color:#00f">case</span> <span style="color:#a31515">&#34;ObjectCreated:Put&#34;</span>:
+    {
+      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
+    }
+  <span style="color:#00f">case</span> <span style="color:#a31515">&#34;s3:ObjectRemoved:Delete&#34;</span>:
+    {
+      <span style="color:#008000">// Delete stamped image
+</span><span style="color:#008000"></span>    }
+  <span style="color:#00f">default</span>:
+    {
+      logger.Info(<span style="color:#a31515">&#34;Unsupported event: &#34;</span>, eachRecord.EventName)
+    }
+  }
+
+  <span style="color:#008000">//
+</span><span style="color:#008000"></span>  <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+    logger.Error(<span style="color:#a31515">&#34;Failed to process event: &#34;</span>, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+}</code></pre>
 </div>
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify items which have already been stamped &amp; prevents an &ldquo;event-storm&rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.</p>
@@ -554,34 +553,34 @@
 
 <p>Our lambda function needs to both <em>Get</em> and <em>Put</em> items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Provision an IAM::Role as part of this application
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">iamRole</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#75715e">// Setup the ARN that includes all child keys
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">resourceArn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Sprintf</span><span style="">(</span><span style="color:#e6db74">&#34;%s/*&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">s3EventBroadcasterBucket</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">iamRole</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">iamRole</span><span style="">.</span><span style="color:#a6e22e">Privileges</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRolePrivilege</span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Actions</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:GetObject&#34;</span><span style="">,</span><span style="">
-</span><span style="">    </span><span style="color:#e6db74">&#34;s3:PutObject&#34;</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="">},</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Resource</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">resourceArn</span><span style="">,</span><span style="">
-</span><span style=""></span><span style="">})</span></code></pre>
-</div></p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Provision an IAM::Role as part of this application
+</span><span style="color:#008000"></span><span style="color:#00f">var</span> iamRole = sparta.IAMRoleDefinition{}
+
+<span style="color:#008000">// Setup the ARN that includes all child keys
+</span><span style="color:#008000"></span>resourceArn := fmt.Sprintf(<span style="color:#a31515">&#34;%s/*&#34;</span>, s3EventBroadcasterBucket)
+iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
+  Actions: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>,
+    <span style="color:#a31515">&#34;s3:PutObject&#34;</span>,
+  },
+  Resource: resourceArn,
+})</code></pre>
+</div>
 
 <p>The <code>s3EventBroadcasterBucket</code> param is the ARN of the S3 bucket that will trigger your lambda function (eg: <em>arn:aws:s3:::MyImagingS3Bucket</em>).</p>
 
 <p>With the IAM Role defined, we can create the Sparta lambda function for <code>transformImage</code>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
-</span><span style="color:#75715e">// transform lambda doesn&#39;t fail early.
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">transformOptions</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaFunctionOptions</span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Description</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Stamp assets in S3&#34;</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">MemorySize</span><span style="">:</span><span style="">  </span><span style="color:#ae81ff">128</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Timeout</span><span style="">:</span><span style="">     </span><span style="color:#ae81ff">30</span><span style="">,</span><span style="">
-</span><span style=""></span><span style="">}</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">transformImage</span><span style="">),</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">transformImage</span><span style="">),</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">iamRole</span><span style="">)</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Options</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">transformOptions</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+</span><span style="color:#008000">// transform lambda doesn&#39;t fail early.
+</span><span style="color:#008000"></span>transformOptions := &amp;sparta.LambdaFunctionOptions{
+  Description: <span style="color:#a31515">&#34;Stamp assets in S3&#34;</span>,
+  MemorySize:  128,
+  Timeout:     30,
+}
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(transformImage),
+  http.HandlerFunc(transformImage),
+  iamRole)
+lambdaFn.Options = transformOptions</code></pre>
 </div>
 
 <p>It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the <code>iamRole</code> we defined earlier.</p>
@@ -590,16 +589,16 @@
 
 <p>If we were to deploy this Sparta application, the <code>transformImage</code> function would have the ability to <em>Get</em> and <em>Put</em> back to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// S3 configuration
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Permissions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">S3Permission</span><span style="">{</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">BasePermission</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">BasePermission</span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">SourceArn</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">s3EventBroadcasterBucket</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="">},</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Events</span><span style="">:</span><span style=""> </span><span style="">[]</span><span style="color:#66d9ef">string</span><span style="">{</span><span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span><span style="">},</span><span style="">
-</span><span style=""></span><span style="">})</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// S3 configuration
+</span><span style="color:#008000">//
+</span><span style="color:#008000"></span>lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: s3EventBroadcasterBucket,
+  },
+  Events: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:ObjectCreated:*&#34;</span>, <span style="color:#a31515">&#34;s3:ObjectRemoved:*&#34;</span>},
+})
+lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
 </div>
 
 <p>When <code>Sparta</code> generates the CloudFormation template, it scans for <code>Permission</code> configurations.  For <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">push based sources</a> like S3, Sparta uses that service&rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.</p>

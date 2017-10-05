@@ -50,7 +50,6 @@
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/application.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/temporary.css">
     <link rel="stylesheet" href="http://gosparta.io/stylesheets/palettes.css">
-    <link rel="stylesheet" href="http://gosparta.io/stylesheets/highlight/highlight.css">
 
     
     
@@ -496,31 +495,31 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">echoKinesisEvent</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#e6db74">&#34;RequestID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">lambdaContext</span><span style="">.</span><span style="color:#a6e22e">AWSRequestID</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Request received&#34;</span><span style="">)</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoKinesisEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+	logger.WithFields(logrus.Fields{
+		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
+	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)</code></pre>
 </div>
 
 <p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta <a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">kinesis event</a> and log the id to CloudWatch Logs:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="">	</span><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style=""> </span><span style="color:#a6e22e">spartaKinesis</span><span style="">.</span><span style="color:#a6e22e">Event</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambdaEvent</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to unmarshal event data: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style="">	</span><span style="color:#66d9ef">for</span><span style=""> </span><span style="color:#a6e22e">_</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#66d9ef">range</span><span style=""> </span><span style="color:#a6e22e">lambdaEvent</span><span style="">.</span><span style="color:#a6e22e">Records</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
-</span><span style="">			</span><span style="color:#e6db74">&#34;EventID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">eachRecord</span><span style="">.</span><span style="color:#a6e22e">EventID</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Kinesis Event&#34;</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="">}</span><span style="">
-</span><span style=""></span><span style="">}</span></code></pre>
-</div></p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	decoder := json.NewDecoder(r.Body)
+	<span style="color:#00f">defer</span> r.Body.Close()
+	<span style="color:#00f">var</span> lambdaEvent spartaKinesis.Event
+	err := decoder.Decode(&amp;lambdaEvent)
+	<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+		logger.Error(<span style="color:#a31515">&#34;Failed to unmarshal event data: &#34;</span>, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	<span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> lambdaEvent.Records {
+		logger.WithFields(logrus.Fields{
+			<span style="color:#a31515">&#34;EventID&#34;</span>: eachRecord.EventID,
+		}).Info(<span style="color:#a31515">&#34;Kinesis Event&#34;</span>)
+	}
+}</code></pre>
+</div>
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
 
@@ -528,10 +527,10 @@
 
 <p>First we wrap the <strong>go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
-<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">echoKinesisEvent</span><span style="">),</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">echoKinesisEvent</span><span style="">),</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span></code></pre>
-</div></p>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent),
+	http.HandlerFunc(echoKinesisEvent),
+	sparta.IAMRoleDefinition{})</code></pre>
+</div>
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
@@ -539,13 +538,13 @@
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">EventSourceMappings</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">EventSourceMappings</span><span style="">,</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambda</span><span style="">.</span><span style="color:#a6e22e">CreateEventSourceMappingInput</span><span style="">{</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">EventSourceArn</span><span style="">:</span><span style="">   </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#a6e22e">kinesisTestStream</span><span style="">),</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">StartingPosition</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">String</span><span style="">(</span><span style="color:#e6db74">&#34;TRIM_HORIZON&#34;</span><span style="">),</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">BatchSize</span><span style="">:</span><span style="">        </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">Int64</span><span style="">(</span><span style="color:#ae81ff">100</span><span style="">),</span><span style="">
-</span><span style="">    </span><span style="color:#a6e22e">Enabled</span><span style="">:</span><span style="">          </span><span style="color:#a6e22e">aws</span><span style="">.</span><span style="color:#a6e22e">Bool</span><span style="">(</span><span style="color:#66d9ef">true</span><span style="">),</span><span style="">
-</span><span style="">  </span><span style="">})</span></code></pre>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+  &amp;lambda.CreateEventSourceMappingInput{
+    EventSourceArn:   aws.String(kinesisTestStream),
+    StartingPosition: aws.String(<span style="color:#a31515">&#34;TRIM_HORIZON&#34;</span>),
+    BatchSize:        aws.Int64(100),
+    Enabled:          aws.Bool(<span style="color:#00f">true</span>),
+  })</code></pre>
 </div>
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
