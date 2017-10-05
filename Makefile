@@ -1,5 +1,7 @@
 .DEFAULT_GOAL=build
 
+GO_LINT := $(GOPATH)/bin/golint
+
 ################################################################################
 # Meta
 ################################################################################
@@ -39,7 +41,7 @@ vet:
 .PHONY: lint
 lint:
 	for file in $(shell $(GO_SOURCE_FILES)); do \
-		golint "$${file}" || exit 1 ;\
+		$(GO_LINT) "$${file}" || exit 1 ;\
 	done
 
 .PHONY: fmt
