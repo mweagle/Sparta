@@ -368,6 +368,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -503,11 +516,11 @@
 
 <p>This is the core of your custom resource&rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:</p>
 
-<pre><code>type CustomResourceFunction func(requestType string
-                                 stackID string
-                                 properties map[string]interface{}
-                                 logger *logrus.Logger) (map[string]interface{}, error)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span><span style=""> </span><span style="color:#a6e22e">CustomResourceFunction</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">requestType</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">
+</span><span style="">                                  </span><span style="color:#a6e22e">stackID</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">
+</span><span style="">                                  </span><span style="color:#a6e22e">properties</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{}</span><span style="">
+</span><span style="">                                  </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span></code></pre>
+</div>
 
 <p>where</p>
 
@@ -522,18 +535,18 @@
 
 <p>As an example, we&rsquo;ll use the following custom resource function:</p>
 
-<pre><code>// User defined λ-backed CloudFormation CustomResource
-func userDefinedCustomResource(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
-
-	var results = map[string]interface{}{
-		&quot;CustomResourceResult&quot;: &quot;Victory!&quot;,
-	}
-	return results, nil
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// User defined λ-backed CloudFormation CustomResource
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">userDefinedCustomResource</span><span style="">(</span><span style="color:#a6e22e">requestType</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">stackID</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">properties</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">(</span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style=""> </span><span style="color:#66d9ef">error</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">results</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{}{</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;CustomResourceResult&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Victory!&#34;</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#a6e22e">results</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>This function always succeeds and returns a non-empty results map consisting of a single key (<code>CustomResourceResult</code>).</p>
 
@@ -552,33 +565,27 @@ func userDefinedCustomResource(requestType string,
 
 <p>For example, our custom resource function above can be associated via:</p>
 
-<pre><code>// Standard AWS λ function
-func helloWorld(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
-	configuration, _ := Discover()
-
-	logger.WithFields(logrus.Fields{
-		&quot;Discovery&quot;: configuration,
-	}).Info(&quot;Custom resource request&quot;)
-
-	fmt.Fprint(w, &quot;Hello World&quot;)
-}
-
-func ExampleLambdaAWSInfo_RequireCustomResource() {
-
-	lambdaFn := NewLambda(IAMRoleDefinition{},
-		helloWorld,
-		nil)
-
-	cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
-		userDefinedCustomResource,
-		nil,
-		nil)
-
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Standard AWS λ function
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">configuration</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">Discover</span><span style="">()</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">WithFields</span><span style="">(</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Fields</span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#e6db74">&#34;Discovery&#34;</span><span style="">:</span><span style=""> </span><span style="color:#a6e22e">configuration</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="">}).</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Custom resource request&#34;</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Write</span><span style="">([]</span><span style="">byte</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World&#34;</span><span style="">))</span><span style="">
+</span><span style=""></span><span style="">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">ExampleLambdaAWSInfo_RequireCustomResource</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">cfResName</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">RequireCustomResource</span><span style="">(</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style="">
+</span><span style="">  </span><span style="color:#a6e22e">userDefinedCustomResource</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">nil</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">nil</span><span style="">)</span></code></pre>
+</div>
 
 <p>Since our custom resource function doesn&rsquo;t require any additional AWS resources, we provide an empty <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition">IAMRoleDefinition</a>.</p>
 
@@ -590,22 +597,22 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 <p>To link these resources together, the first step is to include a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> that annotates your Sparta lambda function&rsquo;s CloudFormation resource metadata.  This function specifies which user defined output keys (<code>CustomResourceResult</code> in this example) you wish to make available during your lambda function&rsquo;s execution.</p>
 
-<pre><code>lambdaFn.Decorator = func(serviceName string,
-	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
-	buildID string,
-	cfTemplate *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger)  error {
-
-  // Pass CustomResource outputs to the λ function
-  resourceMetadata[&quot;CustomResource&quot;] = gocf.GetAtt(cfResName, &quot;CustomResourceResult&quot;)
-  return nil
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span><span style="">.</span><span style="color:#a6e22e">Decorator</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">serviceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaResourceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaResource</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">LambdaFunction</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">resourceMetadata</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">S3Bucket</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">S3Key</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">buildID</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">cfTemplate</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">Template</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">  </span><span style="color:#66d9ef">error</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">
+</span><span style="">  </span><span style="color:#75715e">// Pass CustomResource outputs to the λ function
+</span><span style="color:#75715e"></span><span style="">  </span><span style="color:#a6e22e">resourceMetadata</span><span style="">[</span><span style="color:#e6db74">&#34;CustomResource&#34;</span><span style="">]</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="color:#a6e22e">gocf</span><span style="">.</span><span style="color:#a6e22e">GetAtt</span><span style="">(</span><span style="color:#a6e22e">cfResName</span><span style="">,</span><span style=""> </span><span style="color:#e6db74">&#34;CustomResourceResult&#34;</span><span style="">)</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time through a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">go-cloudformation</a> version of <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a>.</p>
 
@@ -615,33 +622,33 @@ func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 <p>In this example, the unmarshalled <em>DiscoveryInfo</em> struct looks like:</p>
 
-<pre><code class="language-json">{
-  &quot;Discovery&quot;: {
-    &quot;ResourceID&quot;: &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;,
-    &quot;Region&quot;: &quot;us-west-2&quot;,
-    &quot;StackID&quot;: &quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/70b28170-13f9-11e6-b0c7-50d5ca11b8d2&quot;,
-    &quot;StackName&quot;: &quot;SpartaHelloWorld&quot;,
-    &quot;Resources&quot;: {
-      &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;: {
-          &quot;ResourceID&quot;: &quot;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&quot;,
-          &quot;Properties&quot;: {
-            &quot;CustomResource&quot;: &quot;Victory!&quot;
-          },
-          &quot;Tags&quot;: {}
-      }
-    }
-  },
-  &quot;level&quot;: &quot;info&quot;,
-  &quot;msg&quot;: &quot;Custom resource request&quot;,
-  &quot;time&quot;: &quot;2016-05-07T14:13:37Z&quot;
-}
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="">{</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;Discovery&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;ResourceID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;Region&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;us-west-2&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;StackID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/70b28170-13f9-11e6-b0c7-50d5ca11b8d2&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;StackName&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;SpartaHelloWorld&#34;</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">&#34;Resources&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">      </span><span style="color:#f92672">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;ResourceID&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="">,</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;Properties&#34;</span><span style="">:</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">            </span><span style="color:#f92672">&#34;CustomResource&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Victory!&#34;</span><span style="">
+</span><span style="">          </span><span style="">},</span><span style="">
+</span><span style="">          </span><span style="color:#f92672">&#34;Tags&#34;</span><span style="">:</span><span style=""> </span><span style="">{}</span><span style="">
+</span><span style="">      </span><span style="">}</span><span style="">
+</span><span style="">    </span><span style="">}</span><span style="">
+</span><span style="">  </span><span style="">},</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;level&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;info&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;msg&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;Custom resource request&#34;</span><span style="">,</span><span style="">
+</span><span style="">  </span><span style="color:#f92672">&#34;time&#34;</span><span style="">:</span><span style=""> </span><span style="color:#e6db74">&#34;2016-05-07T14:13:37Z&#34;</span><span style="">
+</span><span style=""></span><span style="">}</span></code></pre>
+</div>
 
 <p>To lookup the output, the calling function might do something like:</p>
 
-<pre><code>configuration, _ := sparta.Discover()
-customResult := configuration.Resources[configuration.ResourceID].Properties[&quot;CustomResourceResult&quot;]
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">configuration</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Discover</span><span style="">()</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">customResult</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">configuration</span><span style="">.</span><span style="color:#a6e22e">Resources</span><span style="">[</span><span style="color:#a6e22e">configuration</span><span style="">.</span><span style="color:#a6e22e">ResourceID</span><span style="">].</span><span style="color:#a6e22e">Properties</span><span style="">[</span><span style="color:#e6db74">&#34;CustomResourceResult&#34;</span><span style="">]</span></code></pre>
+</div>
 
 <h2 id="wrapping-up">Wrapping Up</h2>
 

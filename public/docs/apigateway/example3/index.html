@@ -365,6 +365,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -483,7 +496,7 @@
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">ipGeoLambda</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaContext</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLambdaContext</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">)</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">

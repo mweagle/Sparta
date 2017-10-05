@@ -368,6 +368,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -484,12 +497,20 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World: &#34;</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">fmt</span><span style="">.</span><span style="color:#a6e22e">Fprint</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">event</span><span style="">))</span><span style="">
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Context</span><span style="">().</span><span style="color:#a6e22e">Value</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">ContextKeyLogger</span><span style="">).(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style="">
+</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">decoder</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">NewDecoder</span><span style="">(</span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">defer</span><span style=""> </span><span style="color:#a6e22e">r</span><span style="">.</span><span style="color:#a6e22e">Body</span><span style="">.</span><span style="color:#a6e22e">Close</span><span style="">()</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">jsonMessage</span><span style=""> </span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">decoder</span><span style="">.</span><span style="color:#a6e22e">Decode</span><span style="">(</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">jsonMessage</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#a6e22e">err</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#e6db74">&#34;Failed to decode request: &#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">())</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(</span><span style="color:#a6e22e">w</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">err</span><span style="">.</span><span style="color:#a6e22e">Error</span><span style="">(),</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">StatusInternalServerError</span><span style="">)</span><span style="">
+</span><span style="">		</span><span style="color:#66d9ef">return</span><span style="">
+</span><span style="">	</span><span style="">}</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style="">.</span><span style="color:#a6e22e">Info</span><span style="">(</span><span style="color:#e6db74">&#34;Hello World: &#34;</span><span style="">,</span><span style=""> </span><span style="">string</span><span style="">(</span><span style="color:#f92672">*</span><span style="color:#a6e22e">jsonMessage</span><span style="">))</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">w</span><span style="">.</span><span style="color:#a6e22e">Write</span><span style="">(</span><span style="color:#a6e22e">jsonMessage</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="">}</span></code></pre>
 </div>
 
@@ -499,9 +520,9 @@
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewStage</span><span style="">(</span><span style="color:#e6db74">&#34;v1&#34;</span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#a6e22e">apiGateway</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewAPIGateway</span><span style="">(</span><span style="color:#e6db74">&#34;SpartaHTML&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">apiStage</span><span style="">)</span></code></pre>
-</div>
+</div></p>
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
@@ -513,7 +534,9 @@
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">spartaLambdaFunctions</span><span style="">(</span><span style="color:#a6e22e">api</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">API</span><span style="">)</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">NewLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style=""> </span><span style="color:#a6e22e">helloWorld</span><span style="">,</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">helloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">iamDynamicRole</span><span style="">)</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#66d9ef">nil</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style="">		</span><span style="color:#a6e22e">apiGatewayResource</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">api</span><span style="">.</span><span style="color:#a6e22e">NewResource</span><span style="">(</span><span style="color:#e6db74">&#34;/hello&#34;</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">

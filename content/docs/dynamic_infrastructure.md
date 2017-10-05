@@ -82,7 +82,8 @@ Sparta supports Dynamic Resources via [TemplateDecorator](https://godoc.org/gith
 
 A template decorator is a **go** function with the following signature
 
-```go
+{{< highlight go >}}
+
 type TemplateDecorator func(serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
@@ -95,7 +96,7 @@ type TemplateDecorator func(serviceName string,
 	logger *logrus.Logger)  error {
 
 }
-```
+{{< /highlight >}}
 
 Clients use [go-cloudformation](https://godoc.org/github.com/crewjam/go-cloudformation) types for CloudFormation resources and  `template.AddResource` to add them to the `*template` parameter.  After a decorator is invoked, Sparta verifies that the user-supplied function has not produced entities that collide with the internally-generated ones.
 
@@ -119,22 +120,23 @@ Let's work through an example to make things a bit more concrete.  We have the f
 
 To start with, we'll need a Sparta lambda function to expose:
 
-```go
-func echoS3DynamicBucketEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
+{{< highlight go >}}
+func echoS3DynamicBucketEvent(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+	eventData, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	config, _ := sparta.Discover()
+	logger.WithFields(logrus.Fields{
+		"RequestID":     lambdaContext.AWSRequestID,
+		"Event":         string(eventData),
+		"Configuration": config,
+	}).Info("Request received")
 
-  config, _ := sparta.Discover()
-  logger.WithFields(logrus.Fields{
-    "RequestID":     context.AWSRequestID,
-    "Event":         string(*event),
-    "Configuration": config,
-  }).Info("Request received")
-
-  fmt.Fprintf(w, string(*event))
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(eventData)
 }
-```
+{{< /highlight >}}
 
 For brevity our demo function doesn't access the S3 bucket objects.  To support that we'll need to discuss the `sparta.Discover` function in another [section](/docs/discovery/).
 
@@ -142,17 +144,20 @@ For brevity our demo function doesn't access the S3 bucket objects.  To support 
 
 The next thing we need is a _Logical ID_ for our bucket:
 
-```go
+{{< highlight go >}}
+
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket", "myServiceBucket")
-```
+{{< /highlight >}}
 
 ## Sparta Integration
 
 With these two values we're ready to get started building up the lambda function:
 
-```go
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-```
+{{< highlight go >}}
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+  http.HandlerFunc(echoS3DynamicBucketEvent),
+  sparta.IAMRoleDefinition{})
+{{< /highlight >}}
 
 The open issue is how to publish the CloudFormation-defined S3 Arn to the `compile`-time application.  Our lambda function needs to provide both:
 
@@ -165,7 +170,8 @@ The missing piece is [gocf.Ref()](https://godoc.org/github.com/crewjam/go-cloudf
 
 The `IAMRolePrivilege` struct references the dynamically assigned S3 Arn as follows:
 
-```go
+{{< highlight go >}}
+
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   BasePermission: sparta.BasePermission{
     SourceArn: gocf.Ref(s3BucketResourceName),
@@ -173,19 +179,20 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
   Events: []string{"s3:ObjectCreated:*", "s3:ObjectRemoved:*"},
 })
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-```
+{{< /highlight >}}
 
 ### Dynamic S3 Permissions
 
 The `S3Permission` struct also requires the dynamic Arn, to which it will append `"/*"` to enable object read access.
 
-```go
+{{< highlight go >}}
+
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
     Actions:  []string{"s3:GetObject", "s3:HeadObject"},
     Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
   })
-```
+{{< /highlight >}}
 
 The `spartaCF.S3AllKeysArnForBucket` call is a convenience wrapper around [gocf.Join](https://godoc.org/github.com/crewjam/go-cloudformation#Join) to generate the concatenated, dynamic Arn expression.
 
@@ -193,7 +200,8 @@ The `spartaCF.S3AllKeysArnForBucket` call is a convenience wrapper around [gocf.
 
 All that's left to do is actually insert the S3 resource in our decorator:
 
-```go
+{{< highlight go >}}
+
 lambdaFn.Decorator = func(lambdaResourceName string,
                           lambdaResource gocf.LambdaFunction,
                           template *gocf.Template,
@@ -205,24 +213,27 @@ lambdaFn.Decorator = func(lambdaResourceName string,
   cfResource.DeletionPolicy = "Delete"
   return nil
 }
-```
+{{< /highlight >}}
 
 ### Dependencies
 
 In reality, we shouldn't even attempt to create the AWS Lambda function if the S3 bucket creation fails.  As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the [DependsOn](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html) attribute:
 
-```go
+{{< highlight go >}}
+
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
-```
+{{< /highlight >}}
 
 ## Code Listing
 
 Putting everything together, our Sparta lambda function with dynamic infrastructure is listed below.
 
-```go
-s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
+{{< highlight go >}}
 
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
+s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+  http.HandlerFunc(echoS3DynamicBucketEvent),
+  sparta.IAMRoleDefinition{})
 
 // Our lambda function requires the S3 bucket
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
@@ -255,7 +266,7 @@ lambdaFn.Decorator = func(lambdaResourceName string,
   cfResource.DeletionPolicy = "Delete"
   return nil
 }
-```
+{{< /highlight >}}
 
 ## Wrapping Up
 

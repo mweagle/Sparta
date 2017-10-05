@@ -32,10 +32,12 @@ Defining a custom resource is a two stage process, depending on whether your app
 
 This is the core of your custom resource's logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:
 
-    type CustomResourceFunction func(requestType string
-                                     stackID string
-                                     properties map[string]interface{}
-                                     logger *logrus.Logger) (map[string]interface{}, error)
+{{< highlight go >}}
+type CustomResourceFunction func(requestType string
+                                  stackID string
+                                  properties map[string]interface{}
+                                  logger *logrus.Logger) (map[string]interface{}, error)
+{{< /highlight >}}
 
 where
 
@@ -48,7 +50,8 @@ The multiple return values denote success with non-empty results, or an error.
 
 As an example, we'll use the following custom resource function:
 
-```
+{{< highlight go >}}
+
 // User defined λ-backed CloudFormation CustomResource
 func userDefinedCustomResource(requestType string,
 	stackID string,
@@ -60,7 +63,8 @@ func userDefinedCustomResource(requestType string,
 	}
 	return results, nil
 }
-```
+{{< /highlight >}}
+
 
 This function always succeeds and returns a non-empty results map consisting of a single key (`CustomResourceResult`).
 
@@ -78,34 +82,29 @@ The multiple return values denote the logical, stable CloudFormation resource ID
 For example, our custom resource function above can be associated via:
 
 
-```
+{{< highlight go >}}
 // Standard AWS λ function
-func helloWorld(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
 	configuration, _ := Discover()
 
 	logger.WithFields(logrus.Fields{
 		"Discovery": configuration,
 	}).Info("Custom resource request")
-
-	fmt.Fprint(w, "Hello World")
+  w.Write([]byte("Hello World"))
 }
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+  http.HandlerFunc(helloWorld),
+  sparta.IAMRoleDefinition{})
 
-	lambdaFn := NewLambda(IAMRoleDefinition{},
-		helloWorld,
-		nil)
+cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
+  userDefinedCustomResource,
+  nil,
+  nil)
+{{< /highlight >}}
 
-	cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
-		userDefinedCustomResource,
-		nil,
-		nil)
-
-```
 
 Since our custom resource function doesn't require any additional AWS resources, we provide an empty [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition).
 
@@ -117,7 +116,7 @@ It's possible to share state from the custom resource to a standard Sparta lambd
 
 To link these resources together, the first step is to include a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) that annotates your Sparta lambda function's CloudFormation resource metadata.  This function specifies which user defined output keys (`CustomResourceResult` in this example) you wish to make available during your lambda function's execution.
 
-```
+{{< highlight go >}}
 lambdaFn.Decorator = func(serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
@@ -133,7 +132,8 @@ lambdaFn.Decorator = func(serviceName string,
   resourceMetadata["CustomResource"] = gocf.GetAtt(cfResName, "CustomResourceResult")
   return nil
 }
-```
+{{< /highlight >}}
+
 
 The `cfResName` value is the CloudFormation resource name returned by `RequireCustomResource`.  The template decorator specifies which of your [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) outputs should be discoverable during the paren't lambda functions execution time through a [go-cloudformation](https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt) version of [Fn::GetAtt](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html).
 
@@ -143,8 +143,7 @@ Discovery is handled by [sparta.Discover()](https://godoc.org/github.com/mweagle
 
 In this example, the unmarshalled _DiscoveryInfo_ struct looks like:
 
-
-```json
+{{< highlight json >}}
 {
   "Discovery": {
     "ResourceID": "mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb",
@@ -165,14 +164,14 @@ In this example, the unmarshalled _DiscoveryInfo_ struct looks like:
   "msg": "Custom resource request",
   "time": "2016-05-07T14:13:37Z"
 }
-```
+{{< /highlight >}}
 
 To lookup the output, the calling function might do something like:
 
-```
+{{< highlight go >}}
 configuration, _ := sparta.Discover()
 customResult := configuration.Resources[configuration.ResourceID].Properties["CustomResourceResult"]
-```
+{{< /highlight >}}
 
 ## Wrapping Up
 

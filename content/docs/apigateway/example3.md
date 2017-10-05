@@ -17,7 +17,7 @@ As this function is only expected to be invoked from the API Gateway, we'll unma
 {{< highlight go >}}
 func ipGeoLambda(w http.ResponseWriter, r *http.Request) {
 	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext) {
+	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
 
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()

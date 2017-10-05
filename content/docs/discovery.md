@@ -28,14 +28,18 @@ For reference, we provision an S3 bucket and declare an explicit dependency with
 
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
 
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoS3DynamicBucketEvent, nil)
-lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []string{"s3:ObjectCreated:*",
-                    "s3:ObjectRemoved:*"},
-})
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+  http.HandlerFunc(echoS3DynamicBucketEvent),
+  sparta.IAMRoleDefinition{})
+
+lambdaFn.Permissions = append(lambdaFn.Permissions,
+  sparta.S3Permission{
+    BasePermission: sparta.BasePermission{
+      SourceArn: gocf.Ref(s3BucketResourceName),
+    },
+    Events: []string{"s3:ObjectCreated:*",
+                      "s3:ObjectRemoved:*"},
+  })
 
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 
@@ -60,7 +64,6 @@ lambdaFn.Decorator = func(lambdaResourceName string,
 }
 {{< /highlight >}}
 
-
 The key to `sparta.Discovery` is the `DependsOn` slice value.
 
 # Template Marshaling & Decoration
@@ -73,7 +76,7 @@ During template marshaling, Sparta scans for `DependsOn` relationships and propa
 
 In our example, a `DiscoveryInfo` from a sample stack might be:
 
-```json
+{{< highlight json >}}
 {
   "Region": "us-west-2",
   "StackID": "arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e",
@@ -91,11 +94,12 @@ In our example, a `DiscoveryInfo` from a sample stack might be:
     }
   }
 }
-```
+{{< /highlight >}}
+
 
 With this, our lambda function can discover the dynamically assigned bucket name using non-production ready code similar to:
 
-```go
+{{< highlight go >}}
 configuration, _ := sparta.Discover()
 bucketName := ""
 for _, eachResource := range configuration.Resources {
@@ -103,13 +107,14 @@ for _, eachResource := range configuration.Resources {
     bucketName = eachResource.Properties["Ref"]
   }
 }
-```
+{{< /highlight >}}
+
 
 The `Properties` map includes the CloudFormation `Ref` and other outputs (see each resource type's [documentation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html) for the complete set) as well as the actual resource type (keyed by `sparta.TagResourceType`).
 
 Multiple dependencies can be disambiguated by annotating the CloudFormation resource's [Tags](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html) slice.  Tag key-values are published as a key-value map as part of each [DiscoveryResource](https://godoc.org/github.com/mweagle/Sparta#DiscoveryResource).  For example:
 
-```go
+{{< highlight go >}}
 cfResource := template.AddResource(s3BucketResourceName, &gocf.S3Bucket{
   AccessControl: gocf.String("PublicRead"),
   Tags: []gocf.ResourceTag{
@@ -119,7 +124,8 @@ cfResource := template.AddResource(s3BucketResourceName, &gocf.S3Bucket{
     },
   },
 })
-```
+{{< /highlight >}}
+
 
 # Special Considerations
 

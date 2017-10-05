@@ -18,12 +18,20 @@ The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) e
 We'll start by creating a very simple lambda function:
 
 {{< highlight go >}}
-func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-	logger.Info("Hello World: ", string(*event))
-	fmt.Fprint(w, string(*event))
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+	var jsonMessage json.RawMessage
+	err := decoder.Decode(&jsonMessage)
+	if err != nil {
+		logger.Error("Failed to decode request: ", err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	logger.Info("Hello World: ", string(*jsonMessage))
+	w.Write(jsonMessage)
 }
 {{< /highlight >}}
 
@@ -51,7 +59,9 @@ Finally, we register the `helloWorld` lambda function with an API Gateway resour
 
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		http.HandlerFunc(helloWorld),
+		iamDynamicRole)
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)

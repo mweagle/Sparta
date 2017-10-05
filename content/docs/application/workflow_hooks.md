@@ -20,16 +20,15 @@ The following sections describe the three types of WorkflowHooks available.  All
 
 BuilderHooks share the [WorkflowHook](https://godoc.org/github.com/mweagle/Sparta#WorkflowHook) signature:
 
-```
+{{< highlight go >}}
 type WorkflowHook func(context map[string]interface{},
-    serviceName string,
-    S3Bucket string,
-    buildID string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error
-
-```
+	serviceName string,
+	S3Bucket string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+{{< /highlight >}}
 
 These functions include:
 
@@ -42,14 +41,14 @@ These functions include:
 
 The `ArchiveHook` allows a service to add custom resources to the ZIP archive and have the signature:
 
-```
+{{< highlight go >}}
 type ArchiveHook func(context map[string]interface{},
     serviceName string,
     zipWriter *zip.Writer,
     awsSession *session.Session,
     noop bool,
     logger *logrus.Logger) error
-```
+{{< /highlight >}}
 
 This function is called _after_ Sparta has written the standard resources to the `*zip.Writer` stream.
 
@@ -57,13 +56,15 @@ This function is called _after_ Sparta has written the standard resources to the
 
 The `RollbackHook` is called *iff* the _provision_ operation fails and has the signature:
 
-```
+{{< highlight go >}}
+
 type RollbackHook func(context map[string]interface{},
     serviceName string,
     awsSession *session.Session,
     noop bool,
     logger *logrus.Logger)
-```
+{{< /highlight >}}
+
 
 # Using WorkflowHooks
 

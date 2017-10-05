@@ -19,10 +19,11 @@ With Sparta [v0.11.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v
 
 - Docker - Tested on OSX:
 
-  ```
+{{< highlight bash >}}
   $ docker -v
   Docker version 17.03.1-ce, build c6d412)
-  ```
+{{< /highlight >}}
+
 - Ability to build [CGO](https://blog.golang.org/c-go-cgo) libraries
 - You *MUST* call `cgo.Main(...)` from your application's `main` package. The CGO functionality depends on being able to rewrite your application code into a CGO-compabible [source](https://golang.org/cmd/cgo/).  This enables Sparta to transform your application's `main()` into a library-equivalent `init()` function to initialize the internal function registry.
 
@@ -45,19 +46,16 @@ import (
 	"github.com/mweagle/SpartaPython"
 )
 // HelloWorld is a standard Sparta AWS λ function
-func HelloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func HelloWorld(w http.ResponseWriter, r *http.Request) {
 ...
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
-	lambdaFn, _ := sparta.Lambda(sparta.IAMRoleDefinition{},
-		HelloWorld,
-		nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(HelloWorld),
+		http.HandlerFunc(HelloWorld),
+		sparta.IAMRoleDefinition{})
 
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
@@ -84,19 +82,16 @@ import (
 	"github.com/mweagle/SpartaPython"
 )
 // HelloWorld is a standard Sparta AWS λ function
-func HelloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func HelloWorld(w http.ResponseWriter, r *http.Request) {
 ...
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
-	lambdaFn, _ := sparta.Lambda(sparta.IAMRoleDefinition{},
-		HelloWorld,
-		nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(HelloWorld),
+		http.HandlerFunc(HelloWorld),
+		sparta.IAMRoleDefinition{})
 
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
@@ -124,9 +119,10 @@ INFO[0000] Building `cgo` library in Docker              Args=[run --rm -v /User
 
 The `cgo` variant of your Sparta application is proxied by a Python 3.6 handler. This handler provides access to the lambda credentials via:
 
-```python
+{{< highlight python >}}
 from botocore.credentials import get_credentials
-```
+{{< /highlight >}}
+
 
 Sparta makes these credentials available via `cgo.NewSession()` which returns a [*session.Session](http://docs.aws.amazon.com/sdk-for-go/api/aws/session/) instance. This value can be supplied to AWS service `New` functions as in:
 
@@ -139,10 +135,10 @@ svc := apigateway.New(cgo.NewSession())
 
 Sparta parses the output from your host machine to determine the container tag.
 
-```shell
+{{< highlight bash >}}
 $ go version
-go version go1.8.1 darwin/amd64
-```
+go version go1.9.0 darwin/amd64
+{{< /highlight >}}
 
 ### How can I pass environment variables to the Docker build
 

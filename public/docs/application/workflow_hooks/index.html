@@ -365,6 +365,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -574,15 +587,14 @@ graph TD
 
 <p>BuilderHooks share the <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> signature:</p>
 
-<pre><code>type WorkflowHook func(context map[string]interface{},
-    serviceName string,
-    S3Bucket string,
-    buildID string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error
-
-</code></pre>
+<p><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span><span style=""> </span><span style="color:#a6e22e">WorkflowHook</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">serviceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">S3Bucket</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">buildID</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">awsSession</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">session</span><span style="">.</span><span style="color:#a6e22e">Session</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#66d9ef">bool</span><span style="">,</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">error</span></code></pre>
+</div></p>
 
 <p>These functions include:</p>
 
@@ -597,13 +609,13 @@ graph TD
 
 <p>The <code>ArchiveHook</code> allows a service to add custom resources to the ZIP archive and have the signature:</p>
 
-<pre><code>type ArchiveHook func(context map[string]interface{},
-    serviceName string,
-    zipWriter *zip.Writer,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span><span style=""> </span><span style="color:#a6e22e">ArchiveHook</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">serviceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">zipWriter</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">zip</span><span style="">.</span><span style="color:#a6e22e">Writer</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">awsSession</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">session</span><span style="">.</span><span style="color:#a6e22e">Session</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#66d9ef">bool</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="color:#66d9ef">error</span></code></pre>
+</div>
 
 <p>This function is called <em>after</em> Sparta has written the standard resources to the <code>*zip.Writer</code> stream.</p>
 
@@ -611,12 +623,12 @@ graph TD
 
 <p>The <code>RollbackHook</code> is called <em>iff</em> the <em>provision</em> operation fails and has the signature:</p>
 
-<pre><code>type RollbackHook func(context map[string]interface{},
-    serviceName string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span><span style=""> </span><span style="color:#a6e22e">RollbackHook</span><span style=""> </span><span style="color:#66d9ef">func</span><span style="">(</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#66d9ef">map</span><span style="">[</span><span style="color:#66d9ef">string</span><span style="">]</span><span style="color:#66d9ef">interface</span><span style="">{},</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">serviceName</span><span style=""> </span><span style="color:#66d9ef">string</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">awsSession</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">session</span><span style="">.</span><span style="color:#a6e22e">Session</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">noop</span><span style=""> </span><span style="color:#66d9ef">bool</span><span style="">,</span><span style="">
+</span><span style="">    </span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span></code></pre>
+</div>
 
 <h1 id="using-workflowhooks">Using WorkflowHooks</h1>
 

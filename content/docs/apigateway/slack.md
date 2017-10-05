@@ -19,14 +19,14 @@ This lambda handler is a bit more complicated than the other examples, primarily
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
-func helloSlackbot(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func helloSlackbot(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
 
 	// 1. Unmarshal the primary event
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 	var lambdaEvent slackLambdaJSONEvent
-	err := json.Unmarshal([]byte(*event), &lambdaEvent)
+	err := decoder.Decode(&lambdaEvent)
 	if err != nil {
 		logger.Error("Failed to unmarshal event data: ", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -69,7 +69,7 @@ func helloSlackbot(event *json.RawMessage,
 		logger.Error("Failed to marshal response: ", err.Error())
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Fprint(w, string(responseBody))
+	w.Write(responseBody)
 }
 {{< /highlight >}}
 
@@ -78,29 +78,30 @@ There are a couple of things to note in this code:
 1. **Custom Event Type**
   - The inbound Slack `POST` request is `application/x-www-form-urlencoded` data.  However, our [integration mapping](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl) mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw `POST` body with the mapping envelope (so that we can access [identity information, HTTP headers, etc.](/docs/apigateway/example1)), which produces an inbound JSON request that includes a **Body** parameter.  The **Body** string value is the raw inbound `POST` data.  Since it's `application/x-www-form-urlencoded`, to get the actual parameters we need to parse it:
 
-        ```javascript
+        {{< highlight go >}}
         if bodyData, ok := lambdaEvent.Body.(string); ok {
           requestParams, err = url.ParseQuery(bodyData)
-        ```
+        {{< /highlight >}}
+
 
   - The lambda function extracts all Slack parameters and if defined, sends the `text` back with a bit of [Slack Message Formatting](https://api.slack.com/docs/formatting) (and some attitude, to be honest about it):
 
-        ```javascript
+        {{< highlight go >}}
         responseText := "You talkin to me?"
         for _, eachLine := range requestParams["text"] {
           responseText += fmt.Sprintf("\n>>> %s", eachLine)
         }
-        ```
+        {{< /highlight >}}
 
 1. **Custom Response**
   - The Slack API expects a [JSON formatted response](https://api.slack.com/slash-commands), which is created in step 4:
 
-        ```javascript
+        {{< highlight go >}}
         responseData := sparta.ArbitraryJSONObject{
       		"response_type": "in_channel",
       		"text":          responseText,
       	}
-        ```
+        {{< /highlight >}}
 
 # Create the API Gateway
 
@@ -120,7 +121,9 @@ Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo`
 {{< highlight go >}}
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloSlackbot, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloSlackbot),
+		http.HandlerFunc(helloSlackbot),
+		iamDynamicRole)
 
 	if nil != api {
 		apiGatewayResource, _ := api.NewResource("/slack", lambdaFn)

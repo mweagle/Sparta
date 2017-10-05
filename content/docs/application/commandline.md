@@ -22,26 +22,30 @@ err := sparta.Main("SpartaHelloWorld",
 A compiled application provides several command line options which are available by providing the `-h/--help` option as in:
 
 {{< highlight nohighlight >}}
-$ ./SpartaHelloWorld --help
-
-Test HelloWorld resource command
+$ go run main.go --help
+Simple Sparta application that demonstrates core functionality
 
 Usage:
-  SpartaHelloWorld [command]
+  main [command]
 
 Available Commands:
-  version     Sparta framework version
-  provision   Provision service
   delete      Delete service
-  execute     Execute
   describe    Describe service
+  execute     Execute
   explore     Interactively explore service
+  help        Help about any command
+  provision   Provision service
+  version     Sparta framework version
 
 Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug]' (default "info")
-  -n, --noop           Dry-run behavior only (do not perform mutations)
+  -f, --format string    Log format [text, json] (default "text")
+  -h, --help             help for main
+      --ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+  -l, --level string     Log level [panic, fatal, error, warn, info, debug] (default "info")
+  -n, --noop             Dry-run behavior only (do not perform mutations)
+  -t, --tags string      Optional build tags for conditional compilation
 
-Use "SpartaHelloWorld [command] --help" for more information about a command.
+Use "main [command] --help" for more information about a command.
 {{< /highlight >}}
 
 It's also possible to add [custom flags](/docs/application/custom_flags) and/or [custom commands](/docs/application/custom_commands) to extend your application's behavior.
@@ -71,7 +75,6 @@ The `execute` option is typically used when the compiled application is launched
 The `explore` option creates a _localhost_ server to allow Sparta lambda functions to be tested locally.
 
 NOTE: API Gateway mapping templates are not currently supported.
-
 
 ## Version
 

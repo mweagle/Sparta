@@ -368,6 +368,19 @@
 
 
 
+<a  title="CI/CD" href="http://gosparta.io/docs/cicd/">
+	
+	CI/CD
+</a>
+
+
+
+      
+        
+        
+
+
+
 <a  title="Docker" href="http://gosparta.io/docs/docker/">
 	
 	Docker
@@ -488,9 +501,9 @@
 <li>Docker - Tested on OSX:</li>
 </ul>
 
-<pre><code>  $ docker -v
-  Docker version 17.03.1-ce, build c6d412)
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">  $ docker -v
+</span><span style="">  Docker version </span><span style="color:#ae81ff">17</span><span style="">.03.1-ce, build c6d412</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <ul>
 <li>Ability to build <a href="https://blog.golang.org/c-go-cgo">CGO</a> libraries</li>
@@ -515,19 +528,16 @@
 </span><span style="">	</span><span style="color:#e6db74">&#34;github.com/mweagle/SpartaPython&#34;</span><span style="">
 </span><span style=""></span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#75715e">// HelloWorld is a standard Sparta AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">HelloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">HelloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style=""></span><span style="color:#f92672">...</span><span style="">
 </span><span style=""></span><span style="">}</span><span style="">
 </span><span style="">
 </span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#75715e">// Main
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Lambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">HelloWorld</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">HelloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">HelloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
 </span><span style="">	</span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
@@ -553,19 +563,16 @@
 </span><span style="color:#75715e"></span><span style="">	</span><span style="color:#e6db74">&#34;github.com/mweagle/SpartaPython&#34;</span><span style="">
 </span><span style=""></span><span style="">)</span><span style="">
 </span><span style=""></span><span style="color:#75715e">// HelloWorld is a standard Sparta AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">HelloWorld</span><span style="">(</span><span style="color:#a6e22e">event</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">json</span><span style="">.</span><span style="color:#a6e22e">RawMessage</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">context</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaContext</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">logger</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span><span style="">.</span><span style="color:#a6e22e">Logger</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">HelloWorld</span><span style="">(</span><span style="color:#a6e22e">w</span><span style=""> </span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">ResponseWriter</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">r</span><span style=""> </span><span style="color:#f92672">*</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">Request</span><span style="">)</span><span style=""> </span><span style="">{</span><span style="">
 </span><span style=""></span><span style="color:#f92672">...</span><span style="">
 </span><span style=""></span><span style="">}</span><span style="">
 </span><span style="">
 </span><span style=""></span><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#75715e">// Main
 </span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span><span style=""> </span><span style="color:#a6e22e">main</span><span style="">()</span><span style=""> </span><span style="">{</span><span style="">
-</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">_</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">Lambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{},</span><span style="">
-</span><span style="">		</span><span style="color:#a6e22e">HelloWorld</span><span style="">,</span><span style="">
-</span><span style="">		</span><span style="color:#66d9ef">nil</span><span style="">)</span><span style="">
+</span><span style="">	</span><span style="color:#a6e22e">lambdaFn</span><span style=""> </span><span style="color:#f92672">:=</span><span style=""> </span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">HandleAWSLambda</span><span style="">(</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaName</span><span style="">(</span><span style="color:#a6e22e">HelloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">http</span><span style="">.</span><span style="color:#a6e22e">HandlerFunc</span><span style="">(</span><span style="color:#a6e22e">HelloWorld</span><span style="">),</span><span style="">
+</span><span style="">		</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">IAMRoleDefinition</span><span style="">{})</span><span style="">
 </span><span style="">
 </span><span style="">	</span><span style="color:#66d9ef">var</span><span style=""> </span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">[]</span><span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span><span style="">.</span><span style="color:#a6e22e">LambdaAWSInfo</span><span style="">
 </span><span style="">	</span><span style="color:#a6e22e">lambdaFunctions</span><span style=""> </span><span style="">=</span><span style=""> </span><span style="">append</span><span style="">(</span><span style="color:#a6e22e">lambdaFunctions</span><span style="">,</span><span style=""> </span><span style="color:#a6e22e">lambdaFn</span><span style="">)</span><span style="">
@@ -591,8 +598,8 @@
 
 <p>The <code>cgo</code> variant of your Sparta application is proxied by a Python 3.6 handler. This handler provides access to the lambda credentials via:</p>
 
-<pre><code class="language-python">from botocore.credentials import get_credentials
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span><span style=""> </span><span style="">botocore.credentials</span><span style=""> </span><span style="color:#f92672">import</span><span style=""> </span><span style="">get_credentials</span></code></pre>
+</div>
 
 <p>Sparta makes these credentials available via <code>cgo.NewSession()</code> which returns a <a href="http://docs.aws.amazon.com/sdk-for-go/api/aws/session/">*session.Session</a> instance. This value can be supplied to AWS service <code>New</code> functions as in:</p>
 
@@ -604,9 +611,9 @@
 
 <p>Sparta parses the output from your host machine to determine the container tag.</p>
 
-<pre><code class="language-shell">$ go version
-go version go1.8.1 darwin/amd64
-</code></pre>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="">$ go version
+</span><span style="">go version go1.9.0 darwin/amd64</span></code></pre>
+</div>
 
 <h3 id="how-can-i-pass-environment-variables-to-the-docker-build">How can I pass environment variables to the Docker build</h3>
 

@@ -32,19 +32,17 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
-func helloWorld(event *json.RawMessage,
-	context *sparta.LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
-	fmt.Fprint(w, "Hello World")
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Hello World"))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
 	// Deploy it
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		http.HandlerFunc(helloWorld),
+		sparta.IAMRoleDefinition{})
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
@@ -63,15 +61,17 @@ With our application defined, let's run it:
 {{< highlight go >}}
 go run main.go explore
 
-INFO[0000] Welcome to Sparta                             Option=explore TS=2016-01-31T18:05:19Z Version=0.3.0
-INFO[0000] --------------------------------------------------------------------------------
+INFO[0000] ========================================
+INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.9 LinkFlags= Option=explore SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC="2017-10-05T02:46:11Z"
+INFO[0000] ========================================
 INFO[0000] The following URLs are available for testing.
-INFO[0000] main.helloWorld                               URL=http://localhost:9999/main.helloWorld
+INFO[0000] Hello_World                                   URL="http://localhost:9999/Hello_World"
 INFO[0000] Functions can be invoked via application/json over POST
-INFO[0000] 	curl -vs -X POST -H "Content-Type: application/json" --data @testEvent.json http://localhost:9999/main.helloWorld
+INFO[0000] 	curl -vs -X POST -H "Content-Type: application/json" --data @testEvent.json http://localhost:9999/Hello_World
 INFO[0000] Where @testEvent.json is a local file with top level `context` and `event` properties:
-INFO[0000] 	{context: {}, event: {}}
-INFO[0000] Starting Sparta server                        URL=http://localhost:9999
+INFO[0000] 	{"context": {}, "event": {}}
+INFO[0000] Signaling parent process                      ParentPID=0
+INFO[0000] Starting main server                          URL="http://localhost:9999"
 {{< /highlight >}}
 
 The _localhost_ server mirrors the contract between the NodeJS proxying tier and the **go** binary that is used in the AWS Lambda execution environment.
@@ -126,7 +126,9 @@ To show this in action, let's walk through how Sparta [does this](https://github
 func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(exploreTestHelloWorld),
+		http.HandlerFunc(exploreTestHelloWorld),
+		sparta.IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	// 2. Mock event specific data to send to the lambda function
@@ -137,7 +139,7 @@ func TestExplore(t *testing.T) {
 
 	// 3. Make the request and confirm
 	logger, _ := NewLogger("warning")
-	ts := httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger))
+	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
 	defer ts.Close()
 	resp, err := explore.NewRequest(lambdaFn.URLPath(), eventData, ts.URL)
 	if err != nil {
