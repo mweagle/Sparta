@@ -27,6 +27,7 @@ install_requirements:
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/fzipp/gocyclo
 	go get -u honnef.co/go/tools/cmd/staticcheck
+	go get -u github.com/golang/lint
 
 .PHONY: vet
 vet:
