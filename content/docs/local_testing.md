@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: local-testing
-    weight: 0
+    weight: 500
 ---
 While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  Sparta supports _localhost_ testing in two different ways:
 

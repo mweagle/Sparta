@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: cicd
-    weight: 0
+    weight: 500
 ---
 
 

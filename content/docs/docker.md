@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: docker
-    weight: 0
+    weight: 950
 ---
 
 # Introduction

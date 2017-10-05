@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Custom Application Commands - Sparta</title>
+    <title>Presentations - Sparta</title>
     <meta name="generator" content="Hugo 0.29" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
     
-    <link rel="canonical" href="http://gosparta.io/docs/application/custom_commands/">
+    <link rel="canonical" href="http://gosparta.io/docs/presentations/">
     
     <meta name="author" content="Matt Weagle">
     
 
-    <meta property="og:url" content="http://gosparta.io/docs/application/custom_commands/">
+    <meta property="og:url" content="http://gosparta.io/docs/presentations/">
     <meta property="og:title" content="Sparta">
     <meta property="og:image" content="http://gosparta.io/images/SpartaHelmet.png">
     <meta name="apple-mobile-web-app-title" content="Sparta">
@@ -102,7 +102,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Custom Application Commands
+        Presentations
       </div>
     </div>
 
@@ -403,11 +403,14 @@
 
 
 
-<a  title="Presentations" href="http://gosparta.io/docs/presentations/">
+<a class="current" title="Presentations" href="http://gosparta.io/docs/presentations/">
 	
 	Presentations
 </a>
 
+
+<ul id="scrollspy">
+</ul>
 
 
       
@@ -494,64 +497,15 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Custom Application Commands </h1>
+			<h1>Presentations </h1>
 
 			
 
-<h1 id="introduction">Introduction</h1>
+<h1 id="sparta-presentations">Sparta presentations</h1>
 
-<p>In addition to <a href="http://gosparta.io/docs/application/custom_flags">custom flags</a>, an application may register completely new commands. For example, to support <a href="http://gosparta.io/docs/application/custom_flags">alternative topologies</a> or integrated automated acceptance tests as part of a CI/CD pipeline.</p>
-
-<p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
-
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">httpServerCommand := &amp;cobra.Command{
-  Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
-  Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
-  Long:  <span style="color:#a31515">`Sample HelloWorld HTTP server that binds to port: `</span> + HTTPServerPort,
-  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
-    http.HandleFunc(<span style="color:#a31515">&#34;/&#34;</span>, helloWorldResource)
-    <span style="color:#00f">return</span> http.ListenAndServe(fmt.Sprintf(<span style="color:#a31515">&#34;:%d&#34;</span>, HTTPServerPort), <span style="color:#00f">nil</span>)
-  },
-}
-sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
-</div>
-
-<p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
-
-<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega --help
-Provision AWS Lambda and EC2 instance with same code
-
-Usage:
-  SpartaOmega [command]
-
-Available Commands:
-  httpServer  Sample HelloWorld HTTP server
-  version     Sparta framework version
-  provision   Provision service
-  delete      Delete service
-  execute     Execute
-  describe    Describe service
-  explore     Interactively explore service
-
-Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
-  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
-
-Use <span style="color:#a31515">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#00f">for</span> more information about a command.</code></pre>
-</div></p>
-
-<p>And you can query for user-command specific usage as in:</p>
-
-<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega httpServer --help
-Custom command
-
-Usage:
-  SpartaOmega httpServer [flags]
-
-Global Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
-  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)</code></pre>
-</div></p>
+<ul>
+<li><a href="http://gosparta.io/presentations/overview.html">High Level Overview</a></li>
+</ul>
 
 
 			<aside class="copyright" role="note">
@@ -570,7 +524,7 @@ Global Flags:
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="http://gosparta.io/docs/application/commandline/" title="Command Line Options">
+      <a href="http://gosparta.io/docs/intro_example/step2/" title="Sample Service - Details">
         <span class="direction">
           Previous
         </span>
@@ -580,7 +534,7 @@ Global Flags:
           </div>
           <div class="stretch">
             <div class="title">
-              Command Line Options
+              Sample Service - Details
             </div>
           </div>
         </div>
@@ -590,14 +544,14 @@ Global Flags:
 
   <div class="next">
   
-      <a href="http://gosparta.io/docs/application/custom_flags/" title="Custom Flags">
+      <a href="http://gosparta.io/docs/cicd/" title="CI/CD">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Custom Flags
+              CI/CD
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

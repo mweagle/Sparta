@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: discovery
-    weight: 55
+    weight: 100
 ---
 
 # Introduction
