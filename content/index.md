@@ -83,6 +83,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+  "io/ioutil"
 	"net/http"
 
 	"github.com/Sirupsen/logrus"
