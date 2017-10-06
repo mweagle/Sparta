@@ -14,20 +14,14 @@ import (
 type StructHandler1 struct {
 }
 
-func (handler *StructHandler1) handler(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func (handler *StructHandler1) handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
 type StructHandler2 struct {
 }
 
-func (handler *StructHandler2) handler(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
+func (handler *StructHandler2) handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "StructHandler1 handler")
 }
 
@@ -35,11 +29,15 @@ func testLambdaStructData() []*LambdaAWSInfo {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	handler1 := &StructHandler1{}
-	lambdaFn1 := NewLambda(LambdaExecuteARN, handler1.handler, nil)
+	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
+		http.HandlerFunc(handler1.handler),
+		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler2{}
-	lambdaFn2 := NewLambda(LambdaExecuteARN, handler2.handler, nil)
+	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
+		http.HandlerFunc(handler2.handler),
+		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
 	return lambdaFunctions
@@ -49,11 +47,15 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	handler1 := &StructHandler1{}
-	lambdaFn1 := NewLambda(LambdaExecuteARN, handler1.handler, nil)
+	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
+		http.HandlerFunc(handler1.handler),
+		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler1{}
-	lambdaFn2 := NewLambda(LambdaExecuteARN, handler2.handler, nil)
+	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
+		http.HandlerFunc(handler2.handler),
+		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
 	return lambdaFunctions
@@ -74,9 +76,9 @@ func userDefinedCustomResource2(requestType string,
 }
 
 func TestStruct(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		testLambdaStructData(),
@@ -98,9 +100,9 @@ func TestStruct(t *testing.T) {
 }
 
 func TestDoubleRefStruct(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		testLambdaDoubleStructPtrData(),
@@ -123,7 +125,7 @@ func TestDoubleRefStruct(t *testing.T) {
 }
 
 func TestCustomResource(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource1,
@@ -136,7 +138,7 @@ func TestCustomResource(t *testing.T) {
 		nil)
 
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		lambdaFuncs,
@@ -159,7 +161,7 @@ func TestCustomResource(t *testing.T) {
 }
 
 func TestDoubleRefCustomResource(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 
 	for _, eachLambda := range lambdaFuncs {
@@ -169,7 +171,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 			nil)
 	}
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		lambdaFuncs,
@@ -192,7 +194,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 }
 
 func SignatureVersion(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	lambdaFunctions[0].Options = &LambdaFunctionOptions{
@@ -206,7 +208,7 @@ func SignatureVersion(t *testing.T) {
 		},
 	}
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"TestOverlappingLambdas",
 		"",
 		lambdaFunctions,
@@ -231,7 +233,7 @@ func SignatureVersion(t *testing.T) {
 }
 
 func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	for _, eachLambda := range lambdaFunctions {
@@ -243,7 +245,7 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 	}
 
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"TestOverlappingLambdas",
 		"",
 		lambdaFunctions,
@@ -264,5 +266,49 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		t.Fatal("Failed to reject duplicate lambdas with overlapping user supplied names")
 	} else {
 		t.Logf("Rejected overlapping user supplied names")
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// LEGACY
+////////////////////////////////////////////////////////////////////////////////
+func legacyLambdaSignature(event *json.RawMessage,
+	context *LambdaContext,
+	w http.ResponseWriter,
+	logger *logrus.Logger) {
+	logger.Info("Hello World: ", string(*event))
+	fmt.Fprint(w, string(*event))
+}
+
+func TestLegacyLambdaSignature(t *testing.T) {
+	logger, _ := NewLogger("info")
+	lambdaFn := NewLambda(IAMRoleDefinition{}, legacyLambdaSignature, nil)
+
+	lambdaFunctions := []*LambdaAWSInfo{
+		lambdaFn,
+	}
+
+	var templateWriter bytes.Buffer
+	err := Provision(true,
+		"TestLegacyLambdaSignature",
+		"",
+		lambdaFunctions,
+		nil,
+		nil,
+		os.Getenv("S3_BUCKET"),
+		false,
+		false,
+		"testBuildID",
+		"",
+		"",
+		"",
+		&templateWriter,
+		nil,
+		logger)
+
+	if err != nil {
+		t.Fatal("Failed to build legacy Sparta NewLambda signature ")
+	} else {
+		t.Logf("Correctly supported NewLambda signature")
 	}
 }

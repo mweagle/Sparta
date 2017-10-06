@@ -1469,6 +1469,7 @@ func Provision(noop bool,
 			s3BucketVersioningEnabled: false,
 			awsSession:                spartaAWS.NewSession(logger),
 			workflowHooksContext:      make(map[string]interface{}, 0),
+			templateWriter:            templateWriter,
 		},
 		transaction: transaction{
 			startTime: time.Now(),

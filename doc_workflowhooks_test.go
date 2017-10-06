@@ -51,7 +51,9 @@ func ExampleWorkflowHooks() {
 	}
 
 	var lambdaFunctions []*LambdaAWSInfo
-	helloWorldLambda := NewLambda("PreexistingAWSLambdaRoleName", mainHelloWorld, nil)
+	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
+		http.HandlerFunc(mainHelloWorld),
+		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
 	MainEx("HelloWorldArchiveHook",
 		"Description for Hello World HelloWorldArchiveHook",

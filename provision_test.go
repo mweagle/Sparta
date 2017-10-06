@@ -33,9 +33,9 @@ func init() {
 }
 
 func TestProvision(t *testing.T) {
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		testLambdaData(),
@@ -90,9 +90,9 @@ func TestDecorateProvision(t *testing.T) {
 	lambdas := testLambdaData()
 	lambdas[0].Decorator = templateDecorator
 
-	logger, err := NewLogger("info")
+	logger, _ := NewLogger("info")
 	var templateWriter bytes.Buffer
-	err = Provision(true,
+	err := Provision(true,
 		"SampleProvision",
 		"",
 		lambdas,

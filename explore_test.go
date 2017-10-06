@@ -12,13 +12,14 @@ import (
 	"github.com/mweagle/Sparta/explore"
 )
 
-func exploreTestHelloWorld(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-	logger.Info("Hello World: ", string(*event))
+func exploreTestHelloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
 
-	fmt.Fprint(w, string(*event))
+	event, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	logger.Info("Hello World: ", string(event))
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(event)
 }
 
 func exploreTestHelloWorldHTTP(w http.ResponseWriter, r *http.Request) {
@@ -36,7 +37,9 @@ func exploreTestHelloWorldHTTP(w http.ResponseWriter, r *http.Request) {
 func TestExplore(t *testing.T) {
 	// Create the function to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFn := HandleAWSLambda(LambdaName(exploreTestHelloWorld),
+		http.HandlerFunc(exploreTestHelloWorld),
+		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	// Mock event specific data to send to the lambda function
@@ -65,7 +68,9 @@ func TestExplore(t *testing.T) {
 func TestExploreAPIGateway(t *testing.T) {
 	// Create the function to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFn := HandleAWSLambda(LambdaName(exploreTestHelloWorld),
+		http.HandlerFunc(exploreTestHelloWorld),
+		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	// Mock event specific data to send to the lambda function
@@ -99,7 +104,7 @@ func TestExploreAPIGateway(t *testing.T) {
 func TestExploreUserName(t *testing.T) {
 	// Create the function to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := HandleAWSLambda("exploreTestHelloWorld",
+	lambdaFn := HandleAWSLambda(LambdaName(exploreTestHelloWorldHTTP),
 		http.HandlerFunc(exploreTestHelloWorldHTTP),
 		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
@@ -130,7 +135,9 @@ func TestExploreUserName(t *testing.T) {
 func TestNewAPIGatewayRequest(t *testing.T) {
 	// Create the function to test
 	var lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := NewLambda(IAMRoleDefinition{}, exploreTestHelloWorld, nil)
+	lambdaFn := HandleAWSLambda(LambdaName(exploreTestHelloWorld),
+		http.HandlerFunc(exploreTestHelloWorld),
+		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
 	// Mock event specific data to send to the lambda function
@@ -164,7 +171,7 @@ func TestNewAPIGatewayRequest(t *testing.T) {
 	}
 
 	t.Log("Method:", testlambdaevent.Method)
-	t.Log("Body:", testlambdaevent.Body)
+	t.Log("Body:", string(testlambdaevent.Body))
 	t.Log("Headers:", testlambdaevent.Headers)
 	t.Log("QueryParams:", testlambdaevent.QueryParams)
 	t.Log("PathParams:", testlambdaevent.PathParams)
