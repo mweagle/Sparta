@@ -513,8 +513,8 @@
 <li>Docker - Tested on OSX:</li>
 </ul>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">  $ docker -v
-  Docker version 17.03.1-ce, build c6d412)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">  $ docker -v
+  Docker version <span style="color:#0000cf;font-weight:bold">17</span>.03.1-ce, build c6d412<span style="color:#ce5c00;font-weight:bold">)</span></code></pre>
 </div>
 
 <ul>
@@ -530,79 +530,79 @@
 
 <h3 id="before">Before</h3>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// File main.go
-</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
-<span style="color:#00f">import</span> (
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>
-	<span style="color:#a31515">&#34;github.com/mweagle/SpartaPython&#34;</span>
-)
-<span style="color:#008000">// HelloWorld is a standard Sparta AWS λ function
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> HelloWorld(w http.ResponseWriter, r *http.Request) {
-...
-}
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File main.go
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>
+	<span style="color:#4e9a06">&#34;github.com/mweagle/SpartaPython&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#8f5902;font-style:italic">// HelloWorld is a standard Sparta AWS λ function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+<span style="color:#ce5c00;font-weight:bold">...</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Main
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(HelloWorld),
-		http.HandlerFunc(HelloWorld),
-		sparta.IAMRoleDefinition{})
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-	<span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>	sparta.Main(<span style="color:#a31515">&#34;SpartaHelloNodeJSProcess&#34;</span>,
-		fmt.Sprintf(<span style="color:#a31515">&#34;Test HelloWorld resource command&#34;</span>),
-		lambdaFunctions,
-		<span style="color:#00f">nil</span>,
-		<span style="color:#00f">nil</span>)
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>
-}</code></pre>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloNodeJSProcess&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test HelloWorld resource command&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h3 id="after">After</h3>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// File main.go
-</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
-<span style="color:#00f">import</span> (
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>	spartaCGO <span style="color:#a31515">&#34;github.com/mweagle/Sparta/cgo&#34;</span>
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>	<span style="color:#a31515">&#34;github.com/mweagle/SpartaPython&#34;</span>
-)
-<span style="color:#008000">// HelloWorld is a standard Sparta AWS λ function
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> HelloWorld(w http.ResponseWriter, r *http.Request) {
-...
-}
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File main.go
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">spartaCGO</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/cgo&#34;</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#4e9a06">&#34;github.com/mweagle/SpartaPython&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#8f5902;font-style:italic">// HelloWorld is a standard Sparta AWS λ function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+<span style="color:#ce5c00;font-weight:bold">...</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Main
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(HelloWorld),
-		http.HandlerFunc(HelloWorld),
-		sparta.IAMRoleDefinition{})
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-	<span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>	spartaCGO.Main(<span style="color:#a31515">&#34;SpartaHelloPythonCGO&#34;</span>,
-		fmt.Sprintf(<span style="color:#a31515">&#34;Test HelloWorld resource command&#34;</span>),
-		lambdaFunctions,
-		<span style="color:#00f">nil</span>,
-		<span style="color:#00f">nil</span>)
-  <span style="color:#008000">// ================================================== //
-</span><span style="color:#008000"></span>
-}</code></pre>
-</div>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">spartaCGO</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloPythonCGO&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test HelloWorld resource command&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#8f5902;font-style:italic">// ================================================== //
+</span><span style="color:#8f5902;font-style:italic"></span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
+</div></p>
 
 <p>You should see log output that includes a statement similar to:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">INFO[0000] Building <span style="color:#a31515">`</span>cgo<span style="color:#a31515">`</span> library in Docker              Args=[run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e GOPATH=/usr/src/gopath -e GOOS=linux -e GOARCH=amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode=c-shared -tags lambdabinary ] Name=SpartaHelloPythonCGOUSEast.lambda.so</code></pre>
-</div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> Building <span style="color:#4e9a06">`</span>cgo<span style="color:#4e9a06">`</span> library in Docker              <span style="color:#000">Args</span><span style="color:#ce5c00;font-weight:bold">=[</span>run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e <span style="color:#000">GOPATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/usr/src/gopath -e <span style="color:#000">GOOS</span><span style="color:#ce5c00;font-weight:bold">=</span>linux -e <span style="color:#000">GOARCH</span><span style="color:#ce5c00;font-weight:bold">=</span>amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode<span style="color:#ce5c00;font-weight:bold">=</span>c-shared -tags lambdabinary <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#000">Name</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloPythonCGOUSEast.lambda.so</code></pre>
+</div></p>
 
 <h2 id="questions">Questions</h2>
 
@@ -610,20 +610,20 @@
 
 <p>The <code>cgo</code> variant of your Sparta application is proxied by a Python 3.6 handler. This handler provides access to the lambda credentials via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#00f">from</span> botocore.credentials <span style="color:#00f">import</span> get_credentials</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">botocore.credentials</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">get_credentials</span></code></pre>
 </div>
 
 <p>Sparta makes these credentials available via <code>cgo.NewSession()</code> which returns a <a href="http://docs.aws.amazon.com/sdk-for-go/api/aws/session/">*session.Session</a> instance. This value can be supplied to AWS service <code>New</code> functions as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Create a APIGateway client from just a session.
-</span><span style="color:#008000"></span>svc := apigateway.New(cgo.NewSession())</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Create a APIGateway client from just a session.
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">svc</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apigateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cgo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewSession</span><span style="color:#000;font-weight:bold">())</span></code></pre>
 </div>
 
 <h3 id="how-does-sparta-determine-the-docker-image-for-the-cgo-build">How does Sparta determine the Docker image for the CGO build?</h3>
 
 <p>Sparta parses the output from your host machine to determine the container tag.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go version
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go version
 go version go1.9.0 darwin/amd64</code></pre>
 </div>
 

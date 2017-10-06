@@ -575,46 +575,46 @@
 
 <h1 id="hello-lambda-world">Hello Lambda World</h1>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// File: application.go
-</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
 
-<span style="color:#00f">import</span> (
-	<span style="color:#a31515">&#34;encoding/json&#34;</span>
-	<span style="color:#a31515">&#34;fmt&#34;</span>
-  <span style="color:#a31515">&#34;io/ioutil&#34;</span>
-	<span style="color:#a31515">&#34;net/http&#34;</span>
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#4e9a06">&#34;encoding/json&#34;</span>
+  <span style="color:#4e9a06">&#34;fmt&#34;</span>
+  <span style="color:#4e9a06">&#34;io/ioutil&#34;</span>
+  <span style="color:#4e9a06">&#34;net/http&#34;</span>
 
-	<span style="color:#a31515">&#34;github.com/Sirupsen/logrus&#34;</span>
-	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
-)
+  <span style="color:#4e9a06">&#34;github.com/Sirupsen/logrus&#34;</span>
+  <span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Hello world event handler
-</span><span style="color:#008000">//
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	eventData, _ := ioutil.ReadAll(r.Body)
-	<span style="color:#00f">defer</span> r.Body.Close()
-	logger.Info(<span style="color:#a31515">&#34;Hello World: &#34;</span>, string(eventData))
-	fmt.Fprint(w, string(eventData))
-}
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ioutil</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ReadAll</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">))</span>
+	<span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fprint</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Main
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
-  <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda(<span style="color:#a31515">&#34;Hello world test&#34;</span>,
-    http.HandlerFunc(helloWorld),
-    sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world test&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+  <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
 
-  <span style="color:#008000">// Deploy it
-</span><span style="color:#008000"></span>  sparta.Main(<span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
-		<span style="color:#a31515">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span>,
-		lambdaFunctions,
-                <span style="color:#00f">nil</span>,
-                <span style="color:#00f">nil</span>)
-}</code></pre>
+  <span style="color:#8f5902;font-style:italic">// Deploy it
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h1 id="getting-started">Getting Started</h1>

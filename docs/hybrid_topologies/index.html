@@ -532,17 +532,17 @@
 
 <p>The first step is to add a <a href="http://gosparta.io/docs/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Custom command to startup a simple HelloWorld HTTP server
-</span><span style="color:#008000"></span>httpServerCommand := &amp;cobra.Command{
-  Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
-  Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
-  Long:  <span style="color:#a31515">`Sample HelloWorld HTTP server that binds to port: `</span> + HTTPServerPort,
-  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
-    http.HandleFunc(<span style="color:#a31515">&#34;/&#34;</span>, helloWorldResource)
-    <span style="color:#00f">return</span> http.ListenAndServe(fmt.Sprintf(<span style="color:#a31515">&#34;:%d&#34;</span>, HTTPServerPort), <span style="color:#00f">nil</span>)
-  },
-}
-sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Custom command to startup a simple HelloWorld HTTP server
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">httpServerCommand</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Use</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;httpServer&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Short</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Sample HelloWorld HTTP server&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Long</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#4e9a06">`Sample HelloWorld HTTP server that binds to port: `</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">RunE</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cmd</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">args</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">helloWorldResource</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ListenAndServe</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;:%d&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
@@ -551,72 +551,72 @@ sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre>
 
 <p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#008000">#!/bin/bash -xe
-</span><span style="color:#008000"></span>SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{ .ServiceName }}.lambda.amd64
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#8f5902;font-style:italic">#!/bin/bash -xe
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">SPARTA_OMEGA_BINARY_PATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/home/ubuntu/<span style="color:#ce5c00;font-weight:bold">{{</span> .ServiceName <span style="color:#ce5c00;font-weight:bold">}}</span>.lambda.amd64
 
-<span style="color:#008000">################################################################################
-</span><span style="color:#008000">#
-</span><span style="color:#008000"># Tested on Ubuntu 16.04
-</span><span style="color:#008000">#
-</span><span style="color:#008000"># AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
-</span><span style="color:#008000"></span><span style="color:#00f">if</span> [ ! -f <span style="color:#a31515">&#34;/home/ubuntu/userdata.sh&#34;</span> ]
-<span style="color:#00f">then</span>
+<span style="color:#8f5902;font-style:italic">################################################################################
+</span><span style="color:#8f5902;font-style:italic">#
+</span><span style="color:#8f5902;font-style:italic"># Tested on Ubuntu 16.04
+</span><span style="color:#8f5902;font-style:italic">#
+</span><span style="color:#8f5902;font-style:italic"># AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">if</span> <span style="color:#ce5c00;font-weight:bold">[</span> ! -f <span style="color:#4e9a06">&#34;/home/ubuntu/userdata.sh&#34;</span> <span style="color:#ce5c00;font-weight:bold">]</span>
+<span style="color:#204a87;font-weight:bold">then</span>
   curl -vs http://169.254.169.254/latest/user-data -o /home/ubuntu/userdata.sh
   chmod +x /home/ubuntu/userdata.sh
-<span style="color:#00f">fi</span>
+<span style="color:#204a87;font-weight:bold">fi</span>
 
-<span style="color:#008000"># Install everything
-</span><span style="color:#008000"></span>service supervisor stop || apt-get install supervisor -y
+<span style="color:#8f5902;font-style:italic"># Install everything
+</span><span style="color:#8f5902;font-style:italic"></span>service supervisor stop <span style="color:#ce5c00;font-weight:bold">||</span> apt-get install supervisor -y
 apt-get update -y
 apt-get upgrade -y
 apt-get install supervisor awscli unzip git -y
 
-<span style="color:#008000">################################################################################
-</span><span style="color:#008000"># Our own binary
-</span><span style="color:#008000"></span>aws s3 cp s3://{{ .S3Bucket }}/{{ .S3Key }} /home/ubuntu/application.zip
+<span style="color:#8f5902;font-style:italic">################################################################################
+</span><span style="color:#8f5902;font-style:italic"># Our own binary
+</span><span style="color:#8f5902;font-style:italic"></span>aws s3 cp s3://<span style="color:#ce5c00;font-weight:bold">{{</span> .S3Bucket <span style="color:#ce5c00;font-weight:bold">}}</span>/<span style="color:#ce5c00;font-weight:bold">{{</span> .S3Key <span style="color:#ce5c00;font-weight:bold">}}</span> /home/ubuntu/application.zip
 unzip -o /home/ubuntu/application.zip -d /home/ubuntu
-chmod +x $SPARTA_OMEGA_BINARY_PATH
+chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
 
-<span style="color:#008000">################################################################################
-</span><span style="color:#008000"># SUPERVISOR
-</span><span style="color:#008000"># REF: http://supervisord.org/
-</span><span style="color:#008000"># Cleanout secondary directory
-</span><span style="color:#008000"></span>mkdir -pv /etc/supervisor/conf.d
+<span style="color:#8f5902;font-style:italic">################################################################################
+</span><span style="color:#8f5902;font-style:italic"># SUPERVISOR
+</span><span style="color:#8f5902;font-style:italic"># REF: http://supervisord.org/
+</span><span style="color:#8f5902;font-style:italic"># Cleanout secondary directory
+</span><span style="color:#8f5902;font-style:italic"></span>mkdir -pv /etc/supervisor/conf.d
 
-SPARTA_OMEGA_SUPERVISOR_CONF=<span style="color:#a31515">&#34;[program:spartaomega]
-</span><span style="color:#a31515">command=</span>$SPARTA_OMEGA_BINARY_PATH<span style="color:#a31515"> httpServer
-</span><span style="color:#a31515">numprocs=1
-</span><span style="color:#a31515">directory=/tmp
-</span><span style="color:#a31515">priority=999
-</span><span style="color:#a31515">autostart=true
-</span><span style="color:#a31515">autorestart=unexpected
-</span><span style="color:#a31515">startsecs=10
-</span><span style="color:#a31515">startretries=3
-</span><span style="color:#a31515">exitcodes=0,2
-</span><span style="color:#a31515">stopsignal=TERM
-</span><span style="color:#a31515">stopwaitsecs=10
-</span><span style="color:#a31515">stopasgroup=false
-</span><span style="color:#a31515">killasgroup=false
-</span><span style="color:#a31515">user=ubuntu
-</span><span style="color:#a31515">stdout_logfile=/var/log/spartaomega.log
-</span><span style="color:#a31515">stdout_logfile_maxbytes=1MB
-</span><span style="color:#a31515">stdout_logfile_backups=10
-</span><span style="color:#a31515">stdout_capture_maxbytes=1MB
-</span><span style="color:#a31515">stdout_events_enabled=false
-</span><span style="color:#a31515">redirect_stderr=false
-</span><span style="color:#a31515">stderr_logfile=spartaomega.err.log
-</span><span style="color:#a31515">stderr_logfile_maxbytes=1MB
-</span><span style="color:#a31515">stderr_logfile_backups=10
-</span><span style="color:#a31515">stderr_capture_maxbytes=1MB
-</span><span style="color:#a31515">stderr_events_enabled=false
-</span><span style="color:#a31515">&#34;</span>
-echo <span style="color:#a31515">&#34;</span>$SPARTA_OMEGA_SUPERVISOR_CONF<span style="color:#a31515">&#34;</span> &gt; /etc/supervisor/conf.d/spartaomega.conf
+<span style="color:#000">SPARTA_OMEGA_SUPERVISOR_CONF</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;[program:spartaomega]
+</span><span style="color:#4e9a06">command=</span><span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span><span style="color:#4e9a06"> httpServer
+</span><span style="color:#4e9a06">numprocs=1
+</span><span style="color:#4e9a06">directory=/tmp
+</span><span style="color:#4e9a06">priority=999
+</span><span style="color:#4e9a06">autostart=true
+</span><span style="color:#4e9a06">autorestart=unexpected
+</span><span style="color:#4e9a06">startsecs=10
+</span><span style="color:#4e9a06">startretries=3
+</span><span style="color:#4e9a06">exitcodes=0,2
+</span><span style="color:#4e9a06">stopsignal=TERM
+</span><span style="color:#4e9a06">stopwaitsecs=10
+</span><span style="color:#4e9a06">stopasgroup=false
+</span><span style="color:#4e9a06">killasgroup=false
+</span><span style="color:#4e9a06">user=ubuntu
+</span><span style="color:#4e9a06">stdout_logfile=/var/log/spartaomega.log
+</span><span style="color:#4e9a06">stdout_logfile_maxbytes=1MB
+</span><span style="color:#4e9a06">stdout_logfile_backups=10
+</span><span style="color:#4e9a06">stdout_capture_maxbytes=1MB
+</span><span style="color:#4e9a06">stdout_events_enabled=false
+</span><span style="color:#4e9a06">redirect_stderr=false
+</span><span style="color:#4e9a06">stderr_logfile=spartaomega.err.log
+</span><span style="color:#4e9a06">stderr_logfile_maxbytes=1MB
+</span><span style="color:#4e9a06">stderr_logfile_backups=10
+</span><span style="color:#4e9a06">stderr_capture_maxbytes=1MB
+</span><span style="color:#4e9a06">stderr_events_enabled=false
+</span><span style="color:#4e9a06">&#34;</span>
+<span style="color:#204a87">echo</span> <span style="color:#4e9a06">&#34;</span><span style="color:#000">$SPARTA_OMEGA_SUPERVISOR_CONF</span><span style="color:#4e9a06">&#34;</span> &gt; /etc/supervisor/conf.d/spartaomega.conf
 
-<span style="color:#008000"># Patch up the directory
-</span><span style="color:#008000"></span>chown -R ubuntu:ubuntu /home/ubuntu
+<span style="color:#8f5902;font-style:italic"># Patch up the directory
+</span><span style="color:#8f5902;font-style:italic"></span>chown -R ubuntu:ubuntu /home/ubuntu
 
-<span style="color:#008000"># Startup Supervisor
-</span><span style="color:#008000"></span>service supervisor restart || service supervisor start</code></pre>
+<span style="color:#8f5902;font-style:italic"># Startup Supervisor
+</span><span style="color:#8f5902;font-style:italic"></span>service supervisor restart <span style="color:#ce5c00;font-weight:bold">||</span> service supervisor start</code></pre>
 </div>
 
 <p>The script uses the command line option (<code>command=$SPARTA_OMEGA_BINARY_PATH httpServer</code>) that was defined in the first step.</p>
@@ -629,7 +629,7 @@ echo <span style="color:#a31515">&#34;</span>$SPARTA_OMEGA_SUPERVISOR_CONF<span 
 
 <p>For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">POSTGRES_ADDRESS={ <span style="color:#a31515">&#34;Fn::GetAtt&#34;</span> : [ <span style="color:#a31515">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#a31515">&#34;Endpoint.Address&#34;</span> ] }</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#000">POSTGRES_ADDRESS</span><span style="color:#ce5c00;font-weight:bold">={</span> <span style="color:#4e9a06">&#34;Fn::GetAtt&#34;</span> : <span style="color:#ce5c00;font-weight:bold">[</span> <span style="color:#4e9a06">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#4e9a06">&#34;Endpoint.Address&#34;</span> <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
@@ -638,190 +638,190 @@ echo <span style="color:#a31515">&#34;</span>$SPARTA_OMEGA_SUPERVISOR_CONF<span 
 
 <p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource.  For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// The CloudFormation template decorator that inserts all the other
-</span><span style="color:#008000">// AWS components we need to support this deployment...
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> lambdaDecorator(customResourceAMILookupName <span style="color:#2b91af">string</span>) sparta.TemplateDecorator {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// The CloudFormation template decorator that inserts all the other
+</span><span style="color:#8f5902;font-style:italic">// AWS components we need to support this deployment...
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">lambdaDecorator</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">customResourceAMILookupName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TemplateDecorator</span> <span style="color:#000;font-weight:bold">{</span>
 
-  <span style="color:#00f">return</span> <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
-	lambdaResourceName <span style="color:#2b91af">string</span>,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	S3Bucket <span style="color:#2b91af">string</span>,
-	S3Key <span style="color:#2b91af">string</span>,
-	buildID <span style="color:#2b91af">string</span>,
-	cfTemplate *gocf.Template,
-	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	logger *logrus.Logger) <span style="color:#2b91af">error</span> {
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">cfTemplate</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
 
-    <span style="color:#008000">// Create the launch configuration with Metadata to download the ZIP file, unzip it &amp; launch the
-</span><span style="color:#008000"></span>    <span style="color:#008000">// golang binary...
-</span><span style="color:#008000"></span>    ec2SecurityGroupResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SpartaOmegaSecurityGroup&#34;</span>,
-      <span style="color:#a31515">&#34;SpartaOmegaSecurityGroup&#34;</span>)
-    asgLaunchConfigurationName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SpartaOmegaASGLaunchConfig&#34;</span>,
-      <span style="color:#a31515">&#34;SpartaOmegaASGLaunchConfig&#34;</span>)
-    asgResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SpartaOmegaASG&#34;</span>,
-      <span style="color:#a31515">&#34;SpartaOmegaASG&#34;</span>)
-    ec2InstanceRoleName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SpartaOmegaEC2InstanceRole&#34;</span>,
-      <span style="color:#a31515">&#34;SpartaOmegaEC2InstanceRole&#34;</span>)
-    ec2InstanceProfileName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;SpartaOmegaEC2InstanceProfile&#34;</span>,
-      <span style="color:#a31515">&#34;SpartaOmegaEC2InstanceProfile&#34;</span>)
+    <span style="color:#8f5902;font-style:italic">// Create the launch configuration with Metadata to download the ZIP file, unzip it &amp; launch the
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// golang binary...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">ec2SecurityGroupResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmegaSecurityGroup&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;SpartaOmegaSecurityGroup&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">asgLaunchConfigurationName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmegaASGLaunchConfig&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;SpartaOmegaASGLaunchConfig&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">asgResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmegaASG&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;SpartaOmegaASG&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">ec2InstanceRoleName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmegaEC2InstanceRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;SpartaOmegaEC2InstanceRole&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">ec2InstanceProfileName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmegaEC2InstanceProfile&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;SpartaOmegaEC2InstanceProfile&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-    <span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000"></span>    <span style="color:#008000">// 1 - Create the security group for the SpartaOmega EC2 instance
-</span><span style="color:#008000"></span>    ec2SecurityGroup := &amp;gocf.EC2SecurityGroup{
-      GroupDescription: gocf.String(<span style="color:#a31515">&#34;SpartaOmega Security Group&#34;</span>),
-      SecurityGroupIngress: &amp;gocf.EC2SecurityGroupRuleList{
-        gocf.EC2SecurityGroupRule{
-          CidrIp:     gocf.String(<span style="color:#a31515">&#34;0.0.0.0/0&#34;</span>),
-          IpProtocol: gocf.String(<span style="color:#a31515">&#34;tcp&#34;</span>),
-          FromPort:   gocf.Integer(HTTPServerPort),
-          ToPort:     gocf.Integer(HTTPServerPort),
-        },
-        gocf.EC2SecurityGroupRule{
-          CidrIp:     gocf.String(<span style="color:#a31515">&#34;0.0.0.0/0&#34;</span>),
-          IpProtocol: gocf.String(<span style="color:#a31515">&#34;tcp&#34;</span>),
-          FromPort:   gocf.Integer(22),
-          ToPort:     gocf.Integer(22),
-        },
-      },
-    }
-    template.AddResource(ec2SecurityGroupResourceName, ec2SecurityGroup)
-    <span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000"></span>    <span style="color:#008000">// 2 - Create the ASG and associate the userdata with the EC2 init
-</span><span style="color:#008000"></span>    <span style="color:#008000">// EC2 Instance Role...
-</span><span style="color:#008000"></span>    statements := sparta.CommonIAMStatements.Core
+    <span style="color:#8f5902;font-style:italic">//////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// 1 - Create the security group for the SpartaOmega EC2 instance
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">ec2SecurityGroup</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EC2SecurityGroup</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">GroupDescription</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaOmega Security Group&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">SecurityGroupIngress</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EC2SecurityGroupRuleList</span><span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EC2SecurityGroupRule</span><span style="color:#000;font-weight:bold">{</span>
+          <span style="color:#000">CidrIp</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;0.0.0.0/0&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">IpProtocol</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;tcp&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">FromPort</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">ToPort</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
+        <span style="color:#000;font-weight:bold">},</span>
+        <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EC2SecurityGroupRule</span><span style="color:#000;font-weight:bold">{</span>
+          <span style="color:#000">CidrIp</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;0.0.0.0/0&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">IpProtocol</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;tcp&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">FromPort</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">22</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">ToPort</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">22</span><span style="color:#000;font-weight:bold">),</span>
+        <span style="color:#000;font-weight:bold">},</span>
+      <span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2SecurityGroupResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ec2SecurityGroup</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#8f5902;font-style:italic">//////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// 2 - Create the ASG and associate the userdata with the EC2 init
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// EC2 Instance Role...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">statements</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommonIAMStatements</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Core</span>
 
-    <span style="color:#008000">// Add the statement that allows us to fetch the S3 object with this compiled
-</span><span style="color:#008000"></span>    <span style="color:#008000">// binary
-</span><span style="color:#008000"></span>    statements = append(statements, spartaIAM.PolicyStatement{
-      Effect:   <span style="color:#a31515">&#34;Allow&#34;</span>,
-      Action:   []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>},
-      Resource: gocf.String(fmt.Sprintf(<span style="color:#a31515">&#34;arn:aws:s3:::%s/%s&#34;</span>, S3Bucket, S3Key)),
-    })
-    iamPolicyList := gocf.IAMPoliciesList{}
-    iamPolicyList = append(iamPolicyList,
-      gocf.IAMPolicies{
-        PolicyDocument: sparta.ArbitraryJSONObject{
-          <span style="color:#a31515">&#34;Version&#34;</span>:   <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
-          <span style="color:#a31515">&#34;Statement&#34;</span>: statements,
-        },
-        PolicyName: gocf.String(<span style="color:#a31515">&#34;EC2Policy&#34;</span>),
-      },
-    )
-    ec2InstanceRole := &amp;gocf.IAMRole{
-      AssumeRolePolicyDocument: sparta.AssumePolicyDocument,
-      Policies:                 &amp;iamPolicyList,
-    }
-    template.AddResource(ec2InstanceRoleName, ec2InstanceRole)
+    <span style="color:#8f5902;font-style:italic">// Add the statement that allows us to fetch the S3 object with this compiled
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#8f5902;font-style:italic">// binary
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">statements</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">statements</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">spartaIAM</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">PolicyStatement</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">Effect</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">Action</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+      <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;arn:aws:s3:::%s/%s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Key</span><span style="color:#000;font-weight:bold">)),</span>
+    <span style="color:#000;font-weight:bold">})</span>
+    <span style="color:#000">iamPolicyList</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMPoliciesList</span><span style="color:#000;font-weight:bold">{}</span>
+    <span style="color:#000">iamPolicyList</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">iamPolicyList</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMPolicies</span><span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#000">PolicyDocument</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ArbitraryJSONObject</span><span style="color:#000;font-weight:bold">{</span>
+          <span style="color:#4e9a06">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;2012-10-17&#34;</span><span style="color:#000;font-weight:bold">,</span>
+          <span style="color:#4e9a06">&#34;Statement&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">statements</span><span style="color:#000;font-weight:bold">,</span>
+        <span style="color:#000;font-weight:bold">},</span>
+        <span style="color:#000">PolicyName</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;EC2Policy&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">ec2InstanceRole</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRole</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">AssumeRolePolicyDocument</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AssumePolicyDocument</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">Policies</span><span style="color:#000;font-weight:bold">:</span>                 <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">iamPolicyList</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2InstanceRoleName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ec2InstanceRole</span><span style="color:#000;font-weight:bold">)</span>
 
-    <span style="color:#008000">// Create the instance profile
-</span><span style="color:#008000"></span>    ec2InstanceProfile := &amp;gocf.IAMInstanceProfile{
-      Path:  gocf.String(<span style="color:#a31515">&#34;/&#34;</span>),
-      Roles: []gocf.Stringable{gocf.Ref(ec2InstanceRoleName).String()},
-    }
-    template.AddResource(ec2InstanceProfileName, ec2InstanceProfile)
+    <span style="color:#8f5902;font-style:italic">// Create the instance profile
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">ec2InstanceProfile</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMInstanceProfile</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">Path</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">Roles</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Stringable</span><span style="color:#000;font-weight:bold">{</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2InstanceRoleName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">()},</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2InstanceProfileName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ec2InstanceProfile</span><span style="color:#000;font-weight:bold">)</span>
 
-    <span style="color:#008000">//Now setup the properties map, expand the userdata, and attach it...
-</span><span style="color:#008000"></span>    userDataProps := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-      <span style="color:#a31515">&#34;S3Bucket&#34;</span>:    S3Bucket,
-      <span style="color:#a31515">&#34;S3Key&#34;</span>:       S3Key,
-      <span style="color:#a31515">&#34;ServiceName&#34;</span>: serviceName,
-    }
+    <span style="color:#8f5902;font-style:italic">//Now setup the properties map, expand the userdata, and attach it...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">userDataProps</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+      <span style="color:#4e9a06">&#34;S3Bucket&#34;</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;S3Key&#34;</span><span style="color:#000;font-weight:bold">:</span>       <span style="color:#000">S3Key</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;ServiceName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">serviceName</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000;font-weight:bold">}</span>
 
-    userDataTemplateInput, userDataTemplateInputErr := resources.FSString(<span style="color:#00f">false</span>, <span style="color:#a31515">&#34;/resources/source/userdata.sh&#34;</span>)
-    <span style="color:#00f">if</span> <span style="color:#00f">nil</span> != userDataTemplateInputErr {
-      <span style="color:#00f">return</span> userDataTemplateInputErr
-    }
-    templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
-                                                                                      userDataProps)
-    <span style="color:#00f">if</span> <span style="color:#00f">nil</span> != userDataExpressionErr {
-      <span style="color:#00f">return</span> userDataExpressionErr
-    }
+    <span style="color:#000">userDataTemplateInput</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">userDataTemplateInputErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">resources</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">FSString</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">false</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;/resources/source/userdata.sh&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">userDataTemplateInputErr</span> <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">userDataTemplateInputErr</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">templateReader</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">strings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewReader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataTemplateInput</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">userDataExpressionErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ConvertToTemplateExpression</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">templateReader</span><span style="color:#000;font-weight:bold">,</span>
+                                                                                      <span style="color:#000">userDataProps</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">userDataExpressionErr</span> <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">userDataExpressionErr</span>
+    <span style="color:#000;font-weight:bold">}</span>
 
-    logger.WithFields(logrus.Fields{
-      <span style="color:#a31515">&#34;Parameters&#34;</span>: userDataProps,
-      <span style="color:#a31515">&#34;Expanded&#34;</span>:   userDataExpression,
-    }).Debug(<span style="color:#a31515">&#34;Expanded userdata&#34;</span>)
+    <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#4e9a06">&#34;Parameters&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">userDataProps</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;Expanded&#34;</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Debug</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Expanded userdata&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
-      ImageId:            gocf.GetAtt(customResourceAMILookupName, <span style="color:#a31515">&#34;HVM&#34;</span>),
-      InstanceType:       gocf.String(<span style="color:#a31515">&#34;t2.micro&#34;</span>),
-      KeyName:            gocf.String(SSHKeyName),
-      IamInstanceProfile: gocf.Ref(ec2InstanceProfileName).String(),
-      UserData:           gocf.Base64(userDataExpression),
-      SecurityGroups:     gocf.StringList(gocf.GetAtt(ec2SecurityGroupResourceName, <span style="color:#a31515">&#34;GroupId&#34;</span>)),
-    }
-    launchConfigResource := template.AddResource(asgLaunchConfigurationName,
-      asgLaunchConfigurationResource)
-    launchConfigResource.DependsOn = append(launchConfigResource.DependsOn,
-      customResourceAMILookupName)
+    <span style="color:#000">asgLaunchConfigurationResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AutoScalingLaunchConfiguration</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">ImageId</span><span style="color:#000;font-weight:bold">:</span>            <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">customResourceAMILookupName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;HVM&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">InstanceType</span><span style="color:#000;font-weight:bold">:</span>       <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;t2.micro&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">KeyName</span><span style="color:#000;font-weight:bold">:</span>            <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">IamInstanceProfile</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2InstanceProfileName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
+      <span style="color:#000">UserData</span><span style="color:#000;font-weight:bold">:</span>           <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Base64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">SecurityGroups</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StringList</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ec2SecurityGroupResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;GroupId&#34;</span><span style="color:#000;font-weight:bold">)),</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">launchConfigResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">asgLaunchConfigurationName</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">asgLaunchConfigurationResource</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">launchConfigResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">launchConfigResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">customResourceAMILookupName</span><span style="color:#000;font-weight:bold">)</span>
 
-    <span style="color:#008000">// Create the ASG
-</span><span style="color:#008000"></span>    asgResource := &amp;gocf.AutoScalingAutoScalingGroup{
-      <span style="color:#008000">// Empty Region is equivalent to all region AZs
-</span><span style="color:#008000"></span>      <span style="color:#008000">// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
-</span><span style="color:#008000"></span>      AvailabilityZones:       gocf.GetAZs(gocf.String(<span style="color:#a31515">&#34;&#34;</span>)),
-      LaunchConfigurationName: gocf.Ref(asgLaunchConfigurationName).String(),
-      MaxSize:                 gocf.String(<span style="color:#a31515">&#34;1&#34;</span>),
-      MinSize:                 gocf.String(<span style="color:#a31515">&#34;1&#34;</span>),
-    }
-    template.AddResource(asgResourceName, asgResource)
-    <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-  }
-}</code></pre>
+    <span style="color:#8f5902;font-style:italic">// Create the ASG
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">asgResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AutoScalingAutoScalingGroup</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#8f5902;font-style:italic">// Empty Region is equivalent to all region AZs
+</span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#8f5902;font-style:italic">// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
+</span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">AvailabilityZones</span><span style="color:#000;font-weight:bold">:</span>       <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAZs</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">)),</span>
+      <span style="color:#000">LaunchConfigurationName</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">asgLaunchConfigurationName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
+      <span style="color:#000">MaxSize</span><span style="color:#000;font-weight:bold">:</span>                 <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;1&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">MinSize</span><span style="color:#000;font-weight:bold">:</span>                 <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;1&#34;</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">asgResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">asgResource</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>There are a few things to point out in this function:</p>
 
 <ul>
 <li><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    gocf.EC2SecurityGroupRule{
-          CidrIp:     gocf.String(<span style="color:#a31515">&#34;0.0.0.0/0&#34;</span>),
-          IpProtocol: gocf.String(<span style="color:#a31515">&#34;tcp&#34;</span>),
-          FromPort:   gocf.Integer(HTTPServerPort),
-          ToPort:     gocf.Integer(HTTPServerPort),
-        }</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EC2SecurityGroupRule</span><span style="color:#000;font-weight:bold">{</span>
+          <span style="color:#000">CidrIp</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;0.0.0.0/0&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">IpProtocol</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;tcp&#34;</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">FromPort</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
+          <span style="color:#000">ToPort</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
+        <span style="color:#000;font-weight:bold">}</span></code></pre>
 </div></li>
 <li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">      statements = append(statements, spartaIAM.PolicyStatement{
-      Effect:   <span style="color:#a31515">&#34;Allow&#34;</span>,
-      Action:   []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>},
-      Resource: gocf.String(fmt.Sprintf(<span style="color:#a31515">&#34;arn:aws:s3:::%s/%s&#34;</span>, S3Bucket, S3Key)),
-    })</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">      <span style="color:#000">statements</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">statements</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">spartaIAM</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">PolicyStatement</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">Effect</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#000">Action</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+      <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;arn:aws:s3:::%s/%s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Key</span><span style="color:#000;font-weight:bold">)),</span>
+    <span style="color:#000;font-weight:bold">})</span></code></pre>
 </div></li>
 <li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#008000">// Now setup the properties map, expand the userdata, and attach it...
-</span><span style="color:#008000"></span>    userDataProps := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-      <span style="color:#a31515">&#34;S3Bucket&#34;</span>:    S3Bucket,
-      <span style="color:#a31515">&#34;S3Key&#34;</span>:       S3Key,
-      <span style="color:#a31515">&#34;ServiceName&#34;</span>: serviceName,
-    }
-    <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>    templateReader := strings.NewReader(userDataTemplateInput)
-    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
-                                                                                      userDataProps)
-    <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
-      <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>      UserData:           gocf.Base64(userDataExpression),
-      <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>    }</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#8f5902;font-style:italic">// Now setup the properties map, expand the userdata, and attach it...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">userDataProps</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+      <span style="color:#4e9a06">&#34;S3Bucket&#34;</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;S3Key&#34;</span><span style="color:#000;font-weight:bold">:</span>       <span style="color:#000">S3Key</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;ServiceName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">serviceName</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">templateReader</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">strings</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewReader</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataTemplateInput</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">userDataExpressionErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ConvertToTemplateExpression</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">templateReader</span><span style="color:#000;font-weight:bold">,</span>
+                                                                                      <span style="color:#000">userDataProps</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">asgLaunchConfigurationResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AutoScalingLaunchConfiguration</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">UserData</span><span style="color:#000;font-weight:bold">:</span>           <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Base64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre>
 </div></li>
 <li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="http://gosparta.io/docs/application/custom_flags">custom flag</a> (not shown above):
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#008000">// And add the SSHKeyName option to the provision step
-</span><span style="color:#008000"></span>  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
-    <span style="color:#a31515">&#34;key&#34;</span>,
-    <span style="color:#a31515">&#34;k&#34;</span>,
-    <span style="color:#a31515">&#34;&#34;</span>,
-    <span style="color:#a31515">&#34;SSH Key Name to use for EC2 instances&#34;</span>)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#8f5902;font-style:italic">// And add the SSHKeyName option to the provision step
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Provision</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Flags</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">StringVarP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;key&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;k&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;SSH Key Name to use for EC2 instances&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 This value is used as an input to the AutoScalingLaunchConfiguration value:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
-      <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>      KeyName:            gocf.String(SSHKeyName),
-      <span style="color:#008000">// ...
-</span><span style="color:#008000"></span>    }</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#000">asgLaunchConfigurationResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AutoScalingLaunchConfiguration</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">KeyName</span><span style="color:#000;font-weight:bold">:</span>            <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#8f5902;font-style:italic">// ...
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre>
 </div></li>
 </ul>
 
@@ -831,21 +831,21 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 
 <h2 id="http-access">HTTP Access</h2>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
-*   Trying 52.26.146.138...
-* Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com (52.26.146.138) port 9999 (<span style="color:#008000">#0)
-</span><span style="color:#008000"></span>&gt; GET / HTTP/1.1
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
+*   Trying <span style="color:#0000cf;font-weight:bold">52</span>.26.146.138...
+* Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">52</span>.26.146.138<span style="color:#ce5c00;font-weight:bold">)</span> port <span style="color:#0000cf;font-weight:bold">9999</span> <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#8f5902;font-style:italic">#0)
+</span><span style="color:#8f5902;font-style:italic"></span>&gt; GET / HTTP/1.1
 &gt; Host: ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999
 &gt; User-Agent: curl/7.43.0
 &gt; Accept: */*
 &gt;
-&lt; HTTP/1.1 200 OK
-&lt; Date: Fri, 10 Jun 2016 14:58:15 GMT
-&lt; Content-Length: 29
-&lt; Content-Type: text/plain; charset=utf-8
+&lt; HTTP/1.1 <span style="color:#0000cf;font-weight:bold">200</span> OK
+&lt; Date: Fri, <span style="color:#0000cf;font-weight:bold">10</span> Jun <span style="color:#0000cf;font-weight:bold">2016</span> <span style="color:#0000cf;font-weight:bold">14</span>:58:15 GMT
+&lt; Content-Length: <span style="color:#0000cf;font-weight:bold">29</span>
+&lt; Content-Type: text/plain<span style="color:#000;font-weight:bold">;</span> <span style="color:#000">charset</span><span style="color:#ce5c00;font-weight:bold">=</span>utf-8
 &lt;
-* Connection <span style="color:#008000">#0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
-</span><span style="color:#008000"></span>Hello world from SpartaOmega!</code></pre>
+* Connection <span style="color:#8f5902;font-style:italic">#0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
+</span><span style="color:#8f5902;font-style:italic"></span>Hello world from SpartaOmega!</code></pre>
 </div>
 
 <h2 id="lambda-access">Lambda Access</h2>

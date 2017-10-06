@@ -548,30 +548,30 @@
 
 <p>Assume your Sparta lambda function returns a JSON struct as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// API response struct
-</span><span style="color:#008000"></span><span style="color:#00f">type</span> helloWorldResponse <span style="color:#00f">struct</span> {
-  Location <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;location&#34;`</span>
-  Body     <span style="color:#2b91af">string</span> <span style="color:#a31515">`json:&#34;body&#34;`</span>
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// API response struct
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">helloWorldResponse</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Location</span> <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;location&#34;`</span>
+  <span style="color:#000">Body</span>     <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;body&#34;`</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>To extract the <code>location</code> field and promote it to the HTTP <code>Location</code> header, you must configure the <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html">response data mappings</a>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">//
-</span><span style="color:#008000">// Promote the location key value to an HTTP header
-</span><span style="color:#008000">//
-</span><span style="color:#008000"></span>  lambdaFn := sparta.HandleAWSLambda(
-    sparta.LambdaName(helloWorldResponseFunc),
-    http.HandlerFunc(helloWorldResponseFunc),
-    sparta.IAMRoleDefinition{})
-	apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/hello&#34;</span>, lambdaFn)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic">// Promote the location key value to an HTTP header
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span>
+    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorldResponseFunc</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorldResponseFunc</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+	<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
 
-apiGWMethod, _ := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)
-apiGWMethod.Responses[http.StatusOK].Parameters = <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">bool</span>{
-  <span style="color:#a31515">&#34;method.response.header.Location&#34;</span>: <span style="color:#00f">true</span>,
-}
-apiGWMethod.Integration.Responses[http.StatusOK].Parameters[<span style="color:#a31515">&#34;method.response.header.Location&#34;</span>] =
-  <span style="color:#a31515">&#34;integration.response.body.location&#34;</span></code></pre>
+<span style="color:#000">apiGWMethod</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGWMethod</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Responses</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Parameters</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">bool</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#4e9a06">&#34;method.response.header.Location&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">apiGWMethod</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Responses</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Parameters</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;method.response.header.Location&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span>
+  <span style="color:#4e9a06">&#34;integration.response.body.location&#34;</span></code></pre>
 </div>
 
 <p>See the related <a href="https://forums.aws.amazon.com/thread.jspa?threadID=199443">AWS Forum thread</a>.</p>

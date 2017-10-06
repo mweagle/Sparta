@@ -508,54 +508,54 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> transformImage(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">transformImage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
 
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
-	}).Info(<span style="color:#a31515">&#34;Request received 👍&#34;</span>)</code></pre>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received 👍&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <h1 id="unmarshalling-the-s3-event">Unmarshalling the S3 Event</h1>
 
 <p>Since the <code>transformImage</code> is expected to be triggered by S3 event changes, we will unmarshal the <code>*json.RawMessage</code> data into an S3-specific event provided by Sparta via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">decoder := json.NewDecoder(r.Body)
-<span style="color:#00f">defer</span> r.Body.Close()
-<span style="color:#00f">var</span> lambdaEvent spartaS3.Event
-err := decoder.Decode(&amp;lambdaEvent)
-<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-  logger.Error(<span style="color:#a31515">&#34;Failed to unmarshal event data: &#34;</span>, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">spartaS3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span>
+<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>S3 events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> lambdaEvent.Records {
-  err = <span style="color:#00f">nil</span>
-  <span style="color:#00f">switch</span> eachRecord.EventName {
-  <span style="color:#00f">case</span> <span style="color:#a31515">&#34;ObjectCreated:Put&#34;</span>:
-    {
-      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
-    }
-  <span style="color:#00f">case</span> <span style="color:#a31515">&#34;s3:ObjectRemoved:Delete&#34;</span>:
-    {
-      <span style="color:#008000">// Delete stamped image
-</span><span style="color:#008000"></span>    }
-  <span style="color:#00f">default</span>:
-    {
-      logger.Info(<span style="color:#a31515">&#34;Unsupported event: &#34;</span>, eachRecord.EventName)
-    }
-  }
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Records</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">nil</span>
+  <span style="color:#204a87;font-weight:bold">switch</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventName</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">case</span> <span style="color:#4e9a06">&#34;ObjectCreated:Put&#34;</span><span style="color:#000;font-weight:bold">:</span>
+    <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">stampImage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Bucket</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Name</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Object</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Key</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#204a87;font-weight:bold">case</span> <span style="color:#4e9a06">&#34;s3:ObjectRemoved:Delete&#34;</span><span style="color:#000;font-weight:bold">:</span>
+    <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#8f5902;font-style:italic">// Delete stamped image
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#204a87;font-weight:bold">default</span><span style="color:#000;font-weight:bold">:</span>
+    <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Unsupported event: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventName</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#000;font-weight:bold">}</span>
 
-  <span style="color:#008000">//
-</span><span style="color:#008000"></span>  <span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-    logger.Error(<span style="color:#a31515">&#34;Failed to process event: &#34;</span>, err.Error())
-    http.Error(w, err.Error(), http.StatusInternalServerError)
-  }
-}</code></pre>
+  <span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to process event: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+    <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory, applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify items which have already been stamped &amp; prevents an &ldquo;event-storm&rdquo; from being triggered.  This simple approach is acceptable for an example, but in production you should use a more durable approach.</p>
@@ -566,34 +566,34 @@ err := decoder.Decode(&amp;lambdaEvent)
 
 <p>Our lambda function needs to both <em>Get</em> and <em>Put</em> items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Provision an IAM::Role as part of this application
-</span><span style="color:#008000"></span><span style="color:#00f">var</span> iamRole = sparta.IAMRoleDefinition{}
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Provision an IAM::Role as part of this application
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">iamRole</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{}</span>
 
-<span style="color:#008000">// Setup the ARN that includes all child keys
-</span><span style="color:#008000"></span>resourceArn := fmt.Sprintf(<span style="color:#a31515">&#34;%s/*&#34;</span>, s3EventBroadcasterBucket)
-iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
-  Actions: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>,
-    <span style="color:#a31515">&#34;s3:PutObject&#34;</span>,
-  },
-  Resource: resourceArn,
-})</code></pre>
-</div>
+<span style="color:#8f5902;font-style:italic">// Setup the ARN that includes all child keys
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">resourceArn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;%s/*&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3EventBroadcasterBucket</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">iamRole</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">iamRole</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRolePrivilege</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Actions</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;s3:PutObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">resourceArn</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">})</span></code></pre>
+</div></p>
 
 <p>The <code>s3EventBroadcasterBucket</code> param is the ARN of the S3 bucket that will trigger your lambda function (eg: <em>arn:aws:s3:::MyImagingS3Bucket</em>).</p>
 
 <p>With the IAM Role defined, we can create the Sparta lambda function for <code>transformImage</code>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
-</span><span style="color:#008000">// transform lambda doesn&#39;t fail early.
-</span><span style="color:#008000"></span>transformOptions := &amp;sparta.LambdaFunctionOptions{
-  Description: <span style="color:#a31515">&#34;Stamp assets in S3&#34;</span>,
-  MemorySize:  128,
-  Timeout:     30,
-}
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(transformImage),
-  http.HandlerFunc(transformImage),
-  iamRole)
-lambdaFn.Options = transformOptions</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+</span><span style="color:#8f5902;font-style:italic">// transform lambda doesn&#39;t fail early.
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">transformOptions</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunctionOptions</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Description</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Stamp assets in S3&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">MemorySize</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#0000cf;font-weight:bold">128</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Timeout</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#0000cf;font-weight:bold">30</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">transformImage</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">transformImage</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">iamRole</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Options</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">transformOptions</span></code></pre>
 </div>
 
 <p>It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new lambda function using the <code>iamRole</code> we defined earlier.</p>
@@ -602,16 +602,16 @@ lambdaFn.Options = transformOptions</code></pre>
 
 <p>If we were to deploy this Sparta application, the <code>transformImage</code> function would have the ability to <em>Get</em> and <em>Put</em> back to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket.  To register for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">//////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// S3 configuration
-</span><span style="color:#008000">//
-</span><span style="color:#008000"></span>lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: s3EventBroadcasterBucket,
-  },
-  Events: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:ObjectCreated:*&#34;</span>, <span style="color:#a31515">&#34;s3:ObjectRemoved:*&#34;</span>},
-})
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">//////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// S3 configuration
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Permission</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">SourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">s3EventBroadcasterBucket</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000">Events</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:ObjectCreated:*&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;s3:ObjectRemoved:*&#34;</span><span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">})</span>
+<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>When <code>Sparta</code> generates the CloudFormation template, it scans for <code>Permission</code> configurations.  For <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">push based sources</a> like S3, Sparta uses that service&rsquo;s APIs to register your lambda function as a publishing target for events.  This remote registration is handled automatically by CustomResources added to the CloudFormation template.</p>
