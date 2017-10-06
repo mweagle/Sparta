@@ -513,84 +513,84 @@
 
 <p>Because <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L149">s3ItemInfo</a> is expected to be invoked by the API Gateway, we&rsquo;ll start by unmarshalling the event data:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">decoder := json.NewDecoder(r.Body)
-<span style="color:#00f">defer</span> r.Body.Close()
-<span style="color:#00f">var</span> lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := decoder.Decode(&amp;lambdaEvent)
-<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-  logger.Error(<span style="color:#a31515">&#34;Failed to unmarshal event data: &#34;</span>, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  <span style="color:#00f">return</span>
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayLambdaJSONEvent</span>
+<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>The <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">sparta.APIGatewayLambdaJSONEvent</a> fields correspond to the Integration Response Mapping template discussed in the <a href="http://gosparta.io/docs/apigateway/example1">previous example</a> (see the full mapping template <a href="https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl">here</a>).</p>
 
 <p>Once the event is unmarshaled, we can use it to fetch the S3 item info:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">getObjectInput := &amp;s3.GetObjectInput{
-  Bucket: aws.String(lambdaEvent.QueryParams[<span style="color:#a31515">&#34;bucketName&#34;</span>]),
-  Key:    aws.String(lambdaEvent.QueryParams[<span style="color:#a31515">&#34;keyName&#34;</span>]),
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">getObjectInput</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">s3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetObjectInput</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Bucket</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">QueryParams</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;bucketName&#34;</span><span style="color:#000;font-weight:bold">]),</span>
+  <span style="color:#000">Key</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">QueryParams</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;keyName&#34;</span><span style="color:#000;font-weight:bold">]),</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">awsSession := awsSession(logger)
-svc := s3.New(awsSession)
-result, err := svc.GetObject(getObjectInput)
-<span style="color:#00f">if</span> <span style="color:#00f">nil</span> != err {
-  logger.Error(<span style="color:#a31515">&#34;Failed to process event: &#34;</span>, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  <span style="color:#00f">return</span>
-}
-presignedReq, _ := svc.GetObjectRequest(getObjectInput)
-url, err := presignedReq.Presign(5 * time.Minute)
-<span style="color:#00f">if</span> <span style="color:#00f">nil</span> != err {
-  logger.Error(<span style="color:#a31515">&#34;Failed to process event: &#34;</span>, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  <span style="color:#00f">return</span>
-}
-httpResponse := <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-  <span style="color:#a31515">&#34;S3&#34;</span>:  result,
-  <span style="color:#a31515">&#34;URL&#34;</span>: url,
-}
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">awsSession</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">awsSession</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logger</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">svc</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">s3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">awsSession</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">result</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">svc</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetObject</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">getObjectInput</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to process event: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">presignedReq</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">svc</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetObjectRequest</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">getObjectInput</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">url</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">presignedReq</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Presign</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">5</span> <span style="color:#ce5c00;font-weight:bold">*</span> <span style="color:#000">time</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Minute</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to process event: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">httpResponse</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+  <span style="color:#4e9a06">&#34;S3&#34;</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">result</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;URL&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">url</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-responseBody, err := json.Marshal(httpResponse)
-<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} <span style="color:#00f">else</span> {
-  w.Header().Set(<span style="color:#a31515">&#34;Content-Type&#34;</span>, <span style="color:#a31515">&#34;application/json&#34;</span>)
-  fmt.Fprint(w, string(responseBody))
-}</code></pre>
+<span style="color:#000">responseBody</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Marshal</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpResponse</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Set</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fprint</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">responseBody</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The next step is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
-apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaImagerAPI&#34;</span>, apiStage)</code></pre>
-</div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaImagerAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre>
+</div></p>
 
 <h1 id="create-lambda-binding">Create Lambda Binding</h1>
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> iamDynamicRole = sparta.IAMRoleDefinition{}
-iamDynamicRole.Privileges = append(iamDynamicRole.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>},
-    Resource: resourceArn,
-  })
-s3ItemInfoLambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(s3ItemInfo),
-  http.HandlerFunc(s3ItemInfo),
-  iamDynamicRole)
-s3ItemInfoOptions.Options = &amp;sparta.LambdaFunctionOptions{
-  Description: <span style="color:#a31515">&#34;Get information about an item in S3 via querystring params&#34;</span>,
-  MemorySize:  128,
-  Timeout:     10,
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">iamDynamicRole</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{}</span>
+<span style="color:#000">iamDynamicRole</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">iamDynamicRole</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRolePrivilege</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">Actions</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">resourceArn</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">})</span>
+<span style="color:#000">s3ItemInfoLambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3ItemInfo</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3ItemInfo</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">iamDynamicRole</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">s3ItemInfoOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Options</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunctionOptions</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Description</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Get information about an item in S3 via querystring params&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">MemorySize</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#0000cf;font-weight:bold">128</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Timeout</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#0000cf;font-weight:bold">10</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>A few items to note here:</p>
@@ -609,20 +609,20 @@ s3ItemInfoOptions.Options = &amp;sparta.LambdaFunctionOptions{
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that represents the <code>s3ItemInfo</code> function. This will be the relative path component used to reference our lambda function via the API Gateway.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/info&#34;</span>, s3ItemInfoLambdaFn)
-method, err := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)
-<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>, err
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/info&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3ItemInfoLambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">method</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h1 id="whitelist-input">Whitelist Input</h1>
 
 <p>The final step is to add the whitelisted parameters to the Method definition.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Whitelist query string params
-</span><span style="color:#008000"></span>method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.keyName&#34;</span>] = <span style="color:#00f">true</span>
-method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.bucketName&#34;</span>] = <span style="color:#00f">true</span></code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Whitelist query string params
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">method</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Parameters</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;method.request.querystring.keyName&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span>
+<span style="color:#000">method</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Parameters</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;method.request.querystring.bucketName&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span></code></pre>
 </div>
 
 <p>Note that the keynames in the <code>method.Parameters</code> map must be of the form: <strong>method.request.{location}.{name}</strong> where location is one of:</p>
@@ -639,7 +639,7 @@ method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.bu
 
 <p>With everything configured, let&rsquo;s provision the stack:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run application.go --level debug provision --s3Bucket $S3_BUCKET</code></pre>
 </div>
 
 <p>and check the results.</p>
@@ -648,14 +648,14 @@ method.Parameters[<span style="color:#a31515">&#34;method.request.querystring.bu
 
 <p>As this Sparta application includes an API Gateway definition, the stack <code>Outputs</code> includes the API Gateway URL:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1
 INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre>
 </div>
 
 <p>Let&rsquo;s fetch an item we know exists:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=somebucket-log&#34;
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=somebucket-log&#34;
 
 *   Trying 54.192.70.158...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.158) port 443 (#0)
@@ -684,53 +684,53 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Pretty printing the response body:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  &#34;code&#34;: 200,
-  &#34;status&#34;: <span style="color:#a31515">&#34;OK&#34;</span>,
-  &#34;headers&#34;: {
-    &#34;content-type&#34;: <span style="color:#a31515">&#34;application/json&#34;</span>,
-    &#34;date&#34;: <span style="color:#a31515">&#34;Sun, 06 Dec 2015 02:35:03 GMT&#34;</span>,
-    &#34;content-length&#34;: <span style="color:#a31515">&#34;1468&#34;</span>
-  },
-  &#34;results&#34;: {
-    &#34;S3&#34;: {
-      &#34;AcceptRanges&#34;: <span style="color:#a31515">&#34;bytes&#34;</span>,
-      &#34;Body&#34;: {},
-      &#34;CacheControl&#34;: <span style="color:#00f">null</span>,
-      &#34;ContentDisposition&#34;: <span style="color:#00f">null</span>,
-      &#34;ContentEncoding&#34;: <span style="color:#00f">null</span>,
-      &#34;ContentLanguage&#34;: <span style="color:#00f">null</span>,
-      &#34;ContentLength&#34;: 70372,
-      &#34;ContentRange&#34;: <span style="color:#00f">null</span>,
-      &#34;ContentType&#34;: <span style="color:#a31515">&#34;image/png&#34;</span>,
-      &#34;DeleteMarker&#34;: <span style="color:#00f">null</span>,
-      &#34;ETag&#34;: <span style="color:#a31515">&#34;\&#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&#34;&#34;</span>,
-      &#34;Expiration&#34;: <span style="color:#00f">null</span>,
-      &#34;Expires&#34;: <span style="color:#00f">null</span>,
-      &#34;LastModified&#34;: <span style="color:#a31515">&#34;2015-11-09T15:38:01Z&#34;</span>,
-      &#34;Metadata&#34;: {},
-      &#34;MissingMeta&#34;: <span style="color:#00f">null</span>,
-      &#34;ReplicationStatus&#34;: <span style="color:#00f">null</span>,
-      &#34;RequestCharged&#34;: <span style="color:#00f">null</span>,
-      &#34;Restore&#34;: <span style="color:#00f">null</span>,
-      &#34;SSECustomerAlgorithm&#34;: <span style="color:#00f">null</span>,
-      &#34;SSECustomerKeyMD5&#34;: <span style="color:#00f">null</span>,
-      &#34;SSEKMSKeyId&#34;: <span style="color:#00f">null</span>,
-      &#34;ServerSideEncryption&#34;: <span style="color:#00f">null</span>,
-      &#34;StorageClass&#34;: <span style="color:#00f">null</span>,
-      &#34;VersionId&#34;: <span style="color:#00f">null</span>,
-      &#34;WebsiteRedirectLocation&#34;: <span style="color:#00f">null</span>
-    },
-    &#34;URL&#34;: <span style="color:#a31515">&#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;</span>
-  }
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;code&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;status&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;OK&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;headers&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;content-type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;date&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Sun, 06 Dec 2015 02:35:03 GMT&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;content-length&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;1468&#34;</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;results&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;S3&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">&#34;AcceptRanges&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;bytes&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;Body&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+      <span style="color:#204a87;font-weight:bold">&#34;CacheControl&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentDisposition&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentEncoding&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentLanguage&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentLength&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">70372</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentRange&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ContentType&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;image/png&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;DeleteMarker&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ETag&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;\&#34;ca1f746d6f232f87fca4e4d94ef6f3ab\&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;Expiration&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;Expires&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;LastModified&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2015-11-09T15:38:01Z&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;Metadata&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+      <span style="color:#204a87;font-weight:bold">&#34;MissingMeta&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ReplicationStatus&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;RequestCharged&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;Restore&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;SSECustomerAlgorithm&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;SSECustomerKeyMD5&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;SSEKMSKeyId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;ServerSideEncryption&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;StorageClass&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;VersionId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;WebsiteRedirectLocation&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span>
+    <span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#204a87;font-weight:bold">&#34;URL&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https://somebucket-log.s3-us-west-2.amazonaws.com/gopher.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=ASIAJ5KB2P6SQ4E7IMMQ%2F20151206%2Fus-west-2%2Fs3%2Faws4_request&amp;X-Amz-Date=20151206T023503Z&amp;X-Amz-Expires=300&amp;X-Amz-Security-Token=AQoDYXdzEFQawAK7vrGb%2BH9lw%2FhEHpR9Yg1KwPmmFcvyMzF7ewFBmxpOkfEM7gLZirMcFFexcxpWv%2F5CVAxpqjRf5FznOYJZHHoBqgmUcKPQZOpYKSbQG768zH5gMNdOANWin1COZU8DyuABrkJYL1bdFpwV7oHgrDmRz2G6oZqqOnfesRHW8WcehSXMV%2BcQFaAcO7IaIMAkRINMIDfxQaa%2FP8i8dbrcOfsEy6UABeaLKL3YgdZIouxcUUKzXQ6Pr4Cgrf0TAyRDAO1t6bVXzv6UFa6j00%2Fm0PYElni7xs5844UFAav%2B1weO2kX65ETzwUxBacAAnuzt%2BmTVPWeikhzgRnjBFn8mQjkZLCJklJJb6QHBO8dph2CSQsh47yw7%2BnexGjAu1y106AA2%2Bfa0WFYC552Q%2FrVVhKU7dejy%2B3jz%2F4LyWdnva9IvmCDVvY6zBQ%3D%3D&amp;X-Amz-SignedHeaders=host&amp;X-Amz-Signature=7d0e6663e043317b5611ddf4ae9f7514aff8c484a31deba524906ba50cbc6a2f&#34;</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>Please see the <a href="http://gosparta.io/docs/apigateway/example1">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 
 <p>What about an item that we know doesn&rsquo;t exist, but is in the bucket our lambda function has privileges to access:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher42.png&amp;bucketName=somebucket-log&#34;
 
 *   Trying 54.230.71.213...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.230.71.213) port 443 (#0)
@@ -755,11 +755,11 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 &lt;
 * Connection #0 to host 0ux556ho77.execute-api.us-west-2.amazonaws.com left intact
 {&#34;errorMessage&#34;:&#34;{\&#34;code\&#34;:500,\&#34;status\&#34;:\&#34;Internal Server Error\&#34;,\&#34;headers\&#34;:{\&#34;content-type\&#34;:\&#34;text/plain; charset=utf-8\&#34;,\&#34;x-content-type-options\&#34;:\&#34;nosniff\&#34;,\&#34;date\&#34;:\&#34;Sun, 06 Dec 2015 02:40:14 GMT\&#34;,\&#34;content-length\&#34;:\&#34;60\&#34;},\&#34;error\&#34;:\&#34;AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\&#34;}&#34;,&#34;errorType&#34;:&#34;Error&#34;,&#34;stackTrace&#34;:[&#34;IncomingMessage.&lt;anonymous&gt; (/var/task/index.js:68:53)&#34;,&#34;IncomingMessage.emit (events.js:117:20)&#34;,&#34;_stream_readable.js:944:16&#34;,&#34;process._tickCallback (node.js:442:13)&#34;]}</code></pre>
-</div>
+</div></p>
 
 <p>And finally, what if we try to access a bucket that our lambda function isn&rsquo;t authorized to access:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=weagle&#34;
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs &#34;https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName=gopher.png&amp;bucketName=weagle&#34;
 
 *   Trying 54.192.70.129...
 * Connected to 0ux556ho77.execute-api.us-west-2.amazonaws.com (54.192.70.129) port 443 (#0)
@@ -790,7 +790,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run application.go delete</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run application.go delete</code></pre>
 </div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>

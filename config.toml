@@ -7,7 +7,7 @@ canonifyurls = true
 googleAnalytics = "UA-70794971-1"
 # Code highlighting
 # https://gohugo.io/content-management/syntax-highlighting
-pygmentsStyle="vs"
+pygmentsStyle="tango"
 
 [params]
 	# General information

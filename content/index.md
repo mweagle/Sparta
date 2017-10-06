@@ -81,13 +81,13 @@ Sparta exclusively relies on [CloudFormation](http://docs.aws.amazon.com/AWSClou
 package main
 
 import (
-	"encoding/json"
-	"fmt"
+  "encoding/json"
+  "fmt"
   "io/ioutil"
-	"net/http"
+  "net/http"
 
-	"github.com/Sirupsen/logrus"
-	sparta "github.com/mweagle/Sparta"
+  "github.com/Sirupsen/logrus"
+  sparta "github.com/mweagle/Sparta"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

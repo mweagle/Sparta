@@ -508,38 +508,38 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoDynamoDBEvent(w http.ResponseWriter, r *http.Request)
-{
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
-	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoDynamoDBEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h1 id="a-href-hahahugoshortcode-2hbhb-unmarshalling-the-dynamodb-event-a"><a href="#unmarshalDynamoDBEvent">Unmarshalling the DynamoDB Event</a></h1>
 
 <p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>req.Body</code> data into an DynamoDB-specific event provided by Sparta via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">decoder := json.NewDecoder(r.Body)
-<span style="color:#00f">defer</span> r.Body.Close()
-<span style="color:#00f">var</span> lambdaEvent spartaDynamoDB.Event
-err := decoder.Decode(&amp;lambdaEvent)
-<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-  logger.Error(<span style="color:#a31515">&#34;Failed to unmarshal event data: &#34;</span>, err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">spartaDynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span>
+<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>DynamoDB events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">for</span> _, eachRecord := <span style="color:#00f">range</span> lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    <span style="color:#a31515">&#34;Keys&#34;</span>:     eachRecord.DynamoDB.Keys,
-    <span style="color:#a31515">&#34;NewImage&#34;</span>: eachRecord.DynamoDB.NewImage,
-  }).Info(<span style="color:#a31515">&#34;DynamoDb Event&#34;</span>)
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Records</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#4e9a06">&#34;Keys&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Keys</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;NewImage&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewImage</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;DynamoDb Event&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
@@ -548,24 +548,24 @@ err := decoder.Decode(&amp;lambdaEvent)
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn := sparta.HandleAWSLambda(
-  sparta.LambdaName(echoDynamoDBEvent),
-  http.HandlerFunc(echoDynamoDBEvent),
-  sparta.IAMRoleDefinition{})</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoDynamoDBEvent</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoDynamoDBEvent</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre>
 </div>
 
 <h1 id="event-source-mappings">Event Source Mappings</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoDynamoDBEvent</code> function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">EventSourceMappings</a>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
-    &amp;lambda.CreateEventSourceMappingInput{
-      EventSourceArn:   aws.String(dynamoTestStream),
-      StartingPosition: aws.String(<span style="color:#a31515">&#34;TRIM_HORIZON&#34;</span>),
-      BatchSize:        aws.Int64(10),
-      Enabled:          aws.Bool(<span style="color:#00f">true</span>),
-  })
-lambdaFunctions = append(lambdaFunctions, lambdaFn)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambda</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CreateEventSourceMappingInput</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">EventSourceArn</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">dynamoTestStream</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">StartingPosition</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;TRIM_HORIZON&#34;</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">BatchSize</span><span style="color:#000;font-weight:bold">:</span>        <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Int64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">10</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">Enabled</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Bool</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">})</span>
+<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>The <code>dynamoTestStream</code> param is the ARN of the Dynamo stream that that your lambda function will <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">poll</a> (eg: <em>arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869</em>).</p>

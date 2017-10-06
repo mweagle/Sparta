@@ -502,18 +502,18 @@
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-lambdaFunctions = append(lambdaFunctions, lambdaFn)
-err := sparta.Main(<span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
-  fmt.Sprintf(<span style="color:#a31515">&#34;Test HelloWorld resource command&#34;</span>),
-  lambdaFunctions,
-  <span style="color:#00f">nil</span>,
-  <span style="color:#00f">nil</span>)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test HelloWorld resource command&#34;</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --help
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --help
 Simple Sparta application that demonstrates core functionality
 
 Usage:

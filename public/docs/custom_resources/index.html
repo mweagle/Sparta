@@ -528,10 +528,10 @@
 
 <p>This is the core of your custom resource&rsquo;s logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> CustomResourceFunction <span style="color:#00f">func</span>(requestType <span style="color:#2b91af">string</span>
-                                  stackID <span style="color:#2b91af">string</span>
-                                  properties <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}
-                                  logger *logrus.Logger) (<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>)</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">CustomResourceFunction</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">requestType</span> <span style="color:#204a87;font-weight:bold">string</span>
+                                  <span style="color:#000">stackID</span> <span style="color:#204a87;font-weight:bold">string</span>
+                                  <span style="color:#000">properties</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}</span>
+                                  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>where</p>
@@ -547,17 +547,17 @@
 
 <p>As an example, we&rsquo;ll use the following custom resource function:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// User defined λ-backed CloudFormation CustomResource
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> userDefinedCustomResource(requestType <span style="color:#2b91af">string</span>,
-	stackID <span style="color:#2b91af">string</span>,
-	properties <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	logger *logrus.Logger) (<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}, <span style="color:#2b91af">error</span>) {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// User defined λ-backed CloudFormation CustomResource
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">userDefinedCustomResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">requestType</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">stackID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">properties</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
 
-	<span style="color:#00f">var</span> results = <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-		<span style="color:#a31515">&#34;CustomResourceResult&#34;</span>: <span style="color:#a31515">&#34;Victory!&#34;</span>,
-	}
-	<span style="color:#00f">return</span> results, <span style="color:#00f">nil</span>
-}</code></pre>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">results</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+		<span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Victory!&#34;</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">results</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>This function always succeeds and returns a non-empty results map consisting of a single key (<code>CustomResourceResult</code>).</p>
@@ -577,26 +577,26 @@
 
 <p>For example, our custom resource function above can be associated via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Standard AWS λ function
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	configuration, _ := Discover()
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Standard AWS λ function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
 
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;Discovery&#34;</span>: configuration,
-	}).Info(<span style="color:#a31515">&#34;Custom resource request&#34;</span>)
-  w.Write([]byte(<span style="color:#a31515">&#34;Hello World&#34;</span>))
-}
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;Discovery&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Custom resource request&#34;</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">([]</span><span style="color:#204a87">byte</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World&#34;</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#00f">func</span> ExampleLambdaAWSInfo_RequireCustomResource() {
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-  http.HandlerFunc(helloWorld),
-  sparta.IAMRoleDefinition{})
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">ExampleLambdaAWSInfo_RequireCustomResource</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
-  userDefinedCustomResource,
-  <span style="color:#00f">nil</span>,
-  <span style="color:#00f">nil</span>)</code></pre>
+<span style="color:#000">cfResName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RequireCustomResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#000">userDefinedCustomResource</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre>
 </div>
 
 <p>Since our custom resource function doesn&rsquo;t require any additional AWS resources, we provide an empty <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition">IAMRoleDefinition</a>.</p>
@@ -609,21 +609,21 @@ cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
 
 <p>To link these resources together, the first step is to include a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> that annotates your Sparta lambda function&rsquo;s CloudFormation resource metadata.  This function specifies which user defined output keys (<code>CustomResourceResult</code> in this example) you wish to make available during your lambda function&rsquo;s execution.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.Decorator = <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
-	lambdaResourceName <span style="color:#2b91af">string</span>,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	S3Bucket <span style="color:#2b91af">string</span>,
-	S3Key <span style="color:#2b91af">string</span>,
-	buildID <span style="color:#2b91af">string</span>,
-	cfTemplate *gocf.Template,
-	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	logger *logrus.Logger)  <span style="color:#2b91af">error</span> {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorator</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">cfTemplate</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>  <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
 
-  <span style="color:#008000">// Pass CustomResource outputs to the λ function
-</span><span style="color:#008000"></span>  resourceMetadata[<span style="color:#a31515">&#34;CustomResource&#34;</span>] = gocf.GetAtt(cfResName, <span style="color:#a31515">&#34;CustomResourceResult&#34;</span>)
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-}</code></pre>
+  <span style="color:#8f5902;font-style:italic">// Pass CustomResource outputs to the λ function
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">resourceMetadata</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;CustomResource&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cfResName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time through a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">go-cloudformation</a> version of <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a>.</p>
@@ -634,32 +634,32 @@ cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
 
 <p>In this example, the unmarshalled <em>DiscoveryInfo</em> struct looks like:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  &#34;Discovery&#34;: {
-    &#34;ResourceID&#34;: <span style="color:#a31515">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span>,
-    &#34;Region&#34;: <span style="color:#a31515">&#34;us-west-2&#34;</span>,
-    &#34;StackID&#34;: <span style="color:#a31515">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/70b28170-13f9-11e6-b0c7-50d5ca11b8d2&#34;</span>,
-    &#34;StackName&#34;: <span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
-    &#34;Resources&#34;: {
-      &#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;: {
-          &#34;ResourceID&#34;: <span style="color:#a31515">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span>,
-          &#34;Properties&#34;: {
-            &#34;CustomResource&#34;: <span style="color:#a31515">&#34;Victory!&#34;</span>
-          },
-          &#34;Tags&#34;: {}
-      }
-    }
-  },
-  &#34;level&#34;: <span style="color:#a31515">&#34;info&#34;</span>,
-  &#34;msg&#34;: <span style="color:#a31515">&#34;Custom resource request&#34;</span>,
-  &#34;time&#34;: <span style="color:#a31515">&#34;2016-05-07T14:13:37Z&#34;</span>
-}</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;Discovery&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;ResourceID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Region&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;us-west-2&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;StackID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/70b28170-13f9-11e6-b0c7-50d5ca11b8d2&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;StackName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Resources&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+          <span style="color:#204a87;font-weight:bold">&#34;ResourceID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;mainhelloWorldLambda837e49c53be175a0f75018a148ab6cd22841cbfb&#34;</span><span style="color:#000;font-weight:bold">,</span>
+          <span style="color:#204a87;font-weight:bold">&#34;Properties&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;CustomResource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Victory!&#34;</span>
+          <span style="color:#000;font-weight:bold">},</span>
+          <span style="color:#204a87;font-weight:bold">&#34;Tags&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{}</span>
+      <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;level&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;msg&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Custom resource request&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;time&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2016-05-07T14:13:37Z&#34;</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>To lookup the output, the calling function might do something like:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">configuration, _ := sparta.Discover()
-customResult := configuration.Resources[configuration.ResourceID].Properties[<span style="color:#a31515">&#34;CustomResourceResult&#34;</span>]</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
+<span style="color:#000">customResult</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceID</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">]</span></code></pre>
 </div>
 
 <h2 id="wrapping-up">Wrapping Up</h2>

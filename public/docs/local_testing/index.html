@@ -512,92 +512,92 @@
 
 <p>For this example, let&rsquo;s define a simple Sparta application:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">package</span> main
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
 
-<span style="color:#00f">import</span> (
-	<span style="color:#a31515">&#34;encoding/json&#34;</span>
-	<span style="color:#a31515">&#34;fmt&#34;</span>
-	<span style="color:#a31515">&#34;net/http&#34;</span>
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#4e9a06">&#34;encoding/json&#34;</span>
+	<span style="color:#4e9a06">&#34;fmt&#34;</span>
+	<span style="color:#4e9a06">&#34;net/http&#34;</span>
 
-	<span style="color:#a31515">&#34;github.com/Sirupsen/logrus&#34;</span>
-	sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
-)
+	<span style="color:#4e9a06">&#34;github.com/Sirupsen/logrus&#34;</span>
+	<span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Hello world event handler
-</span><span style="color:#008000">//
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(<span style="color:#a31515">&#34;Hello World&#34;</span>))
-}
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">([]</span><span style="color:#204a87">byte</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World&#34;</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Main
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
-	<span style="color:#008000">// Deploy it
-</span><span style="color:#008000"></span>	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-		http.HandlerFunc(helloWorld),
-		sparta.IAMRoleDefinition{})
-	<span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#8f5902;font-style:italic">// Deploy it
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
 
-	sparta.Main(<span style="color:#a31515">&#34;SpartaExplore&#34;</span>,
-		fmt.Sprintf(<span style="color:#a31515">&#34;Test explore command&#34;</span>),
-		lambdaFunctions,
-		<span style="color:#00f">nil</span>,
-		<span style="color:#00f">nil</span>)
-}</code></pre>
+	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaExplore&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test explore command&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <h1 id="command-line-testing">Command Line Testing</h1>
 
 <p>With our application defined, let&rsquo;s run it:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> explore
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">explore</span>
 
-INFO[0000] ========================================
-INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.9 LinkFlags= Option=explore SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC=<span style="color:#a31515">&#34;2017-10-05T02:46:11Z&#34;</span>
-INFO[0000] ========================================
-INFO[0000] The following URLs are available <span style="color:#00f">for</span> testing.
-INFO[0000] Hello_World                                   URL=<span style="color:#a31515">&#34;http://localhost:9999/Hello_World&#34;</span>
-INFO[0000] Functions can be invoked via application/json over POST
-INFO[0000] 	curl -vs -X POST -H <span style="color:#a31515">&#34;Content-Type: application/json&#34;</span> --data <span style="">@</span>testEvent.json http:<span style="color:#008000">//localhost:9999/Hello_World
-</span><span style="color:#008000"></span>INFO[0000] Where <span style="">@</span>testEvent.json is a local file with top level <span style="color:#a31515">`context`</span> and <span style="color:#a31515">`event`</span> properties:
-INFO[0000] 	{<span style="color:#a31515">&#34;context&#34;</span>: {}, <span style="color:#a31515">&#34;event&#34;</span>: {}}
-INFO[0000] Signaling parent process                      ParentPID=0
-INFO[0000] Starting main server                          URL=<span style="color:#a31515">&#34;http://localhost:9999&#34;</span></code></pre>
-</div>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">========================================</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Welcome</span> <span style="color:#000">to</span> <span style="color:#000">MyHelloWorldStack</span>                  <span style="color:#000">GoVersion</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000">go1</span><span style="color:#0000cf;font-weight:bold">.9</span> <span style="color:#000">LinkFlags</span><span style="color:#000;font-weight:bold">=</span> <span style="color:#000">Option</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000">explore</span> <span style="color:#000">SpartaSHA</span><span style="color:#000;font-weight:bold">=</span><span style="color:#000">d3479d7</span> <span style="color:#000">SpartaVersion</span><span style="color:#000;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0.20.1</span> <span style="color:#000">UTC</span><span style="color:#000;font-weight:bold">=</span><span style="color:#4e9a06">&#34;2017-10-05T02:46:11Z&#34;</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">========================================</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">The</span> <span style="color:#000">following</span> <span style="color:#000">URLs</span> <span style="color:#000">are</span> <span style="color:#000">available</span> <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">testing</span><span style="color:#000;font-weight:bold">.</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Hello_World</span>                                   <span style="color:#000">URL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#4e9a06">&#34;http://localhost:9999/Hello_World&#34;</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Functions</span> <span style="color:#000">can</span> <span style="color:#000">be</span> <span style="color:#000">invoked</span> <span style="color:#000">via</span> <span style="color:#000">application</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">json</span> <span style="color:#000">over</span> <span style="color:#000">POST</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> 	<span style="color:#000">curl</span> <span style="color:#ce5c00;font-weight:bold">-</span><span style="color:#000">vs</span> <span style="color:#ce5c00;font-weight:bold">-</span><span style="color:#000">X</span> <span style="color:#000">POST</span> <span style="color:#ce5c00;font-weight:bold">-</span><span style="color:#000">H</span> <span style="color:#4e9a06">&#34;Content-Type: application/json&#34;</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">data</span> <span style="color:#a40000">@</span><span style="color:#000">testEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">json</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">:</span><span style="color:#8f5902;font-style:italic">//localhost:9999/Hello_World
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Where</span> <span style="color:#a40000">@</span><span style="color:#000">testEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">json</span> <span style="color:#000">is</span> <span style="color:#000">a</span> <span style="color:#000">local</span> <span style="color:#000">file</span> <span style="color:#000">with</span> <span style="color:#000">top</span> <span style="color:#000">level</span> <span style="color:#4e9a06">`context`</span> <span style="color:#000">and</span> <span style="color:#4e9a06">`event`</span> <span style="color:#000">properties</span><span style="color:#000;font-weight:bold">:</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> 	<span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;context&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span> <span style="color:#4e9a06">&#34;event&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{}}</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Signaling</span> <span style="color:#000">parent</span> <span style="color:#000">process</span>                      <span style="color:#000">ParentPID</span><span style="color:#000;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0</span>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Starting</span> <span style="color:#000">main</span> <span style="color:#000">server</span>                          <span style="color:#000">URL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#4e9a06">&#34;http://localhost:9999&#34;</span></code></pre>
+</div></p>
 
 <p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>go</strong> binary that is used in the AWS Lambda execution environment.</p>
 
 <p>Per the instructions, let&rsquo;s create a <em>testEvent.json</em> file with the required structure:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  &#34;context&#34; : {},
-  &#34;event&#34; : {}
-}</code></pre>
-</div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;context&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;event&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
+</div></p>
 
 <p>and post it:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -vs -X POST -H <span style="color:#a31515">&#34;Content-Type: application/json&#34;</span> --data @testEvent.json http://localhost:9999/main.helloWorld
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -vs -X POST -H <span style="color:#4e9a06">&#34;Content-Type: application/json&#34;</span> --data @testEvent.json http://localhost:9999/main.helloWorld
 
 *   Trying ::1...
-* Connected to localhost (::1) port 9999 (<span style="color:#008000">#0)
-</span><span style="color:#008000"></span>&gt; POST /main.helloWorld HTTP/1.1
+* Connected to localhost <span style="color:#ce5c00;font-weight:bold">(</span>::1<span style="color:#ce5c00;font-weight:bold">)</span> port <span style="color:#0000cf;font-weight:bold">9999</span> <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#8f5902;font-style:italic">#0)
+</span><span style="color:#8f5902;font-style:italic"></span>&gt; POST /main.helloWorld HTTP/1.1
 &gt; Host: localhost:9999
 &gt; User-Agent: curl/7.43.0
 &gt; Accept: */*
 &gt; Content-Type: application/json
-&gt; Content-Length: 33
+&gt; Content-Length: <span style="color:#0000cf;font-weight:bold">33</span>
 &gt;
-* upload completely sent off: 33 out of 33 bytes
-&lt; HTTP/1.1 200 OK
-&lt; Date: Mon, 21 Dec 2015 03:13:33 GMT
-&lt; Content-Length: 11
-&lt; Content-Type: text/plain; charset=utf-8
+* upload completely sent off: <span style="color:#0000cf;font-weight:bold">33</span> out of <span style="color:#0000cf;font-weight:bold">33</span> bytes
+&lt; HTTP/1.1 <span style="color:#0000cf;font-weight:bold">200</span> OK
+&lt; Date: Mon, <span style="color:#0000cf;font-weight:bold">21</span> Dec <span style="color:#0000cf;font-weight:bold">2015</span> <span style="color:#0000cf;font-weight:bold">03</span>:13:33 GMT
+&lt; Content-Length: <span style="color:#0000cf;font-weight:bold">11</span>
+&lt; Content-Type: text/plain<span style="color:#000;font-weight:bold">;</span> <span style="color:#000">charset</span><span style="color:#ce5c00;font-weight:bold">=</span>utf-8
 &lt;
-* Connection <span style="color:#008000">#0 to host localhost left intact
-</span><span style="color:#008000"></span>Hello World</code></pre>
+* Connection <span style="color:#8f5902;font-style:italic">#0 to host localhost left intact
+</span><span style="color:#8f5902;font-style:italic"></span>Hello World</code></pre>
 </div>
 
 <p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
@@ -615,36 +615,36 @@ INFO[0000] Starting main server                          URL=<span style="color:
 
 <p>To show this in action, let&rsquo;s walk through how Sparta <a href="https://github.com/mweagle/Sparta/blob/master/explore_test.go">does this</a>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> TestExplore(t *testing.T) {
-	<span style="color:#008000">// 1. Create the function(s) we want to test
-</span><span style="color:#008000"></span>	<span style="color:#00f">var</span> lambdaFunctions []*LambdaAWSInfo
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(exploreTestHelloWorld),
-		http.HandlerFunc(exploreTestHelloWorld),
-		sparta.IAMRoleDefinition{})
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">TestExplore</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">t</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">testing</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">T</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#8f5902;font-style:italic">// 1. Create the function(s) we want to test
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">LambdaAWSInfo</span>
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">exploreTestHelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">exploreTestHelloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
 
-	<span style="color:#008000">// 2. Mock event specific data to send to the lambda function
-</span><span style="color:#008000"></span>	eventData := ArbitraryJSONObject{
-		<span style="color:#a31515">&#34;key1&#34;</span>: <span style="color:#a31515">&#34;value1&#34;</span>,
-		<span style="color:#a31515">&#34;key2&#34;</span>: <span style="color:#a31515">&#34;value2&#34;</span>,
-		<span style="color:#a31515">&#34;key3&#34;</span>: <span style="color:#a31515">&#34;value3&#34;</span>}
+	<span style="color:#8f5902;font-style:italic">// 2. Mock event specific data to send to the lambda function
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">eventData</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ArbitraryJSONObject</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;key1&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;value1&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;key2&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;value2&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;key3&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;value3&#34;</span><span style="color:#000;font-weight:bold">}</span>
 
-	<span style="color:#008000">// 3. Make the request and confirm
-</span><span style="color:#008000"></span>	logger, _ := NewLogger(<span style="color:#a31515">&#34;warning&#34;</span>)
-	ts := httptest.NewServer(NewServeMuxLambda(lambdaFunctions, logger))
-	<span style="color:#00f">defer</span> ts.Close()
-	resp, err := explore.NewRequest(lambdaFn.URLPath(), eventData, ts.URL)
-	<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-		t.Fatal(err.Error())
-	}
+	<span style="color:#8f5902;font-style:italic">// 3. Make the request and confirm
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">NewLogger</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;warning&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">ts</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">httptest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewServer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">NewServeMuxLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">))</span>
+	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">ts</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">resp</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">explore</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewRequest</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">URLPath</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ts</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">URL</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fatal</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+	<span style="color:#000;font-weight:bold">}</span>
 
-	<span style="color:#00f">defer</span> resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
+	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">body</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ioutil</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ReadAll</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
 
-	t.Log(<span style="color:#a31515">&#34;Status: &#34;</span>, resp.Status)
-	t.Log(<span style="color:#a31515">&#34;Headers: &#34;</span>, resp.Header)
-	t.Log(<span style="color:#a31515">&#34;Body: &#34;</span>, string(body))
-}</code></pre>
+	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Status: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Status</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Headers: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Body: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">body</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
 </div>
 
 <p>The test function above has the following features:</p>
