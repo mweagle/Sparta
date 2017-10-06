@@ -72,9 +72,9 @@ This function always succeeds and returns a non-empty results map consisting of 
 
 The next step is to associate this custom resource function with a previously created Sparta `LambdaAWSInfo` instance via [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource).  This function accepts:
 
-  * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [NewLambda](https://godoc.org/github.com/mweagle/Sparta#NewLambda).
+  * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
   * `userFunc`: Custom resource function pointer
-  * `lambdaOptions`: Lambda execution options. Equivalent to the same argument in [NewLambda](https://godoc.org/github.com/mweagle/Sparta#NewLambda).
+  * `lambdaOptions`: Lambda execution options. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
   * `resourceProps`: Arbitrary, optional properties that will be provided to the `userFunc` during execution.
 
 The multiple return values denote the logical, stable CloudFormation resource ID of the new custom resource, or an error if one occurred.

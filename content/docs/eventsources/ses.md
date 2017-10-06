@@ -250,7 +250,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoSESEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
   * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct so that the lambda function is triggered.
 
 Additionally, if the SES handler needs to access the raw email message body:

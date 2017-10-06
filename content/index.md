@@ -92,19 +92,21 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
-func helloWorld(event *json.RawMessage,
-              	context *sparta.LambdaContext,
-              	w http.ResponseWriter,
-              	logger *logrus.Logger) {
-	logger.Info("Hello World: ", string(*event))
-	fmt.Fprint(w, string(*event))
+func helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	eventData, _ := ioutil.ReadAll(r.Body)
+	defer r.Body.Close()
+	logger.Info("Hello World: ", string(eventData))
+	fmt.Fprint(w, string(eventData))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, nil)
+  lambdaFn := sparta.HandleAWSLambda("Hello world test",
+    http.HandlerFunc(helloWorld),
+    sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
   // Deploy it

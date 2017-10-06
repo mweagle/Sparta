@@ -78,7 +78,10 @@ func main() {
 	stackName := "SpartaGeoIP"
 
 	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, nil)
+  lambdaFn := sparta.HandleAWSLambda(
+    sparta.LambdaName(ipGeoLambda),
+    http.HandlerFunc(ipGeoLambda),
+    sparta.IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource("/info", lambdaFn)
 	apiGatewayResource.NewMethod("GET", http.StatusOK)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)

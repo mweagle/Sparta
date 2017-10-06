@@ -59,7 +59,10 @@ That's enough to get the data into CloudWatch Logs.
 With the core of the `echoDynamoDBEvent` complete, the next step is to integrate the **go** function with Sparta.  This is performed by the [appendDynamoDBLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114) function.  Since the `echoDynamoDBEvent` function doesn't access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:
 
 {{< highlight go >}}
-lambdaFn = sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamoDBEvent, nil)
+lambdaFn := sparta.HandleAWSLambda(
+  sparta.LambdaName(echoDynamoDBEvent),
+  http.HandlerFunc(echoDynamoDBEvent),
+  sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
 # Event Source Mappings
@@ -87,7 +90,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoDynamoDBEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
   * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 # Other Resources

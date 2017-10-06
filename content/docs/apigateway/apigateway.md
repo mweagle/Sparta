@@ -64,7 +64,10 @@ To extract the `location` field and promote it to the HTTP `Location` header, yo
 //
 // Promote the location key value to an HTTP header
 //
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorldResponseFunc, nil)
+  lambdaFn := sparta.HandleAWSLambda(
+    sparta.LambdaName(helloWorldResponseFunc),
+    http.HandlerFunc(helloWorldResponseFunc),
+    sparta.IAMRoleDefinition{})
 	apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
 
 apiGWMethod, _ := apiGatewayResource.NewMethod("GET", http.StatusOK)

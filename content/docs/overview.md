@@ -81,7 +81,10 @@ snsTopicName := sparta.CloudFormationResourceName("SNSDynamicTopic")
 snsTopic := &gocf.SNSTopic{
   DisplayName: gocf.String("Sparta Application SNS topic"),
 })
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamicSNSEvent, nil)
+lambdaFn := sparta.HandleAWSLambda(
+  sparta.LambdaName(echoDynamicSNSEvent),
+  http.HandlerFunc(echoDynamicSNSEvent),
+  sparta.IAMRoleDefinition{})
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 	BasePermission: sparta.BasePermission{
 		SourceArn: gocf.Ref(snsTopicName),

@@ -560,7 +560,10 @@
 <div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">//
 </span><span style="color:#008000">// Promote the location key value to an HTTP header
 </span><span style="color:#008000">//
-</span><span style="color:#008000"></span>lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorldResponseFunc, <span style="color:#00f">nil</span>)
+</span><span style="color:#008000"></span>  lambdaFn := sparta.HandleAWSLambda(
+    sparta.LambdaName(helloWorldResponseFunc),
+    http.HandlerFunc(helloWorldResponseFunc),
+    sparta.IAMRoleDefinition{})
 	apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/hello&#34;</span>, lambdaFn)
 
 apiGWMethod, _ := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)

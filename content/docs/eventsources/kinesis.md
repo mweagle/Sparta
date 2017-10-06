@@ -80,7 +80,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoKinesisEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.NewLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
   * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 # Notes

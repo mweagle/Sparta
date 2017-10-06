@@ -567,9 +567,9 @@
 <p>The next step is to associate this custom resource function with a previously created Sparta <code>LambdaAWSInfo</code> instance via <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a>.  This function accepts:</p>
 
 <ul>
-<li><code>roleNameOrIAMRoleDefinition</code>: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewLambda">NewLambda</a>.</li>
+<li><code>roleNameOrIAMRoleDefinition</code>: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda">HandleAWSLambda</a>.</li>
 <li><code>userFunc</code>: Custom resource function pointer</li>
-<li><code>lambdaOptions</code>: Lambda execution options. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewLambda">NewLambda</a>.</li>
+<li><code>lambdaOptions</code>: Lambda execution options. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda">HandleAWSLambda</a>.</li>
 <li><code>resourceProps</code>: Arbitrary, optional properties that will be provided to the <code>userFunc</code> during execution.</li>
 </ul>
 
