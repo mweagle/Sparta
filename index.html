@@ -590,19 +590,21 @@
 <span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#008000">// Hello world event handler
 </span><span style="color:#008000">//
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(event *json.RawMessage,
-              	context *sparta.LambdaContext,
-              	w http.ResponseWriter,
-              	logger *logrus.Logger) {
-	logger.Info(<span style="color:#a31515">&#34;Hello World: &#34;</span>, string(*event))
-	fmt.Fprint(w, string(*event))
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	eventData, _ := ioutil.ReadAll(r.Body)
+	<span style="color:#00f">defer</span> r.Body.Close()
+	logger.Info(<span style="color:#a31515">&#34;Hello World: &#34;</span>, string(eventData))
+	fmt.Fprint(w, string(eventData))
 }
 
 <span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#008000">// Main
 </span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
   <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, helloWorld, <span style="color:#00f">nil</span>)
+  lambdaFn := sparta.HandleAWSLambda(<span style="color:#a31515">&#34;Hello world test&#34;</span>,
+    http.HandlerFunc(helloWorld),
+    sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
   <span style="color:#008000">// Deploy it

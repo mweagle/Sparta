@@ -568,7 +568,10 @@ responseBody, err := json.Marshal(httpResponse)
 	stackName := <span style="color:#a31515">&#34;SpartaGeoIP&#34;</span>
 
 	<span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, ipGeoLambda, <span style="color:#00f">nil</span>)
+  lambdaFn := sparta.HandleAWSLambda(
+    sparta.LambdaName(ipGeoLambda),
+    http.HandlerFunc(ipGeoLambda),
+    sparta.IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource(<span style="color:#a31515">&#34;/info&#34;</span>, lambdaFn)
 	apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)

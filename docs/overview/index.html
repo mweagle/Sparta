@@ -571,7 +571,10 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)<
 snsTopic := &amp;gocf.SNSTopic{
   DisplayName: gocf.String(<span style="color:#a31515">&#34;Sparta Application SNS topic&#34;</span>),
 })
-lambdaFn := sparta.NewLambda(sparta.IAMRoleDefinition{}, echoDynamicSNSEvent, <span style="color:#00f">nil</span>)
+lambdaFn := sparta.HandleAWSLambda(
+  sparta.LambdaName(echoDynamicSNSEvent),
+  http.HandlerFunc(echoDynamicSNSEvent),
+  sparta.IAMRoleDefinition{})
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 	BasePermission: sparta.BasePermission{
 		SourceArn: gocf.Ref(snsTopicName),
