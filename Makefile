@@ -78,8 +78,7 @@ travis-depends: install_requirements
 
 .PHONY: travis-ci-test
 travis-ci-test: travis-depends test build
-	go test -v .
-	go test -v ./aws/...
+	go test -v -cover ./...
 
 ################################################################################
 # Sparta commands
@@ -104,8 +103,7 @@ clean:
 
 .PHONY: test
 test: build
-	go test -v .
-	go test -v ./aws/...
+	go test -v -cover ./...
 
 .PHONY: build
 build: validate
