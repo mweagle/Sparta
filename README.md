@@ -4,7 +4,7 @@
 
 # Sparta <p align="center">
 
-[![Build Status](https://travis-ci.org/mweagle/Sparta.svg?branch=master)](https://travis-ci.org/mweagle/Sparta) [![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta) [![Sourcegraph](https://sourcegraph.com/github.com/mweagle/Sparta/-/badge.svg)](https://sourcegraph.com/github.com/mweagle/Sparta?badge)
+[![Build Status](https://travis-ci.org/mweagle/Sparta.svg?branch=master)](https://travis-ci.org/mweagle/Sparta) [![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta) [![Sourcegraph](https://sourcegraph.com/github.com/mweagle/Sparta/-/badge.svg)](https://sourcegraph.com/github.com/mweagle/Sparta?badge)[![Go Report Card](https://goreportcard.com/badge/github.com/mweagle/Sparta)](https://goreportcard.com/report/github.com/mweagle/Sparta)
 
 Visit [gosparta.io](http://gosparta.io) for complete documentation.
 
