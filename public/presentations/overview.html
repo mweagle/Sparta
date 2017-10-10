@@ -141,9 +141,9 @@
 				<section data-markdown>
 					<textarea data-template>
 						#### Options
-						```bash
-							$ go run main.go help
-							Sparta HelloWorld stack for mweagle
+						```shell
+							$ go run main.go --help
+							Simple Sparta application that demonstrates core functionality
 
 							Usage:
 								main [command]
@@ -160,7 +160,7 @@
 							Flags:
 								-f, --format string    Log format [text, json] (default "text")
 								-h, --help             help for main
-									--ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
+										--ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
 								-l, --level string     Log level [panic, fatal, error, warn, info, debug] (default "info")
 								-n, --noop             Dry-run behavior only (do not perform mutations)
 								-t, --tags string      Optional build tags for conditional compilation
@@ -548,7 +548,7 @@
 
 				<section data-markdown>
 					<textarea data-template>
-						### ALM
+						### CI/CD
 						* Produce a [CodePipeline package](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-action-reference.html) with an optional `--provision` option
 						* Build a CI/CD pipeline with:
 							* [CodePipeline](https://aws.amazon.com/codepipeline/)

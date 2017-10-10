@@ -71,6 +71,13 @@ pygmentsStyle="tango"
 # 	weight = 30
 
 [[menu.main]]
+	name   = "Presentations"
+	url    = "/docs/presentations"
+	weight = 900
+
+
+
+[[menu.main]]
 	name   = "Limitations"
 	url    = "/docs/limitations"
 	weight = 950
