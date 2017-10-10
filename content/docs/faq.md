@@ -40,8 +40,7 @@ See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
 
 ### How can I test locally?
 
-Local testing is available via the [explore](/docs/local_testing/) command.
-
+Local testing is available via the [explore](/docs/local_testing/) command. You can use the standard Go [httptest](https://golang.org/pkg/net/http/httptest/) package for unit tests. See the [explore_test.go](https://github.com/mweagle/Sparta/blob/master/explore_test.go) source for an example.
 
 ### How can I make `provision` faster?
 

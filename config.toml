@@ -38,8 +38,8 @@ pygmentsStyle="tango"
 		accent  = "indigo"
 
 [params.font]
-    text = "Roboto"
-    code = "Roboto Mono"
+    text = "Open Sans"
+    code = "Source Code Pro"
 
 [social]
 	twitter = "mweagle"

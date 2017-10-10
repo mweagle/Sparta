@@ -4,4 +4,9 @@ title: Presentations
 weight: 800
 ---
 
-  * [High Level Overview](/presentations/overview.html)
+<img src="/presentations/overview/CouchPotatoGopher.png" width="50%">
+
+# [Overview - October 2017](/presentations/overview.html)
+
+
+<h4>Image courtesy of <a href="https://github.com/ashleymcnamara/gophers">Ashley McNamara<a/></h4>

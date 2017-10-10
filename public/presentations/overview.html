@@ -82,7 +82,7 @@
 					<p class="fragment fade-up">Repo commit is the unit of promotion</p>
 					<p class="fragment fade-up">AWS Lambda is a viable execution platform</p>
 					<p class="fragment fade-up">Responsibilities rather than Roles</p>
-					<p class="fragment fade-up">Go is awesome</p>
+					<p class="fragment fade-up">Go is fantastic</p>
 
 					<aside class="notes">
 						PaaS: Abstraction over infrastructure, service as first glass
@@ -93,14 +93,23 @@
 					</aside>
 				</section>
 
+
+				<section data-markdown>
+					<textarea data-template>
+							<img src="./overview/GOPHER_INCLUSION.png" alt="Drawing" style="width: 50%"/>
+
+							<h5>Image courtesy of <a href="https://github.com/ashleymcnamara/gophers">Ashley McNamara<a/></h5>
+					</textarea>
+				</section>
+
 				<section data-markdown>
 					<textarea data-template>
 						### Concepts
 						* **ServiceName**: Stable, logical service identifier
-						* **Sparta Function**: `(http.ResponseWriter, *http.Request)`
+						* **Sparta Function**: `(http.ResponseWriter, *http.Request)` (aka: _http.HandlerFunc_)
 						* **Privileges**: Lambda IAM Role Privilege
-						* **Permissions**: Configure AWS event publishers (eg: S3, Kinesis)
-						* **Dynamic Resources**: Non-Lambda resources provisioned by a Sparta Application
+						* **Permissions**: Configure AWS event publishers (eg: S3, Dynamo, Kinesis)
+						* **Dynamic Resources**: Other AWS infrastructure provisioned by a Sparta Application
 					</textarea>
 				</section>
 
@@ -143,7 +152,8 @@
 						#### Options
 						```shell
 							$ go run main.go --help
-							Simple Sparta application that demonstrates core functionality
+							Simple Sparta application that demonstrates
+							core functionality
 
 							Usage:
 								main [command]
@@ -158,12 +168,12 @@
 								version     Sparta framework version
 
 							Flags:
-								-f, --format string    Log format [text, json] (default "text")
-								-h, --help             help for main
-										--ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
-								-l, --level string     Log level [panic, fatal, error, warn, info, debug] (default "info")
-								-n, --noop             Dry-run behavior only (do not perform mutations)
-								-t, --tags string      Optional build tags for conditional compilation
+								-f, --format string Log format [text, json] (default "text")
+								-h, --help          help for main
+								--ldflags string    Go linker string definition flags (https://golang.org/cmd/link/)
+								-l, --level string  Log level [panic, fatal, error, warn, info, debug] (default "info")
+								-n, --noop          Dry-run behavior only (do not perform mutations)
+								-t, --tags string   Optional build tags for conditional compilation
 
 							Use "main [command] --help" for more information about a command.
 						```
@@ -173,7 +183,7 @@
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Trust
-						# λ
+						<div style="font-size: 96px">λ</div>
 						<small>
 						`go run main.go provision --level info --s3Bucket $S3BUCKET --noop`
 						</small>
@@ -222,7 +232,7 @@
 						```bash
 						$ go get -u -v github.com/mweagle/SpartaImager
 						$ cd $GOPATH/src/github.com/mweagle/SpartaImager
-						$ go run main.go provision --level info --s3Bucket weagle
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
 						```
 					</textarea>
 				</section>
@@ -237,8 +247,7 @@
 						resourceArn := fmt.Sprintf("%s/*", s3EventBroadcasterBucket)
 						iamRole.Privileges = append(iamRole.Privileges,
 							sparta.IAMRolePrivilege{
-								Actions: []string{"s3:GetObject",
-									"s3:PutObject"},
+								Actions: []string{"s3:GetObject", "s3:PutObject"},
 								Resource: resourceArn,
 							})
 						```
@@ -250,18 +259,18 @@
 						#### Lambda & Permissions
 						```golang
 						var lambdaFunctions []*sparta.LambdaAWSInfo
-						// The default timeout is 3 seconds - increase that to 30
-						// s.t. transform lambda doesn't exit early.
-						transformOptions := &sparta.LambdaFunctionOptions{
-							Description: "Stamp assets in S3",
-							MemorySize:  128,
-							Timeout:     30,
-						}
 						lambdaFn := sparta.HandleAWSLambda(
 							sparta.LambdaName(transformImage),
 							http.HandlerFunc(transformImage),
 							iamRole)
-						// S3 configuration
+						// The default timeout is 3 seconds - increase that to 30
+						// so the transform function doesn't timeout
+						lambdaFn.Options = &sparta.LambdaFunctionOptions{
+							Description: "Stamp assets in S3",
+							MemorySize:  128,
+							Timeout:     30,
+						}
+						// S3 notification configuration
 						lambdaFn.Permissions = append(lambdaFn.Permissions,
 							sparta.S3Permission{
 							BasePermission: sparta.BasePermission{
@@ -278,8 +287,8 @@
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
-						# λ
 
+						<div style="font-size: 96px">λ</div>
 						Note:
 						* Provision the stack: `go run main.go provision --s3Bucket ${S3_BUCKET}`
 						* Use `aws s3 cp` to upload the ben file to the bucket: `aws s3 cp ./site/ben.jpg s3://$(SPARTA_S3_TEST_BUCKET)/ben.jpg`
@@ -312,7 +321,7 @@
 						```bash
 						$ go get -u -v github.com/mweagle/SpartaImager
 						$ cd $GOPATH/src/github.com/mweagle/SpartaImager
-						$ go run main.go provision --level info --s3Bucket weagle
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
 						```
 					</textarea>
 				</section>
@@ -358,7 +367,7 @@
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
-						# λ
+						<div style="font-size: 96px">λ</div>
 
 						Note:
 						Follow the Repo steps [README](https://github.com/mweagle/SpartaImager/blob/master/README.md) has an overview of what's going on.
@@ -392,7 +401,7 @@
 						$ go get -u -v github.com/mweagle/SpartaHTML
 						$ cd $GOPATH/src/github.com/mweagle/SpartaHTML
 						$ go get -u -v ./...
-						$ go run main.go provision --level info --s3Bucket weagle
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
 						```
 					</textarea>
 				</section>
@@ -443,7 +452,7 @@
 						### Developer Experience
 
 						* **standard**: Full CloudFormation `UPDATE_STACK` cycle.
-						* **inplace**: When safe, concurrent code updates via API
+						* **--inplace**: When safe, concurrent code updates directly via <a href="http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode">Lambda API</a>
 					</textarea>
 				</section>
 
@@ -451,7 +460,7 @@
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
-						# λ
+						<div style="font-size: 96px">λ</div>
 
 						Note:
 						Use the SpartaHelloWorld app with and without the --inplace argument. Add a new function, try to do an inplace update.
@@ -463,7 +472,7 @@
 						### Runtime
 
 						* **standard**: NodeJS HTTP proxy
-						* **cgo**: Python CGO bindings
+						* **cgo**: Python <a href="https://golang.org/cmd/cgo/">cgo</a> bindings
 
 					</textarea>
 				</section>
@@ -511,7 +520,7 @@
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
 						## Walkthrough
-						# λ
+						<div style="font-size: 96px">λ</div>
 
 						Note:
 						Build the https://github.com/mweagle/SpartaPython cgo version with `make provisionCGO`
@@ -537,7 +546,7 @@
 					<textarea data-template>
 						### Observability
 
-						* CloudWatch Metrics, CloudWatch Logs
+						* CloudWatch [Dashboard](https://github.com/mweagle/SpartaXRay), [Metrics](http://gosparta.io/docs/faq/), Logs
 						* [Honeycomb.io](https://github.com/mweagle/SpartaHoneycomb)
 						* [IOPipe](https://www.iopipe.com/)
 						* [AWS Lambda XRay](http://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html#lambda-x-ray-daemon)
@@ -581,10 +590,10 @@
 
 						* [SpartaDocker](https://github.com/mweagle/SpartaDocker)
 							* `Lambda->SQS->ECS Worker Pool`
-							* [Medium post](https://serverless.zone/flexibility-is-a-virtue-54059d75b1ef)
+							* [Flexibility is a Virtue](https://serverless.zone/flexibility-is-a-virtue-54059d75b1ef)
 						* [SpartaGrafana](https://github.com/mweagle/SpartaGrafana)
 							* `Lambda->Grafana on EC2`
-							* [Medium post](https://medium.com/@mweagle/spartagrafana-serverless-monitoring-f86ca6da79ed)
+							* [Serverless Monitoring](https://medium.com/@mweagle/spartagrafana-serverless-monitoring-f86ca6da79ed)
 
 					</textarea>
 				</section>
@@ -618,14 +627,14 @@
 				<section data-markdown>
 					<textarea data-template>
 						## Cons
-						* <span class="fragment fade-in">Go isn't first class</span> <span class="fragment fade-in">although [binaries are](https://aws.amazon.com/blogs/compute/running-executables-in-aws-lambda/)
+						* <span class="fragment fade-in">Go isn't first class</span> <span class="fragment fade-in">- although [binaries are](https://aws.amazon.com/blogs/compute/running-executables-in-aws-lambda/)
 						* <span class="fragment fade-in">Serverless can be operationally opaque
 							* AWS operational tool usability is uneven
 							* CloudFormation can be verbose</span>
 						* <span class="fragment fade-in">Lacking phased rollout strategies (blue/green, canary)</span>
-						* <span class="fragment fade-in">API-Gateway configuration complexity</span>
-						* <span class="fragment fade-in">Easy to create big ball of λ spaghetti</span>
-						* <span class="fragment fade-in">Single vendor</span>
+						* <span class="fragment fade-in">API-Gateway configuration complexity & performance</span>
+						* <span class="fragment fade-in">Easy to create complex λ call graphs</span>
+						* <span class="fragment fade-in">Single vendor <a href="https://twitter.com/mweagle/status/913958451474075654">currently</a></span>
 					</textarea>
 				</section>
 
