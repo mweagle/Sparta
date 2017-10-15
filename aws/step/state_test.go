@@ -28,7 +28,7 @@ func TestAWSStepFunction(t *testing.T) {
 	delayState.Next(successState)
 
 	// Startup the machine.
-	startMachine := NewStateMachine(lambdaTaskState, delayState, successState)
+	startMachine := NewStateMachine(lambdaTaskState)
 
 	// Add the state machine to the deployment...
 	workflowHooks := &sparta.WorkflowHooks{
