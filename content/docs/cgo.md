@@ -61,7 +61,7 @@ func main() {
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
 	stackName := spartaCF.UserScopedStackName("SpartaHelloPythonCGO")
-	err = Main(stackName,
+	err = sparta.Main(stackName,
 		fmt.Sprintf("HelloWorld resource command"),
 		lambdaFunctions,
 		nil,
@@ -101,7 +101,7 @@ func main() {
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
 	stackName := spartaCF.UserScopedStackName("SpartaHelloPythonCGO")
-	err = sparta.Main(stackName,
+	err = spartaCGO.Main(stackName,
 		fmt.Sprintf("HelloWorld resource command"),
 		lambdaFunctions,
 		nil,
