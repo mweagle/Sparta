@@ -16,16 +16,29 @@ import (
 )
 
 // StateError is the reserved type used for AWS Step function error names
+// Ref: https://states-language.net/spec.html#appendix-a
 type StateError string
 
 const (
-	StatesAll                    StateError = "States.ALL"
-	StatesTimeout                StateError = "States.Timeout"
-	StatesTaskFailed             StateError = "States.TaskFailed"
-	StatesPermissions            StateError = "States.Permissions"
+	// StatesAll is a wild-card which matches any Error Name.
+	StatesAll StateError = "States.ALL"
+	// StatesTimeout is a Task State either ran longer than the
+	// “TimeoutSeconds” value, or failed to heartbeat for a time
+	// longer than the “HeartbeatSeconds” value.
+	StatesTimeout StateError = "States.Timeout"
+	// StatesTaskFailed is a Task State failed during the execution
+	StatesTaskFailed StateError = "States.TaskFailed"
+	// StatesPermissions is a Task State failed because it had
+	// insufficient privileges to execute the specified code.
+	StatesPermissions StateError = "States.Permissions"
+	// StatesResultPathMatchFailure is a Task State’s “ResultPath” field
+	// cannot be applied to the input the state received
 	StatesResultPathMatchFailure StateError = "States.ResultPathMatchFailure"
-	StatesBranchFailed           StateError = "States.BranchFailed"
-	StatesNoChoiceMatched        StateError = "States.NoChoiceMatched"
+	// StatesBranchFailed is a branch of a Parallel state failed
+	StatesBranchFailed StateError = "States.BranchFailed"
+	// StatesNoChoiceMatched is a Choice state failed to find a match for the
+	// condition field extracted from its input
+	StatesNoChoiceMatched StateError = "States.NoChoiceMatched"
 )
 
 /*******************************************************************************
@@ -43,7 +56,7 @@ type Comparison interface {
 
 // ChoiceBranch represents a type for a ChoiceState "Choices" entry
 type ChoiceBranch interface {
-	nextState() StepState
+	nextState() MachineState
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,9 +64,6 @@ type ChoiceBranch interface {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
-TODO
-IAM
-	- Aggregate all the Lambda IAM role documents and create a new role with them for the state machine
 
 Validations
 	- JSONPath: https://github.com/NodePrime/jsonpath
@@ -422,10 +432,10 @@ func (cmp *TimestampGreaterThanEquals) MarshalJSON() ([]byte, error) {
 type And struct {
 	ChoiceBranch
 	Comparison []Comparison
-	Next       StepState
+	Next       MachineState
 }
 
-func (andOperation *And) nextState() StepState {
+func (andOperation *And) nextState() MachineState {
 	return andOperation.Next
 }
 
@@ -448,10 +458,10 @@ func (andOperation *And) MarshalJSON() ([]byte, error) {
 type Or struct {
 	ChoiceBranch
 	Comparison []Comparison
-	Next       StepState
+	Next       MachineState
 }
 
-func (orOperation *Or) nextState() StepState {
+func (orOperation *Or) nextState() MachineState {
 	return orOperation.Next
 }
 
@@ -474,10 +484,10 @@ func (orOperation *Or) MarshalJSON() ([]byte, error) {
 type Not struct {
 	ChoiceBranch
 	Comparison Comparison
-	Next       StepState
+	Next       MachineState
 }
 
-func (notOperation *Not) nextState() StepState {
+func (notOperation *Not) nextState() MachineState {
 	return notOperation.Next
 }
 
@@ -492,17 +502,17 @@ func (notOperation *Not) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// StepState is the base state for all AWS Step function
-type StepState interface {
+// MachineState is the base state for all AWS Step function
+type MachineState interface {
 	Name() string
 }
 
 // TransitionState is the generic state according to
 // https://states-language.net/spec.html#state-type-table
 type TransitionState interface {
-	StepState
-	Next(state StepState) StepState
-	NextState() StepState
+	MachineState
+	Next(state MachineState) MachineState
+	NextState() MachineState
 	WithComment(string) TransitionState
 	WithInputPath(string) TransitionState
 	WithOutputPath(string) TransitionState
@@ -511,7 +521,7 @@ type TransitionState interface {
 // Embedding struct for common properties
 type baseInnerState struct {
 	name       string
-	next       StepState
+	next       MachineState
 	comment    string
 	inputPath  string
 	outputPath string
@@ -570,13 +580,13 @@ func (ps *PassState) WithResult(result interface{}) *PassState {
 }
 
 // Next returns the next state
-func (ps *PassState) Next(nextState StepState) StepState {
+func (ps *PassState) Next(nextState MachineState) MachineState {
 	ps.next = nextState
 	return ps
 }
 
 // NextState sets the next state
-func (ps *PassState) NextState() StepState {
+func (ps *PassState) NextState() MachineState {
 	return ps.next
 }
 
@@ -860,13 +870,13 @@ func (ts *TaskState) WithCatch(catch *TaskCatch) *TaskState {
 }
 
 // Next returns the next state
-func (ts *TaskState) Next(nextState StepState) StepState {
+func (ts *TaskState) Next(nextState MachineState) MachineState {
 	ts.next = nextState
 	return nextState
 }
 
 // NextState sets the next state
-func (ts *TaskState) NextState() StepState {
+func (ts *TaskState) NextState() MachineState {
 	return ts.next
 }
 
@@ -938,13 +948,13 @@ func (wd *WaitDelay) Name() string {
 }
 
 // Next sets the step after the wait delay
-func (wd *WaitDelay) Next(nextState StepState) StepState {
+func (wd *WaitDelay) Next(nextState MachineState) MachineState {
 	wd.next = nextState
 	return wd
 }
 
 // NextState returns the next State
-func (wd *WaitDelay) NextState() StepState {
+func (wd *WaitDelay) NextState() MachineState {
 	return wd.next
 }
 
@@ -1001,13 +1011,13 @@ func (wu *WaitUntil) Name() string {
 }
 
 // Next sets the step after the wait delay
-func (wu *WaitUntil) Next(nextState StepState) StepState {
+func (wu *WaitUntil) Next(nextState MachineState) MachineState {
 	wu.next = nextState
 	return wu
 }
 
 // NextState returns the next State
-func (wu *WaitUntil) NextState() StepState {
+func (wu *WaitUntil) NextState() MachineState {
 	return wu.next
 }
 
@@ -1060,13 +1070,13 @@ func (wdu *WaitDynamicUntil) Name() string {
 }
 
 // Next sets the step after the wait delay
-func (wdu *WaitDynamicUntil) Next(nextState StepState) StepState {
+func (wdu *WaitDynamicUntil) Next(nextState MachineState) MachineState {
 	wdu.next = nextState
 	return wdu
 }
 
 // NextState returns the next State
-func (wdu *WaitDynamicUntil) NextState() StepState {
+func (wdu *WaitDynamicUntil) NextState() MachineState {
 	return wdu.next
 }
 
@@ -1120,13 +1130,13 @@ func (ss *SuccessState) Name() string {
 }
 
 // Next sets the step after the wait delay
-func (ss *SuccessState) Next(nextState StepState) StepState {
+func (ss *SuccessState) Next(nextState MachineState) MachineState {
 	ss.next = nextState
 	return ss
 }
 
 // NextState returns the next State
-func (ss *SuccessState) NextState() StepState {
+func (ss *SuccessState) NextState() MachineState {
 	return ss.next
 }
 
@@ -1178,12 +1188,12 @@ func (fs *FailState) Name() string {
 }
 
 // Next sets the step after the wait delay
-func (fs *FailState) Next(nextState StepState) StepState {
+func (fs *FailState) Next(nextState MachineState) MachineState {
 	return fs
 }
 
 // NextState returns the next State
-func (fs *FailState) NextState() StepState {
+func (fs *FailState) NextState() MachineState {
 	return nil
 }
 
@@ -1261,13 +1271,13 @@ func (ps *ParallelState) WithCatch(catch *TaskCatch) *ParallelState {
 }
 
 // Next returns the next state
-func (ps *ParallelState) Next(nextState StepState) StepState {
+func (ps *ParallelState) Next(nextState MachineState) MachineState {
 	ps.next = nextState
 	return nextState
 }
 
 // NextState sets the next state
-func (ps *ParallelState) NextState() StepState {
+func (ps *ParallelState) NextState() MachineState {
 	return ps.next
 }
 
@@ -1333,7 +1343,7 @@ func NewParallelState(parallelStateName string, states StateMachine) *ParallelSt
 type StateMachine struct {
 	comment      string
 	startAt      TransitionState
-	uniqueStates map[string]StepState
+	uniqueStates map[string]MachineState
 }
 
 //Comment sets the StateMachine comment
@@ -1458,10 +1468,10 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 
 	// If there aren't any states, then it's the end
 	return json.Marshal(&struct {
-		Comment string               `json:",omitempty"`
-		StartAt string               `json:",omitempty"`
-		States  map[string]StepState `json:",omitempty"`
-		End     bool                 `json:",omitempty"`
+		Comment string                  `json:",omitempty"`
+		StartAt string                  `json:",omitempty"`
+		States  map[string]MachineState `json:",omitempty"`
+		End     bool                    `json:",omitempty"`
 	}{
 		Comment: sm.comment,
 		StartAt: sm.startAt.Name(),
@@ -1472,10 +1482,10 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 
 // NewStateMachine returns a new StateMachine instance
 func NewStateMachine(startState TransitionState) *StateMachine {
-	uniqueStates := make(map[string]StepState, 0)
-	pendingStates := []StepState{startState}
+	uniqueStates := make(map[string]MachineState, 0)
+	pendingStates := []MachineState{startState}
 
-	nodeVisited := func(node StepState) bool {
+	nodeVisited := func(node MachineState) bool {
 		if node == nil {
 			return true
 		}

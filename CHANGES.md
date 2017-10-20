@@ -3,8 +3,16 @@
 ## v0.20.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Pending...[Step functions](https://aws.amazon.com/step-functions/faqs/)
+- :bug:  **FIXED**
+  * Handle case where multipart forms with empty values weren't handled [https://github.com/mweagle/Sparta/issues/74]
+
+
+## v0.20.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
   - Add `sparta.LambdaName` to return the reflection-discovered name of an `http.HandleFunc` instance.
-- :bug:
+- :bug:  **FIXED**
   * Fixed issue with `--describe` not rendering CloudFormation template properly
   * Better handle failures when [posting body](https://github.com/mweagle/Sparta/pull/72) - thanks https://github.com/nylar
 
