@@ -60,11 +60,15 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
-	sparta.Main("SpartaHelloNodeJSProcess",
-		fmt.Sprintf("Test HelloWorld resource command"),
+	stackName := spartaCF.UserScopedStackName("SpartaHelloPythonCGO")
+	err = cgo.Main(stackName,
+		fmt.Sprintf("HelloWorld resource command"),
 		lambdaFunctions,
 		nil,
 		nil)
+	if err != nil {
+		os.Exit(1)
+	}
   // ================================================== //
 
 }
@@ -96,11 +100,15 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
   // ================================================== //
-	spartaCGO.Main("SpartaHelloPythonCGO",
-		fmt.Sprintf("Test HelloWorld resource command"),
+	stackName := spartaCF.UserScopedStackName("SpartaHelloPythonCGO")
+	err = cgo.Main(stackName,
+		fmt.Sprintf("HelloWorld resource command"),
 		lambdaFunctions,
 		nil,
 		nil)
+	if err != nil {
+		os.Exit(1)
+	}
   // ================================================== //
 
 }
