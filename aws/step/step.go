@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -1341,15 +1342,26 @@ func NewParallelState(parallelStateName string, states StateMachine) *ParallelSt
 
 // StateMachine is the top level item
 type StateMachine struct {
-	comment      string
-	startAt      TransitionState
-	uniqueStates map[string]MachineState
+	comment              string
+	stateDefinitionError error
+	startAt              TransitionState
+	uniqueStates         map[string]MachineState
 }
 
 //Comment sets the StateMachine comment
 func (sm *StateMachine) Comment(comment string) *StateMachine {
 	sm.comment = comment
 	return sm
+}
+
+// validate performs any validation against the state machine
+// prior to marshaling
+func (sm *StateMachine) validate() []error {
+	validationErrors := make([]error, 0)
+	if sm.stateDefinitionError != nil {
+		validationErrors = append(validationErrors, sm.stateDefinitionError)
+	}
+	return validationErrors
 }
 
 // StateMachineDecorator is the hook exposed by the StateMachine
@@ -1363,6 +1375,16 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHook {
 		awsSession *session.Session,
 		noop bool,
 		logger *logrus.Logger) error {
+
+		machineErrors := sm.validate()
+		if len(machineErrors) != 0 {
+			errorText := make([]string, len(machineErrors))
+			for index := range machineErrors {
+				errorText[index] = machineErrors[index].Error()
+			}
+			return fmt.Errorf("Invalid state machine. Errors: %s",
+				strings.Join(errorText, ", "))
+		}
 
 		lambdaFunctionResourceNames := []string{}
 		for _, eachState := range sm.uniqueStates {
@@ -1484,13 +1506,20 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 func NewStateMachine(startState TransitionState) *StateMachine {
 	uniqueStates := make(map[string]MachineState, 0)
 	pendingStates := []MachineState{startState}
+	duplicateStateNames := make(map[string]bool, 0)
 
 	nodeVisited := func(node MachineState) bool {
 		if node == nil {
 			return true
 		}
-		_, visited := uniqueStates[node.Name()]
-		return visited
+		visitedNode, visitedExists := uniqueStates[node.Name()]
+		if !visitedExists {
+			return false
+		}
+		if visitedNode != node {
+			duplicateStateNames[node.Name()] = true
+		}
+		return visitedExists
 	}
 
 	for len(pendingStates) != 0 {
@@ -1516,10 +1545,15 @@ func NewStateMachine(startState TransitionState) *StateMachine {
 	}
 
 	// Walk all the states and assemble them into the states slice
-	return &StateMachine{
+	sm := &StateMachine{
 		startAt:      startState,
 		uniqueStates: uniqueStates,
 	}
+	// Store duplicate state names
+	if len(duplicateStateNames) != 0 {
+		sm.stateDefinitionError = fmt.Errorf("Duplicate state names: %#v", duplicateStateNames)
+	}
+	return sm
 }
 
 ////////////////////////////////////////////////////////////////////////////////
