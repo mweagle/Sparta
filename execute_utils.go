@@ -292,8 +292,8 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 // localhost testing.
 func NewServeMuxLambda(lambdaAWSInfos []*LambdaAWSInfo,
 	logger *logrus.Logger) *ServeMuxLambda {
-	lookupMap := make(dispatchMap, 0)
-	customResourceMap := make(customResourceDispatchMap, 0)
+	lookupMap := make(dispatchMap)
+	customResourceMap := make(customResourceDispatchMap)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		logger.WithFields(logrus.Fields{
 			"Path": eachLambdaInfo.lambdaFunctionName(),

@@ -23,8 +23,8 @@ const (
 )
 
 // RE for sanitizing golang/JS layer
-var reSanitizeMermaidNodeName = regexp.MustCompile("[\\W\\s]+")
-var reSanitizeMermaidLabelValue = regexp.MustCompile("[\\{\\}\"\\[\\]']+")
+var reSanitizeMermaidNodeName = regexp.MustCompile(`[\W\s]+`)
+var reSanitizeMermaidLabelValue = regexp.MustCompile(`[\{\}\"\[\]']+`)
 
 func mermaidNodeName(sourceName string) string {
 	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "x")

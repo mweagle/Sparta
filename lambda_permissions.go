@@ -151,11 +151,6 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 ////////////////////////////////////////////////////////////////////////////////
 // START - LambdaPermission
 //
-var lambdaSourceArnParts = []gocf.Stringable{
-	gocf.String("arn:aws:lambda:"),
-	gocf.Ref("AWS::Region"),
-	gocf.String(":function:"),
-}
 
 // LambdaPermission type that creates a Lambda::Permission entry
 // in the generated template, but does NOT automatically register the lambda
@@ -167,6 +162,7 @@ type LambdaPermission struct {
 	Principal string
 }
 
+/*
 func (perm LambdaPermission) export(serviceName string,
 	lambdaFunctionDisplayName string,
 	lambdaLogicalCFResourceName string,
@@ -184,7 +180,8 @@ func (perm LambdaPermission) export(serviceName string,
 		S3Key,
 		logger)
 }
-
+*/
+/*
 func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
 		{
@@ -194,7 +191,7 @@ func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
 	}
 	return nodes, nil
 }
-
+*/
 //
 // END - LambdaPermission
 ////////////////////////////////////////////////////////////////////////////////
@@ -468,8 +465,8 @@ func (storage *MessageBodyStorage) export(serviceName string,
 		cfResource := template.AddResource(storage.cloudFormationS3BucketResourceName, s3Bucket)
 		cfResource.DeletionPolicy = "Retain"
 
-		lambdaResource, _ := template.Resources[lambdaLogicalCFResourceName]
-		if nil != lambdaResource {
+		lambdaResource, lambdaResourceExists := template.Resources[lambdaLogicalCFResourceName]
+		if !lambdaResourceExists {
 			safeAppendDependency(lambdaResource, storage.cloudFormationS3BucketResourceName)
 		}
 
@@ -876,7 +873,7 @@ func (perm CloudWatchEventsPermission) export(serviceName string,
 	}
 
 	// Add the permission to invoke the lambda function
-	uniqueRuleNameMap := make(map[string]int, 0)
+	uniqueRuleNameMap := make(map[string]int)
 	for eachRuleName, eachRuleDefinition := range perm.Rules {
 
 		// We need a stable unique name s.t. the permission is properly configured...
@@ -1030,7 +1027,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 
 	// Then we need to uniqueify the rule names s.t. we prevent
 	// collisions with other stacks.
-	configurationResourceNames := make(map[string]int, 0)
+	configurationResourceNames := make(map[string]int)
 	// Store the last name.  We'll do a uniqueness check when exiting the loop,
 	// and if that passes, the last name will also be the unique one.
 	var configurationResourceName string

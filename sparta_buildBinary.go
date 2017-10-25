@@ -11,7 +11,7 @@ import (
 var codePipelineEnvironments map[string]map[string]string
 
 func init() {
-	codePipelineEnvironments = make(map[string]map[string]string, 0)
+	codePipelineEnvironments = make(map[string]map[string]string)
 }
 
 // RegisterCodePipelineEnvironment is part of a CodePipeline deployment

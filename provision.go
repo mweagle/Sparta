@@ -76,9 +76,6 @@ type s3UploadURL struct {
 	version  string
 }
 
-func (s3URL *s3UploadURL) url() string {
-	return s3URL.location
-}
 func (s3URL *s3UploadURL) keyName() string {
 	// Find the hostname in the URL, then strip it out
 	urlParts, _ := url.Parse(s3URL.location)
@@ -443,7 +440,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	// or a gocf.RefFunc() value.
 	// Don't verify them, just create them...
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
-	ctx.context.lambdaIAMRoleNameMap = make(map[string]*gocf.StringExpr, 0)
+	ctx.context.lambdaIAMRoleNameMap = make(map[string]*gocf.StringExpr)
 	svc := iam.New(ctx.context.awsSession)
 
 	// Assemble all the RoleNames and validate the inline IAMRoleDefinitions
@@ -1085,7 +1082,7 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 	}
 
 	ctx.logger.WithFields(logrus.Fields{
-		"Count": len(updateCodeRequests),
+		"FunctionCount": len(updateCodeRequests),
 	}).Info("Updating Lambda function code")
 	ctx.logger.WithFields(logrus.Fields{
 		"Updates": updateCodeRequests,
@@ -1124,17 +1121,15 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		wg.Done()
 	}(awsCloudFormation)
 	wg.Wait()
+	close(resultChannel)
 
 	// What happened?
 	asyncErrors := []string{}
-	for i := 0; i != wgCount; i++ {
-		select {
-		case res := <-resultChannel:
-			if nil != res.error {
-				asyncErrors = append(asyncErrors, res.error.Error())
-			} else {
-				ctx.logger.Debug(res.result)
-			}
+	for eachResult := range resultChannel {
+		if nil != eachResult.error {
+			asyncErrors = append(asyncErrors, eachResult.error.Error())
+		} else {
+			ctx.logger.Debug(eachResult.result)
 		}
 	}
 	if len(asyncErrors) != 0 {
@@ -1257,7 +1252,7 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 			lambdaAWSInfo.Options = defaultLambdaFunctionOptions()
 		}
 		if nil == lambdaAWSInfo.Options.Environment {
-			lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr, 0)
+			lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
 		}
 		for _, eachEnvironment := range codePipelineEnvironments {
 
@@ -1291,7 +1286,7 @@ func ensureCloudFormationStack() workflowStep {
 
 		// Add the "Parameters" to the template...
 		if nil != codePipelineEnvironments {
-			ctx.context.cfTemplate.Parameters = make(map[string]*gocf.Parameter, 0)
+			ctx.context.cfTemplate.Parameters = make(map[string]*gocf.Parameter)
 			for _, eachEnvironment := range codePipelineEnvironments {
 				for eachKey := range eachEnvironment {
 					ctx.context.cfTemplate.Parameters[eachKey] = &gocf.Parameter{
@@ -1468,7 +1463,7 @@ func Provision(noop bool,
 			cfTemplate:                gocf.NewTemplate(),
 			s3BucketVersioningEnabled: false,
 			awsSession:                spartaAWS.NewSession(logger),
-			workflowHooksContext:      make(map[string]interface{}, 0),
+			workflowHooksContext:      make(map[string]interface{}),
 			templateWriter:            templateWriter,
 		},
 		transaction: transaction{
@@ -1506,8 +1501,10 @@ func Provision(noop bool,
 		}
 
 		if next == nil {
-			summaryLine := fmt.Sprintf("Summary (%s)", time.Now().Format(time.RFC3339))
-			subheaderDivider := strings.Repeat("-", len(summaryLine)+len(summaryLine)/5)
+			summaryLine := fmt.Sprintf("%s Summary (%s)",
+				ctx.userdata.serviceName,
+				time.Now().Format(time.RFC3339))
+			subheaderDivider := strings.Repeat("─", dividerLength)
 
 			ctx.logger.Info(subheaderDivider)
 			ctx.logger.Info(summaryLine)

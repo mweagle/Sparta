@@ -57,7 +57,7 @@ func outputsForResource(template *gocf.Template,
 		return nil, nil
 	}
 
-	outputs := make(map[string]interface{}, 0)
+	outputs := make(map[string]interface{})
 	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.CfnResourceType()]
 	if exists {
 		outputs["Ref"] = gocf.Ref(logicalResourceName).String()
@@ -92,7 +92,7 @@ func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
 }
 func safeMetadataInsert(resource *gocf.Resource, key string, value interface{}) {
 	if nil == resource.Metadata {
-		resource.Metadata = make(map[string]interface{}, 0)
+		resource.Metadata = make(map[string]interface{})
 	}
 	resource.Metadata[key] = value
 }

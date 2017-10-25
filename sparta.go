@@ -40,12 +40,12 @@ const (
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
 	// divider length is the length of a divider
-	dividerLength = 40
+	dividerLength = 62
 )
 
 var (
 	// internal logging header
-	headerDivider = strings.Repeat("=", dividerLength)
+	headerDivider = strings.Repeat("═", dividerLength)
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -178,12 +178,7 @@ var CommonIAMStatements = struct {
 }
 
 // RE for sanitizing golang/JS layer
-var reSanitize = regexp.MustCompile("\\W+")
-
-// RE to ensure CloudFormation compatible resource names
-// Issue: https://github.com/mweagle/Sparta/issues/8
-// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
-var reCloudFormationInvalidChars = regexp.MustCompile("[^A-Za-z0-9]+")
+var reSanitize = regexp.MustCompile(`\W+`)
 
 // Wildcard ARN for any AWS resource
 var wildcardArn = gocf.String("*")
@@ -456,9 +451,7 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 
 	// Add VPC permissions iff needed
 	if options != nil && options.VpcConfig != nil {
-		for _, eachStatement := range CommonIAMStatements.VPC {
-			statements = append(statements, eachStatement)
-		}
+		statements = append(statements, CommonIAMStatements.VPC...)
 	}
 
 	// http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -937,7 +930,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
 		// Create an empty template so that we can track whether things
 		// are overwritten
-		metadataMap := make(map[string]interface{}, 0)
+		metadataMap := make(map[string]interface{})
 		decoratorProxyTemplate := gocf.NewTemplate()
 		err := info.Decorator(serviceName,
 			info.logicalName(),
@@ -980,7 +973,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) error {
 
 	var errorText []string
-	collisionMemo := make(map[string]int, 0)
+	collisionMemo := make(map[string]int)
 
 	incrementCounter := func(keyName string) {
 		_, exists := collisionMemo[keyName]

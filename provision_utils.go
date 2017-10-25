@@ -26,7 +26,6 @@ const (
 	// where intermediate build artifacts are created
 	ScratchDirectory = ".sparta"
 
-	salt = "213EA743-A98F-499D-8FEF-B87015FE13E7"
 	// The relative path of the custom scripts that is used
 	// to create the filename relative path when creating the custom archive
 	provisioningResourcesRelPath = "/resources/provision"
@@ -430,7 +429,7 @@ func insertNodeJSProxyResources(serviceName string,
 	nodeJSSource := _escFSMustString(false, "/resources/provision/index.js")
 	nodeJSSource += "\n// DO NOT EDIT - CONTENT UNTIL EOF IS AUTOMATICALLY GENERATED\n"
 
-	handlerNames := make(map[string]bool, 0)
+	handlerNames := make(map[string]bool)
 	for _, eachLambda := range lambdaAWSInfos {
 		if _, exists := handlerNames[eachLambda.scriptExportHandlerName()]; !exists {
 			nodeJSSource += createNewNodeJSProxyEntry(eachLambda, logger)
@@ -497,6 +496,7 @@ func pythonFunctionEntry(scriptExportName string,
 
 // Return a string representation of a JS function call that can be exposed
 // to AWS Lambda
+/*
 func createNewPythonProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger) string {
 	logger.WithFields(logrus.Fields{
 		"FunctionName": lambdaInfo.lambdaFunctionName(),
@@ -510,6 +510,7 @@ func createNewPythonProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 		lambdaInfo.lambdaFunctionName())
 	return primaryEntry
 }
+*/
 
 func createNewSpartaPythonCustomResourceEntry(resourceName string, logger *logrus.Logger) string {
 	// The resource name is a :: delimited one, so let's sanitize that
@@ -534,7 +535,7 @@ func insertPythonProxyResources(serviceName string,
 	// Great, let's assemble all the Python function names, then
 	// supply them to the template expansion to perform the final
 	// magic
-	handlerNames := make(map[string]bool, 0)
+	handlerNames := make(map[string]bool)
 	for _, eachLambda := range lambdaAWSInfos {
 		if _, exists := handlerNames[eachLambda.scriptExportHandlerName()]; !exists {
 			pythonSource += pythonFunctionEntry(eachLambda.scriptExportHandlerName(),

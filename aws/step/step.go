@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"regexp"
 	"strings"
 	"time"
@@ -506,6 +507,7 @@ func (notOperation *Not) MarshalJSON() ([]byte, error) {
 // MachineState is the base state for all AWS Step function
 type MachineState interface {
 	Name() string
+	nodeID() string
 }
 
 // TransitionState is the generic state according to
@@ -522,10 +524,15 @@ type TransitionState interface {
 // Embedding struct for common properties
 type baseInnerState struct {
 	name       string
+	id         int64
 	next       MachineState
 	comment    string
 	inputPath  string
 	outputPath string
+}
+
+func (bis *baseInnerState) nodeID() string {
+	return fmt.Sprintf("%s-%d", bis.name, bis.id)
 }
 
 // marshalStateJSON for subclass marshalling of state information
@@ -631,6 +638,7 @@ func NewPassState(name string, resultData interface{}) *PassState {
 	return &PassState{
 		baseInnerState: baseInnerState{
 			name: name,
+			id:   rand.Int63(),
 		},
 		Result: resultData,
 	}
@@ -691,6 +699,7 @@ func NewChoiceState(choiceStateName string, choices ...ChoiceBranch) *ChoiceStat
 	return &ChoiceState{
 		baseInnerState: baseInnerState{
 			name: choiceStateName,
+			id:   rand.Int63(),
 		},
 		Choices: append([]ChoiceBranch{}, choices...),
 	}
@@ -798,6 +807,7 @@ func NewTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *TaskState {
 	ts := &TaskState{
 		baseInnerState: baseInnerState{
 			name: stateName,
+			id:   rand.Int63(),
 		},
 		lambdaFn: lambdaFn,
 	}
@@ -989,6 +999,7 @@ func NewWaitDelayState(stateName string, delayInSeconds time.Duration) *WaitDela
 	return &WaitDelay{
 		baseInnerState: baseInnerState{
 			name: stateName,
+			id:   rand.Int63(),
 		},
 		delay: delayInSeconds,
 	}
@@ -1052,6 +1063,7 @@ func NewWaitUntilState(stateName string, waitUntil time.Time) *WaitUntil {
 	return &WaitUntil{
 		baseInnerState: baseInnerState{
 			name: stateName,
+			id:   rand.Int63(),
 		},
 		Timestamp: waitUntil,
 	}
@@ -1111,6 +1123,7 @@ func NewWaitDynamicUntilState(stateName string, timestampPath string) *WaitDynam
 	return &WaitDynamicUntil{
 		baseInnerState: baseInnerState{
 			name: stateName,
+			id:   rand.Int63(),
 		},
 		TimestampPath: timestampPath,
 	}
@@ -1170,6 +1183,7 @@ func NewSuccessState(name string) *SuccessState {
 	return &SuccessState{
 		baseInnerState: baseInnerState{
 			name: name,
+			id:   rand.Int63(),
 		},
 	}
 }
@@ -1230,6 +1244,7 @@ func NewFailState(failStateName string, errorName string, cause error) *FailStat
 	return &FailState{
 		baseInnerState: baseInnerState{
 			name: failStateName,
+			id:   rand.Int63(),
 		},
 		ErrorName: errorName,
 		Cause:     cause,
@@ -1331,6 +1346,7 @@ func NewParallelState(parallelStateName string, states StateMachine) *ParallelSt
 	return &ParallelState{
 		baseInnerState: baseInnerState{
 			name: parallelStateName,
+			id:   rand.Int63(),
 		},
 		States: states,
 	}
@@ -1512,7 +1528,8 @@ func NewStateMachine(startState TransitionState) *StateMachine {
 		if node == nil {
 			return true
 		}
-		visitedNode, visitedExists := uniqueStates[node.Name()]
+		// Allow for same name nodes at different levels
+		visitedNode, visitedExists := uniqueStates[node.nodeID()]
 		if !visitedExists {
 			return false
 		}
