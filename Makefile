@@ -27,9 +27,9 @@ GO_SOURCE_FILES := find . -type f -name '*.go' \
 	! -path './vendor/*' \
 
 install_requirements:
+	go get -u honnef.co/go/tools/cmd/megacheck
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/fzipp/gocyclo
-	go get -u honnef.co/go/tools/cmd/staticcheck
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
 
@@ -60,6 +60,7 @@ analyze: install_requirements
 
 .PHONY: validate
 validate: vet lint fmtcheck analyze
+	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
 
 docs:
 	@echo ""
