@@ -423,10 +423,12 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
+		prettyHeader := false
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
 			formatter = &logrus.TextFormatter{}
+			prettyHeader = true
 		case "json":
 			formatter = &logrus.JSONFormatter{}
 		}
@@ -436,16 +438,31 @@ func MainEx(serviceName string,
 		}
 		OptionsGlobal.Logger = logger
 
-		welcomeMessage := fmt.Sprintf("Welcome to %s", serviceName)
+		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 		logger.Info(headerDivider)
-		logger.WithFields(logrus.Fields{
-			"Option":        cmd.Name(),
-			"SpartaVersion": SpartaVersion,
-			"SpartaSHA":     SpartaGitHash[0:7],
-			"GoVersion":     runtime.Version(),
-			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
-			"LinkFlags":     OptionsGlobal.LinkerFlags,
-		}).Info(welcomeMessage)
+
+		if prettyHeader {
+			logger.Info(fmt.Sprintf(`   _______  ___   ___  _________ `))
+			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |      Version  : %s`, SpartaVersion))
+			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |      SHA      : %s`, SpartaGitHash[0:7]))
+			logger.Info(fmt.Sprintf(`/___/_/  /_/ |_/_/|_| /_/ /_/ |_|      GoVersion: %s`, runtime.Version()))
+			logger.Info("")
+			logger.Info(headerDivider)
+			logger.WithFields(logrus.Fields{
+				"Option":    cmd.Name(),
+				"UTC":       (time.Now().UTC().Format(time.RFC3339)),
+				"LinkFlags": OptionsGlobal.LinkerFlags,
+			}).Info(welcomeMessage)
+		} else {
+			logger.WithFields(logrus.Fields{
+				"Option":        cmd.Name(),
+				"SpartaVersion": SpartaVersion,
+				"SpartaSHA":     SpartaGitHash[0:7],
+				"GoVersion":     runtime.Version(),
+				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
+				"LinkFlags":     OptionsGlobal.LinkerFlags,
+			}).Info(welcomeMessage)
+		}
 		logger.Info(headerDivider)
 		return nil
 	}
