@@ -1528,15 +1528,8 @@ func NewStateMachine(startState TransitionState) *StateMachine {
 		if node == nil {
 			return true
 		}
-		// Allow for same name nodes at different levels
-		visitedNode, visitedExists := uniqueStates[node.nodeID()]
-		if !visitedExists {
-			return false
-		}
-		if visitedNode != node {
-			duplicateStateNames[node.Name()] = true
-		}
-		return visitedExists
+		_, visited := uniqueStates[node.Name()]
+		return visited
 	}
 
 	for len(pendingStates) != 0 {
