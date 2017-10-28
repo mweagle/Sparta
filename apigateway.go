@@ -538,7 +538,6 @@ func (api *API) export(serviceName string,
 				RestAPIID:   apiGatewayRestAPIID.String(),
 				StageName:   gocf.String(stageName),
 				StageDescription: &gocf.APIGatewayDeploymentStageDescription{
-					StageName:   gocf.String(api.stage.name),
 					Description: gocf.String(api.stage.Description),
 					Variables:   api.stage.Variables,
 				},
