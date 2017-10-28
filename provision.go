@@ -863,7 +863,7 @@ func createUploadStep(packagePath string) workflowStep {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			logFilesize("Lambda function deployment package size", packagePath, ctx.logger)
+			logFilesize("Lambda code archive size", packagePath, ctx.logger)
 
 			// Create the S3 key...
 			zipS3URL, zipS3URLErr := uploadLocalFileToS3(packagePath, "", ctx)

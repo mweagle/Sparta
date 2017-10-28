@@ -350,7 +350,7 @@ func createNewNodeJSProxyEntry(lambdaInfo *LambdaAWSInfo, logger *logrus.Logger)
 	logger.WithFields(logrus.Fields{
 		"FunctionName": lambdaInfo.lambdaFunctionName(),
 		"ScriptName":   lambdaInfo.scriptExportHandlerName(),
-	}).Info("Registering Sparta JS function")
+	}).Info("Creating NodeJS/Sparta proxy function")
 
 	// We do know the CF resource name here - could write this into
 	// index.js and expose a GET localhost:9000/lambdaMetadata

@@ -32,14 +32,15 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.20.1"
+	SpartaVersion = "0.20.2"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs6.10"
 	// PythonVersion is the Python version used for CGO support
 	PythonVersion = "python3.6"
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
-	// divider length is the length of a divider
+	// divider length is the length of a divider in the text
+	// based CLI output
 	dividerLength = 62
 )
 

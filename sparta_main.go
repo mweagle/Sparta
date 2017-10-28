@@ -443,9 +443,9 @@ func MainEx(serviceName string,
 
 		if prettyHeader {
 			logger.Info(fmt.Sprintf(`   _______  ___   ___  _________ `))
-			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |      Version  : %s`, SpartaVersion))
-			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |      SHA      : %s`, SpartaGitHash[0:7]))
-			logger.Info(fmt.Sprintf(`/___/_/  /_/ |_/_/|_| /_/ /_/ |_|      GoVersion: %s`, runtime.Version()))
+			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |     Version : %s`, SpartaVersion))
+			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : %s`, SpartaGitHash[0:7]))
+			logger.Info(fmt.Sprintf(`/___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : %s`, runtime.Version()))
 			logger.Info("")
 			logger.Info(headerDivider)
 			logger.WithFields(logrus.Fields{
@@ -458,7 +458,7 @@ func MainEx(serviceName string,
 				"Option":        cmd.Name(),
 				"SpartaVersion": SpartaVersion,
 				"SpartaSHA":     SpartaGitHash[0:7],
-				"GoVersion":     runtime.Version(),
+				"Go Version":    runtime.Version(),
 				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags":     OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
