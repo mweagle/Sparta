@@ -1,12 +1,15 @@
 # Change Notes
 
-## v0.20.1
+
+## v0.20.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
-  - Pending...[Step functions](https://aws.amazon.com/step-functions/faqs/)
+  - Added support for [Step functions](https://aws.amazon.com/step-functions/faqs/).
+    - Step functions are expressed via a combination of: states, `NewStateMachine`, and adding a `StateMachineDecorator` as a [service hook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook).
+    - See the [SpartaStep](https://github.com/mweagle/SpartaStep) sample for a service that provisions a simple roll die state machine.
 - :bug:  **FIXED**
   * Handle case where multipart forms with empty values weren't handled [https://github.com/mweagle/Sparta/issues/74]
-
+  *
 
 ## v0.20.1
 - :warning: **BREAKING**
