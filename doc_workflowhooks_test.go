@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"archive/zip"
-	"encoding/json"
 	"fmt"
 	"io"
 
@@ -18,12 +17,7 @@ const userdataResourceContents = `
   "Hello" : "World",
 }`
 
-// Standard AWS λ function
-func helloZipLambda(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-
+func helloZipLambda(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "Hello World")
 }
 
@@ -52,7 +46,7 @@ func ExampleWorkflowHooks() {
 
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
-		http.HandlerFunc(mainHelloWorld),
+		http.HandlerFunc(helloZipLambda),
 		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
 	MainEx("HelloWorldArchiveHook",

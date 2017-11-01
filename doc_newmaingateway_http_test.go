@@ -39,8 +39,8 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	apiGateway := NewAPIGateway("MyEchoHTTPAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayEvent),
-		http.HandlerFunc(echoAPIGatewayEvent),
+	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
+		http.HandlerFunc(echoAPIGatewayHTTPEvent),
 		IAMRoleDefinition{})
 
 	// Associate a URL path component with the Lambda function

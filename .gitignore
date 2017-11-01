@@ -30,4 +30,4 @@ _testmain.go
 *.prof
 
 
-.sparta/*
+.sparta/

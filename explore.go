@@ -25,7 +25,7 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo, port int, logger *logrus.Logger) e
 	msgText := ""
 
 	// Get unique paths
-	lambdaPaths := make(map[string]*LambdaAWSInfo, 0)
+	lambdaPaths := make(map[string]*LambdaAWSInfo)
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaPaths[eachLambdaInfo.lambdaFunctionName()] = eachLambdaInfo
 	}

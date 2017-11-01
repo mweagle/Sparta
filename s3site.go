@@ -224,7 +224,7 @@ func (s3Site *S3Site) export(serviceName string,
 	zipResource.DestBucket = gocf.Ref(s3BucketResourceName).String()
 
 	// Build the manifest data with any output info...
-	manifestData := make(map[string]interface{}, 0)
+	manifestData := make(map[string]interface{})
 	for eachKey, eachOutput := range apiGatewayOutputs {
 		manifestData[eachKey] = map[string]interface{}{
 			"Description": eachOutput.Description,

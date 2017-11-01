@@ -193,7 +193,7 @@ func TestDoubleRefCustomResource(t *testing.T) {
 	}
 }
 
-func SignatureVersion(t *testing.T) {
+func TestSignatureVersion(t *testing.T) {
 	logger, _ := NewLogger("info")
 
 	lambdaFunctions := testLambdaDoubleStructPtrData()

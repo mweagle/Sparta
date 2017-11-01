@@ -1,10 +1,34 @@
 # Change Notes
 
+
+## v0.20.2
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added support for [Step functions](https://aws.amazon.com/step-functions/faqs/).
+    - Step functions are expressed via a combination of: states, `NewStateMachine`, and adding a `StateMachineDecorator` as a [service hook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook).
+    - See the [SpartaStep](https://github.com/mweagle/SpartaStep) sample for a service that provisions a simple roll die state machine.
+  - Usability improvements & enhancements for CLI log output. Text-formatted output now includes cleaner header as in:
+    ```
+    INFO[0000] ══════════════════════════════════════════════════════════════
+    INFO[0000]    _______  ___   ___  _________
+    INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.2
+    INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 740028b
+    INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
+    INFO[0000]
+    INFO[0000] ══════════════════════════════════════════════════════════════
+    INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC="2017-11-01T01:14:31Z"
+    INFO[0000] ══════════════════════════════════════════════════════════════
+    ```
+  - Added [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck) to compile pipeline. Fixed issues.
+  - Corrected inline Go examples to use proper function references & signatures.
+- :bug:  **FIXED**
+  * Handle case where multipart forms with empty values weren't handled [https://github.com/mweagle/Sparta/issues/74]
+
 ## v0.20.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Add `sparta.LambdaName` to return the reflection-discovered name of an `http.HandleFunc` instance.
-- :bug:
+- :bug:  **FIXED**
   * Fixed issue with `--describe` not rendering CloudFormation template properly
   * Better handle failures when [posting body](https://github.com/mweagle/Sparta/pull/72) - thanks https://github.com/nylar
 

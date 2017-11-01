@@ -32,8 +32,8 @@ type DiscoveryResource struct {
 func newDiscoveryResource(resourceID string, props map[string]interface{}) (DiscoveryResource, error) {
 	resource := DiscoveryResource{}
 	resource.ResourceID = resourceID
-	resource.Properties = make(map[string]string, 0)
-	resource.Tags = make(map[string]string, 0)
+	resource.Properties = make(map[string]string)
+	resource.Tags = make(map[string]string)
 
 	for eachProp, eachValue := range props {
 		if eachProp != "Tags" {
@@ -95,7 +95,7 @@ func (discoveryInfo *DiscoveryInfo) UnmarshalJSON(data []byte) error {
 	if err := json.Unmarshal(data, &discoveryData); err != nil {
 		return err
 	}
-	discoveryInfo.Resources = make(map[string]DiscoveryResource, 0)
+	discoveryInfo.Resources = make(map[string]DiscoveryResource)
 	for eachKey, eachValue := range discoveryData {
 		typeAssertOk := true
 
@@ -162,7 +162,7 @@ func DiscoverByName(name string) (*DiscoveryInfo, error) {
 // TODO cache the data somewhere other than querying CF
 func initializeDiscovery(serviceName string, lambdaAWSInfos []*LambdaAWSInfo, logger *logrus.Logger) {
 	// Setup the discoveryImpl reference
-	discoveryCache = make(map[string]*DiscoveryInfo, 0)
+	discoveryCache = make(map[string]*DiscoveryInfo)
 	discoverImpl = func(golangFuncName string) (*DiscoveryInfo, error) {
 
 		// Find the LambdaAWSInfo that has this golang function

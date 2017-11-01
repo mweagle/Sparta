@@ -1,7 +1,6 @@
 .DEFAULT_GOAL=build
 
 GO_LINT := $(GOPATH)/bin/golint
-GO_STATICCHECK := $(GOPATH)/bin/staticcheck
 
 ################################################################################
 # Meta
@@ -27,11 +26,15 @@ GO_SOURCE_FILES := find . -type f -name '*.go' \
 	! -path './vendor/*' \
 
 install_requirements:
+	go get -u honnef.co/go/tools/cmd/megacheck
+	go get -u honnef.co/go/tools/cmd/gosimple
+	go get -u honnef.co/go/tools/cmd/unused
+	go get -u honnef.co/go/tools/cmd/staticcheck
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/fzipp/gocyclo
-	go get -u honnef.co/go/tools/cmd/staticcheck
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
+
 
 .PHONY: vet
 vet: install_requirements
@@ -54,12 +57,9 @@ fmtcheck:install_requirements
 	@ export output="$$($(GO_SOURCE_FILES) -exec goimports -d {} \;)"; \
 		test -z "$${output}" || (echo "$${output}" && exit 1)
 
-.PHONY: analyze
-analyze: install_requirements
-	$(GO_STATICCHECK) .
-
 .PHONY: validate
-validate: vet lint fmtcheck analyze
+validate: install_requirements vet lint fmtcheck
+	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
 
 docs:
 	@echo ""
@@ -75,6 +75,7 @@ travis-depends: install_requirements
 	dep ensure
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
 	rsync -a --quiet --remove-source-files ./vendor/ $(GOPATH)/src
+
 
 .PHONY: travis-ci-test
 travis-ci-test: travis-depends test build

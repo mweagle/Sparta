@@ -22,7 +22,7 @@ func ExampleCloudWatchEventsPermission() {
 		IAMRoleDefinition{})
 
 	cloudWatchEventsPermission := CloudWatchEventsPermission{}
-	cloudWatchEventsPermission.Rules = make(map[string]CloudWatchEventsRule, 0)
+	cloudWatchEventsPermission.Rules = make(map[string]CloudWatchEventsRule)
 	cloudWatchEventsPermission.Rules["Rate5Mins"] = CloudWatchEventsRule{
 		ScheduleExpression: "rate(5 minutes)",
 	}

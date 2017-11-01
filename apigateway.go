@@ -42,12 +42,6 @@ const (
 	// that stores the APIGateway provisioned URL
 	// @enum OutputKey
 	OutputAPIGatewayURL = "APIGatewayURL"
-
-	// boolTrue is the string representation that CF needs
-	boolTrue = "true"
-
-	// boolTrue is the string representation that CF needs
-	boolFalse = "false"
 )
 
 // APIGatewayIdentity represents the user identity of a request
@@ -212,7 +206,7 @@ type API struct {
 }
 
 func corsMethodResponseParams() map[string]bool {
-	responseParams := make(map[string]bool, 0)
+	responseParams := make(map[string]bool)
 	responseParams["method.response.header.Access-Control-Allow-Headers"] = true
 	responseParams["method.response.header.Access-Control-Allow-Methods"] = true
 	responseParams["method.response.header.Access-Control-Allow-Origin"] = true
@@ -249,7 +243,7 @@ func methodResponses(userResponses map[int]*Response, corsEnabled bool) *gocf.AP
 }
 
 func corsIntegrationResponseParams() map[string]string {
-	responseParams := make(map[string]string, 0)
+	responseParams := make(map[string]string)
 	responseParams["method.response.header.Access-Control-Allow-Headers"] = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
 	responseParams["method.response.header.Access-Control-Allow-Methods"] = "'*'"
 	responseParams["method.response.header.Access-Control-Allow-Origin"] = "'*'"
@@ -505,7 +499,7 @@ func (api *API) export(serviceName string,
 				},
 			}
 			if len(eachMethodDef.Parameters) != 0 {
-				requestParams := make(map[string]string, 0)
+				requestParams := make(map[string]string)
 				for eachKey, eachBool := range eachMethodDef.Parameters {
 					requestParams[eachKey] = fmt.Sprintf("%t", eachBool)
 				}
@@ -544,7 +538,6 @@ func (api *API) export(serviceName string,
 				RestAPIID:   apiGatewayRestAPIID.String(),
 				StageName:   gocf.String(stageName),
 				StageDescription: &gocf.APIGatewayDeploymentStageDescription{
-					StageName:   gocf.String(api.stage.name),
 					Description: gocf.String(api.stage.Description),
 					Variables:   api.stage.Variables,
 				},
@@ -591,7 +584,7 @@ func NewAPIGateway(name string, stage *Stage) *API {
 	return &API{
 		name:      name,
 		stage:     stage,
-		resources: make(map[string]*Resource, 0),
+		resources: make(map[string]*Resource),
 	}
 }
 
@@ -602,7 +595,7 @@ func NewAPIGateway(name string, stage *Stage) *API {
 func NewStage(name string) *Stage {
 	return &Stage{
 		name:      name,
-		Variables: make(map[string]string, 0),
+		Variables: make(map[string]string),
 	}
 }
 
@@ -619,7 +612,7 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 	resource := &Resource{
 		pathPart:     pathPart,
 		parentLambda: parentLambda,
-		Methods:      make(map[string]*Method, 0),
+		Methods:      make(map[string]*Method),
 	}
 	api.resources[resourcesKey] = resource
 	return resource, nil
@@ -641,9 +634,9 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 	}
 
 	integration := Integration{
-		Parameters:       make(map[string]string, 0),
-		RequestTemplates: make(map[string]string, 0),
-		Responses:        make(map[int]*IntegrationResponse, 0),
+		Parameters:       make(map[string]string),
+		RequestTemplates: make(map[string]string),
+		Responses:        make(map[int]*IntegrationResponse),
 		integrationType:  "AWS", // Type used for Lambda integration
 	}
 
@@ -651,9 +644,9 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 		authorizationType:       authorizationType,
 		httpMethod:              httpMethod,
 		defaultHTTPResponseCode: defaultHTTPStatusCode,
-		Parameters:              make(map[string]bool, 0),
-		Models:                  make(map[string]*Model, 0),
-		Responses:               make(map[int]*Response, 0),
+		Parameters:              make(map[string]bool),
+		Models:                  make(map[string]*Model),
+		Responses:               make(map[int]*Response),
 		Integration:             integration,
 	}
 
@@ -667,7 +660,7 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 				regExp = ""
 			}
 			method.Integration.Responses[i] = &IntegrationResponse{
-				Parameters: make(map[string]string, 0),
+				Parameters: make(map[string]string),
 				Templates: map[string]string{
 					"application/json": "",
 					"text/*":           "",
@@ -677,8 +670,8 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 
 			// Then the Method.Responses
 			method.Responses[i] = &Response{
-				Parameters: make(map[string]bool, 0),
-				Models:     make(map[string]*Model, 0),
+				Parameters: make(map[string]bool),
+				Models:     make(map[string]*Model),
 			}
 		}
 	}
