@@ -21,7 +21,7 @@ The first step is to define the core Lambda function [Task](http://docs.aws.amaz
 // Standard AWS λ function
 func lambdaRollDie(w http.ResponseWriter, r *http.Request) {
   ...
-	// Return a randomized value in the range [0, 6]
+	// Return a randomized value in the range [1, 6]
 	rollBytes, rollBytesErr := json.Marshal(&struct {
 		Roll int `json:"roll"`
 	}{
