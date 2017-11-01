@@ -166,7 +166,7 @@ INFO[0085] ───────────────────────
 
 ### Testing
 
-With the stack provisioned, the final step is to Test the state machine and see how lucky our die roll is. Navigate to the **Step Functions**
+With the stack provisioned, the final step is to test the State Machine and see how lucky our die roll is. Navigate to the **Step Functions**
 service dashboard in the AWS Console and find the State Machine that was provisioned. Click the **New Execution** button and accept the default JSON.
 This sample state machine doesn't interrogate the incoming data so the initial JSON is effectively ignored.
 
