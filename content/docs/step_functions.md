@@ -63,7 +63,7 @@ choiceState := step.NewChoiceState("checkRoll",
   WithDefault(successState)
 {{< /highlight >}}
 
-The Sparta state types correspond to their [AWS States Spec](https://states-language.net) equivalents:
+The Sparta state types correspond to their [AWS States Spec](https://states-language.net/spec.html) equivalents:
 
   - `successState` : [SucceedState](https://states-language.net/spec.html#succeed-state)
   - `delayState` : a specialized [WaitState](https://states-language.net/spec.html#wait-state)
