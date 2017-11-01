@@ -1,7 +1,6 @@
 .DEFAULT_GOAL=build
 
 GO_LINT := $(GOPATH)/bin/golint
-GO_STATICCHECK := $(GOPATH)/bin/staticcheck
 
 ################################################################################
 # Meta
@@ -58,12 +57,8 @@ fmtcheck:install_requirements
 	@ export output="$$($(GO_SOURCE_FILES) -exec goimports -d {} \;)"; \
 		test -z "$${output}" || (echo "$${output}" && exit 1)
 
-.PHONY: analyze
-analyze: install_requirements
-	$(GO_STATICCHECK) .
-
 .PHONY: validate
-validate: vet lint fmtcheck analyze
+validate: install_requirements vet lint fmtcheck
 	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
 
 docs:
