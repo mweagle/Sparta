@@ -28,10 +28,14 @@ GO_SOURCE_FILES := find . -type f -name '*.go' \
 
 install_requirements:
 	go get -u honnef.co/go/tools/cmd/megacheck
+	go get -u honnef.co/go/tools/cmd/gosimple
+	go get -u honnef.co/go/tools/cmd/unused
+	go get -u honnef.co/go/tools/cmd/staticcheck
 	go get -u golang.org/x/tools/cmd/goimports
 	go get -u github.com/fzipp/gocyclo
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
+
 
 .PHONY: vet
 vet: install_requirements
@@ -76,6 +80,7 @@ travis-depends: install_requirements
 	dep ensure
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
 	rsync -a --quiet --remove-source-files ./vendor/ $(GOPATH)/src
+
 
 .PHONY: travis-ci-test
 travis-ci-test: travis-depends test build
