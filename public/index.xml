@@ -7,10 +7,20 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Copyright 2015-2017 Matt Weagle</copyright>
-    <lastBuildDate>Tue, 03 Oct 2017 07:15:40 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 31 Oct 2017 18:20:05 +0000</lastBuildDate>
     
 	<atom:link href="http://gosparta.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Step Functions</title>
+      <link>http://gosparta.io/docs/step_functions/</link>
+      <pubDate>Tue, 31 Oct 2017 18:20:05 +0000</pubDate>
+      
+      <guid>http://gosparta.io/docs/step_functions/</guid>
+      <description>Introduction AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+    </item>
     
     <item>
       <title>Sample Service</title>
