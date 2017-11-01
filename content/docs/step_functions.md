@@ -25,7 +25,7 @@ func lambdaRollDie(w http.ResponseWriter, r *http.Request) {
 	rollBytes, rollBytesErr := json.Marshal(&struct {
 		Roll int `json:"roll"`
 	}{
-		Roll: rand.Int31n(1,7),
+		Roll: rand.Intn(5) + 1,
 	})
 	if rollBytesErr != nil {
 		http.Error(w, rollBytesErr.Error(), http.StatusInternalServerError)
