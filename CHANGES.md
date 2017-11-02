@@ -1,6 +1,12 @@
 # Change Notes
 
 
+## v0.20.3
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+- :bug:  **FIXED**
+  * Fixed `explore` interactive debugging instructions
+
 ## v0.20.2
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**

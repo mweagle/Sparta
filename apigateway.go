@@ -555,7 +555,6 @@ func (api *API) export(serviceName string,
 			newDeployment := &gocf.APIGatewayDeployment{
 				Description: gocf.String("Sparta deploy"),
 				RestAPIID:   apiGatewayRestAPIID.String(),
-				StageName:   gocf.String(stageName),
 			}
 			// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this
 			// is going to work with deletes...
