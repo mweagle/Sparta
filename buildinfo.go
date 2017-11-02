@@ -4,4 +4,4 @@ package sparta
 // DO NOT EDIT
 
 // SpartaGitHash is the commit hash of this Sparta library
-const SpartaGitHash = "bec87c0d77e1d15ccf748b0935352b51529bd094"
+const SpartaGitHash = "c78055bfb47c96837453a3113abf2e8abd94e83f"
