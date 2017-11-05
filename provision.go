@@ -10,6 +10,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"go/parser"
+	"go/token"
 	"io"
 	"net/url"
 	"os"
@@ -583,12 +585,42 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 	return createPackageStep(), nil
 }
 
+func ensureMainEntrypoint(logger *logrus.Logger) error {
+	fset := token.NewFileSet()
+	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
+	if parseErr != nil {
+		return fmt.Errorf("Failed to parse source input: %s", parseErr.Error())
+	}
+	logger.WithFields(logrus.Fields{
+		"SourcePackages": packageMap,
+	}).Debug("Checking working directory")
+
+	// If there isn't a main defined, we're in the wrong directory..
+	mainPackageCount := 0
+	for eachPackage := range packageMap {
+		if eachPackage == "main" {
+			mainPackageCount++
+		}
+	}
+	if mainPackageCount <= 0 {
+		unlikelyBinaryErr := fmt.Errorf("It appears your application's `func main() {}` is not in the current working directory. Please run this command in the same directory as `func main() {}`")
+		return unlikelyBinaryErr
+	}
+	return nil
+}
+
 func buildGoBinary(executableOutput string,
 	useCGO bool,
 	buildTags string,
 	linkFlags string,
 	noop bool,
 	logger *logrus.Logger) error {
+
+	// Before we do anything, let's make sure there's a `main` package in this directory.
+	ensureMainPackageErr := ensureMainEntrypoint(logger)
+	if ensureMainPackageErr != nil {
+		return ensureMainPackageErr
+	}
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
