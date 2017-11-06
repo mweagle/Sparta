@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"go/parser"
 	"go/token"
@@ -586,6 +587,12 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 }
 
 func ensureMainEntrypoint(logger *logrus.Logger) error {
+	// Don't do this for "go test" runs
+	if flag.Lookup("test.v") != nil {
+		logger.Debug("Skipping main() check for test")
+		return nil
+	}
+
 	fset := token.NewFileSet()
 	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
 	if parseErr != nil {
