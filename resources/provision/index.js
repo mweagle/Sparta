@@ -307,7 +307,6 @@ var createForwarder = function (path) {
         }
       })
       var golangProcessReadyHandler = function () {
-        spartaUtils.log('SIGUSR2 signal received')
         process.removeListener('SIGUSR2', golangProcessReadyHandler)
         forwardToGolangProcess(event,
           context,
@@ -329,7 +328,8 @@ var createForwarder = function (path) {
 // Log the outputs
 var envSettings = {
   AWS_SDK_Version: AWS.VERSION,
-  NodeJSVersion: process.version
+  NodeJSVersion: process.version,
+  Uptime: process.uptime(),
 }
 spartaUtils.log(envSettings)
 
