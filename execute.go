@@ -37,7 +37,7 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 	}
 	logger.WithFields(logrus.Fields{
 		"ParentPID": parentProcessPID,
-	}).Info("Signaling parent process")
+	}).Debug("Signaling parent process")
 
 	if 0 != parentProcessPID {
 		platformKill(parentProcessPID)
