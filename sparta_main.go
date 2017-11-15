@@ -423,15 +423,23 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
+		// If we're running in AWS, then pick some sensible defaults
+		// per http://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+		runningInLambda := ("" != os.Getenv("LAMBDA_TASK_ROOT"))
 		prettyHeader := false
 		var formatter logrus.Formatter
-		switch OptionsGlobal.LogFormat {
-		case "text", "txt":
-			formatter = &logrus.TextFormatter{}
-			prettyHeader = true
-		case "json":
+		if !runningInLambda {
+			switch OptionsGlobal.LogFormat {
+			case "text", "txt":
+				formatter = &logrus.TextFormatter{}
+				prettyHeader = true
+			case "json":
+				formatter = &logrus.JSONFormatter{}
+			}
+		} else {
 			formatter = &logrus.JSONFormatter{}
 		}
+
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
 			return loggerErr
@@ -439,9 +447,9 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
-		logger.Info(headerDivider)
 
 		if prettyHeader {
+			logger.Info(headerDivider)
 			logger.Info(fmt.Sprintf(`   _______  ___   ___  _________ `))
 			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |     Version : %s`, SpartaVersion))
 			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : %s`, SpartaGitHash[0:7]))
@@ -453,7 +461,11 @@ func MainEx(serviceName string,
 				"UTC":       (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags": OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
+			logger.Info(headerDivider)
 		} else {
+			if !runningInLambda {
+				logger.Info(headerDivider)
+			}
 			logger.WithFields(logrus.Fields{
 				"Option":        cmd.Name(),
 				"SpartaVersion": SpartaVersion,
@@ -462,6 +474,9 @@ func MainEx(serviceName string,
 				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags":     OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
+			if !runningInLambda {
+				logger.Info(headerDivider)
+			}
 		}
 		logger.Info(headerDivider)
 		return nil
