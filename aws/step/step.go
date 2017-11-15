@@ -182,7 +182,7 @@ func (cmp *StringGreaterThanEquals) MarshalJSON() ([]byte, error) {
 // NumericEquals
 ////////////////////////////////////////////////////////////////////////////////
 
-// NumericEquals comparision
+// NumericEquals comparison
 type NumericEquals struct {
 	Comparison
 	Variable string
