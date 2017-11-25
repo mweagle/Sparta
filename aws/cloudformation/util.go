@@ -960,3 +960,29 @@ func UserScopedStackName(basename string) string {
 	userName := strings.Replace(platformUserName, " ", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName)
 }
+
+// ListStacks returns a slice of stacks that meet the given filter.
+func ListStacks(session *session.Session,
+	maxReturned int,
+	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
+
+	listStackInput := &cloudformation.ListStacksInput{
+		StackStatusFilter: []*string{},
+	}
+	for _, eachFilter := range stackFilters {
+		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
+	}
+	cloudformationSvc := cloudformation.New(session)
+	accumulator := []*cloudformation.StackSummary{}
+	for {
+		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
+		if listResultErr != nil {
+			return nil, listResultErr
+		}
+		accumulator = append(accumulator, listResult.StackSummaries...)
+		if len(accumulator) >= maxReturned || listResult.NextToken == nil {
+			return accumulator, nil
+		}
+		listStackInput.NextToken = listResult.NextToken
+	}
+}
