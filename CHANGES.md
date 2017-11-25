@@ -1,5 +1,21 @@
 # Change Notes
 
+## v0.20.4
+- :warning: **BREAKING**
+  - Changed `step.NewStateMachine` signature to include _StateMachineName_ as first argument per [Nov 15th, 2017 release](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/ReleaseHistory.html)
+- :checkered_flag: **CHANGES**
+  * Add `profile` command
+    - Profile snapshots are enabled via:
+    ```
+    sparta.ScheduleProfileLoop(nil, 5*time.Second, 30*time.Second, "heap")
+    ```
+    - Profile snapshots are published to S3 and are locally aggregated across all lambda instance publishers. To view the ui, run the `profile` Sparta command.
+      - For more information, see [b0rk](https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/), [Go blog](https://blog.golang.org/profiling-go-programs), or [rakyll](https://rakyll.org/pprof-ui/)
+    - See the [SpartaPProf](https://github.com/mweagle/SpartaPProf) sample for a service that installs profiling hooks.
+  * Eliminate unnecessary logging in AWS lambda environment
+  * Log NodeJS [process.uptime()](https://nodejs.org/api/process.html#process_process_uptime)
+- :bug:  **FIXED**
+  * Added more constructive message when working directory for `go build` doesn't contain `main` package.
 
 ## v0.20.3
 - :warning: **BREAKING**
