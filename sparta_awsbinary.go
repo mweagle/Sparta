@@ -65,6 +65,16 @@ func Explore(lambdaAWSInfos []*LambdaAWSInfo,
 	return errors.New("Explore not supported for this binary")
 }
 
+// Profile is the interactive command used to pull S3 assets locally into /tmp
+// and run ppro against the cached profiles
+func Profile(serviceName string,
+	serviceDescription string,
+	s3Bucket string,
+	httpPort int,
+	logger *logrus.Logger) error {
+	return errors.New("Profile not supported for this binary")
+}
+
 // Support Windows development, by only requiring `syscall` in the compiled
 // linux binary.  THere is a NOP impl over in sparta_xplatbuild that doesn't
 // include the lambdabinary flag
