@@ -21,11 +21,11 @@ var currentSlot int
 var stackName string
 var profileBucket string
 
-const snapshot_count = 3
+const snapshotCount = 3
 
 func nextUploadSlot() int {
 	uploadSlot := currentSlot
-	currentSlot = (currentSlot + 1) % snapshot_count
+	currentSlot = (currentSlot + 1) % snapshotCount
 	return uploadSlot
 }
 
@@ -151,6 +151,9 @@ func snapshotProfiles(s3BucketArchive interface{},
 	}
 }
 
+// ScheduleProfileLoop installs a profiling loop that pushes profile information
+// to S3 for local consumption using a `profile` command that wraps
+// pprof
 func ScheduleProfileLoop(s3BucketArchive interface{},
 	snapshotInterval time.Duration,
 	cpuProfileDuration time.Duration,
