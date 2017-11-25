@@ -30,10 +30,11 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 
 	// Startup the server...
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", port),
-		Handler:      NewServeMuxLambda(lambdaAWSInfos, logger),
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 10 * time.Second,
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: NewServeMuxLambda(lambdaAWSInfos, logger),
+		// Use maximum Lambda timeout
+		ReadTimeout:  5 * time.Minute,
+		WriteTimeout: 5 * time.Minute,
 	}
 	logger.WithFields(logrus.Fields{
 		"ParentPID": parentProcessPID,
