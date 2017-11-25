@@ -458,6 +458,16 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				allRoleNames = append(allRoleNames, eachCustomResource.roleName)
 			}
 		}
+		// Profiling enabled?
+		if profileDecorator != nil {
+			profileErr := profileDecorator(ctx.userdata.serviceName,
+				eachLambdaInfo,
+				ctx.userdata.s3Bucket,
+				ctx.logger)
+			if profileErr != nil {
+				return nil, profileErr
+			}
+		}
 
 		// Validate the IAMRoleDefinitions associated
 		if nil != eachLambdaInfo.RoleDefinition {
@@ -824,11 +834,9 @@ func createPackageStep() workflowStep {
 			return nil, err
 		}
 		// Strip the local directory in case it's in there...
-
 		ctx.logger.WithFields(logrus.Fields{
 			"TempName": relativePath(tmpFile.Name()),
 		}).Info("Creating code ZIP archive for upload")
-
 		lambdaArchive := zip.NewWriter(tmpFile)
 
 		// Archive Hook
