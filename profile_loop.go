@@ -226,7 +226,7 @@ func syncStackProfileSnapshots(profileType string,
 		// Make sure they exist...
 		_, cachedInfoErr := os.Stat(cachedProfilePath)
 		if os.IsNotExist(cachedInfoErr) {
-			return nil, fmt.Errorf("No cache files found for profile type: %s. Re-run and fetch S3 artifacts", profileType)
+			return nil, fmt.Errorf("No cache files found for profile type: %s. Please run again and fetch S3 artifacts", profileType)
 		}
 		return []string{cachedProfilePath}, nil
 	}
