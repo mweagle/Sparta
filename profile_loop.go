@@ -5,8 +5,10 @@ package sparta
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/AlecAivazis/survey"
@@ -31,12 +33,31 @@ type userAnswers struct {
 	RefreshSnapshots     bool
 }
 
+func cachedProfileNames() []string {
+	globPattern := filepath.Join(ScratchDirectory, "*.profile")
+	matchingFiles, matchingFilesErr := filepath.Glob(globPattern)
+	if matchingFilesErr != nil {
+		return []string{}
+	}
+	// Just get the base name of the profile...
+	cachedNames := []string{}
+	for _, eachMatch := range matchingFiles {
+		baseName := path.Base(eachMatch)
+		filenameParts := strings.Split(baseName, ".")
+		cachedNames = append(cachedNames, filenameParts[0])
+	}
+	return cachedNames
+}
+
 func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*userAnswers, error) {
 	stackNames := []string{}
 	for eachKey := range stackNameToIDMap {
 		stackNames = append(stackNames, eachKey)
 	}
 	sort.Strings(stackNames)
+	cachedProfiles := cachedProfileNames()
+	sort.Strings(cachedProfiles)
+
 	var qs = []*survey.Question{
 		{
 			Name: "stackName",
@@ -57,7 +78,8 @@ func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*us
 		{
 			Name: "downloadNewSnapshots",
 			Prompt: &survey.Select{
-				Message: "Would you like to download new profile snapshots?",
+				Message: fmt.Sprintf("Would you like to download new profile snapshots? (Cached: %s)",
+					strings.Join(cachedProfiles, ", ")),
 				Options: []string{"Yes", "No"},
 				Default: "Yes",
 			},
