@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/http/pprof"
 	"runtime/debug"
 	"strings"
 	"sync"
@@ -27,6 +28,16 @@ type dispatchMap map[string]*LambdaAWSInfo
 
 // Dispatch map for normal AWS Lambda to user defined Sparta lambda functions
 type customResourceDispatchMap map[string]*customResourceInfo
+
+var pprofDispatchMap = map[string]http.HandlerFunc{}
+
+func init() {
+	pprofDispatchMap["/debug/pprof"] = http.HandlerFunc(pprof.Index)
+	pprofDispatchMap["/debug/pprof/cmdline"] = http.HandlerFunc(pprof.Cmdline)
+	pprofDispatchMap["/debug/pprof/profile"] = http.HandlerFunc(pprof.Profile)
+	pprofDispatchMap["/debug/pprof/symbol"] = http.HandlerFunc(pprof.Symbol)
+	pprofDispatchMap["/debug/pprof/trace"] = http.HandlerFunc(pprof.Trace)
+}
 
 // This is a copy of the expvarHandler implementation from
 // https://golang.org/src/expvar/expvar.go
@@ -192,6 +203,12 @@ func (handler *ServeMuxLambda) ServeHTTP(w http.ResponseWriter, req *http.Reques
 		expvarHandler(w, req)
 		return
 	}
+	pprofHandler := pprofDispatchMap[req.URL.Path]
+	if pprofHandler != nil {
+		pprofHandler(w, req)
+		return
+	}
+
 	// Read the request and unmarshal the right version
 	defer req.Body.Close()
 	bodyData, bodyDataErr := ioutil.ReadAll(req.Body)
