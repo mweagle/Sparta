@@ -1358,6 +1358,7 @@ func NewParallelState(parallelStateName string, states StateMachine) *ParallelSt
 
 // StateMachine is the top level item
 type StateMachine struct {
+	name                 string
 	comment              string
 	stateDefinitionError error
 	startAt              TransitionState
@@ -1491,6 +1492,7 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHook {
 
 		// Awsome - add an AWS::StepFunction to the template with this info and roll with it...
 		stepFunctionResource := &gocf.StepFunctionsStateMachine{
+			StateMachineName: gocf.String(sm.name),
 			DefinitionString: templateExpr,
 			RoleArn:          gocf.GetAtt(iamRoleResource, "Arn").String(),
 		}
@@ -1519,7 +1521,7 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 }
 
 // NewStateMachine returns a new StateMachine instance
-func NewStateMachine(startState TransitionState) *StateMachine {
+func NewStateMachine(stateMachineName string, startState TransitionState) *StateMachine {
 	uniqueStates := make(map[string]MachineState, 0)
 	pendingStates := []MachineState{startState}
 	duplicateStateNames := make(map[string]bool, 0)
@@ -1556,6 +1558,7 @@ func NewStateMachine(startState TransitionState) *StateMachine {
 
 	// Walk all the states and assemble them into the states slice
 	sm := &StateMachine{
+		name:         stateMachineName,
 		startAt:      startState,
 		uniqueStates: uniqueStates,
 	}
