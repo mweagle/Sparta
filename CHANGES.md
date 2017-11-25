@@ -10,8 +10,9 @@
     sparta.ScheduleProfileLoop(nil, 5*time.Second, 30*time.Second, "heap")
     ```
     - Profile snapshots are published to S3 and are locally aggregated across all lambda instance publishers. To view the ui, run the `profile` Sparta command.
-      - For more information, see [b0rk](https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/), [Go blog](https://blog.golang.org/profiling-go-programs), or [rakyll](https://rakyll.org/pprof-ui/)
+      - For more information, please see [The new pprof user interface - ⭐️](https://rakyll.org/pprof-ui/), [Profiling Go programs with pprof](https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/), or the [Go blog](https://blog.golang.org/profiling-go-programs)
     - See the [SpartaPProf](https://github.com/mweagle/SpartaPProf) sample for a service that installs profiling hooks.
+    - Ensure you have the latest `pprof` UI via _go get -u -v github.com/google/pprof_
     - The standard [profile names](https://golang.org/pkg/runtime/pprof/#Profile) are available, as well as a _cpu_ type implied by a non-zero `time.Duration` supplied as the third parameter to `ScheduleProfileLoop`.
   * Eliminate unnecessary logging in AWS lambda environment
   * Log NodeJS [process.uptime()](https://nodejs.org/api/process.html#process_process_uptime)
