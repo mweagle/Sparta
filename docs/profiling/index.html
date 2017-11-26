@@ -690,11 +690,11 @@ INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to ex
 
 <p><img src="http://gosparta.io/images/profiling/main_alloc_space.jpg" alt="Main Alloc Space" /></p>
 
-<p>To view another profile type, enter <code>Ctrl+C</code> to exit the blocking web ui loop &amp;&amp; launch another <code>profile</code> session.</p>
+<p>To view another profile type, enter <code>Ctrl+C</code> to exit the blocking web ui loop and launch another <code>profile</code> session.</p>
 
 <h1 id="conclusion">Conclusion</h1>
 
-<p>Go includes a very powerful toolchain that can help diagnose performance bottlenecks in Lambda execution codepaths. With the <code>profile</code> command, it&rsquo;s possible to bring those tools to Lambda in order to diagnose performance issues in their deployed environment.</p>
+<p>Go includes a very powerful set of tools that can help diagnose performance bottlenecks. With the Sparta <code>profile</code> command, it&rsquo;s possible to bring that same visibility to bear to AWS Lambda, despite running on ephemeral, (typically) unaddressable hosts. Get started optimizing today! And also, don&rsquo;t forget to disable the profiling loop before pushing to production.</p>
 
 <h1 id="notes">Notes</h1>
 
