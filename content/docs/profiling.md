@@ -170,6 +170,12 @@ For this sample run, the _heap_ profile output is made available to the `pprof` 
 
 ![Main Alloc Space](/images/profiling/main_alloc_space.jpg)
 
+The latest `pprof` also includes flamegraph support to help identify issues:
+
+
+![Main Alloc Space Flamegraph](/images/profiling/main_alloc_space_flamegraph.jpg)
+
+
 To view another profile type, enter `Ctrl+C` to exit the blocking web ui loop and launch another `profile` session.
 
 # Conclusion
@@ -177,6 +183,7 @@ To view another profile type, enter `Ctrl+C` to exit the blocking web ui loop an
 Go includes a very powerful set of tools that can help diagnose performance bottlenecks. With the Sparta `profile` command, it's possible to bring that same visibility to bear to AWS Lambda, despite running on ephemeral, (typically) unaddressable hosts. Get started optimizing today! And also, don't forget to disable the profiling loop before pushing to production.
 
 # Notes
+  - [CPU Flame Graphs](http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html) provides a great overview.
   - It's not currently possible to use [custom profiles](https://medium.com/@cep21/creating-custom-go-profiles-with-pprof-b737dfc58e11)
   - Lambda instances are limited to a window size of 3 rolling snapshots
   - The `explore` command also exposes the `pprof` [web handlers](https://github.com/mweagle/Sparta/blob/ead2872585dc0da81f222577a898707c6a486ab1/execute_utils.go#L35) for local exploration as well.

@@ -690,6 +690,10 @@ INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to ex
 
 <p><img src="http://gosparta.io/images/profiling/main_alloc_space.jpg" alt="Main Alloc Space" /></p>
 
+<p>The latest <code>pprof</code> also includes flamegraph support to help identify issues:</p>
+
+<p><img src="http://gosparta.io/images/profiling/main_alloc_space_flamegraph.jpg" alt="Main Alloc Space Flamegraph" /></p>
+
 <p>To view another profile type, enter <code>Ctrl+C</code> to exit the blocking web ui loop and launch another <code>profile</code> session.</p>
 
 <h1 id="conclusion">Conclusion</h1>
@@ -699,6 +703,7 @@ INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to ex
 <h1 id="notes">Notes</h1>
 
 <ul>
+<li><a href="http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html">CPU Flame Graphs</a> provides a great overview.</li>
 <li>It&rsquo;s not currently possible to use <a href="https://medium.com/@cep21/creating-custom-go-profiles-with-pprof-b737dfc58e11">custom profiles</a></li>
 <li>Lambda instances are limited to a window size of 3 rolling snapshots</li>
 <li>The <code>explore</code> command also exposes the <code>pprof</code> <a href="https://github.com/mweagle/Sparta/blob/ead2872585dc0da81f222577a898707c6a486ab1/execute_utils.go#L35">web handlers</a> for local exploration as well.</li>
