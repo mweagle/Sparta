@@ -16,20 +16,20 @@
 [[projects]]
   name = "github.com/asaskevich/govalidator"
   packages = ["."]
-  revision = "73945b6115bfbbcc57d89b7316e28109364124e1"
-  version = "v7"
+  revision = "521b25f4b05fd26bec69d9dedeb8f9c9a83939a8"
+  version = "v8"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "ee1f179877b2daf2aaabf71fa900773bf8842253"
-  version = "v1.12.19"
+  revision = "cd721c97ef6fcfcb76b4feb14fcfead57fb01e5e"
+  version = "v1.12.33"
 
 [[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
-  revision = "f280b3ba517bf5fc98922624f21fb0e7a92adaec"
-  version = "v1.30.3"
+  revision = "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a"
+  version = "v1.32.0"
 
 [[projects]]
   name = "github.com/go-playground/locales"
@@ -47,7 +47,7 @@
   branch = "master"
   name = "github.com/golang/protobuf"
   packages = ["jsonpb","proto","ptypes/struct"]
-  revision = "1643683e1b54a9e88ad26d98f81400c8c9d9f4f9"
+  revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
 
 [[projects]]
   branch = "master"
@@ -100,13 +100,13 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "faa41a15e720cbe9c2edd9cc739eb72e3f042843"
+  revision = "a92cdf9b3fabcc9da74f17cf2b65a35bf7bdae83"
 
 [[projects]]
-  branch = "master"
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "b3426bbac13d7110c4d8fce456ea0012f79f3b8b"
+  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
+  version = "v0.0.1"
 
 [[projects]]
   name = "github.com/spf13/pflag"
@@ -124,19 +124,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "bd6f299fb381e4c3393d1c4b1f0b94f5e77650c8"
+  revision = "b080dc9a8c480b08e698fb1219160d598526310f"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "95c6576299259db960f6c5b9b69ea52422860fce"
+  revision = "4ff8c001ce4cc464e644b922325097228fce14d8"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "9b61fcc4c548d69663d915801fc4b42a43b6cd9c"
+  revision = "6d70fb2e85323e81c89374331d3d2b93304faa36"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
@@ -147,12 +147,12 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "1304298bf10d085adec514b076772a79c9cadb6b"
-  version = "v9.8.0"
+  revision = "61caf9d3038e1af346dbf5c2e16f6678e1548364"
+  version = "v9.9.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "be5ed83c756fe5ba1b91bb6a8a0a2b8c1a8e43e6a3ce528c5eb9d6ffc8f053bb"
+  inputs-digest = "dd96aa7857983057a614e852ea0407af12f8b6c1be78487cba6a2d11183f9745"
   solver-name = "gps-cdcl"
   solver-version = 1
