@@ -333,6 +333,15 @@ This example will work through the SpartaConfig sample.</description>
     </item>
     
     <item>
+      <title>Profiling</title>
+      <link>http://gosparta.io/docs/profiling/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>http://gosparta.io/docs/profiling/</guid>
+      <description>Introduction One of Lambda&amp;rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs.</description>
+    </item>
+    
+    <item>
       <title>Python/cgo Support</title>
       <link>http://gosparta.io/docs/cgo/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
