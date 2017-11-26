@@ -170,11 +170,11 @@ For this sample run, the _heap_ profile output is made available to the `pprof` 
 
 ![Main Alloc Space](/images/profiling/main_alloc_space.jpg)
 
-To view another profile type, enter `Ctrl+C` to exit the blocking web ui loop && launch another `profile` session.
+To view another profile type, enter `Ctrl+C` to exit the blocking web ui loop and launch another `profile` session.
 
 # Conclusion
 
-Go includes a very powerful toolchain that can help diagnose performance bottlenecks in Lambda execution codepaths. With the `profile` command, it's possible to bring those tools to Lambda in order to diagnose performance issues in their deployed environment.
+Go includes a very powerful set of tools that can help diagnose performance bottlenecks. With the Sparta `profile` command, it's possible to bring that same visibility to bear to AWS Lambda, despite running on ephemeral, (typically) unaddressable hosts. Get started optimizing today! And also, don't forget to disable the profiling loop before pushing to production.
 
 # Notes
   - It's not currently possible to use [custom profiles](https://medium.com/@cep21/creating-custom-go-profiles-with-pprof-b737dfc58e11)
