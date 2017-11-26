@@ -153,6 +153,11 @@
   </url>
   
   <url>
+    <loc>http://gosparta.io/docs/profiling/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://gosparta.io/docs/cgo/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>

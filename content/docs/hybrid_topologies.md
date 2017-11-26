@@ -6,7 +6,7 @@ menu:
   main:
     parent: Documentation
     identifier: hybrid-topologies
-    weight: 1000
+    weight: 950
 ---
 
 # Introduction
