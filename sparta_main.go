@@ -27,6 +27,7 @@ var CommandLineOptions = struct {
 	Execute   *cobra.Command
 	Describe  *cobra.Command
 	Explore   *cobra.Command
+	Profile   *cobra.Command
 }{}
 
 /******************************************************************************/
@@ -98,6 +99,15 @@ type optionsExploreStruct struct {
 }
 
 var optionsExplore optionsExploreStruct
+
+/******************************************************************************/
+// Profile options
+type optionsProfileStruct struct {
+	S3Bucket string `valid:"required,matches(\\w+)"`
+	Port     int    `valid:"-"`
+}
+
+var optionsProfile optionsProfileStruct
 
 /******************************************************************************/
 // Initialization
@@ -223,6 +233,23 @@ func init() {
 		"p",
 		9999,
 		"Alternative port for HTTP binding (default=9999)")
+
+	// Profile
+	CommandLineOptions.Profile = &cobra.Command{
+		Use:   "profile",
+		Short: "Interactively examine service pprof output",
+		Long:  `Startup a local pprof webserver to interrogate profiles snapshots on S3`,
+	}
+	CommandLineOptions.Profile.Flags().StringVarP(&optionsProfile.S3Bucket,
+		"s3Bucket",
+		"s",
+		"",
+		"S3 Bucket that stores lambda profile snapshots")
+	CommandLineOptions.Profile.Flags().IntVarP(&optionsProfile.Port,
+		"port",
+		"p",
+		8080,
+		"Alternative port for HTTP binding (default=8080)")
 }
 
 // CommandLineOptionsHook allows embedding applications the ability
@@ -306,6 +333,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		CommandLineOptions.Execute,
 		CommandLineOptions.Describe,
 		CommandLineOptions.Explore,
+		CommandLineOptions.Profile,
 	}
 	CommandLineOptions.Version.PreRunE = func(cmd *cobra.Command, args []string) error {
 		if handler != nil {
@@ -354,6 +382,14 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		return nil
 	}
 	parseCmdRoot.AddCommand(CommandLineOptions.Explore)
+
+	CommandLineOptions.Profile.PreRunE = func(cmd *cobra.Command, args []string) error {
+		if handler != nil {
+			return handler(CommandLineOptions.Profile)
+		}
+		return nil
+	}
+	parseCmdRoot.AddCommand(CommandLineOptions.Profile)
 
 	// Assign each command an empty RunE func s.t.
 	// Cobra doesn't print out the command info
@@ -423,15 +459,23 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
+		// If we're running in AWS, then pick some sensible defaults
+		// per http://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+		runningInLambda := ("" != os.Getenv("LAMBDA_TASK_ROOT"))
 		prettyHeader := false
 		var formatter logrus.Formatter
-		switch OptionsGlobal.LogFormat {
-		case "text", "txt":
-			formatter = &logrus.TextFormatter{}
-			prettyHeader = true
-		case "json":
+		if !runningInLambda {
+			switch OptionsGlobal.LogFormat {
+			case "text", "txt":
+				formatter = &logrus.TextFormatter{}
+				prettyHeader = true
+			case "json":
+				formatter = &logrus.JSONFormatter{}
+			}
+		} else {
 			formatter = &logrus.JSONFormatter{}
 		}
+
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
 			return loggerErr
@@ -439,21 +483,24 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
-		logger.Info(headerDivider)
 
 		if prettyHeader {
+			logger.Info(headerDivider)
 			logger.Info(fmt.Sprintf(`   _______  ___   ___  _________ `))
 			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |     Version : %s`, SpartaVersion))
 			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : %s`, SpartaGitHash[0:7]))
 			logger.Info(fmt.Sprintf(`/___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : %s`, runtime.Version()))
-			logger.Info("")
 			logger.Info(headerDivider)
 			logger.WithFields(logrus.Fields{
 				"Option":    cmd.Name(),
 				"UTC":       (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags": OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
+			logger.Info(headerDivider)
 		} else {
+			if !runningInLambda {
+				logger.Info(headerDivider)
+			}
 			logger.WithFields(logrus.Fields{
 				"Option":        cmd.Name(),
 				"SpartaVersion": SpartaVersion,
@@ -462,8 +509,10 @@ func MainEx(serviceName string,
 				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags":     OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
+			if !runningInLambda {
+				logger.Info(headerDivider)
+			}
 		}
-		logger.Info(headerDivider)
 		return nil
 	}
 
@@ -586,6 +635,22 @@ func MainEx(serviceName string,
 	}
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Explore)
 
+	//////////////////////////////////////////////////////////////////////////////
+	// Profile
+	if nil == CommandLineOptions.Profile.RunE {
+		CommandLineOptions.Profile.RunE = func(cmd *cobra.Command, args []string) error {
+			_, validateErr := govalidator.ValidateStruct(optionsProfile)
+			if nil != validateErr {
+				return validateErr
+			}
+			return Profile(serviceName,
+				serviceDescription,
+				optionsProfile.S3Bucket,
+				optionsProfile.Port,
+				OptionsGlobal.Logger)
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Profile)
 	// Run it!
 
 	executeErr := CommandLineOptions.Root.Execute()

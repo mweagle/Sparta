@@ -32,7 +32,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.20.3"
+	SpartaVersion = "0.20.4"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs6.10"
 	// PythonVersion is the Python version used for CGO support

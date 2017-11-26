@@ -9,7 +9,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
+	"go/parser"
+	"go/token"
 	"io"
 	"net/url"
 	"os"
@@ -455,6 +458,16 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				allRoleNames = append(allRoleNames, eachCustomResource.roleName)
 			}
 		}
+		// Profiling enabled?
+		if profileDecorator != nil {
+			profileErr := profileDecorator(ctx.userdata.serviceName,
+				eachLambdaInfo,
+				ctx.userdata.s3Bucket,
+				ctx.logger)
+			if profileErr != nil {
+				return nil, profileErr
+			}
+		}
 
 		// Validate the IAMRoleDefinitions associated
 		if nil != eachLambdaInfo.RoleDefinition {
@@ -583,12 +596,48 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 	return createPackageStep(), nil
 }
 
+func ensureMainEntrypoint(logger *logrus.Logger) error {
+	// Don't do this for "go test" runs
+	if flag.Lookup("test.v") != nil {
+		logger.Debug("Skipping main() check for test")
+		return nil
+	}
+
+	fset := token.NewFileSet()
+	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
+	if parseErr != nil {
+		return fmt.Errorf("Failed to parse source input: %s", parseErr.Error())
+	}
+	logger.WithFields(logrus.Fields{
+		"SourcePackages": packageMap,
+	}).Debug("Checking working directory")
+
+	// If there isn't a main defined, we're in the wrong directory..
+	mainPackageCount := 0
+	for eachPackage := range packageMap {
+		if eachPackage == "main" {
+			mainPackageCount++
+		}
+	}
+	if mainPackageCount <= 0 {
+		unlikelyBinaryErr := fmt.Errorf("It appears your application's `func main() {}` is not in the current working directory. Please run this command in the same directory as `func main() {}`")
+		return unlikelyBinaryErr
+	}
+	return nil
+}
+
 func buildGoBinary(executableOutput string,
 	useCGO bool,
 	buildTags string,
 	linkFlags string,
 	noop bool,
 	logger *logrus.Logger) error {
+
+	// Before we do anything, let's make sure there's a `main` package in this directory.
+	ensureMainPackageErr := ensureMainEntrypoint(logger)
+	if ensureMainPackageErr != nil {
+		return ensureMainPackageErr
+	}
 	// Go generate
 	cmd := exec.Command("go", "generate")
 	if logger.Level == logrus.DebugLevel {
@@ -785,11 +834,9 @@ func createPackageStep() workflowStep {
 			return nil, err
 		}
 		// Strip the local directory in case it's in there...
-
 		ctx.logger.WithFields(logrus.Fields{
 			"TempName": relativePath(tmpFile.Name()),
 		}).Info("Creating code ZIP archive for upload")
-
 		lambdaArchive := zip.NewWriter(tmpFile)
 
 		// Archive Hook
