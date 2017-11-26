@@ -75,26 +75,43 @@ func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*us
 				Default: profileTypes[0],
 			},
 		},
-		{
-			Name: "downloadNewSnapshots",
-			Prompt: &survey.Select{
-				Message: fmt.Sprintf("Would you like to download new profile snapshots? (Cached: %s)",
-					strings.Join(cachedProfiles, ", ")),
-				Options: []string{"Yes", "No"},
-				Default: "Yes",
-			},
-		},
 	}
 
-	// Ask the known questions, do some type conversta
+	// Ask the known questions, figure out if they want to download a new
+	// version of the snapshots...
 	var responses userAnswers
 	responseError := survey.Ask(qs, &responses)
 	if responseError != nil {
 		return nil, responseError
 	}
 	responses.StackInstance = stackNameToIDMap[responses.StackName]
-	responses.RefreshSnapshots = (responses.DownloadNewSnapshots == "Yes")
 
+	// Based on the first set, ask whether then want to download a new snapshot
+	cachedProfileExists := strings.Contains(strings.Join(cachedProfiles, " "), responses.ProfileType)
+
+	refreshCacheOptions := []string{}
+	if cachedProfileExists {
+		refreshCacheOptions = append(refreshCacheOptions, "Use cached snapshot")
+	}
+	refreshCacheOptions = append(refreshCacheOptions, "Download new snapshots from S3")
+	var questionsRefresh = []*survey.Question{
+		{
+			Name: "downloadNewSnapshots",
+			Prompt: &survey.Select{
+				Message: fmt.Sprintf("What profile snapshot(s) would you like to view?"),
+				Options: refreshCacheOptions,
+				Default: refreshCacheOptions[0],
+			},
+		},
+	}
+	var refreshAnswers userAnswers
+	refreshQuestionError := survey.Ask(questionsRefresh, &refreshAnswers)
+	if refreshQuestionError != nil {
+		return nil, refreshQuestionError
+	}
+	responses.RefreshSnapshots = (refreshAnswers.DownloadNewSnapshots == "Download new snapshots from S3")
+
+	// Final set of questions regarding heap information
 	// If this is a memory profile, what kind?
 	if responses.ProfileType == "heap" {
 		// the answers will be written to this struct
