@@ -46,11 +46,11 @@ This function accepts the following arguments:
 
 During the `provision` step, the `ScheduleProfileLoop` adds an [IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) _Enable_ entry (if possible) to each Lambda function's IAM policy. It also annotates the Lambda's [Environment](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment) map so that the publishing loop knows where to publish snapshots.
 
-During the `execute` step when the Sparta binary is executing in AWS Lambda, the `ScheduleProfileLoop` installs the requestd sampling and publishing steps so that profile snapshots, serialized as [proto](https://github.com/google/pprof/blob/master/proto/profile.proto) files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:
+During the `execute` step when the Sparta binary is executing in AWS Lambda, the `ScheduleProfileLoop` installs the requested sampling and publishing steps so that profile snapshots, serialized as [proto](https://github.com/google/pprof/blob/master/proto/profile.proto) files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:
 
 s3:://{BUCKET_NAME}/sparta/pprof/{STACK_NAME}/profiles/{PROFILE_TYPE}/{SNAPSHOT_INDEX}-{PROFILE_TYPE}.λ-{INSTANCE_ID}.profile
 
-To manage profile sprawl, each lambda instance uses a rolling `SNAPSHOT_INDEX` to maintain a fixed size window. The new `profile` command is responsible for aggregating them into a single consolidated profile that can be visualized.
+To manage profile sprawl, each lambda instance uses a rolling `SNAPSHOT_INDEX` to maintain a fixed size window. The new `profile` command is responsible for aggregating them into a single local, consolidated profile that can be visualized using the existing tools.
 
 ## Deploying
 With profiling enabled, the next step is to deploy the *SpartaPProf* service using the `provision` command:
