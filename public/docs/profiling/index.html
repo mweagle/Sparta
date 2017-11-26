@@ -562,7 +562,7 @@
 <p>This function accepts the following arguments:</p>
 
 <ul>
-<li><code>s3Bucket</code>: The S3 bucket to which profile snapshots should be written. If <code>nil</code>, the bucket used to host the original ZIP archive is used.</li>
+<li><code>s3Bucket</code>: The S3 bucket to which profile snapshots should be written. If <code>nil</code>, the bucket used to host the original ZIP code archive is used.</li>
 <li><code>snapshotInterval</code> - The interval between each snapshot.</li>
 <li><code>cpuProfileDuration</code> - The duration for the <a href="https://golang.org/pkg/runtime/pprof/#StartCPUProfile">CPUProfile</a> sample.</li>
 <li><code>profileNames...</code> - The profile types to snapshot. In addition to the <a href="https://golang.org/pkg/runtime/pprof/#Profile">standard profiles</a>, Sparta includes a &ldquo;cpu&rdquo; profile iff the <code>cpuProfileDuration</code> is non-zero.</li>
@@ -641,7 +641,7 @@ Lambda response (9 of 500): &#34;Hi there 🌍&#34;
 ...</code></pre>
 </div>
 
-<p>After about thirty seconds or so, which took about 60 requests in <code>us-west-2</code>, a set of named profiles are now available. Since each container&rsquo;s instance id is randomly assigned, the profile files you see will have slightly different names</p>
+<p>After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
 S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
@@ -658,7 +658,7 @@ S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 
 <p>Sparta delegates to the pprof <a href="https://github.com/google/pprof">webui</a> to visualize profile snapshots. Ensure you have the latest version of this by running <code>go get -u -v go get github.com/google/pprof</code> first.</p>
 
-<p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating each profile.</p>
+<p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating all published profiles for a single type.</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
 INFO[0000] ══════════════════════════════════════════════════════════════

@@ -37,7 +37,7 @@ sparta.ScheduleProfileLoop(nil, 5*time.Second, 30*time.Second,
 
 This function accepts the following arguments:
 
-  - `s3Bucket`: The S3 bucket to which profile snapshots should be written. If `nil`, the bucket used to host the original ZIP archive is used.
+  - `s3Bucket`: The S3 bucket to which profile snapshots should be written. If `nil`, the bucket used to host the original ZIP code archive is used.
   - `snapshotInterval` - The interval between each snapshot.
   - `cpuProfileDuration` - The duration for the [CPUProfile](https://golang.org/pkg/runtime/pprof/#StartCPUProfile) sample.
   - `profileNames...` - The profile types to snapshot. In addition to the [standard profiles](https://golang.org/pkg/runtime/pprof/#Profile), Sparta includes a "cpu" profile iff the `cpuProfileDuration` is non-zero.
@@ -51,7 +51,6 @@ During the `execute` step when the Sparta binary is executing in AWS Lambda, the
 s3:://{BUCKET_NAME}/sparta/pprof/{STACK_NAME}/profiles/{PROFILE_TYPE}/{SNAPSHOT_INDEX}-{PROFILE_TYPE}.λ-{INSTANCE_ID}.profile
 
 To manage profile sprawl, each lambda instance uses a rolling `SNAPSHOT_INDEX` to maintain a fixed size window. The new `profile` command is responsible for aggregating them into a single consolidated profile that can be visualized.
-
 
 ## Deploying
 With profiling enabled, the next step is to deploy the *SpartaPProf* service using the `provision` command:
@@ -119,7 +118,7 @@ Lambda response (9 of 500): "Hi there 🌍"
 ...
 {{</highlight>}}
 
-After about thirty seconds or so, which took about 60 requests in `us-west-2`, a set of named profiles are now available. Since each container's instance id is randomly assigned, the profile files you see will have slightly different names
+After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in `us-west-2`, a set of named profiles was published. Since each container's instance id is randomly assigned, the profile names you see will have slightly different names
 
 {{<highlight plain>}}
 ---------------------------------------------------------------
@@ -138,7 +137,7 @@ S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 
 Sparta delegates to the pprof [webui](https://github.com/google/pprof) to visualize profile snapshots. Ensure you have the latest version of this by running `go get -u -v go get github.com/google/pprof` first.
 
-The final step is to provide the profile snapshots to `pprof`. Sparta exposes a `profile` command that accomplishes this, by fetching and consolidating each profile.
+The final step is to provide the profile snapshots to `pprof`. Sparta exposes a `profile` command that accomplishes this, by fetching and consolidating all published profiles for a single type.
 
 {{<highlight plain>}}
 $ go run main.go profile --s3Bucket weagle
