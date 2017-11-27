@@ -44,7 +44,9 @@ This function accepts the following arguments:
 
 ### Profiling Implementation
 
-During the `provision` step, the `ScheduleProfileLoop` adds an [IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) _Enable_ entry (if possible) to each Lambda function's IAM policy. It also annotates the Lambda's [Environment](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment) map so that the publishing loop knows where to publish snapshots.
+During the `provision` step, the `ScheduleProfileLoop` adds an [IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) _Allow_ entry (if possible) to each Lambda function's IAM policy. This policy extension is a minimal privilege and only enables `s3:PutObject` against the Sparta managed key prefix (see below).
+
+The `provision` implementation also annotates the Lambda's [Environment](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment) map so that the publishing loop knows where to publish snapshots.
 
 During the `execute` step when the Sparta binary is executing in AWS Lambda, the `ScheduleProfileLoop` installs the requested sampling and publishing steps so that profile snapshots, serialized as [proto](https://github.com/google/pprof/blob/master/proto/profile.proto) files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:
 
