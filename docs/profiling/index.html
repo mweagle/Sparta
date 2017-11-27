@@ -570,7 +570,9 @@
 
 <h3 id="profiling-implementation">Profiling Implementation</h3>
 
-<p>During the <code>provision</code> step, the <code>ScheduleProfileLoop</code> adds an <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">IAMRolePrivilege</a> <em>Enable</em> entry (if possible) to each Lambda function&rsquo;s IAM policy. It also annotates the Lambda&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment">Environment</a> map so that the publishing loop knows where to publish snapshots.</p>
+<p>During the <code>provision</code> step, the <code>ScheduleProfileLoop</code> adds an <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">IAMRolePrivilege</a> <em>Allow</em> entry (if possible) to each Lambda function&rsquo;s IAM policy. This policy extension is a minimal privilege and only enables <code>s3:PutObject</code> against the Sparta managed key prefix (see below).</p>
+
+<p>The <code>provision</code> implementation also annotates the Lambda&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment">Environment</a> map so that the publishing loop knows where to publish snapshots.</p>
 
 <p>During the <code>execute</code> step when the Sparta binary is executing in AWS Lambda, the <code>ScheduleProfileLoop</code> installs the requested sampling and publishing steps so that profile snapshots, serialized as <a href="https://github.com/google/pprof/blob/master/proto/profile.proto">proto</a> files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:</p>
 
