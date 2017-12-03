@@ -1,9 +1,11 @@
 package sparta
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
-	"reflect"
+	"strings"
+	"text/template"
 
 	// Also included in lambda_permissions.go, but doubly included
 	// here as the package's init() function handles registering
@@ -14,27 +16,36 @@ import (
 	gocf "github.com/mweagle/go-cloudformation"
 )
 
-// See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html
-const (
-	// TagLogicalResourceID is the current logical resource name
-	TagLogicalResourceID = "aws:cloudformation:logical-id"
-	// TagResourceType is the type of the referred resource type
-	TagResourceType = "sparta:cloudformation:restype"
-	// TagStackRegion is the current stack's logical id
-	TagStackRegion = "sparta:cloudformation:region"
-	// TagStackID is the current stack's ID
-	TagStackID = "aws:cloudformation:stack-id"
-	// TagStackName is the current stack name
-	TagStackName = "aws:cloudformation:stack-name"
-)
+// resourceOutputs is responsible for returning the conditional
+// set of CloudFormation outputs for a given resource type.
+func resourceOutputs(resourceName string,
+	resource gocf.ResourceProperties,
+	logger *logrus.Logger) ([]string, error) {
 
-var cloudformationTypeMapDiscoveryOutputs = map[string][]string{
-	"AWS::DynamoDB::Table":    {"StreamArn"},
-	"AWS::Kinesis::Stream":    {"Arn"},
-	"AWS::Route53::RecordSet": {""},
-	"AWS::S3::Bucket":         {"DomainName", "WebsiteURL"},
-	"AWS::SNS::Topic":         {"TopicName"},
-	"AWS::SQS::Queue":         {"Arn", "QueueName"},
+	outputProps := []string{}
+	switch typedResource := resource.(type) {
+	case gocf.IAMRole:
+		// NOP
+	case gocf.DynamoDBTable:
+		if typedResource.StreamSpecification != nil {
+			outputProps = append(outputProps, "StreamArn")
+		}
+	case gocf.KinesisStream:
+		outputProps = append(outputProps, "Arn")
+	case gocf.Route53RecordSet:
+		// TODO
+	case gocf.S3Bucket:
+		outputProps = append(outputProps, "DomainName", "WebsiteURL")
+	case gocf.SNSTopic:
+		outputProps = append(outputProps, "TopicName")
+	case gocf.SQSQueue:
+		outputProps = append(outputProps, "Arn", "QueueName")
+	default:
+		logger.WithFields(logrus.Fields{
+			"ResourceType": fmt.Sprintf("%T", typedResource),
+		}).Warn("Discovery information for dependency not yet implemented")
+	}
+	return outputProps, nil
 }
 
 func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf.ResourceProperties, error) {
@@ -48,41 +59,83 @@ func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf
 	return resProps, nil
 }
 
-func outputsForResource(template *gocf.Template,
-	logicalResourceName string,
-	logger *logrus.Logger) (map[string]interface{}, error) {
+type discoveryDataTemplate struct {
+	ResourceID         string
+	ResourceType       string
+	ResourceProperties string
+}
 
-	item, ok := template.Resources[logicalResourceName]
+var discoveryDataForResourceDependency = `
+	{
+		"ResourceID" : "<< .ResourceID >>",
+		"ResourceRef" : "{"Ref":"<< .ResourceID >>"}",
+		"ResourceType" : "<< .ResourceType >>",
+		"Properties" : {
+			<< .ResourceProperties >>
+		}
+	}
+`
+
+func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
+	logicalResourceName string,
+	logger *logrus.Logger) ([]byte, error) {
+
+	item, ok := cfTemplate.Resources[logicalResourceName]
 	if !ok {
 		return nil, nil
 	}
+	resourceOutputs, resourceOutputsErr := resourceOutputs(logicalResourceName,
+		item.Properties,
+		logger)
+	if resourceOutputsErr != nil {
+		return nil, resourceOutputsErr
+	}
+	// Template data
+	templateData := &discoveryDataTemplate{
+		ResourceID:   logicalResourceName,
+		ResourceType: item.Properties.CfnResourceType(),
+	}
+	quotedAttrs := make([]string, 0)
+	for _, eachOutput := range resourceOutputs {
+		quotedAttrs = append(quotedAttrs,
+			fmt.Sprintf(`"%s" :"{ "Fn::GetAtt" : [ "%s", "%s" ] }"`,
+				eachOutput,
+				logicalResourceName,
+				eachOutput))
+	}
+	templateData.ResourceProperties = strings.Join(quotedAttrs, ",")
 
-	outputs := make(map[string]interface{})
-	attrs, exists := cloudformationTypeMapDiscoveryOutputs[item.Properties.CfnResourceType()]
-	if exists {
-		outputs["Ref"] = gocf.Ref(logicalResourceName).String()
-		outputs[TagResourceType] = item.Properties.CfnResourceType()
-
-		for _, eachAttr := range attrs {
-			outputs[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
-		}
-
-		// Any tags?
-		r := reflect.ValueOf(item.Properties)
-		tagsField := reflect.Indirect(r).FieldByName("Tags")
-		if tagsField.IsValid() && !tagsField.IsNil() {
-			outputs["Tags"] = tagsField.Interface()
-		}
+	// Create the data that can be stuffed into Environment
+	discoveryTemplate, discoveryTemplateErr := template.New("discoveryResourceData").
+		Delims("<<", ">>").
+		Parse(discoveryDataForResourceDependency)
+	if nil != discoveryTemplateErr {
+		return nil, discoveryTemplateErr
 	}
 
-	if len(outputs) != 0 {
-		logger.WithFields(logrus.Fields{
-			"ResourceName": logicalResourceName,
-			"Outputs":      outputs,
-		}).Debug("Resource Outputs")
-	}
+	var templateResults bytes.Buffer
+	evalResultErr := discoveryTemplate.Execute(&templateResults, templateData)
+	return templateResults.Bytes(), evalResultErr
 
-	return outputs, nil
+	// outputs := make(map[string]interface{})
+	// outputs["ResourceID"] = logicalResourceName
+	// outputs["ResourceType"] = item.Properties.CfnResourceType()
+	// if len(resourceOutputs) != 0 {
+	// 	properties := make(map[string]interface{})
+	// 	for _, eachAttr := range resourceOutputs {
+	// 		properties[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
+	// 	}
+	// 	if len(properties) != 0 {
+	// 		outputs["Properties"] = properties
+	// 	}
+	// }
+	// if len(outputs) != 0 {
+	// 	logger.WithFields(logrus.Fields{
+	// 		"ResourceName": logicalResourceName,
+	// 		"Outputs":      outputs,
+	// 	}).Debug("Resource Outputs")
+	// }
+	// return outputs, nil
 }
 func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
 	if nil == resource.DependsOn {

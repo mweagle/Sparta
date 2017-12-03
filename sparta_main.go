@@ -481,7 +481,6 @@ func MainEx(serviceName string,
 			return loggerErr
 		}
 		OptionsGlobal.Logger = logger
-
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		if prettyHeader {
@@ -579,7 +578,7 @@ func MainEx(serviceName string,
 
 			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
 			// Ensure the discovery service is initialized
-			initializeDiscovery(serviceName, lambdaAWSInfos, OptionsGlobal.Logger)
+			initializeDiscovery(OptionsGlobal.Logger)
 
 			return Execute(lambdaAWSInfos,
 				optionsExecute.Port,
