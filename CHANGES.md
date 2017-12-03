@@ -6,6 +6,7 @@
   - Remove public sparta `Tag*` constants that were previously reserved for Discover support.
 - :checkered_flag: **CHANGES**
   - Change [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) to use _Environment_ data rather than CloudFormation API calls.
+  - See [SpartaDynamoDB](https://github.com/mweagle/SpartaDynamoDB) for sample usage of multiple lambda functions depending on a single, dynamically provisioned Dynamo table.
   - Include **BuildID** in Lambda environment via `SPARTA_BUILD_ID` environment variable.
 - :bug:  **FIXED**
   - Correct CLI typo
