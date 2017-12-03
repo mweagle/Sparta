@@ -417,11 +417,13 @@ type IAMRolePrivilege struct {
 }
 
 func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {
-	switch rolePrivilege.Resource.(type) {
+	switch typedPrivilege := rolePrivilege.Resource.(type) {
 	case string:
-		return gocf.String(rolePrivilege.Resource.(string))
+		return gocf.String(typedPrivilege)
+	case gocf.RefFunc:
+		return typedPrivilege.String()
 	default:
-		return rolePrivilege.Resource.(*gocf.StringExpr)
+		return typedPrivilege.(*gocf.StringExpr)
 	}
 }
 
