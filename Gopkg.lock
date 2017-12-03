@@ -22,8 +22,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "cd721c97ef6fcfcb76b4feb14fcfead57fb01e5e"
-  version = "v1.12.33"
+  revision = "388e6676807f5968ad5eaaec0c70002f80c20b84"
+  version = "v1.12.39"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -53,7 +53,7 @@
   branch = "master"
   name = "github.com/google/pprof"
   packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svg"]
-  revision = "0a0dc5ed0d750cca41de7da2055e4607b69ec2ab"
+  revision = "63475f227eddd4e1226737100e162c52494c9c49"
 
 [[projects]]
   branch = "master"
@@ -100,7 +100,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "a92cdf9b3fabcc9da74f17cf2b65a35bf7bdae83"
+  revision = "d4d39d439140cd56c1580db1f56decfcf380c9f2"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -124,19 +124,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "b080dc9a8c480b08e698fb1219160d598526310f"
+  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "4ff8c001ce4cc464e644b922325097228fce14d8"
+  revision = "8b4580aae2a0dd0c231a45d3ccb8434ff533b840"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "6d70fb2e85323e81c89374331d3d2b93304faa36"
+  revision = "04447353bc504b9a5c02eb227b9ecd252e64ea20"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
