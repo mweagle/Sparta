@@ -46,7 +46,7 @@ func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, lo
 	binaryName := path.Base(os.Args[0])
 	logger.WithFields(logrus.Fields{
 		"URL": fmt.Sprintf("http://localhost:%d", port),
-	}).Info(fmt.Sprintf("Starting %s server", binaryName))
+	}).Debug(fmt.Sprintf("Starting %s server", binaryName))
 
 	err := server.ListenAndServe()
 	if err != nil {

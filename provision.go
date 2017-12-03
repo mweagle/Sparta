@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"text/template"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -977,33 +978,108 @@ func createUploadStep(packagePath string) workflowStep {
 	}
 }
 
-func annotateDiscoveryInfo(template *gocf.Template, logger *logrus.Logger) *gocf.Template {
-	for eachResourceID, eachResource := range template.Resources {
-		// Only apply this to lambda functions
-		if eachResource.Properties.CfnResourceType() == "AWS::Lambda::Function" {
-
-			// Update the metdata with a reference to the output of each
-			// depended on item...
-			for _, eachDependsKey := range eachResource.DependsOn {
-				dependencyOutputs, _ := outputsForResource(template, eachDependsKey, logger)
-				if nil != dependencyOutputs && len(dependencyOutputs) != 0 {
-					logger.WithFields(logrus.Fields{
-						"Resource":  eachDependsKey,
-						"DependsOn": eachResource.DependsOn,
-						"Outputs":   dependencyOutputs,
-					}).Debug("Resource metadata")
-					safeMetadataInsert(eachResource, eachDependsKey, dependencyOutputs)
-				}
-			}
-			// Also include standard AWS outputs at a resource level if a lambda
-			// needs to self-discover other resources
-			safeMetadataInsert(eachResource, TagLogicalResourceID, gocf.String(eachResourceID))
-			safeMetadataInsert(eachResource, TagStackRegion, gocf.Ref("AWS::Region"))
-			safeMetadataInsert(eachResource, TagStackID, gocf.Ref("AWS::StackId"))
-			safeMetadataInsert(eachResource, TagStackName, gocf.Ref("AWS::StackName"))
-		}
+// This is a literal version of the DiscoveryInfo struct.
+var discoveryData = `
+{
+	"ResourceID": "<< .TagLogicalResourceID >>",
+	"Region": "{"Ref" : "AWS::Region"}",
+	"StackID": "{"Ref" : "AWS::StackId"}",
+	"StackName": "{"Ref" : "AWS::StackName"}",
+	"Resources":{<<range $eachDepResource, $eachOutputString := .Resources>>
+		"<< $eachDepResource >>" : << $eachOutputString >><< trailingComma >><<end>>
 	}
-	return template
+}`
+
+//
+type discoveryDataTemplateData struct {
+	TagLogicalResourceID string
+	Resources            map[string]string
+}
+
+func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
+	discoveryDataTemplateData := &discoveryDataTemplateData{
+		TagLogicalResourceID: resID,
+		Resources:            deps,
+	}
+	totalDeps := len(deps)
+	var templateFuncMap = template.FuncMap{
+		// The name "inc" is what the function will be called in the template text.
+		"trailingComma": func() string {
+			totalDeps--
+			if totalDeps > 0 {
+				return ","
+			}
+			return ""
+		},
+	}
+
+	discoveryTemplate, discoveryTemplateErr := template.New("discoveryData").
+		Delims("<<", ">>").
+		Funcs(templateFuncMap).
+		Parse(discoveryData)
+	if nil != discoveryTemplateErr {
+		return nil, discoveryTemplateErr
+	}
+
+	var templateResults bytes.Buffer
+	evalResultErr := discoveryTemplate.Execute(&templateResults, discoveryDataTemplateData)
+	if nil != evalResultErr {
+		return nil, evalResultErr
+	}
+	templateReader := bytes.NewReader(templateResults.Bytes())
+	templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
+	if templateExprErr != nil {
+		return nil, templateExprErr
+	}
+	return gocf.Base64(templateExpr), nil
+}
+
+func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
+	template *gocf.Template,
+	buildID string,
+	logger *logrus.Logger) (*gocf.Template, error) {
+
+	// Add the build id s.t. the logger can get stamped...
+	if lambdaAWSInfo.Options == nil {
+		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
+	}
+	lambdaEnvironment := lambdaAWSInfo.Options.Environment
+	if lambdaEnvironment == nil {
+		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
+	}
+	lambdaAWSInfo.Options.Environment[spartaEnvVarBuildID] = gocf.String(buildID)
+	return template, nil
+}
+
+func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
+	template *gocf.Template,
+	logger *logrus.Logger) (*gocf.Template, error) {
+	depMap := make(map[string]string)
+
+	// Update the metdata with a reference to the output of each
+	// depended on item...
+	for _, eachDependsKey := range lambdaAWSInfo.DependsOn {
+		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template, eachDependsKey, logger)
+		if dependencyTextErr != nil {
+			return nil, dependencyTextErr
+		}
+		depMap[eachDependsKey] = string(dependencyText)
+	}
+	if lambdaAWSInfo.Options == nil {
+		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
+	}
+	lambdaEnvironment := lambdaAWSInfo.Options.Environment
+	if lambdaEnvironment == nil {
+		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
+	}
+
+	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.logicalName(), depMap)
+	if discoveryInfoErr != nil {
+		return nil, discoveryInfoErr
+	}
+	// Update the env map
+	lambdaAWSInfo.Options.Environment[spartaEnvVarDiscoveryInformation] = discoveryInfo
+	return template, nil
 }
 
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
@@ -1436,8 +1512,20 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, mergeErr
 			}
 		}
-		ctx.context.cfTemplate = annotateDiscoveryInfo(ctx.context.cfTemplate, ctx.logger)
-
+		// Discovery info on a per-function basis
+		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
+			_, annotateErr := annotateDiscoveryInfo(eachEntry, ctx.context.cfTemplate, ctx.logger)
+			if annotateErr != nil {
+				return nil, annotateErr
+			}
+			_, annotateErr = annotateBuildInformation(eachEntry,
+				ctx.context.cfTemplate,
+				ctx.userdata.buildID,
+				ctx.logger)
+			if annotateErr != nil {
+				return nil, annotateErr
+			}
+		}
 		// PostMarshall Hook
 		if ctx.userdata.workflowHooks != nil {
 			postMarshallErr := callWorkflowHook(ctx.userdata.workflowHooks.PostMarshall, ctx)
@@ -1445,6 +1533,7 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, postMarshallErr
 			}
 		}
+
 		return applyCloudFormationOperation(ctx)
 	}
 }

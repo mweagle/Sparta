@@ -1,5 +1,16 @@
 # Change Notes
 
+## v0.20.5
+- :warning: **BREAKING**
+  - `Tags` for dependent resources no longer available via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover)
+  - Remove public sparta `Tag*` constants that were previously reserved for Discover support.
+- :checkered_flag: **CHANGES**
+  - Change [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) to use _Environment_ data rather than CloudFormation API calls.
+  - See [SpartaDynamoDB](https://github.com/mweagle/SpartaDynamoDB) for sample usage of multiple lambda functions depending on a single, dynamically provisioned Dynamo table.
+  - Include **BuildID** in Lambda environment via `SPARTA_BUILD_ID` environment variable.
+- :bug:  **FIXED**
+  - Correct CLI typo
+
 ## v0.20.4
 - :warning: **BREAKING**
   - Changed `step.NewStateMachine` signature to include _StateMachineName_ as first argument per [Nov 15th, 2017 release](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/ReleaseHistory.html)

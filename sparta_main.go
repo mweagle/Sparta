@@ -173,7 +173,7 @@ func init() {
 		"codePipelinePackage",
 		"p",
 		"",
-		"Name of CodePipelin package that includes cloduformation.json Template and ZIP config files")
+		"Name of CodePipeline package that includes cloduformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
@@ -481,7 +481,6 @@ func MainEx(serviceName string,
 			return loggerErr
 		}
 		OptionsGlobal.Logger = logger
-
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		if prettyHeader {
@@ -505,7 +504,8 @@ func MainEx(serviceName string,
 				"Option":        cmd.Name(),
 				"SpartaVersion": SpartaVersion,
 				"SpartaSHA":     SpartaGitHash[0:7],
-				"Go Version":    runtime.Version(),
+				"go Version":    runtime.Version(),
+				"BuildID":       os.Getenv(spartaEnvVarBuildID),
 				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 				"LinkFlags":     OptionsGlobal.LinkerFlags,
 			}).Info(welcomeMessage)
@@ -578,7 +578,7 @@ func MainEx(serviceName string,
 
 			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
 			// Ensure the discovery service is initialized
-			initializeDiscovery(serviceName, lambdaAWSInfos, OptionsGlobal.Logger)
+			initializeDiscovery(OptionsGlobal.Logger)
 
 			return Execute(lambdaAWSInfos,
 				optionsExecute.Port,

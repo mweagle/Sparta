@@ -406,7 +406,8 @@ func MapToResourceTags(tagMap map[string]string) []interface{} {
 // an Fn::Join- compatible representation for template serialization.
 // The templateData contents may include both golang text/template properties
 // and single-line JSON Fn::Join supported serializations.
-func ConvertToTemplateExpression(templateData io.Reader, additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+func ConvertToTemplateExpression(templateData io.Reader,
+	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
