@@ -467,7 +467,7 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 
 		// 1. Add the env vars to the map
 		if info.Options.Environment == nil {
-			info.Options.Environment = make(map[string]*gocf.StringExpr, 0)
+			info.Options.Environment = make(map[string]*gocf.StringExpr)
 		}
 		info.Options.Environment[envVarStackName] = gocf.Ref("AWS::StackName").String()
 		info.Options.Environment[envVarStackInstanceID] = gocf.Ref("AWS::StackId").String()
