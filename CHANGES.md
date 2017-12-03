@@ -1,6 +1,6 @@
 # Change Notes
 
-## v0.20.5
+## v0.30.0
 - :warning: **BREAKING**
   - `Tags` for dependent resources no longer available via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover)
   - Remove public sparta `Tag*` constants that were previously reserved for Discover support.
