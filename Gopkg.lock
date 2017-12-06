@@ -26,6 +26,24 @@
   version = "v1.12.39"
 
 [[projects]]
+  name = "github.com/briandowns/spinner"
+  packages = ["."]
+  revision = "48dbb65d7bd5c74ab50d53d04c949f20e3d14944"
+  version = "1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/go-humanize"
+  packages = ["."]
+  revision = "bb3d318650d48840a39aa21a027c6630e198e626"
+
+[[projects]]
+  name = "github.com/fatih/color"
+  packages = ["."]
+  revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
+  version = "v1.5.0"
+
+[[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
   revision = "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a"
@@ -153,6 +171,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "dd96aa7857983057a614e852ea0407af12f8b6c1be78487cba6a2d11183f9745"
+  inputs-digest = "c0008a1187e1a6497e9be5d07b3d2c728fc42c65dffbe1f1ef576ddc1e72397a"
   solver-name = "gps-cdcl"
   solver-version = 1
