@@ -63,6 +63,7 @@ The absolute minimum set of privileges an account needs is the following [IAM Po
 
 This set of privileges should be sufficient to deploy a Sparta application similar to [SpartaHelloWorld](https://github.com/mweagle/SpartaHelloWorld). Additional privileges may be required to enable different datasources.
 
+You can view the exact set of AWS API calls by enabling `--level debug` log verbosity. This log level includes all AWS API calls starting with release [0.20.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200).
 
 ### What flags are defined during AWS AMI compilation?
 
