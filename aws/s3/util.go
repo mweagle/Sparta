@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	humanize "github.com/dustin/go-humanize"
 )
 
 // RollbackFunction called in the event of a stack provisioning failure
@@ -81,10 +82,16 @@ func UploadLocalFileToS3(localPath string,
 			logPath = fmt.Sprintf(".%s", logPath)
 		}
 	}
+	// Binary size
+	stat, err := os.Stat(localPath)
+	if err != nil {
+		return "", fmt.Errorf("Failed to calculate upload size for file: %s", localPath)
+	}
 	logger.WithFields(logrus.Fields{
 		"Path":   logPath,
 		"Bucket": S3Bucket,
 		"Key":    S3KeyName,
+		"Size":   humanize.Bytes(uint64(stat.Size())),
 	}).Info("Uploading local file to S3")
 
 	uploader := s3manager.NewUploader(awsSession)

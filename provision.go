@@ -32,6 +32,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/lambda"
+	humanize "github.com/dustin/go-humanize"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
@@ -330,8 +331,7 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	stat, err := os.Stat(filePath)
 	if err == nil {
 		logger.WithFields(logrus.Fields{
-			"KB": stat.Size() / 1024,
-			"MB": stat.Size() / (1024 * 1024),
+			"Size": humanize.Bytes(uint64(stat.Size())),
 		}).Info(message)
 	}
 }
