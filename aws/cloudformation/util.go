@@ -6,16 +6,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-
-	"github.com/Sirupsen/logrus"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	gocf "github.com/mweagle/go-cloudformation"
-
 	"io"
 	"io/ioutil"
 	"math/rand"
@@ -25,6 +15,16 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/briandowns/spinner"
+	humanize "github.com/dustin/go-humanize"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
@@ -583,6 +583,12 @@ func WaitForStackOperationComplete(stackID string,
 
 	result := &WaitForStackOperationCompleteResult{}
 
+	startTime := time.Now()
+
+	// Startup a spinner...
+	cliSpinner := spinner.New(spinner.CharSets[39], 500*time.Millisecond)
+	cliSpinnerStarted := false
+
 	// Poll for the current stackID state, and
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackID),
@@ -616,7 +622,21 @@ func WaitForStackOperationComplete(stackID string,
 			result.operationSuccessful = false
 			waitComplete = true
 		default:
-			logger.Info(pollingMessage)
+			// If this is JSON output, just do the normal thing
+			switch logger.Formatter.(type) {
+			case *logrus.JSONFormatter:
+				{
+					logger.Info(pollingMessage)
+				}
+			default:
+				if !cliSpinnerStarted {
+					cliSpinner.Start()
+					defer cliSpinner.Stop()
+					cliSpinnerStarted = true
+				}
+				spinnerText := fmt.Sprintf(" %s (Initiated: %s)", pollingMessage, humanize.Time(startTime))
+				cliSpinner.Suffix = spinnerText
+			}
 		}
 	}
 	return result, nil
@@ -921,13 +941,16 @@ func ConvergeStackState(serviceName string,
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", serviceName)
 	} else if nil != convergeResult.stackInfo.Outputs {
+		// Add a nice divider
+		logger.Info("")
+		logger.Info("Stack Outputs")
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.WithFields(logrus.Fields{
-				"Key":         aws.StringValue(eachOutput.OutputKey),
 				"Value":       aws.StringValue(eachOutput.OutputValue),
 				"Description": aws.StringValue(eachOutput.Description),
-			}).Info("Stack output")
+			}).Info(fmt.Sprintf("%s", aws.StringValue(eachOutput.OutputKey)))
 		}
+		logger.Info("")
 	}
 	return convergeResult.stackInfo, nil
 }
