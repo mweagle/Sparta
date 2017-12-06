@@ -1,5 +1,15 @@
 # Change Notes
 
+## v0.30.1
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Humanize outputs and times with [go-humanize](https://github.com/dustin/go-humanize)
+  - Replace CloudFormation polling log output with [spinner](https://github.com/briandowns/spinner)
+    - This is only active in non-JSON log output
+- :bug:  **FIXED**
+  - Re-enable `cloudformation:DescribeStacks` and `cloudformation:DescribeStackResource` privileges to support HTML based deployments
+
+
 ## v0.30.0
 - :warning: **BREAKING**
   - `Tags` for dependent resources no longer available via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover)
