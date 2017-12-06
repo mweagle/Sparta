@@ -17,6 +17,53 @@ During development, configuration is typically done through environment variable
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_REGION`
 
+### What are the *Minimum* set of privileges needed for an account to use Sparta?
+
+The absolute minimum set of privileges an account needs is the following [IAM Policy](https://awspolicygen.s3.amazonaws.com/policygen.html):
+
+{{< highlight json >}}
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1505975332000",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:DescribeStacks",
+                "cloudformation:CreateStack",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:DeleteStack",
+                "iam:GetRole",
+                "iam:DeleteRole",
+                "iam:DeleteRolePolicy",
+                "iam:PutRolePolicy"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {
+            "Sid": "Stmt1505975332000",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetBucketVersioning",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::PROVISION_TARGET_BUCKETNAME"
+            ]
+        }
+    ]
+}
+{{< /highlight >}}
+
+This set of privileges should be sufficient to deploy a Sparta application similar to [SpartaHelloWorld](https://github.com/mweagle/SpartaHelloWorld). Additional privileges may be required to enable different datasources.
+
+
 ### What flags are defined during AWS AMI compilation?
 
 * **TAGS**:         `-tags lambdabinary`

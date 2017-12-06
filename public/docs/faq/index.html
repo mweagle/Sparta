@@ -545,6 +545,51 @@
 <li><code>AWS_REGION</code></li>
 </ul>
 
+<h3 id="what-are-the-minimum-set-of-privileges-needed-for-an-account-to-use-sparta">What are the <em>Minimum</em> set of privileges needed for an account to use Sparta?</h3>
+
+<p>The absolute minimum set of privileges an account needs is the following <a href="https://awspolicygen.s3.amazonaws.com/policygen.html">IAM Policy</a>:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2012-10-17&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Statement&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Stmt1505975332000&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeStacks&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:ExecuteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:GetRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRolePolicy&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:PutRolePolicy&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;*&#34;</span>
+            <span style="color:#000;font-weight:bold">]</span>
+        <span style="color:#000;font-weight:bold">},</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Stmt1505975332000&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;s3:PutObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:GetBucketVersioning&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:DeleteObject&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
+            <span style="color:#000;font-weight:bold">]</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">]</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre>
+</div>
+
+<p>This set of privileges should be sufficient to deploy a Sparta application similar to <a href="https://github.com/mweagle/SpartaHelloWorld">SpartaHelloWorld</a>. Additional privileges may be required to enable different datasources.</p>
+
 <h3 id="what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</h3>
 
 <ul>
