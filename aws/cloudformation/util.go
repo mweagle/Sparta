@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"text/template"
@@ -586,7 +587,11 @@ func WaitForStackOperationComplete(stackID string,
 	startTime := time.Now()
 
 	// Startup a spinner...
-	cliSpinner := spinner.New(spinner.CharSets[39], 500*time.Millisecond)
+	charSetIndex := 39
+	if runtime.GOOS == "windows" {
+		charSetIndex = 14
+	}
+	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 500*time.Millisecond)
 	cliSpinnerStarted := false
 
 	// Poll for the current stackID state, and
