@@ -14,8 +14,8 @@ reset:
 ################################################################################
 generate:
 	go generate -x . ./proxy
-	./stamp.sh
-	./embed.sh
+	./buildinfo.sh
+	./generate-constants.sh
 	@echo "Generate complete: `date`"
 
 ################################################################################
