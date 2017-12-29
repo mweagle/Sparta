@@ -2,6 +2,7 @@ package sparta
 
 import (
 	"archive/zip"
+	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -19,9 +20,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
-	_ "github.com/aws/aws-sdk-go/service/ecr" // Ref to have Glide include depends
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	_ "github.com/mweagle/Sparta/aws/dynamodb" // Ref to have Glide include depends
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 )
@@ -44,6 +43,11 @@ const (
 	dividerLength = 62
 )
 
+const (
+	// ContextKeyLambdaVersions is the key in the context that stores the map
+	// of autoincrementing versions
+	ContextKeyLambdaVersions = "spartaLambdaVersions"
+)
 const (
 	// spartaEnvVarDiscoveryInformation is the name of the discovery information
 	// published into the environment
