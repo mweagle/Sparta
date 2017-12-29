@@ -95,7 +95,7 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 		ResourceID:   logicalResourceName,
 		ResourceType: item.Properties.CfnResourceType(),
 	}
-	quotedAttrs := make([]string, 0)
+	var quotedAttrs []string
 	for _, eachOutput := range resourceOutputs {
 		quotedAttrs = append(quotedAttrs,
 			fmt.Sprintf(`"%s" :"{ "Fn::GetAtt" : [ "%s", "%s" ] }"`,
@@ -116,26 +116,6 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 	var templateResults bytes.Buffer
 	evalResultErr := discoveryTemplate.Execute(&templateResults, templateData)
 	return templateResults.Bytes(), evalResultErr
-
-	// outputs := make(map[string]interface{})
-	// outputs["ResourceID"] = logicalResourceName
-	// outputs["ResourceType"] = item.Properties.CfnResourceType()
-	// if len(resourceOutputs) != 0 {
-	// 	properties := make(map[string]interface{})
-	// 	for _, eachAttr := range resourceOutputs {
-	// 		properties[eachAttr] = gocf.GetAtt(logicalResourceName, eachAttr)
-	// 	}
-	// 	if len(properties) != 0 {
-	// 		outputs["Properties"] = properties
-	// 	}
-	// }
-	// if len(outputs) != 0 {
-	// 	logger.WithFields(logrus.Fields{
-	// 		"ResourceName": logicalResourceName,
-	// 		"Outputs":      outputs,
-	// 	}).Debug("Resource Outputs")
-	// }
-	// return outputs, nil
 }
 func safeAppendDependency(resource *gocf.Resource, dependencyName string) {
 	if nil == resource.DependsOn {
