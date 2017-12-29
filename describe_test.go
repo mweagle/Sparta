@@ -9,7 +9,7 @@ func TestDescribe(t *testing.T) {
 	logger, _ := NewLogger("info")
 	output, err := os.Create("./graph.html")
 	if nil != err {
-		t.Fatalf(err.Error())
+		t.Fatalf("Failed to create graph: %s", err.Error())
 		return
 	}
 	defer output.Close()
