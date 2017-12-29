@@ -14,6 +14,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
+var cacheLock sync.Mutex
 
 func init() {
 	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
@@ -158,6 +160,8 @@ func (converter *templateConverter) results() (*gocf.StringExpr, error) {
 func existingStackTemplate(serviceName string,
 	session *session.Session,
 	logger *logrus.Logger) (*gocf.Template, error) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
 	template, templateExists := cloudFormationStackTemplateMap[serviceName]
 	if !templateExists {
 		templateParams := &cloudformation.GetTemplateInput{
