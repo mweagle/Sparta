@@ -467,7 +467,6 @@ func MainEx(serviceName string,
 		if !runningInLambda {
 			switch OptionsGlobal.LogFormat {
 			case "text", "txt":
-				formatter = &logrus.TextFormatter{}
 				formatter = &logrus.TextFormatter{
 					DisableColors: (runtime.GOOS == "windows"),
 				}
