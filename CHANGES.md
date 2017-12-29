@@ -3,9 +3,10 @@
 ## v0.30.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
-  - Humanize outputs and times with [go-humanize](https://github.com/dustin/go-humanize)
+  - Humanize magnitude output values and times with [go-humanize](https://github.com/dustin/go-humanize)
   - Replace CloudFormation polling log output with [spinner](https://github.com/briandowns/spinner)
     - This is only active in non-JSON log output
+  - Usability improvements for Windows based builds
 - :bug:  **FIXED**
   - Re-enable `cloudformation:DescribeStacks` and `cloudformation:DescribeStackResource` privileges to support HTML based deployments
 

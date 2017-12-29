@@ -25,6 +25,7 @@ generate:
 GO_SOURCE_FILES := find . -type f -name '*.go' \
 	! -path './vendor/*' \
 
+.PHONY: install_requirements
 install_requirements:
 	go get -u honnef.co/go/tools/cmd/megacheck
 	go get -u honnef.co/go/tools/cmd/gosimple
@@ -34,7 +35,6 @@ install_requirements:
 	go get -u github.com/fzipp/gocyclo
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
-
 
 .PHONY: vet
 vet: install_requirements
