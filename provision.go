@@ -47,28 +47,30 @@ func spartaTagName(baseKey string) string {
 	return fmt.Sprintf("io:gosparta:%s", baseKey)
 }
 
-// SpartaTagHomeKey is the keyname used in the CloudFormation Output
-// that stores the Sparta home URL.
-// @enum OutputKey
-var SpartaTagHomeKey = spartaTagName("home")
+var (
+	// SpartaTagHomeKey is the keyname used in the CloudFormation Output
+	// that stores the Sparta home URL.
+	// @enum OutputKey
+	SpartaTagHomeKey = spartaTagName("home")
 
-// SpartaTagVersionKey is the keyname used in the CloudFormation Output
-// that stores the Sparta version used to provision/update the service.
-// @enum OutputKey
-var SpartaTagVersionKey = spartaTagName("version")
+	// SpartaTagVersionKey is the keyname used in the CloudFormation Output
+	// that stores the Sparta version used to provision/update the service.
+	// @enum OutputKey
+	SpartaTagVersionKey = spartaTagName("version")
 
-// SpartaTagHashKey is the keyname used in the CloudFormation Output
-// that stores the Sparta commit ID used to provision/update the service
-var SpartaTagHashKey = spartaTagName("sha")
+	// SpartaTagHashKey is the keyname used in the CloudFormation Output
+	// that stores the Sparta commit ID used to provision/update the service
+	SpartaTagHashKey = spartaTagName("sha")
 
-// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
-// that stores the user-supplied or automatically generated BuildID
-// for this run
-var SpartaTagBuildIDKey = spartaTagName("buildId")
+	// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
+	// that stores the user-supplied or automatically generated BuildID
+	// for this run
+	SpartaTagBuildIDKey = spartaTagName("buildId")
 
-// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
-// that stores the optional user-supplied golang build tags
-var SpartaTagBuildTagsKey = spartaTagName("buildTags")
+	// SpartaTagBuildTagsKey is the keyname used in the CloudFormation Output
+	// that stores the optional user-supplied golang build tags
+	SpartaTagBuildTagsKey = spartaTagName("buildTags")
+)
 
 // finalizerFunction is the type of function pushed onto the cleanup stack
 type finalizerFunction func(logger *logrus.Logger)
@@ -904,68 +906,64 @@ func createUploadStep(packagePath string) workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		defer recordDuration(time.Now(), "Uploading code", ctx)
 
-		var uploadErrors []error
-		var wg sync.WaitGroup
-
-		// We always need to upload the primary binary
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
+		var uploadTasks []*workTask
+		// We always upload the primary binary...
+		uploadBinaryTask := func() workResult {
 			logFilesize("Lambda code archive size", packagePath, ctx.logger)
 
 			// Create the S3 key...
 			zipS3URL, zipS3URLErr := uploadLocalFileToS3(packagePath, "", ctx)
 			if nil != zipS3URLErr {
-				uploadErrors = append(uploadErrors, zipS3URLErr)
-			} else {
-				ctx.context.s3CodeZipURL = newS3UploadURL(zipS3URL)
+				return newTaskResult(nil, zipS3URLErr)
 			}
-		}()
+			ctx.context.s3CodeZipURL = newS3UploadURL(zipS3URL)
+			return newTaskResult(ctx.context.s3CodeZipURL, nil)
+		}
+		uploadTasks = append(uploadTasks, newWorkTask(uploadBinaryTask))
 
-		// S3 site to compress & upload
+		// We might need to upload some other things...
 		if nil != ctx.userdata.s3SiteContext.s3Site {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
+			uploadSiteTask := func() workResult {
 				tempName := fmt.Sprintf("%s-S3Site.zip", ctx.userdata.serviceName)
 				tmpFile, err := temporaryFile(tempName)
 				if err != nil {
-					uploadErrors = append(uploadErrors,
-						errors.New("Failed to create temporary S3 site archive file"))
-					return
+					return newTaskResult(nil,
+						errors.New("Failed to create temporary S3 site archive file: "+err.Error()))
 				}
 
 				// Add the contents to the Zip file
 				zipArchive := zip.NewWriter(tmpFile)
 				absResourcePath, err := filepath.Abs(ctx.userdata.s3SiteContext.s3Site.resources)
 				if nil != err {
-					uploadErrors = append(uploadErrors, err)
-					return
+					return newTaskResult(nil, err)
 				}
 
 				ctx.logger.WithFields(logrus.Fields{
-					"S3Key":  path.Base(tmpFile.Name()),
-					"Source": absResourcePath,
+					"S3Key":      path.Base(tmpFile.Name()),
+					"SourcePath": absResourcePath,
 				}).Info("Creating S3Site archive")
 
 				err = spartaZip.AddToZip(zipArchive, absResourcePath, absResourcePath, ctx.logger)
 				if nil != err {
-					uploadErrors = append(uploadErrors, err)
-					return
+					return newTaskResult(nil, err)
 				}
 				zipArchive.Close()
 
 				// Upload it & save the key
 				s3SiteLambdaZipURL, s3SiteLambdaZipURLErr := uploadLocalFileToS3(tmpFile.Name(), "", ctx)
 				if s3SiteLambdaZipURLErr != nil {
-					uploadErrors = append(uploadErrors, s3SiteLambdaZipURLErr)
-				} else {
-					ctx.userdata.s3SiteContext.s3UploadURL = newS3UploadURL(s3SiteLambdaZipURL)
+					return newTaskResult(nil, s3SiteLambdaZipURLErr)
 				}
-			}()
+				ctx.userdata.s3SiteContext.s3UploadURL = newS3UploadURL(s3SiteLambdaZipURL)
+				return newTaskResult(ctx.userdata.s3SiteContext.s3UploadURL, nil)
+			}
+			uploadTasks = append(uploadTasks, newWorkTask(uploadSiteTask))
+
 		}
-		wg.Wait()
+
+		// Run it and figure out what happened
+		p := newWorkerPool(uploadTasks, len(uploadTasks))
+		_, uploadErrors := p.Run()
 
 		if len(uploadErrors) > 0 {
 			errorText := "Encountered multiple errors during upload:\n"
@@ -1211,52 +1209,33 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		"Updates": updateCodeRequests,
 	}).Debug("Update requests")
 
-	// Run the updates...
-	var wg sync.WaitGroup
-	// The concurrent ops include the Lambda updates as well as the
-	// request to delete the changeset we created to see if updating
-	// the lambda code is a safe operation
-	wgCount := len(updateCodeRequests) + 1
-	wg.Add(wgCount)
-	resultChannel := make(chan eitherResult, wgCount)
+	// TODO - migrate to the worker pool
+	updateTaskMaker := func(lambdaSvc *lambda.Lambda, request *lambda.UpdateFunctionCodeInput) taskFunc {
+		return func() workResult {
+			_, updateResultErr := lambdaSvc.UpdateFunctionCode(request)
+			return newTaskResult("", updateResultErr)
+		}
+	}
+	var inPlaceUpdateTasks []*workTask
 	awsLambda := lambda.New(ctx.context.awsSession)
 	for _, eachUpdateCodeRequest := range updateCodeRequests {
-		go func(lambdaSvc *lambda.Lambda, input *lambda.UpdateFunctionCodeInput) {
-			_, updateResultErr := lambdaSvc.UpdateFunctionCode(input)
-			if nil != updateResultErr {
-				resultChannel <- eitherResult{error: updateResultErr}
-			} else {
-				resultChannel <- eitherResult{result: fmt.Sprintf("Updated function: %s", *input.FunctionName)}
-			}
-			wg.Done()
-		}(awsLambda, eachUpdateCodeRequest)
+		updateTask := updateTaskMaker(awsLambda, eachUpdateCodeRequest)
+		inPlaceUpdateTasks = append(inPlaceUpdateTasks, newWorkTask(updateTask))
 	}
-	// Finally, add the request to delete the changeset
-	go func(cloudformationSvc *cloudformation.CloudFormation) {
+
+	// Add the request to delete the change set...
+	// TODO: add some retry logic in here to handle failures.
+	deleteChangeSetTask := func() workResult {
 		_, deleteChangeSetResultErr := spartaCF.DeleteChangeSet(ctx.userdata.serviceName,
 			changeSetRequestName,
-			cloudformationSvc)
-		if nil != deleteChangeSetResultErr {
-			resultChannel <- eitherResult{error: deleteChangeSetResultErr}
-		} else {
-			resultChannel <- eitherResult{result: "Deleted changeset: " + changeSetRequestName}
-		}
-		wg.Done()
-	}(awsCloudFormation)
-	wg.Wait()
-	close(resultChannel)
-
-	// What happened?
-	asyncErrors := []string{}
-	for eachResult := range resultChannel {
-		if nil != eachResult.error {
-			asyncErrors = append(asyncErrors, eachResult.error.Error())
-		} else {
-			ctx.logger.Debug(eachResult.result)
-		}
+			awsCloudFormation)
+		return newTaskResult("", deleteChangeSetResultErr)
 	}
+	inPlaceUpdateTasks = append(inPlaceUpdateTasks, newWorkTask(deleteChangeSetTask))
+	p := newWorkerPool(inPlaceUpdateTasks, len(inPlaceUpdateTasks))
+	_, asyncErrors := p.Run()
 	if len(asyncErrors) != 0 {
-		return nil, fmt.Errorf(strings.Join(asyncErrors, ", "))
+		return nil, fmt.Errorf("Failed to update function code: %v", asyncErrors)
 	}
 	// Describe the stack so that we can satisfy the contract with the
 	// normal path using CloudFormation
@@ -1369,6 +1348,15 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	return nil, nil
 }
 
+func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
+	// If this is a legacy Sparta lambda function, let the user know
+	if lambdaAWSInfo.lambdaFn != nil {
+		logger.WithFields(logrus.Fields{
+			"Name": lambdaAWSInfo.lambdaFunctionName(),
+		}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
+	}
+}
+
 func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
 	if nil != codePipelineEnvironments {
 		if nil == lambdaAWSInfo.Options {
@@ -1424,12 +1412,8 @@ func ensureCloudFormationStack() workflowStep {
 			lambdaRuntime = PythonVersion
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
-			// If this is a legacy Sparta lambda function, let the user know
-			if eachEntry.lambdaFn != nil {
-				ctx.logger.WithFields(logrus.Fields{
-					"Name": eachEntry.lambdaFunctionName(),
-				}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
-			}
+
+			verifyLambdaPreconditions(eachEntry, ctx.logger)
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
@@ -1533,7 +1517,6 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, postMarshallErr
 			}
 		}
-
 		return applyCloudFormationOperation(ctx)
 	}
 }
@@ -1637,9 +1620,7 @@ func Provision(noop bool,
 		}
 
 		if next == nil {
-			summaryLine := fmt.Sprintf("%s Summary (%s)",
-				ctx.userdata.serviceName,
-				time.Now().Format(time.RFC3339))
+			summaryLine := fmt.Sprintf("%s Summary", ctx.userdata.serviceName)
 			subheaderDivider := strings.Repeat("─", dividerLength)
 
 			ctx.logger.Info(subheaderDivider)
