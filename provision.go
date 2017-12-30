@@ -108,12 +108,6 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// eitherResult is an "Either" result returned by a worker pool
-type eitherResult struct {
-	error  error
-	result interface{}
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // Represents data associated with provisioning the S3 Site iff defined
 type s3SiteContext struct {
