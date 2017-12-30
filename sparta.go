@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"archive/zip"
-	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
