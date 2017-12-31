@@ -37,6 +37,12 @@ import (
   }
 */
 
+var defaultCORSHeaders = map[string]string{
+	"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
+	"Access-Control-Allow-Methods": "*",
+	"Access-Control-Allow-Origin":  "*",
+}
+
 const (
 	// OutputAPIGatewayURL is the keyname used in the CloudFormation Output
 	// that stores the APIGateway provisioned URL
@@ -44,185 +50,50 @@ const (
 	OutputAPIGatewayURL = "APIGatewayURL"
 )
 
-// APIGatewayIdentity represents the user identity of a request
-// made on behalf of the API Gateway
-type APIGatewayIdentity struct {
-	// Account ID
-	AccountID string `json:"accountId"`
-	// API Key
-	APIKey string `json:"apiKey"`
-	// Caller
-	Caller string `json:"caller"`
-	// Cognito Authentication Provider
-	CognitoAuthenticationProvider string `json:"cognitoAuthenticationProvider"`
-	// Cognito Authentication Type
-	CognitoAuthenticationType string `json:"cognitoAuthenticationType"`
-	// CognitoIdentityId
-	CognitoIdentityID string `json:"cognitoIdentityId"`
-	// CognitoIdentityPoolId
-	CognitoIdentityPoolID string `json:"cognitoIdentityPoolId"`
-	// Source IP
-	SourceIP string `json:"sourceIp"`
-	// User
-	User string `json:"user"`
-	// User Agent
-	UserAgent string `json:"userAgent"`
-	// User ARN
-	UserARN string `json:"userArn"`
-}
-
-// APIGatewayContext represents the context available to an AWS Lambda
-// function that is invoked by an API Gateway integration.
-type APIGatewayContext struct {
-	// API ID
-	APIID string `json:"apiId"`
-	// HTTPMethod
-	Method string `json:"method"`
-	// Request ID
-	RequestID string `json:"requestId"`
-	// Resource ID
-	ResourceID string `json:"resourceId"`
-	// Resource Path
-	ResourcePath string `json:"resourcePath"`
-	// Stage
-	Stage string `json:"stage"`
-	// User identity
-	Identity APIGatewayIdentity `json:"identity"`
-}
-
-// APIGatewayLambdaJSONEvent provides a pass through mapping
-// of all whitelisted Parameters.  The transformation is defined
-// by the resources/gateway/inputmapping_json.vtl template.
-type APIGatewayLambdaJSONEvent struct {
-	// HTTPMethod
-	Method string `json:"method"`
-	// Body, if available
-	Body json.RawMessage `json:"body"`
-	// Whitelisted HTTP headers
-	Headers map[string]string `json:"headers"`
-	// Whitelisted HTTP query params
-	QueryParams map[string]string `json:"queryParams"`
-	// Whitelisted path parameters
-	PathParams map[string]string `json:"pathParams"`
-	// Context information - http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
-	Context APIGatewayContext `json:"context"`
-}
-
-// Model proxies the AWS SDK's Model data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#Model
-//
-// TODO: Support Dynamic Model creation
-type Model struct {
-	Description string `json:",omitempty"`
-	Name        string `json:",omitempty"`
-	Schema      string `json:",omitempty"`
-}
-
-// Response proxies the AWS SDK's PutMethodResponseInput data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#PutMethodResponseInput
-type Response struct {
-	Parameters map[string]bool   `json:",omitempty"`
-	Models     map[string]*Model `json:",omitempty"`
-}
-
-// IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway/#IntegrationResponse
-type IntegrationResponse struct {
-	Parameters       map[string]string `json:",omitempty"`
-	SelectionPattern string            `json:",omitempty"`
-	Templates        map[string]string `json:",omitempty"`
-}
-
-// Integration proxies the AWS SDK's Integration data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#Integration
-type Integration struct {
-	Parameters         map[string]string
-	RequestTemplates   map[string]string
-	CacheKeyParameters []string
-	CacheNamespace     string
-	Credentials        string
-
-	Responses map[int]*IntegrationResponse
-
-	// Typically "AWS", but for OPTIONS CORS support is set to "MOCK"
-	integrationType string
-}
-
-// Method proxies the AWS SDK's Method data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Method
-type Method struct {
-	authorizationType       string
-	httpMethod              string
-	defaultHTTPResponseCode int
-
-	APIKeyRequired bool
-
-	// Request data
-	Parameters map[string]bool
-	Models     map[string]*Model
-
-	// Response map
-	Responses map[int]*Response
-
-	// Integration response map
-	Integration Integration
-}
-
-// Resource proxies the AWS SDK's Resource data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Resource
-type Resource struct {
-	pathPart     string
-	parentLambda *LambdaAWSInfo
-	Methods      map[string]*Method
-}
-
-// Stage proxies the AWS SDK's Stage data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Stage
-type Stage struct {
-	name                string
-	CacheClusterEnabled bool
-	CacheClusterSize    string
-	Description         string
-	Variables           map[string]string
-}
-
-// API represents the AWS API Gateway data associated with a given Sparta app.  Proxies
-// the AWS SDK's CreateRestApiInput data.  See
-// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-CreateRestApiInput
-type API struct {
-	// The API name
-	// TODO: bind this to the stack name to prevent provisioning collisions.
-	name string
-	// Optional stage. If defined, the API will be deployed
-	stage *Stage
-	// Existing API to CloneFrom
-	CloneFrom string
-	// API Description
-	Description string
-	// Non-empty map of urlPaths->Resource definitions
-	resources map[string]*Resource
-	// Should CORS be enabled for this API?
-	CORSEnabled bool
-}
-
-func corsMethodResponseParams() map[string]bool {
+func corsMethodResponseParams(api *API) map[string]bool {
+	var userDefinedHeaders map[string]string
+	if api != nil &&
+		api.CORSOptions != nil {
+		userDefinedHeaders = api.CORSOptions.Headers
+	}
+	if len(userDefinedHeaders) <= 0 {
+		userDefinedHeaders = defaultCORSHeaders
+	}
 	responseParams := make(map[string]bool)
-	responseParams["method.response.header.Access-Control-Allow-Headers"] = true
-	responseParams["method.response.header.Access-Control-Allow-Methods"] = true
-	responseParams["method.response.header.Access-Control-Allow-Origin"] = true
+	for eachHeader := range userDefinedHeaders {
+		keyName := fmt.Sprintf("method.response.header.%s", eachHeader)
+		responseParams[keyName] = true
+	}
+	return responseParams
+}
+
+func corsIntegrationResponseParams(api *API) map[string]string {
+	var userDefinedHeaders map[string]string
+	if api != nil &&
+		api.CORSOptions != nil {
+		userDefinedHeaders = api.CORSOptions.Headers
+	}
+	if len(userDefinedHeaders) <= 0 {
+		userDefinedHeaders = defaultCORSHeaders
+	}
+	responseParams := make(map[string]string)
+	for eachHeader, eachHeaderValue := range userDefinedHeaders {
+		keyName := fmt.Sprintf("method.response.header.%s", eachHeader)
+		responseParams[keyName] = fmt.Sprintf("'%s'", eachHeaderValue)
+	}
 	return responseParams
 }
 
 // DefaultMethodResponses returns the default set of Method HTTPStatus->Response
 // pass through responses.  The successfulHTTPStatusCode param is the single
 // 2XX response code to use for the method.
-func methodResponses(userResponses map[int]*Response, corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
+func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool) *gocf.APIGatewayMethodMethodResponseList {
 
 	var responses gocf.APIGatewayMethodMethodResponseList
 	for eachHTTPStatusCode, eachResponse := range userResponses {
 		methodResponseParams := eachResponse.Parameters
 		if corsEnabled {
-			for eachString, eachBool := range corsMethodResponseParams() {
+			for eachString, eachBool := range corsMethodResponseParams(api) {
 				methodResponseParams[eachString] = eachBool
 			}
 		}
@@ -242,25 +113,16 @@ func methodResponses(userResponses map[int]*Response, corsEnabled bool) *gocf.AP
 	return &responses
 }
 
-func corsIntegrationResponseParams() map[string]string {
-	responseParams := make(map[string]string)
-	responseParams["method.response.header.Access-Control-Allow-Headers"] = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
-	responseParams["method.response.header.Access-Control-Allow-Methods"] = "'*'"
-	responseParams["method.response.header.Access-Control-Allow-Origin"] = "'*'"
-	return responseParams
-}
-
-func integrationResponses(userResponses map[int]*IntegrationResponse,
+func integrationResponses(api *API, userResponses map[int]*IntegrationResponse,
 	corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
 
 	var integrationResponses gocf.APIGatewayMethodIntegrationResponseList
 
 	// We've already populated this entire map in the NewMethod call
 	for eachHTTPStatusCode, eachMethodIntegrationResponse := range userResponses {
-
 		responseParameters := eachMethodIntegrationResponse.Parameters
 		if corsEnabled {
-			for eachKey, eachValue := range corsIntegrationResponseParams() {
+			for eachKey, eachValue := range corsIntegrationResponseParams(api) {
 				responseParameters[eachKey] = eachValue
 			}
 		}
@@ -279,19 +141,33 @@ func integrationResponses(userResponses map[int]*IntegrationResponse,
 	return &integrationResponses
 }
 
-func defaultRequestTemplates() map[string]string {
-	return map[string]string{
+func methodRequestTemplates(method *Method) (map[string]string, error) {
+	supportedTemplates := map[string]string{
 		"application/json":                  _escFSMustString(false, "/resources/provision/apigateway/inputmapping_json.vtl"),
 		"text/plain":                        _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
 		"application/x-www-form-urlencoded": _escFSMustString(false, "/resources/provision/apigateway/inputmapping_formencoded.vtl"),
 		"multipart/form-data":               _escFSMustString(false, "/resources/provision/apigateway/inputmapping_default.vtl"),
 	}
+	if len(method.SupportedRequestContentTypes) <= 0 {
+		return supportedTemplates, nil
+	}
+
+	// Else, let's go ahead and return only the mappings the user wanted
+	userDefinedTemplates := make(map[string]string, 0)
+	for _, eachContentType := range method.SupportedRequestContentTypes {
+		vtlMapping, vtlMappingExists := supportedTemplates[eachContentType]
+		if !vtlMappingExists {
+			return nil, fmt.Errorf("Unsupported method request template Content-Type provided: %s", eachContentType)
+		}
+		userDefinedTemplates[eachContentType] = vtlMapping
+	}
+	return userDefinedTemplates, nil
 }
 
-func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.APIGatewayMethod {
+func corsOptionsGatewayMethod(api *API, restAPIID gocf.Stringable, resourceID gocf.Stringable) *gocf.APIGatewayMethod {
 	methodResponse := gocf.APIGatewayMethodMethodResponse{
 		StatusCode:         gocf.String("200"),
-		ResponseParameters: corsMethodResponseParams(),
+		ResponseParameters: corsMethodResponseParams(api),
 	}
 
 	integrationResponse := gocf.APIGatewayMethodIntegrationResponse{
@@ -300,7 +176,7 @@ func corsOptionsGatewayMethod(restAPIID gocf.Stringable, resourceID gocf.Stringa
 			"text/*":        "",
 		},
 		StatusCode:         gocf.String("200"),
-		ResponseParameters: corsIntegrationResponseParams(),
+		ResponseParameters: corsIntegrationResponseParams(api),
 	}
 
 	methodIntegrationIntegrationResponseList := gocf.APIGatewayMethodIntegrationResponseList{}
@@ -391,6 +267,223 @@ func apiStageInfo(apiName string, stageName string, session *session.Session, no
 	return matchingStageOutput, nil
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// APIGatewayIdentity represents the user identity of a request
+// made on behalf of the API Gateway
+type APIGatewayIdentity struct {
+	// Account ID
+	AccountID string `json:"accountId"`
+	// API Key
+	APIKey string `json:"apiKey"`
+	// Caller
+	Caller string `json:"caller"`
+	// Cognito Authentication Provider
+	CognitoAuthenticationProvider string `json:"cognitoAuthenticationProvider"`
+	// Cognito Authentication Type
+	CognitoAuthenticationType string `json:"cognitoAuthenticationType"`
+	// CognitoIdentityId
+	CognitoIdentityID string `json:"cognitoIdentityId"`
+	// CognitoIdentityPoolId
+	CognitoIdentityPoolID string `json:"cognitoIdentityPoolId"`
+	// Source IP
+	SourceIP string `json:"sourceIp"`
+	// User
+	User string `json:"user"`
+	// User Agent
+	UserAgent string `json:"userAgent"`
+	// User ARN
+	UserARN string `json:"userArn"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// APIGatewayContext represents the context available to an AWS Lambda
+// function that is invoked by an API Gateway integration.
+type APIGatewayContext struct {
+	// API ID
+	APIID string `json:"apiId"`
+	// HTTPMethod
+	Method string `json:"method"`
+	// Request ID
+	RequestID string `json:"requestId"`
+	// Resource ID
+	ResourceID string `json:"resourceId"`
+	// Resource Path
+	ResourcePath string `json:"resourcePath"`
+	// Stage
+	Stage string `json:"stage"`
+	// User identity
+	Identity APIGatewayIdentity `json:"identity"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// APIGatewayLambdaJSONEvent provides a pass through mapping
+// of all whitelisted Parameters.  The transformation is defined
+// by the resources/gateway/inputmapping_json.vtl template.
+type APIGatewayLambdaJSONEvent struct {
+	// HTTPMethod
+	Method string `json:"method"`
+	// Body, if available
+	Body json.RawMessage `json:"body"`
+	// Whitelisted HTTP headers
+	Headers map[string]string `json:"headers"`
+	// Whitelisted HTTP query params
+	QueryParams map[string]string `json:"queryParams"`
+	// Whitelisted path parameters
+	PathParams map[string]string `json:"pathParams"`
+	// Context information - http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
+	Context APIGatewayContext `json:"context"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// Model proxies the AWS SDK's Model data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#Model
+//
+// TODO: Support Dynamic Model creation
+type Model struct {
+	Description string `json:",omitempty"`
+	Name        string `json:",omitempty"`
+	Schema      string `json:",omitempty"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// Response proxies the AWS SDK's PutMethodResponseInput data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#PutMethodResponseInput
+type Response struct {
+	Parameters map[string]bool   `json:",omitempty"`
+	Models     map[string]*Model `json:",omitempty"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway/#IntegrationResponse
+type IntegrationResponse struct {
+	Parameters       map[string]string `json:",omitempty"`
+	SelectionPattern string            `json:",omitempty"`
+	Templates        map[string]string `json:",omitempty"`
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// Integration proxies the AWS SDK's Integration data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#Integration
+type Integration struct {
+	Parameters         map[string]string
+	RequestTemplates   map[string]string
+	CacheKeyParameters []string
+	CacheNamespace     string
+	Credentials        string
+
+	Responses map[int]*IntegrationResponse
+
+	// Typically "AWS", but for OPTIONS CORS support is set to "MOCK"
+	integrationType string
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// Method proxies the AWS SDK's Method data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Method
+type Method struct {
+	authorizationType       string
+	httpMethod              string
+	defaultHTTPResponseCode int
+
+	APIKeyRequired bool
+
+	// Request data
+	Parameters map[string]bool
+	Models     map[string]*Model
+
+	// Supported HTTP request Content-Types. Used to limit the amount of VTL
+	// injected into the CloudFormation template. Eligible values include:
+	// application/json
+	// text/plain
+	// application/x-www-form-urlencoded
+	// multipart/form-data
+	SupportedRequestContentTypes []string
+
+	// Response map
+	Responses map[int]*Response
+
+	// Integration response map
+	Integration Integration
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// Resource proxies the AWS SDK's Resource data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Resource
+type Resource struct {
+	pathPart     string
+	parentLambda *LambdaAWSInfo
+	Methods      map[string]*Method
+}
+
+// Stage proxies the AWS SDK's Stage data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Stage
+type Stage struct {
+	name                string
+	CacheClusterEnabled bool
+	CacheClusterSize    string
+	Description         string
+	Variables           map[string]string
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// CORSOptions is a struct that clients supply to the API in order to enable
+// and parameterize CORS API values
+type CORSOptions struct {
+	// Headers represent the CORS headers that should be used for an OPTIONS
+	// preflight request. These should be of the form key-value as in:
+	// "Access-Control-Allow-Headers"="Content-Type,X-Amz-Date,Authorization,X-Api-Key"
+	Headers map[string]string
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+
+// API represents the AWS API Gateway data associated with a given Sparta app.  Proxies
+// the AWS SDK's CreateRestApiInput data.  See
+// http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-CreateRestApiInput
+type API struct {
+	// The API name
+	// TODO: bind this to the stack name to prevent provisioning collisions.
+	name string
+	// Optional stage. If defined, the API will be deployed
+	stage *Stage
+	// Existing API to CloneFrom
+	CloneFrom string
+	// API Description
+	Description string
+	// Non-empty map of urlPaths->Resource definitions
+	resources map[string]*Resource
+	// Should CORS be enabled for this API?
+	CORSEnabled bool
+	// CORS options - if non-nil, supersedes CORSEnabled
+	CORSOptions *CORSOptions
+}
+
+func (api *API) corsEnabled() bool {
+	return api.CORSEnabled || (api.CORSOptions != nil)
+}
+
 // export marshals the API data to a CloudFormation compatible representation
 func (api *API) export(serviceName string,
 	session *session.Session,
@@ -467,11 +560,11 @@ func (api *API) export(serviceName string,
 		// CORS is API global, but it's possible that there are multiple different lambda functions
 		// that are handling the same HTTP resource. In this case, track whether we've already created an
 		// OPTIONS entry for this path and only append iff this is the first time through
-		if api.CORSEnabled {
+		if api.corsEnabled() {
 			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS", eachResourceDef.pathPart), eachResourceDef.pathPart)
 			_, resourceExists := optionsMethodPathMap[methodResourceName]
 			if !resourceExists {
-				template.AddResource(methodResourceName, corsOptionsGatewayMethod(apiGatewayRestAPIID, parentResource))
+				template.AddResource(methodResourceName, corsOptionsGatewayMethod(api, apiGatewayRestAPIID, parentResource))
 				apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
 				optionsMethodPathMap[methodResourceName] = true
 			}
@@ -480,7 +573,10 @@ func (api *API) export(serviceName string,
 
 		// BEGIN - user defined verbs
 		for eachMethodName, eachMethodDef := range eachResourceDef.Methods {
-
+			methodRequestTemplates, methodRequestTemplatesErr := methodRequestTemplates(eachMethodDef)
+			if methodRequestTemplatesErr != nil {
+				return methodRequestTemplatesErr
+			}
 			apiGatewayMethod := &gocf.APIGatewayMethod{
 				HTTPMethod:        gocf.String(eachMethodName),
 				AuthorizationType: gocf.String("NONE"),
@@ -489,7 +585,7 @@ func (api *API) export(serviceName string,
 				Integration: &gocf.APIGatewayMethodIntegration{
 					IntegrationHTTPMethod: gocf.String("POST"),
 					Type:             gocf.String("AWS"),
-					RequestTemplates: defaultRequestTemplates(),
+					RequestTemplates: methodRequestTemplates,
 					URI: gocf.Join("",
 						gocf.String("arn:aws:apigateway:"),
 						gocf.Ref("AWS::Region"),
@@ -507,12 +603,13 @@ func (api *API) export(serviceName string,
 			}
 
 			// Add the integration response RegExps
-			apiGatewayMethod.Integration.IntegrationResponses = integrationResponses(eachMethodDef.Integration.Responses,
-				api.CORSEnabled)
+			apiGatewayMethod.Integration.IntegrationResponses = integrationResponses(api,
+				eachMethodDef.Integration.Responses,
+				api.corsEnabled())
 
 			// Add outbound method responses
-			apiGatewayMethod.MethodResponses = methodResponses(eachMethodDef.Responses,
-				api.CORSEnabled)
+			apiGatewayMethod.MethodResponses = methodResponses(api, eachMethodDef.Responses,
+				api.corsEnabled())
 
 			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourceMethodKey)
 			methodResourceName := CloudFormationResourceName(prefix, eachResourceMethodKey, serviceName)
@@ -581,9 +678,11 @@ func (api *API) export(serviceName string,
 // will also be deployed as part of stack creation.
 func NewAPIGateway(name string, stage *Stage) *API {
 	return &API{
-		name:      name,
-		stage:     stage,
-		resources: make(map[string]*Resource),
+		name:        name,
+		stage:       stage,
+		resources:   make(map[string]*Resource),
+		CORSEnabled: false,
+		CORSOptions: nil,
 	}
 }
 
@@ -618,8 +717,13 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 }
 
 // NewMethod associates the httpMethod name with the given Resource.  The returned Method
-// has no authorization requirements.
-func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int) (*Method, error) {
+// has no authorization requirements. To limit the amount of API gateway resource mappings,
+// supply the variadic slice of  possibleHTTPStatusCodeResponses which is the universe
+// of all HTTP status codes returned by your Sparta function. If this slice is non-empty,
+// Sparta will *ONLY* generate mappings for known codes. This slice need only include the
+// codes in addition to the defaultHTTPStatusCode. If the function can only return a single
+// value, provide the defaultHTTPStatusCode in the possibleHTTPStatusCodeResponses slice
+func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int, possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 	authorizationType := "NONE"
 
 	// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-method-settings.html#how-to-method-settings-console
@@ -649,37 +753,46 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 		Integration:             integration,
 	}
 
-	// Populate Integration.Responses and the method Parameters
-	for i := http.StatusOK; i <= http.StatusNetworkAuthenticationRequired; i++ {
-		statusText := http.StatusText(i)
-		if "" != statusText {
-			// First the Integration Responses...
-			regExp := fmt.Sprintf(".*%s.*", statusText)
-			if defaultHTTPStatusCode == i {
-				regExp = ""
-			}
-			method.Integration.Responses[i] = &IntegrationResponse{
-				Parameters: make(map[string]string),
-				Templates: map[string]string{
-					"application/json": "",
-					"text/*":           "",
-				},
-				SelectionPattern: regExp,
-			}
-
-			// Then the Method.Responses
-			method.Responses[i] = &Response{
-				Parameters: make(map[string]bool),
-				Models:     make(map[string]*Model),
+	// Eligible HTTP status codes...
+	if len(possibleHTTPStatusCodeResponses) <= 0 {
+		// User didn't supply any potential codes, so use the entire set...
+		for i := http.StatusOK; i <= http.StatusNetworkAuthenticationRequired; i++ {
+			if len(http.StatusText(i)) != 0 {
+				possibleHTTPStatusCodeResponses = append(possibleHTTPStatusCodeResponses, i)
 			}
 		}
+	} else {
+		// There are some, so include them, plus the default one
+		possibleHTTPStatusCodeResponses = append(possibleHTTPStatusCodeResponses,
+			defaultHTTPStatusCode)
 	}
 
-	// apiGWMethod.Responses[200].Parameters = map[string]bool{
-	// 	"method.response.header.Location": true,
-	// }
-	// apiGWMethod.Integration.Responses[200].Parameters["method.response.header.Location"] = "integration.response.body.location"
+	// Populate Integration.Responses and the method Parameters
+	for _, i := range possibleHTTPStatusCodeResponses {
+		statusText := http.StatusText(i)
+		if "" == statusText {
+			return nil, fmt.Errorf("Invalid HTTP status code %d provided for method: %s", i, httpMethod)
+		}
+		// First the Integration Responses...
+		regExp := fmt.Sprintf(".*%s.*", statusText)
+		if defaultHTTPStatusCode == i {
+			regExp = ""
+		}
+		method.Integration.Responses[i] = &IntegrationResponse{
+			Parameters: make(map[string]string),
+			Templates: map[string]string{
+				"application/json": "",
+				"text/*":           "",
+			},
+			SelectionPattern: regExp,
+		}
 
+		// Then the Method.Responses
+		method.Responses[i] = &Response{
+			Parameters: make(map[string]bool),
+			Models:     make(map[string]*Model),
+		}
+	}
 	resource.Methods[keyname] = method
 	return method, nil
 }
