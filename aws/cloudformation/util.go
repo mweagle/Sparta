@@ -51,6 +51,7 @@ var cloudformationPollingTimeout = 3 * time.Minute
 ////////////////////////////////////////////////////////////////////////////////
 
 type resourceProvisionMetrics struct {
+	resourceType      string
 	logicalResourceID string
 	startTime         time.Time
 	endTime           time.Time
@@ -981,6 +982,7 @@ func ConvergeStackState(serviceName string,
 			if !existingMetricExists {
 				existingMetric = &resourceProvisionMetrics{}
 			}
+			existingMetric.resourceType = *eachEvent.ResourceType
 			existingMetric.logicalResourceID = *eachEvent.LogicalResourceId
 			existingMetric.startTime = *eachEvent.Timestamp
 			resourceMetrics[*eachEvent.LogicalResourceId] = existingMetric
@@ -1019,12 +1021,13 @@ func ConvergeStackState(serviceName string,
 		return resourceStats[i].elapsed > resourceStats[j].elapsed
 	})
 	// Output the sorted time it took to create the necessary resources...
-	logger.Info("")
+	logger.Info("CloudFormation provisioning details")
 	for _, eachResourceStat := range resourceStats {
 		logger.WithFields(logrus.Fields{
-			"Resource":     eachResourceStat.logicalResourceID,
-			"Duration (s)": eachResourceStat.elapsed.Seconds(),
-		}).Info("CloudFormation operation summary")
+			"Resource": eachResourceStat.logicalResourceID,
+			"Type":     eachResourceStat.resourceType,
+			"Duration": fmt.Sprintf("%.2fs", eachResourceStat.elapsed.Seconds()),
+		}).Info("Operation duration")
 	}
 
 	if nil != convergeResult.stackInfo.Outputs {
