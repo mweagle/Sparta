@@ -7,9 +7,10 @@
     - Parameterize CORS headers returned by _OPTIONS_ via [API.CORSOptions](https://godoc.org/github.com/mweagle/Sparta#API)
     - Add `SupportedRequestContentTypes` to [Method](https://godoc.org/github.com/mweagle/Sparta#Method) struct. This is a slice of supported content types that define what API-Gateway _Content-Type_ values are supported. Limiting the set of supported content types reduces CloudFormation template size.
     - Add variadic `possibleHTTPStatusCodeResponses` values to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod). If defined, Sparta will ONLY generate [IntegrationResponse](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-integration-settings-integration-response.html) entries for the possible codes (including the default HTTP status code). The previous, and default behavior, is to generate IntegrationResponse entries for *ALL* valid HTTP status codes.
+  - Include per-resource CloudFormation provisioning times in output log
   - Humanize magnitude output values and times with [go-humanize](https://github.com/dustin/go-humanize)
   - Replace CloudFormation polling log output with [spinner](https://github.com/briandowns/spinner)
-    - This is only active in non-JSON log output
+    - This feedback is only available in normal CLI output. JSON formatted output remains unchanged.
   - Usability improvements for Windows based builds
 - :bug:  **FIXED**
   - Re-enable `cloudformation:DescribeStacks` and `cloudformation:DescribeStackResource` privileges to support HTML based deployments
