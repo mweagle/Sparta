@@ -153,7 +153,7 @@ func methodRequestTemplates(method *Method) (map[string]string, error) {
 	}
 
 	// Else, let's go ahead and return only the mappings the user wanted
-	userDefinedTemplates := make(map[string]string, 0)
+	userDefinedTemplates := make(map[string]string)
 	for _, eachContentType := range method.SupportedRequestContentTypes {
 		vtlMapping, vtlMappingExists := supportedTemplates[eachContentType]
 		if !vtlMappingExists {
