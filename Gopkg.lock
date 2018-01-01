@@ -10,8 +10,8 @@
 [[projects]]
   name = "github.com/Sirupsen/logrus"
   packages = ["."]
-  revision = "f006c2ac4710855cf0f916dd6b77acf6b048dc6e"
-  version = "v1.0.3"
+  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
+  version = "v1.0.4"
 
 [[projects]]
   name = "github.com/asaskevich/govalidator"
@@ -22,8 +22,26 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatch","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "388e6676807f5968ad5eaaec0c70002f80c20b84"
-  version = "v1.12.39"
+  revision = "5db34a6d9a78f5a3c6a713197aeb6bf159458211"
+  version = "v1.12.54"
+
+[[projects]]
+  name = "github.com/briandowns/spinner"
+  packages = ["."]
+  revision = "48dbb65d7bd5c74ab50d53d04c949f20e3d14944"
+  version = "1.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/dustin/go-humanize"
+  packages = ["."]
+  revision = "bb3d318650d48840a39aa21a027c6630e198e626"
+
+[[projects]]
+  name = "github.com/fatih/color"
+  packages = ["."]
+  revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
+  version = "v1.5.0"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -52,8 +70,8 @@
 [[projects]]
   branch = "master"
   name = "github.com/google/pprof"
-  packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svg"]
-  revision = "63475f227eddd4e1226737100e162c52494c9c49"
+  packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svgpan"]
+  revision = "11a15b7e99f6ab1fc7c7e9ed22e6291dc478aea6"
 
 [[projects]]
   branch = "master"
@@ -100,7 +118,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "d4d39d439140cd56c1580db1f56decfcf380c9f2"
+  revision = "5a2669d1a9f6acaf76f135ed6f32450eedd2f274"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -124,19 +142,19 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "94eea52f7b742c7cbe0b03b22f0c4c8631ece122"
+  revision = "0fcca4842a8d74bfddc2c96a073bd2a4d2a7a2e8"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "8b4580aae2a0dd0c231a45d3ccb8434ff533b840"
+  revision = "83801418e1b59fb1880e363299581ee543af32ca"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "04447353bc504b9a5c02eb227b9ecd252e64ea20"
+  revision = "f271d7a0f8cf389f3ee4f6bf8d68e716a60ea571"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
@@ -147,12 +165,12 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "61caf9d3038e1af346dbf5c2e16f6678e1548364"
-  version = "v9.9.0"
+  revision = "b1f51f36f1c98cc97f777d6fc9d4b05eaa0cabb5"
+  version = "v9.9.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "dd96aa7857983057a614e852ea0407af12f8b6c1be78487cba6a2d11183f9745"
+  inputs-digest = "c0008a1187e1a6497e9be5d07b3d2c728fc42c65dffbe1f1ef576ddc1e72397a"
   solver-name = "gps-cdcl"
   solver-version = 1

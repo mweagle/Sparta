@@ -22,9 +22,9 @@ func TestUnmarshal(t *testing.T) {
 	}
 	data, err := event.AWSLogs.DecodedData()
 	if nil != err {
-		t.Errorf("Failed to decode event data: " + err.Error())
+		t.Error("Failed to decode event data: " + err.Error())
 	}
 	if len(data.LogEvents) != 4 {
-		t.Errorf("Failed to unmarshal 4 LogEvent entries")
+		t.Error("Failed to unmarshal 4 LogEvent entries")
 	}
 }

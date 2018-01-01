@@ -467,7 +467,9 @@ func MainEx(serviceName string,
 		if !runningInLambda {
 			switch OptionsGlobal.LogFormat {
 			case "text", "txt":
-				formatter = &logrus.TextFormatter{}
+				formatter = &logrus.TextFormatter{
+					DisableColors: (runtime.GOOS == "windows"),
+				}
 				prettyHeader = true
 			case "json":
 				formatter = &logrus.JSONFormatter{}
@@ -484,12 +486,7 @@ func MainEx(serviceName string,
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		if prettyHeader {
-			logger.Info(headerDivider)
-			logger.Info(fmt.Sprintf(`   _______  ___   ___  _________ `))
-			logger.Info(fmt.Sprintf(`  / __/ _ \/ _ | / _ \/_  __/ _ |     Version : %s`, SpartaVersion))
-			logger.Info(fmt.Sprintf(` _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : %s`, SpartaGitHash[0:7]))
-			logger.Info(fmt.Sprintf(`/___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : %s`, runtime.Version()))
-			logger.Info(headerDivider)
+			displayPrettyHeader(headerDivider, logger)
 			logger.WithFields(logrus.Fields{
 				"Option":    cmd.Name(),
 				"UTC":       (time.Now().UTC().Format(time.RFC3339)),

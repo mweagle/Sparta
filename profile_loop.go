@@ -316,7 +316,7 @@ func syncStackProfileSnapshots(profileType string,
 	}
 
 	// Read them all and merge them into a single profile...
-	accumulatedProfiles := make([]*profile.Profile, 0)
+	var accumulatedProfiles []*profile.Profile
 	for _, eachResult := range results {
 		profileFile := eachResult.(string)
 		profileInput, profileInputErr := os.Open(profileFile)

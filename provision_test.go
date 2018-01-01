@@ -2,13 +2,11 @@ package sparta
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
-	gocf "github.com/mweagle/go-cloudformation"
-
-	"os"
-
 	"github.com/Sirupsen/logrus"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 type cloudFormationProvisionTestResource struct {

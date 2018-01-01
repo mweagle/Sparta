@@ -6,28 +6,32 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-
-	"github.com/Sirupsen/logrus"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	gocf "github.com/mweagle/go-cloudformation"
-
 	"io"
 	"io/ioutil"
 	"math/rand"
 	"os"
 	"regexp"
+	"runtime"
+	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"text/template"
 	"time"
+
+	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go/service/lambda"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
+	"github.com/briandowns/spinner"
+	humanize "github.com/dustin/go-humanize"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
+var cacheLock sync.Mutex
 
 func init() {
 	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
@@ -39,9 +43,20 @@ func init() {
 // Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 var reCloudFormationInvalidChars = regexp.MustCompile("[^A-Za-z0-9]+")
 
+// maximum amount of time allowed for polling CloudFormation
+var cloudformationPollingTimeout = 3 * time.Minute
+
 ////////////////////////////////////////////////////////////////////////////////
 // Private
 ////////////////////////////////////////////////////////////////////////////////
+
+type resourceProvisionMetrics struct {
+	resourceType      string
+	logicalResourceID string
+	startTime         time.Time
+	endTime           time.Time
+	elapsed           time.Duration
+}
 
 // BEGIN - templateConverter
 // Struct to encapsulate transforming data into
@@ -154,9 +169,15 @@ func (converter *templateConverter) results() (*gocf.StringExpr, error) {
 
 // END - templateConverter
 
+func cloudformationPollingDelay() time.Duration {
+	return time.Duration(3+rand.Int31n(5)) * time.Second
+}
+
 func existingStackTemplate(serviceName string,
 	session *session.Session,
 	logger *logrus.Logger) (*gocf.Template, error) {
+	cacheLock.Lock()
+	defer cacheLock.Unlock()
 	template, templateExists := cloudFormationStackTemplateMap[serviceName]
 	if !templateExists {
 		templateParams := &cloudformation.GetTemplateInput{
@@ -536,6 +557,7 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 func StackEvents(stackID string,
 	eventFilterLowerBound time.Time,
 	awsSession *session.Session) ([]*cloudformation.StackEvent, error) {
+
 	cfService := cloudformation.New(awsSession)
 	var events []*cloudformation.StackEvent
 
@@ -583,6 +605,16 @@ func WaitForStackOperationComplete(stackID string,
 
 	result := &WaitForStackOperationCompleteResult{}
 
+	startTime := time.Now()
+
+	// Startup a spinner...
+	charSetIndex := 39
+	if runtime.GOOS == "windows" {
+		charSetIndex = 14
+	}
+	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 500*time.Millisecond)
+	cliSpinnerStarted := false
+
 	// Poll for the current stackID state, and
 	describeStacksInput := &cloudformation.DescribeStacksInput{
 		StackName: aws.String(stackID),
@@ -616,7 +648,21 @@ func WaitForStackOperationComplete(stackID string,
 			result.operationSuccessful = false
 			waitComplete = true
 		default:
-			logger.Info(pollingMessage)
+			// If this is JSON output, just do the normal thing
+			switch logger.Formatter.(type) {
+			case *logrus.JSONFormatter:
+				{
+					logger.Info(pollingMessage)
+				}
+			default:
+				if !cliSpinnerStarted {
+					cliSpinner.Start()
+					defer cliSpinner.Stop()
+					cliSpinnerStarted = true
+				}
+				spinnerText := fmt.Sprintf(" %s (Initiated: %s)", pollingMessage, humanize.Time(startTime))
+				cliSpinner.Suffix = spinnerText
+			}
 		}
 	}
 	return result, nil
@@ -756,8 +802,12 @@ func CreateStackChangeSet(changeSetRequestName string,
 	}
 
 	var describeChangeSetOutput *cloudformation.DescribeChangeSetOutput
-	for i := 0; i != 5; i++ {
-		sleepDuration := time.Duration(3+rand.Int31n(5)) * time.Second
+
+	// Loop, with a total timeout of 3 minutes
+	startTime := time.Now()
+	changeSetStabilized := false
+	for !changeSetStabilized {
+		sleepDuration := cloudformationPollingDelay()
 		time.Sleep(sleepDuration)
 
 		changeSetOutput, describeChangeSetError := awsCloudFormation.DescribeChangeSet(&describeChangeSetInput)
@@ -766,14 +816,24 @@ func CreateStackChangeSet(changeSetRequestName string,
 			return nil, describeChangeSetError
 		}
 		describeChangeSetOutput = changeSetOutput
-		if nil != describeChangeSetOutput &&
-			*describeChangeSetOutput.Status == "CREATE_COMPLETE" {
-			break
+		// The current status of the change set, such as CREATE_IN_PROGRESS, CREATE_COMPLETE,
+		// or FAILED.
+		if nil != describeChangeSetOutput {
+			switch *describeChangeSetOutput.Status {
+			case "CREATE_IN_PROGRESS":
+				// If this has taken more than 3 minutes, then that's an error
+				elapsedTime := time.Since(startTime)
+				if elapsedTime > cloudformationPollingTimeout {
+					return nil, fmt.Errorf("ChangeSet failed to finalize within window: %s", elapsedTime.String())
+				}
+			case "CREATE_COMPLETE":
+				changeSetStabilized = true
+			case "FAILED":
+				return nil, fmt.Errorf("Failed to create ChangeSet: %#v", *describeChangeSetOutput)
+			}
 		}
 	}
-	if nil == describeChangeSetOutput {
-		return nil, fmt.Errorf("ChangeSet failed to stabilize: %s", changeSetRequestName)
-	}
+
 	logger.WithFields(logrus.Fields{
 		"DescribeChangeSetOutput": describeChangeSetOutput,
 	}).Debug("DescribeChangeSet result")
@@ -807,21 +867,23 @@ func DeleteChangeSet(stackName string,
 		StackName:     aws.String(stackName),
 	}
 
-	var delChangeSetResultErr error
-	for i := 0; i != 5; i++ {
-		deleteChangeSetResults, deleteChangeSetResultErr :=
-			awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
+	startTime := time.Now()
+	for {
+		elapsedTime := time.Since(startTime)
+
+		deleteChangeSetResults, deleteChangeSetResultErr := awsCloudFormation.DeleteChangeSet(&deleteChangeSetInput)
 		if nil == deleteChangeSetResultErr {
 			return deleteChangeSetResults, nil
 		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
-			delChangeSetResultErr = deleteChangeSetResultErr
-			sleepDuration := time.Duration(1+rand.Int31n(5)) * time.Second
+			if elapsedTime > cloudformationPollingTimeout {
+				return nil, fmt.Errorf("Failed to delete ChangeSet within timeout window: %s", elapsedTime.String())
+			}
+			sleepDuration := cloudformationPollingDelay()
 			time.Sleep(sleepDuration)
 		} else {
 			return nil, deleteChangeSetResultErr
 		}
 	}
-	return nil, delChangeSetResultErr
 }
 
 // ConvergeStackState ensures that the serviceName converges to the template
@@ -895,39 +957,90 @@ func ConvergeStackState(serviceName string,
 	if nil != convergeErr {
 		return nil, convergeErr
 	}
+	// Get the events and assemble them into either errors to output
+	// or summary information
+	resourceMetrics := make(map[string]*resourceProvisionMetrics)
+	errorMessages := []string{}
+	events, err := StackEvents(stackID, startTime, awsSession)
+	if nil != err {
+		return nil, fmt.Errorf("Failed to retrieve stack events: %s", err.Error())
+	}
+
+	for _, eachEvent := range events {
+		switch *eachEvent.ResourceStatus {
+		case cloudformation.ResourceStatusCreateFailed,
+			cloudformation.ResourceStatusDeleteFailed,
+			cloudformation.ResourceStatusUpdateFailed:
+			errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
+				aws.StringValue(eachEvent.ResourceType),
+				aws.StringValue(eachEvent.LogicalResourceId),
+				aws.StringValue(eachEvent.ResourceStatusReason))
+			errorMessages = append(errorMessages, errMsg)
+		case cloudformation.ResourceStatusCreateInProgress,
+			cloudformation.ResourceStatusUpdateInProgress:
+			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]
+			if !existingMetricExists {
+				existingMetric = &resourceProvisionMetrics{}
+			}
+			existingMetric.resourceType = *eachEvent.ResourceType
+			existingMetric.logicalResourceID = *eachEvent.LogicalResourceId
+			existingMetric.startTime = *eachEvent.Timestamp
+			resourceMetrics[*eachEvent.LogicalResourceId] = existingMetric
+		case cloudformation.ResourceStatusCreateComplete,
+			cloudformation.ResourceStatusUpdateComplete:
+			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]
+			if !existingMetricExists {
+				existingMetric = &resourceProvisionMetrics{}
+			}
+			existingMetric.logicalResourceID = *eachEvent.LogicalResourceId
+			existingMetric.endTime = *eachEvent.Timestamp
+			resourceMetrics[*eachEvent.LogicalResourceId] = existingMetric
+		default:
+			// NOP
+		}
+	}
 
 	// If it didn't work, then output some failure information
 	if !convergeResult.operationSuccessful {
-		// Get the stack events and find the ones that failed.
-		events, err := StackEvents(stackID, startTime, awsSession)
-		if nil != err {
-			return nil, err
-		}
-
 		logger.Error("Stack provisioning error")
-		for _, eachEvent := range events {
-			switch *eachEvent.ResourceStatus {
-			case cloudformation.ResourceStatusCreateFailed,
-				cloudformation.ResourceStatusDeleteFailed,
-				cloudformation.ResourceStatusUpdateFailed:
-				errMsg := fmt.Sprintf("\tError ensuring %s (%s): %s",
-					aws.StringValue(eachEvent.ResourceType),
-					aws.StringValue(eachEvent.LogicalResourceId),
-					aws.StringValue(eachEvent.ResourceStatusReason))
-				logger.Error(errMsg)
-			default:
-				// NOP
-			}
+		for _, eachError := range errorMessages {
+			logger.Error(eachError)
 		}
 		return nil, fmt.Errorf("Failed to provision: %s", serviceName)
-	} else if nil != convergeResult.stackInfo.Outputs {
+	}
+
+	// Rip through the events so that we can output exactly how long it took to
+	// update each resource
+	var resourceStats []*resourceProvisionMetrics
+	for _, eachResource := range resourceMetrics {
+		eachResource.elapsed = eachResource.endTime.Sub(eachResource.startTime)
+		resourceStats = append(resourceStats, eachResource)
+	}
+	// Create a slice with them all, sorted by total elapsed mutation time
+	sort.Slice(resourceStats, func(i, j int) bool {
+		return resourceStats[i].elapsed > resourceStats[j].elapsed
+	})
+	// Output the sorted time it took to create the necessary resources...
+	logger.Info("CloudFormation provisioning details")
+	for _, eachResourceStat := range resourceStats {
+		logger.WithFields(logrus.Fields{
+			"Resource": eachResourceStat.logicalResourceID,
+			"Type":     eachResourceStat.resourceType,
+			"Duration": fmt.Sprintf("%.2fs", eachResourceStat.elapsed.Seconds()),
+		}).Info("Operation duration")
+	}
+
+	if nil != convergeResult.stackInfo.Outputs {
+		// Add a nice divider if there are Stack specific output
+		logger.Info("")
+		logger.Info("Stack Outputs")
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.WithFields(logrus.Fields{
-				"Key":         aws.StringValue(eachOutput.OutputKey),
 				"Value":       aws.StringValue(eachOutput.OutputValue),
 				"Description": aws.StringValue(eachOutput.Description),
-			}).Info("Stack output")
+			}).Info(fmt.Sprintf("%s", aws.StringValue(eachOutput.OutputKey)))
 		}
+		logger.Info("")
 	}
 	return convergeResult.stackInfo, nil
 }

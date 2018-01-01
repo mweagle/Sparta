@@ -19,9 +19,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
-	_ "github.com/aws/aws-sdk-go/service/ecr" // Ref to have Glide include depends
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	_ "github.com/mweagle/Sparta/aws/dynamodb" // Ref to have Glide include depends
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 )
@@ -32,7 +30,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.30.0"
+	SpartaVersion = "0.30.1"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs6.10"
 	// PythonVersion is the Python version used for CGO support
@@ -44,6 +42,11 @@ const (
 	dividerLength = 62
 )
 
+const (
+	// ContextKeyLambdaVersions is the key in the context that stores the map
+	// of autoincrementing versions
+	ContextKeyLambdaVersions = "spartaLambdaVersions"
+)
 const (
 	// spartaEnvVarDiscoveryInformation is the name of the discovery information
 	// published into the environment
@@ -105,13 +108,13 @@ func init() {
 
 // Represents the CloudFormation Arn of this stack, referenced
 // in CommonIAMStatements
-// var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudformation:"),
-// 	gocf.Ref("AWS::Region").String(),
-// 	gocf.String(":"),
-// 	gocf.Ref("AWS::AccountId").String(),
-// 	gocf.String(":stack/"),
-// 	gocf.Ref("AWS::StackName").String(),
-// 	gocf.String("/*")}
+var cloudFormationThisStackArn = []gocf.Stringable{gocf.String("arn:aws:cloudformation:"),
+	gocf.Ref("AWS::Region").String(),
+	gocf.String(":"),
+	gocf.Ref("AWS::AccountId").String(),
+	gocf.String(":stack/"),
+	gocf.Ref("AWS::StackName").String(),
+	gocf.String("/*")}
 
 // CommonIAMStatements defines common IAM::Role Policy Statement values for different AWS
 // service types.  See http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#genref-aws-service-namespaces
@@ -142,14 +145,12 @@ var CommonIAMStatements = struct {
 			Effect:   "Allow",
 			Resource: wildcardArn,
 		},
-		// Removed as part of migrating sparta.Discovery
-		// to
-		// {
-		// 	Effect: "Allow",
-		// 	Action: []string{"cloudformation:DescribeStacks",
-		// 		"cloudformation:DescribeStackResource"},
-		// 	Resource: gocf.Join("", cloudFormationThisStackArn...),
-		// },
+		{
+			Effect: "Allow",
+			Action: []string{"cloudformation:DescribeStacks",
+				"cloudformation:DescribeStackResource"},
+			Resource: gocf.Join("", cloudFormationThisStackArn...),
+		},
 		// http://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html#enabling-x-ray
 		{
 			Effect: "Allow",

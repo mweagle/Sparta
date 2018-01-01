@@ -1,3 +1,5 @@
+package sparta
+
 /*
 Package sparta transforms a set of golang functions into an Amazon Lambda deployable unit.
 
@@ -11,4 +13,3 @@ The deployable archive includes
 
 See the Main() docs for more information and examples
 */
-package sparta

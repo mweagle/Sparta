@@ -45,9 +45,30 @@ func relativePath(logPath string) string {
 	return logPath
 }
 
+// workResult is the result from a worker task
 type workResult interface {
 	Result() interface{}
 	Error() error
+}
+
+// taskResult is a convenience type for a task poll return value
+type taskResult struct {
+	result interface{}
+	err    error
+}
+
+func (tr *taskResult) Result() interface{} {
+	return tr.result
+}
+func (tr *taskResult) Error() error {
+	return tr.err
+}
+
+func newTaskResult(taskValue interface{}, err error) workResult {
+	return &taskResult{
+		result: taskValue,
+		err:    err,
+	}
 }
 
 type taskFunc func() workResult
