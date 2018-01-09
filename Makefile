@@ -102,11 +102,11 @@ clean:
 	go env
 
 .PHONY: test
-test: build
+test: validate
 	go test -v -cover ./...
 
 .PHONY: build
-build: validate
+build: validate test
 	go build .
 	@echo "Build complete"
 
