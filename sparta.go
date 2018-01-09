@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"archive/zip"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -18,7 +17,6 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/session"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -30,7 +28,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "0.30.1"
+	SpartaVersion = "0.30.2"
 	// NodeJSVersion is the Node JS runtime used for the shim layer
 	NodeJSVersion = "nodejs6.10"
 	// PythonVersion is the Python version used for CGO support
@@ -323,87 +321,47 @@ type SpartaOptions struct {
 	Name string
 }
 
-// TemplateDecorator allows Lambda functions to annotate the CloudFormation
-// template definition.  Both the resources and the outputs params
-// are initialized to an empty ArbitraryJSONObject and should
-// be populated with valid CloudFormation ArbitraryJSONObject values.  The
-// CloudFormationResourceName() function can be used to generate
-// logical CloudFormation-compatible resource names.
-// See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html and
-// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html for
-// more information.
-type TemplateDecorator func(serviceName string,
-	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
-	buildID string,
-	template *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger) error
-
-// WorkflowHook defines a user function that should be called at a specific
-// point in the larger Sparta workflow. The first argument is a map that
-// is shared across all LifecycleHooks and which Sparta treats as an opaque
-// value.
-type WorkflowHook func(context map[string]interface{},
-	serviceName string,
-	S3Bucket string,
-	buildID string,
-	awsSession *session.Session,
-	noop bool,
-	logger *logrus.Logger) error
-
-// ServiceDecoratorHook defines a user function that is called a single
-// time in the marshall workflow.
-type ServiceDecoratorHook func(context map[string]interface{},
-	serviceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	buildID string,
-	awsSession *session.Session,
-	noop bool,
-	logger *logrus.Logger) error
-
-// ArchiveHook provides callers an opportunity to insert additional
-// files into the ZIP archive deployed to S3
-type ArchiveHook func(context map[string]interface{},
-	serviceName string,
-	zipWriter *zip.Writer,
-	awsSession *session.Session,
-	noop bool,
-	logger *logrus.Logger) error
-
-// RollbackHook provides callers an opportunity to handle failures
-// associated with failing to perform the requested operation
-type RollbackHook func(context map[string]interface{},
-	serviceName string,
-	awsSession *session.Session,
-	noop bool,
-	logger *logrus.Logger)
-
 // WorkflowHooks is a structure that allows callers to customize the Sparta provisioning
 // pipeline to add contents the Lambda archive or perform other workflow operations.
+// TODO: remove single-valued fields
 type WorkflowHooks struct {
 	// Initial hook context. May be empty
 	Context map[string]interface{}
 	// PreBuild is called before the current Sparta-binary is compiled
 	PreBuild WorkflowHook
+	// PreBuilds are called before the current Sparta-binary is compiled
+	PreBuilds []WorkflowHookHandler
 	// PostBuild is called after the current Sparta-binary is compiled
 	PostBuild WorkflowHook
+	// PostBuilds are called after the current Sparta-binary is compiled
+	PostBuilds []WorkflowHookHandler
 	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
 	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
 	// to add additional resource files to your Lambda package
 	Archive ArchiveHook
+	// ArchiveHook is called after Sparta has populated the ZIP archive containing the
+	// AWS Lambda code package and before the ZIP writer is closed.  Define this hook
+	// to add additional resource files to your Lambda package
+	Archives []ArchiveHookHandler
 	// PreMarshall is called before Sparta marshalls the application contents to a CloudFormation template
 	PreMarshall WorkflowHook
+	// PreMarshalls are called before Sparta marshalls the application contents into a CloudFormation
+	// template
+	PreMarshalls []WorkflowHookHandler
 	// ServiceDecorator is called before Sparta marshalls the CloudFormation template
 	ServiceDecorator ServiceDecoratorHook
+	// ServiceDecorators are called before Sparta marshalls the CloudFormation template
+	ServiceDecorators []ServiceDecoratorHookHandler
 	// PostMarshall is called after Sparta marshalls the application contents to a CloudFormation template
 	PostMarshall WorkflowHook
+	// PostMarshalls are called after Sparta marshalls the application contents to a CloudFormation
+	// template
+	PostMarshalls []WorkflowHookHandler
+
 	// Rollback is called if there is an error performing the requested operation
 	Rollback RollbackHook
+	// Rollbacks are called if there is an error performing the requested operation
+	Rollbacks []RollbackHookHandler
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -686,6 +644,9 @@ type LambdaAWSInfo struct {
 	// Event Source docs (http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 	// for more information
 	EventSourceMappings []*EventSourceMapping
+	// Template decorators. If non empty, the decorators will be called,
+	// in order, to annotate the template
+	Decorators []TemplateDecoratorHandler
 	// Template decorator. If defined, the decorator will be called to insert additional
 	// resources on behalf of this lambda function
 	Decorator TemplateDecorator
@@ -809,6 +770,56 @@ func (info *LambdaAWSInfo) logicalName() string {
 	resourceName := strings.Replace(sanitizedName(baseName), "_", "", -1)
 	prefix := fmt.Sprintf("%sLambda", resourceName)
 	return CloudFormationResourceName(prefix, info.lambdaFunctionName())
+}
+
+func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
+	lambdaResource gocf.LambdaFunction,
+	cfResource *gocf.Resource,
+	serviceName string,
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
+
+	decorators := info.Decorators
+	if info.Decorator != nil {
+		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
+		logger.Warn("DEPRECATED: Single `Decorator` field is superseded by `Decorators` slice")
+		decorators = append(decorators, TemplateDecoratorHookFunc(info.Decorator))
+	}
+
+	for _, eachDecorator := range decorators {
+		// Create an empty template so that we can track whether things
+		// are overwritten
+		metadataMap := make(map[string]interface{})
+		decoratorProxyTemplate := gocf.NewTemplate()
+		decoratorErr := eachDecorator.DecorateTemplate(serviceName,
+			info.logicalName(),
+			lambdaResource,
+			metadataMap,
+			S3Bucket,
+			S3Key,
+			buildID,
+			decoratorProxyTemplate,
+			context,
+			logger)
+		if decoratorErr != nil {
+			return decoratorErr
+		}
+		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
+		// unmarshalled via sparta.Discover.  We're going to just stuff it into
+		// it's own same named property
+		if len(metadataMap) != 0 {
+			safeMetadataInsert(cfResource, info.logicalName(), metadataMap)
+		}
+		// Append the custom resources
+		safeMergeErr := safeMergeTemplates(decoratorProxyTemplate, template, logger)
+		if safeMergeErr != nil {
+			return fmt.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
+		}
+	}
+	return nil
 }
 
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
@@ -940,40 +951,17 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		}
 	}
 
-	// Decorator
-	if nil != info.Decorator {
-		logger.Debug("Decorator found for Lambda: ", info.lambdaFunctionName())
-		// Create an empty template so that we can track whether things
-		// are overwritten
-		metadataMap := make(map[string]interface{})
-		decoratorProxyTemplate := gocf.NewTemplate()
-		err := info.Decorator(serviceName,
-			info.logicalName(),
-			lambdaResource,
-			metadataMap,
-			S3Bucket,
-			S3Key,
-			buildID,
-			decoratorProxyTemplate,
-			context,
-			logger)
-		if nil != err {
-			return err
-		}
+	decoratorErr := info.applyDecorators(template,
+		lambdaResource,
+		cfResource,
+		serviceName,
+		S3Bucket,
+		S3Key,
+		buildID,
+		context,
+		logger)
 
-		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
-		// unmarshalled via sparta.Discover.  We're going to just stuff it into
-		// it's own same named property
-		if len(metadataMap) != 0 {
-			safeMetadataInsert(cfResource, info.logicalName(), metadataMap)
-		}
-		// Append the custom resources
-		err = safeMergeTemplates(decoratorProxyTemplate, template, logger)
-		if nil != err {
-			return fmt.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
-		}
-	}
-	return nil
+	return decoratorErr
 }
 
 //

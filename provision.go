@@ -264,31 +264,10 @@ func (ctx *workflowContext) rollback() {
 	// Run each cleanup function concurrently.  If there's an error
 	// all we're going to do is log it as a warning, since at this
 	// point there's nothing to do...
+	ctx.logger.Info("Invoking rollback functions")
 	var wg sync.WaitGroup
 	wg.Add(len(ctx.transaction.rollbackFunctions))
-
-	// Include the user defined rollback if there is one...
-	if ctx.userdata.workflowHooks != nil && ctx.userdata.workflowHooks.Rollback != nil {
-		wg.Add(1)
-		go func(hook RollbackHook, context map[string]interface{},
-			serviceName string,
-			awsSession *session.Session,
-			noop bool,
-			logger *logrus.Logger) {
-			// Decrement the counter when the goroutine completes.
-			defer wg.Done()
-			hook(context, serviceName, awsSession, noop, logger)
-		}(ctx.userdata.workflowHooks.Rollback,
-			ctx.context.workflowHooksContext,
-			ctx.userdata.serviceName,
-			ctx.context.awsSession,
-			ctx.userdata.noop,
-			ctx.logger)
-	}
-
-	ctx.logger.WithFields(logrus.Fields{
-		"RollbackCount": len(ctx.transaction.rollbackFunctions),
-	}).Info("Invoking rollback functions")
+	callRollbackHook(ctx, &wg)
 
 	for _, eachCleanup := range ctx.transaction.rollbackFunctions {
 		go func(cleanupFunc spartaS3.RollbackFunction, goLogger *logrus.Logger) {
@@ -332,25 +311,143 @@ func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	}
 }
 
-// Encapsulate calling a workflow hook
-func callWorkflowHook(hook WorkflowHook, ctx *workflowContext) error {
-	if nil == hook {
+// Encapsulate calling the rollback hooks
+func callRollbackHook(ctx *workflowContext, wg *sync.WaitGroup) error {
+	if ctx.userdata.workflowHooks == nil {
 		return nil
 	}
-	// Run the hook
-	hookName := runtime.FuncForPC(reflect.ValueOf(hook).Pointer()).Name()
-	ctx.logger.WithFields(logrus.Fields{
-		"WorkflowHook":        hookName,
-		"WorkflowHookContext": ctx.context.workflowHooksContext,
-	}).Info("Calling WorkflowHook")
+	rollbackHooks := ctx.userdata.workflowHooks.Rollbacks
+	if ctx.userdata.workflowHooks.Rollback != nil {
+		ctx.logger.Warn("DEPRECATED: Single RollbackHook superseded by RollbackHookHandler slice")
+		rollbackHooks = append(rollbackHooks,
+			RollbackHookFunc(ctx.userdata.workflowHooks.Rollback))
+	}
+	for _, eachRollbackHook := range rollbackHooks {
+		wg.Add(1)
+		go func(handler RollbackHookHandler, context map[string]interface{},
+			serviceName string,
+			awsSession *session.Session,
+			noop bool,
+			logger *logrus.Logger) {
+			// Decrement the counter when the goroutine completes.
+			defer wg.Done()
+			handler.Rollback(context, serviceName, awsSession, noop, logger)
+		}(eachRollbackHook,
+			ctx.context.workflowHooksContext,
+			ctx.userdata.serviceName,
+			ctx.context.awsSession,
+			ctx.userdata.noop,
+			ctx.logger)
+	}
+	return nil
+}
 
-	return hook(ctx.context.workflowHooksContext,
-		ctx.userdata.serviceName,
-		ctx.userdata.s3Bucket,
-		ctx.userdata.buildID,
-		ctx.context.awsSession,
-		ctx.userdata.noop,
-		ctx.logger)
+// Encapsulate calling the service decorator hooks
+func callServiceDecoratorHook(ctx *workflowContext) error {
+	if ctx.userdata.workflowHooks == nil {
+		return nil
+	}
+	serviceHooks := ctx.userdata.workflowHooks.ServiceDecorators
+	if ctx.userdata.workflowHooks.ServiceDecorator != nil {
+		ctx.logger.Warn("DEPRECATED: Single ServiceDecorator hook superseded by ServiceDecorators slice")
+		serviceHooks = append(serviceHooks,
+			ServiceDecoratorHookFunc(ctx.userdata.workflowHooks.ServiceDecorator))
+	}
+	// If there's an API gateway definition, include the resources that provision it.
+	// Since this export will likely
+	// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator,
+	// pass that to the S3Site
+	// if it's defined, and then merge it with the normal output map.-
+	for _, eachServiceHook := range serviceHooks {
+		hookName := runtime.FuncForPC(reflect.ValueOf(eachServiceHook).Pointer()).Name()
+		ctx.logger.WithFields(logrus.Fields{
+			"ServiceDecoratorHook": hookName,
+			"WorkflowHookContext":  ctx.context.workflowHooksContext,
+		}).Info("Calling WorkflowHook")
+
+		serviceTemplate := gocf.NewTemplate()
+		decoratorError := eachServiceHook.DecorateService(ctx.context.workflowHooksContext,
+			ctx.userdata.serviceName,
+			serviceTemplate,
+			ctx.userdata.s3Bucket,
+			ctx.userdata.buildID,
+			ctx.context.awsSession,
+			ctx.userdata.noop,
+			ctx.logger,
+		)
+		if nil != decoratorError {
+			return decoratorError
+		}
+		mergeErr := safeMergeTemplates(serviceTemplate, ctx.context.cfTemplate, ctx.logger)
+		if nil != mergeErr {
+			return mergeErr
+		}
+	}
+	return nil
+}
+
+// Encapsulate calling the archive hooks
+func callArchiveHook(lambdaArchive *zip.Writer,
+	ctx *workflowContext) error {
+
+	if ctx.userdata.workflowHooks == nil {
+		return nil
+	}
+	archiveHooks := ctx.userdata.workflowHooks.Archives
+	if ctx.userdata.workflowHooks.Archive != nil {
+		ctx.logger.Warn("DEPRECATED: Single ArchiveHook hook superseded by ArchiveHooks slice")
+		archiveHooks = append(archiveHooks,
+			ArchiveHookFunc(ctx.userdata.workflowHooks.Archive))
+	}
+	for _, eachArchiveHook := range archiveHooks {
+		// Run the hook
+		ctx.logger.WithFields(logrus.Fields{
+			"WorkflowHookContext": ctx.context.workflowHooksContext,
+		}).Info("Calling ArchiveHook")
+		hookErr := eachArchiveHook.DecorateArchive(ctx.context.workflowHooksContext,
+			ctx.userdata.serviceName,
+			lambdaArchive,
+			ctx.context.awsSession,
+			ctx.userdata.noop,
+			ctx.logger)
+		if hookErr != nil {
+			return hookErr
+		}
+	}
+	return nil
+}
+
+// Encapsulate calling a workflow hook
+func callWorkflowHook(hookPhase string,
+	hook WorkflowHook,
+	hooks []WorkflowHookHandler,
+	ctx *workflowContext) error {
+
+	if hook != nil {
+		ctx.logger.Warn(fmt.Sprintf("DEPRECATED: Single %s hook superseded by %ss slice",
+			hookPhase,
+			hookPhase))
+		hooks = append(hooks, WorkflowHookFunc(hook))
+	}
+	for _, eachHook := range hooks {
+		// Run the hook
+		ctx.logger.WithFields(logrus.Fields{
+			"Phase":               hookPhase,
+			"WorkflowHookContext": ctx.context.workflowHooksContext,
+		}).Info("Calling WorkflowHook")
+
+		hookErr := eachHook.DecorateWorkflow(ctx.context.workflowHooksContext,
+			ctx.userdata.serviceName,
+			ctx.userdata.s3Bucket,
+			ctx.userdata.buildID,
+			ctx.context.awsSession,
+			ctx.userdata.noop,
+			ctx.logger)
+		if hookErr != nil {
+			return hookErr
+		}
+	}
+	return nil
 }
 
 // versionAwareS3KeyName returns a keyname that provides the correct cache
@@ -785,7 +882,10 @@ func createPackageStep() workflowStep {
 
 		// PreBuild Hook
 		if ctx.userdata.workflowHooks != nil {
-			preBuildErr := callWorkflowHook(ctx.userdata.workflowHooks.PreBuild, ctx)
+			preBuildErr := callWorkflowHook("PreBuild",
+				ctx.userdata.workflowHooks.PreBuild,
+				ctx.userdata.workflowHooks.PreBuilds,
+				ctx)
 			if nil != preBuildErr {
 				return nil, preBuildErr
 			}
@@ -821,7 +921,10 @@ func createPackageStep() workflowStep {
 
 		// PostBuild Hook
 		if ctx.userdata.workflowHooks != nil {
-			postBuildErr := callWorkflowHook(ctx.userdata.workflowHooks.PostBuild, ctx)
+			postBuildErr := callWorkflowHook("PostBuild",
+				ctx.userdata.workflowHooks.PostBuild,
+				ctx.userdata.workflowHooks.PostBuilds,
+				ctx)
 			if nil != postBuildErr {
 				return nil, postBuildErr
 			}
@@ -837,18 +940,10 @@ func createPackageStep() workflowStep {
 		lambdaArchive := zip.NewWriter(tmpFile)
 
 		// Archive Hook
-		if ctx.userdata.workflowHooks != nil && ctx.userdata.workflowHooks.Archive != nil {
-			archiveErr := ctx.userdata.workflowHooks.Archive(ctx.context.workflowHooksContext,
-				ctx.userdata.serviceName,
-				lambdaArchive,
-				ctx.context.awsSession,
-				ctx.userdata.noop,
-				ctx.logger)
-			if nil != archiveErr {
-				return nil, archiveErr
-			}
+		archiveErr := callArchiveHook(lambdaArchive, ctx)
+		if nil != archiveErr {
+			return nil, archiveErr
 		}
-
 		// File info for the binary executable
 		readerErr := spartaZip.AddToZip(lambdaArchive,
 			executableOutput,
@@ -1145,9 +1240,8 @@ func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContex
 	ctx.logger.WithFields(logrus.Fields{
 		"File": filepath.Base(tmpFile.Name()),
 	}).Info("Created CodePipeline archive")
-	return tmpFile.Name(), nil
 	// The key is the name + the pipeline name
-	//return uploadLocalFileToS3(tmpFile.Name(), "", ctx)
+	return tmpFile.Name(), nil
 }
 
 // If the only detected changes to a stack are Lambda code updates,
@@ -1342,13 +1436,14 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	return nil, nil
 }
 
-func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
+func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) error {
 	// If this is a legacy Sparta lambda function, let the user know
 	if lambdaAWSInfo.lambdaFn != nil {
 		logger.WithFields(logrus.Fields{
 			"Name": lambdaAWSInfo.lambdaFunctionName(),
 		}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
 	}
+	return nil
 }
 
 func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
@@ -1373,6 +1468,7 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 	}
 }
 
+// ensureCloudFormationStack is responsible for
 func ensureCloudFormationStack() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		msg := "Ensuring CloudFormation stack"
@@ -1383,7 +1479,10 @@ func ensureCloudFormationStack() workflowStep {
 
 		// PreMarshall Hook
 		if ctx.userdata.workflowHooks != nil {
-			preMarshallErr := callWorkflowHook(ctx.userdata.workflowHooks.PreMarshall, ctx)
+			preMarshallErr := callWorkflowHook("PreMarshall",
+				ctx.userdata.workflowHooks.PreMarshall,
+				ctx.userdata.workflowHooks.PreMarshalls,
+				ctx)
 			if nil != preMarshallErr {
 				return nil, preMarshallErr
 			}
@@ -1407,7 +1506,10 @@ func ensureCloudFormationStack() workflowStep {
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
 
-			verifyLambdaPreconditions(eachEntry, ctx.logger)
+			verifyErr := verifyLambdaPreconditions(eachEntry, ctx.logger)
+			if verifyErr != nil {
+				return nil, verifyErr
+			}
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
@@ -1461,35 +1563,11 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.logger)
 		}
 		// Service decorator?
-		// If there's an API gateway definition, include the resources that provision it. Since this export will likely
-		// generate outputs that the s3 site needs, we'll use a temporary outputs accumulator, pass that to the S3Site
-		// if it's defined, and then merge it with the normal output map.-
-		if nil != ctx.userdata.workflowHooks && nil != ctx.userdata.workflowHooks.ServiceDecorator {
-			hookName := runtime.FuncForPC(reflect.ValueOf(ctx.userdata.workflowHooks.ServiceDecorator).Pointer()).Name()
-			ctx.logger.WithFields(logrus.Fields{
-				"WorkflowHook":        hookName,
-				"WorkflowHookContext": ctx.context.workflowHooksContext,
-			}).Info("Calling WorkflowHook")
-
-			serviceTemplate := gocf.NewTemplate()
-			decoratorError := ctx.userdata.workflowHooks.ServiceDecorator(
-				ctx.context.workflowHooksContext,
-				ctx.userdata.serviceName,
-				serviceTemplate,
-				ctx.userdata.s3Bucket,
-				ctx.userdata.buildID,
-				ctx.context.awsSession,
-				ctx.userdata.noop,
-				ctx.logger,
-			)
-			if nil != decoratorError {
-				return nil, decoratorError
-			}
-			mergeErr := safeMergeTemplates(serviceTemplate, ctx.context.cfTemplate, ctx.logger)
-			if nil != mergeErr {
-				return nil, mergeErr
-			}
+		serviceDecoratorErr := callServiceDecoratorHook(ctx)
+		if serviceDecoratorErr != nil {
+			return nil, serviceDecoratorErr
 		}
+
 		// Discovery info on a per-function basis
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
 			_, annotateErr := annotateDiscoveryInfo(eachEntry, ctx.context.cfTemplate, ctx.logger)
@@ -1506,7 +1584,10 @@ func ensureCloudFormationStack() workflowStep {
 		}
 		// PostMarshall Hook
 		if ctx.userdata.workflowHooks != nil {
-			postMarshallErr := callWorkflowHook(ctx.userdata.workflowHooks.PostMarshall, ctx)
+			postMarshallErr := callWorkflowHook("PostMarshall",
+				ctx.userdata.workflowHooks.PostMarshall,
+				ctx.userdata.workflowHooks.PostMarshalls,
+				ctx)
 			if nil != postMarshallErr {
 				return nil, postMarshallErr
 			}

@@ -841,9 +841,12 @@ func NewTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *TaskState {
 		ts.lambdaLogicalResourceName = lambdaResourceName
 		return nil
 	}
+	// Make sure this Lambda decorator is included in the list of existing decorators
+
 	// If there already is a decorator, then save it...
 	ts.preexistingDecorator = lambdaFn.Decorator
-	ts.lambdaFn.Decorator = ts.LambdaDecorator
+	ts.lambdaFn.Decorators = append(ts.lambdaFn.Decorators,
+		sparta.TemplateDecoratorHookFunc(ts.LambdaDecorator))
 	return ts
 }
 
