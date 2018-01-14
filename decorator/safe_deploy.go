@@ -3,10 +3,10 @@ package decorator
 import (
 	"fmt"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 // codeDeployLambdaUpdateDecorator is the per-function decorator
@@ -76,11 +76,13 @@ func codeDeployLambdaUpdateDecorator(updateType string,
 }
 
 // CodeDeployServiceUpdateDecorator is a service level decorator that attaches
-// the CodeDeploy safe update to an upgrade operation
+// the CodeDeploy safe update to an upgrade operation.
+// Ref: https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst
+//
 func CodeDeployServiceUpdateDecorator(updateType string,
 	lambdaFuncs []*sparta.LambdaAWSInfo,
 	preHook *sparta.LambdaAWSInfo,
-	postHook *sparta.LambdaAWSInfo) sparta.ServiceDecoratorHook {
+	postHook *sparta.LambdaAWSInfo) sparta.ServiceDecoratorHookFunc {
 
 	// Define the names that are shared
 	codeDeployApplicationName := sparta.CloudFormationResourceName("SafeDeploy",
