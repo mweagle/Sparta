@@ -3,9 +3,9 @@ package sparta
 import (
 	"archive/zip"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

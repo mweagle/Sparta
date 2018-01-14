@@ -19,7 +19,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
@@ -28,6 +27,7 @@ import (
 	"github.com/briandowns/spinner"
 	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template

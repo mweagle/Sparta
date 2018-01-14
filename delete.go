@@ -3,10 +3,10 @@
 package sparta
 
 import (
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	"github.com/sirupsen/logrus"
 
 	spartaAWS "github.com/mweagle/Sparta/aws"
 )

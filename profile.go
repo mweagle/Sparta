@@ -5,7 +5,7 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type profileLambdaDecorator func(stackName string, info *LambdaAWSInfo, S3Bucket string, logger *logrus.Logger) error

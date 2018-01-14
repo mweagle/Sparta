@@ -7,13 +7,8 @@ import (
 	"strings"
 	"text/template"
 
-	// Also included in lambda_permissions.go, but doubly included
-	// here as the package's init() function handles registering
-	// the resources we look up in this package.
-	_ "github.com/mweagle/cloudformationresources"
-
-	"github.com/Sirupsen/logrus"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 // resourceOutputs is responsible for returning the conditional

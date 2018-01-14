@@ -1,9 +1,9 @@
 package sparta
 
 import (
-	"github.com/Sirupsen/logrus"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 // LambdaVersioningDecorator returns a TemplateDecorator
