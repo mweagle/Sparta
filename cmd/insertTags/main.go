@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {
@@ -27,11 +28,7 @@ func main() {
 	if nil != err {
 		panic(err)
 	}
-	fmt.Printf("Opened file: %s\n", absPath)
-	tagString := ""
-	for _, eachTag := range tags {
-		tagString = fmt.Sprintf("%s %s", tagString, eachTag)
-	}
+	tagString := strings.Join(tags, " ")
 	fmt.Printf("Prepending tags: %s\n", tagString)
 
 	updatedContents := fmt.Sprintf("// +build %s\n\n%s", tagString, fileContents)
