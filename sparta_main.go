@@ -1,3 +1,5 @@
+// +build !lambdabinary
+
 package sparta
 
 import (
@@ -10,10 +12,63 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/asaskevich/govalidator"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
+
+const (
+	nocolor = 0
+	red     = 31
+	green   = 32
+	yellow  = 33
+	blue    = 36
+	gray    = 37
+)
+
+func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
+	logger.Info(headerDivider)
+	if enableColors {
+		logger.Info(fmt.Sprintf("\x1b[%dm╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐\x1b[0m   Version : %s", red, SpartaVersion))
+		logger.Info(fmt.Sprintf("\x1b[%dm╚═╗├─┘├─┤├┬┘ │ ├─┤\x1b[0m   SHA     : %s", red, SpartaGitHash[0:7]))
+		logger.Info(fmt.Sprintf("\x1b[%dm╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴\x1b[0m   Go      : %s", red, runtime.Version()))
+	} else {
+		logger.Info(fmt.Sprintf(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : %s`, SpartaVersion))
+		logger.Info(fmt.Sprintf(`╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : %s`, SpartaGitHash[0:7]))
+		logger.Info(fmt.Sprintf(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : %s`, runtime.Version()))
+	}
+	logger.Info(headerDivider)
+}
+
+func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
+	// NOP
+}
+
+var codePipelineEnvironments map[string]map[string]string
+
+func init() {
+	codePipelineEnvironments = make(map[string]map[string]string)
+}
+
+// RegisterCodePipelineEnvironment is part of a CodePipeline deployment
+// and defines the environments available for deployment. Environments
+// are defined the `environmentName`. The values defined in the
+// environmentVariables are made available to each service as
+// environment variables. The environment key will be transformed into
+// a configuration file for a CodePipeline CloudFormation action:
+// TemplateConfiguration: !Sub "TemplateSource::${environmentName}".
+func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+	if _, exists := codePipelineEnvironments[environmentName]; exists {
+		return fmt.Errorf("Environment (%s) has already been defined", environmentName)
+	}
+	codePipelineEnvironments[environmentName] = environmentVariables
+	return nil
+}
+
+// Logger returns the sparta Logger instance for this process
+func Logger() *logrus.Logger {
+	return OptionsGlobal.Logger
+}
 
 // CommandLineOptions defines the commands available via the Sparta command
 // line interface.  Embedding applications can extend existing commands
@@ -147,7 +202,7 @@ func init() {
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
 		Use:   "version",
-		Short: "Sparta framework version",
+		Short: "Display version information",
 		Long:  `Displays the Sparta framework version `,
 		Run: func(cmd *cobra.Command, args []string) {
 
@@ -193,11 +248,7 @@ func init() {
 		Short: "Execute",
 		Long:  `Startup the localhost HTTP server to handle requests`,
 	}
-	CommandLineOptions.Execute.Flags().IntVarP(&optionsExecute.Port,
-		"port",
-		"p",
-		9999,
-		"Alternative port for HTTP binding (default=9999)")
+
 	CommandLineOptions.Execute.Flags().IntVarP(&optionsExecute.SignalParentPID,
 		"signal",
 		"s",
@@ -228,12 +279,6 @@ func init() {
 		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
 	}
 
-	CommandLineOptions.Explore.Flags().IntVarP(&optionsExplore.Port,
-		"port",
-		"p",
-		9999,
-		"Alternative port for HTTP binding (default=9999)")
-
 	// Profile
 	CommandLineOptions.Profile = &cobra.Command{
 		Use:   "profile",
@@ -249,7 +294,7 @@ func init() {
 		"port",
 		"p",
 		8080,
-		"Alternative port for HTTP binding (default=8080)")
+		"Alternative port for `pprof` web UI (default=8080)")
 }
 
 // CommandLineOptionsHook allows embedding applications the ability
@@ -459,57 +504,37 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
-		// If we're running in AWS, then pick some sensible defaults
-		// per http://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
-		runningInLambda := ("" != os.Getenv("LAMBDA_TASK_ROOT"))
-		prettyHeader := false
+		enableColors := (runtime.GOOS != "windows")
 		var formatter logrus.Formatter
-		if !runningInLambda {
-			switch OptionsGlobal.LogFormat {
-			case "text", "txt":
-				formatter = &logrus.TextFormatter{
-					DisableColors: (runtime.GOOS == "windows"),
-				}
-				prettyHeader = true
-			case "json":
-				formatter = &logrus.JSONFormatter{}
+		switch OptionsGlobal.LogFormat {
+		case "text", "txt":
+			formatter = &logrus.TextFormatter{
+				DisableColors: !enableColors,
 			}
-		} else {
+		case "json":
 			formatter = &logrus.JSONFormatter{}
+			enableColors = false
 		}
-
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
 			return loggerErr
 		}
+		// This is a NOP, but makes megacheck happy b/c it doesn't know about
+		// build flags
+		platformLogSysInfo("", logger)
 		OptionsGlobal.Logger = logger
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
-		if prettyHeader {
-			displayPrettyHeader(headerDivider, logger)
-			logger.WithFields(logrus.Fields{
-				"Option":    cmd.Name(),
-				"UTC":       (time.Now().UTC().Format(time.RFC3339)),
-				"LinkFlags": OptionsGlobal.LinkerFlags,
-			}).Info(welcomeMessage)
-			logger.Info(headerDivider)
-		} else {
-			if !runningInLambda {
-				logger.Info(headerDivider)
-			}
-			logger.WithFields(logrus.Fields{
-				"Option":        cmd.Name(),
-				"SpartaVersion": SpartaVersion,
-				"SpartaSHA":     SpartaGitHash[0:7],
-				"go Version":    runtime.Version(),
-				"BuildID":       os.Getenv(spartaEnvVarBuildID),
-				"UTC":           (time.Now().UTC().Format(time.RFC3339)),
-				"LinkFlags":     OptionsGlobal.LinkerFlags,
-			}).Info(welcomeMessage)
-			if !runningInLambda {
-				logger.Info(headerDivider)
-			}
-		}
+		// Header information...
+		displayPrettyHeader(headerDivider, enableColors, logger)
+		// Metadata about the build...
+		logger.WithFields(logrus.Fields{
+			"Option":    cmd.Name(),
+			"UTC":       (time.Now().UTC().Format(time.RFC3339)),
+			"LinkFlags": OptionsGlobal.LinkerFlags,
+		}).Info(welcomeMessage)
+		logger.Info(headerDivider)
+
 		return nil
 	}
 
@@ -577,7 +602,8 @@ func MainEx(serviceName string,
 			// Ensure the discovery service is initialized
 			initializeDiscovery(OptionsGlobal.Logger)
 
-			return Execute(lambdaAWSInfos,
+			return Execute(serviceName,
+				lambdaAWSInfos,
 				optionsExecute.Port,
 				optionsExecute.SignalParentPID,
 				OptionsGlobal.Logger)
@@ -620,19 +646,6 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Describe)
 
 	//////////////////////////////////////////////////////////////////////////////
-	// Explore
-	if nil == CommandLineOptions.Explore.RunE {
-		CommandLineOptions.Explore.RunE = func(cmd *cobra.Command, args []string) error {
-			_, validateErr := govalidator.ValidateStruct(optionsExplore)
-			if nil != validateErr {
-				return validateErr
-			}
-			return Explore(lambdaAWSInfos, optionsExplore.Port, OptionsGlobal.Logger)
-		}
-	}
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Explore)
-
-	//////////////////////////////////////////////////////////////////////////////
 	// Profile
 	if nil == CommandLineOptions.Profile.RunE {
 		CommandLineOptions.Profile.RunE = func(cmd *cobra.Command, args []string) error {
@@ -657,4 +670,33 @@ func MainEx(serviceName string,
 	// Cleanup, if for some reason the caller wants to re-execute later...
 	CommandLineOptions.Root.PersistentPreRunE = nil
 	return executeErr
+}
+
+// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
+// is nil, a TTY-aware formatter is used
+func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
+	logger := logrus.New()
+	// If there is an environment override, use that
+	envLogLevel := os.Getenv(envVarLogLevel)
+	if envLogLevel != "" {
+		level = envLogLevel
+	}
+
+	logLevel, err := logrus.ParseLevel(level)
+	if err != nil {
+		return nil, err
+	}
+
+	logger.Level = logLevel
+	if nil != formatter {
+		logger.Formatter = formatter
+	}
+	logger.Out = os.Stdout
+	return logger, nil
+}
+
+// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
+// to set the formatter if needed.
+func NewLogger(level string) (*logrus.Logger, error) {
+	return NewLoggerWithFormatter(level, nil)
 }

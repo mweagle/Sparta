@@ -1,24 +1,22 @@
 package sparta
 
 import (
-	"io/ioutil"
-	"net/http"
+	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
 const s3Bucket = "arn:aws:sns:us-west-2:123412341234:myBucket"
 
-func s3LambdaProcessor(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("S3Event")
-	event, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	logger.Info("Event data: ", string(event))
+func s3LambdaProcessor(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return props, nil
 }
 
 func ExampleS3Permission() {
@@ -32,7 +30,7 @@ func ExampleS3Permission() {
 	})
 	// Create the Lambda
 	s3Lambda := HandleAWSLambda(LambdaName(s3LambdaProcessor),
-		http.HandlerFunc(s3LambdaProcessor),
+		s3LambdaProcessor,
 		IAMRoleDefinition{})
 
 	// Add a Permission s.t. the Lambda function automatically registers for S3 events

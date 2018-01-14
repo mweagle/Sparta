@@ -1,31 +1,29 @@
 package sparta
 
 import (
-	"io/ioutil"
-	"net/http"
+	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
 const snsTopic = "arn:aws:sns:us-west-2:123412341234:mySNSTopic"
 
-func snsProcessor(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("SNSEvent")
-	event, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	logger.Info("Event data: ", string(event))
+func snsProcessor(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return props, nil
 }
 
 func ExampleSNSPermission() {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	snsLambda := HandleAWSLambda(LambdaName(snsProcessor),
-		http.HandlerFunc(snsProcessor),
+		snsProcessor,
 		IAMRoleDefinition{})
 	snsLambda.Permissions = append(snsLambda.Permissions, SNSPermission{
 		BasePermission: BasePermission{

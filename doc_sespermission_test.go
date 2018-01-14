@@ -1,23 +1,20 @@
 package sparta
 
 import (
-	"io/ioutil"
-	"net/http"
+	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
-func sesLambdaProcessor(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("SES Event")
-
-	event, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	logger.Info("Event data: ", string(event))
+func sesLambdaProcessor(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return props, nil
 }
 
 func ExampleSESPermission_messageBody() {
@@ -25,7 +22,7 @@ func ExampleSESPermission_messageBody() {
 	// Define the IAM role
 	roleDefinition := IAMRoleDefinition{}
 	sesLambda := HandleAWSLambda(LambdaName(sesLambdaProcessor),
-		http.HandlerFunc(sesLambdaProcessor),
+		sesLambdaProcessor,
 		roleDefinition)
 
 	// Add a Permission s.t. the Lambda function is automatically invoked
@@ -58,7 +55,7 @@ func ExampleSESPermission_headersOnly() {
 	// Define the IAM role
 	roleDefinition := IAMRoleDefinition{}
 	sesLambda := HandleAWSLambda(LambdaName(sesLambdaProcessor),
-		http.HandlerFunc(sesLambdaProcessor),
+		sesLambdaProcessor,
 		roleDefinition)
 
 	// Add a Permission s.t. the Lambda function is automatically invoked

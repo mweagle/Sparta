@@ -1386,7 +1386,7 @@ func (sm *StateMachine) validate() []error {
 
 // StateMachineDecorator is the hook exposed by the StateMachine
 // to insert the AWS Step function into the CloudFormation template
-func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHook {
+func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc {
 	return func(context map[string]interface{},
 		serviceName string,
 		template *gocf.Template,

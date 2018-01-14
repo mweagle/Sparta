@@ -2,27 +2,28 @@ package sparta
 
 import (
 	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
-	"net/http"
 	"os"
 	"testing"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 type StructHandler1 struct {
 }
 
-func (handler *StructHandler1) handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "StructHandler1 handler")
+func (handler *StructHandler1) handler(ctx context.Context,
+	props map[string]interface{}) (string, error) {
+	return "StructHandler1 handler", nil
 }
 
 type StructHandler2 struct {
 }
 
-func (handler *StructHandler2) handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "StructHandler1 handler")
+func (handler *StructHandler2) handler(ctx context.Context,
+	props map[string]interface{}) (string, error) {
+	return "StructHandler2 handler", nil
 }
 
 func testLambdaStructData() []*LambdaAWSInfo {
@@ -30,13 +31,13 @@ func testLambdaStructData() []*LambdaAWSInfo {
 
 	handler1 := &StructHandler1{}
 	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
-		http.HandlerFunc(handler1.handler),
+		handler1.handler,
 		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler2{}
 	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
-		http.HandlerFunc(handler2.handler),
+		handler2.handler,
 		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
@@ -48,13 +49,13 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 
 	handler1 := &StructHandler1{}
 	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
-		http.HandlerFunc(handler1.handler),
+		handler1.handler,
 		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler1{}
 	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
-		http.HandlerFunc(handler2.handler),
+		handler2.handler,
 		LambdaExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
@@ -266,49 +267,5 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		t.Fatal("Failed to reject duplicate lambdas with overlapping user supplied names")
 	} else {
 		t.Logf("Rejected overlapping user supplied names")
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// LEGACY
-////////////////////////////////////////////////////////////////////////////////
-func legacyLambdaSignature(event *json.RawMessage,
-	context *LambdaContext,
-	w http.ResponseWriter,
-	logger *logrus.Logger) {
-	logger.Info("Hello World: ", string(*event))
-	fmt.Fprint(w, string(*event))
-}
-
-func TestLegacyLambdaSignature(t *testing.T) {
-	logger, _ := NewLogger("info")
-	lambdaFn := NewLambda(IAMRoleDefinition{}, legacyLambdaSignature, nil)
-
-	lambdaFunctions := []*LambdaAWSInfo{
-		lambdaFn,
-	}
-
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"TestLegacyLambdaSignature",
-		"",
-		lambdaFunctions,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if err != nil {
-		t.Fatal("Failed to build legacy Sparta NewLambda signature ")
-	} else {
-		t.Logf("Correctly supported NewLambda signature")
 	}
 }

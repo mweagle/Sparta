@@ -20,10 +20,11 @@ func LambdaVersioningDecorator() TemplateDecorator {
 		template *gocf.Template,
 		context map[string]interface{},
 		logger *logrus.Logger) error {
-		incrementer, incrementerErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
-			lambdaResourceName,
-			template,
-			logger)
+		incrementer, incrementerErr :=
+			spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+				lambdaResourceName,
+				template,
+				logger)
 		if incrementerErr != nil {
 			return nil
 		}

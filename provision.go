@@ -177,6 +177,8 @@ type provisionContext struct {
 	cfTemplate *gocf.Template
 	// Is versioning enabled for s3 Bucket?
 	s3BucketVersioningEnabled bool
+	// name of the binary inside the ZIP archive
+	binaryName string
 	// Context to pass between workflow operations
 	workflowHooksContext map[string]interface{}
 }
@@ -498,12 +500,22 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 
 	s3URL := ""
 	if ctx.userdata.noop {
+
+		// Binary size
+		filesize := int64(0)
+		stat, statErr := os.Stat(localPath)
+		if statErr == nil {
+			filesize = stat.Size()
+		}
 		ctx.logger.WithFields(logrus.Fields{
 			"Bucket": ctx.userdata.s3Bucket,
 			"Key":    s3ObjectKey,
 			"File":   filepath.Base(localPath),
-		}).Info("Bypassing S3 upload due to -n/-noop command line argument")
-		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s", ctx.userdata.s3Bucket, s3ObjectKey)
+			"Size":   humanize.Bytes(uint64(filesize)),
+		}).Info(noopMessage("S3 upload"))
+		s3URL = fmt.Sprintf("https://%s-s3.amazonaws.com/%s",
+			ctx.userdata.s3Bucket,
+			s3ObjectKey)
 	} else {
 		// Make sure we mark things for cleanup in case there's a problem
 		ctx.registerFileCleanupFinalizer(localPath)
@@ -628,7 +640,7 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		ctx.logger.WithFields(logrus.Fields{
 			"VersioningEnabled": false,
 			"Bucket":            ctx.userdata.s3Bucket,
-		}).Info("Bypassing S3 upload due to -n/-noop command line argument.")
+		}).Info(noopMessage("S3 versioning check"))
 	} else {
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession, ctx.userdata.s3Bucket, ctx.logger)
@@ -720,7 +732,8 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 	return nil
 }
 
-func buildGoBinary(executableOutput string,
+func buildGoBinary(serviceName string,
+	executableOutput string,
 	useCGO bool,
 	buildTags string,
 	linkFlags string,
@@ -750,9 +763,20 @@ func buildGoBinary(executableOutput string,
 	if noop {
 		noopTag = "noop "
 	}
+
 	userBuildFlags := []string{"-tags",
 		fmt.Sprintf("lambdabinary %s%s", noopTag, buildTags)}
+
 	// Append all the linker flags
+	// Stamp the service name into the binary
+	// We need to stamp the servicename into the aws binary so that if the user
+	// chose some type of dynamic stack name at provision time, the name
+	// we use at execution time has that value. This is necessary because
+	// the function dispatch logic uses the AWS_LAMBDA_FUNCTION_NAME environment
+	// variable to do the lookup. And in effect, this value has to be unique
+	// across an account, since functions cannot have the same name
+	linkFlags = fmt.Sprintf("%s -X github.com/mweagle/Sparta.StampedServiceName=%s", linkFlags, serviceName)
+	linkFlags = strings.TrimSpace(linkFlags)
 	if len(linkFlags) != 0 {
 		userBuildFlags = append(userBuildFlags, "-ldflags", linkFlags)
 	}
@@ -890,13 +914,9 @@ func createPackageStep() workflowStep {
 				return nil, preBuildErr
 			}
 		}
-		binarySuffix := "lambda.amd64"
-		if ctx.userdata.useCGO {
-			binarySuffix = "lambda.so"
-		}
 		sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-		executableOutput := fmt.Sprintf("Sparta.%s", binarySuffix)
-		buildErr := buildGoBinary(executableOutput,
+		buildErr := buildGoBinary(ctx.userdata.serviceName,
+			ctx.context.binaryName,
 			ctx.userdata.useCGO,
 			ctx.userdata.buildTags,
 			ctx.userdata.linkFlags,
@@ -907,17 +927,14 @@ func createPackageStep() workflowStep {
 		}
 		// Cleanup the temporary binary
 		defer func() {
-			errRemove := os.Remove(executableOutput)
+			errRemove := os.Remove(ctx.context.binaryName)
 			if nil != errRemove {
 				ctx.logger.WithFields(logrus.Fields{
-					"File":  executableOutput,
+					"File":  ctx.context.binaryName,
 					"Error": errRemove,
 				}).Warn("Failed to delete binary")
 			}
 		}()
-
-		// Binary size
-		logFilesize("Executable binary size", executableOutput, ctx.logger)
 
 		// PostBuild Hook
 		if ctx.userdata.workflowHooks != nil {
@@ -946,36 +963,11 @@ func createPackageStep() workflowStep {
 		}
 		// File info for the binary executable
 		readerErr := spartaZip.AddToZip(lambdaArchive,
-			executableOutput,
-			"bin",
+			ctx.context.binaryName,
+			"",
 			ctx.logger)
 		if nil != readerErr {
 			return nil, readerErr
-		}
-
-		// Based on whether this is NodeJS or CGO, pick the proper shim
-		// and write the custom entries
-
-		// Add the string literal adapter, which requires us to add exported
-		// functions to the end of index.js.  These NodeJS exports will be
-		// linked to the AWS Lambda NodeJS function name, and are basically
-		// automatically generated pass through proxies to the golang HTTP handler.
-		var shimErr error
-		if ctx.userdata.useCGO {
-			shimErr = insertPythonProxyResources(ctx.userdata.serviceName,
-				executableOutput,
-				ctx.userdata.lambdaAWSInfos,
-				lambdaArchive,
-				ctx.logger)
-		} else {
-			shimErr = insertNodeJSProxyResources(ctx.userdata.serviceName,
-				executableOutput,
-				ctx.userdata.lambdaAWSInfos,
-				lambdaArchive,
-				ctx.logger)
-		}
-		if nil != shimErr {
-			return nil, shimErr
 		}
 		archiveCloseErr := lambdaArchive.Close()
 		if nil != archiveCloseErr {
@@ -1134,7 +1126,7 @@ func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 	if lambdaEnvironment == nil {
 		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
-	lambdaAWSInfo.Options.Environment[spartaEnvVarBuildID] = gocf.String(buildID)
+	lambdaAWSInfo.Options.Environment[envVarBuildID] = gocf.String(buildID)
 	return template, nil
 }
 
@@ -1160,12 +1152,12 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
 
-	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.logicalName(), depMap)
+	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(), depMap)
 	if discoveryInfoErr != nil {
 		return nil, discoveryInfoErr
 	}
 	// Update the env map
-	lambdaAWSInfo.Options.Environment[spartaEnvVarDiscoveryInformation] = discoveryInfo
+	lambdaAWSInfo.Options.Environment[envVarDiscoveryInformation] = discoveryInfo
 	return template, nil
 }
 
@@ -1344,7 +1336,6 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	stackTags := map[string]string{
 		SpartaTagHomeKey:    "http://gosparta.io",
-		SpartaTagVersionKey: SpartaVersion,
 		SpartaTagHashKey:    SpartaGitHash,
 		SpartaTagBuildIDKey: ctx.userdata.buildID,
 	}
@@ -1392,7 +1383,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			ctx.logger.WithFields(logrus.Fields{
 				"Bucket":       ctx.userdata.s3Bucket,
 				"TemplateName": templateName,
-			}).Info("Bypassing Stack creation due to -n/-noop command line argument")
+			}).Info(noopMessage("Stack creation"))
 		} else {
 			// Dump the template to a file, then upload it...
 			uploadURL, uploadURLErr := uploadLocalFileToS3(templateFile.Name(), "", ctx)
@@ -1413,6 +1404,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 					stackTags,
 					ctx.transaction.startTime,
 					ctx.context.awsSession,
+					subheaderDivider,
 					ctx.logger)
 			}
 			if nil != stackErr {
@@ -1500,10 +1492,6 @@ func ensureCloudFormationStack() workflowStep {
 				}
 			}
 		}
-		lambdaRuntime := NodeJSVersion
-		if ctx.userdata.useCGO {
-			lambdaRuntime = PythonVersion
-		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
 
 			verifyErr := verifyLambdaPreconditions(eachEntry, ctx.logger)
@@ -1513,8 +1501,7 @@ func ensureCloudFormationStack() workflowStep {
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
-				ctx.userdata.useCGO,
-				lambdaRuntime,
+				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
 				ctx.context.s3CodeZipURL.version,
@@ -1547,16 +1534,16 @@ func ensureCloudFormationStack() workflowStep {
 				err = safeMergeTemplates(apiGatewayTemplate, ctx.context.cfTemplate, ctx.logger)
 			}
 			if nil != err {
-				return nil, fmt.Errorf("Failed to export APIGateway template resources")
+				return nil, fmt.Errorf("APIGateway template export failed: %s", err)
 			}
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.userdata.s3SiteContext.s3Site {
 			ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
+				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
 				ctx.userdata.s3SiteContext.s3UploadURL.keyName(),
-				ctx.userdata.useCGO,
 				apiGatewayTemplate.Outputs,
 				ctx.context.lambdaIAMRoleNameMap,
 				ctx.context.cfTemplate,
@@ -1659,6 +1646,7 @@ func Provision(noop bool,
 			awsSession:                spartaAWS.NewSession(logger),
 			workflowHooksContext:      make(map[string]interface{}),
 			templateWriter:            templateWriter,
+			binaryName:                SpartaBinaryName,
 		},
 		transaction: transaction{
 			startTime: time.Now(),
@@ -1696,11 +1684,10 @@ func Provision(noop bool,
 
 		if next == nil {
 			summaryLine := fmt.Sprintf("%s Summary", ctx.userdata.serviceName)
-			subheaderDivider := strings.Repeat("─", dividerLength)
 
-			ctx.logger.Info(subheaderDivider)
+			ctx.logger.Info(headerDivider)
 			ctx.logger.Info(summaryLine)
-			ctx.logger.Info(subheaderDivider)
+			ctx.logger.Info(headerDivider)
 			for _, eachEntry := range ctx.transaction.stepDurations {
 				ctx.logger.WithFields(logrus.Fields{
 					"Duration (s)": fmt.Sprintf("%.f", eachEntry.duration.Seconds()),
@@ -1710,7 +1697,6 @@ func Provision(noop bool,
 			ctx.logger.WithFields(logrus.Fields{
 				"Duration (s)": fmt.Sprintf("%.f", elapsed.Seconds()),
 			}).Info("Total elapsed time")
-			ctx.logger.Info(subheaderDivider)
 			break
 		} else {
 			step = next

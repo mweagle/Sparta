@@ -1,21 +1,24 @@
 package sparta
 
 import (
-	"fmt"
-	"io/ioutil"
+	"context"
 	"net/http"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
-func echoS3SiteAPIGatewayEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	bytes, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	logger.Info("Hello World: ", string(bytes))
-	fmt.Fprint(w, string(bytes))
+
+func echoS3SiteAPIGatewayEvent(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return props, nil
 }
 
 // Should be main() in your application
@@ -28,7 +31,7 @@ func ExampleMain_s3Site() {
 
 	// Create a lambda function
 	echoS3SiteAPIGatewayEventLambdaFn := HandleAWSLambda(LambdaName(echoS3SiteAPIGatewayEvent),
-		http.HandlerFunc(echoS3SiteAPIGatewayEvent),
+		echoS3SiteAPIGatewayEvent,
 		IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource("/hello", echoS3SiteAPIGatewayEventLambdaFn)
 	_, err := apiGatewayResource.NewMethod("GET", http.StatusOK)

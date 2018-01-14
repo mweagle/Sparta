@@ -1,0 +1,165 @@
+// +build lambdabinary
+
+package sparta
+
+// Provides NOP implementations for functions that do not need to execute
+// in the Lambda context
+
+import (
+	"errors"
+	"fmt"
+	"io"
+	"os"
+	"runtime"
+	"time"
+
+	"github.com/sirupsen/logrus"
+	"github.com/zcalusic/sysinfo"
+)
+
+// Main defines the primary handler for transforming an application into a Sparta package.  The
+// serviceName is used to uniquely identify your service within a region and will
+// be used for subsequent updates.  For provisioning, ensure that you've
+// properly configured AWS credentials for the golang SDK.
+// See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
+// for more information.
+func Main(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site) error {
+	return MainEx(serviceName,
+		serviceDescription,
+		lambdaAWSInfos,
+		api,
+		site,
+		nil,
+		false)
+}
+
+// MainEx provides an "extended" Main that supports customizing the standard Sparta
+// workflow via the `workflowHooks` parameter.
+func MainEx(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	workflowHooks *WorkflowHooks,
+	useCGO bool) error {
+
+	// This can only run in AWS Lambda
+	formatter := &logrus.JSONFormatter{}
+	logger, loggerErr := NewLoggerWithFormatter("info", formatter)
+	if loggerErr != nil {
+		return loggerErr
+	}
+	if logger == nil {
+		return fmt.Errorf("Failed to initialize logger instance")
+	}
+	welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
+	logger.WithFields(logrus.Fields{
+		"SpartaVersion": SpartaVersion,
+		"SpartaSHA":     SpartaGitHash[0:7],
+		"go Version":    runtime.Version(),
+		"BuildID":       os.Getenv(envVarBuildID),
+		"UTC":           (time.Now().UTC().Format(time.RFC3339)),
+	}).Info(welcomeMessage)
+
+	// All we can do is run the Execute call
+	return Execute(serviceName, lambdaAWSInfos, 9999, 0, logger)
+}
+
+// Delete is not available in the AWS Lambda binary
+func Delete(serviceName string, logger *logrus.Logger) error {
+	logger.Error("Delete() not supported in AWS Lambda binary")
+	return errors.New("Delete not supported for this binary")
+}
+
+// Provision is not available in the AWS Lambda binary
+func Provision(noop bool,
+	serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	s3Bucket string,
+	useCGO bool,
+	inplace bool,
+	buildID string,
+	codePipelineTrigger string,
+	buildTags string,
+	linkerFlags string,
+	writer io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *logrus.Logger) error {
+	logger.Error("Provision() not supported in AWS Lambda binary")
+	return errors.New("Provision not supported for this binary")
+}
+
+// Describe is not available in the AWS Lambda binary
+func Describe(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	s3BucketName string,
+	buildTags string,
+	linkerFlags string,
+	outputWriter io.Writer,
+	workflowHooks *WorkflowHooks,
+	logger *logrus.Logger) error {
+	logger.Error("Describe() not supported in AWS Lambda binary")
+	return errors.New("Describe not supported for this binary")
+}
+
+// Profile is the interactive command used to pull S3 assets locally into /tmp
+// and run ppro against the cached profiles
+func Profile(serviceName string,
+	serviceDescription string,
+	s3Bucket string,
+	httpPort int,
+	logger *logrus.Logger) error {
+	return errors.New("Profile not supported for this binary")
+}
+
+func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
+	var si sysinfo.SysInfo
+	si.GetSysInfo()
+	logger.WithFields(logrus.Fields{
+		"spartaLambdaFuncName": lambdaFunc,
+		"systemInfo":           si,
+	}).Info("SystemInfo")
+}
+
+// RegisterCodePipelineEnvironment is not available during lambda execution
+func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+	return nil
+}
+
+// NewLoggerWithFormatter always returns a JSON formatted logger
+// that is aware of the environment variable that may have been
+// set and carried through to the AWS Lambda execution environment
+func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
+
+	logger := logrus.New()
+	// If there is an environment override, use that
+	envLogLevel := os.Getenv(envVarLogLevel)
+	if envLogLevel != "" {
+		level = envLogLevel
+	}
+	logLevel, err := logrus.ParseLevel(level)
+	if err != nil {
+		return nil, err
+	}
+	logger.Level = logLevel
+	// We always use JSON in AWS
+	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Out = os.Stdout
+	return logger, nil
+}
+
+// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
+// to set the formatter if needed.
+func NewLogger(level string) (*logrus.Logger, error) {
+	return NewLoggerWithFormatter(level, nil)
+}

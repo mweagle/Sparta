@@ -1,25 +1,27 @@
 package sparta
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
-func cloudWatchLogsProcessor(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
+func cloudWatchLogsProcessor(ctx context.Context,
+	props map[string]interface{}) error {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID": lambdaCtx.AwsRequestID,
 	}).Info("CloudWatch log event")
-	logger.Info("CloudWatch Log event received")
+	Logger().Info("CloudWatch Log event received")
+	return nil
 }
 
 func ExampleCloudWatchLogsPermission() {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	cloudWatchLogsLambda := HandleAWSLambda(LambdaName(cloudWatchLogsProcessor),
-		http.HandlerFunc(cloudWatchLogsProcessor),
+		cloudWatchLogsProcessor,
 		IAMRoleDefinition{})
 
 	cloudWatchLogsPermission := CloudWatchLogsPermission{}

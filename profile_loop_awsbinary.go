@@ -44,7 +44,7 @@ func init() {
 func profileOutputFile(basename string) (*os.File, error) {
 	fileName := fmt.Sprintf("%s.%s.profile", basename, instanceID)
 	// http://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
-	if os.Getenv("AWS_EXECUTION_ENV") != "" {
+	if os.Getenv("_LAMBDA_SERVER_PORT") != "" {
 		fileName = filepath.Join("/tmp", fileName)
 	}
 	return os.Create(fileName)
@@ -67,7 +67,8 @@ func (ur *uploadResult) Result() interface{} {
 func uploadFileTask(uploader *s3manager.Uploader,
 	profileType string,
 	uploadSlot int,
-	localFilePath string) taskFunc {
+	localFilePath string,
+	logger *logrus.Logger) taskFunc {
 	return func() workResult {
 		fileReader, fileReaderErr := os.Open(localFilePath)
 		if fileReaderErr != nil {
@@ -83,7 +84,6 @@ func uploadFileTask(uploader *s3manager.Uploader,
 			Key:    aws.String(keyPath),
 			Body:   fileReader,
 		}
-		fmt.Printf("Uploading %s to %s\n", localFilePath, keyPath)
 		uploadOutput, uploadErr := uploader.Upload(uploadInput)
 		return &uploadResult{
 			err:      uploadErr,
@@ -97,57 +97,79 @@ func snapshotProfiles(s3BucketArchive interface{},
 	cpuProfileDuration time.Duration,
 	profileTypes ...string) {
 
-	publishProfiles := func(cpuProfilePath string) {
-		uploadSlot := nextUploadSlot()
+	// The session the S3 Uploader will use
+	profileLogger, _ := NewLogger("")
 
-		// The session the S3 Uploader will use
-		profileLogger, _ := NewLogger("info")
+	publishProfiles := func(cpuProfilePath string) {
+
+		profileLogger.WithFields(logrus.Fields{
+			"CPUProfilePath": cpuProfilePath,
+			"Types":          profileTypes,
+		}).Info("Publishing CPU profile")
+
+		uploadSlot := nextUploadSlot()
 		sess := spartaAWS.NewSession(profileLogger)
 		uploader := s3manager.NewUploader(sess)
 		uploadTasks := make([]*workTask, 0)
 
 		if cpuProfilePath != "" {
 			uploadTasks = append(uploadTasks,
-				newWorkTask(uploadFileTask(uploader, "cpu", uploadSlot, cpuProfilePath)))
+				newWorkTask(uploadFileTask(uploader,
+					"cpu",
+					uploadSlot,
+					cpuProfilePath,
+					profileLogger)))
 		}
 		for _, eachProfileType := range profileTypes {
 			namedProfile := pprof.Lookup(eachProfileType)
 			if namedProfile != nil {
 				outputProfile, outputFileErr := profileOutputFile(eachProfileType)
 				if outputFileErr != nil {
-					fmt.Printf("Failed to create output: %s\n", outputFileErr.Error())
+					profileLogger.WithFields(logrus.Fields{
+						"Error": outputFileErr,
+					}).Error("Failed to CPU profile file")
 				} else {
 					namedProfile.WriteTo(outputProfile, 0)
 					outputProfile.Close()
 					uploadTasks = append(uploadTasks,
-						newWorkTask(uploadFileTask(uploader, eachProfileType, uploadSlot, outputProfile.Name())))
+						newWorkTask(uploadFileTask(uploader,
+							eachProfileType,
+							uploadSlot,
+							outputProfile.Name(),
+							profileLogger)))
 				}
 			}
 		}
 		workerPool := newWorkerPool(uploadTasks, 32)
 		workerPool.Run()
-		ScheduleProfileLoop(s3BucketArchive, snapshotInterval, cpuProfileDuration, profileTypes...)
+		ScheduleProfileLoop(s3BucketArchive,
+			snapshotInterval,
+			cpuProfileDuration,
+			profileTypes...)
 	}
 
 	if cpuProfileDuration != 0 {
 		outputFile, outputFileErr := profileOutputFile("cpu")
 		if outputFileErr != nil {
+			profileLogger.Warn("Failed to create cpu profile path: %s\n",
+				outputFileErr.Error())
 			return
 		}
 		startErr := pprof.StartCPUProfile(outputFile)
 		if startErr != nil {
-			fmt.Printf("Failed to start CPU profile: %s\n", startErr.Error())
+			profileLogger.Warn("Failed to start CPU profile: %s\n", startErr.Error())
 		}
+		profileLogger.Info("Opened CPU profile")
 		time.AfterFunc(cpuProfileDuration, func() {
 			pprof.StopCPUProfile()
+			profileLogger.Info("Opened CPU profile")
 			closeErr := outputFile.Close()
 			if closeErr != nil {
-				fmt.Printf("Failed to close CPU profile output: %s\n", closeErr.Error())
+				profileLogger.Warn("Failed to close CPU profile output: %s\n", closeErr.Error())
 			} else {
 				publishProfiles(outputFile.Name())
 			}
 		})
-
 	} else {
 		publishProfiles("")
 	}
@@ -160,6 +182,7 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 	snapshotInterval time.Duration,
 	cpuProfileDuration time.Duration,
 	profileTypes ...string) {
+
 	time.AfterFunc(snapshotInterval, func() {
 		snapshotProfiles(s3BucketArchive, snapshotInterval, cpuProfileDuration, profileTypes...)
 	})

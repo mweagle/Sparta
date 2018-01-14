@@ -9,9 +9,9 @@ func lambdaHelloWorld(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
 }
 
-func ExampleNewLambda_preexistingIAMRoleName() {
+func ExampleHandleAWSLambda_preexistingIAMRoleName() {
 	helloWorldLambda := HandleAWSLambda(LambdaName(lambdaHelloWorld),
-		http.HandlerFunc(lambdaHelloWorld),
+		lambdaHelloWorld,
 		IAMRoleDefinition{})
 	if nil != helloWorldLambda {
 		fmt.Printf("Failed to create new Lambda function")

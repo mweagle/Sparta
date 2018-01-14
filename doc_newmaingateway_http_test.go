@@ -1,33 +1,24 @@
 package sparta
 
 import (
-	"encoding/json"
+	"context"
 	"net/http"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func echoAPIGatewayHTTPEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-	var lambdaEvent APIGatewayLambdaJSONEvent
-	err := decoder.Decode(&lambdaEvent)
-	if err != nil {
-		logger.Error("Failed to unmarshal event data: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	responseBody, err := json.Marshal(lambdaEvent)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	} else {
-		w.Header().Add("Content-Type", "application/json")
-		w.Write(responseBody)
-	}
+func echoAPIGatewayHTTPEvent(ctx context.Context,
+	props map[string]interface{}) error {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return nil
 }
 
 // Should be main() in your application
@@ -40,7 +31,7 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 
 	// Create a lambda function
 	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
-		http.HandlerFunc(echoAPIGatewayHTTPEvent),
+		echoAPIGatewayHTTPEvent,
 		IAMRoleDefinition{})
 
 	// Associate a URL path component with the Lambda function

@@ -2,14 +2,14 @@ package sparta
 
 import (
 	"archive/zip"
-	"fmt"
+	"context"
 	"io"
 
-	"net/http"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/sirupsen/logrus"
 )
 
 const userdataResourceContents = `
@@ -17,8 +17,14 @@ const userdataResourceContents = `
   "Hello" : "World",
 }`
 
-func helloZipLambda(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Hello World")
+func helloZipLambda(ctx context.Context,
+	props map[string]interface{}) (string, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return "Event processed", nil
 }
 
 func archiveHook(context map[string]interface{},
@@ -46,7 +52,7 @@ func ExampleWorkflowHooks() {
 
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
-		http.HandlerFunc(helloZipLambda),
+		helloZipLambda,
 		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)
 	MainEx("HelloWorldArchiveHook",

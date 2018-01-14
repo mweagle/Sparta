@@ -1,8 +1,7 @@
 package sparta
 
 import (
-	"fmt"
-	"net/http"
+	"context"
 )
 
 const LambdaExecuteARN = "LambdaExecutor"
@@ -10,16 +9,16 @@ const s3BucketSourceArn = "arn:aws:s3:::sampleBucket"
 const snsTopicSourceArn = "arn:aws:sns:us-west-2:000000000000:someTopic"
 const dynamoDBTableArn = "arn:aws:dynamodb:us-west-2:000000000000:table/sampleTable"
 
-func mockLambda1(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "mockLambda1!")
+func mockLambda1(ctx context.Context) (string, error) {
+	return "mockLambda1!", nil
 }
 
-func mockLambda2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "mockLambda2!")
+func mockLambda2(ctx context.Context) (string, error) {
+	return "mockLambda2!", nil
 }
 
-func mockLambda3(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "mockLambda3!")
+func mockLambda3(ctx context.Context) (string, error) {
+	return "mockLambda3!", nil
 }
 
 func testLambdaData() []*LambdaAWSInfo {
@@ -28,7 +27,7 @@ func testLambdaData() []*LambdaAWSInfo {
 	//////////////////////////////////////////////////////////////////////////////
 	// Lambda function 1
 	lambdaFn := HandleAWSLambda(LambdaName(mockLambda1),
-		http.HandlerFunc(mockLambda1),
+		mockLambda1,
 		LambdaExecuteARN)
 	lambdaFn.Permissions = append(lambdaFn.Permissions, S3Permission{
 		BasePermission: BasePermission{
@@ -56,13 +55,13 @@ func testLambdaData() []*LambdaAWSInfo {
 	//////////////////////////////////////////////////////////////////////////////
 	// Lambda function 2
 	lambdaFunctions = append(lambdaFunctions, HandleAWSLambda(LambdaName(mockLambda2),
-		http.HandlerFunc(mockLambda2),
+		mockLambda2,
 		LambdaExecuteARN))
 	//////////////////////////////////////////////////////////////////////////////
 	// Lambda function 3
 	// https://github.com/mweagle/Sparta/pull/1
 	lambdaFn3 := HandleAWSLambda(LambdaName(mockLambda3),
-		http.HandlerFunc(mockLambda3),
+		mockLambda3,
 		LambdaExecuteARN)
 	lambdaFn3.Permissions = append(lambdaFn3.Permissions, SNSPermission{
 		BasePermission: BasePermission{

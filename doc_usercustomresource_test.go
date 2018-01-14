@@ -1,23 +1,23 @@
 package sparta
 
 import (
-	"fmt"
-	"net/http"
+	"context"
 
+	"github.com/aws/aws-lambda-go/lambdacontext"
 	gocf "github.com/mweagle/go-cloudformation"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // Standard AWS λ function
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	configuration, _ := Discover()
-	logger.WithFields(logrus.Fields{
-		"Discovery": configuration,
-	}).Info("Custom resource request")
-
-	fmt.Fprint(w, "Hello World")
+func helloWorld(ctx context.Context,
+	props map[string]interface{}) (string, error) {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return "Event processed", nil
 }
 
 // User defined λ-backed CloudFormation CustomResource
@@ -35,7 +35,7 @@ func userDefinedCustomResource(requestType string,
 func ExampleLambdaAWSInfo_RequireCustomResource() {
 
 	lambdaFn := HandleAWSLambda(LambdaName(helloWorld),
-		http.HandlerFunc(helloWorld),
+		helloWorld,
 		IAMRoleDefinition{})
 
 	cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
