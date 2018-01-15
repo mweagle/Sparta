@@ -1,21 +1,37 @@
+SPARTA_TEMP_DIR = ./.sparta
+HUGO_BINARY := $(SPARTA_TEMP_DIR)/hugo
+UNAME := $(shell uname)
+HUGO_TARGZ_ARCHIVE_URL := ""
+ifeq ($(UNAME), Linux)
+	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_Linux-64bit.tar.gz"
+endif
+ifeq ($(UNAME), Darwin)
+	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_macOS-64bit.tar.gz"
+endif
+
+
 default: build
 
-.PHONY: run edit
+.PHONY: install_hugo
+install_hugo:
+ifneq ("$(wildcard $(HUGO_BINARY))","")
+	echo "Hugo already installed at: $(HUGO_BINARY)"
+else
+	mkdir -pv $(SPARTA_TEMP_DIR)
+	curl -L -o $(SPARTA_TEMP_DIR)/hugo.tar.gz $(HUGO_TARGZ_ARCHIVE_URL)
+	tar -xvf $(SPARTA_TEMP_DIR)/hugo.tar.gz -C $(SPARTA_TEMP_DIR)
+	rm -rf $(SPARTA_TEMP_DIR)/hugo.tar.gz
+endif
+	$(SPARTA_TEMP_DIR)/hugo version
 
 clean:
 	rm -rf ./public
 
 build: clean
-	hugo
+	$(HUGO_BINARY)
 
-test:
-	rm -rfv ./tmp
-	mkdir -pv ./tmp
-	# Github replies with a 302 and location header response
-	curl -L -o ./tmp/hugo.tar.gz https://github.com/spf13/hugo/releases/download/v0.15/hugo_0.15_linux_amd64.tar.gz
-	tar -xvf ./tmp/hugo.tar.gz -C ./tmp
-	./tmp/hugo_0.15_linux_amd64/hugo_0.15_linux_amd64
-	rm -rfv ./tmp
+test: install_hugo
+	echo "Hugo installed"
 
 reset: clean
 		git reset --hard
@@ -34,9 +50,7 @@ push:
 	git push -f origin docs
 
 edit: clean
-	# Used for localhost editing
-	# Windows: ./hugo.exe server --watch --verbose --renderToDisk
-	hugo server --watch --verbose
+	$(HUGO_BINARY) server --watch --verbose
 
 publish: build commit push
 	# Publish locally committed content to gh-pages
