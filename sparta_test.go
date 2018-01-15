@@ -269,3 +269,41 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 		t.Logf("Rejected overlapping user supplied names")
 	}
 }
+
+func invalidFuncSignature(ctx context.Context) string {
+	return "Hello World!"
+}
+
+func TestInvalidFunctionSignature(t *testing.T) {
+	logger, _ := NewLogger("info")
+
+	var lambdaFunctions []*LambdaAWSInfo
+	invalidSigHandler := HandleAWSLambda("InvalidSignature",
+		invalidFuncSignature,
+		IAMRoleDefinition{})
+	lambdaFunctions = append(lambdaFunctions, invalidSigHandler)
+
+	var templateWriter bytes.Buffer
+	err := Provision(true,
+		"TestInvalidFunctionSignatuure",
+		"",
+		lambdaFunctions,
+		nil,
+		nil,
+		os.Getenv("S3_BUCKET"),
+		false,
+		false,
+		"testBuildID",
+		"",
+		"",
+		"",
+		&templateWriter,
+		nil,
+		logger)
+
+	if err == nil {
+		t.Fatal("Failed to reject invalid lambda function signature")
+	} else {
+		t.Log("Properly rejected invalid function signature")
+	}
+}
