@@ -13,7 +13,6 @@ reset:
 # Code generation
 ################################################################################
 generate:
-	go generate -x . ./proxy
 	./generate-constants.sh
 	@echo "Generate complete: `date`"
 
