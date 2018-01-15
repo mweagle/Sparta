@@ -12,6 +12,17 @@ weight: 0
 A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a> microservices
 <br />
 
+{{< warning title="Documentation Updates" >}}
+  Sparta documentation is currently being updated as part of officially supporting
+  the AWS Lambda Go SDK. While the general examples and
+  features outlined in this documentation are still valid, the specific
+  lambda function signatures require changes.
+
+  In the meantime, please see the [Change Notes](https://github.com/mweagle/Sparta/blob/master/CHANGES.md) for the latest updates.
+
+   - Matt (2018-01-15 08:36:50)
+{{< /warning >}}
+
 
 <table style="width:90%">
   <!-- Row 1 -->
