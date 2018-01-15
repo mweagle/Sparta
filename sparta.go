@@ -1015,20 +1015,20 @@ func ensureValidSignature(lambdaName string, handlerSymbol interface{}) error {
 		return fmt.Errorf("Failed to confirm function type: %#v", handlerSymbol)
 	}
 	if handlerType.Kind() != reflect.Func {
-		return fmt.Errorf("Lambda handler %s kind %s is not %s",
+		return fmt.Errorf("Lambda function (%s) is a %s type, not a %s type",
 			lambdaName,
 			handlerType.Kind(),
 			reflect.Func)
 	}
 	argumentErr := validateArguments(handlerType)
 	if argumentErr != nil {
-		return fmt.Errorf("Invalid lambda definition: %s. Error: %s",
+		return fmt.Errorf("Lambda function (%s) has invalid formal arguments: %s",
 			lambdaName,
 			argumentErr)
 	}
 	returnsErr := validateReturns(handlerType)
 	if returnsErr != nil {
-		return fmt.Errorf("Invalid lambda returns: %s. Error: %s",
+		return fmt.Errorf("Lambda function (%s) has invalid returns: %s",
 			lambdaName,
 			returnsErr)
 	}
@@ -1051,7 +1051,7 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 	}
 	// 0 - check for invalid signatures
 	for _, eachLambda := range lambdaAWSInfos {
-		validationErr := ensureValidSignature(eachLambda.lambdaFunctionName(),
+		validationErr := ensureValidSignature(eachLambda.userSuppliedFunctionName,
 			eachLambda.handlerSymbol)
 		if validationErr != nil {
 			errorText = append(errorText, validationErr.Error())
