@@ -24,6 +24,7 @@
 
 - :warning: **BREAKING**
   - Removed `sparta.NewLambda` constructor
+  - Removed `sparta.NewServeMuxLambda` proxying function
   - Removed `sparta.LambdaFunction` type
   - `ContextKeyLambdaContext` is no longer published into the context. Prefer the official AWS [FromContext()](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#LambdaContext) function to access the AWS Go Lambda context.
   - Moved [DashboardDecorator](https://github.com/mweagle/SpartaXRay) to `decorators` namespace
