@@ -31,7 +31,9 @@ func TestAWSStepFunction(t *testing.T) {
 
 	// Add the state machine to the deployment...
 	workflowHooks := &sparta.WorkflowHooks{
-		ServiceDecorator: startMachine.StateMachineDecorator(),
+		ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
+			startMachine.StateMachineDecorator(),
+		},
 	}
 
 	// Test it...
