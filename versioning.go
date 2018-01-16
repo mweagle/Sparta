@@ -1,9 +1,9 @@
 package sparta
 
 import (
-	"github.com/Sirupsen/logrus"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 // LambdaVersioningDecorator returns a TemplateDecorator
@@ -20,10 +20,11 @@ func LambdaVersioningDecorator() TemplateDecorator {
 		template *gocf.Template,
 		context map[string]interface{},
 		logger *logrus.Logger) error {
-		incrementer, incrementerErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
-			lambdaResourceName,
-			template,
-			logger)
+		incrementer, incrementerErr :=
+			spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
+				lambdaResourceName,
+				template,
+				logger)
 		if incrementerErr != nil {
 			return nil
 		}

@@ -2,20 +2,19 @@ package step
 
 import (
 	"bytes"
-	"fmt"
-	"net/http"
+	"context"
 	"os"
 	"testing"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	sparta "github.com/mweagle/Sparta"
+	"github.com/sirupsen/logrus"
 )
 
 func TestAWSStepFunction(t *testing.T) {
 	// Normal Sparta lambda function
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-		http.HandlerFunc(helloWorld),
+		helloWorld,
 		sparta.IAMRoleDefinition{})
 
 	// // Create a Choice state
@@ -32,7 +31,9 @@ func TestAWSStepFunction(t *testing.T) {
 
 	// Add the state machine to the deployment...
 	workflowHooks := &sparta.WorkflowHooks{
-		ServiceDecorator: startMachine.StateMachineDecorator(),
+		ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
+			startMachine.StateMachineDecorator(),
+		},
 	}
 
 	// Test it...
@@ -60,12 +61,13 @@ func TestAWSStepFunction(t *testing.T) {
 }
 
 // Standard AWS λ function
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	logger.WithFields(logrus.Fields{
+func helloWorld(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	sparta.Logger().WithFields(logrus.Fields{
 		"Woot": "Found",
 	}).Warn("Lambda called")
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, `{"hello" : "world"}`)
+	return map[string]interface{}{
+		"hello": "world",
+	}, nil
 }

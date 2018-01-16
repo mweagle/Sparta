@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 // StateError is the reserved type used for AWS Step function error names
@@ -841,9 +841,12 @@ func NewTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *TaskState {
 		ts.lambdaLogicalResourceName = lambdaResourceName
 		return nil
 	}
+	// Make sure this Lambda decorator is included in the list of existing decorators
+
 	// If there already is a decorator, then save it...
 	ts.preexistingDecorator = lambdaFn.Decorator
-	ts.lambdaFn.Decorator = ts.LambdaDecorator
+	ts.lambdaFn.Decorators = append(ts.lambdaFn.Decorators,
+		sparta.TemplateDecoratorHookFunc(ts.LambdaDecorator))
 	return ts
 }
 
@@ -1383,7 +1386,7 @@ func (sm *StateMachine) validate() []error {
 
 // StateMachineDecorator is the hook exposed by the StateMachine
 // to insert the AWS Step function into the CloudFormation template
-func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHook {
+func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc {
 	return func(context map[string]interface{},
 		serviceName string,
 		template *gocf.Template,

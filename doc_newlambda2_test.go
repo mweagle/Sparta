@@ -1,15 +1,23 @@
 package sparta
 
 import (
+	"context"
 	"fmt"
-	"net/http"
+
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
-func lambdaHelloWorld2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+func lambdaHelloWorld2(ctx context.Context,
+	props map[string]interface{}) error {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID": lambdaCtx.AwsRequestID,
+	}).Info("Lambda event")
+	Logger().Info("Event received")
+	return nil
 }
-
-func ExampleNewLambda_iAMRoleDefinition() {
+func ExampleHandleAWSLambda_iAMRoleDefinition() {
 	roleDefinition := IAMRoleDefinition{}
 	roleDefinition.Privileges = append(roleDefinition.Privileges, IAMRolePrivilege{
 		Actions: []string{"s3:GetObject",
@@ -17,7 +25,7 @@ func ExampleNewLambda_iAMRoleDefinition() {
 		Resource: "arn:aws:s3:::*",
 	})
 	helloWorldLambda := HandleAWSLambda(LambdaName(lambdaHelloWorld2),
-		http.HandlerFunc(lambdaHelloWorld2),
+		lambdaHelloWorld2,
 		IAMRoleDefinition{})
 	if nil != helloWorldLambda {
 		fmt.Printf("Failed to create new Lambda function")

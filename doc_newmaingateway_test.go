@@ -1,26 +1,24 @@
 package sparta
 
 import (
-	"fmt"
-	"io/ioutil"
+	"context"
 	"net/http"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 
-func echoAPIGatewayEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-	bodyData, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-		"Event":     string(bodyData),
-	}).Debug("Request received")
-	fmt.Fprintf(w, "Hello World!")
+func echoAPIGatewayEvent(ctx context.Context,
+	props map[string]interface{}) error {
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID":  lambdaCtx.AwsRequestID,
+		"Properties": props,
+	}).Info("Lambda event")
+	return nil
 }
 
 // Should be main() in your application
@@ -33,7 +31,7 @@ func ExampleMain_apiGateway() {
 
 	// Create a lambda function
 	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayEvent),
-		http.HandlerFunc(echoAPIGatewayEvent),
+		echoAPIGatewayEvent,
 		IAMRoleDefinition{})
 
 	// Associate a URL path component with the Lambda function

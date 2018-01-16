@@ -19,7 +19,6 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
@@ -28,6 +27,7 @@ import (
 	"github.com/briandowns/spinner"
 	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
@@ -660,7 +660,9 @@ func WaitForStackOperationComplete(stackID string,
 					defer cliSpinner.Stop()
 					cliSpinnerStarted = true
 				}
-				spinnerText := fmt.Sprintf(" %s (Initiated: %s)", pollingMessage, humanize.Time(startTime))
+				spinnerText := fmt.Sprintf(" %s (requested: %s)",
+					pollingMessage,
+					humanize.Time(startTime))
 				cliSpinner.Suffix = spinnerText
 			}
 		}
@@ -895,6 +897,7 @@ func ConvergeStackState(serviceName string,
 	tags map[string]string,
 	startTime time.Time,
 	awsSession *session.Session,
+	outputsDivider string,
 	logger *logrus.Logger) (*cloudformation.Stack, error) {
 
 	awsCloudFormation := cloudformation.New(awsSession)
@@ -1021,7 +1024,7 @@ func ConvergeStackState(serviceName string,
 		return resourceStats[i].elapsed > resourceStats[j].elapsed
 	})
 	// Output the sorted time it took to create the necessary resources...
-	logger.Info("CloudFormation provisioning details")
+	logger.Info("CloudFormation provisioning metrics:")
 	for _, eachResourceStat := range resourceStats {
 		logger.WithFields(logrus.Fields{
 			"Resource": eachResourceStat.logicalResourceID,
@@ -1032,15 +1035,16 @@ func ConvergeStackState(serviceName string,
 
 	if nil != convergeResult.stackInfo.Outputs {
 		// Add a nice divider if there are Stack specific output
-		logger.Info("")
+		logger.Info(outputsDivider)
 		logger.Info("Stack Outputs")
+		logger.Info(outputsDivider)
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.WithFields(logrus.Fields{
 				"Value":       aws.StringValue(eachOutput.OutputValue),
 				"Description": aws.StringValue(eachOutput.Description),
 			}).Info(fmt.Sprintf("%s", aws.StringValue(eachOutput.OutputKey)))
 		}
-		logger.Info("")
+		logger.Info(outputsDivider)
 	}
 	return convergeResult.stackInfo, nil
 }

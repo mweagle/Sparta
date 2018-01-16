@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // Dynamically assigned discover function that is set by Main
@@ -77,7 +77,7 @@ func initializeDiscovery(logger *logrus.Logger) {
 		cachedDiscoveryInfo = &DiscoveryInfo{}
 
 		// Get the serialized discovery info the environment string
-		discoveryInfo := os.Getenv(spartaEnvVarDiscoveryInformation)
+		discoveryInfo := os.Getenv(envVarDiscoveryInformation)
 		decoded, decodedErr := base64.StdEncoding.DecodeString(discoveryInfo)
 		logger.WithFields(logrus.Fields{
 			"DecodeData":  string(decoded),

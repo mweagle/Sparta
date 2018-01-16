@@ -1,24 +1,26 @@
 package sparta
 
 import (
-	"net/http"
+	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/aws/aws-lambda-go/lambdacontext"
+	"github.com/sirupsen/logrus"
 )
 
-func cloudWatchEventProcessor(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(ContextKeyLambdaContext).(*LambdaContext)
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("Request received")
+func cloudWatchEventProcessor(ctx context.Context,
+	event map[string]interface{}) (map[string]interface{}, error) {
 
-	logger.Info("CloudWatch Event received")
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
+	Logger().WithFields(logrus.Fields{
+		"RequestID": lambdaCtx.AwsRequestID,
+	}).Info("Request received")
+	Logger().Info("CloudWatch Event received")
+	return nil, nil
 }
 
 func ExampleCloudWatchEventsPermission() {
 	cloudWatchEventsLambda := HandleAWSLambda(LambdaName(cloudWatchEventProcessor),
-		http.HandlerFunc(cloudWatchEventProcessor),
+		cloudWatchEventProcessor,
 		IAMRoleDefinition{})
 
 	cloudWatchEventsPermission := CloudWatchEventsPermission{}
@@ -32,7 +34,8 @@ func ExampleCloudWatchEventsPermission() {
 			"detail-type": []string{"EC2 Instance State-change Notification"},
 		},
 	}
-	cloudWatchEventsLambda.Permissions = append(cloudWatchEventsLambda.Permissions, cloudWatchEventsPermission)
+	cloudWatchEventsLambda.Permissions = append(cloudWatchEventsLambda.Permissions,
+		cloudWatchEventsPermission)
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, cloudWatchEventsLambda)
 	Main("CloudWatchLogs", "Registers for CloudWatch Logs", lambdaFunctions, nil, nil)

@@ -1,22 +1,19 @@
 package sparta
 
-import (
-	"fmt"
-	"net/http"
-)
+import "context"
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
 // Should be main() in your application
 
-func mainHelloWorld(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello World!")
+func mainHelloWorld(ctx context.Context) (string, error) {
+	return "Hello World!", nil
 }
 
 func ExampleMain_basic() {
 	var lambdaFunctions []*LambdaAWSInfo
 	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
-		http.HandlerFunc(mainHelloWorld),
+		mainHelloWorld,
 		IAMRoleDefinition{})
 
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)

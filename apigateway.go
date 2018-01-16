@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/apigateway"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 /*
@@ -37,7 +37,7 @@ import (
   }
 */
 
-var defaultCORSHeaders = map[string]string{
+var defaultCORSHeaders = map[string]interface{}{
 	"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
 	"Access-Control-Allow-Methods": "*",
 	"Access-Control-Allow-Origin":  "*",
@@ -51,7 +51,8 @@ const (
 )
 
 func corsMethodResponseParams(api *API) map[string]bool {
-	var userDefinedHeaders map[string]string
+
+	var userDefinedHeaders map[string]interface{}
 	if api != nil &&
 		api.CORSOptions != nil {
 		userDefinedHeaders = api.CORSOptions.Headers
@@ -67,8 +68,9 @@ func corsMethodResponseParams(api *API) map[string]bool {
 	return responseParams
 }
 
-func corsIntegrationResponseParams(api *API) map[string]string {
-	var userDefinedHeaders map[string]string
+func corsIntegrationResponseParams(api *API) map[string]interface{} {
+
+	var userDefinedHeaders map[string]interface{}
 	if api != nil &&
 		api.CORSOptions != nil {
 		userDefinedHeaders = api.CORSOptions.Headers
@@ -76,10 +78,18 @@ func corsIntegrationResponseParams(api *API) map[string]string {
 	if len(userDefinedHeaders) <= 0 {
 		userDefinedHeaders = defaultCORSHeaders
 	}
-	responseParams := make(map[string]string)
+	responseParams := make(map[string]interface{})
 	for eachHeader, eachHeaderValue := range userDefinedHeaders {
 		keyName := fmt.Sprintf("method.response.header.%s", eachHeader)
-		responseParams[keyName] = fmt.Sprintf("'%s'", eachHeaderValue)
+		switch headerVal := eachHeaderValue.(type) {
+		case *gocf.StringExpr:
+			responseParams[keyName] = gocf.Join("",
+				gocf.String("'"),
+				headerVal.String(),
+				gocf.String("'"))
+		default:
+			responseParams[keyName] = fmt.Sprintf("'%s'", eachHeaderValue)
+		}
 	}
 	return responseParams
 }
@@ -203,14 +213,19 @@ func corsOptionsGatewayMethod(api *API, restAPIID gocf.Stringable, resourceID go
 	return corsMethod
 }
 
-func apiStageInfo(apiName string, stageName string, session *session.Session, noop bool, logger *logrus.Logger) (*apigateway.Stage, error) {
+func apiStageInfo(apiName string,
+	stageName string,
+	session *session.Session,
+	noop bool,
+	logger *logrus.Logger) (*apigateway.Stage, error) {
+
 	logger.WithFields(logrus.Fields{
 		"APIName":   apiName,
 		"StageName": stageName,
-	}).Info("Checking current APIGateway stage status")
+	}).Info("Checking current API Gateway stage status")
 
 	if noop {
-		logger.Info("Bypassing APIGateway check to -n/-noop command line argument")
+		logger.Info(noopMessage("API Gateway check"))
 		return nil, nil
 	}
 
@@ -369,9 +384,9 @@ type Response struct {
 // IntegrationResponse proxies the AWS SDK's IntegrationResponse data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway/#IntegrationResponse
 type IntegrationResponse struct {
-	Parameters       map[string]string `json:",omitempty"`
-	SelectionPattern string            `json:",omitempty"`
-	Templates        map[string]string `json:",omitempty"`
+	Parameters       map[string]interface{} `json:",omitempty"`
+	SelectionPattern string                 `json:",omitempty"`
+	Templates        map[string]string      `json:",omitempty"`
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -453,7 +468,7 @@ type CORSOptions struct {
 	// Headers represent the CORS headers that should be used for an OPTIONS
 	// preflight request. These should be of the form key-value as in:
 	// "Access-Control-Allow-Headers"="Content-Type,X-Amz-Date,Authorization,X-Api-Key"
-	Headers map[string]string
+	Headers map[string]interface{}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -551,7 +566,7 @@ func (api *API) export(serviceName string,
 		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm", eachResourceMethodKey)
 		lambdaInvokePermission := &gocf.LambdaPermission{
 			Action:       gocf.String("lambda:InvokeFunction"),
-			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
+			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
 			Principal:    gocf.String(APIGatewayPrincipal),
 		}
 		template.AddResource(apiGatewayPermissionResourceName, lambdaInvokePermission)
@@ -590,7 +605,7 @@ func (api *API) export(serviceName string,
 						gocf.String("arn:aws:apigateway:"),
 						gocf.Ref("AWS::Region"),
 						gocf.String(":lambda:path/2015-03-31/functions/"),
-						gocf.GetAtt(eachResourceDef.parentLambda.logicalName(), "Arn"),
+						gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
 						gocf.String("/invocations")),
 				},
 			}
@@ -623,13 +638,18 @@ func (api *API) export(serviceName string,
 	if nil != api.stage {
 		// Is the stack already deployed?
 		stageName := api.stage.name
-		stageInfo, stageInfoErr := apiStageInfo(api.name, stageName, session, noop, logger)
+		stageInfo, stageInfoErr := apiStageInfo(api.name,
+			stageName,
+			session,
+			noop,
+			logger)
 		if nil != stageInfoErr {
 			return stageInfoErr
 		}
 		if nil == stageInfo {
 			// Use a stable identifier so that we can update the existing deployment
-			apiDeploymentResName := CloudFormationResourceName("APIGatewayDeployment", serviceName)
+			apiDeploymentResName := CloudFormationResourceName("APIGatewayDeployment",
+				serviceName)
 			apiDeployment := &gocf.APIGatewayDeployment{
 				Description: gocf.String(api.stage.Description),
 				RestAPIID:   apiGatewayRestAPIID.String(),
@@ -640,10 +660,12 @@ func (api *API) export(serviceName string,
 				},
 			}
 			if api.stage.CacheClusterEnabled {
-				apiDeployment.StageDescription.CacheClusterEnabled = gocf.Bool(api.stage.CacheClusterEnabled)
+				apiDeployment.StageDescription.CacheClusterEnabled =
+					gocf.Bool(api.stage.CacheClusterEnabled)
 			}
 			if api.stage.CacheClusterSize != "" {
-				apiDeployment.StageDescription.CacheClusterSize = gocf.String(api.stage.CacheClusterSize)
+				apiDeployment.StageDescription.CacheClusterSize =
+					gocf.String(api.stage.CacheClusterSize)
 			}
 			deployment := template.AddResource(apiDeploymentResName, apiDeployment)
 			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
@@ -652,6 +674,9 @@ func (api *API) export(serviceName string,
 			newDeployment := &gocf.APIGatewayDeployment{
 				Description: gocf.String("Sparta deploy"),
 				RestAPIID:   apiGatewayRestAPIID.String(),
+			}
+			if stageInfo.StageName != nil {
+				newDeployment.StageName = gocf.String(*stageInfo.StageName)
 			}
 			// Use an unstable ID s.t. we can actually create a new deployment event.  Not sure how this
 			// is going to work with deletes...
@@ -779,7 +804,7 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 			regExp = ""
 		}
 		method.Integration.Responses[i] = &IntegrationResponse{
-			Parameters: make(map[string]string),
+			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
 				"application/json": "",
 				"text/*":           "",

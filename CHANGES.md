@@ -1,5 +1,77 @@
 # Change Notes
 
+# v1.0.0
+
+## 🎉 AWS Lambda for Go Support 🎉
+
+  - Sparta Go function signature has been changed to **ONLY** support the official AWS Lambda Go signatures
+
+    - `func ()`
+    - `func () error`
+    - `func (TIn) error`
+    - `func () (TOut, error)`
+    - `func (context.Context) error`
+    - `func (context.Context, TIn) error`
+    - `func (context.Context) (TOut, error)`
+    - `func (context.Context, TIn) (TOut, error)`
+
+  - See the  lambda.Start [docs](https://godoc.org/github.com/aws/aws-lambda-go/lambda#Start) or the related [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
+  - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, a function pointer that satisfies one of the supported signatures.
+  - Providing an invalid signature such as `func() string` will produce a `provision` time error as in:
+    ```
+    Error: Invalid lambda returns: Hello World. Error: handler returns a single value, but it does not implement error
+    ```
+
+- :warning: **BREAKING**
+  - Removed `sparta.NewLambda` constructor
+  - Removed `sparta.NewServeMuxLambda` proxying function
+  - Removed `sparta.LambdaFunction` type
+  - `ContextKeyLambdaContext` is no longer published into the context. Prefer the official AWS [FromContext()](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#LambdaContext) function to access the AWS Go Lambda context.
+  - Moved [DashboardDecorator](https://github.com/mweagle/SpartaXRay) to `decorators` namespace
+  - Removed `explore` command line option as proxying tier is no longer supported
+  - Changed all `logrus` imports to proper [lowercase format](https://github.com/sirupsen/logrus#logrus-)
+
+- :checkered_flag: **CHANGES**
+  - All decorators are now implemented as slices.
+    - Existing single-valued fields remain supported, but deprecated
+    - There are convenience types to adapt free functions to their `*Handler` interface versions:
+      - `TemplateDecoratorHookFunc`
+      - `WorkflowHookFunc`
+      - `ArchiveHookFunc`
+      - `ServiceDecoratorHookFunc`
+      - `RollbackHookFunc`
+  - Added `CodeDeployServiceUpdateDecorator` to support [safe AWS Lambda deploys](https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst)
+    - Safe lambda deploys are implemented via [ServiceDecoratorHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks)
+    - See [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) for a complete example
+  - Added **requestID** and **lambdaARN** request-scoped [*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) to `context` argument.
+    - This can be accessed as in:
+    ```
+      contextLogger, contextLoggerOk := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+	    if contextLoggerOk {
+		    contextLogger.Info("Request scoped log")
+      }
+    ```
+    - The existing `*logrus.Logger` entry is also available in the `context` via:
+    ```
+    	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+    ```
+  - [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) now accepts variadic parameters to limit how many API Gateway integration mappings are defined
+  - Added `SupportedRequestContentTypes` to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) to limit API Gateway generated content.
+  - Added `apiGateway.CORSOptions` field to configure _CORS_ settings
+  - Added `Add S3Site.CloudFormationS3ResourceName()`
+    - This value can be used to scope _CORS_ accesss to a dynamoc S3 website as in:
+    ```
+    apiGateway.CORSOptions = &sparta.CORSOptions{
+      Headers: map[string]interface{}{
+        "Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(),
+        "WebsiteURL"),
+      }
+	  }
+    ```
+    - Improved CLI usability in consistency of named outputs, formatting.
+- :bug:  **FIXED**
+  - Fix latent bug where `provision` would not consistently create new [API Gateway Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/stages.html) events.
+
 ## v0.30.1
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**

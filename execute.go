@@ -1,60 +1,39 @@
+// +build !lambdabinary
+
 package sparta
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-	"path"
-	"time"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
-
-// Port used for HTTP proxying communication
-const defaultHTTPPort = 9999
 
 // Execute creates an HTTP listener to dispatch execution. Typically
 // called via Main() via command line arguments.
-func Execute(lambdaAWSInfos []*LambdaAWSInfo, port int, parentProcessPID int, logger *logrus.Logger) error {
-	validationErr := validateSpartaPreconditions(lambdaAWSInfos, logger)
-	if validationErr != nil {
-		return validationErr
-	}
+func Execute(serviceName string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	port int,
+	parentProcessPID int,
+	logger *logrus.Logger) error {
+	// Execute no longer supported in non AWS binaries...
+	return fmt.Errorf("Execute not supported outside of AWS Lambda environment")
+}
 
-	if port <= 0 {
-		port = defaultHTTPPort
-	}
-
-	// Log any info when we start up...
-	platformLogSysInfo(logger)
-
-	// Startup the server...
-	server := &http.Server{
-		Addr:    fmt.Sprintf(":%d", port),
-		Handler: NewServeMuxLambda(lambdaAWSInfos, logger),
-		// Use maximum Lambda timeout
-		ReadTimeout:  5 * time.Minute,
-		WriteTimeout: 5 * time.Minute,
-	}
-	logger.WithFields(logrus.Fields{
-		"ParentPID": parentProcessPID,
-	}).Debug("Signaling parent process")
-
-	if 0 != parentProcessPID {
-		platformKill(parentProcessPID)
-	}
-	binaryName := path.Base(os.Args[0])
-	logger.WithFields(logrus.Fields{
-		"URL": fmt.Sprintf("http://localhost:%d", port),
-	}).Debug(fmt.Sprintf("Starting %s server", binaryName))
-
-	err := server.ListenAndServe()
-	if err != nil {
-		logger.WithFields(logrus.Fields{
-			"Error": err.Error(),
-		}).Error("Failed to launch server")
-		return err
-	}
-
-	return nil
+// awsLambdaFunctionName returns the name of the function, which
+// is set in the CloudFormation template that is published
+// into the container as `AWS_LAMBDA_FUNCTION_NAME`. Rather
+// than publish custom vars which are editable in the Console,
+// tunneling this value through allows Sparta to leverage the
+// built in env vars.
+func awsLambdaFunctionName(serviceName string,
+	internalFunctionName string) string {
+	// Ok, so we need to scope the functionname with the StackName, otherwise
+	// there will be collisions in the account. So how to publish
+	// the stack name into the awsbinary?
+	// How about
+	// Linker flags would be nice...sparta.StampedServiceName ?
+	awsLambdaName := fmt.Sprintf("%s-%s",
+		serviceName,
+		internalFunctionName)
+	return sanitizedName(awsLambdaName)
 }

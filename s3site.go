@@ -1,3 +1,5 @@
+// +build !lambdabinary
+
 package sparta
 
 import (
@@ -5,14 +7,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mweagle/cloudformationresources"
-
-	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	gocf "github.com/mweagle/go-cloudformation"
-
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
+	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -30,27 +30,12 @@ const (
 // Need to create the S3 target bucket
 // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putBucketWebsite-property
 
-func stableCloudformationResourceName(prefix string) string {
-	return CloudFormationResourceName(prefix, prefix)
-}
-
-// S3Site provisions a new, publicly available S3Bucket populated by the
-// contents of the resources directory.
-// http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/quickref-s3.html#scenario-s3-bucket-website-customdomain
-type S3Site struct {
-	// Directory or filepath (uncompressed) of contents to use to initialize
-	// S3 bucket hosting site.
-	resources string
-	// If nil, defaults to ErrorDocument: error.html and IndexDocument: index.html
-	WebsiteConfiguration *s3.WebsiteConfiguration
-}
-
 // export marshals the API data to a CloudFormation compatible representation
 func (s3Site *S3Site) export(serviceName string,
+	binaryName string,
 	S3Bucket string,
 	S3Key string,
 	S3ResourcesKey string,
-	useCGO bool,
 	apiGatewayOutputs map[string]*gocf.Output,
 	roleNameMap map[string]*gocf.StringExpr,
 	template *gocf.Template,
@@ -83,7 +68,7 @@ func (s3Site *S3Site) export(serviceName string,
 		AccessControl:        gocf.String("PublicRead"),
 		WebsiteConfiguration: s3WebsiteConfig,
 	}
-	s3BucketResourceName := stableCloudformationResourceName("Site")
+	s3BucketResourceName := s3Site.CloudFormationS3ResourceName()
 	cfResource := template.AddResource(s3BucketResourceName, s3Bucket)
 	cfResource.DeletionPolicy = "Delete"
 
@@ -182,28 +167,31 @@ func (s3Site *S3Site) export(serviceName string,
 	// dynamically provisioned IAM policy.  This is similar to what happens in
 	// ensureCustomResourceHandler, but due to the more complex IAM rules
 	// there's a bit of duplication
-	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
+	//	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
 	logger.WithFields(logrus.Fields{
-		"CustomResourceType": cloudformationresources.ZipToS3Bucket,
-		"ScriptExport":       handlerName,
+		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
-	runtimeName := gocf.String(NodeJSVersion)
-	if useCGO {
-		runtimeName = gocf.String(PythonVersion)
-	}
-
+	lambdaFunctionName := awsLambdaFunctionName(serviceName,
+		cfCustomResources.ZipToS3Bucket)
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
 			S3Key:    gocf.String(S3Key),
 		},
-		Description: gocf.String(customResourceDescription(serviceName, "S3 static site")),
-		Handler:     gocf.String(handlerName),
-		Role:        iamRoleRef,
-		Runtime:     runtimeName,
-		MemorySize:  gocf.Integer(256),
-		Timeout:     gocf.Integer(180),
+		Description: gocf.String(customResourceDescription(serviceName,
+			"S3 static site")),
+		Handler:      gocf.String(binaryName),
+		Role:         iamRoleRef,
+		Runtime:      gocf.String(GoLambdaVersion),
+		MemorySize:   gocf.Integer(256),
+		Timeout:      gocf.Integer(180),
+		FunctionName: gocf.String(lambdaFunctionName),
+		Environment: &gocf.LambdaFunctionEnvironment{
+			Variables: map[string]interface{}{
+				envVarLogLevel: logger.Level.String(),
+			},
+		},
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
@@ -213,11 +201,14 @@ func (s3Site *S3Site) export(serviceName string,
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
 	// actually populate the S3 with content
 	customResourceName := CloudFormationResourceName("S3SiteBuilder")
-	newResource, err := newCloudFormationResource(cloudformationresources.ZipToS3Bucket, logger)
+	newResource, err := newCloudFormationResource(cfCustomResources.ZipToS3Bucket, logger)
 	if nil != err {
 		return err
 	}
-	zipResource := newResource.(*cloudformationresources.ZipToS3BucketResource)
+	zipResource, zipResourceOK := newResource.(*cfCustomResources.ZipToS3BucketResource)
+	if !zipResourceOK {
+		return fmt.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
+	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
 	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)
 	zipResource.SrcBucket = gocf.String(S3Bucket)

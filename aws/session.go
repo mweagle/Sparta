@@ -1,10 +1,10 @@
 package aws
 
 import (
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/sirupsen/logrus"
 )
 
 type logrusProxy struct {
@@ -70,6 +70,5 @@ func NewSessionWithConfigLevel(awsConfig *aws.Config,
 		"Name":    aws.SDKName,
 		"Version": aws.SDKVersion,
 	}).Debug("AWS SDK Info")
-
 	return sess
 }

@@ -1,4 +1,4 @@
-package sparta
+package decorator
 
 import (
 	"bytes"
@@ -6,10 +6,11 @@ import (
 
 	"regexp"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/aws/aws-sdk-go/aws/session"
+	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -40,7 +41,7 @@ type widgetExtents struct {
 // LambdaTemplateData is the mapping of Sparta public LambdaAWSInfo together
 // with the CloudFormationResource name this resource uses
 type LambdaTemplateData struct {
-	LambdaAWSInfo *LambdaAWSInfo
+	LambdaAWSInfo *sparta.LambdaAWSInfo
 	ResourceName  string
 }
 
@@ -127,7 +128,8 @@ var templateFuncMap = template.FuncMap{
 
 // DashboardDecorator returns a ServiceDecoratorHook function that
 // can be attached the workflow to create a dashboard
-func DashboardDecorator(lambdaAWSInfo []*LambdaAWSInfo, timeSeriesPeriod int) ServiceDecoratorHook {
+func DashboardDecorator(lambdaAWSInfo []*sparta.LambdaAWSInfo,
+	timeSeriesPeriod int) sparta.ServiceDecoratorHookFunc {
 	return func(context map[string]interface{},
 		serviceName string,
 		cfTemplate *gocf.Template,
@@ -141,12 +143,12 @@ func DashboardDecorator(lambdaAWSInfo []*LambdaAWSInfo, timeSeriesPeriod int) Se
 		for index, eachLambda := range lambdaAWSInfo {
 			lambdaFunctions[index] = &LambdaTemplateData{
 				LambdaAWSInfo: eachLambda,
-				ResourceName:  eachLambda.logicalName(),
+				ResourceName:  eachLambda.LogicalResourceName(),
 			}
 		}
 		dashboardTemplateData := &DashboardTemplateData{
-			SpartaVersion:    SpartaVersion,
-			SpartaGitHash:    SpartaGitHash,
+			SpartaVersion:    sparta.SpartaVersion,
+			SpartaGitHash:    sparta.SpartaGitHash,
 			LambdaFunctions:  lambdaFunctions,
 			TimeSeriesPeriod: timeSeriesPeriod,
 			Extents: widgetExtents{
@@ -198,7 +200,7 @@ func DashboardDecorator(lambdaAWSInfo []*LambdaAWSInfo, timeSeriesPeriod int) Se
 		dashboardResource := gocf.CloudWatchDashboard{}
 		dashboardResource.DashboardBody = templateExpr
 		dashboardResource.DashboardName = gocf.String(serviceName)
-		dashboardName := CloudFormationResourceName("Dashboard", "Dashboard")
+		dashboardName := sparta.CloudFormationResourceName("Dashboard", "Dashboard")
 		cfTemplate.AddResource(dashboardName, &dashboardResource)
 
 		// Add the output

@@ -32,7 +32,7 @@ func TestDiscoveryInitialized(t *testing.T) {
 
 	// Encode the data, stuff it into the environment variable
 	encodedString := base64.StdEncoding.EncodeToString([]byte(discoveryDataNoTags))
-	os.Setenv(spartaEnvVarDiscoveryInformation, encodedString)
+	os.Setenv(envVarDiscoveryInformation, encodedString)
 
 	// Initialize the data
 	initializeDiscovery(logger)
