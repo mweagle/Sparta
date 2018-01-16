@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Profiling - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -556,8 +556,7 @@
   <span style="color:#4e9a06">&#34;heap&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#4e9a06">&#34;threadcreate&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#4e9a06">&#34;block&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#4e9a06">&#34;mutex&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+  <span style="color:#4e9a06">&#34;mutex&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>This function accepts the following arguments:</p>
 
@@ -618,15 +617,13 @@ INFO[0062] Creating code bundle                          Duration (s)=10
 INFO[0062] Uploading code                                Duration (s)=17
 INFO[0062] Ensuring CloudFormation stack                 Duration (s)=34
 INFO[0062] Total elapsed time                            Duration (s)=62
-INFO[0062] ──────────────────────────────────────────────────────────────</code></pre>
-</div>
+INFO[0062] ──────────────────────────────────────────────────────────────</code></pre></div>
 
 <h2 id="generating-load">Generating Load</h2>
 
 <p>While the <strong>SpartaPProf</strong> binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. <strong>SpartaPProf</strong> includes a simple tool (<em>cmd/load.go</em>) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the <em>ARN</em> of the lambda function listed as a <em>Stack output</em> in the log output:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;</code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;</code></pre></div>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ cd cmd
 $ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
@@ -640,8 +637,7 @@ Lambda response (6 of 500): &#34;Hi there 🌍&#34;
 Lambda response (7 of 500): &#34;Hi there 🌍&#34;
 Lambda response (8 of 500): &#34;Hi there 🌍&#34;
 Lambda response (9 of 500): &#34;Hi there 🌍&#34;
-...</code></pre>
-</div>
+...</code></pre></div>
 
 <p>After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
 
@@ -653,8 +649,7 @@ S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 2017-11-26 11:32:28    1.8 KiB sparta/pprof/SpartaPProf-mweagle/profiles/goroutine/0-goroutine.λ-3838737145763622974.profile
 2017-11-26 11:32:28    2.2 KiB sparta/pprof/SpartaPProf-mweagle/profiles/heap/0-heap.λ-3838737145763622974.profile
 2017-11-26 11:32:28   54 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/mutex/0-mutex.λ-3838737145763622974.profile
-2017-11-26 11:32:30  200 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/threadcreate/0-threadcreate.λ-3838737145763622974.profile</code></pre>
-</div>
+2017-11-26 11:32:30  200 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/threadcreate/0-threadcreate.λ-3838737145763622974.profile</code></pre></div>
 
 <h2 id="visualizing-profiles">Visualizing Profiles</h2>
 
@@ -679,8 +674,7 @@ INFO[0010] Refreshing cached profiles                    CacheRoot=.sparta/profi
 INFO[0010] Aggregating profile                           Input=&#34;.sparta/profiles/SpartaPProf-mweagle/heap/0-heap.λ-3838737145763622974.profile&#34;
 INFO[0010] Consolidating profiles                        ProfileCount=1
 INFO[0010] Creating consolidated profile                 ConsolidatedProfile=.sparta/heap.consolidated.profile
-INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.</code></pre>
-</div>
+INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.</code></pre></div>
 
 <p>The <code>profile</code> command downloads the published profiles and consolidates them into a single cached version in the <em>./sparta</em> directory with a name of the form:</p>
 
@@ -714,7 +708,7 @@ INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to ex
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

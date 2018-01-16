@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Local Testing - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -576,8 +576,7 @@
 		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="command-line-testing">Command Line Testing</h1>
 
@@ -595,8 +594,7 @@
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Where</span> <span style="color:#a40000">@</span><span style="color:#000">testEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">json</span> <span style="color:#000">is</span> <span style="color:#000">a</span> <span style="color:#000">local</span> <span style="color:#000">file</span> <span style="color:#000">with</span> <span style="color:#000">top</span> <span style="color:#000">level</span> <span style="color:#4e9a06">`context`</span> <span style="color:#000">and</span> <span style="color:#4e9a06">`event`</span> <span style="color:#000">properties</span><span style="color:#000;font-weight:bold">:</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> 	<span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;context&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span> <span style="color:#4e9a06">&#34;event&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{}}</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Signaling</span> <span style="color:#000">parent</span> <span style="color:#000">process</span>                      <span style="color:#000">ParentPID</span><span style="color:#000;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0</span>
-<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Starting</span> <span style="color:#000">main</span> <span style="color:#000">server</span>                          <span style="color:#000">URL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#4e9a06">&#34;http://localhost:9999&#34;</span></code></pre>
-</div></p>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Starting</span> <span style="color:#000">main</span> <span style="color:#000">server</span>                          <span style="color:#000">URL</span><span style="color:#000;font-weight:bold">=</span><span style="color:#4e9a06">&#34;http://localhost:9999&#34;</span></code></pre></div></p>
 
 <p>The <em>localhost</em> server mirrors the contract between the NodeJS proxying tier and the <strong>go</strong> binary that is used in the AWS Lambda execution environment.</p>
 
@@ -605,8 +603,7 @@
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#204a87;font-weight:bold">&#34;context&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
   <span style="color:#204a87;font-weight:bold">&#34;event&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></p>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>and post it:</p>
 
@@ -628,8 +625,7 @@
 &lt; Content-Type: text/plain<span style="color:#000;font-weight:bold">;</span> <span style="color:#000">charset</span><span style="color:#ce5c00;font-weight:bold">=</span>utf-8
 &lt;
 * Connection <span style="color:#8f5902;font-style:italic">#0 to host localhost left intact
-</span><span style="color:#8f5902;font-style:italic"></span>Hello World</code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span>Hello World</code></pre></div>
 
 <p>Our lambda function (which at this point is just an HTTP handler) was successfully called and responded successfully.</p>
 
@@ -675,8 +671,7 @@
 	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Status: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Status</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Headers: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">t</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Log</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Body: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">body</span><span style="color:#000;font-weight:bold">))</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The test function above has the following features:</p>
 
@@ -710,7 +705,7 @@
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

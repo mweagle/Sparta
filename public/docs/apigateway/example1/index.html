@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>API Gateway - Echo - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -552,16 +552,14 @@
 
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Set</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">stage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;prod&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MySpartaAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div></p>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MySpartaAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
 
@@ -573,8 +571,7 @@
   <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoS3Event</span><span style="color:#000;font-weight:bold">),</span>
   <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 <span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/hello/world/test&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
 
@@ -589,15 +586,13 @@
   <span style="color:#4e9a06">&#34;Simple Sparta application&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">spartaLambdaData</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">),</span>
   <span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">API</span> <span style="color:#000">Gateway</span> <span style="color:#000">URL</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">APIGatewayURL</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">https</span><span style="color:#ce5c00;font-weight:bold">:</span><span style="color:#8f5902;font-style:italic">//7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">Sparta</span> <span style="color:#000">Home</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">SpartaHome</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">https</span><span style="color:#ce5c00;font-weight:bold">:</span><span style="color:#8f5902;font-style:italic">//github.com/mweagle/Sparta
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">Sparta</span> <span style="color:#000">Version</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">SpartaVersion</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0.1.0</span></code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">Sparta</span> <span style="color:#000">Version</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">SpartaVersion</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0.1.0</span></code></pre></div>
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
 
@@ -628,8 +623,7 @@
 &lt; X-Amz-Cf-Id: rx1cVURKTlc3sla3v59Ekz1YMfVdcUWG1QwFKCFPjjLzHzmL_d6r_w==
 &lt;
 * Connection #0 to host 7ljn63rysd.execute-api.us-west-2.amazonaws.com left intact
-{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.211&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;bmik0opc3l&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,&#34;resourceId&#34;:&#34;mp2mrk&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}</code></pre>
-</div>
+{&#34;method&#34;:&#34;GET&#34;,&#34;body&#34;:{},&#34;headers&#34;:{&#34;Accept&#34;:&#34;*/*&#34;,&#34;CloudFront-Forwarded-Proto&#34;:&#34;https&#34;,&#34;CloudFront-Is-Desktop-Viewer&#34;:&#34;true&#34;,&#34;CloudFront-Is-Mobile-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-SmartTV-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Is-Tablet-Viewer&#34;:&#34;false&#34;,&#34;CloudFront-Viewer-Country&#34;:&#34;US&#34;,&#34;Via&#34;:&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;,&#34;X-Amz-Cf-Id&#34;:&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;,&#34;X-Forwarded-For&#34;:&#34;50.135.43.1, 54.240.158.211&#34;,&#34;X-Forwarded-Port&#34;:&#34;443&#34;,&#34;X-Forwarded-Proto&#34;:&#34;https&#34;},&#34;queryParams&#34;:{},&#34;pathParams&#34;:{},&#34;context&#34;:{&#34;apiId&#34;:&#34;bmik0opc3l&#34;,&#34;method&#34;:&#34;GET&#34;,&#34;requestId&#34;:&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;,&#34;resourceId&#34;:&#34;mp2mrk&#34;,&#34;resourcePath&#34;:&#34;/hello/world/test&#34;,&#34;stage&#34;:&#34;prod&#34;,&#34;identity&#34;:{&#34;accountId&#34;:&#34;&#34;,&#34;apiKey&#34;:&#34;&#34;,&#34;caller&#34;:&#34;&#34;,&#34;cognitoAuthenticationProvider&#34;:&#34;&#34;,&#34;cognitoAuthenticationType&#34;:&#34;&#34;,&#34;cognitoIdentityId&#34;:&#34;&#34;,&#34;cognitoIdentityPoolId&#34;:&#34;&#34;,&#34;sourceIp&#34;:&#34;50.135.43.1&#34;,&#34;user&#34;:&#34;&#34;,&#34;userAgent&#34;:&#34;curl/7.43.0&#34;,&#34;userArn&#34;:&#34;&#34;}}}</code></pre></div>
 
 <p>Pretty-printing the response body to make things more readable:</p>
 
@@ -673,8 +667,7 @@
       <span style="color:#204a87;font-weight:bold">&#34;userArn&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span>
     <span style="color:#000;font-weight:bold">}</span>
   <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
 
@@ -741,8 +734,7 @@ See
       &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
     }
   }
-}</code></pre>
-</div></p>
+}</code></pre></div></p>
 
 <p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
 
@@ -773,8 +765,7 @@ See
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
@@ -789,7 +780,7 @@ See
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

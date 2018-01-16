@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>API Gateway - Slack SlashCommand - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -593,8 +593,7 @@
 		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">responseBody</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>There are a couple of things to note in this code:</p>
 
@@ -606,8 +605,7 @@
 
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ok</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#000">ok</span> <span style="color:#000;font-weight:bold">{</span>
           <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">url</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseQuery</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">)</span>
-        </code></pre>
-</div></p></li>
+        </code></pre></div></p></li>
 
 <li><p>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</p>
 
@@ -615,8 +613,7 @@
         <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">{</span>
           <span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n&gt;&gt;&gt; %s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span><span style="color:#000;font-weight:bold">)</span>
         <span style="color:#000;font-weight:bold">}</span>
-        </code></pre>
-</div></li>
+        </code></pre></div></li>
 </ul></li>
 
 <li><p><strong>Custom Response</strong></p>
@@ -628,8 +625,7 @@
       		<span style="color:#4e9a06">&#34;response_type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;in_channel&#34;</span><span style="color:#000;font-weight:bold">,</span>
       		<span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">responseText</span><span style="color:#000;font-weight:bold">,</span>
       	<span style="color:#000;font-weight:bold">}</span>
-        </code></pre>
-</div></li>
+        </code></pre></div></li>
 </ul></li>
 </ol>
 
@@ -638,8 +634,7 @@
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaSlackbot&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaSlackbot&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
 
@@ -661,8 +656,7 @@
 		<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>A few items to note here:</p>
 
@@ -687,20 +681,17 @@
 		<span style="color:#000">spartaLambdaFunctions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">),</span>
 		<span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>and provision the service:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre></div>
 
 <p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
 INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre>
-</div>
+INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre></div>
 
 <h1 id="configure-slack">Configure Slack</h1>
 
@@ -750,8 +741,7 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run slack.go delete</code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run slack.go delete</code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
@@ -760,7 +750,7 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>FAQ - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -585,8 +585,7 @@
             <span style="color:#000;font-weight:bold">]</span>
         <span style="color:#000;font-weight:bold">}</span>
     <span style="color:#000;font-weight:bold">]</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>This set of privileges should be sufficient to deploy a Sparta application similar to <a href="https://github.com/mweagle/SpartaHelloWorld">SpartaHelloWorld</a>. Additional privileges may be required to enable different datasources.</p>
 
@@ -603,13 +602,11 @@
 
 <p>Your working directory should be the root of your Sparta application.  Eg, use</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre></div>
 
 <p>rather than</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000;font-weight:bold">.</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">some</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">child</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000;font-weight:bold">.</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">some</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">child</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre></div>
 
 <p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 
@@ -657,8 +654,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#8f5902;font-style:italic">// Setup the DashboardDecorator lambda hook
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">workflowHooks</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WorkflowHooks</span><span style="color:#000;font-weight:bold">{</span>
 	<span style="color:#000">ServiceDecorator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DashboardDecorator</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">60</span><span style="color:#000;font-weight:bold">),</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
 
@@ -705,8 +701,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 	<span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;LambdaErrorAlaram&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaErrorsAlarm</span><span style="color:#000;font-weight:bold">)</span>
 
 	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
 
@@ -746,8 +741,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">autoIncrementingInfo</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">autoIncrementingInfoErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddAutoIncrementingLambdaVersionResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div></p>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
 
@@ -758,8 +752,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
     <span style="color:#000">FunctionName</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
     <span style="color:#000">FunctionVersion</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">autoIncrementingInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CurrentVersionResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
 <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">aliasResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">aliasResource</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">aliasResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">aliasResource</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
 
@@ -778,7 +771,7 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

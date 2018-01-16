@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Custom Resources - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -562,8 +562,7 @@
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">CustomResourceFunction</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">requestType</span> <span style="color:#204a87;font-weight:bold">string</span>
                                   <span style="color:#000">stackID</span> <span style="color:#204a87;font-weight:bold">string</span>
                                   <span style="color:#000">properties</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}</span>
-                                  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+                                  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>where</p>
 
@@ -588,8 +587,7 @@
 		<span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Victory!&#34;</span><span style="color:#000;font-weight:bold">,</span>
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">results</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>This function always succeeds and returns a non-empty results map consisting of a single key (<code>CustomResourceResult</code>).</p>
 
@@ -627,8 +625,7 @@
 <span style="color:#000">cfResName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RequireCustomResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{},</span>
   <span style="color:#000">userDefinedCustomResource</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Since our custom resource function doesn&rsquo;t require any additional AWS resources, we provide an empty <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition">IAMRoleDefinition</a>.</p>
 
@@ -654,8 +651,7 @@
   <span style="color:#8f5902;font-style:italic">// Pass CustomResource outputs to the λ function
 </span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">resourceMetadata</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;CustomResource&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cfResName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time through a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">go-cloudformation</a> version of <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a>.</p>
 
@@ -684,14 +680,12 @@
   <span style="color:#204a87;font-weight:bold">&#34;level&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#204a87;font-weight:bold">&#34;msg&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Custom resource request&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#204a87;font-weight:bold">&#34;time&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2016-05-07T14:13:37Z&#34;</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>To lookup the output, the calling function might do something like:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
-<span style="color:#000">customResult</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceID</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">]</span></code></pre>
-</div>
+<span style="color:#000">customResult</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceID</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;CustomResourceResult&#34;</span><span style="color:#000;font-weight:bold">]</span></code></pre></div>
 
 <h2 id="wrapping-up">Wrapping Up</h2>
 
@@ -707,7 +701,7 @@
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
