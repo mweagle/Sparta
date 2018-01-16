@@ -15,7 +15,7 @@
     - `func (context.Context) (TOut, error)`
     - `func (context.Context, TIn) (TOut, error)`
 
-  - See the official [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
+  - See the  lambda.Start [docs](https://godoc.org/github.com/aws/aws-lambda-go/lambda#Start) or the related [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
   - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, a function pointer that satisfies one of the supported signatures.
   - Providing an invalid signature such as `func() string` will produce a `provision` time error as in:
     ```
