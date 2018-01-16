@@ -18,12 +18,7 @@ import (
 )
 
 const (
-	nocolor = 0
-	red     = 31
-	green   = 32
-	yellow  = 33
-	blue    = 36
-	gray    = 37
+	red = 31
 )
 
 func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
@@ -146,14 +141,6 @@ type optionsDescribeStruct struct {
 }
 
 var optionsDescribe optionsDescribeStruct
-
-/******************************************************************************/
-// Explore options
-type optionsExploreStruct struct {
-	Port int `valid:"-"`
-}
-
-var optionsExplore optionsExploreStruct
 
 /******************************************************************************/
 // Profile options
