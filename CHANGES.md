@@ -6,14 +6,14 @@
 
   - Sparta Go function signature has been changed to **ONLY** support the official AWS Lambda Go signatures
 
-    * `func ()`
-    • `func () error`
-    • `func (TIn) error`
-    • `func () (TOut, error)`
-    • `func (context.Context) error`
-    • `func (context.Context, TIn) error`
-    • `func (context.Context) (TOut, error)`
-    • `func (context.Context, TIn) (TOut, error)`
+    - `func ()`
+    - `func () error`
+    - `func (TIn) error`
+    - `func () (TOut, error)`
+    - `func (context.Context) error`
+    - `func (context.Context, TIn) error`
+    - `func (context.Context) (TOut, error)`
+    - `func (context.Context, TIn) (TOut, error)`
 
   - See the official [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
   - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, supplying a valid function signature.
@@ -66,6 +66,7 @@
       }
 	  }
     ```
+    - Improved CLI usability in consistency of named outputs, formatting.
 - :bug:  **FIXED**
   - Fix latent bug where `provision` would not consistently create new [API Gateway Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/stages.html) events.
 
