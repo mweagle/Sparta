@@ -16,11 +16,11 @@
     - `func (context.Context, TIn) (TOut, error)`
 
   - See the official [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
-  - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, supplying a valid function signature.
+  - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, a function pointer that satisfies one of the supported signatures.
   - Providing an invalid signature will produce a `provision` time error as in:
-  ```
-  Error: Invalid lambda returns: Hello World. Error: handler returns a single value, but it does not implement error
-  ```
+    ```
+    Error: Invalid lambda returns: Hello World. Error: handler returns a single value, but it does not implement error
+    ```
 
 - :warning: **BREAKING**
   - Removed `sparta.NewLambda` constructor
