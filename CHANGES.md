@@ -25,7 +25,7 @@
 - :warning: **BREAKING**
   - Removed `sparta.NewLambda` constructor
   - Removed `sparta.LambdaFunction` type
-  - `ContextKeyLambdaContext` is no longer published into the context. Prefer the official AWS [FromContext](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#LambdaContext)to access the AWS Go Lambda context.
+  - `ContextKeyLambdaContext` is no longer published into the context. Prefer the official AWS [FromContext()](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#LambdaContext) function to access the AWS Go Lambda context.
   - Moved [DashboardDecorator](https://github.com/mweagle/SpartaXRay) to `decorators` namespace
   - Removed `explore` command line option as proxying tier is no longer supported
   - Changed all `logrus` imports to proper [lowercase format](https://github.com/sirupsen/logrus#logrus-)
@@ -45,7 +45,7 @@
   - Added **requestID** and **lambdaARN** request-scoped [*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) to `context` argument.
     - This can be accessed as in:
     ```
-    	contextLogger, contextLoggerOk := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+      contextLogger, contextLoggerOk := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 	    if contextLoggerOk {
 		    contextLogger.Info("Request scoped log")
       }
@@ -62,7 +62,8 @@
     ```
     apiGateway.CORSOptions = &sparta.CORSOptions{
       Headers: map[string]interface{}{
-        "Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(), "WebsiteURL"),
+        "Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(),
+        "WebsiteURL"),
       }
 	  }
     ```
