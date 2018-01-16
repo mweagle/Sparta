@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Hybrid Topologies - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -573,8 +573,7 @@
     <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ListenAndServe</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;:%d&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#000;font-weight:bold">},</span>
 <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
 
@@ -647,8 +646,7 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
 </span><span style="color:#8f5902;font-style:italic"></span>chown -R ubuntu:ubuntu /home/ubuntu
 
 <span style="color:#8f5902;font-style:italic"># Startup Supervisor
-</span><span style="color:#8f5902;font-style:italic"></span>service supervisor restart <span style="color:#ce5c00;font-weight:bold">||</span> service supervisor start</code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span>service supervisor restart <span style="color:#ce5c00;font-weight:bold">||</span> service supervisor start</code></pre></div>
 
 <p>The script uses the command line option (<code>command=$SPARTA_OMEGA_BINARY_PATH httpServer</code>) that was defined in the first step.</p>
 
@@ -660,8 +658,7 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
 
 <p>For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#000">POSTGRES_ADDRESS</span><span style="color:#ce5c00;font-weight:bold">={</span> <span style="color:#4e9a06">&#34;Fn::GetAtt&#34;</span> : <span style="color:#ce5c00;font-weight:bold">[</span> <span style="color:#4e9a06">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#4e9a06">&#34;Endpoint.Address&#34;</span> <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#000">POSTGRES_ADDRESS</span><span style="color:#ce5c00;font-weight:bold">={</span> <span style="color:#4e9a06">&#34;Fn::GetAtt&#34;</span> : <span style="color:#ce5c00;font-weight:bold">[</span> <span style="color:#4e9a06">&#34;{{ .DBInstanceResourceName }}&#34;</span> , <span style="color:#4e9a06">&#34;Endpoint.Address&#34;</span> <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">}</span></code></pre></div>
 
 <p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
 
@@ -800,8 +797,7 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
     <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">asgResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">asgResource</span><span style="color:#000;font-weight:bold">)</span>
     <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
   <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>There are a few things to point out in this function:</p>
 
@@ -812,15 +808,13 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
           <span style="color:#000">IpProtocol</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;tcp&#34;</span><span style="color:#000;font-weight:bold">),</span>
           <span style="color:#000">FromPort</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
           <span style="color:#000">ToPort</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span>
-        <span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></li>
+        <span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
 <li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">      <span style="color:#000">statements</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">statements</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">spartaIAM</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">PolicyStatement</span><span style="color:#000;font-weight:bold">{</span>
       <span style="color:#000">Effect</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
       <span style="color:#000">Action</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
       <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;arn:aws:s3:::%s/%s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">S3Key</span><span style="color:#000;font-weight:bold">)),</span>
-    <span style="color:#000;font-weight:bold">})</span></code></pre>
-</div></li>
+    <span style="color:#000;font-weight:bold">})</span></code></pre></div></li>
 <li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#8f5902;font-style:italic">// Now setup the properties map, expand the userdata, and attach it...
 </span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000">userDataProps</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
@@ -837,23 +831,20 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
       <span style="color:#8f5902;font-style:italic">// ...
 </span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">UserData</span><span style="color:#000;font-weight:bold">:</span>           <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Base64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">),</span>
       <span style="color:#8f5902;font-style:italic">// ...
-</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></li>
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
 <li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="http://gosparta.io/docs/application/custom_flags">custom flag</a> (not shown above):
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#8f5902;font-style:italic">// And add the SSHKeyName option to the provision step
 </span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Provision</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Flags</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">StringVarP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;key&#34;</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;k&#34;</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;SSH Key Name to use for EC2 instances&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+    <span style="color:#4e9a06">&#34;SSH Key Name to use for EC2 instances&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 This value is used as an input to the AutoScalingLaunchConfiguration value:
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#000">asgLaunchConfigurationResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AutoScalingLaunchConfiguration</span><span style="color:#000;font-weight:bold">{</span>
       <span style="color:#8f5902;font-style:italic">// ...
 </span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">KeyName</span><span style="color:#000;font-weight:bold">:</span>            <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">),</span>
       <span style="color:#8f5902;font-style:italic">// ...
-</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></li>
+</span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
 </ul>
 
 <h1 id="result">Result</h1>
@@ -876,8 +867,7 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 &lt; Content-Type: text/plain<span style="color:#000;font-weight:bold">;</span> <span style="color:#000">charset</span><span style="color:#ce5c00;font-weight:bold">=</span>utf-8
 &lt;
 * Connection <span style="color:#8f5902;font-style:italic">#0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
-</span><span style="color:#8f5902;font-style:italic"></span>Hello world from SpartaOmega!</code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span>Hello world from SpartaOmega!</code></pre></div>
 
 <h2 id="lambda-access">Lambda Access</h2>
 
@@ -900,7 +890,7 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

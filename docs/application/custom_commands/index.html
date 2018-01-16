@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Custom Application Commands - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -544,8 +544,7 @@
     <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ListenAndServe</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;:%d&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#000;font-weight:bold">},</span>
 <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
@@ -568,8 +567,7 @@ Flags:
   -l, --level string   Log level <span style="color:#ce5c00;font-weight:bold">[</span>panic, fatal, error, warn, info, debug<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
   -n, --noop           Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span>
 
-Use <span style="color:#4e9a06">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#204a87;font-weight:bold">for</span> more information about a command.</code></pre>
-</div></p>
+Use <span style="color:#4e9a06">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#204a87;font-weight:bold">for</span> more information about a command.</code></pre></div></p>
 
 <p>And you can query for user-command specific usage as in:</p>
 
@@ -581,13 +579,12 @@ Usage:
 
 Global Flags:
   -l, --level string   Log level <span style="color:#ce5c00;font-weight:bold">[</span>panic, fatal, error, warn, info, debug<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
-  -n, --noop           Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span></code></pre>
-</div></p>
+  -n, --noop           Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span></code></pre></div></p>
 
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

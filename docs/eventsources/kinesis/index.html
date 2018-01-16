@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Event Sources - Kinesis - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -544,8 +544,7 @@
 	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
 		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>For this sample all we&rsquo;re going to do is unmarshal the Kinesis <a href="http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually">event</a> to a Sparta <a href="https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event">kinesis event</a> and log the id to CloudWatch Logs:</p>
 
@@ -562,8 +561,7 @@
 			<span style="color:#4e9a06">&#34;EventID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventID</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Kinesis Event&#34;</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></p>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
 
@@ -573,8 +571,7 @@
 
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoKinesisEvent</span><span style="color:#000;font-weight:bold">),</span>
 	<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoKinesisEvent</span><span style="color:#000;font-weight:bold">),</span>
-	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre>
-</div></p>
+	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div></p>
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
@@ -588,8 +585,7 @@
     <span style="color:#000">StartingPosition</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;TRIM_HORIZON&#34;</span><span style="color:#000;font-weight:bold">),</span>
     <span style="color:#000">BatchSize</span><span style="color:#000;font-weight:bold">:</span>        <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Int64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">100</span><span style="color:#000;font-weight:bold">),</span>
     <span style="color:#000">Enabled</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Bool</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">),</span>
-  <span style="color:#000;font-weight:bold">})</span></code></pre>
-</div>
+  <span style="color:#000;font-weight:bold">})</span></code></pre></div>
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
 
@@ -614,7 +610,7 @@
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

@@ -104,7 +104,7 @@ Define the Lambda Function Our function will accept two params:
       
       <guid>http://gosparta.io/docs/application/commandline/</guid>
       <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
-var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil)  A compiled application provides several command line options which are available by providing the -h/--help option as in:
+var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil) A compiled application provides several command line options which are available by providing the -h/--help option as in:
 $ go run main.go --help Simple Sparta application that demonstrates core functionality Usage: main [command] Available Commands: delete Delete service describe Describe service execute Execute explore Interactively explore service help Help about any command provision Provision service version Sparta framework version Flags: -f, --format string Log format [text, json] (default &amp;#34;text&amp;#34;) -h, --help help for main --ldflags string Go linker string definition flags (https://golang.</description>
     </item>
     
@@ -288,7 +288,7 @@ Getting Started We&amp;rsquo;ll start with an empty lambda function and build up
       <description>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
 During development, configuration is typically done through environment variables:
  AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
-{ &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;, &amp;#34;Statement&amp;#34;: [ { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;cloudformation:DescribeStacks&amp;#34;, &amp;#34;cloudformation:CreateStack&amp;#34;, &amp;#34;cloudformation:CreateChangeSet&amp;#34;, &amp;#34;cloudformation:DescribeChangeSet&amp;#34;, &amp;#34;cloudformation:ExecuteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteStack&amp;#34;, &amp;#34;iam:GetRole&amp;#34;, &amp;#34;iam:DeleteRole&amp;#34;, &amp;#34;iam:DeleteRolePolicy&amp;#34;, &amp;#34;iam:PutRolePolicy&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;*&amp;#34; ] }, { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;s3:PutObject&amp;#34;, &amp;#34;s3:GetBucketVersioning&amp;#34;, &amp;#34;s3:DeleteObject&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&amp;#34; ] } ] }  This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld.</description>
+{ &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;, &amp;#34;Statement&amp;#34;: [ { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;cloudformation:DescribeStacks&amp;#34;, &amp;#34;cloudformation:CreateStack&amp;#34;, &amp;#34;cloudformation:CreateChangeSet&amp;#34;, &amp;#34;cloudformation:DescribeChangeSet&amp;#34;, &amp;#34;cloudformation:ExecuteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteStack&amp;#34;, &amp;#34;iam:GetRole&amp;#34;, &amp;#34;iam:DeleteRole&amp;#34;, &amp;#34;iam:DeleteRolePolicy&amp;#34;, &amp;#34;iam:PutRolePolicy&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;*&amp;#34; ] }, { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;s3:PutObject&amp;#34;, &amp;#34;s3:GetBucketVersioning&amp;#34;, &amp;#34;s3:DeleteObject&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&amp;#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld.</description>
     </item>
     
     <item>
@@ -350,7 +350,7 @@ This example will work through the SpartaConfig sample.</description>
       <guid>http://gosparta.io/docs/cgo/</guid>
       <description>Introduction The initial Sparta release supported running a normal Go binary alongside a NodeJS HTTP-based proxy.
 With Sparta v0.11.0 it&amp;rsquo;s possible to transform your Sparta application into a CGO-library proxied by a Python 3.6 ctypes interface. This provides significant cold-start &amp;amp; hot exeecution performance improvements.
-Requirements  Docker - Tested on OSX:  $ docker -v Docker version 17.03.1-ce, build c6d412)   Ability to build CGO libraries You MUST call cgo.</description>
+Requirements  Docker - Tested on OSX:  $ docker -v Docker version 17.03.1-ce, build c6d412)  Ability to build CGO libraries You MUST call cgo.</description>
     </item>
     
     <item>
@@ -405,7 +405,7 @@ Terms and Concepts At a high level, Sparta transforms a go binary&amp;rsquo;s re
       <guid>http://gosparta.io/docs/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>
@@ -442,7 +442,10 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a s
       <pubDate>Tue, 08 Mar 2016 21:07:13 +0100</pubDate>
       
       <guid>http://gosparta.io/</guid>
-      <description>A Go framework for AWS Lambda microservices  Unified Language Use a single Go codebase to define your microservice&#39;s:  Application logic AWS infrastructure Operational metrics Alert conditions Security policies   Complete AWS Ecosystem Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda event sources such as:  DynamoDB S3 Kinesis SNS SES CloudWatch Events CloudWatch Logs  Additionally, your service may provision any other CloudFormation supported resource and even your own CustomResources.</description>
+      <description>A Go framework for AWS Lambda microservices Documentation Updates
+Sparta documentation is currently being updated as part of officially supporting the AWS Lambda Go SDK. While the general examples and features outlined in this documentation are still valid, the specific lambda function signatures require changes.
+In the meantime, please see the Change Notes for the latest updates.
+ Matt (2018-01-15 08:36:50)    Unified Language Use a single Go codebase to define your microservice&#39;s:  Application logic AWS infrastructure Operational metrics Alert conditions Security policies   Complete AWS Ecosystem Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda event sources such as:  DynamoDB S3 Kinesis SNS SES CloudWatch Events CloudWatch Logs  Additionally, your service may provision any other CloudFormation supported resource and even your own CustomResources.</description>
     </item>
     
   </channel>

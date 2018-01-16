@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Sample Service - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -548,8 +548,7 @@
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
   <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Hello World!&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>This is a standard <a href="https://golang.org/pkg/net/http/#HandlerFunc">http.HandlerFunc</a> signature.</p>
 
@@ -595,8 +594,7 @@
 <span style="color:#000">helloWorldFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
   <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
-<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">helloWorldFn</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">helloWorldFn</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to register a new lambda target via <code>HandleAWSLambda</code>.  <code>HandleAWSLambda</code> accepts three parameters:</p>
 
@@ -618,8 +616,7 @@
             <span style="color:#4e9a06">&#34;Simple Sparta application that demonstrates core functionality&#34;</span><span style="color:#000;font-weight:bold">,</span>
             <span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
             <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
-            <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+            <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p><code>sparta.Main</code> accepts five parameters:</p>
 
@@ -677,8 +674,7 @@
     <span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="running-it">Running It</h1>
 
@@ -710,8 +706,7 @@
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0010</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Uploading</span> <span style="color:#000">code</span>                                <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0010</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Ensuring</span> <span style="color:#000">CloudFormation</span> <span style="color:#000">stack</span>                 <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0010</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Total</span> <span style="color:#000">elapsed</span> <span style="color:#000">time</span>                            <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">10</span>
-<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0010</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">------------------------------------------</span></code></pre>
-</div>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0010</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">------------------------------------------</span></code></pre></div>
 
 <p>Then open <em>graph.html</em> in your browser (also linked <a href="http://gosparta.io/images/overview/graph.html">here</a> ) to see what will be provisioned.</p>
 
@@ -746,8 +741,7 @@
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">005</span><span style="color:#0000cf;font-weight:bold">8</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Uploading</span> <span style="color:#000">code</span>                                <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">16</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">005</span><span style="color:#0000cf;font-weight:bold">8</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Ensuring</span> <span style="color:#000">CloudFormation</span> <span style="color:#000">stack</span>                 <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">32</span>
 <span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">005</span><span style="color:#0000cf;font-weight:bold">8</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Total</span> <span style="color:#000">elapsed</span> <span style="color:#000">time</span>                            <span style="color:#000">Duration</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">s</span><span style="color:#000;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">58</span>
-<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">005</span><span style="color:#0000cf;font-weight:bold">8</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">------------------------------------------</span></code></pre>
-</div></p>
+<span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">005</span><span style="color:#0000cf;font-weight:bold">8</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">------------------------------------------</span></code></pre></div></p>
 
 <p>Once the stack has been provisioned (<code>CREATE_COMPLETE</code>), login to the AWS console and navigate to the Lambda section.</p>
 
@@ -775,8 +769,7 @@ INFO[0000] ========================================
 INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.8.3 LinkFlags= Option=delete SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC=&#34;2017-10-03T13:21:19Z&#34;
 INFO[0000] ========================================
 INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
-INFO[0000] Delete request submitted                      Response=&#34;{\n\n}&#34;</code></pre>
-</div></p>
+INFO[0000] Delete request submitted                      Response=&#34;{\n\n}&#34;</code></pre></div></p>
 
 <h1 id="conclusion">Conclusion</h1>
 
@@ -789,7 +782,7 @@ INFO[0000] Delete request submitted                      Response=&#34;{\n\n}&#3
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>S3 Sites with CORS - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -554,8 +554,7 @@
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">))</span>
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>This lambda function simply sends back the content of the inbound event.  See the <a href="http://gosparta.io/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
 
@@ -564,14 +563,12 @@
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
 <p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHTML&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div></p>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHTML&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Enable CORS s.t. the S3 site can access the resources
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CORSEnabled</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span></code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CORSEnabled</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">true</span></code></pre></div>
 
 <p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
 
@@ -589,8 +586,7 @@
 		<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="define-the-s3-site">Define the S3 Site</h1>
 
@@ -625,8 +621,7 @@ typically points to a directory, which will be:</p>
 		<span style="color:#000">spartaLambdaFunctions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">),</span>
 		<span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#000">s3Site</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></p>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>which can be provisioned using the standard <a href="http://gosparta.io/docs/commandline">command line</a> option.</p>
 
@@ -637,8 +632,7 @@ INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=ht
 INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
 INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114</code></pre>
-</div></p>
+INFO[0114] Elapsed time        Seconds=114</code></pre></div></p>
 
 <p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
 
@@ -655,14 +649,13 @@ INFO[0114] Elapsed time        Seconds=114</code></pre>
   <span style="color:#204a87;font-weight:bold">&#34;Description&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;API Gateway URL&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#204a87;font-weight:bold">&#34;Value&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;</span>
  <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></li>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
 </ol>
 
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

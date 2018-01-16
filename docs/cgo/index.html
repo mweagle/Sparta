@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Python/cgo Support - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -545,8 +545,7 @@
 </ul>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">  $ docker -v
-  Docker version <span style="color:#0000cf;font-weight:bold">17</span>.03.1-ce, build c6d412<span style="color:#ce5c00;font-weight:bold">)</span></code></pre>
-</div>
+  Docker version <span style="color:#0000cf;font-weight:bold">17</span>.03.1-ce, build c6d412<span style="color:#ce5c00;font-weight:bold">)</span></code></pre></div>
 
 <ul>
 <li>Ability to build <a href="https://blog.golang.org/c-go-cgo">CGO</a> libraries</li>
@@ -596,8 +595,7 @@
 	<span style="color:#000;font-weight:bold">}</span>
   <span style="color:#8f5902;font-style:italic">// ================================================== //
 </span><span style="color:#8f5902;font-style:italic"></span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="after">After</h3>
 
@@ -635,13 +633,11 @@
 	<span style="color:#000;font-weight:bold">}</span>
   <span style="color:#8f5902;font-style:italic">// ================================================== //
 </span><span style="color:#8f5902;font-style:italic"></span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></p>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>You should see log output that includes a statement similar to:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> Building <span style="color:#4e9a06">`</span>cgo<span style="color:#4e9a06">`</span> library in Docker              <span style="color:#000">Args</span><span style="color:#ce5c00;font-weight:bold">=[</span>run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e <span style="color:#000">GOPATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/usr/src/gopath -e <span style="color:#000">GOOS</span><span style="color:#ce5c00;font-weight:bold">=</span>linux -e <span style="color:#000">GOARCH</span><span style="color:#ce5c00;font-weight:bold">=</span>amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode<span style="color:#ce5c00;font-weight:bold">=</span>c-shared -tags lambdabinary <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#000">Name</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloPythonCGOUSEast.lambda.so</code></pre>
-</div></p>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> Building <span style="color:#4e9a06">`</span>cgo<span style="color:#4e9a06">`</span> library in Docker              <span style="color:#000">Args</span><span style="color:#ce5c00;font-weight:bold">=[</span>run --rm -v /Users/mweagle/Documents/gopath:/usr/src/gopath -w /usr/src/gopath/src/github.com/mweagle/SpartaPython/cgo -e <span style="color:#000">GOPATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/usr/src/gopath -e <span style="color:#000">GOOS</span><span style="color:#ce5c00;font-weight:bold">=</span>linux -e <span style="color:#000">GOARCH</span><span style="color:#ce5c00;font-weight:bold">=</span>amd64 golang:1.8.1 go build -o SpartaHelloPythonCGOUSEast.lambda.so -tags lambdabinary linux  -buildmode<span style="color:#ce5c00;font-weight:bold">=</span>c-shared -tags lambdabinary <span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#000">Name</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloPythonCGOUSEast.lambda.so</code></pre></div></p>
 
 <h2 id="questions">Questions</h2>
 
@@ -649,22 +645,19 @@
 
 <p>The <code>cgo</code> variant of your Sparta application is proxied by a Python 3.6 handler. This handler provides access to the lambda credentials via:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">botocore.credentials</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">get_credentials</span></code></pre>
-</div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">botocore.credentials</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">get_credentials</span></code></pre></div>
 
 <p>Sparta makes these credentials available via <code>cgo.NewSession()</code> which returns a <a href="http://docs.aws.amazon.com/sdk-for-go/api/aws/session/">*session.Session</a> instance. This value can be supplied to AWS service <code>New</code> functions as in:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Create a APIGateway client from just a session.
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">svc</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apigateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cgo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewSession</span><span style="color:#000;font-weight:bold">())</span></code></pre>
-</div>
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">svc</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apigateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cgo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewSession</span><span style="color:#000;font-weight:bold">())</span></code></pre></div>
 
 <h3 id="how-does-sparta-determine-the-docker-image-for-the-cgo-build">How does Sparta determine the Docker image for the CGO build?</h3>
 
 <p>Sparta parses the output from your host machine to determine the container tag.</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go version
-go version go1.9.0 darwin/amd64</code></pre>
-</div>
+go version go1.9.0 darwin/amd64</code></pre></div>
 
 <h3 id="how-can-i-pass-environment-variables-to-the-docker-build">How can I pass environment variables to the Docker build</h3>
 
@@ -685,7 +678,7 @@ go version go1.9.0 darwin/amd64</code></pre>
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

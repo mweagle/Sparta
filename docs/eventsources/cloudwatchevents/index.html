@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Event Source - CloudWatch Events - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -557,8 +557,7 @@
 	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">([]</span><span style="color:#204a87">byte</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;CloudWatch event received!&#34;</span><span style="color:#000;font-weight:bold">))</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 Our lambda function doesn&rsquo;t need to do much with the event other than log it.</p>
 
 <h1 id="spartaIntegration">Sparta Integration</h1>
@@ -571,13 +570,11 @@ Our lambda function doesn&rsquo;t need to do much with the event other than log 
 
 	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">),</span>
 		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandlerFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">),</span>
-		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre>
-</div></p>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div></p>
 
 <p>The next step is to add a <code>CloudWatchEventsPermission</code> value that includes the two rule triggers.
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">cloudWatchEventsPermission</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">{}</span>
-<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">make</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div></p>
+<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">make</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>Our two rules will be inserted into the <code>Rules</code> map in the next steps.</p>
 
@@ -586,8 +583,7 @@ Our lambda function doesn&rsquo;t need to do much with the event other than log 
 <p>Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Rate5Mins&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#000">ScheduleExpression</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;rate(5 minutes)&#34;</span><span style="color:#000;font-weight:bold">,</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em>cron</em> <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html">expression</a>.  The map keyname is used when adding the <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">rule</a> during stack provisioning.</p>
 
 <h2 id="event-pattern">Event Pattern</h2>
@@ -599,8 +595,7 @@ The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em
     <span style="color:#4e9a06">&#34;source&#34;</span><span style="color:#000;font-weight:bold">:</span>      <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;aws.ec2&#34;</span><span style="color:#000;font-weight:bold">},</span>
     <span style="color:#4e9a06">&#34;detail-type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;EC2 Instance State-change Notification&#34;</span><span style="color:#000;font-weight:bold">},</span>
   <span style="color:#000;font-weight:bold">},</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The EC2 event pattern is the <strong>go</strong> JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.</p>
 
@@ -614,8 +609,7 @@ The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em
 <p>With the two rules configured, the final step is to add the <code>sparta.CloudWatchPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Our entire function is therefore:</p>
 
@@ -639,8 +633,7 @@ The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
@@ -673,7 +666,7 @@ The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

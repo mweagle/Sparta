@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Discovery Service - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -581,8 +581,7 @@
   <span style="color:#000;font-weight:bold">})</span>
   <span style="color:#000">cfResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DeletionPolicy</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;Delete&#34;</span>
   <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
 
@@ -611,8 +610,7 @@
             <span style="color:#000;font-weight:bold">}</span>
         <span style="color:#000;font-weight:bold">}</span>
     <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div></p>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>This JSON data is Base64 encoded and published into the Lambda function&rsquo;s <em>Environment</em> using the <code>SPARTA_DISCOVERY_INFO</code> key. The <code>sparta.Discover()</code> function is responsible for
 accessing the encoded discovery information:</p>
@@ -623,8 +621,7 @@ accessing the encoded discovery information:</p>
   <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceType</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span> <span style="color:#000;font-weight:bold">{</span>
     <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceRef</span>
   <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The <code>Properties</code> object includes resource-specific <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set)</p>
 
@@ -645,7 +642,7 @@ accessing the encoded discovery information:</p>
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

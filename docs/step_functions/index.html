@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Step Functions - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -555,8 +555,7 @@
 	<span style="color:#000;font-weight:bold">}</span>
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Add</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">rollBytes</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="state-machine">State Machine</h3>
 
@@ -581,8 +580,7 @@
 <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000">choiceState</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">step</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewChoiceState</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;checkRoll&#34;</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">lambdaChoices</span><span style="color:#ce5c00;font-weight:bold">...</span><span style="color:#000;font-weight:bold">).</span>
-  <span style="color:#000">WithDefault</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">successState</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+  <span style="color:#000">WithDefault</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">successState</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>The Sparta state types correspond to their <a href="https://states-language.net/spec.html">AWS States Spec</a> equivalents:</p>
 
@@ -606,8 +604,7 @@ to a delay or the success end state.</p>
 <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Options</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MemorySize</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#0000cf;font-weight:bold">128</span>
 <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Options</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Tags</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#4e9a06">&#34;myAccounting&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;tag&#34;</span><span style="color:#000;font-weight:bold">,</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre>
-</div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The final step is to hook up the state transitions for states that don&rsquo;t implicitly include them, and create the State Machine:</p>
 
@@ -617,8 +614,7 @@ to a delay or the success end state.</p>
 
 <span style="color:#8f5902;font-style:italic">// Startup the machine with a user-scoped name for account uniqueness
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">stateMachineName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">UserScopedStackName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;StateMachine&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">startMachine</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">step</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStateMachine</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">stateMachineName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaTaskState</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+<span style="color:#000">startMachine</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">step</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStateMachine</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">stateMachineName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaTaskState</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>At this point we have a potentially well-formed <a href="http://docs.aws.amazon.com/step-functions/latest/dg/tutorial-creating-lambda-state-machine.html">Lambda-powered</a> State Machine.
 The final step is to attach this machine to the normal service definition.</p>
@@ -640,8 +636,7 @@ will include it in the CloudFormation template serialization:</p>
   <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000">workflowHooks</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">false</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+  <span style="color:#204a87;font-weight:bold">false</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>With the decorator attached, the next service <code>provision</code> request will include the state machine as above.</p>
 
@@ -680,8 +675,7 @@ INFO[0085] Creating code bundle                          Duration (s)=11
 INFO[0085] Uploading code                                Duration (s)=15
 INFO[0085] Ensuring CloudFormation stack                 Duration (s)=59
 INFO[0085] Total elapsed time                            Duration (s)=85
-INFO[0085] ──────────────────────────────────────────────────────────────</code></pre>
-</div>
+INFO[0085] ──────────────────────────────────────────────────────────────</code></pre></div>
 
 <h3 id="testing">Testing</h3>
 
@@ -712,7 +706,7 @@ on shared data.</p>
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>

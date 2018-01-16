@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
     <title>Workflow Hooks - Sparta</title>
-    <meta name="generator" content="Hugo 0.29" />
+    <meta name="generator" content="Hugo 0.31.1" />
 
     
     <meta name="description" content="Sparta - Go framework for AWS Lambda">
@@ -147,7 +147,7 @@
         </div>
       
       <div class="name">
-        <strong>Sparta <span class="version">0.30.0</span></strong>
+        <strong>Sparta <span class="version">1.0.0</span></strong>
         
           <br>
           mweagle/Sparta
@@ -636,8 +636,7 @@ graph TD
 	<span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
 	<span style="color:#000">awsSession</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">session</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Session</span><span style="color:#000;font-weight:bold">,</span>
 	<span style="color:#000">noop</span> <span style="color:#204a87;font-weight:bold">bool</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span></code></pre>
-</div></p>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span></code></pre></div></p>
 
 <p>These functions include:</p>
 
@@ -657,8 +656,7 @@ graph TD
     <span style="color:#000">zipWriter</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">zip</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Writer</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#000">awsSession</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">session</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Session</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#000">noop</span> <span style="color:#204a87;font-weight:bold">bool</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span></code></pre>
-</div>
+    <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span></code></pre></div>
 
 <p>This function is called <em>after</em> Sparta has written the standard resources to the <code>*zip.Writer</code> stream.</p>
 
@@ -670,8 +668,7 @@ graph TD
     <span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#000">awsSession</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">session</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Session</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#000">noop</span> <span style="color:#204a87;font-weight:bold">bool</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span></code></pre>
-</div>
+    <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h1 id="using-workflowhooks">Using WorkflowHooks</h1>
 
@@ -691,7 +688,7 @@ graph TD
 
 			<aside class="copyright" role="note">
 				
-				&copy; 2017 Copyright 2015-2017 Matt Weagle &ndash;
+				&copy; 2018 Copyright 2015-2017 Matt Weagle &ndash;
 				
 				Last built at <b>2017-10-31 18:20:05 &#43;0000 UTC</b> with
 				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
