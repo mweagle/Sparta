@@ -20,6 +20,9 @@ import (
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
+
+	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
+	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
 )
 
 ////////////////////////////////////////////////////////////////////////////////
