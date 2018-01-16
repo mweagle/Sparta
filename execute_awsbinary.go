@@ -16,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// StampedServiceName is the name stamp
 // https://blog.cloudflare.com/setting-go-variables-at-compile-time/
 // StampedServiceName is the serviceName stamped into this binary
 var StampedServiceName string
