@@ -2,7 +2,7 @@
 
 # v1.0.0
 
-## 🎉 Support for the AWS Lambda Go Programming Model 🎉
+## 🎉 AWS Lambda for Go Support 🎉
 
   - Sparta Go function signature has been changed to **ONLY** support the official AWS Lambda Go signatures
 
