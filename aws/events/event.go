@@ -1,4 +1,4 @@
-package explore
+package events
 
 import (
 	"fmt"
@@ -6,7 +6,8 @@ import (
 	"strings"
 )
 
-type mockAPIGatewayIdentity struct {
+// APIGatewayIdentity is the API Gateway identity information
+type APIGatewayIdentity struct {
 	AccountID                     string `json:"accountId"`
 	APIKey                        string `json:"apiKey"`
 	Caller                        string `json:"caller"`
@@ -20,40 +21,39 @@ type mockAPIGatewayIdentity struct {
 	UserArn                       string `json:"userArn"`
 }
 
-type mockAPIGatewayContext struct {
-	AppID        string                 `json:"appId"`
-	Method       string                 `json:"method"`
-	RequestID    string                 `json:"requestId"`
-	ResourceID   string                 `json:"resourceId"`
-	ResourcePath string                 `json:"resourcePath"`
-	Stage        string                 `json:"stage"`
-	Identity     mockAPIGatewayIdentity `json:"identity"`
+// APIGatewayContext is the API-Gateway context information
+type APIGatewayContext struct {
+	AppID        string             `json:"appId"`
+	Method       string             `json:"method"`
+	RequestID    string             `json:"requestId"`
+	ResourceID   string             `json:"resourceId"`
+	ResourcePath string             `json:"resourcePath"`
+	Stage        string             `json:"stage"`
+	Identity     APIGatewayIdentity `json:"identity"`
 }
 
-// SpartaAPIGatewayRequest represents the API Gateway request that
+// APIGatewayRequest represents the API Gateway request that
 // is submitted to a Lambda function. This format matches the
 // inputmapping_default.VTL templates
-type SpartaAPIGatewayRequest struct {
-	Method      string                `json:"method"`
-	Body        interface{}           `json:"body"`
-	Headers     map[string]string     `json:"headers"`
-	QueryParams map[string]string     `json:"queryParams"`
-	PathParams  map[string]string     `json:"pathParams"`
-	Context     mockAPIGatewayContext `json:"context"`
+type APIGatewayRequest struct {
+	Method      string            `json:"method"`
+	Body        interface{}       `json:"body"`
+	Headers     map[string]string `json:"headers"`
+	QueryParams map[string]string `json:"queryParams"`
+	PathParams  map[string]string `json:"pathParams"`
+	Context     APIGatewayContext `json:"context"`
 }
 
-// NewAPIGatewayRequest sends a mock request to a localhost server that
-// was created by httptest.NewServer(NewLambdaHTTPHandler(lambdaFunctions, logger)).
-// lambdaName is the lambdaFnName to be called, eventData is optional event-specific
-// data, and the testingURL is the URL returned by httptest.NewServer().  The optional event data is
-// embedded in the Sparta input mapping templates.
-func NewAPIGatewayRequest(lambdaName string,
+// NewAPIGatewayMockRequest creates a mock API Gateway request.
+// This request format mirrors the VTL templates in
+// github.com/mweagle/Sparta/resources/provision/apigateway
+func NewAPIGatewayMockRequest(lambdaName string,
 	httpMethod string,
 	whitelistParamValues map[string]string,
 	eventData interface{},
-	testingURL string) (*SpartaAPIGatewayRequest, error) {
+	testingURL string) (*APIGatewayRequest, error) {
 
-	mockAPIGatewayRequest := &SpartaAPIGatewayRequest{
+	apiGatewayRequest := &APIGatewayRequest{
 		Method:      httpMethod,
 		Body:        eventData,
 		Headers:     make(map[string]string, 0),
@@ -74,23 +74,23 @@ func NewAPIGatewayRequest(lambdaName string,
 		keyName := parts[3]
 		switch keyType {
 		case "header":
-			mockAPIGatewayRequest.Headers[keyName] = eachWhitelistValue
+			apiGatewayRequest.Headers[keyName] = eachWhitelistValue
 		case "querystring":
-			mockAPIGatewayRequest.QueryParams[keyName] = eachWhitelistValue
+			apiGatewayRequest.QueryParams[keyName] = eachWhitelistValue
 		case "path":
-			mockAPIGatewayRequest.PathParams[keyName] = eachWhitelistValue
+			apiGatewayRequest.PathParams[keyName] = eachWhitelistValue
 		default:
 			return nil, fmt.Errorf("Unsupported whitelist param type: %s", keyType)
 		}
 	}
 
-	mockAPIGatewayRequest.Context.AppID = fmt.Sprintf("spartaApp%d", os.Getpid())
-	mockAPIGatewayRequest.Context.Method = httpMethod
-	mockAPIGatewayRequest.Context.RequestID = "12341234-1234-1234-1234-123412341234"
-	mockAPIGatewayRequest.Context.ResourceID = "anon42"
-	mockAPIGatewayRequest.Context.ResourcePath = "/mock"
-	mockAPIGatewayRequest.Context.Stage = "mock"
-	mockAPIGatewayRequest.Context.Identity = mockAPIGatewayIdentity{
+	apiGatewayRequest.Context.AppID = fmt.Sprintf("spartaApp%d", os.Getpid())
+	apiGatewayRequest.Context.Method = httpMethod
+	apiGatewayRequest.Context.RequestID = "12341234-1234-1234-1234-123412341234"
+	apiGatewayRequest.Context.ResourceID = "anon42"
+	apiGatewayRequest.Context.ResourcePath = "/mock"
+	apiGatewayRequest.Context.Stage = "mock"
+	apiGatewayRequest.Context.Identity = APIGatewayIdentity{
 		AccountID: "123412341234",
 		APIKey:    "",
 		Caller:    "",
@@ -103,5 +103,5 @@ func NewAPIGatewayRequest(lambdaName string,
 		UserAgent:                     "Mozilla/Gecko",
 		UserArn:                       "",
 	}
-	return mockAPIGatewayRequest, nil
+	return apiGatewayRequest, nil
 }
