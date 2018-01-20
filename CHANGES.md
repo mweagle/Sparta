@@ -6,6 +6,7 @@
 - :checkered_flag: **CHANGES**
   - Prefer stamping `buildID` into binary rather than providing as environment variable. Previously the stamped buildID was the `env.SPARTA_BUILD_ID` mutable variable.
 - :bug:  **FIXED**
+  - Fixed latent bug where [Discovery](https://godoc.org/github.com/mweagle/Sparta#Discover) wasn't properly initialized in AWS Lambda execution context
 
 # v1.0.0
 

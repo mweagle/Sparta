@@ -119,6 +119,9 @@ func Execute(serviceName string,
 	parentProcessPID int,
 	logger *logrus.Logger) error {
 
+	// Initialize the discovery service
+	initializeDiscovery(logger)
+
 	// Find the function name based on the dispatch
 	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	requestedLambdaFunctionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
