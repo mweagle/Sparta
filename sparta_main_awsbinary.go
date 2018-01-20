@@ -61,7 +61,7 @@ func MainEx(serviceName string,
 		"SpartaVersion": SpartaVersion,
 		"SpartaSHA":     SpartaGitHash[0:7],
 		"go Version":    runtime.Version(),
-		"BuildID":       os.Getenv(envVarBuildID),
+		"BuildID":       StampedBuildID,
 		"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 	}).Info(welcomeMessage)
 

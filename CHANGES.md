@@ -1,5 +1,12 @@
 # Change Notes
 
+## v1.0.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Prefer stamping `buildID` into binary rather than providing as environment variable. Previously the stamped buildID was the `env.SPARTA_BUILD_ID` mutable variable.
+- :bug:  **FIXED**
+
 # v1.0.0
 
 ## 🎉 AWS Lambda for Go Support 🎉

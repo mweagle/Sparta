@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.0.0"
+	SpartaVersion = "1.0.1"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -54,9 +54,6 @@ const (
 	// envVarDiscoveryInformation is the name of the discovery information
 	// published into the environment
 	envVarDiscoveryInformation = "SPARTA_DISCOVERY_INFO"
-	// envVarBuildID is the environment key that includes the buildID
-	// that this was built with
-	envVarBuildID = "SPARTA_BUILD_ID"
 )
 
 var (

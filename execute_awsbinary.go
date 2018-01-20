@@ -21,6 +21,9 @@ import (
 // StampedServiceName is the serviceName stamped into this binary
 var StampedServiceName string
 
+// StampedBuildID is the buildID stamped into the binary
+var StampedBuildID string
+
 // awsLambdaFunctionName returns the name of the function, that includes
 // a prefix that was stamped into the binary via a linker flag in provision.go
 func awsLambdaFunctionName(serviceName string,
@@ -66,6 +69,7 @@ func tappedHandler(handlerSymbol interface{},
 				WithFields(logrus.Fields{
 					"reqID": lambdaContext.AwsRequestID,
 					"arn":   lambdaContext.InvokedFunctionArn,
+					"build": StampedBuildID,
 				})
 		} else {
 			logrusEntry = logrus.

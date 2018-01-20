@@ -735,6 +735,7 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 func buildGoBinary(serviceName string,
 	executableOutput string,
 	useCGO bool,
+	buildID string,
 	buildTags string,
 	linkFlags string,
 	noop bool,
@@ -775,7 +776,17 @@ func buildGoBinary(serviceName string,
 	// the function dispatch logic uses the AWS_LAMBDA_FUNCTION_NAME environment
 	// variable to do the lookup. And in effect, this value has to be unique
 	// across an account, since functions cannot have the same name
-	linkFlags = fmt.Sprintf("%s -X github.com/mweagle/Sparta.StampedServiceName=%s", linkFlags, serviceName)
+	// Custom flags for the binary
+	linkerFlags := map[string]string{
+		"StampedServiceName": serviceName,
+		"StampedBuildID":     buildID,
+	}
+	for eachFlag, eachValue := range linkerFlags {
+		linkFlags = fmt.Sprintf("%s -X github.com/mweagle/Sparta.%s=%s",
+			linkFlags,
+			eachFlag,
+			eachValue)
+	}
 	linkFlags = strings.TrimSpace(linkFlags)
 	if len(linkFlags) != 0 {
 		userBuildFlags = append(userBuildFlags, "-ldflags", linkFlags)
@@ -918,6 +929,7 @@ func createPackageStep() workflowStep {
 		buildErr := buildGoBinary(ctx.userdata.serviceName,
 			ctx.context.binaryName,
 			ctx.userdata.useCGO,
+			ctx.userdata.buildID,
 			ctx.userdata.buildTags,
 			ctx.userdata.linkFlags,
 			ctx.userdata.noop,
@@ -1126,7 +1138,6 @@ func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 	if lambdaEnvironment == nil {
 		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
-	lambdaAWSInfo.Options.Environment[envVarBuildID] = gocf.String(buildID)
 	return template, nil
 }
 
