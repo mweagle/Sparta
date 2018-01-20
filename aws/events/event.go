@@ -50,8 +50,7 @@ type APIGatewayRequest struct {
 func NewAPIGatewayMockRequest(lambdaName string,
 	httpMethod string,
 	whitelistParamValues map[string]string,
-	eventData interface{},
-	testingURL string) (*APIGatewayRequest, error) {
+	eventData interface{}) (*APIGatewayRequest, error) {
 
 	apiGatewayRequest := &APIGatewayRequest{
 		Method:      httpMethod,
