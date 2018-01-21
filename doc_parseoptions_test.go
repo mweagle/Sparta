@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/spf13/cobra"
+	"gopkg.in/go-playground/validator.v9"
 )
+
+var exampleValidator *validator.Validate
 
 // NOTE: your application MUST use `package main` and define a `main()` function.  The
 // example text is to make the documentation compatible with godoc.
@@ -15,9 +17,9 @@ import (
 // Additional command line options used for both the provision
 // and CLI commands
 type optionsStruct struct {
-	Username   string `valid:"required,match(\\w+)"`
-	Password   string `valid:"required,match(\\w+)"`
-	SSHKeyName string `valid:"-"`
+	Username   string `validate:"required"`
+	Password   string `validate:"required"`
+	SSHKeyName string `validate:"-"`
 }
 
 var options optionsStruct
@@ -71,7 +73,7 @@ func ExampleParseOptions() {
 		switch command.Name() {
 		case "provision",
 			"sync":
-			_, validationErr := govalidator.ValidateStruct(options)
+			validationErr := exampleValidator.Struct(options)
 			return validationErr
 		default:
 			return nil

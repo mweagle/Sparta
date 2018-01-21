@@ -1,5 +1,3 @@
-// +build !lambdabinary
-
 package sparta
 
 import (
@@ -10,23 +8,29 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"time"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	"gopkg.in/go-playground/validator.v9"
 )
 
+// Constant for Sparta color aware stdout logging
 const (
-	red = 31
+	redCode = 31
 )
+
+// Validation instance
+var validate *validator.Validate
 
 func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
 	logger.Info(headerDivider)
 	if enableColors {
-		logger.Info(fmt.Sprintf("\x1b[%dm╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐\x1b[0m   Version : %s", red, SpartaVersion))
-		logger.Info(fmt.Sprintf("\x1b[%dm╚═╗├─┘├─┤├┬┘ │ ├─┤\x1b[0m   SHA     : %s", red, SpartaGitHash[0:7]))
-		logger.Info(fmt.Sprintf("\x1b[%dm╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴\x1b[0m   Go      : %s", red, runtime.Version()))
+		red := func(inputText string) string {
+			return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
+		}
+		logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
+		logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
+		logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
 	} else {
 		logger.Info(fmt.Sprintf(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : %s`, SpartaVersion))
 		logger.Info(fmt.Sprintf(`╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : %s`, SpartaGitHash[0:7]))
@@ -35,29 +39,11 @@ func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus
 	logger.Info(headerDivider)
 }
 
-func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
-	// NOP
-}
-
 var codePipelineEnvironments map[string]map[string]string
 
 func init() {
+	validate = validator.New()
 	codePipelineEnvironments = make(map[string]map[string]string)
-}
-
-// RegisterCodePipelineEnvironment is part of a CodePipeline deployment
-// and defines the environments available for deployment. Environments
-// are defined the `environmentName`. The values defined in the
-// environmentVariables are made available to each service as
-// environment variables. The environment key will be transformed into
-// a configuration file for a CodePipeline CloudFormation action:
-// TemplateConfiguration: !Sub "TemplateSource::${environmentName}".
-func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
-	if _, exists := codePipelineEnvironments[environmentName]; exists {
-		return fmt.Errorf("Environment (%s) has already been defined", environmentName)
-	}
-	codePipelineEnvironments[environmentName] = environmentVariables
-	return nil
 }
 
 // Logger returns the sparta Logger instance for this process
@@ -84,10 +70,10 @@ var CommandLineOptions = struct {
 // Provision options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsProvisionStruct struct {
-	S3Bucket        string `valid:"required,matches(\\w+)"`
-	BuildID         string `valid:"matches(\\S+)"` // non-whitespace
-	PipelineTrigger string `valid:"-"`
-	InPlace         bool   `valid:"-"`
+	S3Bucket        string `validate:"required"`
+	BuildID         string `validate:"-"` // non-whitespace
+	PipelineTrigger string `validate:"-"`
+	InPlace         bool   `validate:"-"`
 }
 
 var optionsProvision optionsProvisionStruct
@@ -108,19 +94,10 @@ func provisionBuildID(userSuppliedValue string) (string, error) {
 }
 
 /******************************************************************************/
-// Execute options
-type optionsExecuteStruct struct {
-	Port            int `valid:"-"`
-	SignalParentPID int `valid:"-"`
-}
-
-var optionsExecute optionsExecuteStruct
-
-/******************************************************************************/
 // Describe options
 type optionsDescribeStruct struct {
-	OutputFile string `valid:"required"`
-	S3Bucket   string `valid:"required,matches(\\w+)"`
+	OutputFile string `validate:"required"`
+	S3Bucket   string `validate:"required"`
 }
 
 var optionsDescribe optionsDescribeStruct
@@ -128,8 +105,8 @@ var optionsDescribe optionsDescribeStruct
 /******************************************************************************/
 // Profile options
 type optionsProfileStruct struct {
-	S3Bucket string `valid:"required,matches(\\w+)"`
-	Port     int    `valid:"-"`
+	S3Bucket string `validate:"required"`
+	Port     int    `validate:"-"`
 }
 
 var optionsProfile optionsProfileStruct
@@ -141,8 +118,9 @@ var optionsProfile optionsProfileStruct
 func init() {
 	// Root
 	CommandLineOptions.Root = &cobra.Command{
-		Use:   path.Base(os.Args[0]),
-		Short: "Sparta-powered AWS Lambda microservice",
+		Use:           path.Base(os.Args[0]),
+		Short:         "Sparta-powered AWS Lambda microservice",
+		SilenceErrors: true,
 	}
 	CommandLineOptions.Root.PersistentFlags().BoolVarP(&OptionsGlobal.Noop, "noop",
 		"n",
@@ -218,12 +196,6 @@ func init() {
 		Short: "Execute",
 		Long:  `Startup the localhost HTTP server to handle requests`,
 	}
-
-	CommandLineOptions.Execute.Flags().IntVarP(&optionsExecute.SignalParentPID,
-		"signal",
-		"s",
-		0,
-		"Process ID to signal with SIGUSR2 once ready")
 
 	// Describe
 	CommandLineOptions.Describe = &cobra.Command{
@@ -312,7 +284,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 			Short: eachUserCommand.Short,
 		}
 		userProxyCmd.PreRunE = func(cmd *cobra.Command, args []string) error {
-			_, validateErr := govalidator.ValidateStruct(OptionsGlobal)
+			validateErr := validate.Struct(OptionsGlobal)
 			if nil != validateErr {
 				return validateErr
 			}
@@ -433,236 +405,6 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		parseCmdRoot.Root().Help()
 	}
 	return executeErr
-}
-
-// Main defines the primary handler for transforming an application into a Sparta package.  The
-// serviceName is used to uniquely identify your service within a region and will
-// be used for subsequent updates.  For provisioning, ensure that you've
-// properly configured AWS credentials for the golang SDK.
-// See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
-// for more information.
-func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
-	return MainEx(serviceName,
-		serviceDescription,
-		lambdaAWSInfos,
-		api,
-		site,
-		nil,
-		false)
-}
-
-// MainEx provides an "extended" Main that supports customizing the standard Sparta
-// workflow via the `workflowHooks` parameter.
-func MainEx(serviceName string,
-	serviceDescription string,
-	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
-	site *S3Site,
-	workflowHooks *WorkflowHooks,
-	useCGO bool) error {
-	//////////////////////////////////////////////////////////////////////////////
-	// cmdRoot defines the root, non-executable command
-	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice", serviceName, SpartaVersion)
-	CommandLineOptions.Root.Long = serviceDescription
-	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		// Save the ServiceName in case a custom command wants it
-		OptionsGlobal.ServiceName = serviceName
-		OptionsGlobal.ServiceDescription = serviceDescription
-
-		_, validateErr := govalidator.ValidateStruct(OptionsGlobal)
-		if nil != validateErr {
-			return validateErr
-		}
-		// Format?
-		enableColors := (runtime.GOOS != "windows")
-		var formatter logrus.Formatter
-		switch OptionsGlobal.LogFormat {
-		case "text", "txt":
-			formatter = &logrus.TextFormatter{
-				DisableColors: !enableColors,
-			}
-		case "json":
-			formatter = &logrus.JSONFormatter{}
-			enableColors = false
-		}
-		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
-		if nil != loggerErr {
-			return loggerErr
-		}
-		// This is a NOP, but makes megacheck happy b/c it doesn't know about
-		// build flags
-		platformLogSysInfo("", logger)
-		OptionsGlobal.Logger = logger
-		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
-
-		// Header information...
-		displayPrettyHeader(headerDivider, enableColors, logger)
-		// Metadata about the build...
-		logger.WithFields(logrus.Fields{
-			"Option":    cmd.Name(),
-			"UTC":       (time.Now().UTC().Format(time.RFC3339)),
-			"LinkFlags": OptionsGlobal.LinkerFlags,
-		}).Info(welcomeMessage)
-		logger.Info(headerDivider)
-
-		return nil
-	}
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Version
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Version)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Provision
-	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
-		validationResults, validateErr := govalidator.ValidateStruct(optionsProvision)
-
-		OptionsGlobal.Logger.WithFields(logrus.Fields{
-			"validationResults": validationResults,
-			"validateErr":       validateErr,
-			"optionsProvision":  optionsProvision,
-		}).Debug("Provision validation results")
-		return validateErr
-	}
-
-	if nil == CommandLineOptions.Provision.RunE {
-		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID)
-			if nil != buildIDErr {
-				return buildIDErr
-			}
-			return Provision(OptionsGlobal.Noop,
-				serviceName,
-				serviceDescription,
-				lambdaAWSInfos,
-				api,
-				site,
-				optionsProvision.S3Bucket,
-				useCGO,
-				optionsProvision.InPlace,
-				buildID,
-				optionsProvision.PipelineTrigger,
-				OptionsGlobal.BuildTags,
-				OptionsGlobal.LinkerFlags,
-				nil,
-				workflowHooks,
-				OptionsGlobal.Logger)
-		}
-	}
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Provision)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Delete
-	CommandLineOptions.Delete.RunE = func(cmd *cobra.Command, args []string) error {
-		return Delete(serviceName, OptionsGlobal.Logger)
-	}
-
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Delete)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Execute
-	if nil == CommandLineOptions.Execute.RunE {
-		CommandLineOptions.Execute.RunE = func(cmd *cobra.Command, args []string) error {
-			_, validateErr := govalidator.ValidateStruct(optionsExecute)
-			if nil != validateErr {
-				return validateErr
-			}
-
-			OptionsGlobal.Logger.Formatter = new(logrus.JSONFormatter)
-			// Ensure the discovery service is initialized
-			initializeDiscovery(OptionsGlobal.Logger)
-
-			return Execute(serviceName,
-				lambdaAWSInfos,
-				optionsExecute.Port,
-				optionsExecute.SignalParentPID,
-				OptionsGlobal.Logger)
-		}
-	}
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Execute)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Describe
-	if nil == CommandLineOptions.Describe.RunE {
-		CommandLineOptions.Describe.RunE = func(cmd *cobra.Command, args []string) error {
-			_, validateErr := govalidator.ValidateStruct(optionsDescribe)
-			if nil != validateErr {
-				return validateErr
-			}
-
-			fileWriter, fileWriterErr := os.Create(optionsDescribe.OutputFile)
-			if fileWriterErr != nil {
-				return fileWriterErr
-			}
-			defer fileWriter.Close()
-			describeErr := Describe(serviceName,
-				serviceDescription,
-				lambdaAWSInfos,
-				api,
-				site,
-				optionsDescribe.S3Bucket,
-				OptionsGlobal.BuildTags,
-				OptionsGlobal.LinkerFlags,
-				fileWriter,
-				workflowHooks,
-				OptionsGlobal.Logger)
-
-			if describeErr == nil {
-				describeErr = fileWriter.Sync()
-			}
-			return describeErr
-		}
-	}
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Describe)
-
-	//////////////////////////////////////////////////////////////////////////////
-	// Profile
-	if nil == CommandLineOptions.Profile.RunE {
-		CommandLineOptions.Profile.RunE = func(cmd *cobra.Command, args []string) error {
-			_, validateErr := govalidator.ValidateStruct(optionsProfile)
-			if nil != validateErr {
-				return validateErr
-			}
-			return Profile(serviceName,
-				serviceDescription,
-				optionsProfile.S3Bucket,
-				optionsProfile.Port,
-				OptionsGlobal.Logger)
-		}
-	}
-	CommandLineOptions.Root.AddCommand(CommandLineOptions.Profile)
-	// Run it!
-
-	executeErr := CommandLineOptions.Root.Execute()
-	if nil != OptionsGlobal.Logger && nil != executeErr {
-		OptionsGlobal.Logger.Error(executeErr)
-	}
-	// Cleanup, if for some reason the caller wants to re-execute later...
-	CommandLineOptions.Root.PersistentPreRunE = nil
-	return executeErr
-}
-
-// NewLoggerWithFormatter returns a logger with the given formatter. If formatter
-// is nil, a TTY-aware formatter is used
-func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.Logger, error) {
-	logger := logrus.New()
-	// If there is an environment override, use that
-	envLogLevel := os.Getenv(envVarLogLevel)
-	if envLogLevel != "" {
-		level = envLogLevel
-	}
-
-	logLevel, err := logrus.ParseLevel(level)
-	if err != nil {
-		return nil, err
-	}
-
-	logger.Level = logLevel
-	if nil != formatter {
-		logger.Formatter = formatter
-	}
-	logger.Out = os.Stdout
-	return logger, nil
 }
 
 // NewLogger returns a new logrus.Logger instance. It is the caller's responsibility

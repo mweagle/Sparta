@@ -115,8 +115,6 @@ func tappedHandler(handlerSymbol interface{},
 // called via Main() via command line arguments.
 func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	port int,
-	parentProcessPID int,
 	logger *logrus.Logger) error {
 
 	// Initialize the discovery service

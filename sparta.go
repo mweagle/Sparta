@@ -112,15 +112,15 @@ func noopMessage(operationName string) string {
 /******************************************************************************/
 // Global options
 type optionsGlobalStruct struct {
-	ServiceName        string         `valid:"required"`
-	ServiceDescription string         `valid:"-"`
-	Noop               bool           `valid:"-"`
-	LogLevel           string         `valid:"matches(panic|fatal|error|warn|info|debug)"`
-	LogFormat          string         `valid:"matches(txt|text|json)"`
-	Logger             *logrus.Logger `valid:"-"`
-	Command            string         `valid:"-"`
-	BuildTags          string         `valid:"-"`
-	LinkerFlags        string         `valid:"-"` // no requirements
+	ServiceName        string         `validate:"required"`
+	ServiceDescription string         `validate:"-"`
+	Noop               bool           `validate:"-"`
+	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
+	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
+	Logger             *logrus.Logger `validate:"-"`
+	Command            string         `validate:"-"`
+	BuildTags          string         `validate:"-"`
+	LinkerFlags        string         `validate:"-"` // no requirements
 }
 
 // OptionsGlobal stores the global command line options

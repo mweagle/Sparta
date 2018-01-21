@@ -8,12 +8,6 @@
   version = "v1.4.1"
 
 [[projects]]
-  name = "github.com/asaskevich/govalidator"
-  packages = ["."]
-  revision = "521b25f4b05fd26bec69d9dedeb8f9c9a83939a8"
-  version = "v8"
-
-[[projects]]
   name = "github.com/aws/aws-lambda-go"
   packages = ["lambda","lambda/messages","lambdacontext"]
   revision = "28a6e9fa1fc02d45d9a8c0a8d22c7d5c3580aa03"
@@ -159,6 +153,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a63fb4ee47d7bf46991e4ccc5c633064f30df400c7b7ce6ae79a7bcd8b11e8c0"
+  inputs-digest = "84407061a01d32674115bf596e9941d1bbeac70502657e17f66484a2543ef7c1"
   solver-name = "gps-cdcl"
   solver-version = 1

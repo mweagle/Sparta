@@ -7,18 +7,20 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/spf13/cobra"
+	"gopkg.in/go-playground/validator.v9"
 )
+
+var validate *validator.Validate
 
 /******************************************************************************/
 // Global options
 type optionsLinkStruct struct {
-	StackName       string `valid:"required,matches(\\w+)"`
-	OutputDirectory string `valid:"required,matchesdirectoryw+)"`
+	StackName       string `validate:"required"`
+	OutputDirectory string `validate:"required"`
 }
 
 var optionsLink optionsLinkStruct
@@ -30,7 +32,7 @@ var RootCmd = &cobra.Command{
 	Short: "Link is a tool to discover and serialize a prexisting CloudFormation stack",
 	Long:  "",
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		_, validateErr := govalidator.ValidateStruct(optionsLink)
+		validateErr := validate.Struct(optionsLink)
 		if nil != validateErr {
 			return validateErr
 		}
@@ -76,6 +78,7 @@ var RootCmd = &cobra.Command{
 }
 
 func init() {
+	validate = validator.New()
 	cobra.OnInitialize()
 	RootCmd.PersistentFlags().StringVar(&optionsLink.StackName, "stackName", "", "CloudFormation Stack Name/ID to query")
 	RootCmd.PersistentFlags().StringVar(&optionsLink.OutputDirectory, "output", "", "Output directory")
