@@ -111,7 +111,7 @@ build: validate test
 	@echo "Build complete"
 
 .PHONY: publish
-publish: generate
+publish:
 	$(info Checking Git tree status)
 	git diff --exit-code
 	./buildinfo.sh
