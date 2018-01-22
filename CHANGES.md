@@ -4,6 +4,8 @@
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added [events](https://github.com/mweagle/Sparta/blob/master/aws/events/event.go) package for Sparta specific event types.
+    - Initial top level event is `APIGatewayRequest` type for responding to API-Gateway mediated requests.
   - Prefer stamping `buildID` into binary rather than providing as environment variable. Previously the stamped buildID was the `env.SPARTA_BUILD_ID` mutable variable.
   - Remove dependency on [go-validator](github.com/asaskevich/govalidator)
 - :bug:  **FIXED**
