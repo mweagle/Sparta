@@ -1,5 +1,18 @@
 # Change Notes
 
+## v1.0.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added [events](https://github.com/mweagle/Sparta/blob/master/aws/events/event.go) package for Sparta specific event types.
+    - Initial top level event is `APIGatewayRequest` type for responding to API-Gateway mediated requests.
+  - Prefer stamping `buildID` into binary rather than providing as environment variable. Previously the stamped buildID was the `env.SPARTA_BUILD_ID` mutable variable.
+  - Remove dependency on [go-validator](github.com/asaskevich/govalidator)
+- :bug:  **FIXED**
+  - Fixed latent bug where [Discovery](https://godoc.org/github.com/mweagle/Sparta#Discover) wasn't properly initialized in AWS Lambda execution context
+  - Fixed latent bug where [CommandLineOptions](https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L72) weren't properly defined in AWS build target
+    - Affected [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) project
+
 # v1.0.0
 
 ## 🎉 AWS Lambda for Go Support 🎉

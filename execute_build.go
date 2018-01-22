@@ -12,8 +12,6 @@ import (
 // called via Main() via command line arguments.
 func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	port int,
-	parentProcessPID int,
 	logger *logrus.Logger) error {
 	// Execute no longer supported in non AWS binaries...
 	return fmt.Errorf("Execute not supported outside of AWS Lambda environment")

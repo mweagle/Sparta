@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.0.0"
+	SpartaVersion = "1.0.1"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -54,9 +54,6 @@ const (
 	// envVarDiscoveryInformation is the name of the discovery information
 	// published into the environment
 	envVarDiscoveryInformation = "SPARTA_DISCOVERY_INFO"
-	// envVarBuildID is the environment key that includes the buildID
-	// that this was built with
-	envVarBuildID = "SPARTA_BUILD_ID"
 )
 
 var (
@@ -111,6 +108,23 @@ func noopMessage(operationName string) string {
 	return fmt.Sprintf("Skipping %s due to -n/-noop flag",
 		operationName)
 }
+
+/******************************************************************************/
+// Global options
+type optionsGlobalStruct struct {
+	ServiceName        string         `validate:"required"`
+	ServiceDescription string         `validate:"-"`
+	Noop               bool           `validate:"-"`
+	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
+	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
+	Logger             *logrus.Logger `validate:"-"`
+	Command            string         `validate:"-"`
+	BuildTags          string         `validate:"-"`
+	LinkerFlags        string         `validate:"-"` // no requirements
+}
+
+// OptionsGlobal stores the global command line options
+var OptionsGlobal optionsGlobalStruct
 
 ////////////////////////////////////////////////////////////////////////////////
 // Variables

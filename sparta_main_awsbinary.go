@@ -61,12 +61,12 @@ func MainEx(serviceName string,
 		"SpartaVersion": SpartaVersion,
 		"SpartaSHA":     SpartaGitHash[0:7],
 		"go Version":    runtime.Version(),
-		"BuildID":       os.Getenv(envVarBuildID),
+		"BuildID":       StampedBuildID,
 		"UTC":           (time.Now().UTC().Format(time.RFC3339)),
 	}).Info(welcomeMessage)
 
 	// All we can do is run the Execute call
-	return Execute(serviceName, lambdaAWSInfos, 9999, 0, logger)
+	return Execute(serviceName, lambdaAWSInfos, logger)
 }
 
 // Delete is not available in the AWS Lambda binary
@@ -156,10 +156,4 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 	logger.Formatter = &logrus.JSONFormatter{}
 	logger.Out = os.Stdout
 	return logger, nil
-}
-
-// NewLogger returns a new logrus.Logger instance. It is the caller's responsibility
-// to set the formatter if needed.
-func NewLogger(level string) (*logrus.Logger, error) {
-	return NewLoggerWithFormatter(level, nil)
 }
