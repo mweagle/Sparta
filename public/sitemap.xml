@@ -3,229 +3,235 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://gosparta.io/docs/step_functions/</loc>
-    <lastmod>2017-10-31T18:20:05+00:00</lastmod>
+    <loc>/reference/eventsources/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/intro_example/step1/</loc>
+    <loc>/overview/</loc>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/sample_service/step1/</loc>
     <lastmod>2017-10-03T07:15:40+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/apigateway/</loc>
+    <loc>/reference/apigateway/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/example1/</loc>
+    <loc>/reference/application/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/example3/</loc>
+    <loc>/reference/eventsources/cloudformation/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/slack/</loc>
+    <loc>/reference/eventsources/cloudwatchevents/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/example2/</loc>
+    <loc>/reference/eventsources/cloudwatchlogs/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/application/</loc>
+    <loc>/reference/eventsources/cognito/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/commandline/</loc>
+    <loc>/reference/application/commandline/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/custom_commands/</loc>
+    <loc>/reference/application/custom_commands/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/custom_flags/</loc>
+    <loc>/reference/application/custom_flags/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/custom_resources/</loc>
+    <loc>/reference/custom_resources/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/discovery/</loc>
+    <loc>/reference/discovery/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/docker/</loc>
+    <loc>/reference/docker/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/dynamic_infrastructure/</loc>
+    <loc>/reference/dynamic_infrastructure/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/cloudformation/</loc>
+    <loc>/reference/eventsources/dynamodb/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/cloudwatchevents/</loc>
+    <loc>/reference/apigateway/example1/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/cloudwatchlogs/</loc>
+    <loc>/reference/eventsources/kinesis/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/cognito/</loc>
+    <loc>/reference/faq/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/dynamodb/</loc>
+    <loc>/reference/hybrid_topologies/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/s3/</loc>
+    <loc>/reference/limitations/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/ses/</loc>
+    <loc>/reference/local_testing/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/sns/</loc>
+    <loc>/reference/application/environments/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/eventsources/</loc>
+    <loc>/reference/profiling/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/eventsources/kinesis/</loc>
+    <loc>/reference/apigateway/example3/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/faq/</loc>
+    <loc>/reference/eventsources/s3/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/hybrid_topologies/</loc>
+    <loc>/reference/eventsources/ses/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/limitations/</loc>
+    <loc>/reference/eventsources/sns/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/local_testing/</loc>
+    <loc>/sample_service/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/environments/</loc>
+    <loc>/reference/apigateway/slack/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/profiling/</loc>
+    <loc>/reference/apigateway/example2/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/cgo/</loc>
+    <loc>/reference/application/workflow_hooks/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/s3site/</loc>
+    <loc>/reference/apigateway/cors/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/intro_example/intro/</loc>
+    <loc>/sample_service/step2/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/application/workflow_hooks/</loc>
+    <loc>/reference/s3site/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/overview/</loc>
-    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
+    <loc>/reference/</loc>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/apigateway/cors/</loc>
-    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/intro_example/step2/</loc>
-    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/docs/presentations/</loc>
+    <loc>/reference/presentations/</loc>
     <lastmod>2017-10-04T22:12:35+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/cicd/</loc>
+    <loc>/reference/cicd/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/</loc>
+    <loc>/reference/step_functions/</loc>
+    <lastmod>2017-10-31T18:20:05+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/credits/</loc>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/</loc>
     <lastmod>2016-03-08T21:07:13+01:00</lastmod>
   </url>
   
   <url>
-    <loc>http://gosparta.io/categories/</loc>
+    <loc>/_meta/</loc>
+    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/_footer/</loc>
+  </url>
+  
+  <url>
+    <loc>/_header/</loc>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://gosparta.io/docs/</loc>
-    <lastmod>2017-10-31T18:20:05+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/</loc>
-    <lastmod>2017-10-31T18:20:05+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://gosparta.io/tags/</loc>
+    <loc>/tags/</loc>
     <priority>0</priority>
   </url>
   
