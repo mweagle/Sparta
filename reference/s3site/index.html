@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>S3 Sites with CORS :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/reference/s3site/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Walkthrough
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example1/">
+            Echo
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example3/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example2/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item active">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/presentations/" class="dd-item">
+        <div>
+          <a href="/reference/presentations/">
+            Presentations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/faq/" >- FAQ</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/"  selected>- S3 Sites with CORS</option>
+      <option value="/reference/presentations/" >- Presentations</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+  
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>S3 Sites with CORS</h1>
+    
+    
+    
+    
+
+<p>Sparta supports provisioning an S3-backed <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">static website</a> as part of provisioning.  We&rsquo;ll walk through provisioning a minimal <a href="http://getbootstrap.com">Bootstrap</a> website that accesses API Gateway lambda functions provisioned by a single service in this example.</p>
+
+<p>The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a> example application.</p>
+
+<h1 id="create-the-lambda-function">Create the Lambda function</h1>
+
+<p>We&rsquo;ll start by creating a very simple lambda function:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> helloWorld(w http.ResponseWriter, r *http.Request) {
+	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+
+	decoder := json.NewDecoder(r.Body)
+	<span style="color:#00f">defer</span> r.Body.Close()
+	<span style="color:#00f">var</span> jsonMessage json.RawMessage
+	err := decoder.Decode(&amp;jsonMessage)
+	<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
+		logger.Error(<span style="color:#a31515">&#34;Failed to decode request: &#34;</span>, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		<span style="color:#00f">return</span>
+	}
+	logger.Info(<span style="color:#a31515">&#34;Hello World: &#34;</span>, string(*jsonMessage))
+	w.Write(jsonMessage)
+}</code></pre></div>
+
+<p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
+
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
+
+<p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
+apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaHTML&#34;</span>, apiStage)</code></pre></div>
+
+<p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Enable CORS s.t. the S3 site can access the resources
+</span><span style="color:#008000"></span>apiGateway.CORSEnabled = <span style="color:#00f">true</span></code></pre></div>
+
+<p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	<span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		http.HandlerFunc(helloWorld),
+		iamDynamicRole)
+
+	<span style="color:#00f">if</span> <span style="color:#00f">nil</span> != api {
+		apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/hello&#34;</span>, lambdaFn)
+		_, err := apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)
+		<span style="color:#00f">if</span> <span style="color:#00f">nil</span> != err {
+			panic(<span style="color:#a31515">&#34;Failed to create /hello resource&#34;</span>)
+		}
+	}
+	<span style="color:#00f">return</span> append(lambdaFunctions, lambdaFn)
+}</code></pre></div>
+
+<h1 id="define-the-s3-site">Define the S3 Site</h1>
+
+<p>The next part is to define the S3 site resources via <code>sparta.NewS3Site(localFilePath)</code>.  The <em>localFilePath</em> parameter
+typically points to a directory, which will be:</p>
+
+<ol>
+<li>Recursively ZIP&rsquo;d</li>
+<li>Posted to S3 alongside the Lambda code archive and CloudFormation Templates</li>
+<li>Dynamically unpacked by a CloudFormation CustomResource during <code>provision</code> to a new S3 bucket.</li>
+</ol>
+
+<h1 id="provision">Provision</h1>
+
+<p>Putting it all together, our <code>main()</code> function looks like:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#008000">// Main
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
+	<span style="color:#008000">// Register the function with the API Gateway
+</span><span style="color:#008000"></span>	apiStage := sparta.NewStage(<span style="color:#a31515">&#34;v1&#34;</span>)
+	apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;SpartaHTML&#34;</span>, apiStage)
+	<span style="color:#008000">// Enable CORS s.t. the S3 site can access the resources
+</span><span style="color:#008000"></span>	apiGateway.CORSEnabled = <span style="color:#00f">true</span>
+
+	<span style="color:#008000">// Provision a new S3 bucket with the resources in the supplied subdirectory
+</span><span style="color:#008000"></span>	s3Site, _ := sparta.NewS3Site(<span style="color:#a31515">&#34;./resources&#34;</span>)
+
+	<span style="color:#008000">// Deploy it
+</span><span style="color:#008000"></span>	sparta.Main(<span style="color:#a31515">&#34;SpartaHTML&#34;</span>,
+		fmt.Sprintf(<span style="color:#a31515">&#34;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&#34;</span>),
+		spartaLambdaFunctions(apiGateway),
+		apiGateway,
+		s3Site)
+}</code></pre></div>
+
+<p>which can be provisioned using the standard <a href="/docs/commandline">command line</a> option.</p>
+
+<p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
+INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
+INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
+INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
+INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
+INFO[0114] Elapsed time        Seconds=114</code></pre></div>
+
+<p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
+
+<h1 id="discover">Discover</h1>
+
+<p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
+
+<p>As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a <em>MANIFEST.json</em> discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:</p>
+
+<ol>
+<li><strong>MANIFEST.json</strong>
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+ &#34;APIGatewayURL&#34;: {
+  &#34;Description&#34;: <span style="color:#a31515">&#34;API Gateway URL&#34;</span>,
+  &#34;Value&#34;: <span style="color:#a31515">&#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;</span>
+ }
+}</code></pre></div></li>
+</ol>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/profiling/" title="Profiling"> <i class="fa fa-chevron-left"></i><label>Profiling</label></a>
+    <a class="nav nav-next" href="/reference/presentations/" title="Presentations" style="margin-right: 0px;"><label>Presentations</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/s3Site.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

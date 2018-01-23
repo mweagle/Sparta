@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>Reference :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/reference/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Walkthrough
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent active alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example1/">
+            Echo
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example3/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example2/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/presentations/" class="dd-item">
+        <div>
+          <a href="/reference/presentations/">
+            Presentations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/"  selected>
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/faq/" >- FAQ</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/presentations/" >- Presentations</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+  
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Reference</h1>
+    
+    
+    
+
+
+
+<div class="extra-pagination inner">
+<nav class="pagination" role="navigation">
+	
+	<span class="page-number">Page 1 of 2</span>
+	
+	    <a class="older-posts" href="/reference/page/2/">Next Pages &rarr;</a>
+	
+</nav>
+
+</div>
+
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/custom_resources/">Custom Resources</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&rsquo;s lifecycle.
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers a user-supplied CustomResourceFunction with the larger CloudFormation resource lifecycle.
+In this section we&rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&rsquo;s outputs can be propagated to an application-level Sparta lambda function. <a class="read-more" href="/reference/custom_resources/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/discovery/">Discovery Service</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction The ability to provision dynamic infrastructure (see also the SES Event Source Example) as part of a Sparta application creates a need to discover those resources at lambda execution time.
+Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling go lambda function.
+The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time. <a class="read-more" href="/reference/discovery/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/docker/">Docker</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction Document SpartaGrafana project. <a class="read-more" href="/reference/docker/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/dynamic_infrastructure/">Dynamic Infrastructure</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
+For instance, consider the case where two developers are working in the same AWS account.
+ Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3. <a class="read-more" href="/reference/dynamic_infrastructure/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/faq/">FAQ</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
+During development, configuration is typically done through environment variables:
+ AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
+{ &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;cloudformation:DescribeStacks&#34;, &#34;cloudformation:CreateStack&#34;, &#34;cloudformation:CreateChangeSet&#34;, &#34;cloudformation:DescribeChangeSet&#34;, &#34;cloudformation:ExecuteChangeSet&#34;, &#34;cloudformation:DeleteChangeSet&#34;, &#34;cloudformation:DeleteStack&#34;, &#34;iam:GetRole&#34;, &#34;iam:DeleteRole&#34;, &#34;iam:DeleteRolePolicy&#34;, &#34;iam:PutRolePolicy&#34; ], &#34;Resource&#34;: [ &#34;*&#34; ] }, { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;s3:PutObject&#34;, &#34;s3:GetBucketVersioning&#34;, &#34;s3:DeleteObject&#34; ], &#34;Resource&#34;: [ &#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld. <a class="read-more" href="/reference/faq/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/hybrid_topologies/">Hybrid Topologies</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
+However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &ldquo;legacy&rdquo; AWS services: <a class="read-more" href="/reference/hybrid_topologies/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/limitations/">Limitations</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Sparta Limitations  go isn&rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome. <a class="read-more" href="/reference/limitations/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/local_testing/">Local Testing</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. Sparta supports localhost testing in two different ways:
+ The explore command line option httptest.NewServer for go test style testing  Example For this example, let&rsquo;s define a simple Sparta application:
+package main import ( &#34;encoding/json&#34; &#34;fmt&#34; &#34;net/http&#34; &#34;github.com/Sirupsen/logrus&#34; sparta &#34;github.com/mweagle/Sparta&#34; ) //////////////////////////////////////////////////////////////////////////////// // Hello world event handler // func helloWorld(w http. <a class="read-more" href="/reference/local_testing/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/profiling/">Profiling</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction One of Lambda&rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs. <a class="read-more" href="/reference/profiling/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/s3site/">S3 Sites with CORS</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Sparta supports provisioning an S3-backed static website as part of provisioning. We&rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Create the Lambda function We&rsquo;ll start by creating a very simple lambda function:
+func helloWorld(w http.ResponseWriter, r *http.Request) { logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger) decoder := json.NewDecoder(r.Body) defer r. <a class="read-more" href="/reference/s3site/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+
+<div style="margin-bottom:2rem"></div>
+
+<nav class="pagination" role="navigation">
+	
+	<span class="page-number">Page 1 of 2</span>
+	
+	    <a class="older-posts" href="/reference/page/2/">Next Pages &rarr;</a>
+	
+</nav>
+
+
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/step_functions/" title="Step Functions"> <i class="fa fa-chevron-left"></i><label>Step Functions</label></a>
+    <a class="nav nav-next" href="/reference/eventsources/" title="Event Sources" style="margin-right: 0px;"><label>Event Sources</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 22/01/2018
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/_index.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

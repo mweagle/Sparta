@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>Step Functions :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/reference/step_functions/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Walkthrough
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example1/">
+            Echo
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example3/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example2/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/presentations/" class="dd-item">
+        <div>
+          <a href="/reference/presentations/">
+            Presentations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item active">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/faq/" >- FAQ</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/presentations/" >- Presentations</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/step_functions/"  selected>- Step Functions</option>
+  
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Step Functions</h1>
+    
+    
+    
+    
+
+<h1 id="introduction">Introduction</h1>
+
+<p>AWS <a href="https://aws.amazon.com/step-functions/">Step Functions</a> are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &ldquo;Roll Die&rdquo; state machine using a single Lambda function. See <a href="https://github.com/mweagle/SpartaStep">SpartaStep</a> for the full source.</p>
+
+<h3 id="lambda-functions">Lambda Functions</h3>
+
+<p>The first step is to define the core Lambda function <a href="http://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html">Task</a> that will be our Step function&rsquo;s core logic. In this example, we&rsquo;ll define a <em>rollDie</em> function:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Standard AWS λ function
+</span><span style="color:#008000"></span><span style="color:#00f">func</span> lambdaRollDie(w http.ResponseWriter, r *http.Request) {
+  ...
+	<span style="color:#008000">// Return a randomized value in the range [1, 6]
+</span><span style="color:#008000"></span>	rollBytes, rollBytesErr := json.Marshal(&amp;<span style="color:#00f">struct</span> {
+		Roll <span style="color:#2b91af">int</span> <span style="color:#a31515">`json:&#34;roll&#34;`</span>
+	}{
+		Roll: rand.Intn(5) + 1,
+	})
+	<span style="color:#00f">if</span> rollBytesErr != <span style="color:#00f">nil</span> {
+		http.Error(w, rollBytesErr.Error(), http.StatusInternalServerError)
+		<span style="color:#00f">return</span>
+	}
+	w.Header().Add(<span style="color:#a31515">&#34;Content-Type&#34;</span>, <span style="color:#a31515">&#34;application/json&#34;</span>)
+	w.Write(rollBytes)
+}</code></pre></div>
+
+<h3 id="state-machine">State Machine</h3>
+
+<p>Our state machine is simple: we want to keep rolling the die until we get a &ldquo;good&rdquo; result, with a delay in between rolls:</p>
+
+<p><img src="/images/step_functions/roll_die.jpg" alt="State Machine" /></p>
+
+<p>To do this, we use the new <code>github.com/mweagle/Sparta/aws/step</code> functions to define the other states.</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Make all the Step states
+</span><span style="color:#008000"></span>lambdaTaskState := step.NewTaskState(<span style="color:#a31515">&#34;lambdaRollDie&#34;</span>, lambdaFn)
+successState := step.NewSuccessState(<span style="color:#a31515">&#34;success&#34;</span>)
+delayState := step.NewWaitDelayState(<span style="color:#a31515">&#34;tryAgainShortly&#34;</span>, 3*time.Second)
+lambdaChoices := []step.ChoiceBranch{
+  &amp;step.Not{
+    Comparison: &amp;step.NumericGreaterThan{
+      Variable: <span style="color:#a31515">&#34;$.roll&#34;</span>,
+      Value:    3,
+    },
+    Next: delayState,
+  },
+}
+choiceState := step.NewChoiceState(<span style="color:#a31515">&#34;checkRoll&#34;</span>,
+  lambdaChoices...).
+  WithDefault(successState)</code></pre></div>
+
+<p>The Sparta state types correspond to their <a href="https://states-language.net/spec.html">AWS States Spec</a> equivalents:</p>
+
+<ul>
+<li><code>successState</code> : <a href="https://states-language.net/spec.html#succeed-state">SucceedState</a></li>
+<li><code>delayState</code> : a specialized <a href="https://states-language.net/spec.html#wait-state">WaitState</a></li>
+<li><code>choiceState</code>: <a href="https://states-language.net/spec.html#choice-state">ChoiceState</a></li>
+</ul>
+
+<p>The <code>choiceState</code> is the most interesting state: based on the JSON response of the <code>lambdaRollDie</code>, it will either transition
+to a delay or the success end state.</p>
+
+<p>See <a href="https://godoc.org/github.com/mweagle/Sparta/aws/step">godoc</a> for the complete set of types.</p>
+
+<p>The <code>lambdaTaskState</code> uses a normal Sparta function as in:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn := sparta.HandleAWSLambda(<span style="color:#a31515">&#34;StepRollDie&#34;</span>,
+  http.HandlerFunc(lambdaRollDie),
+  sparta.IAMRoleDefinition{})
+
+lambdaFn.Options.MemorySize = 128
+lambdaFn.Options.Tags = <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#2b91af">string</span>{
+  <span style="color:#a31515">&#34;myAccounting&#34;</span>: <span style="color:#a31515">&#34;tag&#34;</span>,
+}</code></pre></div>
+
+<p>The final step is to hook up the state transitions for states that don&rsquo;t implicitly include them, and create the State Machine:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Hook up the transitions
+</span><span style="color:#008000"></span>lambdaTaskState.Next(choiceState)
+delayState.Next(lambdaTaskState)
+
+<span style="color:#008000">// Startup the machine with a user-scoped name for account uniqueness
+</span><span style="color:#008000"></span>stateMachineName := spartaCF.UserScopedStackName(<span style="color:#a31515">&#34;StateMachine&#34;</span>)
+startMachine := step.NewStateMachine(stateMachineName, lambdaTaskState)</code></pre></div>
+
+<p>At this point we have a potentially well-formed <a href="http://docs.aws.amazon.com/step-functions/latest/dg/tutorial-creating-lambda-state-machine.html">Lambda-powered</a> State Machine.
+The final step is to attach this machine to the normal service definition.</p>
+
+<h3 id="service-decorator">Service Decorator</h3>
+
+<p>The return type from <code>step.NewStateMachine(...)</code> is a <code>*step.StateMachine</code> instance that exposes a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook">ServiceDecoratorHook</a>.
+Adding the hook to your service&rsquo;s Workflow Hooks (similar to provisioning a service-scoped <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">CloudWatch Dashboard</a>)
+will include it in the CloudFormation template serialization:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Setup the hook to annotate
+</span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
+  ServiceDecorator: startMachine.StateMachineDecorator(),
+}
+userStackName := spartaCF.UserScopedStackName(<span style="color:#a31515">&#34;SpartaStep&#34;</span>)
+err := sparta.MainEx(userStackName,
+  <span style="color:#a31515">&#34;Simple Sparta application that demonstrates AWS Step functions&#34;</span>,
+  lambdaFunctions,
+  <span style="color:#00f">nil</span>,
+  <span style="color:#00f">nil</span>,
+  workflowHooks,
+  <span style="color:#00f">false</span>)</code></pre></div>
+
+<p>With the decorator attached, the next service <code>provision</code> request will include the state machine as above.</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000]    _______  ___   ___  _________
+INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.2
+INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 740028b
+INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
+INFO[0000]
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC=&#34;2017-11-01T02:03:04Z&#34;
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=69ecad9a90c763922e292cd22d63b6874dd3195c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Checking S3 versioning                        Bucket=XXXXXXXXX VersioningEnabled=true
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0010] Executable binary size                        KB=20162 MB=19
+INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaStep_mweagle-code.zip
+INFO[0011] Creating NodeJS/Sparta proxy function         FunctionName=StepRollDie ScriptName=StepRollDie
+INFO[0011] Lambda code archive size                      KB=20261 MB=19
+INFO[0011] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip
+INFO[0026] Calling WorkflowHook                          WorkflowHook=&#34;github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1&#34; WorkflowHookContext=&#34;map[]&#34;
+INFO[0026] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json
+INFO[0027] Creating stack                                StackID=&#34;arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd&#34;
+INFO[0045] Waiting for CloudFormation operation to complete
+INFO[0067] Waiting for CloudFormation operation to complete
+INFO[0085] Stack provisioned                             CreationTime=&#34;2017-11-01 02:03:30.945 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd&#34; StackName=SpartaStep-mweagle
+INFO[0085] ──────────────────────────────────────────────────────────────
+INFO[0085] SpartaStep-mweagle Summary (2017-10-31T19:04:29-07:00)
+INFO[0085] ──────────────────────────────────────────────────────────────
+INFO[0085] Verifying IAM roles                           Duration (s)=0
+INFO[0085] Verifying AWS preconditions                   Duration (s)=0
+INFO[0085] Creating code bundle                          Duration (s)=11
+INFO[0085] Uploading code                                Duration (s)=15
+INFO[0085] Ensuring CloudFormation stack                 Duration (s)=59
+INFO[0085] Total elapsed time                            Duration (s)=85
+INFO[0085] ──────────────────────────────────────────────────────────────</code></pre></div>
+
+<h3 id="testing">Testing</h3>
+
+<p>With the stack provisioned, the final step is to test the State Machine and see how lucky our die roll is. Navigate to the <strong>Step Functions</strong>
+service dashboard in the AWS Console and find the State Machine that was provisioned. Click the <strong>New Execution</strong> button and accept the default JSON.
+This sample state machine doesn&rsquo;t interrogate the incoming data so the initial JSON is effectively ignored.</p>
+
+<p>For this test the first roll was a <code>4</code>, so there was only 1 path through the state machine. Depending on your
+die roll, you may see different state machine paths through the <code>WaitState</code>.</p>
+
+<p><img src="/images/step_functions/step_execution.jpg" alt="State Machine" /></p>
+
+<h2 id="wrapping-up">Wrapping Up</h2>
+
+<p>AWS Step Functions are a powerful tool that allows you to orchestrate long running workflows using AWS Lambda. State functions
+are useful to implement the Saga pattern as in <a href="http://theburningmonk.com/2017/07/applying-the-saga-pattern-with-aws-lambda-and-step-functions/">here</a> and
+<a href="https://read.acloud.guru/how-the-saga-pattern-manages-failures-with-aws-lambda-and-step-functions-bc8f7129f900">here</a>. They can also be used
+to compose Lambda functions into more complex workflows that include <a href="https://states-language.net/spec.html#parallel-state">parallel</a> operations
+on shared data.</p>
+
+<h1 id="notes">Notes</h1>
+
+<ul>
+<li>Minimal State machine validation is done at this time. See <a href="https://www.tbray.org/ongoing/When/201x/2016/12/01/J2119-Validator">Tim Bray</a> for more information.</li>
+<li>Value interrogation is defined by <a href="http://goessner.net/articles/JsonPath/">JSONPath</a> expressions</li>
+</ul>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/cicd/" title="CI/CD"> <i class="fa fa-chevron-left"></i><label>CI/CD</label></a>
+    <a class="nav nav-next" href="/credits/" title="Credits" style="margin-right: 0px;"><label>Credits</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 31/10/2017
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/step_functions.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

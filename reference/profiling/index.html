@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>Profiling :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/reference/profiling/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Walkthrough
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example1/">
+            Echo
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example3/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example2/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item active">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/presentations/" class="dd-item">
+        <div>
+          <a href="/reference/presentations/">
+            Presentations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/faq/" >- FAQ</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/"  selected>- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/presentations/" >- Presentations</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+  
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Profiling</h1>
+    
+    
+    
+    
+
+<h1 id="introduction">Introduction</h1>
+
+<p>One of Lambda&rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of <a href="https://jvns.ca/">tools</a> used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda <a href="https://aws.amazon.com/lambda/pricing/">pricing model</a>, where idle time often directly translates into increased costs.</p>
+
+<p>However, Go offers the excellent <a href="https://rakyll.org/pprof-ui/">pprof</a> tool to visualize and cost allocate program execution. Beginning with <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0204">Sparta 0.20.4</a>, it&rsquo;s possible to enable per-lambda instance snapshotting which can be locally visualized. This documentation provides an overview of how to enable profiling. The full source is available at the <a href="https://github.com/mweagle/SpartaPProf">SpartaPProf</a> repo.</p>
+
+<p>To learn more about <code>pprof</code> itself, please visit:</p>
+
+<ul>
+<li><a href="https://twitter.com/rakyll" class="fa fa-twitter">@rakyll&rsquo;s</a> <a href="https://rakyll.org/">blog</a></li>
+<li><a href="https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/">Profiling Go programs with pprof</a></li>
+<li><a href="https://medium.com/@tjholowaychuk/profiling-golang-851db2d9ae24">Profiling Golang</a></li>
+<li><a href="http://artem.krylysov.com/blog/2017/03/13/profiling-and-optimizing-go-web-applications/">Profiling and optimizing Go web programs</a></li>
+</ul>
+
+<h2 id="enabling-profiling">Enabling Profiling</h2>
+
+<p>To enable profiling add a reference to <a href="https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop">ScheduleProfileLoop</a> in your <code>main()</code> function as in:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">sparta.ScheduleProfileLoop(<span style="color:#00f">nil</span>, 5*time.Second, 30*time.Second,
+  <span style="color:#a31515">&#34;goroutine&#34;</span>,
+  <span style="color:#a31515">&#34;heap&#34;</span>,
+  <span style="color:#a31515">&#34;threadcreate&#34;</span>,
+  <span style="color:#a31515">&#34;block&#34;</span>,
+  <span style="color:#a31515">&#34;mutex&#34;</span>)</code></pre></div>
+
+<p>This function accepts the following arguments:</p>
+
+<ul>
+<li><code>s3Bucket</code>: The S3 bucket to which profile snapshots should be written. If <code>nil</code>, the bucket used to host the original ZIP code archive is used.</li>
+<li><code>snapshotInterval</code> - The interval between each snapshot.</li>
+<li><code>cpuProfileDuration</code> - The duration for the <a href="https://golang.org/pkg/runtime/pprof/#StartCPUProfile">CPUProfile</a> sample.</li>
+<li><code>profileNames...</code> - The profile types to snapshot. In addition to the <a href="https://golang.org/pkg/runtime/pprof/#Profile">standard profiles</a>, Sparta includes a &ldquo;cpu&rdquo; profile iff the <code>cpuProfileDuration</code> is non-zero.</li>
+</ul>
+
+<h3 id="profiling-implementation">Profiling Implementation</h3>
+
+<p>During the <code>provision</code> step, the <code>ScheduleProfileLoop</code> adds an <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">IAMRolePrivilege</a> <em>Allow</em> entry (if possible) to each Lambda function&rsquo;s IAM policy. This policy extension is a minimal privilege and only enables <code>s3:PutObject</code> against the Sparta managed key prefix (see below).</p>
+
+<p>The <code>provision</code> implementation also annotates the Lambda&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment">Environment</a> map so that the publishing loop knows where to publish snapshots.</p>
+
+<p>During the <code>execute</code> step when the Sparta binary is executing in AWS Lambda, the <code>ScheduleProfileLoop</code> installs the requested sampling and publishing steps so that profile snapshots, serialized as <a href="https://github.com/google/pprof/blob/master/proto/profile.proto">proto</a> files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:</p>
+
+<p>s3:://{BUCKET_NAME}/sparta/pprof/{STACK_NAME}/profiles/{PROFILE_TYPE}/{SNAPSHOT_INDEX}-{PROFILE_TYPE}.λ-{INSTANCE_ID}.profile</p>
+
+<p>To manage profile sprawl, each lambda instance uses a rolling <code>SNAPSHOT_INDEX</code> to maintain a fixed size window. The new <code>profile</code> command is responsible for aggregating them into a single local, consolidated profile that can be visualized using the existing tools.</p>
+
+<h2 id="deploying">Deploying</h2>
+
+<p>With profiling enabled, the next step is to deploy the <em>SpartaPProf</em> service using the <code>provision</code> command:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000]    _______  ___   ___  _________
+INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4
+INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 8f97d81
+INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=provision UTC=&#34;2017-11-26T19:21:17Z&#34;
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=441b46af4f35566d5cf2f2b4a7992bedc8825ecf CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] Instrumenting function for profiling          Function=Hello_World
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0010] Executable binary size                        KB=23082 MB=22
+INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaPProf_mweagle-code.zip
+INFO[0010] Creating NodeJS/Sparta proxy function         FunctionName=Hello_World ScriptName=Hello_World
+INFO[0010] Lambda code archive size                      KB=23182 MB=22
+INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-code.zip Path=./.sparta/SpartaPProf_mweagle-code.zip
+INFO[0028] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-cftemplate.json Path=./.sparta/SpartaPProf_mweagle-cftemplate.json
+INFO[0028] Creating stack                                StackID=&#34;arn:aws:cloudformation:us-west-2:012345678910:stack/SpartaPProf-mweagle/0a802640-d2df-11e7-88d8-50a68a0e328e&#34;
+INFO[0049] Waiting for CloudFormation operation to complete
+INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;
+INFO[0062] Stack provisioned                             CreationTime=&#34;2017-11-26 19:21:45.446 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:012345678910:stack/SpartaPProf-mweagle/0a802640-d2df-11e7-88d8-50a68a0e328e&#34; StackName=SpartaPProf-mweagle
+INFO[0062] ──────────────────────────────────────────────────────────────
+INFO[0062] SpartaPProf-mweagle Summary (2017-11-26T11:22:19-08:00)
+INFO[0062] ──────────────────────────────────────────────────────────────
+INFO[0062] Verifying IAM roles                           Duration (s)=0
+INFO[0062] Verifying AWS preconditions                   Duration (s)=0
+INFO[0062] Creating code bundle                          Duration (s)=10
+INFO[0062] Uploading code                                Duration (s)=17
+INFO[0062] Ensuring CloudFormation stack                 Duration (s)=34
+INFO[0062] Total elapsed time                            Duration (s)=62
+INFO[0062] ──────────────────────────────────────────────────────────────</code></pre></div>
+
+<h2 id="generating-load">Generating Load</h2>
+
+<p>While the <strong>SpartaPProf</strong> binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. <strong>SpartaPProf</strong> includes a simple tool (<em>cmd/load.go</em>) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the <em>ARN</em> of the lambda function listed as a <em>Stack output</em> in the log output:</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;</code></pre></div>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ cd cmd
+$ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
+Lambda response (0 of 500): &#34;Hi there 🌍&#34;
+Lambda response (1 of 500): &#34;Hi there 🌍&#34;
+Lambda response (2 of 500): &#34;Hi there 🌍&#34;
+Lambda response (3 of 500): &#34;Hi there 🌍&#34;
+Lambda response (4 of 500): &#34;Hi there 🌍&#34;
+Lambda response (5 of 500): &#34;Hi there 🌍&#34;
+Lambda response (6 of 500): &#34;Hi there 🌍&#34;
+Lambda response (7 of 500): &#34;Hi there 🌍&#34;
+Lambda response (8 of 500): &#34;Hi there 🌍&#34;
+Lambda response (9 of 500): &#34;Hi there 🌍&#34;
+...</code></pre></div>
+
+<p>After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
+S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
+---------------------------------------------------------------
+2017-11-26 11:32:28   41 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/block/0-block.λ-3838737145763622974.profile
+2017-11-26 11:32:27    1.8 KiB sparta/pprof/SpartaPProf-mweagle/profiles/cpu/0-cpu.λ-3838737145763622974.profile
+2017-11-26 11:32:28    1.8 KiB sparta/pprof/SpartaPProf-mweagle/profiles/goroutine/0-goroutine.λ-3838737145763622974.profile
+2017-11-26 11:32:28    2.2 KiB sparta/pprof/SpartaPProf-mweagle/profiles/heap/0-heap.λ-3838737145763622974.profile
+2017-11-26 11:32:28   54 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/mutex/0-mutex.λ-3838737145763622974.profile
+2017-11-26 11:32:30  200 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/threadcreate/0-threadcreate.λ-3838737145763622974.profile</code></pre></div>
+
+<h2 id="visualizing-profiles">Visualizing Profiles</h2>
+
+<p>Sparta delegates to the pprof <a href="https://github.com/google/pprof">webui</a> to visualize profile snapshots. Ensure you have the latest version of this by running <code>go get -u -v go get github.com/google/pprof</code> first.</p>
+
+<p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating all published profiles for a single type.</p>
+
+<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000]    _______  ___   ___  _________
+INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4
+INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 8f97d81
+INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
+INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=profile UTC=&#34;2017-11-26T20:03:55Z&#34;
+INFO[0000] ══════════════════════════════════════════════════════════════
+? Which stack would you like to profile: SpartaPProf-mweagle
+? What type of profile would you like to view? heap
+? What profile snapshot(s) would you like to view? Download new snapshots from S3
+? Please select a heap profile type: alloc_space
+INFO[0010] Refreshing cached profiles                    CacheRoot=.sparta/profiles/SpartaPProf-mweagle/heap ProfileRootKey=sparta/pprof/SpartaPProf-mweagle/profiles/heap S3Bucket=weagle StackName=SpartaPProf-mweagle Type=heap
+INFO[0010] Aggregating profile                           Input=&#34;.sparta/profiles/SpartaPProf-mweagle/heap/0-heap.λ-3838737145763622974.profile&#34;
+INFO[0010] Consolidating profiles                        ProfileCount=1
+INFO[0010] Creating consolidated profile                 ConsolidatedProfile=.sparta/heap.consolidated.profile
+INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.</code></pre></div>
+
+<p>The <code>profile</code> command downloads the published profiles and consolidates them into a single cached version in the <em>./sparta</em> directory with a name of the form:</p>
+
+<p>./.sparta/{PROFILE_TYPE}.consolidated.profile</p>
+
+<p>You can choose to use the cached file if it exists.</p>
+
+<p>For this sample run, the <em>heap</em> profile output is made available to the <code>pprof</code> webserver which produces the following layout:</p>
+
+<p><img src="/images/profiling/main_alloc_space.jpg" alt="Main Alloc Space" /></p>
+
+<p>The latest <code>pprof</code> also includes flamegraph support to help identify issues:</p>
+
+<p><img src="/images/profiling/main_alloc_space_flamegraph.jpg" alt="Main Alloc Space Flamegraph" /></p>
+
+<p>To view another profile type, enter <code>Ctrl+C</code> to exit the blocking web ui loop and launch another <code>profile</code> session.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Go includes a very powerful set of tools that can help diagnose performance bottlenecks. With the Sparta <code>profile</code> command, it&rsquo;s possible to bring that same visibility to bear to AWS Lambda, despite running on ephemeral, (typically) unaddressable hosts. Get started optimizing today! And also, don&rsquo;t forget to disable the profiling loop before pushing to production.</p>
+
+<h1 id="notes">Notes</h1>
+
+<ul>
+<li><a href="http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html">CPU Flame Graphs</a> provides a great overview.</li>
+<li>It&rsquo;s not currently possible to use <a href="https://medium.com/@cep21/creating-custom-go-profiles-with-pprof-b737dfc58e11">custom profiles</a></li>
+<li>Lambda instances are limited to a window size of 3 rolling snapshots</li>
+<li>The <code>explore</code> command also exposes the <code>pprof</code> <a href="https://github.com/mweagle/Sparta/blob/ead2872585dc0da81f222577a898707c6a486ab1/execute_utils.go#L35">web handlers</a> for local exploration as well.</li>
+</ul>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/local_testing/" title="Local Testing"> <i class="fa fa-chevron-left"></i><label>Local Testing</label></a>
+    <a class="nav nav-next" href="/reference/s3site/" title="S3 Sites with CORS" style="margin-right: 0px;"><label>S3 Sites with CORS</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/profiling.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>
