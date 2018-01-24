@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>Application Customization :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+    
+  </head>
+  <body data-url="/reference/application/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Walkthrough
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example1/">
+            Echo
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example3/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/example2/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item parent active haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/presentations/" class="dd-item">
+        <div>
+          <a href="/reference/presentations/">
+            Presentations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/"  selected>
+  - 
+   Application Customization</option> 
+      <option value="/reference/application/commandline/" >-- Command Line Options</option>
+      <option value="/reference/application/custom_commands/" >-- Custom Application Commands</option>
+      <option value="/reference/application/custom_flags/" >-- Custom Flags</option>
+      <option value="/reference/application/environments/" >-- Managing Environments</option>
+      <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
+  
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/faq/" >- FAQ</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/presentations/" >- Presentations</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+  
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>Application Customization</h1>
+    
+    
+    
+
+
+
+<h2 id="customization-options">Customization Options</h2>
+
+<p>Sparta-based applications use the <a href="https://github.com/spf13/cobra">Cobra</a> package to expose a rich set of command line options.  This section describes:</p>
+
+<ul>
+<li><a href="/docs/application/commandline">Default options</a></li>
+<li><a href="/docs/application/custom_flags">Adding flags</a></li>
+<li><a href="/docs/application/custom_commands">Adding commands</a></li>
+<li><a href="/docs/application/environments">Managing Environments</a></li>
+<li><a href="/docs/application/workflow_hooks">Workflow Hooks</a></li>
+</ul>
+
+<p>Adding custom flags or commands is typically a prerequisite to supporting <a href="/docs/alternative_topologies">alternative topologies</a>.</p>
+
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fa fa-chevron-left"></i><label>CORS</label></a>
+    <a class="nav nav-next" href="/reference/application/commandline/" title="Command Line Options" style="margin-right: 0px;"><label>Command Line Options</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/application/_index.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>
