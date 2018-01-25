@@ -1,5 +1,23 @@
 # Change Notes
 
+## v1.0.2
+
+- :warning: **BREAKING**
+  - Removed `lambdabinary` build tags from [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
+    - AWS native support for **Go** in AWS caused a significant difference in how standard vs `lambdabinary` build targets which prevented custom application options from being respected
+- :checkered_flag: **CHANGES**
+  - Ensure `Pre` and `Post` deploy hooks are granted proper permissions
+    - See [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) for more information.
+  - Added [Sparta/aws/apigateway.Error](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#Error) to support returning custom API Gateway errors
+    - See [SpartaHTML](https://github.com/mweagle/SpartaHTML) for example usage
+  - API Gateway `error` responses are now converted to JSON objects via a Body Mapping template:
+    ```
+    "application/json": "$input.path('$.errorMessage')",
+    ```
+    - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
+- :bug:  **FIXED**
+
+
 ## v1.0.1
 
 - :warning: **BREAKING**

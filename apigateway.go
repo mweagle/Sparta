@@ -803,10 +803,11 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 		if defaultHTTPStatusCode == i {
 			regExp = ""
 		}
+		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 		method.Integration.Responses[i] = &IntegrationResponse{
 			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
-				"application/json": "",
+				"application/json": "$input.path('$.errorMessage')",
 				"text/*":           "",
 			},
 			SelectionPattern: regExp,
