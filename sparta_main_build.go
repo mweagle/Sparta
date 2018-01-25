@@ -96,7 +96,8 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
-		enableColors := (runtime.GOOS != "windows")
+		// Running in AWS?
+		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":

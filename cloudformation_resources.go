@@ -21,19 +21,28 @@ func resourceOutputs(resourceName string,
 	switch typedResource := resource.(type) {
 	case gocf.IAMRole:
 		// NOP
+	case *gocf.DynamoDBTable:
+		if typedResource.StreamSpecification != nil {
+			outputProps = append(outputProps, "StreamArn")
+		}
 	case gocf.DynamoDBTable:
 		if typedResource.StreamSpecification != nil {
 			outputProps = append(outputProps, "StreamArn")
 		}
-	case gocf.KinesisStream:
+	case gocf.KinesisStream,
+		*gocf.KinesisStream:
 		outputProps = append(outputProps, "Arn")
-	case gocf.Route53RecordSet:
-		// TODO
-	case gocf.S3Bucket:
+	case gocf.Route53RecordSet,
+		*gocf.Route53RecordSet:
+		// NOP
+	case gocf.S3Bucket,
+		*gocf.S3Bucket:
 		outputProps = append(outputProps, "DomainName", "WebsiteURL")
-	case gocf.SNSTopic:
+	case gocf.SNSTopic,
+		*gocf.SNSTopic:
 		outputProps = append(outputProps, "TopicName")
-	case gocf.SQSQueue:
+	case gocf.SQSQueue,
+		*gocf.SQSQueue:
 		outputProps = append(outputProps, "Arn", "QueueName")
 	default:
 		logger.WithFields(logrus.Fields{

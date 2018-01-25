@@ -71,8 +71,6 @@ func BuildDockerImage(serviceName string,
 		"cgo",
 		"-o",
 		executableOutput,
-		"-tags",
-		"lambdabinary",
 		".")
 
 	cmd.Env = os.Environ()
@@ -182,8 +180,6 @@ func PushDockerImageToECR(localImageTag string,
 					authTokenParts[0],
 					"-p",
 					authTokenParts[1],
-					"-e",
-					"none",
 					dockerURL)
 				dockerLoginCmdErr := runOSCommand(dockerLoginCmd, logger)
 				if nil != dockerLoginCmdErr {

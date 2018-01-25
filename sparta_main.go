@@ -22,6 +22,10 @@ const (
 // Validation instance
 var validate *validator.Validate
 
+func isRunningInAWS() bool {
+	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
+}
+
 func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
 	logger.Info(headerDivider)
 	if enableColors {
