@@ -83,7 +83,6 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 	lambdaFuncs []*sparta.LambdaAWSInfo,
 	preHook *sparta.LambdaAWSInfo,
 	postHook *sparta.LambdaAWSInfo) sparta.ServiceDecoratorHookFunc {
-
 	// Define the names that are shared
 	codeDeployApplicationName := sparta.CloudFormationResourceName("SafeDeploy",
 		"deployment",
@@ -91,6 +90,26 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 	codeDeployRoleResourceName := sparta.CloudFormationResourceName("SafeDeploy",
 		"deployment",
 		"role")
+
+	// Add the Execution status
+	// See: https://github.com/awslabs/serverless-application-model/blob/master/docs/safe_lambda_deployments.rst#traffic-shifting-using-codedeploy
+	for _, eachFunc := range []*sparta.LambdaAWSInfo{preHook, postHook} {
+		if eachFunc != nil {
+			eachFunc.RoleDefinition.Privileges = append(preHook.RoleDefinition.Privileges,
+				sparta.IAMRolePrivilege{
+					Actions: []string{"codedeploy:PutLifecycleEventHookExecutionStatus"},
+					Resource: gocf.Join("",
+						gocf.String("arn:aws:codedeploy:"),
+						gocf.Ref("AWS::Region"),
+						gocf.String(":"),
+						gocf.Ref("AWS::AccountId"),
+						gocf.String(":deploymentgroup:"),
+						gocf.String(codeDeployApplicationName),
+						gocf.String("/*"),
+					)},
+			)
+		}
+	}
 
 	// Add the decorator to each lambda
 	for _, eachLambda := range lambdaFuncs {
