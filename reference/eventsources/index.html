@@ -18,6 +18,16 @@
       var baseurl = "\/";
 </script>
 
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+
 <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
 <meta name="description" content="">
 
@@ -377,6 +387,25 @@
    Sample Service</option>
     <option value="/reference/" >
    Reference</option> 
+    <option value="/reference/eventsources/"  selected>
+  - 
+   Event Sources</option> 
+      <option value="/reference/eventsources/cloudformation/" >-- CloudFormation</option>
+      <option value="/reference/eventsources/cloudwatchevents/" >-- CloudWatch Events</option>
+      <option value="/reference/eventsources/cloudwatchlogs/" >-- CloudWatch Logs</option>
+      <option value="/reference/eventsources/cognito/" >-- Cognito</option>
+      <option value="/reference/eventsources/dynamodb/" >-- DynamoDB</option>
+      <option value="/reference/eventsources/kinesis/" >-- Event Sources - Kinesis</option>
+      <option value="/reference/eventsources/s3/" >-- S3</option>
+      <option value="/reference/eventsources/ses/" >-- SES</option>
+      <option value="/reference/eventsources/sns/" >-- SNS</option>
+  
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
