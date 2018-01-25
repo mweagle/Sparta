@@ -15,6 +15,8 @@ type Error struct {
 	Context map[string]interface{} `json:"context,omitempty"`
 }
 
+// Error returns the JSONified version of this error which will
+// trigger the appropriate integration mapping.
 func (apigError *Error) Error() string {
 	bytes, bytesErr := json.Marshal(apigError)
 	if bytesErr != nil {
