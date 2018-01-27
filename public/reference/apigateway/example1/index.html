@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item parent haschildren
         ">
       <div>
@@ -261,6 +268,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -289,24 +303,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -331,28 +331,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -390,6 +389,7 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option> 
@@ -402,20 +402,20 @@
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -452,33 +452,33 @@
 
 <p>For reference, the <code>echoS3Event</code> function is below.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoS3Event(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoS3Event</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
 
-	decoder := json.NewDecoder(r.Body)
-	<span style="color:#00f">defer</span> r.Body.Close()
-	<span style="color:#00f">var</span> jsonMessage json.RawMessage
-	err := decoder.Decode(&amp;jsonMessage)
-	<span style="color:#00f">if</span> err != <span style="color:#00f">nil</span> {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		<span style="color:#00f">return</span>
-	}
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
-		<span style="color:#a31515">&#34;Event&#34;</span>:     string(jsonMessage),
-	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)
+	<span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">jsonMessage</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RawMessage</span>
+	<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+		<span style="color:#204a87;font-weight:bold">return</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Event&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">),</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-	w.Header().Set(<span style="color:#a31515">&#34;Content-Type&#34;</span>, <span style="color:#a31515">&#34;application/json&#34;</span>)
-	w.Write(jsonMessage)
-}</code></pre></div>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Set</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">stage := sparta.NewStage(<span style="color:#a31515">&#34;prod&#34;</span>)
-apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;MySpartaAPI&#34;</span>, stage)</code></pre></div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">stage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;prod&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MySpartaAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
 
@@ -486,11 +486,11 @@ apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;MySpartaAPI&
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that encapsulates the <strong>go</strong> function:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3Event),
-  http.HandlerFunc(echoS3Event),
-  sparta.IAMRoleDefinition{})
-apiGatewayResource, _ := api.NewResource(<span style="color:#a31515">&#34;/hello/world/test&#34;</span>, lambdaFn)
-apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, http.StatusOK)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoS3Event</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">echoS3Event</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/hello/world/test&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Our <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L34">echoS3Event</a> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
 
@@ -498,20 +498,20 @@ apiGatewayResource.NewMethod(<span style="color:#a31515">&#34;GET&#34;</span>, h
 
 <p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">stage := sparta.NewStage(<span style="color:#a31515">&#34;prod&#34;</span>)
-apiGateway := sparta.NewAPIGateway(<span style="color:#a31515">&#34;MySpartaAPI&#34;</span>, stage)
-stackName := <span style="color:#a31515">&#34;SpartaApplication&#34;</span>
-sparta.Main(stackName,
-  <span style="color:#a31515">&#34;Simple Sparta application&#34;</span>,
-  spartaLambdaData(apiGateway),
-  apiGateway,
-  <span style="color:#00f">nil</span>)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">stage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;prod&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MySpartaAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">stackName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;SpartaApplication&#34;</span>
+<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">stackName</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;Simple Sparta application&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">spartaLambdaData</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https:<span style="color:#008000">//7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
-</span><span style="color:#008000"></span>INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https:<span style="color:#008000">//github.com/mweagle/Sparta
-</span><span style="color:#008000"></span>INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-javascript" data-lang="javascript"><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">API</span> <span style="color:#000">Gateway</span> <span style="color:#000">URL</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">APIGatewayURL</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">https</span><span style="color:#ce5c00;font-weight:bold">:</span><span style="color:#8f5902;font-style:italic">//7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">Sparta</span> <span style="color:#000">Home</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">SpartaHome</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">https</span><span style="color:#ce5c00;font-weight:bold">:</span><span style="color:#8f5902;font-style:italic">//github.com/mweagle/Sparta
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">INFO</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0113</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000">Stack</span> <span style="color:#000">output</span>   <span style="color:#000">Description</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">Sparta</span> <span style="color:#000">Version</span> <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">SpartaVersion</span> <span style="color:#000">Value</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">0.1.0</span></code></pre></div>
 
 <p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test">https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test</a></em></p>
 
@@ -519,7 +519,7 @@ sparta.Main(stackName,
 
 <p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">curl -vs https://7ljn63rysd.execute-api.us-west-2.amazonaws.com/prod/hello/world/test
 *   Trying 54.240.188.223...
 * Connected to 7ljn63rysd.execute-api.us-west-2.amazonaws.com (54.240.188.223) port 443 (#0)
 * TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
@@ -546,47 +546,47 @@ sparta.Main(stackName,
 
 <p>Pretty-printing the response body to make things more readable:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-  &#34;method&#34;: <span style="color:#a31515">&#34;GET&#34;</span>,
-  &#34;body&#34;: {},
-  &#34;headers&#34;: {
-    &#34;Accept&#34;: <span style="color:#a31515">&#34;*/*&#34;</span>,
-    &#34;CloudFront-Forwarded-Proto&#34;: <span style="color:#a31515">&#34;https&#34;</span>,
-    &#34;CloudFront-Is-Desktop-Viewer&#34;: <span style="color:#a31515">&#34;true&#34;</span>,
-    &#34;CloudFront-Is-Mobile-Viewer&#34;: <span style="color:#a31515">&#34;false&#34;</span>,
-    &#34;CloudFront-Is-SmartTV-Viewer&#34;: <span style="color:#a31515">&#34;false&#34;</span>,
-    &#34;CloudFront-Is-Tablet-Viewer&#34;: <span style="color:#a31515">&#34;false&#34;</span>,
-    &#34;CloudFront-Viewer-Country&#34;: <span style="color:#a31515">&#34;US&#34;</span>,
-    &#34;Via&#34;: <span style="color:#a31515">&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;</span>,
-    &#34;X-Amz-Cf-Id&#34;: <span style="color:#a31515">&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;</span>,
-    &#34;X-Forwarded-For&#34;: <span style="color:#a31515">&#34;50.135.43.1, 54.240.158.211&#34;</span>,
-    &#34;X-Forwarded-Port&#34;: <span style="color:#a31515">&#34;443&#34;</span>,
-    &#34;X-Forwarded-Proto&#34;: <span style="color:#a31515">&#34;https&#34;</span>
-  },
-  &#34;queryParams&#34;: {},
-  &#34;pathParams&#34;: {},
-  &#34;context&#34;: {
-    &#34;apiId&#34;: <span style="color:#a31515">&#34;bmik0opc3l&#34;</span>,
-    &#34;method&#34;: <span style="color:#a31515">&#34;GET&#34;</span>,
-    &#34;requestId&#34;: <span style="color:#a31515">&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;</span>,
-    &#34;resourceId&#34;: <span style="color:#a31515">&#34;mp2mrk&#34;</span>,
-    &#34;resourcePath&#34;: <span style="color:#a31515">&#34;/hello/world/test&#34;</span>,
-    &#34;stage&#34;: <span style="color:#a31515">&#34;prod&#34;</span>,
-    &#34;identity&#34;: {
-      &#34;accountId&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;apiKey&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;caller&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;cognitoAuthenticationProvider&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;cognitoAuthenticationType&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;cognitoIdentityId&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;cognitoIdentityPoolId&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;sourceIp&#34;: <span style="color:#a31515">&#34;50.135.43.1&#34;</span>,
-      &#34;user&#34;: <span style="color:#a31515">&#34;&#34;</span>,
-      &#34;userAgent&#34;: <span style="color:#a31515">&#34;curl/7.43.0&#34;</span>,
-      &#34;userArn&#34;: <span style="color:#a31515">&#34;&#34;</span>
-    }
-  }
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">&#34;method&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">&#34;body&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;headers&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Accept&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;*/*&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Forwarded-Proto&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Is-Desktop-Viewer&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;true&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Is-Mobile-Viewer&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;false&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Is-SmartTV-Viewer&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;false&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Is-Tablet-Viewer&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;false&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;CloudFront-Viewer-Country&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;US&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Via&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;1.1 5c98e8df8806ae26f9ae3c33615610d2.cloudfront.net (CloudFront)&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;X-Amz-Cf-Id&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;sRMCwKpH3jIPbwgIo4pPHv_YJXEo9KEojEFw8yrljFVP2krJbyewLg==&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;X-Forwarded-For&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;50.135.43.1, 54.240.158.211&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;X-Forwarded-Port&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;443&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;X-Forwarded-Proto&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;https&#34;</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;queryParams&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;pathParams&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#204a87;font-weight:bold">&#34;context&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;apiId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;bmik0opc3l&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;method&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;requestId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;c113fd3b-a76b-11e5-b5e6-4ff04e5da412&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;resourceId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;mp2mrk&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;resourcePath&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;/hello/world/test&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;stage&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;prod&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;identity&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#204a87;font-weight:bold">&#34;accountId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;apiKey&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;caller&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;cognitoAuthenticationProvider&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;cognitoAuthenticationType&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;cognitoIdentityId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;cognitoIdentityPoolId&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;sourceIp&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;50.135.43.1&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;user&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;userAgent&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;curl/7.43.0&#34;</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#204a87;font-weight:bold">&#34;userArn&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span>
+    <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
 
@@ -603,7 +603,7 @@ sparta.Main(stackName,
 
 <p>The <code>application/json</code> template is copied below:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">#*
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function
 
@@ -653,7 +653,7 @@ See
       &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
     }
   }
-}</code></pre></div>
+}</code></pre></div></p>
 
 <p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
 
@@ -684,7 +684,7 @@ See
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 

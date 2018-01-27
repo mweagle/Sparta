@@ -41,7 +41,7 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 func main() {
 	// Deploy it
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-		http.HandlerFunc(helloWorld),
+		helloWorld,
 		sparta.IAMRoleDefinition{})
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
@@ -127,7 +127,7 @@ func TestExplore(t *testing.T) {
 	// 1. Create the function(s) we want to test
 	var lambdaFunctions []*LambdaAWSInfo
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(exploreTestHelloWorld),
-		http.HandlerFunc(exploreTestHelloWorld),
+		exploreTestHelloWorld,
 		sparta.IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, lambdaFn)
 

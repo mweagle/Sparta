@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -456,6 +456,41 @@
 
    <article class="post reference">
     <header class="post-header">
+        <h2 class="post-title"><a href="/reference/step_functions/">Step Functions</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &ldquo;Roll Die&rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&rsquo;s core logic. <a class="read-more" href="/reference/step_functions/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/cicd/">CI/CD</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Pending Document the SpartaCodePipeline example. Also see the Medium Post <a class="read-more" href="/reference/cicd/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
+
+   <article class="post reference">
+    <header class="post-header">
         <h2 class="post-title"><a href="/reference/custom_resources/">Custom Resources</a></h2>
     </header>
     <section class="post-excerpt">
@@ -497,7 +532,7 @@ The following sections walk through provisioning a S3 bucket, declaring an expli
         <h2 class="post-title"><a href="/reference/docker/">Docker</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Introduction Document SpartaGrafana project. <a class="read-more" href="/reference/docker/">&raquo;</a></p>
+        <p>Introduction Document SpartaDocker project. <a class="read-more" href="/reference/docker/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -530,48 +565,11 @@ For instance, consider the case where two developers are working in the same AWS
 
    <article class="post reference">
     <header class="post-header">
-        <h2 class="post-title"><a href="/reference/faq/">FAQ</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
-During development, configuration is typically done through environment variables:
- AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
-{ &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;cloudformation:DescribeStacks&#34;, &#34;cloudformation:CreateStack&#34;, &#34;cloudformation:CreateChangeSet&#34;, &#34;cloudformation:DescribeChangeSet&#34;, &#34;cloudformation:ExecuteChangeSet&#34;, &#34;cloudformation:DeleteChangeSet&#34;, &#34;cloudformation:DeleteStack&#34;, &#34;iam:GetRole&#34;, &#34;iam:DeleteRole&#34;, &#34;iam:DeleteRolePolicy&#34;, &#34;iam:PutRolePolicy&#34; ], &#34;Resource&#34;: [ &#34;*&#34; ] }, { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;s3:PutObject&#34;, &#34;s3:GetBucketVersioning&#34;, &#34;s3:DeleteObject&#34; ], &#34;Resource&#34;: [ &#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld. <a class="read-more" href="/reference/faq/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
         <h2 class="post-title"><a href="/reference/hybrid_topologies/">Hybrid Topologies</a></h2>
     </header>
     <section class="post-excerpt">
         <p>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
 However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &ldquo;legacy&rdquo; AWS services: <a class="read-more" href="/reference/hybrid_topologies/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/limitations/">Limitations</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Sparta Limitations  go isn&rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome. <a class="read-more" href="/reference/limitations/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          

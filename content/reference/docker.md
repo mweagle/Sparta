@@ -11,4 +11,4 @@ menu:
 
 # Introduction
 
-Document [SpartaGrafana](https://github.com/mweagle/SpartaGrafana) project.
+Document [SpartaDocker](https://github.com/mweagle/SpartaDocker) project.

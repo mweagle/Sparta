@@ -35,20 +35,36 @@ The table below summarizes some of the primary Sparta terminology.
   <tr>
       <td>
       <h2>Sparta Lambda Function</h2>
-A Sparta-compatible lambda is a standard <a href="https://golang.org/pkg/net/http/">http.HandlerFunc</a> instance. Sparta translates the results of the <code>http.ResponseWriter</code> (both status and body) to determine the AWS Lambda response.</h5>
-{{< highlight go >}}
-func mySpartaHandler(w http.ResponseWriter,
-                      r *http.Request) {
-  // Lambda code
-}
+A Sparta-compatible lambda is a standard <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html/">AWS Lambda Go</a> function. The following function signatures are supported:
+
+  <ul>
+    <li><code>func ()</code></li>
+    <li><code>func () error</code></li>
+    <li><code>func (TIn), error</code></li>
+    <li><code>func () (TOut, error)</code></li>
+    <li><code>func (context.Context) error</code></li>
+    <li><code>func (context.Context, TIn) error</code></li>
+    <li><code>func (context.Context) (TOut, error)</code></li>
+    <li><code>func (context.Context, TIn) (TOut, error)</code></li>
+  </ul>
+
+where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types.  Supplying an invalid signature will produce a run time error as in:
+
+{{< highlight text >}}
+ERRO[0000] Lambda function (Hello World) has invalid returns:
+handler returns a single value, but it does not implement error
+exit status 1
 {{< /highlight >}}
+
+
+
     </td>
   </tr>
 <!-- Row 3 -->
   <tr>
     <td>
       <h2>Privileges</h2>
-      To support accessing other AWS resources in your <b>Go</b> function, Sparta users may define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
+      To support accessing other AWS resources in your <b>Go</b> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
 {{< highlight go >}}
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
@@ -84,10 +100,10 @@ snsTopicName := sparta.CloudFormationResourceName("SNSDynamicTopic")
 snsTopic := &gocf.SNSTopic{
   DisplayName: gocf.String("Sparta Application SNS topic"),
 })
-lambdaFn := sparta.HandleAWSLambda(
-  sparta.LambdaName(echoDynamicSNSEvent),
-  http.HandlerFunc(echoDynamicSNSEvent),
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoDynamicSNSEvent),
+  echoDynamicSNSEvent,
   sparta.IAMRoleDefinition{})
+
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 	BasePermission: sparta.BasePermission{
 		SourceArn: gocf.Ref(snsTopicName),
@@ -123,9 +139,7 @@ Given a set of registered Sparta lambda function, a typical `provision` build to
 
 During provisioning, Sparta uses [AWS Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to support operations for which CloudFormation doesn't yet support (eg, [API Gateway](https://aws.amazon.com/api-gateway/) creation).
 
-At runtime, Sparta uses [NodeJS](http://docs.aws.amazon.com/lambda/latest/dg/programming-model.html) shims to proxy the request to your **go** handler.
-
 
 # Next Steps
 
-Writing a simple [Sparta Application](/docs/intro_example/intro/).
+Walk through a starting [Sparta Application](/sample_service/).

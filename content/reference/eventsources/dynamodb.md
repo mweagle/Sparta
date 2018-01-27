@@ -61,7 +61,7 @@ With the core of the `echoDynamoDBEvent` complete, the next step is to integrate
 {{< highlight go >}}
 lambdaFn := sparta.HandleAWSLambda(
   sparta.LambdaName(echoDynamoDBEvent),
-  http.HandlerFunc(echoDynamoDBEvent),
+  echoDynamoDBEvent,
   sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 

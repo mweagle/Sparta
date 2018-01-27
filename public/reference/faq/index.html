@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item active">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item active">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/"  selected>- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/"  selected>- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -461,43 +461,43 @@
 
 <p>The absolute minimum set of privileges an account needs is the following <a href="https://awspolicygen.s3.amazonaws.com/policygen.html">IAM Policy</a>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    &#34;Version&#34;: <span style="color:#a31515">&#34;2012-10-17&#34;</span>,
-    &#34;Statement&#34;: [
-        {
-            &#34;Sid&#34;: <span style="color:#a31515">&#34;Stmt1505975332000&#34;</span>,
-            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
-            &#34;Action&#34;: [
-                <span style="color:#a31515">&#34;cloudformation:DescribeStacks&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:CreateStack&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:CreateChangeSet&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:DescribeChangeSet&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:DeleteChangeSet&#34;</span>,
-                <span style="color:#a31515">&#34;cloudformation:DeleteStack&#34;</span>,
-                <span style="color:#a31515">&#34;iam:GetRole&#34;</span>,
-                <span style="color:#a31515">&#34;iam:DeleteRole&#34;</span>,
-                <span style="color:#a31515">&#34;iam:DeleteRolePolicy&#34;</span>,
-                <span style="color:#a31515">&#34;iam:PutRolePolicy&#34;</span>
-            ],
-            &#34;Resource&#34;: [
-                <span style="color:#a31515">&#34;*&#34;</span>
-            ]
-        },
-        {
-            &#34;Sid&#34;: <span style="color:#a31515">&#34;Stmt1505975332000&#34;</span>,
-            &#34;Effect&#34;: <span style="color:#a31515">&#34;Allow&#34;</span>,
-            &#34;Action&#34;: [
-                <span style="color:#a31515">&#34;s3:PutObject&#34;</span>,
-                <span style="color:#a31515">&#34;s3:GetBucketVersioning&#34;</span>,
-                <span style="color:#a31515">&#34;s3:DeleteObject&#34;</span>
-            ],
-            &#34;Resource&#34;: [
-                <span style="color:#a31515">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
-            ]
-        }
-    ]
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2012-10-17&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Statement&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Stmt1505975332000&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeStacks&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:ExecuteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:GetRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRolePolicy&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:PutRolePolicy&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;*&#34;</span>
+            <span style="color:#000;font-weight:bold">]</span>
+        <span style="color:#000;font-weight:bold">},</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Stmt1505975332000&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;s3:PutObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:GetBucketVersioning&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:DeleteObject&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
+            <span style="color:#000;font-weight:bold">]</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">]</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>This set of privileges should be sufficient to deploy a Sparta application similar to <a href="https://github.com/mweagle/SpartaHelloWorld">SpartaHelloWorld</a>. Additional privileges may be required to enable different datasources.</p>
 
@@ -514,11 +514,11 @@
 
 <p>Your working directory should be the root of your Sparta application.  Eg, use</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre></div>
 
 <p>rather than</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">go</span> run ./some/child/path/main.<span style="color:#00f">go</span> provision --level info --s3Bucket <span style="">$</span>S3_BUCKET</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">run</span> <span style="color:#000;font-weight:bold">.</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">some</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">child</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">/</span><span style="color:#000">main</span><span style="color:#000;font-weight:bold">.</span><span style="color:#204a87;font-weight:bold">go</span> <span style="color:#000">provision</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">level</span> <span style="color:#000">info</span> <span style="color:#ce5c00;font-weight:bold">--</span><span style="color:#000">s3Bucket</span> <span style="color:#a40000">$</span><span style="color:#000">S3_BUCKET</span></code></pre></div>
 
 <p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
 
@@ -563,10 +563,10 @@ requested update operation.</p>
 CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
 is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#008000">// Setup the DashboardDecorator lambda hook
-</span><span style="color:#008000"></span>workflowHooks := &amp;sparta.WorkflowHooks{
-	ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#8f5902;font-style:italic">// Setup the DashboardDecorator lambda hook
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">workflowHooks</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WorkflowHooks</span><span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">ServiceDecorator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DashboardDecorator</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">60</span><span style="color:#000;font-weight:bold">),</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
 
@@ -580,40 +580,40 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 <p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> lambdaDecorator(serviceName <span style="color:#2b91af">string</span>,
-	lambdaResourceName <span style="color:#2b91af">string</span>,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	S3Bucket <span style="color:#2b91af">string</span>,
-	S3Key <span style="color:#2b91af">string</span>,
-	buildID <span style="color:#2b91af">string</span>,
-	cfTemplate *gocf.Template,
-	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	logger *logrus.Logger) <span style="color:#2b91af">error</span> {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">lambdaDecorator</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">cfTemplate</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
 
-	<span style="color:#008000">// setup CloudWatch alarm
-</span><span style="color:#008000"></span>	<span style="color:#00f">var</span> alarmDimensions gocf.CloudWatchMetricDimensionList
-	alarmDimension := gocf.CloudWatchMetricDimension{Name: gocf.String(<span style="color:#a31515">&#34;FunctionName&#34;</span>), Value: gocf.Ref(lambdaResourceName).String()}
-	alarmDimensions = []gocf.CloudWatchMetricDimension{alarmDimension}
+	<span style="color:#8f5902;font-style:italic">// setup CloudWatch alarm
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">alarmDimensions</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchMetricDimensionList</span>
+	<span style="color:#000">alarmDimension</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchMetricDimension</span><span style="color:#000;font-weight:bold">{</span><span style="color:#000">Name</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;FunctionName&#34;</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#000">Value</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">()}</span>
+	<span style="color:#000">alarmDimensions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchMetricDimension</span><span style="color:#000;font-weight:bold">{</span><span style="color:#000">alarmDimension</span><span style="color:#000;font-weight:bold">}</span>
 
-	lambdaErrorsAlarm := &amp;gocf.CloudWatchAlarm{
-		ActionsEnabled:     gocf.Bool(<span style="color:#00f">true</span>),
-		AlarmActions:       gocf.StringList(gocf.String(<span style="color:#a31515">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span>)),
-		AlarmName:          gocf.String(<span style="color:#a31515">&#34;LambdaErrorAlarm&#34;</span>),
-		ComparisonOperator: gocf.String(<span style="color:#a31515">&#34;GreaterThanOrEqualToThreshold&#34;</span>),
-		Dimensions:         &amp;alarmDimensions,
-		EvaluationPeriods:  gocf.String(<span style="color:#a31515">&#34;1&#34;</span>),
-		Period:             gocf.String(<span style="color:#a31515">&#34;300&#34;</span>),
-		MetricName:         gocf.String(<span style="color:#a31515">&#34;Errors&#34;</span>),
-		Namespace:          gocf.String(<span style="color:#a31515">&#34;AWS/Lambda&#34;</span>),
-		Statistic:          gocf.String(<span style="color:#a31515">&#34;Sum&#34;</span>),
-		Threshold:          gocf.String(<span style="color:#a31515">&#34;3.0&#34;</span>),
-		Unit:               gocf.String(<span style="color:#a31515">&#34;Count&#34;</span>),
-	}
-	cfTemplate.AddResource(<span style="color:#a31515">&#34;LambdaErrorAlaram&#34;</span>, lambdaErrorsAlarm)
+	<span style="color:#000">lambdaErrorsAlarm</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchAlarm</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">ActionsEnabled</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Bool</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">AlarmActions</span><span style="color:#000;font-weight:bold">:</span>       <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StringList</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span><span style="color:#000;font-weight:bold">)),</span>
+		<span style="color:#000">AlarmName</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;LambdaErrorAlarm&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">ComparisonOperator</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GreaterThanOrEqualToThreshold&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Dimensions</span><span style="color:#000;font-weight:bold">:</span>         <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">alarmDimensions</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">EvaluationPeriods</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;1&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Period</span><span style="color:#000;font-weight:bold">:</span>             <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;300&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">MetricName</span><span style="color:#000;font-weight:bold">:</span>         <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Errors&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Namespace</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;AWS/Lambda&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Statistic</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Sum&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Threshold</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;3.0&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Unit</span><span style="color:#000;font-weight:bold">:</span>               <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Count&#34;</span><span style="color:#000;font-weight:bold">),</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;LambdaErrorAlaram&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaErrorsAlarm</span><span style="color:#000;font-weight:bold">)</span>
 
-	<span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-}</code></pre></div>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
 
@@ -650,21 +650,21 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 <p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
-  lambdaResourceName,
-  cfTemplate,
-  logger)</code></pre></div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">autoIncrementingInfo</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">autoIncrementingInfoErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddAutoIncrementingLambdaVersionResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
-</span><span style="color:#008000"></span>aliasResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;Alias&#34;</span>, lambdaResourceName)
-aliasResource := &amp;gocf.LambdaAlias{
-    Name:            gocf.String(<span style="color:#a31515">&#34;MostRecentVersion&#34;</span>),
-    FunctionName:    gocf.Ref(lambdaResourceName).String(),
-    FunctionVersion: gocf.GetAtt(autoIncrementingInfo.CurrentVersionResourceName, <span style="color:#a31515">&#34;Version&#34;</span>).String(),
-}
-cfTemplate.AddResource(aliasResourceName, aliasResource)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">aliasResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Alias&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">aliasResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAlias</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">Name</span><span style="color:#000;font-weight:bold">:</span>            <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MostRecentVersion&#34;</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">FunctionName</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
+    <span style="color:#000">FunctionVersion</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">autoIncrementingInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CurrentVersionResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(),</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">cfTemplate</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">aliasResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">aliasResource</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
 
@@ -685,8 +685,8 @@ cfTemplate.AddResource(aliasResourceName, aliasResource)</code></pre></div>
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure"> <i class="fa fa-chevron-left"></i><label>Dynamic Infrastructure</label></a>
-    <a class="nav nav-next" href="/reference/hybrid_topologies/" title="Hybrid Topologies" style="margin-right: 0px;"><label>Hybrid Topologies</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/limitations/" title="Limitations"> <i class="fa fa-chevron-left"></i><label>Limitations</label></a>
+    <a class="nav nav-next" href="/presentations/" title="Presentations" style="margin-right: 0px;"><label>Presentations</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -701,7 +701,7 @@ cfTemplate.AddResource(aliasResourceName, aliasResource)</code></pre></div>
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 23/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 

@@ -95,7 +95,7 @@ iamDynamicRole.Privileges = append(iamDynamicRole.Privileges,
     Resource: resourceArn,
   })
 s3ItemInfoLambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(s3ItemInfo),
-  http.HandlerFunc(s3ItemInfo),
+  s3ItemInfo,
   iamDynamicRole)
 s3ItemInfoOptions.Options = &sparta.LambdaFunctionOptions{
   Description: "Get information about an item in S3 via querystring params",

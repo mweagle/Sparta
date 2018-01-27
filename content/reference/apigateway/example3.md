@@ -80,7 +80,7 @@ func main() {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
   lambdaFn := sparta.HandleAWSLambda(
     sparta.LambdaName(ipGeoLambda),
-    http.HandlerFunc(ipGeoLambda),
+    ipGeoLambda,
     sparta.IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource("/info", lambdaFn)
 	apiGatewayResource.NewMethod("GET", http.StatusOK)

@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -261,6 +268,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -289,24 +303,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -331,28 +331,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -390,6 +389,7 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -402,20 +402,20 @@
       <option value="/reference/application/environments/" >-- Managing Environments</option>
       <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
   
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -460,17 +460,17 @@
 
 <p>For example:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
-</span><span style="color:#008000"></span><span style="color:#00f">var</span> SSHKeyName <span style="color:#2b91af">string</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">SSHKeyName</span> <span style="color:#204a87;font-weight:bold">string</span>
 
-<span style="color:#00f">func</span> main() {
-  <span style="color:#008000">// And add the SSHKeyName option to the provision step
-</span><span style="color:#008000"></span>  sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
-    <span style="color:#a31515">&#34;key&#34;</span>,
-    <span style="color:#a31515">&#34;k&#34;</span>,
-    <span style="color:#a31515">&#34;&#34;</span>,
-    <span style="color:#a31515">&#34;SSH Key Name to use for EC2 instances&#34;</span>)
-}</code></pre></div>
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#8f5902;font-style:italic">// And add the SSHKeyName option to the provision step
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Provision</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Flags</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">StringVarP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;key&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;k&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#4e9a06">&#34;SSH Key Name to use for EC2 instances&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h2 id="validating-input">Validating Input</h2>
 
@@ -480,19 +480,19 @@
 
 <p>The <code>ParseOptions</code> result is the optional error returned from your <em>CommandLineOptionsHook</em> function. If there is an error, your application can then exit with an application specific exit code.  For instance:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// Define a validation hook s.t. we can verify the SSHKey is valid
-</span><span style="color:#008000"></span>validationHook := <span style="color:#00f">func</span>(command *cobra.Command) <span style="color:#2b91af">error</span> {
-  <span style="color:#00f">if</span> command.Name() == <span style="color:#a31515">&#34;provision&#34;</span> &amp;&amp; len(SSHKeyName) &lt;= 0 {
-    <span style="color:#00f">return</span> fmt.Errorf(<span style="color:#a31515">&#34;SSHKeyName option is required&#34;</span>)
-  }
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-  }
-}
-<span style="color:#008000">// Extract &amp; validate the SSH Key
-</span><span style="color:#008000"></span>parseErr := sparta.ParseOptions(validationHook)
-<span style="color:#00f">if</span> <span style="color:#00f">nil</span> != parseErr {
-  os.Exit(3)
-}</code></pre></div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Define a validation hook s.t. we can verify the SSHKey is valid
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">validationHook</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">command</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">command</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Name</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;provision&#34;</span> <span style="color:#ce5c00;font-weight:bold">&amp;&amp;</span> <span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">&lt;=</span> <span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SSHKeyName option is required&#34;</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000;font-weight:bold">}</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#8f5902;font-style:italic">// Extract &amp; validate the SSH Key
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">parseErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseOptions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">validationHook</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">parseErr</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">os</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Exit</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">3</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>Sparta itself uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
 

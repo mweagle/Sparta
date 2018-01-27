@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -261,6 +268,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -289,24 +303,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -331,28 +331,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -390,6 +389,7 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -402,20 +402,20 @@
       <option value="/reference/application/environments/" >-- Managing Environments</option>
       <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
   
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -452,17 +452,17 @@
 
 <p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-lambdaFunctions = append(lambdaFunctions, lambdaFn)
-err := sparta.Main(<span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
-  fmt.Sprintf(<span style="color:#a31515">&#34;Test HelloWorld resource command&#34;</span>),
-  lambdaFunctions,
-  <span style="color:#00f">nil</span>,
-  <span style="color:#00f">nil</span>)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test HelloWorld resource command&#34;</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --help
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --help
 Simple Sparta application that demonstrates core functionality
 
 Usage:

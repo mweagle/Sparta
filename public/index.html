@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -532,42 +532,42 @@
 
 <h1 id="hello-lambda-world">Hello Lambda World</h1>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#008000">// File: application.go
-</span><span style="color:#008000"></span><span style="color:#00f">package</span> main
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
 
-<span style="color:#00f">import</span> (
-  <span style="color:#a31515">&#34;encoding/json&#34;</span>
-  <span style="color:#a31515">&#34;fmt&#34;</span>
-  <span style="color:#a31515">&#34;io/ioutil&#34;</span>
-  <span style="color:#a31515">&#34;net/http&#34;</span>
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#4e9a06">&#34;encoding/json&#34;</span>
+  <span style="color:#4e9a06">&#34;fmt&#34;</span>
+  <span style="color:#4e9a06">&#34;io/ioutil&#34;</span>
+  <span style="color:#4e9a06">&#34;net/http&#34;</span>
 
-  <span style="color:#a31515">&#34;github.com/Sirupsen/logrus&#34;</span>
-  sparta <span style="color:#a31515">&#34;github.com/mweagle/Sparta&#34;</span>
-)
+  <span style="color:#4e9a06">&#34;github.com/Sirupsen/logrus&#34;</span>
+  <span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Hello world event handler
-</span><span style="color:#008000">//
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> helloWorld() (<span style="color:#2b91af">string</span>, <span style="color:#2b91af">error</span>) {
-	<span style="color:#00f">return</span> <span style="color:#a31515">&#34;Hello World 🌏&#34;</span>, <span style="color:#00f">nil</span>
-}
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#4e9a06">&#34;Hello World 🌏&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-<span style="color:#008000">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#008000">// Main
-</span><span style="color:#008000"></span><span style="color:#00f">func</span> main() {
-  <span style="color:#00f">var</span> lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda(<span style="color:#a31515">&#34;Hello world test&#34;</span>,
-    helloWorld,
-    sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world test&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+  <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
 
-  <span style="color:#008000">// Deploy it
-</span><span style="color:#008000"></span>  sparta.Main(<span style="color:#a31515">&#34;SpartaHelloWorld&#34;</span>,
-		<span style="color:#a31515">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span>,
-		lambdaFunctions,
-                <span style="color:#00f">nil</span>,
-                <span style="color:#00f">nil</span>)
-}</code></pre></div>
+  <span style="color:#8f5902;font-style:italic">// Deploy it
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="getting-started">Getting Started</h1>
 
@@ -600,6 +600,8 @@
 <h2 id="other-resources">Other resources</h2>
 
 <ul>
+<li><a href="https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef">Build an S3 website with API Gateway and AWS Lambda for Go using Sparta</a></li>
+<li><a href="https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/">AWS blog post announcing Go support</a></li>
 <li><a href="https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg">Sparta - A Go framework for AWS Lambda</a></li>
 <li>Other libraries &amp; frameworks:
 
@@ -641,7 +643,7 @@
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 23/01/2018
+        <i class='fa fa-calendar'></i> Last update on 08/03/2016
     </div>
     
 

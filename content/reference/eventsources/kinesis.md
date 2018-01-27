@@ -52,7 +52,7 @@ First we wrap the **go** function in a [LambdaAWSInfo](https://godoc.org/github.
 
 {{< highlight go >}}
 lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent),
-	http.HandlerFunc(echoKinesisEvent),
+	echoKinesisEvent,
 	sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 

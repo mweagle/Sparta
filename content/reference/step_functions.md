@@ -1,7 +1,7 @@
 ---
 date: 2017-10-31 18:20:05
 title: Step Functions
-weight: 1000
+weight: 10
 ---
 
 # Introduction
@@ -73,7 +73,7 @@ The `lambdaTaskState` uses a normal Sparta function as in:
 
 {{< highlight go >}}
 lambdaFn := sparta.HandleAWSLambda("StepRollDie",
-  http.HandlerFunc(lambdaRollDie),
+  lambdaRollDie,
   sparta.IAMRoleDefinition{})
 
 lambdaFn.Options.MemorySize = 128

@@ -5,7 +5,7 @@ DefaultContentLanguage = "en"
 title = "Sparta Documentation"
 theme = "hugo-theme-docdock"
 pygmentsCodeFences = true
-pygmentsStyle = "vs"
+pygmentsStyle = "tango"
 
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir= false

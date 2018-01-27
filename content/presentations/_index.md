@@ -4,7 +4,7 @@ title: Presentations
 weight: 800
 ---
 
-<img src="/presentations/overview/CouchPotatoGopher.png" width="50%">
+<img src="/presentations/overview/CouchPotatoGopher.png" width="25%">
 
 # [Overview - October 2017](/presentations/overview.html)
 

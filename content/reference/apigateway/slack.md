@@ -122,7 +122,7 @@ Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo`
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloSlackbot),
-		http.HandlerFunc(helloSlackbot),
+		helloSlackbot,
 		iamDynamicRole)
 
 	if nil != api {

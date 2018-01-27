@@ -45,7 +45,7 @@ func appendCloudWatchEventHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
-		http.HandlerFunc(echoCloudWatchEvent),
+		echoCloudWatchEvent,
 		sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
@@ -104,7 +104,7 @@ func appendCloudWatchEventHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
-		http.HandlerFunc(echoCloudWatchEvent),
+		echoCloudWatchEvent,
 		sparta.IAMRoleDefinition{})
 
 	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}

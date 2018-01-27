@@ -2,11 +2,12 @@ SPARTA_TEMP_DIR = ./.sparta
 HUGO_BINARY := $(SPARTA_TEMP_DIR)/hugo
 UNAME := $(shell uname)
 HUGO_TARGZ_ARCHIVE_URL := ""
+HUGO_VERSION := 0.32.4
 ifeq ($(UNAME), Linux)
-	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_Linux-64bit.tar.gz"
+	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_$(HUGO_VERSION)_Linux-64bit.tar.gz"
 endif
 ifeq ($(UNAME), Darwin)
-	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v0.31.1/hugo_0.31.1_macOS-64bit.tar.gz"
+	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_$(HUGO_VERSION)_macOS-64bit.tar.gz"
 endif
 
 

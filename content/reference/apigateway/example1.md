@@ -48,7 +48,7 @@ The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct 
 
 {{< highlight go >}}
 lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3Event),
-  http.HandlerFunc(echoS3Event),
+  echoS3Event,
   sparta.IAMRoleDefinition{})
 apiGatewayResource, _ := api.NewResource("/hello/world/test", lambdaFn)
 apiGatewayResource.NewMethod("GET", http.StatusOK)

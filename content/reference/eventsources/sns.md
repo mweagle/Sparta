@@ -62,7 +62,7 @@ With the core of the `echoSNSEvent` complete, the next step is to integrate the 
 
 {{< highlight go >}}
 lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoSNSEvent),
-  http.HandlerFunc(echoSNSEvent),
+  echoSNSEvent,
   sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 

@@ -12,16 +12,12 @@ graph TD
   class preBuild userHook;
 
   compile[Cross Compile for AWS AMI]
-  cgoCompile[CGO Docker Compile for AWS AMI]
-  class compile,cgoCompile stdOp;
 
   postBuild[WorkflowHook - PostBuild]
   class postBuild userHook;
 
-  nodeJSProxyShims[Create NodeJS-Go HTTP Proxies]
-  pythonJSProxyShims[Create Python-CGO HTTP Proxies]
   package[ZIP archive]
-  class nodeJSProxyShims,pythonJSProxyShims,package stdOp;
+  class package stdOp;
 
   userArchive[WorkflowHook - Archive]
   class userArchive userHook;
@@ -56,18 +52,10 @@ graph TD
 
   iam-->preBuild
   preBuild-->|go|compile
-  preBuild-->|cgo|cgoCompile
   compile-->postBuild
-  cgoCompile-->postBuild
-  postBuild-->|go|nodeJSProxyShims
+  postBuild-->package
 
-  nodeJSProxyShims-->package
-  nodeJSProxyShims-->packageAssets
-
-  postBuild-->|cgo|pythonJSProxyShims
-  pythonJSProxyShims-->package
-  pythonJSProxyShims-->packageAssets
-
+  package-->packageAssets
   package-->userArchive
   userArchive-->upload
   packageAssets-->uploadAssets

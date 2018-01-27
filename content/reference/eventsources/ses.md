@@ -61,7 +61,7 @@ func appendSESLambda(api *sparta.API,
 	// Our lambda function will need to be able to read from the bucket, which
 	// will be handled by the S3MessageBodyBucketDecorator below
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoSESEvent),
-		http.HandlerFunc(echoSESEvent),
+		echoSESEvent,
 		sparta.IAMRoleDefinition{})
 	// Setup options s.t. the lambda function has time to consume the message body
 	lambdaFn.Options = &sparta.LambdaFunctionOptions{

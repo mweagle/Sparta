@@ -15,3 +15,4 @@ weight: 10000
   - [Nick Scheiblauer](https://github.com/turgon)
   - [Paul Seiffert](https://github.com/seiffert)
   - [Thom Shutt](https://github.com/thomshutt)
+  - [Patrick Steger](https://github.com/psteger)

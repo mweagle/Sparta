@@ -96,7 +96,7 @@ func helloWorld(w http.ResponseWriter, r *http.Request) {
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
 lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-  http.HandlerFunc(helloWorld),
+  helloWorld,
   sparta.IAMRoleDefinition{})
 
 cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},

@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: S3 Sites with CORS
-weight: 20
+weight: 10
 ---
 
 Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.
@@ -55,7 +55,7 @@ Finally, we register the `helloWorld` lambda function with an API Gateway resour
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 	var lambdaFunctions []*sparta.LambdaAWSInfo
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-		http.HandlerFunc(helloWorld),
+		helloWorld,
 		iamDynamicRole)
 
 	if nil != api {

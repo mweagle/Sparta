@@ -37,7 +37,7 @@ Our lambda function only needs logfile write privileges, and since these are ena
 func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
-		http.HandlerFunc(echoCloudWatchLogsEvent),
+		echoCloudWatchLogsEvent,
 		sparta.IAMRoleDefinition{})
 {{< /highlight >}}
 
@@ -68,7 +68,7 @@ func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
 	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
-		http.HandlerFunc(echoCloudWatchLogsEvent),
+		echoCloudWatchLogsEvent,
 		sparta.IAMRoleDefinition{})
 	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
 	cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)

@@ -175,6 +175,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -261,6 +268,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -289,24 +303,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -331,28 +331,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -400,26 +399,27 @@
       <option value="/reference/eventsources/ses/" >-- SES</option>
       <option value="/reference/eventsources/sns/" >-- SNS</option>
   
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -466,21 +466,21 @@
 <h1 id="getting-started">Getting Started</h1>
 
 <p>The lambda function is relatively small:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoCloudWatchEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>: lambdaContext.AWSRequestID,
-	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-	config, _ := sparta.Discover()
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>:     lambdaContext.AWSRequestID,
-		<span style="color:#a31515">&#34;Configuration&#34;</span>: config,
-	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)
+	<span style="color:#000">config</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Configuration&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">config</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-	w.Write([]byte(<span style="color:#a31515">&#34;CloudWatch event received!&#34;</span>))
-}</code></pre></div>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">([]</span><span style="color:#204a87">byte</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;CloudWatch event received!&#34;</span><span style="color:#000;font-weight:bold">))</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 Our lambda function doesn&rsquo;t need to do much with the event other than log it.</p>
 
 <h1 id="spartaIntegration">Sparta Integration</h1>
@@ -488,37 +488,37 @@ Our lambda function doesn&rsquo;t need to do much with the event other than log 
 <p>With <code>echoCloudWatchEvent()</code> implemented, the next step is to integrate the <strong>go</strong> function with Sparta.  This is done by the <code>appendCloudWatchEventHandler</code> in the SpartaApplication <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go">application.go</a> source.</p>
 
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> appendCloudWatchEventHandler(api *sparta.API,
-	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">appendCloudWatchEventHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">api</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">API</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span> <span style="color:#000;font-weight:bold">{</span>
 
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
-		http.HandlerFunc(echoCloudWatchEvent),
-		sparta.IAMRoleDefinition{})</code></pre></div></p>
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div></p>
 
 <p>The next step is to add a <code>CloudWatchEventsPermission</code> value that includes the two rule triggers.
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-cloudWatchEventsPermission.Rules = make(<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]sparta.CloudWatchEventsRule, 0)</code></pre></div></p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">cloudWatchEventsPermission</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">{}</span>
+<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">make</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">)</span></code></pre></div></p>
 
 <p>Our two rules will be inserted into the <code>Rules</code> map in the next steps.</p>
 
 <h2 id="cron-expression">Cron Expression</h2>
 
 <p>Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cloudWatchEventsPermission.Rules[<span style="color:#a31515">&#34;Rate5Mins&#34;</span>] = sparta.CloudWatchEventsRule{
-  ScheduleExpression: <span style="color:#a31515">&#34;rate(5 minutes)&#34;</span>,
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Rate5Mins&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">ScheduleExpression</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;rate(5 minutes)&#34;</span><span style="color:#000;font-weight:bold">,</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em>cron</em> <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html">expression</a>.  The map keyname is used when adding the <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">rule</a> during stack provisioning.</p>
 
 <h2 id="event-pattern">Event Pattern</h2>
 
 <p>The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we&rsquo;ll add a second <code>Rule</code>:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">cloudWatchEventsPermission.Rules[<span style="color:#a31515">&#34;EC2Activity&#34;</span>] = sparta.CloudWatchEventsRule{
-  EventPattern: <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-    <span style="color:#a31515">&#34;source&#34;</span>:      []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;aws.ec2&#34;</span>},
-    <span style="color:#a31515">&#34;detail-type&#34;</span>: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;EC2 Instance State-change Notification&#34;</span>},
-  },
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;EC2Activity&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">EventPattern</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+    <span style="color:#4e9a06">&#34;source&#34;</span><span style="color:#000;font-weight:bold">:</span>      <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;aws.ec2&#34;</span><span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#4e9a06">&#34;detail-type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;EC2 Instance State-change Notification&#34;</span><span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The EC2 event pattern is the <strong>go</strong> JSON-compatible representation of the event pattern that CloudWatch Events will use to trigger our lambda function.  This structured value will be marshaled to a String during CloudFormation Template marshaling.</p>
 
@@ -534,32 +534,32 @@ The <code>ScheduleExpression</code> value can either be a <em>rate</em> or a <em
 
 <p>With the two rules configured, the final step is to add the <code>sparta.CloudWatchPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-<span style="color:#00f">return</span> append(lambdaFunctions, lambdaFn)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Our entire function is therefore:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> appendCloudWatchEventHandler(api *sparta.API,
-	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">appendCloudWatchEventHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">api</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">API</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span> <span style="color:#000;font-weight:bold">{</span>
 
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
-		http.HandlerFunc(echoCloudWatchEvent),
-		sparta.IAMRoleDefinition{})
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">echoCloudWatchEvent</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-	cloudWatchEventsPermission.Rules = make(<span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]sparta.CloudWatchEventsRule, 0)
-	cloudWatchEventsPermission.Rules[<span style="color:#a31515">&#34;Rate5Mins&#34;</span>] = sparta.CloudWatchEventsRule{
-		ScheduleExpression: <span style="color:#a31515">&#34;rate(5 minutes)&#34;</span>,
-	}
-	cloudWatchEventsPermission.Rules[<span style="color:#a31515">&#34;EC2Activity&#34;</span>] = sparta.CloudWatchEventsRule{
-		EventPattern: <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{}{
-			<span style="color:#a31515">&#34;source&#34;</span>:      []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;aws.ec2&#34;</span>},
-			<span style="color:#a31515">&#34;detail-type&#34;</span>: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;EC2 Instance state change&#34;</span>},
-		},
-	}
-	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
-	<span style="color:#00f">return</span> append(lambdaFunctions, lambdaFn)
-}</code></pre></div>
+	<span style="color:#000">cloudWatchEventsPermission</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">{}</span>
+	<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">make</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Rate5Mins&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">ScheduleExpression</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;rate(5 minutes)&#34;</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Rules</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;EC2Activity&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudWatchEventsRule</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">EventPattern</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
+			<span style="color:#4e9a06">&#34;source&#34;</span><span style="color:#000;font-weight:bold">:</span>      <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;aws.ec2&#34;</span><span style="color:#000;font-weight:bold">},</span>
+			<span style="color:#4e9a06">&#34;detail-type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;EC2 Instance state change&#34;</span><span style="color:#000;font-weight:bold">},</span>
+		<span style="color:#000;font-weight:bold">},</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">cloudWatchEventsPermission</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 

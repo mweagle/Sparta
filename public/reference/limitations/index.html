@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item active">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item active">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/"  selected>- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/"  selected>- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -441,26 +441,6 @@
     
     
 
-<h1 id="sparta-limitations">Sparta Limitations</h1>
-
-<ul>
-<li><strong>go</strong> isn&rsquo;t officially supported by AWS (yet)
-
-<ul>
-<li>But, you can <a href="https://twitter.com/awscloud/status/659795641204260864">vote</a> to make <em>golang</em> officially supported.</li>
-<li>Because of this, for the default NodeJS proxying is a per-container initialization cost of:
-
-<ul>
-<li>Copying the embedded binary to <em>/tmp</em></li>
-<li>Changing the binary permissions</li>
-<li>Launching it from the new location</li>
-<li>See the <a href="https://forums.aws.amazon.com/message.jspa?messageID=583910">AWS Forum</a> for more background</li>
-</ul></li>
-<li>Depending on <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>, this initialization penalty (~<code>700ms</code>) may prove burdensome.</li>
-</ul></li>
-<li>Alternatively, look at leveraging Sparta&rsquo;s <a href="https://medium.com/@mweagle/see-lambda-go-e39b526c1020">cgo</a> option to package your service into a shared library that&rsquo;s proxied by Python for significantly improved performance</li>
-</ul>
-
 <h1 id="aws-lambda-limitations">AWS Lambda Limitations</h1>
 
 <ul>
@@ -480,8 +460,8 @@
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/hybrid_topologies/" title="Hybrid Topologies"> <i class="fa fa-chevron-left"></i><label>Hybrid Topologies</label></a>
-    <a class="nav nav-next" href="/reference/local_testing/" title="Local Testing" style="margin-right: 0px;"><label>Local Testing</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/s3site/" title="S3 Sites with CORS"> <i class="fa fa-chevron-left"></i><label>S3 Sites with CORS</label></a>
+    <a class="nav nav-next" href="/reference/faq/" title="FAQ" style="margin-right: 0px;"><label>FAQ</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -496,7 +476,7 @@
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 23/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 
