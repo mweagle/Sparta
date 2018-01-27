@@ -640,8 +640,10 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		ctx.logger.WithFields(logrus.Fields{
 			"VersioningEnabled": false,
 			"Bucket":            ctx.userdata.s3Bucket,
-		}).Info(noopMessage("S3 versioning check"))
+			"Region":            *ctx.context.awsSession.Config.Region,
+		}).Info(noopMessage("S3 preconditions check"))
 	} else {
+		// Bucket versioning
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession, ctx.userdata.s3Bucket, ctx.logger)
 		if nil != versioningPolicyErr {
@@ -654,6 +656,33 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		ctx.context.s3BucketVersioningEnabled = isEnabled
 		if "" != ctx.userdata.codePipelineTrigger && !isEnabled {
 			return nil, fmt.Errorf("Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.userdata.s3Bucket)
+		}
+		// Bucket region should match region
+		/*
+			The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region.
+		*/
+
+		bucketRegion, bucketRegionErr := spartaS3.BucketRegion(ctx.context.awsSession,
+			ctx.userdata.s3Bucket,
+			ctx.logger)
+
+		if bucketRegionErr != nil {
+			return nil, fmt.Errorf("Failed to determine region for %s. Error: %s",
+				ctx.userdata.s3Bucket,
+				bucketRegionErr)
+		}
+		ctx.logger.WithFields(logrus.Fields{
+			"Bucket": ctx.userdata.s3Bucket,
+			"Region": bucketRegion,
+		}).Info("Checking S3 region")
+		if bucketRegion != *ctx.context.awsSession.Config.Region {
+			return nil, fmt.Errorf("Target region (%s) does not match bucket region (%s)",
+				*ctx.context.awsSession.Config.Region,
+				bucketRegion)
+		} else {
+			ctx.logger.WithFields(logrus.Fields{
+				"Region": bucketRegion,
+			}).Debug("Confirmed S3 region match")
 		}
 	}
 

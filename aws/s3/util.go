@@ -139,3 +139,18 @@ func BucketVersioningEnabled(awsSession *session.Session,
 	}
 	return versioningEnabled, err
 }
+
+// BucketRegion returns the AWS region that hosts the bucket
+func BucketRegion(awsSession *session.Session,
+	S3Bucket string,
+	logger *logrus.Logger) (string, error) {
+	regionHint := ""
+	if awsSession.Config.Region != nil {
+		regionHint = *awsSession.Config.Region
+	}
+	awsContext := aws.BackgroundContext()
+	return s3manager.GetBucketRegion(awsContext,
+		awsSession,
+		S3Bucket,
+		regionHint)
+}
