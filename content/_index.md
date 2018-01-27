@@ -19,9 +19,14 @@ A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
   features outlined in this documentation are still valid, the specific
   lambda function signatures require changes.
 
-  In the meantime, please see the [Change Notes](https://github.com/mweagle/Sparta/blob/master/CHANGES.md) for the latest updates.
+  In the meantime, the following links have the most up-to-date information:
 
-   - Matt (2018-01-15 08:36:50)
+  * [Medium Post](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
+  * [Sparta Change Notes](https://github.com/mweagle/Sparta/blob/master/CHANGES.md)
+
+Documentation help is most appreciated - see the [Meta](_meta) page for how to get started!
+
+Matt (2018-01-27 11:11:11)
 
 {{% /panel %}}
 

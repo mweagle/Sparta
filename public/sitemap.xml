@@ -9,22 +9,22 @@
   
   <url>
     <loc>/overview/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/step_functions/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/sample_service/step1/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -34,7 +34,7 @@
   
   <url>
     <loc>/reference/cicd/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -44,12 +44,12 @@
   
   <url>
     <loc>/reference/eventsources/cloudwatchevents/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/cloudwatchlogs/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -74,37 +74,37 @@
   
   <url>
     <loc>/reference/custom_resources/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/discovery/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/docker/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/dynamic_infrastructure/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/dynamodb/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/example1/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -114,7 +114,7 @@
   
   <url>
     <loc>/reference/local_testing/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -129,27 +129,27 @@
   
   <url>
     <loc>/reference/apigateway/example3/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/s3/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/s3site/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sns/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -159,12 +159,12 @@
   
   <url>
     <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/example2/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
@@ -189,40 +189,42 @@
   
   <url>
     <loc>/presentations/</loc>
-    <lastmod>2017-10-04T22:12:35+00:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/limitations/</loc>
-    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/faq/</loc>
-    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/credits/</loc>
-    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
+    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/_meta/</loc>
-    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
+    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
   </url>
   
   <url>
     <loc>/_footer/</loc>
+    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
   </url>
   
   <url>
     <loc>/_header/</loc>
+    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
   </url>
   
   <url>
