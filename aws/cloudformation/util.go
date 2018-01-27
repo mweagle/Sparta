@@ -1063,6 +1063,24 @@ func defaultUserName() string {
 	return userName
 }
 
+// UserAccountScopedStackName returns a CloudFormation stack
+// name that takes into account the current username that is
+//associated with the supplied AWS credentials
+/*
+A stack name can contain only alphanumeric characters
+(case sensitive) and hyphens. It must start with an alphabetic
+\character and cannot be longer than 128 characters.
+*/
+func UserAccountScopedStackName(basename string,
+	awsSession *session.Session) (string, error) {
+	awsName, awsNameErr := platformAccountUserName(awsSession)
+	if awsNameErr != nil {
+		return "", awsNameErr
+	}
+	userName := strings.Replace(awsName, " ", "-", -1)
+	return fmt.Sprintf("%s-%s", basename, userName), nil
+}
+
 // UserScopedStackName returns a CloudFormation stack
 // name that takes into account the current username
 /*
