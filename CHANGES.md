@@ -6,6 +6,9 @@
   - Removed `lambdabinary` build tags from [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
     - AWS native support for **Go** in AWS caused a significant difference in how standard vs `lambdabinary` build targets which prevented custom application options from being respected
 - :checkered_flag: **CHANGES**
+  - Reduced AWS Go binary size by 20% or more by including the `-s` and `-w` [link flags](https://golang.org/cmd/link/)
+    - See [Shrink your Go Binaries with this One Weird Trick](https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/) for more information
+  - Added `github.com/mweagle/Sparta/aws/cloudformation.UserAccountScopedStackName` to produce CloudFormation stackname that are namespaced by AWS account username
   - Ensure `Pre` and `Post` deploy hooks are granted proper permissions
     - See [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) for more information.
   - Added [Sparta/aws/apigateway.Error](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#Error) to support returning custom API Gateway errors
