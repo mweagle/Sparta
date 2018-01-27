@@ -782,7 +782,7 @@ func buildGoBinary(serviceName string,
 		"StampedBuildID":     buildID,
 	}
 	for eachFlag, eachValue := range linkerFlags {
-		linkFlags = fmt.Sprintf("%s -X github.com/mweagle/Sparta.%s=%s",
+		linkFlags = fmt.Sprintf("%s -s -w -X github.com/mweagle/Sparta.%s=%s",
 			linkFlags,
 			eachFlag,
 			eachValue)
