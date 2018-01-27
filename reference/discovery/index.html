@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/"  selected>- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -455,42 +455,42 @@
 
 <p>For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our <code>gocf.S3Bucket{}</code> struct uses a zero-length <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">BucketName</a> property, CloudFormation will dynamically assign one.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">s3BucketResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;S3DynamicBucket&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
-  http.HandlerFunc(echoS3DynamicBucketEvent),
-  sparta.IAMRoleDefinition{})
+<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-lambdaFn.Permissions = append(lambdaFn.Permissions,
-  sparta.S3Permission{
-    BasePermission: sparta.BasePermission{
-      SourceArn: gocf.Ref(s3BucketResourceName),
-    },
-    Events: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:ObjectCreated:*&#34;</span>,
-                      <span style="color:#a31515">&#34;s3:ObjectRemoved:*&#34;</span>},
-  })
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Permission</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">SourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000">Events</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:ObjectCreated:*&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                      <span style="color:#4e9a06">&#34;s3:ObjectRemoved:*&#34;</span><span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000;font-weight:bold">})</span>
 
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#008000">// Add permission s.t. the lambda function could read from the S3 bucket
-</span><span style="color:#008000"></span>lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>,
-                       <span style="color:#a31515">&#34;s3:HeadObject&#34;</span>},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
+<span style="color:#8f5902;font-style:italic">// Add permission s.t. the lambda function could read from the S3 bucket
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRolePrivilege</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">Actions</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                       <span style="color:#4e9a06">&#34;s3:HeadObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3AllKeysArnForBucket</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)),</span>
+  <span style="color:#000;font-weight:bold">})</span>
 
-<span style="color:#008000">// Add the S3 resource to our template
-</span><span style="color:#008000"></span>lambdaFn.Decorator = <span style="color:#00f">func</span>(lambdaResourceName <span style="color:#2b91af">string</span>,
-  lambdaResource gocf.LambdaFunction,
-  template *gocf.Template,
-  logger *logrus.Logger) <span style="color:#2b91af">error</span> {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-    AccessControl: gocf.String(<span style="color:#a31515">&#34;PublicRead&#34;</span>),
-  })
-  cfResource.DeletionPolicy = <span style="color:#a31515">&#34;Delete&#34;</span>
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-}</code></pre></div>
+<span style="color:#8f5902;font-style:italic">// Add the S3 resource to our template
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorator</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">template</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">cfResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">AccessControl</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;PublicRead&#34;</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">})</span>
+  <span style="color:#000">cfResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DeletionPolicy</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;Delete&#34;</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
 
@@ -502,35 +502,35 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 
 <p>In our example, a <code>DiscoveryInfo</code> from a sample stack might be:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    &#34;Region&#34;: <span style="color:#a31515">&#34;us-west-2&#34;</span>,
-    &#34;StackID&#34;: <span style="color:#a31515">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&#34;</span>,
-    &#34;StackName&#34;: <span style="color:#a31515">&#34;SpartaApplication&#34;</span>,
-    &#34;Resources&#34;: {
-        &#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;: {
-            &#34;ResourceID&#34;: <span style="color:#a31515">&#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;</span>,
-            &#34;ResourceRef&#34;: <span style="color:#a31515">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&#34;</span>,
-            &#34;ResourceType&#34; : <span style="color:#a31515">&#34;AWS::S3::Bucket&#34;</span>,
-            &#34;Properties&#34;: {
-                &#34;DomainName&#34;: <span style="color:#a31515">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&#34;</span>,
-                &#34;Ref&#34;: <span style="color:#a31515">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&#34;</span>,
-                &#34;WebsiteURL&#34;: <span style="color:#a31515">&#34;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&#34;</span>,
-                &#34;sparta:cloudformation:restype&#34;: <span style="color:#a31515">&#34;AWS::S3::Bucket&#34;</span>
-            }
-        }
-    }
-}</code></pre></div>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Region&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;us-west-2&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;StackID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/d87bb070-cce5-11e5-b6ca-503f20f2ad1e&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;StackName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SpartaApplication&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Resources&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#204a87;font-weight:bold">&#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;ResourceID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;S3DynamicBucketa3c3daf5543fe6879721e6bb0bc129042459be6b&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;ResourceRef&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;ResourceType&#34;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Properties&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
+                <span style="color:#204a87;font-weight:bold">&#34;DomainName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3.amazonaws.com&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">&#34;Ref&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">&#34;WebsiteURL&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;http://spartaapplication-s3dynamicbucketa3c3daf5543fe687-1avr6h3lrprju.s3-website-us-west-2.amazonaws.com&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">&#34;sparta:cloudformation:restype&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span>
+            <span style="color:#000;font-weight:bold">}</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
 <p>This JSON data is Base64 encoded and published into the Lambda function&rsquo;s <em>Environment</em> using the <code>SPARTA_DISCOVERY_INFO</code> key. The <code>sparta.Discover()</code> function is responsible for
 accessing the encoded discovery information:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">configuration, _ := sparta.Discover()
-bucketName := <span style="color:#a31515">&#34;&#34;</span>
-<span style="color:#00f">for</span> _, eachResource := <span style="color:#00f">range</span> configuration.Resources {
-  <span style="color:#00f">if</span> eachResource.ResourceType == <span style="color:#a31515">&#34;AWS::S3::Bucket&#34;</span> {
-    bucketName = eachResource.ResourceRef
-  }
-}</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
+<span style="color:#000">bucketName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;&#34;</span>
+<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceType</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceRef</span>
+  <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>The <code>Properties</code> object includes resource-specific <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set)</p>
 

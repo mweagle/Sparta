@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/"  selected>- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -460,12 +460,12 @@
 
 <p>To enable profiling add a reference to <a href="https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop">ScheduleProfileLoop</a> in your <code>main()</code> function as in:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">sparta.ScheduleProfileLoop(<span style="color:#00f">nil</span>, 5*time.Second, 30*time.Second,
-  <span style="color:#a31515">&#34;goroutine&#34;</span>,
-  <span style="color:#a31515">&#34;heap&#34;</span>,
-  <span style="color:#a31515">&#34;threadcreate&#34;</span>,
-  <span style="color:#a31515">&#34;block&#34;</span>,
-  <span style="color:#a31515">&#34;mutex&#34;</span>)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ScheduleProfileLoop</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">5</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">time</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Second</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">30</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">time</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Second</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;goroutine&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;heap&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;threadcreate&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;block&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#4e9a06">&#34;mutex&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>This function accepts the following arguments:</p>
 
@@ -492,7 +492,7 @@
 
 <p>With profiling enabled, the next step is to deploy the <em>SpartaPProf</em> service using the <code>provision</code> command:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0000] ══════════════════════════════════════════════════════════════
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0000] ══════════════════════════════════════════════════════════════
 INFO[0000]    _______  ___   ___  _________
 INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4
 INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 8f97d81
@@ -532,9 +532,9 @@ INFO[0062] ───────────────────────
 
 <p>While the <strong>SpartaPProf</strong> binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. <strong>SpartaPProf</strong> includes a simple tool (<em>cmd/load.go</em>) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the <em>ARN</em> of the lambda function listed as a <em>Stack output</em> in the log output:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0062] Stack output                                  Description=&#34;Lambda function ARN&#34; Key=FunctionARN Value=&#34;arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World&#34;</code></pre></div>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ cd cmd
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ cd cmd
 $ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
 Lambda response (0 of 500): &#34;Hi there 🌍&#34;
 Lambda response (1 of 500): &#34;Hi there 🌍&#34;
@@ -550,7 +550,7 @@ Lambda response (9 of 500): &#34;Hi there 🌍&#34;
 
 <p>After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
 S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 ---------------------------------------------------------------
 2017-11-26 11:32:28   41 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/block/0-block.λ-3838737145763622974.profile
@@ -566,7 +566,7 @@ S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
 
 <p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating all published profiles for a single type.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
 INFO[0000] ══════════════════════════════════════════════════════════════
 INFO[0000]    _______  ___   ___  _________
 INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4

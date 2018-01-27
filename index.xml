@@ -12,13 +12,32 @@
     
     
     <item>
+      <title>Step Functions</title>
+      <link>/reference/step_functions/</link>
+      <pubDate>Tue, 31 Oct 2017 18:20:05 +0000</pubDate>
+      
+      <guid>/reference/step_functions/</guid>
+      <description>Introduction AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+    </item>
+    
+    <item>
       <title>Walkthrough</title>
       <link>/sample_service/step1/</link>
       <pubDate>Tue, 03 Oct 2017 07:15:40 +0000</pubDate>
       
       <guid>/sample_service/step1/</guid>
       <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Documentation Updates Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+Costs Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+    </item>
+    
+    <item>
+      <title>CI/CD</title>
+      <link>/reference/cicd/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/cicd/</guid>
+      <description>Pending Document the SpartaCodePipeline example. Also see the Medium Post</description>
     </item>
     
     <item>
@@ -125,7 +144,7 @@ The following sections walk through provisioning a S3 bucket, declaring an expli
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/docker/</guid>
-      <description>Introduction Document SpartaGrafana project.</description>
+      <description>Introduction Document SpartaDocker project.</description>
     </item>
     
     <item>
@@ -172,18 +191,6 @@ Getting Started We&amp;rsquo;ll start with an empty lambda function and build up
     </item>
     
     <item>
-      <title>FAQ</title>
-      <link>/reference/faq/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/faq/</guid>
-      <description>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
-During development, configuration is typically done through environment variables:
- AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
-{ &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;, &amp;#34;Statement&amp;#34;: [ { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;cloudformation:DescribeStacks&amp;#34;, &amp;#34;cloudformation:CreateStack&amp;#34;, &amp;#34;cloudformation:CreateChangeSet&amp;#34;, &amp;#34;cloudformation:DescribeChangeSet&amp;#34;, &amp;#34;cloudformation:ExecuteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteStack&amp;#34;, &amp;#34;iam:GetRole&amp;#34;, &amp;#34;iam:DeleteRole&amp;#34;, &amp;#34;iam:DeleteRolePolicy&amp;#34;, &amp;#34;iam:PutRolePolicy&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;*&amp;#34; ] }, { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;s3:PutObject&amp;#34;, &amp;#34;s3:GetBucketVersioning&amp;#34;, &amp;#34;s3:DeleteObject&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&amp;#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld.</description>
-    </item>
-    
-    <item>
       <title>Hybrid Topologies</title>
       <link>/reference/hybrid_topologies/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -191,15 +198,6 @@ During development, configuration is typically done through environment variable
       <guid>/reference/hybrid_topologies/</guid>
       <description>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
 However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
-    </item>
-    
-    <item>
-      <title>Limitations</title>
-      <link>/reference/limitations/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/limitations/</guid>
-      <description>Sparta Limitations  go isn&amp;rsquo;t officially supported by AWS (yet)  But, you can vote to make golang officially supported. Because of this, for the default NodeJS proxying is a per-container initialization cost of:  Copying the embedded binary to /tmp Changing the binary permissions Launching it from the new location See the AWS Forum for more background  Depending on container reuse, this initialization penalty (~700ms) may prove burdensome.</description>
     </item>
     
     <item>
@@ -256,6 +254,18 @@ Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked
     </item>
     
     <item>
+      <title>S3 Sites with CORS</title>
+      <link>/reference/s3site/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/s3site/</guid>
+      <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
+func helloWorld(w http.ResponseWriter, r *http.Request) { logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger) decoder := json.NewDecoder(r.Body) defer r.</description>
+    </item>
+    
+    <item>
       <title>SES</title>
       <link>/reference/eventsources/ses/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
@@ -307,7 +317,7 @@ Define the Lambda Function Our function will accept two params:
       <guid>/reference/application/workflow_hooks/</guid>
       <description>Introduction While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.
 To support this, Sparta allows you to customize the build pipeline via WorkflowHooks structure. These hooks are called at specific points in the provision lifecycle and support augmenting the standard pipeline:
-mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] cgoCompile[CGO Docker Compile for AWS AMI] class compile,cgoCompile stdOp; postBuild[WorkflowHook - PostBuild] class postBuild userHook; nodeJSProxyShims[Create NodeJS-Go HTTP Proxies] pythonJSProxyShims[Create Python-CGO HTTP Proxies] package[ZIP archive] class nodeJSProxyShims,pythonJSProxyShims,package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile preBuild--|cgo|cgoCompile compile--postBuild cgoCompile--postBuild postBuild--|go|nodeJSProxyShims nodeJSProxyShims--package nodeJSProxyShims--packageAssets postBuild--|cgo|pythonJSProxyShims pythonJSProxyShims--package pythonJSProxyShims--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
+mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] postBuild[WorkflowHook - PostBuild] class postBuild userHook; package[ZIP archive] class package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile compile--postBuild postBuild--package package--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
     </item>
     
     <item>
@@ -332,43 +342,24 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a s
     </item>
     
     <item>
-      <title>S3 Sites with CORS</title>
-      <link>/reference/s3site/</link>
+      <title>Limitations</title>
+      <link>/reference/limitations/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>/reference/s3site/</guid>
-      <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
-The source for this is the SpartaHTML example application.
-Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-func helloWorld(w http.ResponseWriter, r *http.Request) { logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger) decoder := json.NewDecoder(r.Body) defer r.</description>
+      <guid>/reference/limitations/</guid>
+      <description> AWS Lambda Limitations  Lambda is not yet globally available. Please view the Global Infrastructure page for the latest deployment status. There are Lambda Limits that may affect your development It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:  https://forums.aws.amazon.com/thread.jspa?threadID=203889 https://forums.aws.amazon.com/thread.jspa?threadID=210826  Similarly, it&amp;rsquo;s not possible to set proper error response bodies.  </description>
     </item>
     
     <item>
-      <title>Presentations</title>
-      <link>/reference/presentations/</link>
-      <pubDate>Wed, 04 Oct 2017 22:12:35 +0000</pubDate>
-      
-      <guid>/reference/presentations/</guid>
-      <description> Overview - October 2017 Image courtesy of Ashley McNamara </description>
-    </item>
-    
-    <item>
-      <title>CI/CD</title>
-      <link>/reference/cicd/</link>
+      <title>FAQ</title>
+      <link>/reference/faq/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>/reference/cicd/</guid>
-      <description>Pending Document the SpartaCodePipeline example. Also see the Medium Post</description>
-    </item>
-    
-    <item>
-      <title>Step Functions</title>
-      <link>/reference/step_functions/</link>
-      <pubDate>Tue, 31 Oct 2017 18:20:05 +0000</pubDate>
-      
-      <guid>/reference/step_functions/</guid>
-      <description>Introduction AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
-Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+      <guid>/reference/faq/</guid>
+      <description>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
+During development, configuration is typically done through environment variables:
+ AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
+{ &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;, &amp;#34;Statement&amp;#34;: [ { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;cloudformation:DescribeStacks&amp;#34;, &amp;#34;cloudformation:CreateStack&amp;#34;, &amp;#34;cloudformation:CreateChangeSet&amp;#34;, &amp;#34;cloudformation:DescribeChangeSet&amp;#34;, &amp;#34;cloudformation:ExecuteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteChangeSet&amp;#34;, &amp;#34;cloudformation:DeleteStack&amp;#34;, &amp;#34;iam:GetRole&amp;#34;, &amp;#34;iam:DeleteRole&amp;#34;, &amp;#34;iam:DeleteRolePolicy&amp;#34;, &amp;#34;iam:PutRolePolicy&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;*&amp;#34; ] }, { &amp;#34;Sid&amp;#34;: &amp;#34;Stmt1505975332000&amp;#34;, &amp;#34;Effect&amp;#34;: &amp;#34;Allow&amp;#34;, &amp;#34;Action&amp;#34;: [ &amp;#34;s3:PutObject&amp;#34;, &amp;#34;s3:GetBucketVersioning&amp;#34;, &amp;#34;s3:DeleteObject&amp;#34; ], &amp;#34;Resource&amp;#34;: [ &amp;#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&amp;#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld.</description>
     </item>
     
     <item>

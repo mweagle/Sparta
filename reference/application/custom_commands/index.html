@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -261,6 +268,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -289,24 +303,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -331,28 +331,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -387,35 +386,21 @@
    Sample Service</option>
     <option value="/reference/" >
    Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option>
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option> 
-      <option value="/reference/application/commandline/" >-- Command Line Options</option>
-      <option value="/reference/application/custom_commands/"  selected>-- Custom Application Commands</option>
-      <option value="/reference/application/custom_flags/" >-- Custom Flags</option>
-      <option value="/reference/application/environments/" >-- Managing Environments</option>
-      <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
-  
+      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -454,24 +439,24 @@
 
 <p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">httpServerCommand := &amp;cobra.Command{
-  Use:   <span style="color:#a31515">&#34;httpServer&#34;</span>,
-  Short: <span style="color:#a31515">&#34;Sample HelloWorld HTTP server&#34;</span>,
-  Long:  <span style="color:#a31515">`Sample HelloWorld HTTP server that binds to port: `</span> + HTTPServerPort,
-  RunE: <span style="color:#00f">func</span>(cmd *cobra.Command, args []<span style="color:#2b91af">string</span>) <span style="color:#2b91af">error</span> {
-    http.HandleFunc(<span style="color:#a31515">&#34;/&#34;</span>, helloWorldResource)
-    <span style="color:#00f">return</span> http.ListenAndServe(fmt.Sprintf(<span style="color:#a31515">&#34;:%d&#34;</span>, HTTPServerPort), <span style="color:#00f">nil</span>)
-  },
-}
-sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">httpServerCommand</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">Use</span><span style="color:#000;font-weight:bold">:</span>   <span style="color:#4e9a06">&#34;httpServer&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Short</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Sample HelloWorld HTTP server&#34;</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">Long</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#4e9a06">`Sample HelloWorld HTTP server that binds to port: `</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">RunE</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cmd</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">args</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">helloWorldResource</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ListenAndServe</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;:%d&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">HTTPServerPort</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Root</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddCommand</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">httpServerCommand</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
-<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega --help
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega --help
 Provision AWS Lambda and EC2 instance with same code
 
 Usage:
-  SpartaOmega [command]
+  SpartaOmega <span style="color:#ce5c00;font-weight:bold">[</span>command<span style="color:#ce5c00;font-weight:bold">]</span>
 
 Available Commands:
   httpServer  Sample HelloWorld HTTP server
@@ -483,22 +468,22 @@ Available Commands:
   explore     Interactively explore service
 
 Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
-  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)
+  -l, --level string   Log level <span style="color:#ce5c00;font-weight:bold">[</span>panic, fatal, error, warn, info, debug<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+  -n, --noop           Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span>
 
-Use <span style="color:#a31515">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#00f">for</span> more information about a command.</code></pre></div></p>
+Use <span style="color:#4e9a06">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#204a87;font-weight:bold">for</span> more information about a command.</code></pre></div></p>
 
 <p>And you can query for user-command specific usage as in:</p>
 
-<p><div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega httpServer --help
-Custom command
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega httpServer --help
+Custom <span style="color:#204a87">command</span>
 
 Usage:
-  SpartaOmega httpServer [flags]
+  SpartaOmega httpServer <span style="color:#ce5c00;font-weight:bold">[</span>flags<span style="color:#ce5c00;font-weight:bold">]</span>
 
 Global Flags:
-  -l, --level string   Log level [panic, fatal, error, warn, info, debug] (default <span style="color:#a31515">&#34;info&#34;</span>)
-  -n, --noop           Dry-run behavior only (<span style="color:#00f">do</span> not perform mutations)</code></pre></div></p>
+  -l, --level string   Log level <span style="color:#ce5c00;font-weight:bold">[</span>panic, fatal, error, warn, info, debug<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+  -n, --noop           Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span></code></pre></div></p>
 
 
     

@@ -174,6 +174,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
@@ -260,6 +267,13 @@
     </li>
         </ul>
     </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/custom_resources/" class="dd-item">
         <div>
           <a href="/reference/custom_resources/">
@@ -288,24 +302,10 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
         <div>
           <a href="/reference/hybrid_topologies/">
             Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -330,28 +330,27 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/presentations/" class="dd-item">
+      <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
-          <a href="/reference/presentations/">
-            Presentations
+          <a href="/reference/limitations/">
+            Limitations
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
+      <li data-nav-id="/reference/faq/" class="dd-item">
         <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
+          <a href="/reference/faq/">
+            FAQ
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/credits/" class="dd-item
         ">
@@ -389,26 +388,27 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
    Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/"  selected>- Dynamic Infrastructure</option>
-      <option value="/reference/faq/" >- FAQ</option>
       <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/presentations/" >- Presentations</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/presentations/" >
+   Presentations</option>
     <option value="/credits/" >
    Credits</option>
     <option value="/_meta/" >
@@ -536,18 +536,18 @@ graph LR
 
 <p>A template decorator is a <strong>go</strong> function with the following signature</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">type</span> TemplateDecorator <span style="color:#00f">func</span>(serviceName <span style="color:#2b91af">string</span>,
-	lambdaResourceName <span style="color:#2b91af">string</span>,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	S3Bucket <span style="color:#2b91af">string</span>,
-	S3Key <span style="color:#2b91af">string</span>,
-	buildID <span style="color:#2b91af">string</span>,
-	cfTemplate *gocf.Template,
-	context <span style="color:#00f">map</span>[<span style="color:#2b91af">string</span>]<span style="color:#00f">interface</span>{},
-	logger *logrus.Logger)  <span style="color:#2b91af">error</span> {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">TemplateDecorator</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">cfTemplate</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+	<span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>  <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
 
-}</code></pre></div>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>Clients use <a href="https://godoc.org/github.com/crewjam/go-cloudformation">go-cloudformation</a> types for CloudFormation resources and  <code>template.AddResource</code> to add them to the <code>*template</code> parameter.  After a decorator is invoked, Sparta verifies that the user-supplied function has not produced entities that collide with the internally-generated ones.</p>
 
@@ -573,21 +573,21 @@ graph LR
 
 <p>To start with, we&rsquo;ll need a Sparta lambda function to expose:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#00f">func</span> echoS3DynamicBucketEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	eventData, _ := ioutil.ReadAll(r.Body)
-	<span style="color:#00f">defer</span> r.Body.Close()
-	config, _ := sparta.Discover()
-	logger.WithFields(logrus.Fields{
-		<span style="color:#a31515">&#34;RequestID&#34;</span>:     lambdaContext.AWSRequestID,
-		<span style="color:#a31515">&#34;Event&#34;</span>:         string(eventData),
-		<span style="color:#a31515">&#34;Configuration&#34;</span>: config,
-	}).Info(<span style="color:#a31515">&#34;Request received&#34;</span>)
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ioutil</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ReadAll</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">config</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Event&#34;</span><span style="color:#000;font-weight:bold">:</span>         <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#4e9a06">&#34;Configuration&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">config</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-	w.Header().Set(<span style="color:#a31515">&#34;Content-Type&#34;</span>, <span style="color:#a31515">&#34;application/json&#34;</span>)
-	w.Write(eventData)
-}</code></pre></div>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Set</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eventData</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>For brevity our demo function doesn&rsquo;t access the S3 bucket objects.  To support that we&rsquo;ll need to discuss the <code>sparta.Discover</code> function in another <a href="/docs/discovery/">section</a>.</p>
 
@@ -595,15 +595,15 @@ graph LR
 
 <p>The next thing we need is a <em>Logical ID</em> for our bucket:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>, <span style="color:#a31515">&#34;myServiceBucket&#34;</span>)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">s3BucketResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;S3DynamicBucket&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;myServiceBucket&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h2 id="sparta-integration">Sparta Integration</h2>
 
 <p>With these two values we&rsquo;re ready to get started building up the lambda function:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
-  http.HandlerFunc(echoS3DynamicBucketEvent),
-  sparta.IAMRoleDefinition{})</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div>
 
 <p>The open issue is how to publish the CloudFormation-defined S3 Arn to the <code>compile</code>-time application.  Our lambda function needs to provide both:</p>
 
@@ -618,23 +618,23 @@ graph LR
 
 <p>The <code>IAMRolePrivilege</code> struct references the dynamically assigned S3 Arn as follows:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:ObjectCreated:*&#34;</span>, <span style="color:#a31515">&#34;s3:ObjectRemoved:*&#34;</span>},
-})
-lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Permission</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">SourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000">Events</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:ObjectCreated:*&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;s3:ObjectRemoved:*&#34;</span><span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">})</span>
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h3 id="dynamic-s3-permissions">Dynamic S3 Permissions</h3>
 
 <p>The <code>S3Permission</code> struct also requires the dynamic Arn, to which it will append <code>&quot;/*&quot;</code> to enable object read access.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>, <span style="color:#a31515">&#34;s3:HeadObject&#34;</span>},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRolePrivilege</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">Actions</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;s3:HeadObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3AllKeysArnForBucket</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)),</span>
+  <span style="color:#000;font-weight:bold">})</span></code></pre></div>
 
 <p>The <code>spartaCF.S3AllKeysArnForBucket</code> call is a convenience wrapper around <a href="https://godoc.org/github.com/crewjam/go-cloudformation#Join">gocf.Join</a> to generate the concatenated, dynamic Arn expression.</p>
 
@@ -642,64 +642,64 @@ lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)</code></pr
 
 <p>All that&rsquo;s left to do is actually insert the S3 resource in our decorator:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.Decorator = <span style="color:#00f">func</span>(lambdaResourceName <span style="color:#2b91af">string</span>,
-                          lambdaResource gocf.LambdaFunction,
-                          template *gocf.Template,
-                          logger *logrus.Logger) <span style="color:#2b91af">error</span> {
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorator</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">template</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
 
-  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-    AccessControl: gocf.String(<span style="color:#a31515">&#34;PublicRead&#34;</span>),
-  })
-  cfResource.DeletionPolicy = <span style="color:#a31515">&#34;Delete&#34;</span>
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-}</code></pre></div>
+  <span style="color:#000">cfResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">AccessControl</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;PublicRead&#34;</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">})</span>
+  <span style="color:#000">cfResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DeletionPolicy</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;Delete&#34;</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="dependencies">Dependencies</h3>
 
 <p>In reality, we shouldn&rsquo;t even attempt to create the AWS Lambda function if the S3 bucket creation fails.  As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html">DependsOn</a> attribute:</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
 
 <h2 id="code-listing">Code Listing</h2>
 
 <p>Putting everything together, our Sparta lambda function with dynamic infrastructure is listed below.</p>
 
-<div class="highlight"><pre style="background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">s3BucketResourceName := sparta.CloudFormationResourceName(<span style="color:#a31515">&#34;S3DynamicBucket&#34;</span>)
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
-  http.HandlerFunc(echoS3DynamicBucketEvent),
-  sparta.IAMRoleDefinition{})
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">s3BucketResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CloudFormationResourceName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;S3DynamicBucket&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">echoS3DynamicBucketEvent</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
 
-<span style="color:#008000">// Our lambda function requires the S3 bucket
-</span><span style="color:#008000"></span>lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
+<span style="color:#8f5902;font-style:italic">// Our lambda function requires the S3 bucket
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DependsOn</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#008000">// Add a permission s.t. the lambda function could read from the S3 bucket
-</span><span style="color:#008000"></span>lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
-  sparta.IAMRolePrivilege{
-    Actions:  []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:GetObject&#34;</span>,
-                       <span style="color:#a31515">&#34;s3:HeadObject&#34;</span>},
-    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
-  })
+<span style="color:#8f5902;font-style:italic">// Add a permission s.t. the lambda function could read from the S3 bucket
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRolePrivilege</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">Actions</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                       <span style="color:#4e9a06">&#34;s3:HeadObject&#34;</span><span style="color:#000;font-weight:bold">},</span>
+    <span style="color:#000">Resource</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">spartaCF</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3AllKeysArnForBucket</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">)),</span>
+  <span style="color:#000;font-weight:bold">})</span>
 
-<span style="color:#008000">// Configure the S3 event source
-</span><span style="color:#008000"></span>lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
-  BasePermission: sparta.BasePermission{
-    SourceArn: gocf.Ref(s3BucketResourceName),
-  },
-  Events: []<span style="color:#2b91af">string</span>{<span style="color:#a31515">&#34;s3:ObjectCreated:*&#34;</span>,
-                   <span style="color:#a31515">&#34;s3:ObjectRemoved:*&#34;</span>},
-})
+<span style="color:#8f5902;font-style:italic">// Configure the S3 event source
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Permissions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Permission</span><span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">BasePermission</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">SourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Ref</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">},</span>
+  <span style="color:#000">Events</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;s3:ObjectCreated:*&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                   <span style="color:#4e9a06">&#34;s3:ObjectRemoved:*&#34;</span><span style="color:#000;font-weight:bold">},</span>
+<span style="color:#000;font-weight:bold">})</span>
 
-<span style="color:#008000">// Actually add the resource
-</span><span style="color:#008000"></span>lambdaFn.Decorator = <span style="color:#00f">func</span>(lambdaResourceName <span style="color:#2b91af">string</span>,
-                          lambdaResource gocf.LambdaFunction,
-                          template *gocf.Template,
-                          logger *logrus.Logger) <span style="color:#2b91af">error</span> {
-  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
-    AccessControl: gocf.String(<span style="color:#a31515">&#34;PublicRead&#34;</span>),
-  })
-  cfResource.DeletionPolicy = <span style="color:#a31515">&#34;Delete&#34;</span>
-  <span style="color:#00f">return</span> <span style="color:#00f">nil</span>
-}</code></pre></div>
+<span style="color:#8f5902;font-style:italic">// Actually add the resource
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorator</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">template</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+                          <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">cfResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">s3BucketResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">S3Bucket</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">AccessControl</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;PublicRead&#34;</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000;font-weight:bold">})</span>
+  <span style="color:#000">cfResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DeletionPolicy</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;Delete&#34;</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h2 id="wrapping-up">Wrapping Up</h2>
 
@@ -724,7 +724,7 @@ lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/reference/docker/" title="Docker"> <i class="fa fa-chevron-left"></i><label>Docker</label></a>
-    <a class="nav nav-next" href="/reference/faq/" title="FAQ" style="margin-right: 0px;"><label>FAQ</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/reference/hybrid_topologies/" title="Hybrid Topologies" style="margin-right: 0px;"><label>Hybrid Topologies</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>

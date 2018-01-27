@@ -106,7 +106,7 @@
 					<textarea data-template>
 						### Concepts
 						* **ServiceName**: Stable, logical service identifier
-						* **Sparta Function**: `(http.ResponseWriter, *http.Request)` (aka: _http.HandlerFunc_)
+						* **AWS Go Function**: `func(...)`
 						* **Privileges**: Lambda IAM Role Privilege
 						* **Permissions**: Configure AWS event publishers (eg: S3, Dynamo, Kinesis)
 						* **Dynamic Resources**: Other AWS infrastructure provisioned by a Sparta Application
@@ -261,7 +261,7 @@
 						var lambdaFunctions []*sparta.LambdaAWSInfo
 						lambdaFn := sparta.HandleAWSLambda(
 							sparta.LambdaName(transformImage),
-							http.HandlerFunc(transformImage),
+							transformImage,
 							iamRole)
 						// The default timeout is 3 seconds - increase that to 30
 						// so the transform function doesn't timeout
@@ -345,7 +345,7 @@
 						```golang
 							s3ItemInfoLambdaFn := sparta.HandleAWSLambda(
 								sparta.LambdaName(s3ItemInfo),
-								http.HandlerFunc(s3ItemInfo),
+								s3ItemInfo,
 								iamDynamicRole)
 
 							// Register the function with the API Gateway
