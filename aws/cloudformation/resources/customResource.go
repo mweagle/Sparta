@@ -81,7 +81,7 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	case SNSLambdaEventSource:
 		return &SNSLambdaEventSourceResource{}
 	case SESLambdaEventSource:
-		return &SNSLambdaEventSourceResource{}
+		return &SESLambdaEventSourceResource{}
 	case ZipToS3Bucket:
 		return &ZipToS3BucketResource{}
 	}
@@ -114,7 +114,10 @@ type CloudFormationLambdaEvent struct {
 	OldResourceProperties json.RawMessage
 }
 
-func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
+// SendCloudFormationResponse sends the given response
+// to the CloudFormation URL that was submitted together
+// with this event
+func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	event *CloudFormationLambdaEvent,
 	results map[string]interface{},
 	responseErr error,
@@ -316,7 +319,7 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		}
 		// Notify CloudFormation of the result
 		if event.ResponseURL != "" {
-			sendErr := sendCloudFormationResponse(lambdaCtx,
+			sendErr := SendCloudFormationResponse(lambdaCtx,
 				&event,
 				opResults,
 				opErr,
