@@ -25,13 +25,5 @@ func Execute(serviceName string,
 // built in env vars.
 func awsLambdaFunctionName(serviceName string,
 	internalFunctionName string) string {
-	// Ok, so we need to scope the functionname with the StackName, otherwise
-	// there will be collisions in the account. So how to publish
-	// the stack name into the awsbinary?
-	// How about
-	// Linker flags would be nice...sparta.StampedServiceName ?
-	awsLambdaName := fmt.Sprintf("%s-%s",
-		serviceName,
-		internalFunctionName)
-	return sanitizedName(awsLambdaName)
+	return awsLambdaFunctionNameImplementation(serviceName, internalFunctionName)
 }
