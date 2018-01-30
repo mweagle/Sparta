@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/hybrid_topologies/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -174,44 +179,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -219,6 +210,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -281,6 +279,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -330,6 +335,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -373,9 +385,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -385,18 +397,9 @@
    Sample Service</option>
     <option value="/reference/" >
    Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option>
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -404,6 +407,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -433,7 +437,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>Hybrid Topologies</h1>
     
@@ -470,7 +474,7 @@
 
 <h2 id="add-custom-command-line-option">Add Custom Command Line Option</h2>
 
-<p>The first step is to add a <a href="/docs/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
+<p>The first step is to add a <a href="/reference/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Custom command to startup a simple HelloWorld HTTP server
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">httpServerCommand</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">{</span>
@@ -491,7 +495,8 @@
 <p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#8f5902;font-style:italic">#!/bin/bash -xe
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">SPARTA_OMEGA_BINARY_PATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/home/ubuntu/<span style="color:#ce5c00;font-weight:bold">{{</span> .ServiceName <span style="color:#ce5c00;font-weight:bold">}}</span>.lambda.amd64
+</span><span style="color:#8f5902;font-style:italic">#!/bin/bash -xe
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">SPARTA_OMEGA_BINARY_PATH</span><span style="color:#ce5c00;font-weight:bold">=</span>/home/ubuntu/<span style="color:#ce5c00;font-weight:bold">{{</span>.SpartaBinaryName<span style="color:#ce5c00;font-weight:bold">}}</span>
 
 <span style="color:#8f5902;font-style:italic">################################################################################
 </span><span style="color:#8f5902;font-style:italic">#
@@ -505,7 +510,7 @@
 <span style="color:#204a87;font-weight:bold">fi</span>
 
 <span style="color:#8f5902;font-style:italic"># Install everything
-</span><span style="color:#8f5902;font-style:italic"></span>service supervisor stop <span style="color:#ce5c00;font-weight:bold">||</span> apt-get install supervisor -y
+</span><span style="color:#8f5902;font-style:italic"></span>service supervisor stop <span style="color:#ce5c00;font-weight:bold">||</span> <span style="color:#204a87">true</span>
 apt-get update -y
 apt-get upgrade -y
 apt-get install supervisor awscli unzip git -y
@@ -741,7 +746,7 @@ chmod +x <span style="color:#000">$SPARTA_OMEGA_BINARY_PATH</span>
 </span><span style="color:#8f5902;font-style:italic"></span>      <span style="color:#000">UserData</span><span style="color:#000;font-weight:bold">:</span>           <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Base64</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">userDataExpression</span><span style="color:#000;font-weight:bold">),</span>
       <span style="color:#8f5902;font-style:italic">// ...
 </span><span style="color:#8f5902;font-style:italic"></span>    <span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
-<li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/docs/application/custom_flags">custom flag</a> (not shown above):
+<li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/reference/application/custom_flags">custom flag</a> (not shown above):
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#8f5902;font-style:italic">// And add the SSHKeyName option to the provision step
 </span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Provision</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Flags</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">StringVarP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;key&#34;</span><span style="color:#000;font-weight:bold">,</span>
@@ -817,7 +822,7 @@ This value is used as an input to the AutoScalingLaunchConfiguration value:
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 23/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 

@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/step_functions/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -174,44 +179,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item active">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -219,6 +210,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -281,6 +279,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -330,6 +335,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item active">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -373,9 +385,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -388,7 +400,6 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
-      <option value="/reference/step_functions/"  selected>- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -397,6 +408,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -404,6 +416,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/"  selected>- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -433,7 +446,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>Step Functions</h1>
     
@@ -449,21 +462,15 @@
 
 <p>The first step is to define the core Lambda function <a href="http://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html">Task</a> that will be our Step function&rsquo;s core logic. In this example, we&rsquo;ll define a <em>rollDie</em> function:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Standard AWS λ function
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">lambdaRollDie</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#ce5c00;font-weight:bold">...</span>
-	<span style="color:#8f5902;font-style:italic">// Return a randomized value in the range [1, 6]
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">rollBytes</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">rollBytesErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Marshal</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">Roll</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#4e9a06">`json:&#34;roll&#34;`</span>
-	<span style="color:#000;font-weight:bold">}{</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">lambdaRollResponse</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">Roll</span> <span style="color:#204a87;font-weight:bold">int</span> <span style="color:#4e9a06">`json:&#34;roll&#34;`</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#8f5902;font-style:italic">// Standard AWS λ function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">lambdaRollDie</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaRollResponse</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">lambdaRollResponse</span><span style="color:#000;font-weight:bold">{</span>
 		<span style="color:#000">Roll</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">rand</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Intn</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">5</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">})</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">rollBytesErr</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">rollBytesErr</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#204a87;font-weight:bold">return</span>
-	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Header</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Add</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">rollBytes</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000;font-weight:bold">},</span> <span style="color:#204a87;font-weight:bold">nil</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h3 id="state-machine">State Machine</h3>
@@ -549,42 +556,43 @@ will include it in the CloudFormation template serialization:</p>
 
 <p>With the decorator attached, the next service <code>provision</code> request will include the state machine as above.</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000]    _______  ___   ___  _________
-INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.2
-INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 740028b
-INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
-INFO[0000]
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC=&#34;2017-11-01T02:03:04Z&#34;
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Provisioning service                          BuildID=69ecad9a90c763922e292cd22d63b6874dd3195c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ go run main.go provision --s3Bucket weagle
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC=&#34;2018-01-29T14:33:36Z&#34;
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=f7ade93d3900ab4b01c468c1723dedac24cbfa93 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
-INFO[0000] Checking S3 versioning                        Bucket=XXXXXXXXX VersioningEnabled=true
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Executable binary size                        KB=20162 MB=19
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaStep_mweagle-code.zip
-INFO[0011] Creating NodeJS/Sparta proxy function         FunctionName=StepRollDie ScriptName=StepRollDie
-INFO[0011] Lambda code archive size                      KB=20261 MB=19
-INFO[0011] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip
-INFO[0026] Calling WorkflowHook                          WorkflowHook=&#34;github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1&#34; WorkflowHookContext=&#34;map[]&#34;
-INFO[0026] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json
-INFO[0027] Creating stack                                StackID=&#34;arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd&#34;
-INFO[0045] Waiting for CloudFormation operation to complete
-INFO[0067] Waiting for CloudFormation operation to complete
-INFO[0085] Stack provisioned                             CreationTime=&#34;2017-11-01 02:03:30.945 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd&#34; StackName=SpartaStep-mweagle
-INFO[0085] ──────────────────────────────────────────────────────────────
-INFO[0085] SpartaStep-mweagle Summary (2017-10-31T19:04:29-07:00)
-INFO[0085] ──────────────────────────────────────────────────────────────
-INFO[0085] Verifying IAM roles                           Duration (s)=0
-INFO[0085] Verifying AWS preconditions                   Duration (s)=0
-INFO[0085] Creating code bundle                          Duration (s)=11
-INFO[0085] Uploading code                                Duration (s)=15
-INFO[0085] Ensuring CloudFormation stack                 Duration (s)=59
-INFO[0085] Total elapsed time                            Duration (s)=85
-INFO[0085] ──────────────────────────────────────────────────────────────</code></pre></div>
+INFO[0010] Lambda code archive size                      Size=&#34;13 MB&#34;
+INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip Size=&#34;13 MB&#34;
+INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook=&#34;github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1&#34; WorkflowHookContext=&#34;map[]&#34;
+INFO[0020] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json Size=&#34;3.7 kB&#34;
+INFO[0021] Creating stack                                StackID=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629&#34;
+INFO[0094] CloudFormation provisioning metrics:
+INFO[0094] Operation duration                            Duration=54.73s Resource=SpartaStep-mweagle Type=&#34;AWS::CloudFormation::Stack&#34;
+INFO[0094] Operation duration                            Duration=19.02s Resource=IAMRole49969e8a894b9eeea02a4936fb9519f2bd67dbe6 Type=&#34;AWS::IAM::Role&#34;
+INFO[0094] Operation duration                            Duration=18.69s Resource=StatesIAMRolee00aa3484b0397c676887af695abfd160104318a Type=&#34;AWS::IAM::Role&#34;
+INFO[0094] Operation duration                            Duration=2.60s Resource=StateMachine59f153f18068faa0b7fb588350be79df422ba5ef Type=&#34;AWS::StepFunctions::StateMachine&#34;
+INFO[0094] Operation duration                            Duration=2.28s Resource=StepRollDieLambda7d9f8ab476995f16b91b154f68e5f5cc42601ebf Type=&#34;AWS::Lambda::Function&#34;
+INFO[0094] Stack provisioned                             CreationTime=&#34;2018-01-29 14:33:56.7 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629&#34; StackName=SpartaStep-mweagle
+INFO[0094] ════════════════════════════════════════════════
+INFO[0094] SpartaStep-mweagle Summary
+INFO[0094] ════════════════════════════════════════════════
+INFO[0094] Verifying IAM roles                           Duration (s)=0
+INFO[0094] Verifying AWS preconditions                   Duration (s)=0
+INFO[0094] Creating code bundle                          Duration (s)=10
+INFO[0094] Uploading code                                Duration (s)=10
+INFO[0094] Ensuring CloudFormation stack                 Duration (s)=73
+INFO[0094] Total elapsed time                            Duration (s)=94</code></pre></div>
 
 <h3 id="testing">Testing</h3>
 
@@ -617,8 +625,8 @@ on shared data.</p>
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/eventsources/sns/" title="SNS"> <i class="fa fa-chevron-left"></i><label>SNS</label></a>
-    <a class="nav nav-next" href="/reference/apigateway/" title="API Gateway" style="margin-right: 0px;"><label>API Gateway</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/s3site/" title="S3 Sites with CORS"> <i class="fa fa-chevron-left"></i><label>S3 Sites with CORS</label></a>
+    <a class="nav nav-next" href="/reference/limitations/" title="Limitations" style="margin-right: 0px;"><label>Limitations</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -633,7 +641,7 @@ on shared data.</p>
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 27/01/2018
+        <i class='fa fa-calendar'></i> Last update on 31/10/2017
     </div>
     
 

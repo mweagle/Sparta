@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.32.4" />
+<title>Echo Event :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
+    
+  </head>
+  <body data-url="/reference/apigateway/echo_event/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Overview
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item active">
+        <div>
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/user_input/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/_meta/" class="dd-item
+        ">
+      <div>
+      <a href="/_meta/">Meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+
+    <div class="nav-select">
+      <center>Navigation :
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option> 
+      <option value="/reference/apigateway/echo_event/"  selected>-- Echo Event</option>
+      <option value="/reference/apigateway/user_input/" >-- User Input</option>
+      <option value="/reference/apigateway/context/" >-- Request Context</option>
+      <option value="/reference/apigateway/cors/" >-- CORS</option>
+      <option value="/reference/apigateway/slack/" >-- Slack SlashCommand</option>
+  
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
+  
+    <option value="/presentations/" >
+   Presentations</option>
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/_meta/" >
+   Meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+
+
+    <h1>Echo Event</h1>
+    
+    
+    
+    
+
+<p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a>.</p>
+
+<p>For reference, the <code>helloWorld</code> function is below.</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#000">awsLambdaEvents</span> <span style="color:#4e9a06">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">gatewayEvent</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#8f5902;font-style:italic">/*
+</span><span style="color:#8f5902;font-style:italic">		 To return an error back to the client using a standard HTTP status code:
+</span><span style="color:#8f5902;font-style:italic">
+</span><span style="color:#8f5902;font-style:italic">			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
+</span><span style="color:#8f5902;font-style:italic">			&#34;Something failed inside here&#34;)
+</span><span style="color:#8f5902;font-style:italic">			return errorResponse, nil
+</span><span style="color:#8f5902;font-style:italic">
+</span><span style="color:#8f5902;font-style:italic">			You can also create custom error response types, so long as they
+</span><span style="color:#8f5902;font-style:italic">			include `&#34;code&#34;:HTTP_STATUS_CODE` somewhere in the response body.
+</span><span style="color:#8f5902;font-style:italic">			This reserved expression is what Sparta uses as a RegExp to determine
+</span><span style="color:#8f5902;font-style:italic">			the Integration Mapping value
+</span><span style="color:#8f5902;font-style:italic">	*/</span>
+
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">loggerOk</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">loggerOk</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world structured log message&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#8f5902;font-style:italic">// Return a message, together with the incoming input...
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">helloWorldResponse</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">Message</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world 🌏&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Request</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gatewayEvent</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">},</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
+
+<p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">stage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;prod&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;MySpartaAPI&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+
+<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
+
+<h1 id="create-a-resource">Create a Resource</h1>
+
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that encapsulates the <strong>go</strong> function:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">spartaHTMLLambdaFunctions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">api</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">API</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">api</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/hello&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+
+		<span style="color:#8f5902;font-style:italic">// We only return http.StatusOK
+</span><span style="color:#8f5902;font-style:italic"></span>		<span style="color:#000">apiMethod</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiMethodErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span>
+			<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">,</span>
+			<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+		<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">apiMethodErr</span> <span style="color:#000;font-weight:bold">{</span>
+			<span style="color:#204a87">panic</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to create /hello resource: &#34;</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">apiMethodErr</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
+		<span style="color:#000;font-weight:bold">}</span>
+		<span style="color:#8f5902;font-style:italic">// The lambda resource only supports application/json Unmarshallable
+</span><span style="color:#8f5902;font-style:italic"></span>		<span style="color:#8f5902;font-style:italic">// requests.
+</span><span style="color:#8f5902;font-style:italic"></span>		<span style="color:#000">apiMethod</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SupportedRequestContentTypes</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">{</span><span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+
+<p>Our <code>helloWorld</code> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
+
+<h1 id="provision">Provision</h1>
+
+<p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Register the function with the API Gateway
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHTML&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+
+<p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">INFO[0096] ────────────────────────────────────────────────
+INFO[0096] Stack Outputs
+INFO[0096] ────────────────────────────────────────────────
+INFO[0096] S3SiteURL                                     Description=&#34;S3 Website URL&#34; Value=&#34;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-1w6rehqu6x04c.s3-website-us-west-2.amazonaws.com&#34;
+INFO[0096] APIGatewayURL                                 Description=&#34;API Gateway URL&#34; Value=&#34;https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1&#34;
+INFO[0096] ────────────────────────────────────────────────</code></pre></div>
+
+<p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello">https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello</a></em></p>
+
+<h1 id="querying">Querying</h1>
+
+<p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time. The
+snippet below is pretty printed by piping the response through <a href="https://stedolan.github.io/jq/">jq</a>.</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
+*   Trying 52.84.237.220...
+* TCP_NODELAY set
+* Connected to 3e7ux226ga.execute-api.us-west-2.amazonaws.com (52.84.237.220) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Amazon
+* Server certificate: Amazon Root CA 1
+* Server certificate: Starfield Services Root Certificate Authority - G2
+&gt; GET /v1/hello HTTP/1.1
+&gt; Host: 3e7ux226ga.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.54.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 1137
+&lt; Connection: keep-alive
+&lt; Date: Mon, 29 Jan 2018 14:15:28 GMT
+&lt; x-amzn-RequestId: db7f5734-04fe-11e8-b264-c70ecab3a032
+&lt; Access-Control-Allow-Origin: http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-419zo4dp8n2d.s3-website-us-west-2.amazonaws.com
+&lt; Access-Control-Allow-Headers: Content-Type,X-Amz-Date,Authorization,X-Api-Key
+&lt; Access-Control-Allow-Methods: *
+&lt; X-Amzn-Trace-Id: sampled=0;root=1-5a6f2c80-efb0f84554384252abca6d15
+&lt; X-Cache: Miss from cloudfront
+&lt; Via: 1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: -UsCegiR1K3vJUFyAo9IMrWGdH8rKW6UBrtJLjxZqke19r0cxMl1NA==
+&lt;
+{ [1137 bytes data]
+* Connection #0 to host 3e7ux226ga.execute-api.us-west-2.amazonaws.com left intact
+{
+  &#34;Message&#34;: &#34;Hello world 🌏&#34;,
+  &#34;Request&#34;: {
+    &#34;method&#34;: &#34;GET&#34;,
+    &#34;body&#34;: {},
+    &#34;headers&#34;: {
+      &#34;Accept&#34;: &#34;*/*&#34;,
+      &#34;CloudFront-Forwarded-Proto&#34;: &#34;https&#34;,
+      &#34;CloudFront-Is-Desktop-Viewer&#34;: &#34;true&#34;,
+      &#34;CloudFront-Is-Mobile-Viewer&#34;: &#34;false&#34;,
+      &#34;CloudFront-Is-SmartTV-Viewer&#34;: &#34;false&#34;,
+      &#34;CloudFront-Is-Tablet-Viewer&#34;: &#34;false&#34;,
+      &#34;CloudFront-Viewer-Country&#34;: &#34;US&#34;,
+      &#34;Host&#34;: &#34;3e7ux226ga.execute-api.us-west-2.amazonaws.com&#34;,
+      &#34;User-Agent&#34;: &#34;curl/7.54.0&#34;,
+      &#34;Via&#34;: &#34;1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)&#34;,
+      &#34;X-Amz-Cf-Id&#34;: &#34;vAFNTV5uAMeTG9JN6IORnA7LYJhZyB3jHV7vh-7lXn2uZQUR6eHQUw==&#34;,
+      &#34;X-Amzn-Trace-Id&#34;: &#34;Root=1-5a6f2c80-2b48a9c86a30b0162d8ab1f1&#34;,
+      &#34;X-Forwarded-For&#34;: &#34;73.118.138.121, 205.251.214.60&#34;,
+      &#34;X-Forwarded-Port&#34;: &#34;443&#34;,
+      &#34;X-Forwarded-Proto&#34;: &#34;https&#34;
+    },
+    &#34;queryParams&#34;: {},
+    &#34;pathParams&#34;: {},
+    &#34;context&#34;: {
+      &#34;appId&#34;: &#34;&#34;,
+      &#34;method&#34;: &#34;GET&#34;,
+      &#34;requestId&#34;: &#34;db7f5734-04fe-11e8-b264-c70ecab3a032&#34;,
+      &#34;resourceId&#34;: &#34;401s9n&#34;,
+      &#34;resourcePath&#34;: &#34;/hello&#34;,
+      &#34;stage&#34;: &#34;v1&#34;,
+      &#34;identity&#34;: {
+        &#34;accountId&#34;: &#34;&#34;,
+        &#34;apiKey&#34;: &#34;&#34;,
+        &#34;caller&#34;: &#34;&#34;,
+        &#34;cognitoAuthenticationProvider&#34;: &#34;&#34;,
+        &#34;cognitoAuthenticationType&#34;: &#34;&#34;,
+        &#34;cognitoIdentityId&#34;: &#34;&#34;,
+        &#34;cognitoIdentityPoolId&#34;: &#34;&#34;,
+        &#34;sourceIp&#34;: &#34;73.118.138.121&#34;,
+        &#34;user&#34;: &#34;&#34;,
+        &#34;userAgent&#34;: &#34;curl/7.54.0&#34;,
+        &#34;userArn&#34;: &#34;&#34;
+      }
+    }
+  }
+}</code></pre></div>
+
+<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
+
+<h1 id="mapping-templates">Mapping Templates</h1>
+
+<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields (<code>queryParams</code>, <code>pathParams</code>) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
+
+<p>Sparta uses a pass-through template that passes all valid data, with minor <strong>Body</strong> differences based on the inbound <em>Content-Type</em>:</p>
+
+<ul>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">application/json</a></li>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">*</a></li>
+</ul>
+
+<p>The <code>application/json</code> template is copied below:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">#*
+Provide an automatic pass through template that transforms all inputs
+into the JSON payload sent to a golang function. The JSON behavior attempts to parse
+the incoming HTTP body as JSON assign it to the `body` field.
+
+See
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
+  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+*#
+{
+  &#34;method&#34;: &#34;$context.httpMethod&#34;,
+  &#34;body&#34; : $input.json(&#39;$&#39;),
+  &#34;headers&#34;: {
+    #foreach($param in $input.params().header.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().header.get($param))&#34; #if($foreach.hasNext),#end
+    #end
+  },
+  &#34;queryParams&#34;: {
+    #foreach($param in $input.params().querystring.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().querystring.get($param))&#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &#34;pathParams&#34;: {
+    #foreach($param in $input.params().path.keySet())
+    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().path.get($param))&#34; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &#34;context&#34; : {
+    &#34;apiId&#34; : &#34;$util.escapeJavaScript($context.apiId)&#34;,
+    &#34;method&#34; : &#34;$util.escapeJavaScript($context.httpMethod)&#34;,
+    &#34;requestId&#34; : &#34;$util.escapeJavaScript($context.requestId)&#34;,
+    &#34;resourceId&#34; : &#34;$util.escapeJavaScript($context.resourceId)&#34;,
+    &#34;resourcePath&#34; : &#34;$util.escapeJavaScript($context.resourcePath)&#34;,
+    &#34;stage&#34; : &#34;$util.escapeJavaScript($context.stage)&#34;,
+    &#34;identity&#34; : {
+      &#34;accountId&#34; : &#34;$util.escapeJavaScript($context.identity.accountId)&#34;,
+      &#34;apiKey&#34; : &#34;$util.escapeJavaScript($context.identity.apiKey)&#34;,
+      &#34;caller&#34; : &#34;$util.escapeJavaScript($context.identity.caller)&#34;,
+      &#34;cognitoAuthenticationProvider&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&#34;,
+      &#34;cognitoAuthenticationType&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&#34;,
+      &#34;cognitoIdentityId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&#34;,
+      &#34;cognitoIdentityPoolId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&#34;,
+      &#34;sourceIp&#34; : &#34;$util.escapeJavaScript($context.identity.sourceIp)&#34;,
+      &#34;user&#34; : &#34;$util.escapeJavaScript($context.identity.user)&#34;,
+      &#34;userAgent&#34; : &#34;$util.escapeJavaScript($context.identity.userAgent)&#34;,
+      &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
+    }
+  }
+}</code></pre></div>
+
+<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
+
+<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
+
+<h1 id="proxying-envelope">Proxying Envelope</h1>
+
+<p>Because the integration request returned a successful response, the API Gateway response body contains only our lambda&rsquo;s output (<code>$input.json('$')</code>).</p>
+
+<p>To return an error that API Gateway can properly translate into an HTTP
+status code, use an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewErrorResponse">apigateway.NewErrorResponse</a> type. This
+custom error type includes fields that trigger integration mappings based on the
+inline <a href="https://golang.org/src/net/http/status.go">HTTP StatusCode</a>. If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
+
+<p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
+
+<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to the underlying AWS Go API, into API Gateway Method responses.
+If you use the <code>apigateway.Error</code> type, the marshalled string version of your
+error text will trigger the proper Method Response.</p>
+
+<p>Sparta annotates your lambda functions response with <strong>go</strong>&rsquo;s values based on the HTTP status code your lambda function produced.  By default, Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+
+<p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
+
+<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
+
+<ul>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
+</ul>
+
+<h1 id="cleaning-up">Cleaning Up</h1>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre></div>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
+
+<h1 id="other-resources">Other Resources</h1>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">Mapping Template Reference</a></li>
+</ul>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/apigateway/" title="API Gateway"> <i class="fa fa-chevron-left"></i><label>API Gateway</label></a>
+    <a class="nav nav-next" href="/reference/apigateway/user_input/" title="User Input" style="margin-right: 0px;"><label>User Input</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/echo_event.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>

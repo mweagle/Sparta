@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/eventsources/ses/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -175,44 +180,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -220,6 +211,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -282,6 +280,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -331,6 +336,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -374,9 +386,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -399,7 +411,6 @@
       <option value="/reference/eventsources/ses/"  selected>-- SES</option>
       <option value="/reference/eventsources/sns/" >-- SNS</option>
   
-      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -408,6 +419,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -415,6 +427,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -444,7 +457,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>SES</h1>
     
@@ -466,20 +479,28 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoSESEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#000">spartaSES</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/ses&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoSESEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sesEvent</span> <span style="color:#000">spartaSES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">spartaSES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyRequestLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Entry</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
 	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+		<span style="color:#4e9a06">&#34;Error&#34;</span><span style="color:#000;font-weight:bold">:</span>         <span style="color:#000">configErr</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Configuration&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Discovery results&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="unmarshalling-the-ses-event">Unmarshalling the SES Event</h1>
 
-<p>At this point we would normally continue processing the SES event, using Sparta types if available.</p>
+<p>At this point we would normally continue processing the SES event, using Sparta types until the
+official <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">events</a> are available.</p>
 
-<p>However, before moving on to the event unmarshaling, we need to take a detour into <a href="/docs/dynamic_infrastructure/">dynamic infrastructure</a> because of the immutable infrastructure requirement.</p>
+<p>However, before moving on to the event processing, we need to take a detour into <a href="/reference/dynamic_infrastructure/">dynamic infrastructure</a>
+because of the immutable infrastructure requirement.</p>
 
-<p>This requirement implies that our service must be self-contained: we can&rsquo;t assume that &ldquo;something else&rdquo; has created an S3 bucket.  How can our locally compiled code access AWS-created resources?</p>
+<p>This requirement implies that our service must be self-contained: we can&rsquo;t assume that
+the S3 bucket already exists.  How can our locally compiled code access AWS-created resources?</p>
 
 <h1 id="dynamic-resources">Dynamic Resources</h1>
 
@@ -489,7 +510,8 @@
 <li>Provision a new S3 bucket for email message body storage
 
 <ul>
-<li>SES will not provide the message body in the event data.  It will only store the email body in an S3 bucket, from which your lambda function can later consume it.</li>
+<li>SES will not provide the message body in the event data.  It will only store
+the email body in an S3 bucket, from which your lambda function can later consume it.</li>
 </ul></li>
 <li>Wait for the S3 bucket to be provisioned
 
@@ -533,9 +555,12 @@
 </span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">bodyStorage</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sesPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMessageBodyStorageResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Special&#34;</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#000">sesPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MessageBodyStorage</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">bodyStorage</span></code></pre></div>
 
-<p>The <code>MessageBodyStorage</code> type (and the related <a href="https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions">MessageBodyStorageOptions</a> type) cause our SESPermission handler to  add an <a href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html">S3 ReceiptRule</a> at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.</p>
+<p>The <code>MessageBodyStorage</code> type (and the related <a href="https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorageOptions">MessageBodyStorageOptions</a> type)
+cause our SESPermission handler to  add an <a href="http://docs.aws.amazon.com/ses/latest/DeveloperGuide/receiving-email-action-s3.html">S3 ReceiptRule</a>
+at the head of the rules list.  This rule instructs SES to store the message body in the supplied bucket before invoking our lambda function.</p>
 
-<p>The single parameter <code>&quot;Special&quot;</code> is an application-unique literal value that is used to create a stable CloudFormation resource identifier so that new buckets are not created in response to stack update requests.</p>
+<p>The single parameter <code>&quot;Special&quot;</code> is an application-unique literal value that is used to create a stable CloudFormation
+resource identifier so that new buckets are not created in response to stack update requests.</p>
 
 <p>Our SES handler then adds two <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_ReceiptRule.html">ReceiptRules</a>:</p>
 
@@ -555,7 +580,9 @@
 
 <h2 id="dynamic-iamprivilege-arn">Dynamic IAMPrivilege Arn</h2>
 
-<p>Our lambda function is required to access the message body in the dynamically created <code>MessageBodyStorage</code> resource, but the S3 resource Arn is only defined <em>after</em> the service is provisioned.  The solution to this is to reference the dynamically generated <code>BucketArnAllKeys()</code> value in the <code>sparta.IAMRolePrivilege</code> initializer:</p>
+<p>Our lambda function is required to access the message body in the dynamically created <code>MessageBodyStorage</code> resource, but
+the S3 resource Arn is only defined <em>after</em> the service is provisioned.  The solution to this is to reference the
+dynamically generated <code>BucketArnAllKeys()</code> value in the <code>sparta.IAMRolePrivilege</code> initializer:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Then add the privilege to the Lambda function s.t. we can actually get at the data
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RoleDefinition</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Privileges</span><span style="color:#000;font-weight:bold">,</span>
@@ -576,98 +603,71 @@
 <p>Our <code>echoSESEvent</code> function needs to determine, at execution time, the <code>MessageBodyStorage</code> S3 bucket name.  This is done via <code>sparta.Discover()</code>:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Discover</span><span style="color:#000;font-weight:bold">()</span>
-
 <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
   <span style="color:#4e9a06">&#34;Error&#34;</span><span style="color:#000;font-weight:bold">:</span>         <span style="color:#000">configErr</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#4e9a06">&#34;Configuration&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">,</span>
-<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Debug</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Discovery results&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Discovery results&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-<p>The <code>sparta.Discover()</code> function returns a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DiscoveryInfo</a> structure.  This structure is the unmarshaled CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-metadata.html">Metadata</a> of the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html">Lambda::Function</a> resource.</p>
-
-<p>The structure includes the stack&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">Pseudo Parameters</a> as well information about any <em>immediate</em> resource dependencies.  Eg, those that were explicitly marked as <code>DependsOn</code>.  See the <a href="/docs/discovery/">discovery documentation</a> for more details.</p>
-
-<p>Of note is that <code>sparta.Discover()</code> does not accept any parameters and instead uses <a href="https://golang.org/pkg/reflect/">reflect</a> to determine which <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">sparta.LamdaAWSInfo</a> structure to lookup.  Discovery is therefore limited to being called from a <em>Sparta-compliant Go lambda function</em> only.</p>
-
-<p>It will return the full set of data iff:</p>
-
-<ul>
-<li>It&rsquo;s called from a <code>Sparta.LambdaFunction</code> function</li>
-<li>That function has immediate AWS resource dependencies</li>
-</ul>
-
-<p>A sample <code>DiscoveryInfo</code> for SES is below :</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">&#34;Region&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;us-west-2&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">&#34;StackID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaApplication/a94e1e70-cc2a-11e5-b38e-50d5ca789e4a&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">&#34;StackName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SpartaApplication&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">&#34;Resources&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-      <span style="color:#204a87;font-weight:bold">&#34;ResourceID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;SESMessageStoreBucketa622fdfda5789d596c08c79124f12b978b3da772&#34;</span><span style="color:#000;font-weight:bold">,</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Properties&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;DomainName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3.amazonaws.com&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Ref&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;WebsiteURL&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;http://spartaapplication-sesmessagestorebucketa622fdfda5-1ide79vkwrklp.s3-website-us-west-2.amazonaws.com&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;sparta:cloudformation:restype&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Tags&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;sparta:logicalBucketName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Special&#34;</span>
-      <span style="color:#000;font-weight:bold">}</span>
-    <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#8f5902;font-style:italic">// The message bucket is an explicit `DependsOn` relationship, so it&#39;ll be in the
+</span><span style="color:#8f5902;font-style:italic">// resources map.  We&#39;ll find it by looking for the dependent resource with the &#34;AWS::S3::Bucket&#34; type
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">bucketName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;&#34;</span>
+<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachResourceInfo</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">eachResourceInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceType</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">eachResourceInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Ref&#34;</span><span style="color:#000;font-weight:bold">]</span>
   <span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#4e9a06">&#34;&#34;</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">errors</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to discover SES bucket from sparta.Discovery: %#v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">)</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
-<p>Note that the <code>Resources</code> map has an entry for the S3 bucket.  Our code just needs to root around a bit to find the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html">Ref</a> property which is the immediate dependencies bucket name output.  If there were multiple resources, we could have disambiguated by also filtering for the <em>Special</em> tag, which is the logical name we provided earlier:</p>
+<p>The <code>sparta.Discover()</code> function returns a <a href="https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo">DiscoveryInfo</a> structure.  This
+data is published into the Lambda&rsquo;s environment variables to enable it to discover other
+resources published in the same Stack.</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">sesPermission</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMessageBodyStorageResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Special&#34;</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+<p>The structure includes the stack&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">Pseudo Parameters</a>
+as well information about any <em>immediate</em> resource dependencies.
+Eg, those that were explicitly marked as <code>DependsOn</code>.  See the <a href="/reference/discovery/">discovery documentation</a> for more details.</p>
 
 <p>As we only have a single dependency, our discovery filter is:</p>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// The message bucket is an explicit `DependsOn` relationship, so it&#39;ll be in the
 </span><span style="color:#8f5902;font-style:italic">// resources map.  We&#39;ll find it by looking for the dependent resource with the &#34;AWS::S3::Bucket&#34; type
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">bucketName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;&#34;</span>
-<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TagResourceType</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">eachResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Ref&#34;</span><span style="color:#000;font-weight:bold">]</span>
+<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachResourceInfo</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Resources</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">eachResourceInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResourceType</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;AWS::S3::Bucket&#34;</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">eachResourceInfo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Properties</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;Ref&#34;</span><span style="color:#000;font-weight:bold">]</span>
   <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#4e9a06">&#34;&#34;</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to discover SES bucket from sparta.Discovery&#34;</span><span style="color:#000;font-weight:bold">)</span>
-  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Failed to discovery SES MessageBodyBucket&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">errors</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to discover SES bucket from sparta.Discovery: %#v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">configuration</span><span style="color:#000;font-weight:bold">)</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h1 id="sparta-integration">Sparta Integration</h1>
 
 <p>The rest of <code>echoSESEvent</code> satisfies the other requirements, with a bit of help from the SES <a href="https://godoc.org/github.com/mweagle/Sparta/aws/ses">event types</a>:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
-<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">spartaSES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span>
-<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span>
-
-<span style="color:#8f5902;font-style:italic">// Get the metdata about the item...
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Get the metdata about the item...
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">svc</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">s3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">session</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">New</span><span style="color:#000;font-weight:bold">())</span>
-<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Records</span> <span style="color:#000;font-weight:bold">{</span>
+<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">sesEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Records</span> <span style="color:#000;font-weight:bold">{</span>
   <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
     <span style="color:#4e9a06">&#34;Source&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Mail</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Source</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;MessageID&#34;</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Mail</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MessageID</span><span style="color:#000;font-weight:bold">,</span>
     <span style="color:#4e9a06">&#34;BucketName&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">bucketName</span><span style="color:#000;font-weight:bold">,</span>
   <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SES Event&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-  <span style="color:#000">params</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">s3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HeadObjectInput</span><span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#000">Bucket</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bucketName</span><span style="color:#000;font-weight:bold">),</span>
-    <span style="color:#000">Key</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Mail</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MessageID</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#4e9a06">&#34;&#34;</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">bucketName</span> <span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">params</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">s3</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HeadObjectInput</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#000">Bucket</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bucketName</span><span style="color:#000;font-weight:bold">),</span>
+      <span style="color:#000">Key</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">aws</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">String</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SES</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Mail</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">MessageID</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">svc</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HeadObject</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">params</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+      <span style="color:#4e9a06">&#34;Error&#34;</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">err</span><span style="color:#000;font-weight:bold">,</span>
+      <span style="color:#4e9a06">&#34;Metadata&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SES MessageBody&#34;</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#000;font-weight:bold">}</span>
-  <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">svc</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HeadObject</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">params</span><span style="color:#000;font-weight:bold">)</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#4e9a06">&#34;Error&#34;</span><span style="color:#000;font-weight:bold">:</span>    <span style="color:#000">err</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;Metadata&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">resp</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SES MessageBody&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sesEvent</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span></code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
@@ -693,7 +693,6 @@
 
 <ul>
 <li>The SES message (including headers) is stored in the <a href="http://stackoverflow.com/questions/33549327/what-is-the-format-of-the-aws-ses-body-stored-in-s3">raw format</a></li>
-<li><code>sparta.Discover()</code> uses <a href="https://golang.org/pkg/reflect/">reflection</a> to map from the current enclosing <strong>go</strong> function name to the owning <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> CloudFormation. Therefore, calling <code>sparta.Discover()</code> from non-Sparta lambda functions (application helpers, function literals) will generate an error.</li>
 <li>More on Immutable Infrastructure:
 
 <ul>
@@ -725,7 +724,7 @@
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 27/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 
