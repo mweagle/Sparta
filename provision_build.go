@@ -48,20 +48,6 @@ func spartaTagName(baseKey string) string {
 }
 
 var (
-	// SpartaTagHomeKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta home URL.
-	// @enum OutputKey
-	SpartaTagHomeKey = spartaTagName("home")
-
-	// SpartaTagVersionKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta version used to provision/update the service.
-	// @enum OutputKey
-	SpartaTagVersionKey = spartaTagName("version")
-
-	// SpartaTagHashKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta commit ID used to provision/update the service
-	SpartaTagHashKey = spartaTagName("sha")
-
 	// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
 	// that stores the user-supplied or automatically generated BuildID
 	// for this run
@@ -679,11 +665,11 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			return nil, fmt.Errorf("Target region (%s) does not match bucket region (%s)",
 				*ctx.context.awsSession.Config.Region,
 				bucketRegion)
-		} else {
-			ctx.logger.WithFields(logrus.Fields{
-				"Region": bucketRegion,
-			}).Debug("Confirmed S3 region match")
 		}
+		// Nothing else to do...
+		ctx.logger.WithFields(logrus.Fields{
+			"Region": bucketRegion,
+		}).Debug("Confirmed S3 region match")
 	}
 
 	// If there are codePipeline environments defined, warn if they don't include
@@ -1375,8 +1361,6 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 // mutations have been accumulated
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	stackTags := map[string]string{
-		SpartaTagHomeKey:    "http://gosparta.io",
-		SpartaTagHashKey:    SpartaGitHash,
 		SpartaTagBuildIDKey: ctx.userdata.buildID,
 	}
 	if len(ctx.userdata.buildTags) != 0 {
