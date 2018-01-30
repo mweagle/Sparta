@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"encoding/json"
 	"fmt"
 	"os/exec"
 	"regexp"
@@ -66,7 +65,7 @@ func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 }
 
 func awsPrincipalToService(awsPrincipalName string) string {
-	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
+	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".:-", 2)[0])
 }
 
 // ensureCustomResourceHandler handles ensuring that the custom resource responsible
@@ -81,22 +80,9 @@ func ensureCustomResourceHandler(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	// AWS service basename
-	awsServiceName := awsPrincipalToService(customResourceTypeName)
-
-	// Use a stable resource CloudFormation resource name to represent
-	// the single CustomResource that can configure the different
-	// PushSource's for the given principal.
-	keyName, err := json.Marshal(ArbitraryJSONObject{
-		"Principal":   customResourceTypeName,
-		"ServiceName": awsServiceName,
-	})
-	if err != nil {
-		logger.Error("Failed to create configurator resource name: ", err.Error())
-		return "", err
-	}
-	resourceBaseName := fmt.Sprintf("%sCustomResource", awsServiceName)
-	subscriberHandlerName := CloudFormationResourceName(resourceBaseName, string(keyName))
+	// Prefix
+	prefixName := fmt.Sprintf("%s-Sparta-CFRes", serviceName)
+	subscriberHandlerName := CloudFormationResourceName(prefixName, customResourceTypeName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
@@ -176,7 +162,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	}
 
 	// What's the stable IAMRoleName?
-	resourceBaseName := fmt.Sprintf("CustomResource%sIAMRole", awsPrincipalToService(awsPrincipalName))
+	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", awsPrincipalToService(awsPrincipalName))
 	stableRoleName := CloudFormationResourceName(resourceBaseName, awsPrincipalName)
 
 	// Ensure it exists, then check to see if this Source ARN is already specified...
