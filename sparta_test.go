@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 )
 
 type StructHandler1 struct {
@@ -62,17 +62,13 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 	return lambdaFunctions
 }
 
-func userDefinedCustomResource1(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource1(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 	return nil, nil
 }
 
-func userDefinedCustomResource2(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource2(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 	return nil, nil
 }
 
