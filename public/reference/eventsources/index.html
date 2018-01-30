@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/eventsources/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -175,44 +180,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -220,6 +211,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -282,6 +280,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -331,6 +336,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -374,9 +386,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -386,9 +398,28 @@
    Sample Service</option>
     <option value="/reference/" >
    Reference</option> 
-      <option value="/reference/step_functions/" >- Step Functions</option>
+    <option value="/reference/eventsources/"  selected>
+  - 
+   Event Sources</option> 
+      <option value="/reference/eventsources/cloudformation/" >-- CloudFormation</option>
+      <option value="/reference/eventsources/cloudwatchevents/" >-- CloudWatch Events</option>
+      <option value="/reference/eventsources/cloudwatchlogs/" >-- CloudWatch Logs</option>
+      <option value="/reference/eventsources/cognito/" >-- Cognito</option>
+      <option value="/reference/eventsources/dynamodb/" >-- DynamoDB</option>
+      <option value="/reference/eventsources/kinesis/" >-- Event Sources - Kinesis</option>
+      <option value="/reference/eventsources/s3/" >-- S3</option>
+      <option value="/reference/eventsources/ses/" >-- SES</option>
+      <option value="/reference/eventsources/sns/" >-- SNS</option>
+  
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -396,6 +427,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -425,7 +457,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>Event Sources</h1>
     
@@ -441,20 +473,20 @@
 <h2 id="pull-based">Pull Based</h2>
 
 <ul>
-<li><a href="/docs/eventsources/dynamodb">DynamoDB</a></li>
-<li><a href="/docs/eventsources/kinesis">Kinesis</a></li>
+<li><a href="/reference/eventsources/dynamodb">DynamoDB</a></li>
+<li><a href="/reference/eventsources/kinesis">Kinesis</a></li>
 </ul>
 
 <h2 id="push-based">Push Based</h2>
 
 <ul>
-<li><a href="/docs/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/cloudwatchevents">CloudWatch Events</a></li>
-<li><a href="/docs/eventsources/cloudwatchlogs">CloudWatch Logs</a></li>
-<li><a href="/docs/eventsources/cognito">Cognito</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
-<li><a href="/docs/eventsources/s3">S3</a></li>
-<li><a href="/docs/eventsources/ses">SES</a></li>
-<li><a href="/docs/eventsources/sns">SNS</a></li>
+<li><a href="/reference/eventsources/cloudformation">CloudFormation</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/reference/eventsources/cloudwatchevents">CloudWatch Events</a></li>
+<li><a href="/reference/eventsources/cloudwatchlogs">CloudWatch Logs</a></li>
+<li><a href="/reference/eventsources/cognito">Cognito</a> <span class="label label-warning">NOT YET IMPLEMENTED</span></li>
+<li><a href="/reference/eventsources/s3">S3</a></li>
+<li><a href="/reference/eventsources/ses">SES</a></li>
+<li><a href="/reference/eventsources/sns">SNS</a></li>
 </ul>
 
 

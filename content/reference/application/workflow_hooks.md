@@ -73,5 +73,5 @@ To use the Workflow Hooks feature, initialize a [WorkflowHooks](https://godoc.or
 # Notes
 
   - Workflow hooks can be used to support [Dockerizing](https://github.com/mweagle/SpartaDocker) your application
-    - You may need to add [custom CLI commands](/docs/application/custom_commands) to fully support Docker
+    - You may need to add [custom CLI commands](/reference/application/custom_commands) to fully support Docker
   - Enable `--level debug` for detailed workflow hook debugging information

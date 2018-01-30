@@ -13,7 +13,7 @@ menu:
 
 In some circumstances your service may need to provision or access resources that fall outside the standard workflow.  In this case you can use [CloudFormation Lambda-backed CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to create or access resources during your CloudFormation stack's lifecycle.
 
-Sparta provides unchecked access to the CloudFormation resource lifecycle via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) function.  This function registers a user-supplied [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) with the larger CloudFormation resource [lifecycle](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html).
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) function.  This function registers an AWS Lambda Function as an CloudFormation custom resource [lifecycle](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requesttypes.html).
 
 In this section we'll walk through a sample user-defined custom resource and discuss how a custom resource's outputs can be propagated to an application-level Sparta lambda function.
 
@@ -21,59 +21,60 @@ In this section we'll walk through a sample user-defined custom resource and dis
 
 Defining a custom resource is a two stage process, depending on whether your application-level lambda function requires access to the custom resource outputs:
 
-  1. The user-defined [CustomResourceFunction](https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction) instance
+  1. The user-defined AWS Lambda Function
     - This function defines your resource's logic.  The multiple return value is `map[string]interface{}, error` which signify resource results and operation error, respectively.
   1. The `LambdaAWSInfo` struct which declares a dependency on your custom resource via the [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) member function.
+  1. *Optional* - A call to _github.com/mweagle/Sparta/aws/cloudformation/resources.SendCloudFormationResponse_ to signal CloudFormation creation status.
   1. *Optional* - The template decorator that binds your CustomResource's [data results](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html) to the owning `LambdaAWSInfo` caller.
   1. *Optional* - A call from your standard Lambda's function body to discover the CustomResource outputs via `sparta.Discover()`.
 
 
-### CustomResourceFunction
+### Custom Resource Functioon
 
-This is the core of your custom resource's logic and is executed in a manner similar to standard Sparta functions.  The primary difference is the function signature:
-
-{{< highlight go >}}
-type CustomResourceFunction func(requestType string
-                                  stackID string
-                                  properties map[string]interface{}
-                                  logger *logrus.Logger) (map[string]interface{}, error)
-{{< /highlight >}}
-
-where
-
-  * `requestType`: The CustomResource [operation type](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-requests.html)
-  * `stackID` : The current stack being operated on.
-  * `properties`: User-defined properties provided to [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource) (see below).
-  * `logger` : Preconfigured logger instance
+A Custom Resource Function is a standard AWS Lambda Go function type that
+accepts a `CloudFormationLambdaEvent` input type. This type holds all information
+for the requested [operation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html).
 
 The multiple return values denote success with non-empty results, or an error.
 
 As an example, we'll use the following custom resource function:
 
 {{< highlight go >}}
+import (
+	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
+	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+)
 
 // User defined λ-backed CloudFormation CustomResource
-func userDefinedCustomResource(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 
-	var results = map[string]interface{}{
+	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
+	lambdaCtx, _ := awsLambdaCtx.FromContext(ctx)
+
+	var opResults = map[string]interface{}{
 		"CustomResourceResult": "Victory!",
 	}
-	return results, nil
+
+	opErr := spartaCFResources.SendCloudFormationResponse(lambdaCtx,
+		&event,
+		opResults,
+		nil,
+		logger)
+	return opResults, opErr
 }
 {{< /highlight >}}
 
 
-This function always succeeds and returns a non-empty results map consisting of a single key (`CustomResourceResult`).
+This function always succeeds and publishes a non-empty map consisting of a single key (`CustomResourceResult`)
+to CloudFormation. This value can be accessed by other CloudFormation resources.
 
 ### RequireCustomResource
 
 The next step is to associate this custom resource function with a previously created Sparta `LambdaAWSInfo` instance via [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource).  This function accepts:
 
   * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
-  * `userFunc`: Custom resource function pointer
+  * `userFunc`: Custom resource function handler
   * `lambdaOptions`: Lambda execution options. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
   * `resourceProps`: Arbitrary, optional properties that will be provided to the `userFunc` during execution.
 
@@ -81,28 +82,22 @@ The multiple return values denote the logical, stable CloudFormation resource ID
 
 For example, our custom resource function above can be associated via:
 
-
 {{< highlight go >}}
 // Standard AWS λ function
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	configuration, _ := Discover()
-
-	logger.WithFields(logrus.Fields{
-		"Discovery": configuration,
-	}).Info("Custom resource request")
-  w.Write([]byte("Hello World"))
+func helloWorld(ctx context.Context) (string, error) {
+  return "Hello World", nil
 }
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-  helloWorld,
-  sparta.IAMRoleDefinition{})
+  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+    helloWorld,
+    sparta.IAMRoleDefinition{})
 
-cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
-  userDefinedCustomResource,
-  nil,
-  nil)
+  cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
+    userDefinedCustomResource,
+    nil,
+    nil)
+}
 {{< /highlight >}}
 
 
@@ -176,7 +171,6 @@ customResult := configuration.Resources[configuration.ResourceID].Properties["Cu
 ## Wrapping Up
 
 CloudFormation Custom Resources are a powerful tool that can help pre-existing applications migrate to a Sparta application.
-
 
 # Notes
   * Sparta uses [Lambda-backed CustomResource](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) functions, so they are subject to the same [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) as application-level Sparta lambda functions.

@@ -12,3 +12,9 @@
 <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
 <meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}">
 {{ with .Site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
+
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>

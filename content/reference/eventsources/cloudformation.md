@@ -4,6 +4,6 @@ title: CloudFormation
 weight: 10
 ---
 
-{{% panel theme="warning" header="NOT YET IMPLEMENTED" %}}
+{{% notice info %}}
 TODO: CloudFormation source documentation
-{{% /panel %}}
+{{% /notice %}}

@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Dynamic Infrastructure
-weight: 10
+weight: 20
 menu:
   main:
     parent: Documentation
@@ -11,7 +11,10 @@ menu:
 
 # Introduction
 
-In addition to provisioning AWS Lambda functions, Sparta supports the creation of other [CloudFormation Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html).  This enables a service to move towards [immutable infrastructure](https://fugue.co/oreilly/), where the service and its infrastructure requirements are treated as a logical unit.
+In addition to provisioning AWS Lambda functions, Sparta supports the creation of
+other [CloudFormation Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html).
+This enables a service to move towards [immutable infrastructure](https://fugue.co/oreilly/),
+where the service and its infrastructure requirements are treated as a logical unit.
 
 For instance, consider the case where two developers are working in the same AWS account.
 
@@ -76,33 +79,38 @@ graph LR
   dev2S3VideoBucket -->dev2VideoLambda
 {{< /mermaid >}}
 
-Sparta supports Dynamic Resources via [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) functions.
+Sparta supports Dynamic Resources via [TemplateDecoratorHandler](https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler) satisfying
+types.
 
-# Template Decorators
+# Template Decorator Handler
 
-A template decorator is a **go** function with the following signature
+A template decorator is a **go** interface:
 
 {{< highlight go >}}
-
-type TemplateDecorator func(serviceName string,
-	lambdaResourceName string,
-	lambdaResource gocf.LambdaFunction,
-	resourceMetadata map[string]interface{},
-	S3Bucket string,
-	S3Key string,
-	buildID string,
-	cfTemplate *gocf.Template,
-	context map[string]interface{},
-	logger *logrus.Logger)  error {
-
+type TemplateDecoratorHandler interface {
+	DecorateTemplate(serviceName string,
+		lambdaResourceName string,
+		lambdaResource gocf.LambdaFunction,
+		resourceMetadata map[string]interface{},
+		S3Bucket string,
+		S3Key string,
+		buildID string,
+		template *gocf.Template,
+		context map[string]interface{},
+		logger *logrus.Logger) error
 }
 {{< /highlight >}}
 
-Clients use [go-cloudformation](https://godoc.org/github.com/crewjam/go-cloudformation) types for CloudFormation resources and  `template.AddResource` to add them to the `*template` parameter.  After a decorator is invoked, Sparta verifies that the user-supplied function has not produced entities that collide with the internally-generated ones.
+Clients use [go-cloudformation](https://godoc.org/github.com/mweagle/go-cloudformation)
+types for CloudFormation resources and  `template.AddResource` to add them to
+the `*template` parameter.  After a decorator is invoked, Sparta also verifies that
+the user-supplied function did not add entities that that collide with the
+internally-generated ones.
 
 ## Unique Resource Names
 
-CloudFormation uses [Logical IDs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html) as resource key names.
+CloudFormation uses [Logical IDs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html)
+as resource key names.
 
 To minimize collision likelihood, Sparta publishes [CloudFormationResourceName(prefix, ...parts)](https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName) to generate compliant identifiers.  To produce content-based hash values, callers can provide a non-empty set of values as the `...parts` variadic argument.  This produces stable identifiers across Sparta execution (which may affect availability during updates).
 
@@ -121,31 +129,30 @@ Let's work through an example to make things a bit more concrete.  We have the f
 To start with, we'll need a Sparta lambda function to expose:
 
 {{< highlight go >}}
-func echoS3DynamicBucketEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	eventData, _ := ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-	config, _ := sparta.Discover()
+import (
+  awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+)
+func echoS3DynamicBucketEvent(ctx context.Context,
+  s3Event awsLambdaEvents.S3Event) (*awsLambdaEvents.S3Event, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+	discoveryInfo, discoveryInfoErr := sparta.Discover()
 	logger.WithFields(logrus.Fields{
-		"RequestID":     lambdaContext.AWSRequestID,
-		"Event":         string(eventData),
-		"Configuration": config,
-	}).Info("Request received")
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(eventData)
+		"Event":        s3Event,
+		"Discovery":    discoveryInfo,
+		"DiscoveryErr": discoveryInfoErr,
+	}).Info("Event received")
+	return &s3Event, nil
 }
 {{< /highlight >}}
 
-For brevity our demo function doesn't access the S3 bucket objects.  To support that we'll need to discuss the `sparta.Discover` function in another [section](/docs/discovery/).
+For brevity our demo function doesn't access the S3 bucket objects.
+To support that please see the [sparta.Discover](/reference/discovery) functionality.
 
 ## S3 Resource Name
 
 The next thing we need is a _Logical ID_ for our bucket:
 
 {{< highlight go >}}
-
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket", "myServiceBucket")
 {{< /highlight >}}
 
@@ -201,17 +208,29 @@ The `spartaCF.S3AllKeysArnForBucket` call is a convenience wrapper around [gocf.
 All that's left to do is actually insert the S3 resource in our decorator:
 
 {{< highlight go >}}
-
-lambdaFn.Decorator = func(lambdaResourceName string,
-                          lambdaResource gocf.LambdaFunction,
-                          template *gocf.Template,
-                          logger *logrus.Logger) error {
-
+s3Decorator := func(serviceName string,
+  lambdaResourceName string,
+  lambdaResource gocf.LambdaFunction,
+  resourceMetadata map[string]interface{},
+  S3Bucket string,
+  S3Key string,
+  buildID string,
+  template *gocf.Template,
+  context map[string]interface{},
+  logger *logrus.Logger) error {
   cfResource := template.AddResource(s3BucketResourceName, &gocf.S3Bucket{
     AccessControl: gocf.String("PublicRead"),
+    Tags: &gocf.TagList{gocf.Tag{
+      Key:   gocf.String("SpecialKey"),
+      Value: gocf.String("SpecialValue"),
+    },
+    },
   })
   cfResource.DeletionPolicy = "Delete"
   return nil
+}
+lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
+  sparta.TemplateDecoratorHookFunc(s3Decorator),
 }
 {{< /highlight >}}
 
@@ -220,7 +239,6 @@ lambdaFn.Decorator = func(lambdaResourceName string,
 In reality, we shouldn't even attempt to create the AWS Lambda function if the S3 bucket creation fails.  As application developers, we can help CloudFormation sequence infrastructure operations by stating this hard dependency on the S3 bucket via the [DependsOn](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-dependson.html) attribute:
 
 {{< highlight go >}}
-
 lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 {{< /highlight >}}
 
@@ -270,11 +288,14 @@ lambdaFn.Decorator = func(lambdaResourceName string,
 
 ## Wrapping Up
 
-Sparta provides an opportunity to bring infrastructure management into the application programming model.  It's still possible to use literal Arn strings, but the ability to include other infrastructure requirements brings a service closer to being self-contained and more operationally sustainable.
+Sparta provides an opportunity to bring infrastructure management into the
+application programming model.  It's still possible to use literal Arn strings,
+but the ability to include other infrastructure requirements brings a service
+closer to being self-contained and more operationally sustainable.
 
 # Notes
-  * The `echoS3DynamicBucketEvent` function can also access the bucket Arn via [sparta.Discover](/docs/discovery).
+  * The `echoS3DynamicBucketEvent` function can also access the bucket Arn via [sparta.Discover](/reference/discovery).
   * See the [DeletionPolicy](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html) documentation regarding S3 management.
   * CloudFormation resources also publish [other outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) that can be retrieved via [gocf.GetAtt](https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt).
-  * `go-cloudformation` exposes [gocf.Join](https://godoc.org/github.com/crewjam/go-cloudformation#Join) to create compound, dynamic expressions.
+  * `go-cloudformation` exposes [gocf.Join](https://godoc.org/github.com/mweagle/go-cloudformation#Join) to create compound, dynamic expressions.
     - See the CloudWatch docs on [Fn::Join](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html) for more information.

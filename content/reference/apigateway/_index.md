@@ -13,11 +13,11 @@ menu:
 
 One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 
-  * [Example 1 - Echo Event](/docs/apigateway/example1)
-  * [Example 2 - User Input & JSON Response](/docs/apigateway/example2)
-  * [Example 3 - Request Context](/docs/apigateway/example3)
-  * [Example 4 - Slack SlashCommand](/docs/apigateway/slack)
-  * [Example 5 - CORS](/docs/apigateway/cors)
+  * [Example 1 - Echo Event](/reference/apigateway/echo_event)
+  * [Example 2 - User Input & JSON Response](/reference/apigateway/user_input)
+  * [Example 3 - Request Context](/reference/apigateway/context)
+  * [Example 4 - Slack SlashCommand](/reference/apigateway/slack)
+  * [Example 5 - CORS](/reference/apigateway/cors)
 
 ## Concepts
 
@@ -39,7 +39,7 @@ The API Gateway presents a powerful and complex domain model.  In brief, to inte
   1. Create a stage for a REST API
   1. Deploy the given stage
 
-With that overview, let's start with a simple [example](/docs/apigateway/example1).
+With that overview, let's start with a simple [example](/reference/apigateway/echo_event).
 
 
 ## Custom HTTP Headers

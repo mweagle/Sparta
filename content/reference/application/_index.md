@@ -14,10 +14,10 @@ menu:
 
 Sparta-based applications use the [Cobra](https://github.com/spf13/cobra) package to expose a rich set of command line options.  This section describes:
 
-* [Default options](/docs/application/commandline)
-* [Adding flags](/docs/application/custom_flags)
-* [Adding commands](/docs/application/custom_commands)
-* [Managing Environments](/docs/application/environments)
-* [Workflow Hooks](/docs/application/workflow_hooks)
+* [Default options](/reference/application/commandline)
+* [Adding flags](/reference/application/custom_flags)
+* [Adding commands](/reference/application/custom_commands)
+* [Managing Environments](/reference/application/environments)
+* [Workflow Hooks](/reference/application/workflow_hooks)
 
-Adding custom flags or commands is typically a prerequisite to supporting [alternative topologies](/docs/alternative_topologies).
+Adding custom flags or commands is typically a prerequisite to supporting [alternative topologies](/reference/alternative_topologies).

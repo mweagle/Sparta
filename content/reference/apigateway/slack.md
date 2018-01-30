@@ -1,12 +1,13 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Slack SlashCommand
-weight: 10
+weight: 21
 ---
 
 ![SlashLogo](/images/apigateway/slack/slack_rgb.png)
 
-In this example, we'll walk through creating a [Slack Slash Command](https://api.slack.com/slash-commands) service.  The source for this is the [SpartaSlackbot](https://github.com/mweagle/SpartaSlackbot) repo.
+In this example, we'll walk through creating a [Slack Slash Command](https://api.slack.com/slash-commands) service.  The source for
+this is the [SpartaSlackbot](https://github.com/mweagle/SpartaSlackbot) repo.
 
 Our initial command handler won't be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.
 
@@ -15,82 +16,60 @@ Our initial command handler won't be very sophisticated, but will show the steps
 This lambda handler is a bit more complicated than the other examples, primarily because of the [Slack Integration](https://api.slack.com/slash-commands) requirements.  The full source is:
 
 {{< highlight go >}}
-
+import (
+	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+)
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 //
-func helloSlackbot(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
+func helloSlackbot(ctx context.Context,
+	apiRequest spartaAWSEvents.APIGatewayRequest) (map[string]interface{}, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 
-	// 1. Unmarshal the primary event
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-	var lambdaEvent slackLambdaJSONEvent
-	err := decoder.Decode(&lambdaEvent)
-	if err != nil {
-		logger.Error("Failed to unmarshal event data: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	bodyParams, bodyParamsOk := apiRequest.Body.(map[string]interface{})
+	if !bodyParamsOk {
+		return nil, fmt.Errorf("Failed to type convert body. Type: %T", apiRequest.Body)
 	}
 
-	// 2. Conditionally unmarshal to get the Slack text.  See
-	// https://api.slack.com/slash-commands
-	// for the value name list
-	requestParams := url.Values{}
-	if bodyData, ok := lambdaEvent.Body.(string); ok {
-		requestParams, err = url.ParseQuery(bodyData)
-		if err != nil {
-			logger.Error("Failed to parse query: ", err.Error())
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		logger.WithFields(logrus.Fields{
-			"Values": requestParams,
-		}).Info("Slack slashcommand values")
-	} else {
-		logger.Info("Event body empty")
-	}
+	logger.WithFields(logrus.Fields{
+		"BodyType":  fmt.Sprintf("%T", bodyParams),
+		"BodyValue": fmt.Sprintf("%+v", bodyParams),
+	}).Info("Slack slashcommand values")
 
-	// 3. Create the response
+	// 2. Create the response
 	// Slack formatting:
 	// https://api.slack.com/docs/formatting
-	responseText := "You talkin to me?"
-	for _, eachLine := range requestParams["text"] {
-		responseText += fmt.Sprintf("\n>>> %s", eachLine)
+	responseText := "Here's what I understood"
+	for eachKey, eachParam := range bodyParams {
+		responseText += fmt.Sprintf("\n*%s*: %+v", eachKey, eachParam)
 	}
 
 	// 4. Setup the response object:
 	// https://api.slack.com/slash-commands, "Responding to a command"
-	responseData := sparta.ArbitraryJSONObject{
+	responseData := map[string]interface{}{
 		"response_type": "in_channel",
 		"text":          responseText,
+		"mrkdwn":        true,
 	}
-	// 5. Send it off
-	responseBody, err := json.Marshal(responseData)
-	if err != nil {
-		logger.Error("Failed to marshal response: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	w.Write(responseBody)
+	return responseData, nil
 }
 {{< /highlight >}}
 
 There are a couple of things to note in this code:
 
 1. **Custom Event Type**
-  - The inbound Slack `POST` request is `application/x-www-form-urlencoded` data.  However, our [integration mapping](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl) mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw `POST` body with the mapping envelope (so that we can access [identity information, HTTP headers, etc.](/docs/apigateway/example1)), which produces an inbound JSON request that includes a **Body** parameter.  The **Body** string value is the raw inbound `POST` data.  Since it's `application/x-www-form-urlencoded`, to get the actual parameters we need to parse it:
+  - The inbound Slack `POST` request is `application/x-www-form-urlencoded` data.  This
+	data is unmarshalled into the same _spartaAWSEvent.APIGatewayRequest_ using
+	a customized [mapping template](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_formencoded.vtl).
+
+1. **Response Formatting**
+The lambda function extracts all Slack parameters and if defined, sends the `text` back with a bit of [Slack Message Formatting](https://api.slack.com/docs/formatting):
 
         {{< highlight go >}}
-        if bodyData, ok := lambdaEvent.Body.(string); ok {
-          requestParams, err = url.ParseQuery(bodyData)
-        {{< /highlight >}}
-
-
-  - The lambda function extracts all Slack parameters and if defined, sends the `text` back with a bit of [Slack Message Formatting](https://api.slack.com/docs/formatting) (and some attitude, to be honest about it):
-
-        {{< highlight go >}}
-        responseText := "You talkin to me?"
-        for _, eachLine := range requestParams["text"] {
-          responseText += fmt.Sprintf("\n>>> %s", eachLine)
-        }
+				responseText := "Here's what I understood"
+				for eachKey, eachParam := range bodyParams {
+					responseText += fmt.Sprintf("\n*%s*: %+v", eachKey, eachParam)
+				}
         {{< /highlight >}}
 
 1. **Custom Response**

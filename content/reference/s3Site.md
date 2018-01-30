@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: S3 Sites with CORS
-weight: 10
+weight: 20
 ---
 
 Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html) as part of provisioning.  We'll walk through provisioning a minimal [Bootstrap](http://getbootstrap.com) website that accesses API Gateway lambda functions provisioned by a single service in this example.
@@ -13,24 +13,37 @@ The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) e
 We'll start by creating a very simple lambda function:
 
 {{< highlight go >}}
-func helloWorld(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
 
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-	var jsonMessage json.RawMessage
-	err := decoder.Decode(&jsonMessage)
-	if err != nil {
-		logger.Error("Failed to decode request: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	logger.Info("Hello World: ", string(*jsonMessage))
-	w.Write(jsonMessage)
+import (
+	spartaAPIG "github.com/mweagle/Sparta/aws/apigateway"
+	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+)
+type helloWorldResponse struct {
+	Message string
+	Request spartaAWSEvents.APIGatewayRequest
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+func helloWorld(ctx context.Context,
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (*helloWorldResponse, *spartaAPIG.Error) {
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	if loggerOk {
+		logger.Info("Hello world structured log message")
+	}
+	// Return a message, together with the incoming input...
+	return &helloWorldResponse{
+		Message: fmt.Sprintf("Hello world 🌏"),
+		Request: gatewayEvent,
+	}, nil
+
+}
+
 {{< /highlight >}}
 
-This lambda function simply sends back the content of the inbound event.  See the [API Gateway example](/docs/apigateway/example1) for more information on the event contents.
+This lambda function returns a reply that consists of the inbound
+request plus a sample message.  See the API Gateway [examples](/reference/apigateway)
+for more information.
 
 # Create the API Gateway
 
@@ -106,20 +119,20 @@ func main() {
 }
 {{< /highlight >}}
 
-which can be provisioned using the standard [command line](/docs/commandline) option.
+which can be provisioned using the standard [command line](/reference/commandline) option.
 
 The _Outputs_ section of the `provision` command includes the hostname of our new S3 site:
 
 {{< highlight nohighlight >}}
-INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
-INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
-INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
-INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114
+INFO[0092] ────────────────────────────────────────────────
+INFO[0092] Stack Outputs
+INFO[0092] ────────────────────────────────────────────────
+INFO[0092] S3SiteURL                                     Description="S3 Website URL" Value="http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com"
+INFO[0092] APIGatewayURL                                 Description="API Gateway URL" Value="https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1"
+INFO[0092] ────────────────────────────────────────────────
 {{< /highlight >}}
 
-Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com_) and view the deployed site.
+Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com_) and view the deployed site.
 
 # Discover
 
@@ -136,3 +149,7 @@ As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates 
  }
 }
 {{< /highlight >}}
+
+# References
+
+* See the [Medium](https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef) post for an additional walk through this sample.

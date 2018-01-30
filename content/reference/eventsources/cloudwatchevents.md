@@ -17,27 +17,21 @@ Assume that we're supposed to write a simple "HelloWorld" CloudWatch event funct
 
 The lambda function is relatively small:
 {{< highlight go >}}
-func echoCloudWatchEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("Request received")
+func echoCloudWatchEvent(ctx context.Context, event map[string]interface{}) (map[string]interface{}, error) {
+logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-	config, _ := sparta.Discover()
-	logger.WithFields(logrus.Fields{
-		"RequestID":     lambdaContext.AWSRequestID,
-		"Configuration": config,
-	}).Info("Request received")
-
-	w.Write([]byte("CloudWatch event received!"))
+logger.WithFields(logrus.Fields{
+	"Event": event,
+}).Info("Request received")
+return event, nil
 }
 {{< /highlight >}}
-Our lambda function doesn't need to do much with the event other than log it.
+Our lambda function doesn't need to do much with the event other than log and return it.
 
 # Sparta Integration {#spartaIntegration}
 
 With `echoCloudWatchEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
+
 
 Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty `sparta.IAMRoleDefinition` value:
 {{< highlight go >}}

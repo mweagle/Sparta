@@ -1,7 +1,7 @@
 ---
 date: 2017-10-31 18:20:05
 title: Step Functions
-weight: 10
+weight: 25
 ---
 
 # Introduction
@@ -13,21 +13,15 @@ AWS [Step Functions](https://aws.amazon.com/step-functions/) are a powerful way 
 The first step is to define the core Lambda function [Task](http://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html) that will be our Step function's core logic. In this example, we'll define a _rollDie_ function:
 
 {{< highlight go >}}
+type lambdaRollResponse struct {
+	Roll int `json:"roll"`
+}
+
 // Standard AWS λ function
-func lambdaRollDie(w http.ResponseWriter, r *http.Request) {
-  ...
-	// Return a randomized value in the range [1, 6]
-	rollBytes, rollBytesErr := json.Marshal(&struct {
-		Roll int `json:"roll"`
-	}{
+func lambdaRollDie(ctx context.Context) (lambdaRollResponse, error) {
+	return lambdaRollResponse{
 		Roll: rand.Intn(5) + 1,
-	})
-	if rollBytesErr != nil {
-		http.Error(w, rollBytesErr.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Add("Content-Type", "application/json")
-	w.Write(rollBytes)
+	}, nil
 }
 {{< /highlight >}}
 
@@ -122,42 +116,43 @@ With the decorator attached, the next service `provision` request will include t
 
 {{< highlight text >}}
 
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000]    _______  ___   ___  _________
-INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.2
-INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 740028b
-INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
-INFO[0000]
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC="2017-11-01T02:03:04Z"
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Provisioning service                          BuildID=69ecad9a90c763922e292cd22d63b6874dd3195c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+$ go run main.go provision --s3Bucket weagle
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC="2018-01-29T14:33:36Z"
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=f7ade93d3900ab4b01c468c1723dedac24cbfa93 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
-INFO[0000] Checking S3 versioning                        Bucket=XXXXXXXXX VersioningEnabled=true
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Executable binary size                        KB=20162 MB=19
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaStep_mweagle-code.zip
-INFO[0011] Creating NodeJS/Sparta proxy function         FunctionName=StepRollDie ScriptName=StepRollDie
-INFO[0011] Lambda code archive size                      KB=20261 MB=19
-INFO[0011] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip
-INFO[0026] Calling WorkflowHook                          WorkflowHook="github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1" WorkflowHookContext="map[]"
-INFO[0026] Uploading local file to S3                    Bucket=XXXXXXXXX Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json
-INFO[0027] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd"
-INFO[0045] Waiting for CloudFormation operation to complete
-INFO[0067] Waiting for CloudFormation operation to complete
-INFO[0085] Stack provisioned                             CreationTime="2017-11-01 02:03:30.945 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:000000000000:stack/SpartaStep-mweagle/dbc121a0-bea8-11e7-8184-503acbd4dcfd" StackName=SpartaStep-mweagle
-INFO[0085] ──────────────────────────────────────────────────────────────
-INFO[0085] SpartaStep-mweagle Summary (2017-10-31T19:04:29-07:00)
-INFO[0085] ──────────────────────────────────────────────────────────────
-INFO[0085] Verifying IAM roles                           Duration (s)=0
-INFO[0085] Verifying AWS preconditions                   Duration (s)=0
-INFO[0085] Creating code bundle                          Duration (s)=11
-INFO[0085] Uploading code                                Duration (s)=15
-INFO[0085] Ensuring CloudFormation stack                 Duration (s)=59
-INFO[0085] Total elapsed time                            Duration (s)=85
-INFO[0085] ──────────────────────────────────────────────────────────────
+INFO[0010] Lambda code archive size                      Size="13 MB"
+INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-code.zip Path=./.sparta/SpartaStep_mweagle-code.zip Size="13 MB"
+INFO[0020] Calling WorkflowHook                          ServiceDecoratorHook="github.com/mweagle/Sparta/aws/step.(*StateMachine).StateMachineDecorator.func1" WorkflowHookContext="map[]"
+INFO[0020] Uploading local file to S3                    Bucket=weagle Key=SpartaStep-mweagle/SpartaStep_mweagle-cftemplate.json Path=./.sparta/SpartaStep_mweagle-cftemplate.json Size="3.7 kB"
+INFO[0021] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629"
+INFO[0094] CloudFormation provisioning metrics:
+INFO[0094] Operation duration                            Duration=54.73s Resource=SpartaStep-mweagle Type="AWS::CloudFormation::Stack"
+INFO[0094] Operation duration                            Duration=19.02s Resource=IAMRole49969e8a894b9eeea02a4936fb9519f2bd67dbe6 Type="AWS::IAM::Role"
+INFO[0094] Operation duration                            Duration=18.69s Resource=StatesIAMRolee00aa3484b0397c676887af695abfd160104318a Type="AWS::IAM::Role"
+INFO[0094] Operation duration                            Duration=2.60s Resource=StateMachine59f153f18068faa0b7fb588350be79df422ba5ef Type="AWS::StepFunctions::StateMachine"
+INFO[0094] Operation duration                            Duration=2.28s Resource=StepRollDieLambda7d9f8ab476995f16b91b154f68e5f5cc42601ebf Type="AWS::Lambda::Function"
+INFO[0094] Stack provisioned                             CreationTime="2018-01-29 14:33:56.7 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaStep-mweagle/6ff65180-0501-11e8-935b-50a68d01a629" StackName=SpartaStep-mweagle
+INFO[0094] ════════════════════════════════════════════════
+INFO[0094] SpartaStep-mweagle Summary
+INFO[0094] ════════════════════════════════════════════════
+INFO[0094] Verifying IAM roles                           Duration (s)=0
+INFO[0094] Verifying AWS preconditions                   Duration (s)=0
+INFO[0094] Creating code bundle                          Duration (s)=10
+INFO[0094] Uploading code                                Duration (s)=10
+INFO[0094] Ensuring CloudFormation stack                 Duration (s)=73
+INFO[0094] Total elapsed time                            Duration (s)=94
 {{< /highlight >}}
 
 ### Testing

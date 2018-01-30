@@ -51,7 +51,7 @@ push:
 	git push -f origin docs
 
 edit: clean
-	$(HUGO_BINARY) server --watch --verbose
+	$(HUGO_BINARY) server --watch --verbose ./config.toml
 
 publish: build commit push
 	# Publish locally committed content to gh-pages

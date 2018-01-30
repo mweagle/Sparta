@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/apigateway/slack/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -174,13 +179,6 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item parent haschildren
         ">
       <div>
@@ -188,31 +186,24 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item active">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -220,6 +211,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item active">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -282,6 +280,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -331,6 +336,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -374,9 +386,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -389,21 +401,21 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option> 
-      <option value="/reference/apigateway/example1/" >-- Echo</option>
-      <option value="/reference/apigateway/example3/" >-- Request Context</option>
-      <option value="/reference/apigateway/slack/"  selected>-- Slack SlashCommand</option>
-      <option value="/reference/apigateway/example2/" >-- User Input</option>
+      <option value="/reference/apigateway/echo_event/" >-- Echo Event</option>
+      <option value="/reference/apigateway/user_input/" >-- User Input</option>
+      <option value="/reference/apigateway/context/" >-- Request Context</option>
       <option value="/reference/apigateway/cors/" >-- CORS</option>
+      <option value="/reference/apigateway/slack/"  selected>-- Slack SlashCommand</option>
   
     <option value="/reference/application/" >
   - 
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -411,6 +423,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -440,7 +453,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>Slack SlashCommand</h1>
     
@@ -450,7 +463,8 @@
 
 <p><img src="/images/apigateway/slack/slack_rgb.png" alt="SlashLogo" /></p>
 
-<p>In this example, we&rsquo;ll walk through creating a <a href="https://api.slack.com/slash-commands">Slack Slash Command</a> service.  The source for this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</a> repo.</p>
+<p>In this example, we&rsquo;ll walk through creating a <a href="https://api.slack.com/slash-commands">Slack Slash Command</a> service.  The source for
+this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</a> repo.</p>
 
 <p>Our initial command handler won&rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.</p>
 
@@ -458,60 +472,42 @@
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#000">spartaAWSEvents</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
 </span><span style="color:#8f5902;font-style:italic">// Hello world event handler
 </span><span style="color:#8f5902;font-style:italic">//
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloSlackbot</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloSlackbot</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">apiRequest</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
 
-	<span style="color:#8f5902;font-style:italic">// 1. Unmarshal the primary event
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
-	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">slackLambdaJSONEvent</span>
-	<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParamsOk</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{})</span>
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000">bodyParamsOk</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to type convert body. Type: %T&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000;font-weight:bold">}</span>
 
-	<span style="color:#8f5902;font-style:italic">// 2. Conditionally unmarshal to get the Slack text.  See
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// https://api.slack.com/slash-commands
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// for the value name list
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">requestParams</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">url</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Values</span><span style="color:#000;font-weight:bold">{}</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ok</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#000">ok</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">url</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseQuery</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-			<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to parse query: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-			<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#000;font-weight:bold">}</span>
-		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-			<span style="color:#4e9a06">&#34;Values&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Slack slashcommand values&#34;</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000;font-weight:bold">}</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Event body empty&#34;</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#4e9a06">&#34;BodyType&#34;</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;%T&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#4e9a06">&#34;BodyValue&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;%+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">),</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Slack slashcommand values&#34;</span><span style="color:#000;font-weight:bold">)</span>
 
-	<span style="color:#8f5902;font-style:italic">// 3. Create the response
+	<span style="color:#8f5902;font-style:italic">// 2. Create the response
 </span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// Slack formatting:
 </span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// https://api.slack.com/docs/formatting
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;You talkin to me?&#34;</span>
-	<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n&gt;&gt;&gt; %s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span><span style="color:#000;font-weight:bold">)</span>
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;Here&#39;s what I understood&#34;</span>
+	<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">bodyParams</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n*%s*: %+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000;font-weight:bold">}</span>
 
 	<span style="color:#8f5902;font-style:italic">// 4. Setup the response object:
 </span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// https://api.slack.com/slash-commands, &#34;Responding to a command&#34;
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseData</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ArbitraryJSONObject</span><span style="color:#000;font-weight:bold">{</span>
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseData</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
 		<span style="color:#4e9a06">&#34;response_type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;in_channel&#34;</span><span style="color:#000;font-weight:bold">,</span>
 		<span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">responseText</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;mrkdwn&#34;</span><span style="color:#000;font-weight:bold">:</span>        <span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">,</span>
 	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#8f5902;font-style:italic">// 5. Send it off
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseBody</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Marshal</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">responseData</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to marshal response: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">responseBody</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">responseData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>There are a couple of things to note in this code:</p>
@@ -520,20 +516,20 @@
 <li><p><strong>Custom Event Type</strong></p>
 
 <ul>
-<li><p>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  However, our <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">integration mapping</a> mediates the API Gateway HTTPS request, transforming the public request into an integration request.  The integration mapping wraps the raw <code>POST</code> body with the mapping envelope (so that we can access <a href="/docs/apigateway/example1">identity information, HTTP headers, etc.</a>), which produces an inbound JSON request that includes a <strong>Body</strong> parameter.  The <strong>Body</strong> string value is the raw inbound <code>POST</code> data.  Since it&rsquo;s <code>application/x-www-form-urlencoded</code>, to get the actual parameters we need to parse it:</p>
-
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ok</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">);</span> <span style="color:#000">ok</span> <span style="color:#000;font-weight:bold">{</span>
-          <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000">url</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseQuery</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bodyData</span><span style="color:#000;font-weight:bold">)</span>
-        </code></pre></div></p></li>
-
-<li><p>The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a> (and some attitude, to be honest about it):</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;You talkin to me?&#34;</span>
-        <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">requestParams</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">{</span>
-          <span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n&gt;&gt;&gt; %s&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachLine</span><span style="color:#000;font-weight:bold">)</span>
-        <span style="color:#000;font-weight:bold">}</span>
-        </code></pre></div></li>
+<li>The inbound Slack <code>POST</code> request is <code>application/x-www-form-urlencoded</code> data.  This
+data is unmarshalled into the same <em>spartaAWSEvent.APIGatewayRequest</em> using
+a customized <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_formencoded.vtl">mapping template</a>.</li>
 </ul></li>
+
+<li><p><strong>Response Formatting</strong>
+The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a>:</p>
+
+<pre><code><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">				<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;Here&#39;s what I understood&#34;</span>
+				<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">bodyParams</span> <span style="color:#000;font-weight:bold">{</span>
+					<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n*%s*: %+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span><span style="color:#000;font-weight:bold">)</span>
+				<span style="color:#000;font-weight:bold">}</span>
+        </code></pre></div>
+</code></pre></li>
 
 <li><p><strong>Custom Response</strong></p>
 
@@ -671,8 +667,8 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/apigateway/example3/" title="Request Context"> <i class="fa fa-chevron-left"></i><label>Request Context</label></a>
-    <a class="nav nav-next" href="/reference/apigateway/example2/" title="User Input" style="margin-right: 0px;"><label>User Input</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fa fa-chevron-left"></i><label>CORS</label></a>
+    <a class="nav nav-next" href="/reference/application/" title="Application Customization" style="margin-right: 0px;"><label>Application Customization</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -687,7 +683,7 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 27/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 

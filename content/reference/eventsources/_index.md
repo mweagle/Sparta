@@ -11,15 +11,15 @@ There are several [event sources](http://docs.aws.amazon.com/lambda/latest/dg/in
 
 ## Pull Based
 
-  * [DynamoDB](/docs/eventsources/dynamodb)
-  * [Kinesis](/docs/eventsources/kinesis)
+  * [DynamoDB](/reference/eventsources/dynamodb)
+  * [Kinesis](/reference/eventsources/kinesis)
 
 ## Push Based
 
-  * [CloudFormation](/docs/eventsources/cloudformation) <span class="label label-warning">NOT YET IMPLEMENTED</span>
-  * [CloudWatch Events](/docs/eventsources/cloudwatchevents)
-  * [CloudWatch Logs](/docs/eventsources/cloudwatchlogs)
-  * [Cognito](/docs/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
-  * [S3](/docs/eventsources/s3)
-  * [SES](/docs/eventsources/ses)
-  * [SNS](/docs/eventsources/sns)
+  * [CloudFormation](/reference/eventsources/cloudformation) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [CloudWatch Events](/reference/eventsources/cloudwatchevents)
+  * [CloudWatch Logs](/reference/eventsources/cloudwatchlogs)
+  * [Cognito](/reference/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+  * [S3](/reference/eventsources/s3)
+  * [SES](/reference/eventsources/ses)
+  * [SNS](/reference/eventsources/sns)

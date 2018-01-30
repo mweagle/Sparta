@@ -15,44 +15,20 @@ Assume that we're given a DynamoDB stream.  See [below](http://localhost:1313/do
 We'll start with an empty lambda function and build up the needed functionality.
 
 {{< highlight go >}}
-func echoDynamoDBEvent(w http.ResponseWriter, r *http.Request)
-{
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+import (
+	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+)
+func echoDynamoDBEvent(ctx context.Context, ddbEvent awsLambdaEvents.DynamoDBEvent) (*awsLambdaEvents.DynamoDBEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("Request received")
+		"Event": ddbEvent,
+	}).Info("Event received")
+	return &ddbEvent, nil
 }
 {{< /highlight >}}
 
-# <a href="{{< relref "#unmarshalDynamoDBEvent" >}}">Unmarshalling the DynamoDB Event</a>
-
-Since the `echoDynamoDBEvent` is expected to be triggered by DynamoDB events, we will unmarshal the `req.Body` data into an DynamoDB-specific event provided by Sparta via:
-
-{{< highlight go >}}
-decoder := json.NewDecoder(r.Body)
-defer r.Body.Close()
-var lambdaEvent spartaDynamoDB.Event
-err := decoder.Decode(&lambdaEvent)
-if err != nil {
-  logger.Error("Failed to unmarshal event data: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-}
-{{< /highlight >}}
-
-DynamoDB events are delivered in batches, via lists of [EventRecords](https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord
-), so we'll need to process each record.
-
-{{< highlight go >}}
-for _, eachRecord := range lambdaEvent.Records {
-  logger.WithFields(logrus.Fields{
-    "Keys":     eachRecord.DynamoDB.Keys,
-    "NewImage": eachRecord.DynamoDB.NewImage,
-  }).Info("DynamoDb Event")
-}
-{{< /highlight >}}
-
-That's enough to get the data into CloudWatch Logs.
+Since the `echoDynamoDBEvent` is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK [event types](https://godoc.org/github.com/aws/aws-lambda-go/events)
+to access the record.
 
 # <a href="{{< relref "#spartaIntegration" >}}">Sparta Integration</a>
 

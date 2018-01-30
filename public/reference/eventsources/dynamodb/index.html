@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/eventsources/dynamodb/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -175,44 +180,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -220,6 +211,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -282,6 +280,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -331,6 +336,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -374,9 +386,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -399,7 +411,6 @@
       <option value="/reference/eventsources/ses/" >-- SES</option>
       <option value="/reference/eventsources/sns/" >-- SNS</option>
   
-      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -408,6 +419,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -415,6 +427,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -444,7 +457,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>DynamoDB</h1>
     
@@ -462,40 +475,21 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoDynamoDBEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLambdaContext</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaContext</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#000">awsLambdaEvents</span> <span style="color:#4e9a06">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">echoDynamoDBEvent</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">ddbEvent</span> <span style="color:#000">awsLambdaEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDBEvent</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">awsLambdaEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDBEvent</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyRequestLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Entry</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#4e9a06">&#34;RequestID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">lambdaContext</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AWSRequestID</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Request received&#34;</span><span style="color:#000;font-weight:bold">)</span>
+		<span style="color:#4e9a06">&#34;Event&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">ddbEvent</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Event received&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">ddbEvent</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
-<h1 id="a-href-hahahugoshortcode-2hbhb-unmarshalling-the-dynamodb-event-a"><a href="#unmarshalDynamoDBEvent">Unmarshalling the DynamoDB Event</a></h1>
+<p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
+to access the record.</p>
 
-<p>Since the <code>echoDynamoDBEvent</code> is expected to be triggered by DynamoDB events, we will unmarshal the <code>req.Body</code> data into an DynamoDB-specific event provided by Sparta via:</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
-<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaEvent</span> <span style="color:#000">spartaDynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Event</span>
-<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to unmarshal event data: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-  <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
-
-<p>DynamoDB events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/dynamodb#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachRecord</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Records</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#4e9a06">&#34;Keys&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Keys</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;NewImage&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">eachRecord</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">DynamoDB</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewImage</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;DynamoDb Event&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
-
-<p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
-
-<h1 id="a-href-hahahugoshortcode-5hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-2hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 

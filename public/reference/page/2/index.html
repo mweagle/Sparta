@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -174,44 +179,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -219,6 +210,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -281,6 +279,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -330,6 +335,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -373,9 +385,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -388,7 +400,6 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -397,6 +408,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -404,6 +416,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -433,7 +446,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>Reference</h1>
     
@@ -453,6 +466,24 @@
 
 </div>
 
+
+   <article class="post reference">
+    <header class="post-header">
+        <h2 class="post-title"><a href="/reference/step_functions/">Step Functions</a></h2>
+    </header>
+    <section class="post-excerpt">
+        <p>Introduction AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &ldquo;Roll Die&rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&rsquo;s core logic. <a class="read-more" href="/reference/step_functions/">&raquo;</a></p>
+    </section>
+    <footer class=" footline" >
+         
+        
+
+        
+        
+
+    </footer>
+</article>
 
    <article class="post reference">
     <header class="post-header">
@@ -476,10 +507,9 @@
         <h2 class="post-title"><a href="/reference/faq/">FAQ</a></h2>
     </header>
     <section class="post-excerpt">
-        <p>Development How do I setup AWS SDK credentials and region? Sparta relies on standard AWS SDK configuration settings. See the official documentation for more information.
-During development, configuration is typically done through environment variables:
- AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION  What are the Minimum set of privileges needed for an account to use Sparta? The absolute minimum set of privileges an account needs is the following IAM Policy:
-{ &#34;Version&#34;: &#34;2012-10-17&#34;, &#34;Statement&#34;: [ { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;cloudformation:DescribeStacks&#34;, &#34;cloudformation:CreateStack&#34;, &#34;cloudformation:CreateChangeSet&#34;, &#34;cloudformation:DescribeChangeSet&#34;, &#34;cloudformation:ExecuteChangeSet&#34;, &#34;cloudformation:DeleteChangeSet&#34;, &#34;cloudformation:DeleteStack&#34;, &#34;iam:GetRole&#34;, &#34;iam:DeleteRole&#34;, &#34;iam:DeleteRolePolicy&#34;, &#34;iam:PutRolePolicy&#34; ], &#34;Resource&#34;: [ &#34;*&#34; ] }, { &#34;Sid&#34;: &#34;Stmt1505975332000&#34;, &#34;Effect&#34;: &#34;Allow&#34;, &#34;Action&#34;: [ &#34;s3:PutObject&#34;, &#34;s3:GetBucketVersioning&#34;, &#34;s3:DeleteObject&#34; ], &#34;Resource&#34;: [ &#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34; ] } ] } This set of privileges should be sufficient to deploy a Sparta application similar to SpartaHelloWorld. <a class="read-more" href="/reference/faq/">&raquo;</a></p>
+        <p>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
+For instance: import ( gocf &#34;github.com/mweagle/go-cloudformation&#34; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&#34;&#34;, gocf.String(&#34;arn:aws:s3:::&#34;), gocf.Ref(s3BucketResourceName), gocf.String(&#34;/*&#34;))
+import ( gocf &#34;github.com/mweagle/go-cloudformation&#34; ) AuthorizerURI: gocf.Join(&#34;&#34;, gocf.String(&#34;arn:aws:apigateway:&#34;), gocf.Ref(&#34;AWS::Region&#34;).String(), gocf.String(&#34;:lambda:path/2015-03-31/functions/&#34;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &#34;Arn&#34;), gocf.String(&#34;/invocations&#34;)), See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf. <a class="read-more" href="/reference/faq/">&raquo;</a></p>
     </section>
     <footer class=" footline" >
          
@@ -525,7 +555,7 @@ During development, configuration is typically done through environment variable
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 27/01/2018
+        <i class='fa fa-calendar'></i> Last update on 31/10/2017
     </div>
     
 

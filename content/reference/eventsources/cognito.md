@@ -5,4 +5,6 @@ weight: 10
 ---
 <span class="label label-warning">NOT YET IMPLEMENTED</span>
 
-TODO: Cognito source documentation
+{{% notice info %}}
+TODO: CloudFormation source documentation
+{{% /notice %}}

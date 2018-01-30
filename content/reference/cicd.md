@@ -9,7 +9,10 @@ menu:
     weight: 500
 ---
 
+{{% notice info %}}
+TODO
+{{% /notice %}}
 
-## Pending
+## CI/CD with Sparta
 
 Document the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) example. Also see the [Medium Post](https://medium.com/@mweagle/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)

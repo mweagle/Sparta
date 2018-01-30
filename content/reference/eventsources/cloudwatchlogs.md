@@ -14,18 +14,20 @@ Assume that we're supposed to write a simple "HelloWorld" CloudWatch Logs functi
 Our lambda function is relatively short:
 
 {{< highlight go >}}
-func echoCloudWatchLogsEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("Request received")
+import (
+	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+)
+func echoCloudWatchLogsEvent(ctx context.Context, cwlEvent awsLambdaEvents.CloudwatchLogsEvent) (*awsLambdaEvents.CloudwatchLogsEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-	w.Write([]byte("CloudWatch event received!"))
+	logger.WithFields(logrus.Fields{
+		"Event": cwlEvent,
+	}).Info("Request received")
+	return &cwlEvent, nil
 }
 {{< /highlight >}}
 
-Our lambda function doesn't need to do much with the log message other than log it.
+Our lambda function doesn't need to do much with the log message other than log and return it.
 
 # Sparta Integration
 
@@ -74,6 +76,9 @@ func appendCloudWatchLogsHandler(api *sparta.API,
 	cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
 	cloudWatchLogsPermission.Filters["MyFilter"] = sparta.CloudWatchLogsSubscriptionFilter{
 		FilterPattern: "",
+		// NOTE: This LogGroupName MUST already exist in your account, otherwise
+		// the `provision` step will fail. You can create a LogGroupName in the
+		// AWS Console
 		LogGroupName:  "/aws/lambda/versions",
 	}
 	lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)

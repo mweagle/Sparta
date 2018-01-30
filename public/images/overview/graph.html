@@ -585,7 +585,7 @@ d.trigger("activate.bs.scrollspy")},b.prototype.clear=function(){a(this.selector
     $( document ).ready(function() {
         var CLOUDFORMATION_TEMPLATE = null;
         try {
-          CLOUDFORMATION_TEMPLATE = JSON.parse("{\"AWSTemplateFormatVersion\":\"2010-09-09\",\"Description\":\"Simple Sparta application that demonstrates core functionality\",\"Resources\":{\"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af\":{\"Type\":\"AWS::Lambda::Function\",\"DependsOn\":[\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\"],\"Metadata\":{\"aws:cloudformation:logical-id\":\"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af\",\"aws:cloudformation:stack-id\":{\"Ref\":\"AWS::StackId\"},\"aws:cloudformation:stack-name\":{\"Ref\":\"AWS::StackName\"},\"golangFunc\":\"Hello_World\",\"sparta:cloudformation:region\":{\"Ref\":\"AWS::Region\"}},\"Properties\":{\"Code\":{\"S3Bucket\":\"weagle\",\"S3Key\":\"MyHelloWorldStack/MyHelloWorldStack-code-3421c386f41a765e8d6abc8820e2b435de5fb827.zip\"},\"Description\":\"MyHelloWorldStack: Hello_World\",\"Environment\":{\"Variables\":{}},\"FunctionName\":{\"Fn::Join\":[\"-\",[{\"Ref\":\"AWS::StackName\"},\"Hello_World\"]]},\"Handler\":\"index.Hello_World\",\"MemorySize\":256,\"Role\":{\"Fn::GetAtt\":[\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\",\"Arn\"]},\"Runtime\":\"nodejs6.10\",\"Tags\":[{\"Key\":\"myAccounting\",\"Value\":\"tag\"}],\"Timeout\":3}},\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\":{\"Type\":\"AWS::IAM::Role\",\"Properties\":{\"AssumeRolePolicyDocument\":{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}},{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}},{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"apigateway.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"},\"Policies\":[{\"PolicyDocument\":{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":{\"Fn::Join\":[\"\",[\"arn:aws:logs:\",{\"Ref\":\"AWS::Region\"},\":\",{\"Ref\":\"AWS::AccountId\"},\"*\"]]}},{\"Effect\":\"Allow\",\"Action\":[\"cloudwatch:PutMetricData\"],\"Resource\":\"*\"},{\"Effect\":\"Allow\",\"Action\":[\"cloudformation:DescribeStacks\",\"cloudformation:DescribeStackResource\"],\"Resource\":{\"Fn::Join\":[\"\",[\"arn:aws:cloudformation:\",{\"Ref\":\"AWS::Region\"},\":\",{\"Ref\":\"AWS::AccountId\"},\":stack/\",{\"Ref\":\"AWS::StackName\"},\"/*\"]]}},{\"Effect\":\"Allow\",\"Action\":[\"xray:PutTraceSegments\",\"xray:PutTelemetryRecords\"],\"Resource\":\"*\"}],\"Version\":\"2012-10-17\"},\"PolicyName\":\"LambdaPolicy\"}]}}}}");
+          CLOUDFORMATION_TEMPLATE = JSON.parse("{\"AWSTemplateFormatVersion\":\"2010-09-09\",\"Description\":\"Simple Sparta application that demonstrates core functionality\",\"Resources\":{\"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af\":{\"Type\":\"AWS::Lambda::Function\",\"DependsOn\":[\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\"],\"Metadata\":{\"golangFunc\":\"Hello_World\"},\"Properties\":{\"Code\":{\"S3Bucket\":\"weagle\",\"S3Key\":\"MyHelloWorldStack/MyHelloWorldStack-code-710836d403083ac46999f02d2f1cfe69e270207c.zip\"},\"Description\":\"MyHelloWorldStack: Hello_World\",\"Environment\":{\"Variables\":{\"SPARTA_DISCOVERY_INFO\":{\"Fn::Base64\":{\"Fn::Join\":[\"\",[\"{\\n\",\"\\t\\\"ResourceID\\\": \\\"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af\\\",\\n\",\"\\t\\\"Region\\\": \\\"\",{\"Ref\":\"AWS::Region\"},\"\\\",\\n\",\"\\t\\\"StackID\\\": \\\"\",{\"Ref\":\"AWS::StackId\"},\"\\\",\\n\",\"\\t\\\"StackName\\\": \\\"\",{\"Ref\":\"AWS::StackName\"},\"\\\",\\n\",\"\\t\\\"Resources\\\":{\\n\",\"\\t}\\n\",\"}\"]]}},\"SPARTA_LOG_LEVEL\":\"info\"}},\"FunctionName\":\"MyHelloWorldStack_Hello_World\",\"Handler\":\"Sparta.lambda.amd64\",\"MemorySize\":128,\"Role\":{\"Fn::GetAtt\":[\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\",\"Arn\"]},\"Runtime\":\"go1.x\",\"Timeout\":3}},\"IAMRole254383dffcf02e393981e3b2731226f97b1d212b\":{\"Type\":\"AWS::IAM::Role\",\"Properties\":{\"AssumeRolePolicyDocument\":{\"Statement\":[{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"lambda.amazonaws.com\"]}},{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"ec2.amazonaws.com\"]}},{\"Action\":[\"sts:AssumeRole\"],\"Effect\":\"Allow\",\"Principal\":{\"Service\":[\"apigateway.amazonaws.com\"]}}],\"Version\":\"2012-10-17\"},\"Policies\":[{\"PolicyDocument\":{\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":{\"Fn::Join\":[\"\",[\"arn:aws:logs:\",{\"Ref\":\"AWS::Region\"},\":\",{\"Ref\":\"AWS::AccountId\"},\"*\"]]}},{\"Effect\":\"Allow\",\"Action\":[\"cloudwatch:PutMetricData\"],\"Resource\":\"*\"},{\"Effect\":\"Allow\",\"Action\":[\"cloudformation:DescribeStacks\",\"cloudformation:DescribeStackResource\"],\"Resource\":{\"Fn::Join\":[\"\",[\"arn:aws:cloudformation:\",{\"Ref\":\"AWS::Region\"},\":\",{\"Ref\":\"AWS::AccountId\"},\":stack/\",{\"Ref\":\"AWS::StackName\"},\"/*\"]]}},{\"Effect\":\"Allow\",\"Action\":[\"xray:PutTraceSegments\",\"xray:PutTelemetryRecords\"],\"Resource\":\"*\"}],\"Version\":\"2012-10-17\"},\"PolicyName\":\"LambdaPolicy\"}]}}}}");
         }
         catch (e)
         {
@@ -610,12 +610,12 @@ d.trigger("activate.bs.scrollspy")},b.prototype.clear=function(){a(this.selector
           </div>
           <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="file:///Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld/graph.html#lambda" aria-controls="lambda" role="tab" data-toggle="tab" aria-expanded="true">Lambdas</a></li>
+              <li class="active"><a href="file:///Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld/graph.html#lambda" aria-controls="lambda" role="tab" data-toggle="tab">Lambdas</a></li>
               <li></li>
-              <li class=""><a href="file:///Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld/graph.html#cloudformationTemplate" aria-controls="cloudformationTemplate" role="tab" data-toggle="tab" aria-expanded="false">Template</a></li>
+              <li><a href="file:///Users/mweagle/Documents/gopath/src/github.com/mweagle/SpartaHelloWorld/graph.html#cloudformationTemplate" aria-controls="cloudformationTemplate" role="tab" data-toggle="tab">Template</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="http://gosparta.io/" target="_blank">Sparta (v.0.20.1)</a></li>
+              <li><a href="http://gosparta.io/" target="_blank">Sparta (v.1.0.2)</a></li>
             </ul>
           </div>
         </div>
@@ -653,53 +653,58 @@ d.trigger("activate.bs.scrollspy")},b.prototype.clear=function(){a(this.selector
     <span class="hljs-string">"IAMRole254383dffcf02e393981e3b2731226f97b1d212b"</span>
    ]</span>,
    "<span class="hljs-attribute">Metadata</span>": <span class="hljs-value">{
-    "<span class="hljs-attribute">aws:cloudformation:logical-id</span>": <span class="hljs-value"><span class="hljs-string">"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af"</span></span>,
-    "<span class="hljs-attribute">aws:cloudformation:stack-id</span>": <span class="hljs-value">{
-     "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::StackId"</span>
-    </span>}</span>,
-    "<span class="hljs-attribute">aws:cloudformation:stack-name</span>": <span class="hljs-value">{
-     "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::StackName"</span>
-    </span>}</span>,
-    "<span class="hljs-attribute">golangFunc</span>": <span class="hljs-value"><span class="hljs-string">"Hello_World"</span></span>,
-    "<span class="hljs-attribute">sparta:cloudformation:region</span>": <span class="hljs-value">{
-     "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::Region"</span>
-    </span>}
+    "<span class="hljs-attribute">golangFunc</span>": <span class="hljs-value"><span class="hljs-string">"Hello_World"</span>
    </span>}</span>,
    "<span class="hljs-attribute">Properties</span>": <span class="hljs-value">{
     "<span class="hljs-attribute">Code</span>": <span class="hljs-value">{
      "<span class="hljs-attribute">S3Bucket</span>": <span class="hljs-value"><span class="hljs-string">"weagle"</span></span>,
-     "<span class="hljs-attribute">S3Key</span>": <span class="hljs-value"><span class="hljs-string">"MyHelloWorldStack/MyHelloWorldStack-code-3421c386f41a765e8d6abc8820e2b435de5fb827.zip"</span>
+     "<span class="hljs-attribute">S3Key</span>": <span class="hljs-value"><span class="hljs-string">"MyHelloWorldStack/MyHelloWorldStack-code-710836d403083ac46999f02d2f1cfe69e270207c.zip"</span>
     </span>}</span>,
     "<span class="hljs-attribute">Description</span>": <span class="hljs-value"><span class="hljs-string">"MyHelloWorldStack: Hello_World"</span></span>,
     "<span class="hljs-attribute">Environment</span>": <span class="hljs-value">{
-     "<span class="hljs-attribute">Variables</span>": <span class="hljs-value">{}
+     "<span class="hljs-attribute">Variables</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">SPARTA_DISCOVERY_INFO</span>": <span class="hljs-value">{
+       "<span class="hljs-attribute">Fn::Base64</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">Fn::Join</span>": <span class="hljs-value">[
+         <span class="hljs-string">""</span>,
+         [
+          <span class="hljs-string">"{\n"</span>,
+          <span class="hljs-string">"\t\"ResourceID\": \"HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af\",\n"</span>,
+          <span class="hljs-string">"\t\"Region\": \""</span>,
+          {
+           "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::Region"</span>
+          </span>},
+          <span class="hljs-string">"\",\n"</span>,
+          <span class="hljs-string">"\t\"StackID\": \""</span>,
+          {
+           "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::StackId"</span>
+          </span>},
+          <span class="hljs-string">"\",\n"</span>,
+          <span class="hljs-string">"\t\"StackName\": \""</span>,
+          {
+           "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::StackName"</span>
+          </span>},
+          <span class="hljs-string">"\",\n"</span>,
+          <span class="hljs-string">"\t\"Resources\":{\n"</span>,
+          <span class="hljs-string">"\t}\n"</span>,
+          <span class="hljs-string">"}"</span>
+         ]
+        ]
+       </span>}
+      </span>}</span>,
+      "<span class="hljs-attribute">SPARTA_LOG_LEVEL</span>": <span class="hljs-value"><span class="hljs-string">"info"</span>
+     </span>}
     </span>}</span>,
-    "<span class="hljs-attribute">FunctionName</span>": <span class="hljs-value">{
-     "<span class="hljs-attribute">Fn::Join</span>": <span class="hljs-value">[
-      <span class="hljs-string">"-"</span>,
-      [
-       {
-        "<span class="hljs-attribute">Ref</span>": <span class="hljs-value"><span class="hljs-string">"AWS::StackName"</span>
-       </span>},
-       <span class="hljs-string">"Hello_World"</span>
-      ]
-     ]
-    </span>}</span>,
-    "<span class="hljs-attribute">Handler</span>": <span class="hljs-value"><span class="hljs-string">"index.Hello_World"</span></span>,
-    "<span class="hljs-attribute">MemorySize</span>": <span class="hljs-value"><span class="hljs-number">256</span></span>,
+    "<span class="hljs-attribute">FunctionName</span>": <span class="hljs-value"><span class="hljs-string">"MyHelloWorldStack_Hello_World"</span></span>,
+    "<span class="hljs-attribute">Handler</span>": <span class="hljs-value"><span class="hljs-string">"Sparta.lambda.amd64"</span></span>,
+    "<span class="hljs-attribute">MemorySize</span>": <span class="hljs-value"><span class="hljs-number">128</span></span>,
     "<span class="hljs-attribute">Role</span>": <span class="hljs-value">{
      "<span class="hljs-attribute">Fn::GetAtt</span>": <span class="hljs-value">[
       <span class="hljs-string">"IAMRole254383dffcf02e393981e3b2731226f97b1d212b"</span>,
       <span class="hljs-string">"Arn"</span>
      ]
     </span>}</span>,
-    "<span class="hljs-attribute">Runtime</span>": <span class="hljs-value"><span class="hljs-string">"nodejs6.10"</span></span>,
-    "<span class="hljs-attribute">Tags</span>": <span class="hljs-value">[
-     {
-      "<span class="hljs-attribute">Key</span>": <span class="hljs-value"><span class="hljs-string">"myAccounting"</span></span>,
-      "<span class="hljs-attribute">Value</span>": <span class="hljs-value"><span class="hljs-string">"tag"</span>
-     </span>}
-    ]</span>,
+    "<span class="hljs-attribute">Runtime</span>": <span class="hljs-value"><span class="hljs-string">"go1.x"</span></span>,
     "<span class="hljs-attribute">Timeout</span>": <span class="hljs-value"><span class="hljs-number">3</span>
    </span>}
   </span>}</span>,

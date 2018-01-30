@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: User Input
-weight: 10
+weight: 11
 ---
 
 This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
@@ -16,21 +16,45 @@ Our function will accept two params:
 
 Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.
 
-Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) is expected to be invoked by the API Gateway, we'll start by unmarshalling the event data:
+Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) is expected to be invoked by the API Gateway, we'll use the AWS Lambda Go type in the function signature:
 
 {{< highlight go >}}
-decoder := json.NewDecoder(r.Body)
-defer r.Body.Close()
-var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-err := decoder.Decode(&lambdaEvent)
-if err != nil {
-  logger.Error("Failed to unmarshal event data: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
+import (
+	spartaEvents "github.com/mweagle/Sparta/aws/events"
+)
+
+func s3ItemInfo(ctx context.Context, apigRequest spartaEvents.APIGatewayRequest) (*itemInfoResponse, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := awsLambdaContext.FromContext(ctx)
+
+	logger.WithFields(logrus.Fields{
+		"RequestID": lambdaContext.AwsRequestID,
+	}).Info("Request received")
+
+	getObjectInput := &s3.GetObjectInput{
+		Bucket: aws.String(apigRequest.QueryParams["bucketName"]),
+		Key:    aws.String(apigRequest.QueryParams["keyName"]),
+	}
+
+	awsSession := spartaAWS.NewSession(logger)
+	svc := s3.New(awsSession)
+	result, err := svc.GetObject(getObjectInput)
+	if nil != err {
+		return nil, err
+	}
+	presignedReq, _ := svc.GetObjectRequest(getObjectInput)
+	url, err := presignedReq.Presign(5 * time.Minute)
+	if nil != err {
+		return nil, err
+	}
+	return &itemInfoResponse{
+		S3:  result,
+		URL: url,
+	}, nil
 }
 {{< /highlight >}}
 
-The [sparta.APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) fields correspond to the Integration Response Mapping template discussed in the [previous example](/docs/apigateway/example1) (see the full mapping template [here](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl)).
+The [sparta.APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest) fields correspond to the Integration Response Mapping template discussed in the [previous example](/reference/apigateway/echo_event) (see the full mapping template [here](https://raw.githubusercontent.com/mweagle/Sparta/master/resources/gateway/inputmapping_json.vtl)).
 
 Once the event is unmarshaled, we can use it to fetch the S3 item info:
 
@@ -45,33 +69,21 @@ Assuming there are no errors (including the case where the item does not exist),
 
 
 {{< highlight go >}}
-awsSession := awsSession(logger)
+awsSession := spartaAWS.NewSession(logger)
 svc := s3.New(awsSession)
 result, err := svc.GetObject(getObjectInput)
 if nil != err {
-  logger.Error("Failed to process event: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
+  return nil, err
 }
 presignedReq, _ := svc.GetObjectRequest(getObjectInput)
 url, err := presignedReq.Presign(5 * time.Minute)
 if nil != err {
-  logger.Error("Failed to process event: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
+  return nil, err
 }
-httpResponse := map[string]interface{}{
-  "S3":  result,
-  "URL": url,
-}
-
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set("Content-Type", "application/json")
-  fmt.Fprint(w, string(responseBody))
-}
+return &itemInfoResponse{
+  S3:  result,
+  URL: url,
+}, nil
 {{< /highlight >}}
 
 # Create the API Gateway
@@ -236,7 +248,7 @@ Pretty printing the response body:
 }
 {{< /highlight >}}
 
-Please see the [first example](/docs/apigateway/example1) for more information on the `code`, `status`, and `headers` keys.
+Please see the [first example](/reference/apigateway/echo_event) for more information on the `code`, `status`, and `headers` keys.
 
 What about an item that we know doesn't exist, but is in the bucket our lambda function has privileges to access:
 

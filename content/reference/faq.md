@@ -3,11 +3,53 @@ date: 2016-03-09T19:56:50+01:00
 title: FAQ
 weight: 1000
 ---
+## CloudFormation
+
+### How do I create dynamic resource ARNs?
+
+Linking AWS resources together often requires creating dynamic ARN
+references. This can be achieved by using [cloudformation.Join](https://godoc.org/github.com/mweagle/go-cloudformation#Join) expressions.
+
+For instance:
+{{< highlight go >}}
+import (
+	gocf "github.com/mweagle/go-cloudformation"
+)
+
+s3SiteBucketAllKeysResourceValue := gocf.Join("",
+    gocf.String("arn:aws:s3:::"),
+    gocf.Ref(s3BucketResourceName),
+    gocf.String("/*"))
+{{< /highlight  >}}
+
+{{< highlight go >}}
+import (
+	gocf "github.com/mweagle/go-cloudformation"
+)
+
+ AuthorizerURI: gocf.Join("",
+                        gocf.String("arn:aws:apigateway:"),
+                        gocf.Ref("AWS::Region").String(),
+                        gocf.String(":lambda:path/2015-03-31/functions/"),
+                        gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), "Arn"),
+                        gocf.String("/invocations")),
+{{< /highlight  >}}
+
+See the CloudFormation [Fn::GetAtt](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) docs for the set of attributes created by each
+resource. CloudFormation [pseudo-paramters](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html) can be included in dynamic expresssions via [gocf.Ref](https://godoc.org/github.com/mweagle/go-cloudformation#Ref) expressions. For instance:
+
+{{< highlight go >}}
+gocf.Ref("AWS::Region")
+gocf.Ref("AWS::AccountId")
+gocf.Ref("AWS::StackId")
+gocf.Ref("AWS::StackName")
+{{< /highlight  >}}
+
 
 ## Development
 <hr />
 
-### How do I setup AWS SDK credentials and region?
+### How do I configure AWS SDK settings?
 
 Sparta relies on standard AWS SDK configuration settings. See the [official documentation](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html) for more information.
 
@@ -17,7 +59,7 @@ During development, configuration is typically done through environment variable
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_REGION`
 
-### What are the *Minimum* set of privileges needed for an account to use Sparta?
+### What are the *Minimum* IAM Priviliges for Sparta developers?
 
 The absolute minimum set of privileges an account needs is the following [IAM Policy](https://awspolicygen.s3.amazonaws.com/policygen.html):
 
@@ -85,10 +127,6 @@ go run ./some/child/path/main.go provision --level info --s3Bucket $S3_BUCKET
 {{< /highlight >}}
 
 See [GitHub](https://github.com/mweagle/Sparta/issues/29) for more details.
-
-### How can I test locally?
-
-Local testing is available via the [explore](/docs/local_testing/) command. You can use the standard Go [httptest](https://golang.org/pkg/net/http/httptest/) package for unit tests. See the [explore_test.go](https://github.com/mweagle/Sparta/blob/master/explore_test.go) source for an example.
 
 ### How can I make `provision` faster?
 
@@ -207,7 +245,7 @@ For more flexibility, use a [WorkflowHook](https://godoc.org/github.com/mweagle/
 
 ### How can I provide environment variables to lambda functions?
 
-Sparta uses conditional compilation rather than environment variables. See [Managing Environments](/docs/application/environments/) for more information.
+Sparta uses conditional compilation rather than environment variables. See [Managing Environments](/reference/application/environments/) for more information.
 
 ### Does Sparta support Versioning & Aliasing?
 

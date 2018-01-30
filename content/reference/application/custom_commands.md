@@ -6,7 +6,7 @@ weight: 10
 
 # Introduction
 
-In addition to [custom flags](/docs/application/custom_flags), an application may register completely new commands. For example, to support [alternative topologies](/docs/application/custom_flags) or integrated automated acceptance tests as part of a CI/CD pipeline.
+In addition to [custom flags](/reference/application/custom_flags), an application may register completely new commands. For example, to support [alternative topologies](/reference/application/custom_flags) or integrated automated acceptance tests as part of a CI/CD pipeline.
 
 To register a custom command, define a new [cobra.Command](https://github.com/spf13/cobra) and add it to the `sparta.CommandLineOptions.Root` command value.  Ensure you use the `xxxxE` Cobra functions so that errors can be properly propagated.
 

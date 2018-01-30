@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Profiling
-weight: 10
+weight: 20
 menu:
   main:
     parent: Documentation
@@ -24,10 +24,13 @@ To learn more about `pprof` itself, please visit:
 
 ## Enabling Profiling
 
-To enable profiling add a reference to [ScheduleProfileLoop](https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop) in your `main()` function as in:
+To enable profiling add a reference to [ScheduleProfileLoop](https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop)
+in your `main()` function as in:
 
 {{< highlight go >}}
-sparta.ScheduleProfileLoop(nil, 5*time.Second, 30*time.Second,
+sparta.ScheduleProfileLoop(nil,
+  5*time.Second,
+  30*time.Second,
   "goroutine",
   "heap",
   "threadcreate",
@@ -58,41 +61,45 @@ To manage profile sprawl, each lambda instance uses a rolling `SNAPSHOT_INDEX` t
 With profiling enabled, the next step is to deploy the *SpartaPProf* service using the `provision` command:
 
 {{<highlight plain>}}
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000]    _______  ___   ___  _________
-INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4
-INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 8f97d81
-INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=provision UTC="2017-11-26T19:21:17Z"
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Provisioning service                          BuildID=441b46af4f35566d5cf2f2b4a7992bedc8825ecf CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=provision UTC="2018-01-29T04:50:37Z"
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=6c932dbdb6cf92075f80a407da0c9a28e954e492 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] Instrumenting function for profiling          Function=Hello_World
 INFO[0000] IAM roles verified                            Count=1
 INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Executable binary size                        KB=23082 MB=22
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/SpartaPProf_mweagle-code.zip
-INFO[0010] Creating NodeJS/Sparta proxy function         FunctionName=Hello_World ScriptName=Hello_World
-INFO[0010] Lambda code archive size                      KB=23182 MB=22
-INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-code.zip Path=./.sparta/SpartaPProf_mweagle-code.zip
-INFO[0028] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-cftemplate.json Path=./.sparta/SpartaPProf_mweagle-cftemplate.json
-INFO[0028] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:012345678910:stack/SpartaPProf-mweagle/0a802640-d2df-11e7-88d8-50a68a0e328e"
-INFO[0049] Waiting for CloudFormation operation to complete
-INFO[0062] Stack output                                  Description="Lambda function ARN" Key=FunctionARN Value="arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World"
-INFO[0062] Stack provisioned                             CreationTime="2017-11-26 19:21:45.446 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:012345678910:stack/SpartaPProf-mweagle/0a802640-d2df-11e7-88d8-50a68a0e328e" StackName=SpartaPProf-mweagle
-INFO[0062] ──────────────────────────────────────────────────────────────
-INFO[0062] SpartaPProf-mweagle Summary (2017-11-26T11:22:19-08:00)
-INFO[0062] ──────────────────────────────────────────────────────────────
-INFO[0062] Verifying IAM roles                           Duration (s)=0
-INFO[0062] Verifying AWS preconditions                   Duration (s)=0
-INFO[0062] Creating code bundle                          Duration (s)=10
-INFO[0062] Uploading code                                Duration (s)=17
-INFO[0062] Ensuring CloudFormation stack                 Duration (s)=34
-INFO[0062] Total elapsed time                            Duration (s)=62
-INFO[0062] ──────────────────────────────────────────────────────────────
+INFO[0010] Lambda code archive size                      Size="14 MB"
+INFO[0010] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-code.zip Path=./.sparta/SpartaPProf_mweagle-code.zip Size="14 MB"
+INFO[0019] Uploading local file to S3                    Bucket=weagle Key=SpartaPProf-mweagle/SpartaPProf_mweagle-cftemplate.json Path=./.sparta/SpartaPProf_mweagle-cftemplate.json Size="2.7 kB"
+INFO[0020] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaPProf-mweagle/fea58b50-04af-11e8-a4b6-50a68a0e322a"
+INFO[0058] CloudFormation provisioning metrics:
+INFO[0058] Operation duration                            Duration=31.98s Resource=SpartaPProf-mweagle Type="AWS::CloudFormation::Stack"
+INFO[0058] Operation duration                            Duration=20.00s Resource=IAMRole8a95c6bb91d566aaaf2ce0aa72b6257343131e0d Type="AWS::IAM::Role"
+INFO[0058] Operation duration                            Duration=5.37s Resource=HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af Type="AWS::Lambda::Function"
+INFO[0058] ────────────────────────────────────────────────
+INFO[0058] Stack Outputs
+INFO[0058] ────────────────────────────────────────────────
+INFO[0058] FunctionARN                                   Description="Lambda function ARN" Value="arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf_mweagle_Hello_World"
+INFO[0058] ────────────────────────────────────────────────
+INFO[0058] Stack provisioned                             CreationTime="2018-01-29 04:50:57.344 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaPProf-mweagle/fea58b50-04af-11e8-a4b6-50a68a0e322a" StackName=SpartaPProf-mweagle
+INFO[0058] ════════════════════════════════════════════════
+INFO[0058] SpartaPProf-mweagle Summary
+INFO[0058] ════════════════════════════════════════════════
+INFO[0058] Verifying IAM roles                           Duration (s)=0
+INFO[0058] Verifying AWS preconditions                   Duration (s)=0
+INFO[0058] Creating code bundle                          Duration (s)=10
+INFO[0058] Uploading code                                Duration (s)=10
+INFO[0058] Ensuring CloudFormation stack                 Duration (s)=39
+INFO[0058] Total elapsed time                            Duration (s)=59
 
 {{</highlight>}}
 
@@ -101,26 +108,30 @@ INFO[0062] ───────────────────────
 While the **SpartaPProf** binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. **SpartaPProf** includes a simple tool (_cmd/load.go_) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the _ARN_ of the lambda function listed as a _Stack output_ in the log output:
 
 {{<highlight plain>}}
-INFO[0062] Stack output                                  Description="Lambda function ARN" Key=FunctionARN Value="arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World"
+INFO[0058] FunctionARN                                   Description="Lambda function ARN" Value="arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf_mweagle_Hello_World"
 {{</highlight>}}
+
+Run the simple load generation script with the ARN value as in:
 
 {{<highlight plain>}}
 $ cd cmd
 $ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
-Lambda response (0 of 500): "Hi there 🌍"
-Lambda response (1 of 500): "Hi there 🌍"
-Lambda response (2 of 500): "Hi there 🌍"
-Lambda response (3 of 500): "Hi there 🌍"
-Lambda response (4 of 500): "Hi there 🌍"
-Lambda response (5 of 500): "Hi there 🌍"
-Lambda response (6 of 500): "Hi there 🌍"
-Lambda response (7 of 500): "Hi there 🌍"
-Lambda response (8 of 500): "Hi there 🌍"
-Lambda response (9 of 500): "Hi there 🌍"
+Lambda response (0 of 60): "Hi there 🌍"
+Lambda response (1 of 60): "Hi there 🌍"
+Lambda response (2 of 60): "Hi there 🌍"
+Lambda response (3 of 60): "Hi there 🌍"
+Lambda response (4 of 60): "Hi there 🌍"
+Lambda response (5 of 60): "Hi there 🌍"
+Lambda response (6 of 60): "Hi there 🌍"
+Lambda response (7 of 60): "Hi there 🌍"
+Lambda response (8 of 60): "Hi there 🌍"
+Lambda response (9 of 60): "Hi there 🌍"
+Lambda response (10 of 60): "Hi there 🌍"
+Lambda response (11 of 60): "Hi there 🌍"
 ...
 {{</highlight>}}
 
-After about thirty seconds or so, which took about 60 requests for this sample against a stack provisioned in `us-west-2`, a set of named profiles was published. Since each container's instance id is randomly assigned, the profile names you see will have slightly different names
+After all the requests have completed for this sample against a stack provisioned in `us-west-2`, a set of named profiles was published. Since each container's instance id is randomly assigned, the profile names you see will have slightly different names
 
 {{<highlight plain>}}
 ---------------------------------------------------------------
@@ -143,24 +154,22 @@ The final step is to provide the profile snapshots to `pprof`. Sparta exposes a 
 
 {{<highlight plain>}}
 $ go run main.go profile --s3Bucket weagle
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000]    _______  ___   ___  _________
-INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.4
-INFO[0000]  _\ \/ ___/ __ |/ , _/ / / / __ |     SHA     : 8f97d81
-INFO[0000] /___/_/  /_/ |_/_/|_| /_/ /_/ |_|     Go      : go1.9.1
-INFO[0000] ══════════════════════════════════════════════════════════════
-INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=profile UTC="2017-11-26T20:03:55Z"
-INFO[0000] ══════════════════════════════════════════════════════════════
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=profile UTC="2018-01-29T15:23:18Z"
+INFO[0000] ════════════════════════════════════════════════
 ? Which stack would you like to profile: SpartaPProf-mweagle
 ? What type of profile would you like to view? heap
 ? What profile snapshot(s) would you like to view? Download new snapshots from S3
 ? Please select a heap profile type: alloc_space
-INFO[0010] Refreshing cached profiles                    CacheRoot=.sparta/profiles/SpartaPProf-mweagle/heap ProfileRootKey=sparta/pprof/SpartaPProf-mweagle/profiles/heap S3Bucket=weagle StackName=SpartaPProf-mweagle Type=heap
-INFO[0010] Aggregating profile                           Input=".sparta/profiles/SpartaPProf-mweagle/heap/0-heap.λ-3838737145763622974.profile"
-INFO[0010] Consolidating profiles                        ProfileCount=1
-INFO[0010] Creating consolidated profile                 ConsolidatedProfile=.sparta/heap.consolidated.profile
-INFO[0010] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.
-{{</highlight>}}
+INFO[0028] Refreshing cached profiles                    CacheRoot=.sparta/profiles/SpartaPProf-mweagle/heap ProfileRootKey=sparta/pprof/SpartaPProf-mweagle/profiles/heap S3Bucket=weagle StackName=SpartaPProf-mweagle Type=heap
+INFO[0028] Aggregating profile                           Input=".sparta/profiles/SpartaPProf-mweagle/heap/0-heap.λ-8850662459689822644.profile"
+INFO[0028] Consolidating profiles                        ProfileCount=1
+INFO[0028] Creating consolidated profile                 ConsolidatedProfile=.sparta/heap.consolidated.profile
+INFO[0028] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.{{</highlight>}}
 
 The `profile` command downloads the published profiles and consolidates them into a single cached version in the _./sparta_ directory with a name of the form:
 
@@ -174,9 +183,7 @@ For this sample run, the _heap_ profile output is made available to the `pprof` 
 
 The latest `pprof` also includes flamegraph support to help identify issues:
 
-
 ![Main Alloc Space Flamegraph](/images/profiling/main_alloc_space_flamegraph.jpg)
-
 
 To view another profile type, enter `Ctrl+C` to exit the blocking web ui loop and launch another `profile` session.
 

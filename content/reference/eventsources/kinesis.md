@@ -15,34 +15,20 @@ The goal of this example is to provision a Sparta lambda function that logs Amaz
 We'll start with an empty lambda function and build up the needed functionality.
 
 {{< highlight go >}}
-func echoKinesisEvent(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+import (
+	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+)
+func echoKinesisEvent(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (*awsLambdaEvents.KinesisEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AWSRequestID,
-	}).Info("Request received")
-
-{{< /highlight >}}
-
-For this sample all we're going to do is unmarshal the Kinesis [event](http://docs.aws.amazon.com/lambda/latest/dg/walkthrough-kinesis-events-adminuser-create-test-function.html#wt-kinesis-invoke-manually) to a Sparta [kinesis event](https://godoc.org/github.com/mweagle/Sparta/aws/kinesis#Event) and log the id to CloudWatch Logs:
-
-{{< highlight go >}}
-
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-	var lambdaEvent spartaKinesis.Event
-	err := decoder.Decode(&lambdaEvent)
-	if err != nil {
-		logger.Error("Failed to unmarshal event data: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	for _, eachRecord := range lambdaEvent.Records {
-		logger.WithFields(logrus.Fields{
-			"EventID": eachRecord.EventID,
-		}).Info("Kinesis Event")
-	}
+		"Event": kinesisEvent,
+	}).Info("Event received")
+	return &kinesisEvent, nil
 }
 {{< /highlight >}}
+
+For this sample all we're going to do is transparently unmarshal the Kinesis event to an AWS Lambda [event](https://godoc.org/github.com/aws/aws-lambda-go/events), log
+it, and return the value.
 
 With the function defined let's register it with Sparta.
 

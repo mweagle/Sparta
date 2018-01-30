@@ -13,11 +13,6 @@
   </url>
   
   <url>
-    <loc>/reference/step_functions/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/sample_service/step1/</loc>
     <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
@@ -78,153 +73,161 @@
   </url>
   
   <url>
-    <loc>/reference/discovery/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/docker/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/dynamic_infrastructure/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/reference/eventsources/dynamodb/</loc>
     <lastmod>2018-01-27T11:05:53-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/apigateway/example1/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <loc>/reference/apigateway/echo_event/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/hybrid_topologies/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/local_testing/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/application/environments/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/profiling/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/apigateway/example3/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/s3/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/s3site/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sns/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/sample_service/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/apigateway/example2/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/application/workflow_hooks/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/apigateway/user_input/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/apigateway/context/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/cors/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/deployment_strategies/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/sample_service/step2/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/discovery/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/docker/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/dynamic_infrastructure/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/hybrid_topologies/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/local_testing/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/profiling/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/s3site/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/apigateway/slack/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step_functions/</loc>
+    <lastmod>2017-10-31T18:20:05+00:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
   </url>
   
   <url>
     <loc>/presentations/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2017-10-04T22:12:35+00:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/limitations/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/faq/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
   
   <url>
     <loc>/credits/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
   </url>
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-01-27T11:05:53-08:00</lastmod>
+    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
   </url>
   
   <url>
     <loc>/_meta/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
+    <lastmod>2016-03-08T21:07:13+01:00</lastmod>
   </url>
   
   <url>
     <loc>/_footer/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
   </url>
   
   <url>
     <loc>/_header/</loc>
-    <lastmod>2018-01-23T06:31:17-08:00</lastmod>
   </url>
   
   <url>

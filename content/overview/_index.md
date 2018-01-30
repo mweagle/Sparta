@@ -51,9 +51,8 @@ A Sparta-compatible lambda is a standard <a href="https://docs.aws.amazon.com/la
 where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types.  Supplying an invalid signature will produce a run time error as in:
 
 {{< highlight text >}}
-ERRO[0000] Lambda function (Hello World) has invalid returns:
-handler returns a single value, but it does not implement error
-exit status 1
+ERRO[0000] Lambda function (Hello World) has invalid returns: handler
+returns a single value, but it does not implement error exit status 1
 {{< /highlight >}}
 
 
@@ -64,7 +63,7 @@ exit status 1
   <tr>
     <td>
       <h2>Privileges</h2>
-      To support accessing other AWS resources in your <b>Go</b> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>Go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
+      To support accessing other AWS resources in your <b>go</b> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
 {{< highlight go >}}
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
@@ -120,13 +119,18 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
       <h2>Discovery</h2>
       To support Sparta lambda functions discovering dynamically assigned AWS values (eg, <i>S3 Bucket Names</i>), Sparta provides <code>sparta.Discover</code>. </h5>
 {{< highlight go >}}
-func echoS3DynamicBucketEvent(event *json.RawMessage,
-  context *sparta.LambdaContext,
-  w http.ResponseWriter,
-  logger *logrus.Logger) {
+func echoS3DynamicBucketEvent(ctx context.Context,
+	s3Event awsLambdaEvents.S3Event) (*awsLambdaEvents.S3Event, error) {
 
-  config, _ := sparta.Discover()
-  // Use config to determine the bucket name to which RawMessage should be stored
+	discoveryInfo, discoveryInfoErr := sparta.Discover()
+	logger.WithFields(logrus.Fields{
+		"Event":        s3Event,
+		"Discovery":    discoveryInfo,
+		"DiscoveryErr": discoveryInfoErr,
+	}).Info("Event received")
+
+  // Use discoveryInfo to determine the bucket name to which RawMessage should be stored
+  ...
 }
 {{< /highlight >}}
     </td>

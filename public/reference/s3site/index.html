@@ -32,6 +32,11 @@
 <meta name="description" content="">
 
 
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
     
   </head>
   <body data-url="/reference/s3site/">
@@ -83,7 +88,7 @@
       <li data-nav-id="/sample_service/step1/" class="dd-item">
         <div>
           <a href="/sample_service/step1/">
-            Walkthrough
+            Overview
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -174,44 +179,30 @@
     </li>
         </ul>
     </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
     <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
         ">
       <div>
       <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/apigateway/example1/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example1/">
-            Echo
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/apigateway/example3/" class="dd-item">
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
         <div>
-          <a href="/reference/apigateway/example3/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/example2/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/example2/">
+          <a href="/reference/apigateway/user_input/">
             User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -219,6 +210,13 @@
         <div>
           <a href="/reference/apigateway/cors/">
             CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -281,6 +279,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/discovery/" class="dd-item">
         <div>
           <a href="/reference/discovery/">
@@ -330,6 +335,13 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
       <li data-nav-id="/reference/limitations/" class="dd-item">
         <div>
           <a href="/reference/limitations/">
@@ -373,9 +385,9 @@
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -388,7 +400,6 @@
     <option value="/reference/eventsources/" >
   - 
    Event Sources</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
@@ -397,6 +408,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -404,6 +416,7 @@
       <option value="/reference/local_testing/" >- Local Testing</option>
       <option value="/reference/profiling/" >- Profiling</option>
       <option value="/reference/s3site/"  selected>- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
@@ -433,7 +446,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-    
+
 
     <h1>S3 Sites with CORS</h1>
     
@@ -449,23 +462,34 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ResponseWriter</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">r</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Request</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#000">spartaAPIG</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
+	<span style="color:#000">spartaAWSEvents</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">helloWorldResponse</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">Message</span> <span style="color:#204a87;font-weight:bold">string</span>
+	<span style="color:#000">Request</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-	<span style="color:#000">decoder</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewDecoder</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#204a87;font-weight:bold">defer</span> <span style="color:#000">r</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Close</span><span style="color:#000;font-weight:bold">()</span>
-	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">jsonMessage</span> <span style="color:#000">json</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">RawMessage</span>
-	<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">decoder</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decode</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to decode request: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">())</span>
-		<span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">w</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">(),</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusInternalServerError</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#204a87;font-weight:bold">return</span>
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000">gatewayEvent</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">helloWorldResponse</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">spartaAPIG</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">loggerOk</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">loggerOk</span> <span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world structured log message&#34;</span><span style="color:#000;font-weight:bold">)</span>
 	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello World: &#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">string</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">))</span>
-	<span style="color:#000">w</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">jsonMessage</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#8f5902;font-style:italic">// Return a message, together with the incoming input...
+</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">helloWorldResponse</span><span style="color:#000;font-weight:bold">{</span>
+		<span style="color:#000">Message</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world 🌏&#34;</span><span style="color:#000;font-weight:bold">),</span>
+		<span style="color:#000">Request</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gatewayEvent</span><span style="color:#000;font-weight:bold">,</span>
+	<span style="color:#000;font-weight:bold">},</span> <span style="color:#204a87;font-weight:bold">nil</span>
+
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
-<p>This lambda function simply sends back the content of the inbound event.  See the <a href="/docs/apigateway/example1">API Gateway example</a> for more information on the event contents.</p>
+<p>This lambda function returns a reply that consists of the inbound
+request plus a sample message.  See the API Gateway <a href="/reference/apigateway">examples</a>
+for more information.</p>
 
 <h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
@@ -532,18 +556,18 @@ typically points to a directory, which will be:</p>
 		<span style="color:#000">s3Site</span><span style="color:#000;font-weight:bold">)</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
 
-<p>which can be provisioned using the standard <a href="/docs/commandline">command line</a> option.</p>
+<p>which can be provisioned using the standard <a href="/reference/commandline">command line</a> option.</p>
 
 <p>The <em>Outputs</em> section of the <code>provision</code> command includes the hostname of our new S3 site:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0114] Stack output        Description=API Gateway URL Key=APIGatewayURL Value=https://in8vahv6c8.execute-api.us-west-2.amazonaws.com/v1
-INFO[0114] Stack output        Description=S3 website URL Key=S3SiteURL Value=http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com
-INFO[0114] Stack output        Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0114] Stack output        Description=Sparta Version Key=SpartaVersion Value=0.1.0
-INFO[0114] Stack provisioned   CreationTime=2015-12-15 17:25:11.323 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHTML/cb891ce0-a350-11e5-be26-507bfc8840a6 StackName=SpartaHTML
-INFO[0114] Elapsed time        Seconds=114</code></pre></div></p>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0092] ────────────────────────────────────────────────
+INFO[0092] Stack Outputs
+INFO[0092] ────────────────────────────────────────────────
+INFO[0092] S3SiteURL                                     Description=&#34;S3 Website URL&#34; Value=&#34;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com&#34;
+INFO[0092] APIGatewayURL                                 Description=&#34;API Gateway URL&#34; Value=&#34;https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1&#34;
+INFO[0092] ────────────────────────────────────────────────</code></pre></div></p>
 
-<p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com">http://spartahtml-site09b75dfd6a3e4d7e2167f6eca73957ee83-1c31huc6oly7k.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
+<p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com">http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
 
 <h1 id="discover">Discover</h1>
 
@@ -561,13 +585,19 @@ INFO[0114] Elapsed time        Seconds=114</code></pre></div></p>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div></li>
 </ol>
 
+<h1 id="references">References</h1>
+
+<ul>
+<li>See the <a href="https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef">Medium</a> post for an additional walk through this sample.</li>
+</ul>
+
 
     
     
         <div class="chevrons">
     <div id="navigation">
 <a class="nav nav-prev" href="/reference/profiling/" title="Profiling"> <i class="fa fa-chevron-left"></i><label>Profiling</label></a>
-    <a class="nav nav-next" href="/reference/limitations/" title="Limitations" style="margin-right: 0px;"><label>Limitations</label><i class="fa fa-chevron-right"></i></a></div>
+    <a class="nav nav-next" href="/reference/step_functions/" title="Step Functions" style="margin-right: 0px;"><label>Step Functions</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -582,7 +612,7 @@ INFO[0114] Elapsed time        Seconds=114</code></pre></div></p>
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 27/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 

@@ -8,34 +8,19 @@ weight: 0
 <br />
 <img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="192">
 <br />
-
-A <b>Go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a> microservices
+<center>
+<h1>
+A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
+</h1>
+</center>
 <br />
-
-{{% panel theme="danger" header="Documentation Updates" %}}
-
-  Sparta documentation is currently being updated as part of officially supporting
-  the AWS Lambda Go SDK. While the general examples and
-  features outlined in this documentation are still valid, the specific
-  lambda function signatures require changes.
-
-  In the meantime, the following links have the most up-to-date information:
-
-  * [Medium Post](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
-  * [Sparta Change Notes](https://github.com/mweagle/Sparta/blob/master/CHANGES.md)
-
-Documentation help is most appreciated - see the [Meta](_meta) page for how to get started!
-
-Matt (2018-01-27 11:11:11)
-
-{{% /panel %}}
 
 <table style="width:90%">
   <!-- Row 1 -->
   <tr>
     <td style="width:50%">
       <h2>Unified Language</h2>
-      <p>Use a single <b>Go</b> codebase to define your microservice's:
+      <p>Use a single <b>go</b> codebase to define your microservice's:
       <ul>
         <li>Application logic</li>
         <li>AWS infrastructure</li>
@@ -98,12 +83,6 @@ Sparta exclusively relies on [CloudFormation](http://docs.aws.amazon.com/AWSClou
 package main
 
 import (
-  "encoding/json"
-  "fmt"
-  "io/ioutil"
-  "net/http"
-
-  "github.com/Sirupsen/logrus"
   sparta "github.com/mweagle/Sparta"
 )
 
@@ -132,12 +111,27 @@ func main() {
 }
 {{< /highlight >}}
 
+Deploy it:
+
+{{< highlight bash >}}
+$ go run main.go provision --s3Bucket MY_S3_BUCKET
+{{< /highlight >}}
+
 # Getting Started
 
-To get started using Sparta, begin with the [Documentation](/docs/overview).
+To get started using Sparta, begin with the [Overview](/overview).
 
 # Administration
   - Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
+
+<br />
+<img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
+<center>
+<h6>Courtesy of <a href="https://github.com/ashleymcnamara/gophers">gophers</a>
+</h6>
+</center>
+<br />
+
 
 # Questions?
 

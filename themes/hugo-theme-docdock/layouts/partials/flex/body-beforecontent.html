@@ -29,16 +29,16 @@
       {{- partial "menu.html" . }}
 
     </ul>
-    
+
     {{- partial "language-selector.html" . }}
     <section>
         {{- partial "menu-footer.html" . }}
     </section>
   </aside>
   <section class="page">
-    
+
     <div class="nav-select">
-      <center>Navigation : 
+      <center>Navigation :
         <select onchange="javascript:location.href = this.value;">
           {{partial "flex/selectnavigation.html" .}}
         </select>
@@ -63,6 +63,6 @@
         <script type="text/javascript" src="{{"js/search.js" | relURL}}"></script>
       </div>
     {{- end}}
-    
+
 
     {{if not .IsHome}}<h1>{{.Title}}</h1>{{end}}

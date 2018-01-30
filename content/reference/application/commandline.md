@@ -48,7 +48,7 @@ Flags:
 Use "main [command] --help" for more information about a command.
 {{< /highlight >}}
 
-It's also possible to add [custom flags](/docs/application/custom_flags) and/or [custom commands](/docs/application/custom_commands) to extend your application's behavior.
+It's also possible to add [custom flags](/reference/application/custom_flags) and/or [custom commands](/reference/application/custom_commands) to extend your application's behavior.
 
 # Standard Commands
 

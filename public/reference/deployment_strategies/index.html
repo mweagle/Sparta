@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.32.4" />
-<title>Reference :: Sparta Documentation</title>
+<title>Deployment Strategies :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -39,7 +39,7 @@
 </style>
     
   </head>
-  <body data-url="/reference/">
+  <body data-url="/reference/deployment_strategies/">
     
       <header>
   <div class="logo">
@@ -101,7 +101,7 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/reference/" class="dd-item parent active alwaysopen haschildren
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
         ">
       <div>
       <a href="/reference/">Reference</a>
@@ -279,7 +279,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item active">
         <div>
           <a href="/reference/deployment_strategies/">
             Deployment Strategies
@@ -395,7 +395,7 @@
   
     <option value="/sample_service/" >
    Sample Service</option>
-    <option value="/reference/"  selected>
+    <option value="/reference/" >
    Reference</option> 
     <option value="/reference/eventsources/" >
   - 
@@ -408,7 +408,7 @@
    Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
-      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
+      <option value="/reference/deployment_strategies/"  selected>- Deployment Strategies</option>
       <option value="/reference/discovery/" >- Discovery Service</option>
       <option value="/reference/docker/" >- Docker</option>
       <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
@@ -448,230 +448,27 @@
       </div>
 
 
-    <h1>Reference</h1>
+    <h1>Deployment Strategies</h1>
     
     
     
+    
 
-
-
-<div class="extra-pagination inner">
-<nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 2</span>
-	
-	    <a class="older-posts" href="/reference/page/2/">Next Pages &rarr;</a>
-	
-</nav>
-
+<div class="notices info" ><p>TODO</p>
 </div>
 
 
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/cicd/">CI/CD</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>TODO
- CI/CD with Sparta Document the SpartaCodePipeline example. Also see the Medium Post <a class="read-more" href="/reference/cicd/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
+<h2 id="deployment-strategies">Deployment Strategies</h2>
 
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/custom_resources/">Custom Resources</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Introduction In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&rsquo;s lifecycle.
-Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers an AWS Lambda Function as an CloudFormation custom resource lifecycle.
-In this section we&rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&rsquo;s outputs can be propagated to an application-level Sparta lambda function. <a class="read-more" href="/reference/custom_resources/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/deployment_strategies/">Deployment Strategies</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>TODO
- Deployment Strategies Document the SpartaSafeDeploy example. <a class="read-more" href="/reference/deployment_strategies/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/discovery/">Discovery Service</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Introduction The ability to provision dynamic infrastructure (see also the SES Event Source Example) as part of a Sparta application creates a need to discover those resources at lambda execution time.
-Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling go lambda function.
-The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time. <a class="read-more" href="/reference/discovery/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/docker/">Docker</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>TODO
- Docker Support Document the SpartaDocker project. <a class="read-more" href="/reference/docker/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/dynamic_infrastructure/">Dynamic Infrastructure</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Introduction In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
-For instance, consider the case where two developers are working in the same AWS account.
- Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3. <a class="read-more" href="/reference/dynamic_infrastructure/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/hybrid_topologies/">Hybrid Topologies</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Introduction At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
-However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &ldquo;legacy&rdquo; AWS services: <a class="read-more" href="/reference/hybrid_topologies/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/local_testing/">Local Testing</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
-To create proper event types, consider:
- AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.   <a class="read-more" href="/reference/local_testing/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/profiling/">Profiling</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Introduction One of Lambda&rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs. <a class="read-more" href="/reference/profiling/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-   <article class="post reference">
-    <header class="post-header">
-        <h2 class="post-title"><a href="/reference/s3site/">S3 Sites with CORS</a></h2>
-    </header>
-    <section class="post-excerpt">
-        <p>Sparta supports provisioning an S3-backed static website as part of provisioning. We&rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
-The source for this is the SpartaHTML example application.
-Create the Lambda function We&rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIG &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spartaAWSEvents &#34;github.com/mweagle/Sparta/aws/events&#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents. <a class="read-more" href="/reference/s3site/">&raquo;</a></p>
-    </section>
-    <footer class=" footline" >
-         
-        
-
-        
-        
-
-    </footer>
-</article>
-
-
-<div style="margin-bottom:2rem"></div>
-
-<nav class="pagination" role="navigation">
-	
-	<span class="page-number">Page 1 of 2</span>
-	
-	    <a class="older-posts" href="/reference/page/2/">Next Pages &rarr;</a>
-	
-</nav>
-
-
+<p>Document the <a href="https://github.com/mweagle/SpartaSafeDeploy">SpartaSafeDeploy</a> example.</p>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/sample_service/step2/" title="Details"> <i class="fa fa-chevron-left"></i><label>Details</label></a>
-    <a class="nav nav-next" href="/reference/eventsources/" title="Event Sources" style="margin-right: 0px;"><label>Event Sources</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/custom_resources/" title="Custom Resources"> <i class="fa fa-chevron-left"></i><label>Custom Resources</label></a>
+    <a class="nav nav-next" href="/reference/discovery/" title="Discovery Service" style="margin-right: 0px;"><label>Discovery Service</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -686,12 +483,12 @@ import ( spartaAPIG &#34;github.com/mweagle/Sparta/aws/apigateway&#34; spartaAWS
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 22/01/2018
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
     </div>
     
 
     <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/_index.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/deployment_strategies.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>

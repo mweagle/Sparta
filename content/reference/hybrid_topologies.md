@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Hybrid Topologies
-weight: 10
+weight: 20
 menu:
   main:
     parent: Documentation
@@ -34,7 +34,7 @@ Deploying your application to a mixed topology is accomplished by combining exis
 
 ## Add Custom Command Line Option
 
-The first step is to add a [custom command line option](/docs/application/custom_commands). This command option will be used when your binary is running in "mixed topology" mode.  The SpartaOmega project starts up a localhost HTTP server, so we'll add a `httpServer` command line option with:
+The first step is to add a [custom command line option](/reference/application/custom_commands). This command option will be used when your binary is running in "mixed topology" mode.  The SpartaOmega project starts up a localhost HTTP server, so we'll add a `httpServer` command line option with:
 
 {{< highlight go >}}
 // Custom command to startup a simple HelloWorld HTTP server
@@ -58,7 +58,8 @@ The next step is to write a [user-data](http://docs.aws.amazon.com/AWSEC2/latest
 
 {{< highlight bash >}}
 #!/bin/bash -xe
-SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{ .ServiceName }}.lambda.amd64
+#!/bin/bash -xe
+SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{.SpartaBinaryName}}
 
 ################################################################################
 #
@@ -72,7 +73,7 @@ then
 fi
 
 # Install everything
-service supervisor stop || apt-get install supervisor -y
+service supervisor stop || true
 apt-get update -y
 apt-get upgrade -y
 apt-get install supervisor awscli unzip git -y
@@ -319,7 +320,7 @@ There are a few things to point out in this function:
       // ...
     }
 {{< /highlight >}}
-  * **Custom Command Line Flags** - To externalize the SSH Key Name, the binary expects a [custom flag](/docs/application/custom_flags) (not shown above):
+  * **Custom Command Line Flags** - To externalize the SSH Key Name, the binary expects a [custom flag](/reference/application/custom_flags) (not shown above):
 {{< highlight go >}}
   // And add the SSHKeyName option to the provision step
   sparta.CommandLineOptions.Provision.Flags().StringVarP(&SSHKeyName,

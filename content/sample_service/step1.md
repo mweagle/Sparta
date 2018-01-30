@@ -1,6 +1,6 @@
 ---
 date: 2017-10-03 07:15:40
-title: Walkthrough
+title: Overview
 weight: 10
 ---
 
@@ -42,7 +42,6 @@ var lambdaFunctions []*sparta.LambdaAWSInfo
 helloWorldFn := sparta.HandleAWSLambda("Hello World",
   helloWorld,
   sparta.IAMRoleDefinition{})
-lambdaFunctions = append(lambdaFunctions, helloWorldFn)
 {{< /highlight >}}
 
 We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to register a new lambda target via `HandleAWSLambda`.  `HandleAWSLambda` accepts three parameters:
@@ -59,10 +58,10 @@ The final step is to define a Sparta service under your application's `main` pac
 
 {{< highlight go >}}
 sparta.Main("MyHelloWorldStack",
-            "Simple Sparta application that demonstrates core functionality",
-            lambdaFunctions,
-            nil,
-            nil)
+  "Simple Sparta application that demonstrates core functionality",
+  lambdaFunctions,
+  nil,
+  nil)
 {{< /highlight >}}
 
 `sparta.Main` accepts five parameters:
@@ -73,9 +72,9 @@ sparta.Main("MyHelloWorldStack",
   * `serviceDescription`: An optional string used to describe the stack.
   * `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` that define a service
   * `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
-    - We'll walk through how to do that in [another section](/docs/apigateway/apigateway/), but for now our lambda function will only be accessible via the AWS SDK or Console.
+    - We'll walk through how to do that in [another section](/reference/apigateway/apigateway/), but for now our lambda function will only be accessible via the AWS SDK or Console.
   * `*S3Site` : Optional pointer to data if you would like to provision an [static website on S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html), initialized with local resources.
-    - We'll walk through how to do that in [another section](/docs/s3site), but for now our lambda function will only be accessible via the AWS SDK or Console.
+    - We'll walk through how to do that in [another section](/reference/s3site), but for now our lambda function will only be accessible via the AWS SDK or Console.
 
 Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options.  Run `go run main.go --help` to see the available options.
 
@@ -88,29 +87,27 @@ Putting everything together, and including the necessary imports, we have:
 package main
 
 import (
-  "fmt"
-  "net/http"
+	"context"
 
-  "github.com/Sirupsen/logrus"
-  sparta "github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 )
 
 // Standard AWS λ function
-func helloWorld) (string, error) {
-  return "Hello World!", nil
+func helloWorld(ctx context.Context) (string, error) {
+	return "Hello World!", nil
 }
 
 func main() {
-  var lambdaFunctions []*sparta.LambdaAWSInfo
+	var lambdaFunctions []*sparta.LambdaAWSInfo
 	helloWorldFn := sparta.HandleAWSLambda("Hello World",
 		helloWorld,
 		sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, helloWorldFn)
-  sparta.Main("MyHelloWorldStack",
-    "Simple Sparta application that demonstrates core functionality",
-    lambdaFunctions,
-    nil,
-    nil)
+	lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+	sparta.Main("MyHelloWorldStack",
+		"Simple Sparta application that demonstrates core functionality",
+		lambdaFunctions,
+		nil,
+		nil)
 }
 {{< /highlight >}}
 
@@ -119,33 +116,33 @@ func main() {
 Next download the Sparta dependencies via `go get ./...` in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command (replacing `$S3_BUCKET` with an S3 bucket you own):
 
 {{< highlight nohighlight >}}
-go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
-
-INFO[0000] ========================================
-INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.8.3 LinkFlags= Option=describe SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC="2017-10-03T13:14:34Z"
-INFO[0000] ========================================
+$ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack                    LinkFlags= Option=describe UTC="2018-01-27T21:54:16Z"
+INFO[0000] ════════════════════════════════════════════════
 INFO[0000] Provisioning service                          BuildID=N/A CodePipelineTrigger= InPlaceUpdates=false NOOP=true Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
-INFO[0000] Bypassing S3 upload due to -n/-noop command line argument.  Bucket=weagle VersioningEnabled=false
+INFO[0000] Skipping S3 preconditions check due to -n/-noop flag  Bucket=weagle Region=us-west-2 VersioningEnabled=false
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Executable binary size                        KB=22144 MB=21
-INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack-code.zip
-INFO[0010] Registering Sparta JS function                FunctionName=Hello_World ScriptName=Hello_World
-INFO[0010] Lambda function deployment package size       KB=22243 MB=21
-INFO[0010] Bypassing S3 upload due to -n/-noop command line argument  Bucket=weagle File=MyHelloWorldStack-code.zip Key=MyHelloWorldStack/MyHelloWorldStack-code-3421c386f41a765e8d6abc8820e2b435de5fb827.zip
-INFO[0010] Bypassing Stack creation due to -n/-noop command line argument  Bucket=weagle TemplateName=MyHelloWorldStack-cftemplate.json
-INFO[0010] ------------------------------------------
-INFO[0010] Summary (2017-10-03T06:14:45-07:00)
-INFO[0010] ------------------------------------------
-INFO[0010] Verifying IAM roles                           Duration (s)=0
-INFO[0010] Verifying AWS preconditions                   Duration (s)=0
-INFO[0010] Creating code bundle                          Duration (s)=10
-INFO[0010] Uploading code                                Duration (s)=0
-INFO[0010] Ensuring CloudFormation stack                 Duration (s)=0
-INFO[0010] Total elapsed time                            Duration (s)=10
-INFO[0010] ------------------------------------------
+INFO[0009] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack-code.zip
+INFO[0009] Lambda code archive size                      Size="12 MB"
+INFO[0009] Skipping S3 upload due to -n/-noop flag       Bucket=weagle File=MyHelloWorldStack-code.zip Key=MyHelloWorldStack/MyHelloWorldStack-code-710836d403083ac46999f02d2f1cfe69e270207c.zip Size="12 MB"
+INFO[0009] Skipping Stack creation due to -n/-noop flag  Bucket=weagle TemplateName=MyHelloWorldStack-cftemplate.json
+INFO[0009] ════════════════════════════════════════════════
+INFO[0009] MyHelloWorldStack Summary
+INFO[0009] ════════════════════════════════════════════════
+INFO[0009] Verifying IAM roles                           Duration (s)=0
+INFO[0009] Verifying AWS preconditions                   Duration (s)=0
+INFO[0009] Creating code bundle                          Duration (s)=10
+INFO[0009] Uploading code                                Duration (s)=0
+INFO[0009] Ensuring CloudFormation stack                 Duration (s)=0
+INFO[0009] Total elapsed time                            Duration (s)=10
 {{< /highlight >}}
 
 Then open _graph.html_ in your browser (also linked [here](/images/overview/graph.html) ) to see what will be provisioned.
@@ -153,36 +150,40 @@ Then open _graph.html_ in your browser (also linked [here](/images/overview/grap
 Since everything looks good, we'll provision the stack via `provision` and verify the lambda function.  Note that the `$S3_BUCKET` value must be an S3 bucket to which you have write access since Sparta uploads the lambda package and CloudFormation template to that bucket as part of provisioning.
 
 {{< highlight nohighlight >}}
-go run main.go provision --s3Bucket $S3_BUCKET
-
-INFO[0000] ========================================
-INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.8.3 LinkFlags= Option=provision SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC="2017-10-03T13:19:22Z"
-INFO[0000] ========================================
-INFO[0000] Provisioning service                          BuildID=0ad5fea31a524e8eb4e9fb2ecce8cf784c8a7a12 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+$ go run main.go provision --s3Bucket $S3_BUCKET
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack                    LinkFlags= Option=provision UTC="2018-01-27T21:56:27Z"
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=c4e21df1b7a1f2d82d396561db1aa168574f7a22 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
 INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Executable binary size                        KB=22144 MB=21
 INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack-code.zip
-INFO[0010] Registering Sparta JS function                FunctionName=Hello_World ScriptName=Hello_World
-INFO[0010] Lambda function deployment package size       KB=22243 MB=21
-INFO[0010] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack/MyHelloWorldStack-code.zip Path=./.sparta/MyHelloWorldStack-code.zip
-INFO[0026] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack/MyHelloWorldStack-cftemplate.json Path=./.sparta/MyHelloWorldStack-cftemplate.json
-INFO[0027] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/88863e20-a83d-11e7-87a1-500c32c86c29"
-INFO[0039] Waiting for CloudFormation operation to complete
-INFO[0058] Stack provisioned                             CreationTime="2017-10-03 13:19:49.578 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack/88863e20-a83d-11e7-87a1-500c32c86c29" StackName=MyHelloWorldStack
-INFO[0058] ------------------------------------------
-INFO[0058] Summary (2017-10-03T06:20:20-07:00)
-INFO[0058] ------------------------------------------
-INFO[0058] Verifying IAM roles                           Duration (s)=0
-INFO[0058] Verifying AWS preconditions                   Duration (s)=0
-INFO[0058] Creating code bundle                          Duration (s)=10
-INFO[0058] Uploading code                                Duration (s)=16
-INFO[0058] Ensuring CloudFormation stack                 Duration (s)=32
-INFO[0058] Total elapsed time                            Duration (s)=58
-INFO[0058] ------------------------------------------
+INFO[0010] Lambda code archive size                      Size="12 MB"
+INFO[0010] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack/MyHelloWorldStack-code.zip Path=./.sparta/MyHelloWorldStack-code.zip Size="12 MB"
+INFO[0019] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack/MyHelloWorldStack-cftemplate.json Path=./.sparta/MyHelloWorldStack-cftemplate.json Size="2.3 kB"
+INFO[0020] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/f87007f0-03ac-11e8-a93f-50d5ca789e1e"
+INFO[0049] CloudFormation provisioning metrics:
+INFO[0049] Operation duration                            Duration=24.77s Resource=MyHelloWorldStack Type="AWS::CloudFormation::Stack"
+INFO[0049] Operation duration                            Duration=16.43s Resource=IAMRole254383dffcf02e393981e3b2731226f97b1d212b Type="AWS::IAM::Role"
+INFO[0049] Operation duration                            Duration=1.73s Resource=HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af Type="AWS::Lambda::Function"
+INFO[0049] Stack provisioned                             CreationTime="2018-01-27 21:56:47.268 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack/f87007f0-03ac-11e8-a93f-50d5ca789e1e" StackName=MyHelloWorldStack
+INFO[0049] ════════════════════════════════════════════════
+INFO[0049] MyHelloWorldStack Summary
+INFO[0049] ════════════════════════════════════════════════
+INFO[0049] Verifying IAM roles                           Duration (s)=0
+INFO[0049] Verifying AWS preconditions                   Duration (s)=0
+INFO[0049] Creating code bundle                          Duration (s)=10
+INFO[0049] Uploading code                                Duration (s)=9
+INFO[0049] Ensuring CloudFormation stack                 Duration (s)=30
+INFO[0049] Total elapsed time                            Duration (s)=49
 {{< /highlight >}}
 
 Once the stack has been provisioned (`CREATE_COMPLETE`), login to the AWS console and navigate to the Lambda section.
@@ -197,7 +198,7 @@ On the Lambda details page, click the *Test* button:
 
 ![AWS Lambda Test](/images/overview/AWS_Lambda_Test.png)
 
-Accept the Input Test Event sample (our Lambda function doesn't consume the event data) and click *Save and test*.  The execution result pane should display something similar to:
+Accept the and name the _Hello World_ event template sample (our Lambda function doesn't consume the event data) and click *Save and test*.  The execution result pane should display something similar to:
 
 ![AWS Lambda Execution](/images/overview/AWS_Lambda_Execution.png)
 
@@ -206,11 +207,15 @@ Accept the Input Test Event sample (our Lambda function doesn't consume the even
 To prevent unauthorized usage and potential charges, make sure to `delete` your stack before moving on:
 
 {{< highlight nohighlight >}}
-go run main.go delete
+$ go run main.go delete
 
-INFO[0000] ========================================
-INFO[0000] Welcome to MyHelloWorldStack                  GoVersion=go1.8.3 LinkFlags= Option=delete SpartaSHA=d3479d7 SpartaVersion=0.20.1 UTC="2017-10-03T13:21:19Z"
-INFO[0000] ========================================
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack                    LinkFlags= Option=delete UTC="2018-01-27T22:01:59Z"
+INFO[0000] ════════════════════════════════════════════════
 INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
 INFO[0000] Delete request submitted                      Response="{\n\n}"
 {{< /highlight >}}
@@ -218,8 +223,9 @@ INFO[0000] Delete request submitted                      Response="{\n\n}"
 
 # Conclusion
 
-Congratulations! You've just deployed your first "serverless" service.  The following sections will dive deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.
+Congratulations! You've just deployed your first "serverless" service.  The following sections will dive
+deeper into what's going on under the hood as well as how to integrate your lambda function(s) into the broader AWS landscape.
 
 # Next Steps
 
-Walkthrough what Sparta actually does to deploy your application in the [next section](/docs/intro_example/step2/).
+Walkthrough what Sparta actually does to deploy your application in the [next section](/reference/intro_example/step2/).

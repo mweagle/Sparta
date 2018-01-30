@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Request Context
-weight: 10
+weight: 12
 ---
 
 
@@ -15,47 +15,34 @@ As this function is only expected to be invoked from the API Gateway, we'll unma
 
 
 {{< highlight go >}}
-func ipGeoLambda(w http.ResponseWriter, r *http.Request) {
-	logger, _ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)
+import (
+	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+)
+func ipGeoLambda(ctx context.Context,
+  apiRequest spartaAWSEvents.APIGatewayRequest) (map[string]interface{}, error) {
+	parsedIP := net.ParseIP(apiRequest.Context.Identity.SourceIP)
+	record, err := dbHandle.City(parsedIP)
 
-	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
-	var lambdaEvent sparta.APIGatewayLambdaJSONEvent
-	err := decoder.Decode(&lambdaEvent)
-	if err != nil {
-		logger.Error("Failed to unmarshal event data: ", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 {{< /highlight >}}
 
 We'll then parse the inbound IP address from the [Context](https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext) and perform a lookup against the database handle opened in the [init](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19) block:
 
 {{< highlight go >}}
-parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
-record, err := dbHandle.City(parsedIP)
-if err != nil {
-  logger.Error("Failed to find city: ", err.Error())
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-  return
-}
+  parsedIP := net.ParseIP(lambdaEvent.Context.Identity.SourceIP)
+  record, err := dbHandle.City(parsedIP)
+  if err != nil {
+    return nil, err
+  }
 {{< /highlight >}}
 
 Finally, marshal the data or error result and we're done:
 
 {{< highlight go >}}
-// Return the Info
-httpResponse := map[string]interface{}{
-  "info": record,
-}
-responseBody, err := json.Marshal(httpResponse)
-if err != nil {
-  http.Error(w, err.Error(), http.StatusInternalServerError)
-} else {
-  w.Header().Set("Content-Type", "application/json")
-  w.Write(responseBody)
-}
+	requestResponse := map[string]interface{}{
+		"ip":     parsedIP,
+		"record": record,
+	}
+	return requestResponse, nil
 {{< /highlight >}}
 
 # Sparta Integration
@@ -230,7 +217,7 @@ Pretty-printing the response body:
 {{< /highlight >}}
 
 
-Please see the [first example](/docs/apigateway/example1) for more information on the `code`, `status`, and `headers` keys.
+Please see the [first example](/reference/apigateway/echo_event/) for more information on the `code`, `status`, and `headers` keys.
 
 # Cleaning Up
 
