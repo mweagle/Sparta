@@ -25,10 +25,10 @@ func (apigError *Error) Error() string {
 	return string(bytes)
 }
 
-// NewError returns an Error satisfying
-// object that is compatible with the API Gateway integration
-// mappings
-func NewError(statusCode int, messages ...string) *Error {
+// NewErrorResponse returns a response that satisfies
+// the regular expression used to determine integration mappings
+// via the API Gateway
+func NewErrorResponse(statusCode int, messages ...string) *Error {
 	err := &Error{
 		Code:    statusCode,
 		Err:     http.StatusText(statusCode),
