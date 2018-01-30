@@ -1,7 +1,6 @@
 package sparta
 
 import (
-	"context"
 	"crypto/sha1"
 	"encoding/binary"
 	"encoding/hex"
@@ -85,7 +84,7 @@ const (
 type cloudFormationLambdaCustomResource struct {
 	gocf.CloudFormationCustomResource
 	ServiceToken   *gocf.StringExpr
-	UserProperties interface{} `json:",omitempty"`
+	UserProperties map[string]interface{} `json:",omitempty"`
 }
 
 func customResourceProvider(resourceType string) gocf.ResourceProperties {
@@ -566,6 +565,13 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 
+	// Is this valid
+	invalidErr := ensureValidSignature(resourceInfo.userFunctionName,
+		resourceInfo.handlerSymbol)
+	if invalidErr != nil {
+		return invalidErr
+	}
+
 	// Figure out the role name
 	iamRoleArnName := resourceInfo.roleName
 
@@ -573,7 +579,8 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 	// IAMRoleDefinition name has been created and this resource needs to
 	// depend on that being created.
 	if iamRoleArnName == "" && resourceInfo.roleDefinition != nil {
-		iamRoleArnName = resourceInfo.roleDefinition.logicalName(serviceName, resourceInfo.userFunctionName)
+		iamRoleArnName = resourceInfo.roleDefinition.logicalName(serviceName,
+			resourceInfo.userFunctionName)
 	}
 	lambdaDescription := resourceInfo.options.Description
 	if "" == lambdaDescription {
@@ -737,6 +744,7 @@ func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition int
 	if nil == handlerSymbol {
 		return "", fmt.Errorf("RequireCustomResource userFunc must not be nil")
 	}
+	// Is it valid?
 	// Get the function pointer for this...
 	handlerType := reflect.TypeOf(handlerSymbol)
 	if handlerType.Kind() != reflect.Func {
@@ -961,6 +969,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 	// CustomResource
 	for _, eachCustomResource := range info.customResources {
+
 		resourceErr := eachCustomResource.export(serviceName,
 			functionAttr,
 			binaryName,
