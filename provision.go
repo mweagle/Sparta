@@ -1,12 +1,15 @@
 package sparta
 
 import (
+	"bytes"
 	"fmt"
 	"os/exec"
 	"regexp"
 	"runtime"
 	"strings"
+	"text/template"
 
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cloudformationresources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -50,6 +53,24 @@ var PushSourceConfigurationActions = struct {
 	},
 }
 
+// This is a literal version of the DiscoveryInfo struct.
+var discoveryData = `
+{
+	"ResourceID": "<< .TagLogicalResourceID >>",
+	"Region": "{"Ref" : "AWS::Region"}",
+	"StackID": "{"Ref" : "AWS::StackId"}",
+	"StackName": "{"Ref" : "AWS::StackName"}",
+	"Resources":{<<range $eachDepResource, $eachOutputString := .Resources>>
+		"<< $eachDepResource >>" : << $eachOutputString >><< trailingComma >><<end>>
+	}
+}`
+
+//
+type discoveryDataTemplateData struct {
+	TagLogicalResourceID string
+	Resources            map[string]string
+}
+
 func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	logger.WithFields(logrus.Fields{
 		"Arguments": cmd.Args,
@@ -62,6 +83,44 @@ func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	cmd.Stdout = outputWriter
 	cmd.Stderr = outputWriter
 	return cmd.Run()
+}
+
+func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
+	discoveryDataTemplateData := &discoveryDataTemplateData{
+		TagLogicalResourceID: resID,
+		Resources:            deps,
+	}
+	totalDeps := len(deps)
+	var templateFuncMap = template.FuncMap{
+		// The name "inc" is what the function will be called in the template text.
+		"trailingComma": func() string {
+			totalDeps--
+			if totalDeps > 0 {
+				return ","
+			}
+			return ""
+		},
+	}
+
+	discoveryTemplate, discoveryTemplateErr := template.New("discoveryData").
+		Delims("<<", ">>").
+		Funcs(templateFuncMap).
+		Parse(discoveryData)
+	if nil != discoveryTemplateErr {
+		return nil, discoveryTemplateErr
+	}
+
+	var templateResults bytes.Buffer
+	evalResultErr := discoveryTemplate.Execute(&templateResults, discoveryDataTemplateData)
+	if nil != evalResultErr {
+		return nil, evalResultErr
+	}
+	templateReader := bytes.NewReader(templateResults.Bytes())
+	templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
+	if templateExprErr != nil {
+		return nil, templateExprErr
+	}
+	return gocf.Base64(templateExpr), nil
 }
 
 func awsPrincipalToService(awsPrincipalName string) string {
@@ -108,9 +167,14 @@ func ensureCustomResourceHandler(serviceName string,
 
 		// The handler name is the resource name & will be set in the
 		// env block
-		lambdaFunctionName := awsLambdaFunctionName(serviceName,
-			customResourceTypeName)
+		lambdaFunctionName := awsLambdaFunctionName(customResourceTypeName)
 
+		// Don't forget the discovery info...
+		discoveryInfo, discoveryInfoErr := discoveryInfoForResource(subscriberHandlerName,
+			nil)
+		if discoveryInfoErr != nil {
+			return "", discoveryInfoErr
+		}
 		customResourceHandlerDef := gocf.LambdaFunction{
 			Code: &gocf.LambdaFunctionCode{
 				S3Bucket: gocf.String(S3Bucket),
@@ -121,11 +185,12 @@ func ensureCustomResourceHandler(serviceName string,
 			Handler:      gocf.String(binaryName),
 			Role:         iamRoleRef,
 			Timeout:      gocf.Integer(30),
-			FunctionName: gocf.String(lambdaFunctionName),
+			FunctionName: lambdaFunctionName.String(),
 			// DISPATCH INFORMATION
 			Environment: &gocf.LambdaFunctionEnvironment{
 				Variables: map[string]interface{}{
-					envVarLogLevel: logger.Level.String(),
+					envVarLogLevel:             logger.Level.String(),
+					envVarDiscoveryInformation: discoveryInfo,
 				},
 			},
 		}

@@ -2,11 +2,19 @@ package sparta
 
 import (
 	"context"
-	"crypto/sha1"
-	"encoding/hex"
 	"fmt"
 	"reflect"
+	"regexp"
+	"strings"
 )
+
+var (
+	reSplitCustomType = regexp.MustCompile(`\:+`)
+
+	reSplitFunctionName = regexp.MustCompile(`\W+`)
+)
+
+const functionNameDelimiter = "_"
 
 // awsLambdaFunctionName returns the name of the function, which
 // is set in the CloudFormation template that is published
@@ -14,23 +22,16 @@ import (
 // than publish custom vars which are editable in the Console,
 // tunneling this value through allows Sparta to leverage the
 // built in env vars.
-func awsLambdaFunctionNameImplementation(serviceName string,
-	internalFunctionName string) string {
-	// Ok, so we need to scope the functionname with the StackName, otherwise
-	// there will be collisions in the account. So how to publish
-	// the stack name into the awsbinary?
-	// How about
-	// Linker flags would be nice...sparta.StampedServiceName ?
-	awsLambdaName := fmt.Sprintf("%s-%s",
-		serviceName,
-		internalFunctionName)
-	if len(awsLambdaName) > 64 {
-		hash := sha1.New()
-		hash.Write([]byte(awsLambdaName))
-		awsLambdaName = fmt.Sprintf("Sparta-Lambda-%s", hex.EncodeToString(hash.Sum(nil)))
+func awsLambdaInternalName(internalFunctionName string) string {
+	var internalNameParts []string
+
+	customTypeParts := reSplitCustomType.Split(internalFunctionName, -1)
+	if len(customTypeParts) > 1 {
+		internalNameParts = []string{customTypeParts[len(customTypeParts)-1]}
+	} else {
+		internalNameParts = reSplitFunctionName.Split(internalFunctionName, -1)
 	}
-	// If the name is longer than 64 chars, just hash it
-	return sanitizedName(awsLambdaName)
+	return strings.Join(internalNameParts, functionNameDelimiter)
 }
 
 func validateArguments(handler reflect.Type) error {

@@ -24,7 +24,8 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 // environment variables. The environment key will be transformed into
 // a configuration file for a CodePipeline CloudFormation action:
 // TemplateConfiguration: !Sub "TemplateSource::${environmentName}".
-func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+func RegisterCodePipelineEnvironment(environmentName string,
+	environmentVariables map[string]string) error {
 	if _, exists := codePipelineEnvironments[environmentName]; exists {
 		return fmt.Errorf("Environment (%s) has already been defined", environmentName)
 	}

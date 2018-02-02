@@ -172,8 +172,7 @@ func (s3Site *S3Site) export(serviceName string,
 		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
-	lambdaFunctionName := awsLambdaFunctionName(serviceName,
-		cfCustomResources.ZipToS3Bucket)
+	lambdaFunctionName := awsLambdaFunctionName(cfCustomResources.ZipToS3Bucket)
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
@@ -186,7 +185,7 @@ func (s3Site *S3Site) export(serviceName string,
 		Runtime:      gocf.String(GoLambdaVersion),
 		MemorySize:   gocf.Integer(256),
 		Timeout:      gocf.Integer(180),
-		FunctionName: gocf.String(lambdaFunctionName),
+		FunctionName: lambdaFunctionName.String(),
 		Environment: &gocf.LambdaFunctionEnvironment{
 			Variables: map[string]interface{}{
 				envVarLogLevel: logger.Level.String(),

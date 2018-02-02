@@ -23,7 +23,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"text/template"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -1084,62 +1083,6 @@ func createUploadStep(packagePath string) workflowStep {
 	}
 }
 
-// This is a literal version of the DiscoveryInfo struct.
-var discoveryData = `
-{
-	"ResourceID": "<< .TagLogicalResourceID >>",
-	"Region": "{"Ref" : "AWS::Region"}",
-	"StackID": "{"Ref" : "AWS::StackId"}",
-	"StackName": "{"Ref" : "AWS::StackName"}",
-	"Resources":{<<range $eachDepResource, $eachOutputString := .Resources>>
-		"<< $eachDepResource >>" : << $eachOutputString >><< trailingComma >><<end>>
-	}
-}`
-
-//
-type discoveryDataTemplateData struct {
-	TagLogicalResourceID string
-	Resources            map[string]string
-}
-
-func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
-	discoveryDataTemplateData := &discoveryDataTemplateData{
-		TagLogicalResourceID: resID,
-		Resources:            deps,
-	}
-	totalDeps := len(deps)
-	var templateFuncMap = template.FuncMap{
-		// The name "inc" is what the function will be called in the template text.
-		"trailingComma": func() string {
-			totalDeps--
-			if totalDeps > 0 {
-				return ","
-			}
-			return ""
-		},
-	}
-
-	discoveryTemplate, discoveryTemplateErr := template.New("discoveryData").
-		Delims("<<", ">>").
-		Funcs(templateFuncMap).
-		Parse(discoveryData)
-	if nil != discoveryTemplateErr {
-		return nil, discoveryTemplateErr
-	}
-
-	var templateResults bytes.Buffer
-	evalResultErr := discoveryTemplate.Execute(&templateResults, discoveryDataTemplateData)
-	if nil != evalResultErr {
-		return nil, evalResultErr
-	}
-	templateReader := bytes.NewReader(templateResults.Bytes())
-	templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
-	if templateExprErr != nil {
-		return nil, templateExprErr
-	}
-	return gocf.Base64(templateExpr), nil
-}
-
 func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
 	template *gocf.Template,
 	buildID string,
@@ -1178,7 +1121,8 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
 	}
 
-	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(), depMap)
+	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(),
+		depMap)
 	if discoveryInfoErr != nil {
 		return nil, discoveryInfoErr
 	}
@@ -1591,6 +1535,22 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.logger)
 			if annotateErr != nil {
 				return nil, annotateErr
+			}
+			// Any custom resources? These may also need discovery info
+			// so that they can self-discover the stack name
+			for _, eachCustomResource := range eachEntry.customResources {
+				discoveryInfo, discoveryInfoErr := discoveryInfoForResource(eachCustomResource.logicalName(),
+					nil)
+				if discoveryInfoErr != nil {
+					return nil, discoveryInfoErr
+				}
+				ctx.logger.WithFields(logrus.Fields{
+					"Discovery": discoveryInfo,
+					"Resource":  eachCustomResource.logicalName(),
+				}).Info("Annotating discovery info for custom resource")
+
+				// Update the env map
+				eachCustomResource.options.Environment[envVarDiscoveryInformation] = discoveryInfo
 			}
 		}
 		// PostMarshall Hook

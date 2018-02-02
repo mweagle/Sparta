@@ -9,10 +9,12 @@ import (
 	"os"
 	"reflect"
 	"strings"
+	"sync"
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
 	awsLambdaContext "github.com/aws/aws-lambda-go/lambdacontext"
 	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,14 +26,25 @@ var StampedServiceName string
 // StampedBuildID is the buildID stamped into the binary
 var StampedBuildID string
 
-// awsLambdaFunctionName returns the name of the function, that includes
-// a prefix that was stamped into the binary via a linker flag in provision.go
-func awsLambdaFunctionName(serviceName string,
-	internalFunctionName string) string {
-	// Ok, so we need to scope the functionname with the StackName, otherwise
-	// there will be collisions in the account. So how to publish
-	// the stack name into the awsbinary?
-	return awsLambdaFunctionNameImplementation(StampedServiceName, internalFunctionName)
+var discoveryInfo *DiscoveryInfo
+var once sync.Once
+
+func initDiscoveryInfo() {
+	info, _ := Discover()
+	discoveryInfo = info
+}
+
+func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+	// TODO - move this to use SSM so that it's not human editable?
+	// But discover information is per-function, not per stack.
+	// Could we put the stack discovery info in there?
+	once.Do(initDiscoveryInfo)
+	sanitizedName := awsLambdaInternalName(internalFunctionName)
+
+	return gocf.String(fmt.Sprintf("%s%s%s",
+		discoveryInfo.StackName,
+		functionNameDelimiter,
+		sanitizedName))
 }
 
 func takesContext(handler reflect.Type) bool {
@@ -119,7 +132,7 @@ func Execute(serviceName string,
 	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	requestedLambdaFunctionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
 	// Log any info when we start up...
-	platformLogSysInfo(requestedLambdaFunctionName, logger)
+	//platformLogSysInfo(requestedLambdaFunctionName, logger)
 
 	/*
 		There are three types of targets:
@@ -128,23 +141,24 @@ func Execute(serviceName string,
 			- Sparta custom resources
 	*/
 	// Based on the environment variable, setup the proper listener...
-	lambdaFunctionName := ""
+	var lambdaFunctionName gocf.Stringable
+	testAWSName := ""
 	var handlerSymbol interface{}
 	knownNames := []string{}
 	for _, eachLambdaInfo := range lambdaAWSInfos {
-		lambdaFunctionName = awsLambdaFunctionName(serviceName,
-			eachLambdaInfo.lambdaFunctionName())
+		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
+		testAWSName = lambdaFunctionName.String().Literal
 
-		knownNames = append(knownNames, lambdaFunctionName)
-		if requestedLambdaFunctionName == lambdaFunctionName {
+		knownNames = append(knownNames, testAWSName)
+		if requestedLambdaFunctionName == testAWSName {
 			handlerSymbol = eachLambdaInfo.handlerSymbol
 		}
 		// User defined custom resource handler?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
-			lambdaFunctionName = awsLambdaFunctionName(serviceName,
-				eachCustomResource.userFunctionName)
-			knownNames = append(knownNames, lambdaFunctionName)
-			if requestedLambdaFunctionName == lambdaFunctionName {
+			lambdaFunctionName = awsLambdaFunctionName(eachCustomResource.userFunctionName)
+			testAWSName = lambdaFunctionName.String().Literal
+			knownNames = append(knownNames, testAWSName)
+			if requestedLambdaFunctionName == testAWSName {
 				handlerSymbol = eachCustomResource.handlerSymbol
 			}
 		}
@@ -165,17 +179,17 @@ func Execute(serviceName string,
 		}
 		customResourceType := ""
 		for _, eachCustomResourceType := range customResourceTypes {
-			lambdaFunctionName = awsLambdaFunctionName(serviceName,
-				eachCustomResourceType)
+			lambdaFunctionName = awsLambdaFunctionName(eachCustomResourceType)
+			testAWSName = lambdaFunctionName.String().Literal
 
 			logger.WithFields(logrus.Fields{
 				"customResourceType": eachCustomResourceType,
-				"computedLambdaName": lambdaFunctionName,
+				"computedLambdaName": testAWSName,
 			}).Debug("Checking custom resource")
 
-			knownNames = append(knownNames, lambdaFunctionName)
+			knownNames = append(knownNames, testAWSName)
 
-			if requestedLambdaFunctionName == lambdaFunctionName {
+			if requestedLambdaFunctionName == testAWSName {
 				customResourceType = eachCustomResourceType
 				break
 			}

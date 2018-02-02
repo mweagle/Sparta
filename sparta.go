@@ -590,14 +590,13 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 	}
 
 	// Create the Lambda Function
-	lambdaFunctionName := awsLambdaFunctionName(serviceName,
-		resourceInfo.userFunctionName)
+	lambdaFunctionName := awsLambdaFunctionName(resourceInfo.userFunctionName)
 	lambdaResource := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
 			S3Key:    gocf.String(S3Key),
 		},
-		FunctionName: gocf.String(lambdaFunctionName),
+		FunctionName: lambdaFunctionName.String(),
 		// DISPATCH INFORMATION
 		Environment: &gocf.LambdaFunctionEnvironment{
 			Variables: map[string]string{
@@ -772,6 +771,7 @@ func (info *LambdaAWSInfo) RequireCustomResource(roleNameOrIAMRoleDefinition int
 	default:
 		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
 	}
+	resourceInfo.options.Environment = make(map[string]*gocf.StringExpr)
 	info.customResources = append(info.customResources, resourceInfo)
 	info.DependsOn = append(info.DependsOn, resourceInfo.logicalName())
 	return resourceInfo.logicalName(), nil
@@ -910,6 +910,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	if nil != info.Options.TracingConfig {
 		lambdaResource.TracingConfig = info.Options.TracingConfig
 	}
+
 	// DISPATCH INFORMATION
 	// Make sure we set the environment variable that
 	// tells us which function to actually execute in
@@ -928,9 +929,8 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// name that the dispatcher will look up in execute
 	// using the same logic so that we can borrow the
 	// `AWS_LAMBDA_FUNCTION_NAME` env var
-	lambdaFunctionName := awsLambdaFunctionName(serviceName,
-		info.lambdaFunctionName())
-	lambdaResource.FunctionName = gocf.String(lambdaFunctionName)
+	lambdaFunctionName := awsLambdaFunctionName(info.lambdaFunctionName())
+	lambdaResource.FunctionName = lambdaFunctionName.String()
 
 	cfResource := template.AddResource(info.LogicalResourceName(), lambdaResource)
 	cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)

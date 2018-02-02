@@ -5,6 +5,7 @@ package sparta
 import (
 	"fmt"
 
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -19,11 +20,16 @@ func Execute(serviceName string,
 
 // awsLambdaFunctionName returns the name of the function, which
 // is set in the CloudFormation template that is published
-// into the container as `AWS_LAMBDA_FUNCTION_NAME`. Rather
-// than publish custom vars which are editable in the Console,
-// tunneling this value through allows Sparta to leverage the
-// built in env vars.
-func awsLambdaFunctionName(serviceName string,
-	internalFunctionName string) string {
-	return awsLambdaFunctionNameImplementation(serviceName, internalFunctionName)
+// into the container as `AWS_LAMBDA_FUNCTION_NAME`.  The function name
+// is dependent on the CloudFormation stack name so that
+// CodePipeline based builds can properly create unique FunctionNAmes
+// within an account
+func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+	sanitizedName := awsLambdaInternalName(internalFunctionName)
+	// When we build, we return a gocf.Join that
+	// will use the stack name and the internal name
+	return gocf.Join("",
+		gocf.Ref("AWS::StackName"),
+		gocf.String(functionNameDelimiter),
+		gocf.String(sanitizedName))
 }
