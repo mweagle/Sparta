@@ -40,15 +40,15 @@ var (
 	// HelloWorld is the typename for HelloWorldResource
 	HelloWorld = cloudFormationResourceType("HelloWorldResource")
 	// S3LambdaEventSource is the typename for S3LambdaEventSourceResource
-	S3LambdaEventSource = cloudFormationResourceType("S3LambdaEventSourceResource")
+	S3LambdaEventSource = cloudFormationResourceType("S3EventSource")
 	// SNSLambdaEventSource is the typename for SNSLambdaEventSourceResource
-	SNSLambdaEventSource = cloudFormationResourceType("SNSLambdaEventSourceResource")
+	SNSLambdaEventSource = cloudFormationResourceType("SNSEventSource")
 	// SESLambdaEventSource is the typename for SESLambdaEventSourceResource
-	SESLambdaEventSource = cloudFormationResourceType("SESLambdaEventSourceResource")
+	SESLambdaEventSource = cloudFormationResourceType("SESEventSource")
 	// CloudWatchLogsLambdaEventSource is the typename for SESLambdaEventSourceResource
-	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsLambdaEventSourceResource")
+	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsEventSource")
 	// ZipToS3Bucket is the typename for ZipToS3Bucket
-	ZipToS3Bucket = cloudFormationResourceType("ZipToS3BucketResource")
+	ZipToS3Bucket = cloudFormationResourceType("ZipToS3Bucket")
 )
 
 func init() {
