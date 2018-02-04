@@ -1,6 +1,7 @@
 .DEFAULT_GOAL=build
 
 GO_LINT := $(GOPATH)/bin/golint
+WORK_DIR := ./sparta
 
 ################################################################################
 # Meta
@@ -96,6 +97,10 @@ describe: build
 ################################################################################
 # ALM commands
 ################################################################################
+.PHONY: ensure-preconditions
+ensure-preconditions:
+	mkdir -pv $(WORK_DIR)
+
 .PHONY: clean
 clean:
 	go clean .
@@ -104,6 +109,13 @@ clean:
 .PHONY: test
 test: validate
 	go test -v -cover ./...
+
+.PHONY: test-cover
+test-cover: ensure-preconditions
+	go test -coverprofile=$(WORK_DIR)/cover.out -v .
+	go tool cover -html=$(WORK_DIR)/cover.out
+	rm $(WORK_DIR)/cover.out
+	open $(WORK_DIR)/cover.html
 
 .PHONY: build
 build: validate test
