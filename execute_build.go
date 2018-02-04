@@ -3,9 +3,8 @@
 package sparta
 
 import (
-	"fmt"
-
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -15,7 +14,7 @@ func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	logger *logrus.Logger) error {
 	// Execute no longer supported in non AWS binaries...
-	return fmt.Errorf("Execute not supported outside of AWS Lambda environment")
+	return errors.Errorf("Execute not supported outside of AWS Lambda environment")
 }
 
 // awsLambdaFunctionName returns the name of the function, which
@@ -27,7 +26,8 @@ func Execute(serviceName string,
 func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
 	sanitizedName := awsLambdaInternalName(internalFunctionName)
 	// When we build, we return a gocf.Join that
-	// will use the stack name and the internal name
+	// will use the stack name and the internal name. When we run, we're going
+	// to use the name discovered from the environment.
 	return gocf.Join("",
 		gocf.Ref("AWS::StackName"),
 		gocf.String(functionNameDelimiter),
