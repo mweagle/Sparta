@@ -2,12 +2,12 @@ package sparta
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/service/s3"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -236,7 +236,7 @@ func (perm S3Permission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export S3 permission")
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
@@ -252,7 +252,7 @@ func (perm S3Permission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporting S3 permission")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -337,7 +337,7 @@ func (perm SNSPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export SNS permission")
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
@@ -352,7 +352,7 @@ func (perm SNSPermission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporing SNS permission handler")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -667,7 +667,7 @@ func (perm SESPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export SES permission")
 	}
 
 	// MessageBody storage?
@@ -700,7 +700,7 @@ func (perm SESPermission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Ensuring custom resource handler for SES")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -1026,7 +1026,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporting regional CloudWatch log permission")
 	}
 
 	// Then we need to uniqueify the rule names s.t. we prevent
@@ -1062,7 +1062,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			S3Key,
 			logger)
 		if nil != ensureCustomHandlerError {
-			return "", err
+			return "", errors.Wrap(err, "Ensuring CloudWatch permissions handler")
 		}
 		configurationResourceNames[configurationResourceName] = 1
 		configurationResourceName = lastConfigurationResourceName
