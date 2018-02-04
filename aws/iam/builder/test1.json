@@ -1,0 +1,20 @@
+{
+    "Actions": [
+        "ssm:GetParameter"
+    ],
+    "Resource": {
+        "Fn::Join": [
+            "",
+            [
+                "arn:aws:ssm:",
+                {
+                    "Ref": "AWS::Region"
+                },
+                {
+                    "Ref": "AWS::AccountId"
+                },
+                "parameter/SpartaHelloWorld-Discovery"
+            ]
+        ]
+    }
+}
