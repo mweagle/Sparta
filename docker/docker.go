@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -57,7 +58,7 @@ func BuildDockerImage(serviceName string,
 		}
 	}
 	if len(dockerErrors) > 0 {
-		return fmt.Errorf("Docker build errors: %s", strings.Join(dockerErrors[:], ", "))
+		return errors.Errorf("Docker build errors: %s", strings.Join(dockerErrors[:], ", "))
 	}
 	// END DOCKER PRECONDITIONS
 
@@ -80,7 +81,7 @@ func BuildDockerImage(serviceName string,
 	}).Info("Compiling Docker binary")
 	buildErr := runOSCommand(cmd, logger)
 	if nil != buildErr {
-		return buildErr
+		return errors.Wrapf(buildErr, "Attempting to build Docker binary")
 	}
 	defer func() {
 		removeErr := os.Remove(executableOutput)
@@ -133,7 +134,7 @@ func PushDockerImageToECR(localImageTag string,
 	// account name
 	stsIdentityOutput, stsIdentityErr := stsSvc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 	if nil != stsIdentityErr {
-		return "", stsIdentityErr
+		return "", errors.Wrapf(stsIdentityErr, "Attempting to get AWS caller identity")
 	}
 
 	// 2. Create the URL to which we're going to do the push
@@ -148,7 +149,7 @@ func PushDockerImageToECR(localImageTag string,
 	dockerTagCmd := exec.Command("docker", "tag", localImageTag, ecrTagValue)
 	dockerTagCmdErr := runOSCommand(dockerTagCmd, logger)
 	if nil != dockerTagCmdErr {
-		return "", dockerTagCmdErr
+		return "", errors.Wrapf(dockerTagCmdErr, "Attempting to tag Docker image")
 	}
 
 	// 4. Push the image - if that fails attempt to reauthorize with the docker
@@ -192,6 +193,9 @@ func PushDockerImageToECR(localImageTag string,
 				}
 			}
 		}
+	}
+	if pushError != nil {
+		pushError = errors.Wrapf(pushError, "Attempting to push Docker image")
 	}
 	return ecrTagValue, pushError
 }

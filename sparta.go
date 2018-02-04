@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -18,6 +17,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
@@ -835,7 +835,7 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 		// Append the custom resources
 		safeMergeErr := safeMergeTemplates(decoratorProxyTemplate, template, logger)
 		if safeMergeErr != nil {
-			return fmt.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
+			return errors.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
 		}
 	}
 	return nil
@@ -950,7 +950,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			S3Key,
 			logger)
 		if nil != err {
-			return err
+			return errors.Wrapf(err, "Failed to export lambda permission")
 		}
 	}
 

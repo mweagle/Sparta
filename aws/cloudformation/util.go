@@ -27,6 +27,7 @@ import (
 	"github.com/briandowns/spinner"
 	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -711,8 +712,7 @@ func UploadTemplate(serviceName string,
 	// Serialize the template and upload it
 	cfTemplateJSON, err := json.Marshal(cfTemplate)
 	if err != nil {
-		logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
-		return "", err
+		return "", errors.Wrap(err, "Failed to Marshal CloudFormation template")
 	}
 
 	// Upload the actual CloudFormation template to S3 to maximize the template

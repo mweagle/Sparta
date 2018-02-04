@@ -2,13 +2,13 @@ package zip
 
 import (
 	"archive/zip"
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -23,7 +23,7 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 
 	fullPathSource, err := filepath.Abs(source)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to get absolute filepath")
 	}
 
 	appendFile := func(info os.FileInfo) error {
@@ -66,7 +66,7 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		}
 		header, err := zip.FileInfoHeader(info)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "Failed to create FileInfoHeader")
 		}
 		// Normalize the Name
 		platformName := strings.TrimPrefix(strings.TrimPrefix(path, rootSource), string(os.PathSeparator))
@@ -86,16 +86,19 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		}
 		file, err := os.Open(path)
 		if err != nil {
-			return err
+			return errors.Wrapf(err, "Failed to open file: %s", path)
 		}
 		defer file.Close()
 		_, err = io.Copy(writer, file)
-		return err
+		if err != nil {
+			return errors.Wrapf(err, "Failed to copy file contents")
+		}
+		return nil
 	}
 
 	fileInfo, err := os.Stat(fullPathSource)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to get file information")
 	}
 	switch mode := fileInfo.Mode(); {
 	case mode.IsDir():
@@ -105,5 +108,8 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 	default:
 		err = errors.New("Inavlid source type")
 	}
-	return err
+	if err != nil {
+		return errors.Wrapf(err, "Failed to determine file mode")
+	}
+	return nil
 }

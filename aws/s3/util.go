@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -97,7 +98,7 @@ func UploadLocalFileToS3(localPath string,
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
 	if nil != err {
-		return "", err
+		return "", errors.Wrapf(err, "Failed to upload object to S3")
 	}
 	if result.VersionID != nil {
 		logger.WithFields(logrus.Fields{

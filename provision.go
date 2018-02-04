@@ -13,6 +13,7 @@ import (
 	cloudformationresources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -150,7 +151,9 @@ func ensureCustomResourceHandler(serviceName string,
 		template,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrapf(err,
+			"Failed to ensure IAM Role for custom resource: %s",
+			customResourceTypeName)
 	}
 	iamRoleRef := gocf.GetAtt(iamResourceName, "Arn")
 	_, exists := template.Resources[subscriberHandlerName]
@@ -223,7 +226,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	case cloudformationresources.CloudWatchLogsLambdaEventSource:
 		principalActions = PushSourceConfigurationActions.CloudWatchLogsLambdaEventSource
 	default:
-		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
+		return "", errors.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
 
 	// What's the stable IAMRoleName?
@@ -308,8 +311,7 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 
 		return stableRoleName, nil
 	}
-
-	return "", fmt.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)
+	return "", errors.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)
 }
 
 func systemGoVersion(logger *logrus.Logger) (string, error) {

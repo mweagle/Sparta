@@ -8,7 +8,6 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"go/parser"
@@ -36,6 +35,7 @@ import (
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaZip "github.com/mweagle/Sparta/zip"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -367,7 +367,7 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 		}
 		mergeErr := safeMergeTemplates(serviceTemplate, ctx.context.cfTemplate, ctx.logger)
 		if nil != mergeErr {
-			return mergeErr
+			return errors.Wrap(mergeErr, "Attempting to merge templates")
 		}
 	}
 	return nil
@@ -398,7 +398,7 @@ func callArchiveHook(lambdaArchive *zip.Writer,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return hookErr
+			return errors.Wrapf(hookErr, "Failed call to DecorateArchive")
 		}
 	}
 	return nil
@@ -431,7 +431,7 @@ func callWorkflowHook(hookPhase string,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return hookErr
+			return errors.Wrapf(hookErr, "Failed call to DecorateWorkflow")
 		}
 	}
 	return nil
@@ -478,7 +478,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			ctx.context.s3BucketVersioningEnabled,
 			ctx.logger)
 		if nil != s3KeyNameErr {
-			return "", s3KeyNameErr
+			return "", errors.Wrapf(s3KeyNameErr, "Failed to create version aware S3 keyname")
 		}
 		s3ObjectKey = s3KeyName
 	}
@@ -511,7 +511,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			s3ObjectKey,
 			ctx.logger)
 		if nil != uploadURLErr {
-			return "", uploadURLErr
+			return "", errors.Wrapf(uploadURLErr, "Failed to upload local file to S3")
 		}
 		s3URL = uploadLocation
 		ctx.registerRollback(spartaS3.CreateS3RollbackFunc(ctx.context.awsSession, uploadLocation))
@@ -556,7 +556,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				ctx.userdata.s3Bucket,
 				ctx.logger)
 			if profileErr != nil {
-				return nil, profileErr
+				return nil, errors.Wrapf(profileErr, "Failed to call lambda profile decorator")
 			}
 		}
 
@@ -726,7 +726,7 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 	fset := token.NewFileSet()
 	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
 	if parseErr != nil {
-		return fmt.Errorf("Failed to parse source input: %s", parseErr.Error())
+		return errors.Errorf("Failed to parse source input: %s", parseErr.Error())
 	}
 	logger.WithFields(logrus.Fields{
 		"SourcePackages": packageMap,
@@ -1035,14 +1035,14 @@ func createUploadStep(packagePath string) workflowStep {
 				tmpFile, err := temporaryFile(tempName)
 				if err != nil {
 					return newTaskResult(nil,
-						errors.New("Failed to create temporary S3 site archive file: "+err.Error()))
+						errors.Wrapf(err, "Failed to create temporary S3 site archive file"))
 				}
 
 				// Add the contents to the Zip file
 				zipArchive := zip.NewWriter(tmpFile)
 				absResourcePath, err := filepath.Abs(ctx.userdata.s3SiteContext.s3Site.resources)
 				if nil != err {
-					return newTaskResult(nil, err)
+					return newTaskResult(nil, errors.Wrapf(err, "Failed to get absolute filepath"))
 				}
 
 				ctx.logger.WithFields(logrus.Fields{
@@ -1059,7 +1059,8 @@ func createUploadStep(packagePath string) workflowStep {
 				// Upload it & save the key
 				s3SiteLambdaZipURL, s3SiteLambdaZipURLErr := uploadLocalFileToS3(tmpFile.Name(), "", ctx)
 				if s3SiteLambdaZipURLErr != nil {
-					return newTaskResult(nil, s3SiteLambdaZipURLErr)
+					return newTaskResult(nil,
+						errors.Wrapf(s3SiteLambdaZipURLErr, "Failed to upload local file to S3"))
 				}
 				ctx.userdata.s3SiteContext.s3UploadURL = newS3UploadURL(s3SiteLambdaZipURL)
 				return newTaskResult(ctx.userdata.s3SiteContext.s3UploadURL, nil)
@@ -1073,11 +1074,7 @@ func createUploadStep(packagePath string) workflowStep {
 		_, uploadErrors := p.Run()
 
 		if len(uploadErrors) > 0 {
-			errorText := "Encountered multiple errors during upload:\n"
-			for _, eachError := range uploadErrors {
-				errorText += fmt.Sprintf("%s%s\n", errorText, eachError.Error())
-				return nil, errors.New(errorText)
-			}
+			return nil, errors.Errorf("Encountered multiple errors during upload: %#v", uploadErrors)
 		}
 		return ensureCloudFormationStack(), nil
 	}
@@ -1109,7 +1106,7 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	for _, eachDependsKey := range lambdaAWSInfo.DependsOn {
 		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template, eachDependsKey, logger)
 		if dependencyTextErr != nil {
-			return nil, dependencyTextErr
+			return nil, errors.Wrapf(dependencyTextErr, "Failed to determine discovery info for resource")
 		}
 		depMap[eachDependsKey] = string(dependencyText)
 	}
@@ -1124,8 +1121,9 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(),
 		depMap)
 	if discoveryInfoErr != nil {
-		return nil, discoveryInfoErr
+		return nil, errors.Wrap(discoveryInfoErr, "Failed to create resource discovery info")
 	}
+
 	// Update the env map
 	lambdaAWSInfo.Options.Environment[envVarDiscoveryInformation] = discoveryInfo
 	return template, nil
@@ -1136,7 +1134,7 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
 	tmpFile, err := temporaryFile(ctx.userdata.codePipelineTrigger)
 	if err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
 	}
 
 	ctx.logger.WithFields(logrus.Fields{
@@ -1600,7 +1598,7 @@ func Provision(noop bool,
 
 	err := validateSpartaPreconditions(lambdaAWSInfos, logger)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to validate preconditions")
 	}
 	startTime := time.Now()
 
@@ -1663,7 +1661,7 @@ func Provision(noop bool,
 		if err != nil {
 			ctx.rollback()
 			// Workflow step?
-			return err
+			return errors.Wrapf(err, "Failed to verify IAM roles")
 		}
 
 		if next == nil {

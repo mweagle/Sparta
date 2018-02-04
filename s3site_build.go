@@ -12,6 +12,7 @@ import (
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -202,11 +203,11 @@ func (s3Site *S3Site) export(serviceName string,
 	customResourceName := CloudFormationResourceName("S3SiteBuilder")
 	newResource, err := newCloudFormationResource(cfCustomResources.ZipToS3Bucket, logger)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to create ZipToS3Bucket CustomResource")
 	}
 	zipResource, zipResourceOK := newResource.(*cfCustomResources.ZipToS3BucketResource)
 	if !zipResourceOK {
-		return fmt.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
+		return errors.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
 	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
 	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)

@@ -21,6 +21,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -161,7 +162,7 @@ func objectKeysForProfileType(profileType string,
 	for {
 		listItemResults, listItemResultsErr := s3Svc.ListObjects(listObjectInput)
 		if listItemResultsErr != nil {
-			return nil, listItemResultsErr
+			return nil, errors.Wrapf(listItemResultsErr, "Attempting to list bucket: %s", s3BucketName)
 		}
 		for _, eachEntry := range listItemResults.Contents {
 			logger.WithFields(logrus.Fields{
@@ -281,11 +282,11 @@ func syncStackProfileSnapshots(profileType string,
 
 	removeErr := os.RemoveAll(cacheRoot)
 	if removeErr != nil {
-		return nil, removeErr
+		return nil, errors.Wrapf(removeErr, "Attempting delete local directory: %s", cacheRoot)
 	}
 	mkdirErr := os.MkdirAll(cacheRoot, os.ModePerm)
 	if nil != mkdirErr {
-		return nil, mkdirErr
+		return nil, errors.Wrapf(mkdirErr, "Attempting to create local directory: %s", cacheRoot)
 	}
 
 	// Ok, let's get some user information
@@ -459,7 +460,7 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 			case string:
 				bucketValue = gocf.String(bucketExpr)
 			default:
-				return fmt.Errorf("Unknown S3 profile bucket value type: %T", s3BucketArchive)
+				return errors.Errorf("Unknown S3 profile bucket value type: %T", s3BucketArchive)
 			}
 		} else {
 			bucketValue = gocf.String(S3Bucket)

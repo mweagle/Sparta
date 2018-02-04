@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -27,7 +28,7 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 func RegisterCodePipelineEnvironment(environmentName string,
 	environmentVariables map[string]string) error {
 	if _, exists := codePipelineEnvironments[environmentName]; exists {
-		return fmt.Errorf("Environment (%s) has already been defined", environmentName)
+		return errors.Errorf("Environment (%s) has already been defined", environmentName)
 	}
 	codePipelineEnvironments[environmentName] = environmentVariables
 	return nil

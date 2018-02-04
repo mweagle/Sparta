@@ -6,13 +6,13 @@ package sparta
 // in the Lambda context
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"runtime"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/zcalusic/sysinfo"
@@ -60,7 +60,7 @@ func MainEx(serviceName string,
 			return loggerErr
 		}
 		if logger == nil {
-			return fmt.Errorf("Failed to initialize logger instance")
+			return errors.Errorf("Failed to initialize logger instance")
 		}
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 		logger.WithFields(logrus.Fields{

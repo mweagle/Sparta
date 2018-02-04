@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -68,7 +69,7 @@ func templateDecorator(serviceName string,
 	// Add an empty resource
 	newResource, err := newCloudFormationResource("Custom::ProvisionTestEmpty", logger)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to create test resource")
 	}
 	customResource := newResource.(*cloudFormationProvisionTestResource)
 	customResource.ServiceToken = "arn:aws:sns:us-east-1:84969EXAMPLE:CRTest"
