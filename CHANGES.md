@@ -6,6 +6,15 @@
   - Removed `lambdabinary` build tags from [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
     - AWS native support for **Go** in AWS caused a significant difference in how standard vs `lambdabinary` build targets which prevented custom application options from being respected
 - :checkered_flag: **CHANGES**
+  - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample
+    ```
+    	iambuilder.Allow("ssm:GetParameter").ForResource().
+          Literal("arn:aws:ssm:").
+          Region(":").
+          AccountID(":").
+          Literal("parameter/MyReservedParameter").
+          ToPrivilege()
+    ```
   - Remove _io:gosparta:home_ and _io:gosparta:sha_ Tags from Lambda functions
   - Standardize on Lambda function naming in AWS Console
   - Reduced AWS Go binary size by 20% or more by including the `-s` and `-w` [link flags](https://golang.org/cmd/link/)
