@@ -34,6 +34,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaZip "github.com/mweagle/Sparta/zip"
+	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -365,9 +366,9 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 		if nil != decoratorError {
 			return decoratorError
 		}
-		mergeErr := safeMergeTemplates(serviceTemplate, ctx.context.cfTemplate, ctx.logger)
-		if nil != mergeErr {
-			return errors.Wrap(mergeErr, "Attempting to merge templates")
+		safeMergeErrs := gocc.SafeMerge(serviceTemplate, ctx.context.cfTemplate)
+		if len(safeMergeErrs) != 0 {
+			return errors.Errorf("Failed to merge templates: %#v", safeMergeErrs)
 		}
 	}
 	return nil
@@ -1497,7 +1498,11 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.userdata.noop,
 				ctx.logger)
 			if nil == err {
-				err = safeMergeTemplates(apiGatewayTemplate, ctx.context.cfTemplate, ctx.logger)
+				safeMergeErrs := gocc.SafeMerge(apiGatewayTemplate,
+					ctx.context.cfTemplate)
+				if len(safeMergeErrs) != 0 {
+					err = fmt.Errorf("APIGateway template merge failed: %v", safeMergeErrs)
+				}
 			}
 			if nil != err {
 				return nil, fmt.Errorf("APIGateway template export failed: %s", err)

@@ -47,6 +47,10 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/mweagle/go-cloudcondenser"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/mweagle/go-cloudformation"
 
 [[constraint]]

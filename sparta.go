@@ -16,6 +16,7 @@ import (
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -833,9 +834,12 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 			safeMetadataInsert(cfResource, info.LogicalResourceName(), metadataMap)
 		}
 		// Append the custom resources
-		safeMergeErr := safeMergeTemplates(decoratorProxyTemplate, template, logger)
-		if safeMergeErr != nil {
-			return errors.Errorf("Lambda (%s) decorator created conflicting resources", info.lambdaFunctionName())
+		safeMergeErrs := gocc.SafeMerge(decoratorProxyTemplate,
+			template)
+		if len(safeMergeErrs) != 0 {
+			return errors.Errorf("Lambda (%s) decorator created conflicting resources: %v",
+				info.lambdaFunctionName(),
+				safeMergeErrs)
 		}
 	}
 	return nil

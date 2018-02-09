@@ -26,6 +26,12 @@
   version = "1.0"
 
 [[projects]]
+  name = "github.com/deckarep/golang-set"
+  packages = ["."]
+  revision = "1d4478f51bed434f1dadf96dcd9b43aabac66795"
+  version = "v1.7"
+
+[[projects]]
   branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
@@ -98,6 +104,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/mweagle/go-cloudcondenser"
+  packages = ["."]
+  revision = "e1ad78f4b7808efe04dcfb8813d55cb64f673f13"
+
+[[projects]]
+  branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
   revision = "397558cba61b0a45fb12959177cbbbb4f91b4edb"
@@ -159,6 +171,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0b41b06e42e1dcf08124c538bc52f0d19b9f6c4bd23951433e0a0c073bc94417"
+  inputs-digest = "67770d72fc9b9d7bbe35ab77bc7e562f72c181c58de53709b228bcc3bfdb1944"
   solver-name = "gps-cdcl"
   solver-version = 1
