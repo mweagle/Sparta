@@ -195,7 +195,7 @@ var _escData = map[string]*_escFile{
 	"/resources/awsbinary/README.md": {
 		local:   "resources/awsbinary/README.md",
 		size:    104,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/yTLQQrCMBAF0L2n+BfQOxQ3CloXE3Ap0+QXA0mndMZFby/oAV56V8dcG1EdtrQdH2dB
 GPJGDUJBz8dsfdWoUyPOj1HSMCZ5yeV6lz/+odk2DE/BTftUFIVrs71ziRMO3wAAAP//AOMpDWgAAAA=
@@ -205,7 +205,7 @@ GPJGDUJBz8dsfdWoUyPOj1HSMCZ5yeV6lz/+odk2DE/BTftUFIVrs71ziRMO3wAAAP//AOMpDWgAAAA=
 	"/resources/bootstrap/css/bootstrap.min.css": {
 		local:   "resources/bootstrap/css/bootstrap.min.css",
 		size:    122540,
-		modtime: 1516201003,
+		modtime: 1518148115,
 		compressed: `
 H4sIAAAAAAAC/+y93bPjuLEn+L5/BV0dFV3lElXU95EUfdZ3PRNzHTH2y/hhItq1GxAJSeyiSJqkzkdr
 NH/7BvFFIJEAKZ3TtjfWt+K6dYAfEolEAgkmgMTX3//u/wh+H/xfRdHUTUXK4Gk2no0Xwadj05Sbr18P
@@ -542,7 +542,7 @@ cz9fFHlWJjfPJ4KiNrv2U+xRUEFSG7H9JJXMRGFNBWBhJdaySvOmZ03CMY4ifh03sR41R4BuTWdgXdmx
 	"/resources/bootstrap/js/bootstrap.min.js": {
 		local:   "resources/bootstrap/js/bootstrap.min.js",
 		size:    36816,
-		modtime: 1516201003,
+		modtime: 1518148115,
 		compressed: `
 H4sIAAAAAAAC/+R9bXvbuLXg9/4KCZ3LACOIlpPb21sqtJ5Mkj6b3enM7Ezm9tl11RYkwReHIjUkbce1
 1N++D14JkKBkp739sl9skQTAg4Pzfg7Ai6/nv5p9Pfumrru2a8h+dvfKf+X/ZgbzrtsHFxcZ7SL1zI/r
@@ -713,7 +713,7 @@ pC09psysQMT6/wUAAP//Xr9JbtCPAAA=
 	"/resources/bootstrap/lumen/bootstrap.min.css": {
 		local:   "resources/bootstrap/lumen/bootstrap.min.css",
 		size:    130806,
-		modtime: 1516201003,
+		modtime: 1518148115,
 		compressed: `
 H4sIAAAAAAAC/+z9b4/jOJInjj+/V6HNRqErpyy1ZKedmTY6b/b2DrcD3CwWmHlwQE/9fqAl2lKXLGkk
 Of+0z/favxD/iGQwKMnOrMYcMJW705nkh8FgMMggQ2Twj9mhKuvWO9b555u0batm/dNPu7Jom2Bflvuc
@@ -1072,7 +1072,7 @@ gn72/gEA
 	"/resources/describe/template.html": {
 		local:   "resources/describe/template.html",
 		size:    7664,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6xZbY/bNhL+HP+KqXLN2qgt3RXXQ+G1DWy9u82m+3a7bvohCAJaHNtMaFKgKDuu6/9+
 ICVKlGxvXOASwCuSD5954Qw5ogbfURnrTYKw0Es+ag3yPwCDBRJqHgAGmmmOo+0WwmdUKxbjPVki7HaD
@@ -1120,7 +1120,7 @@ a204cEY2k8NMrAurkTfSo2yUj4MoP+8GUf5h938BAAD//2qOnH3wHQAA
 	"/resources/highlights/highlight.pack.js": {
 		local:   "resources/highlights/highlight.pack.js",
 		size:    9438,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6Ra/3ciN5L/V9raBEuD3ODbe3ubZmTe2OtcfGt7cjizyVuaZEVTgMaNulctDA7q+9vv
 lfoLzYz3frn3xiCVpFJVqepTJTFny61OrMo0BXYgW72ApdKwIGfCvuaQLQPY55mxxRho3WIR3Sm9yHbh
@@ -1202,7 +1202,7 @@ gTMjp76Sekv7H4HYcdnxfbT+7bj5PyV8yBOu0XsqZdoVJRv9bwAAAP//n0VgpN4kAAA=
 	"/resources/highlights/styles/vs.css": {
 		local:   "resources/highlights/styles/vs.css",
 		size:    1543,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/2xTT2/bPgy9+1MI6K2IU/f3Q4cuHYYB62nXFbsWlETbimnJlagkXrHvPij+m6zJRaSf
 3iOpx7vbLPtlQgQSPzlq43IyDYrAPaGQEFALZ4XzpjIWSHy/EcqR88ZWQvbiBwRnxbOB1lktvuxT+E0P
@@ -1222,7 +1222,7 @@ YP+tPQcGAAA=
 	"/resources/jquery/jquery-2.1.4.min.js": {
 		local:   "resources/jquery/jquery-2.1.4.min.js",
 		size:    84345,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/8z9e5ejNrY4DP//+xRlpg9B7W2X3UnmPYNbxcp1kpnOZdKZSeZgepYAganC4MJUV3UM
 89nfpS0JBMbdmfN7nrWe1avLIHTX1r5p763r57Or27898Ord1dsXy/Xyk6vmyonI1YvV6lO4erFaf6o/
@@ -1726,7 +1726,7 @@ AQA=
 	"/resources/mermaid/mermaid.css": {
 		local:   "resources/mermaid/mermaid.css",
 		size:    3969,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6wX227bNvTdX3EWP7Q1fJHkBHOVp829vATYsOUHaPJIIkyTGkkndov++0DqRslKnXZL
 AOscnvuV0moGn4R6pgXRFp6I5mQn0MBsNVnN4G/854iSInzgJNfkcMHwmUhrYUR4eUB9IJzBUpAdCvg6
@@ -1754,7 +1754,7 @@ AAD//6oXmbeBDwAA
 	"/resources/mermaid/mermaid.dark.css": {
 		local:   "resources/mermaid/mermaid.dark.css",
 		size:    4200,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6wX227buPLdXzEneWhjxBdJdZOqT02d9CXAWezmB2hyLBGhSS1JJ3aL/vuC1I2SZcft
 LgxYM+TcZzgczsbwINQrzYm28EI0JyuBBsaz0WwMf+HfW5QUYclJpsnmgOAbkdbCAPN0g3pDOIOpICsU
@@ -1782,7 +1782,7 @@ pwffknyiCeNb01hX1eYEX1Ba0w4A3ydcMtylEM396PBPAAAA///0iKApaBAAAA==
 	"/resources/mermaid/mermaid.forest.css": {
 		local:   "resources/mermaid/mermaid.forest.css",
 		size:    5208,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6wYXW/bNvDdv+IWP3Qz4g/JSeeqT1vb9SXAhjV/gCbPMhGa1Eg6sVvkvw+URImUlDip
 AwPWkbzvO96RnE/gL6Ee6JZoC/dEc7IWaGAyH80n8A3/26OkCJ85yTXZ9RC+EmktDBDPdqh3hDOYCbJG
@@ -1812,7 +1812,7 @@ Gl3qHjnFe5TWtHXu+5RLhocMkkV5U/k/AAD//2fbcCtYFAAA
 	"/resources/mermaid/mermaid.js": {
 		local:   "resources/mermaid/mermaid.js",
 		size:    2097804,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/+T965LjNpIwDP/+fBVoPeMassRSkZLqpGp1hdeHtZ91t/252jNjq+UKSoQkdlGkTFJV
 pXbXxm7EE3tH+2v+vRcwvqU3kDgwAYKSutv2TjyvI1wt4pBIJBKJRCKReDJbp9MyzlKHur/EM6eVTV7T
@@ -9044,7 +9044,7 @@ Im+3lbefR0nQGdhvTV6Ky4U8S7StMr2+uA4/Xofng4PhRbs1OBi2d67bh/8nAAD//72CejGMAiAA
 	"/resources/mermaid/mermaid.min.js": {
 		local:   "resources/mermaid/mermaid.min.js",
 		size:    629625,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/7y9eXfbNvoo/P/9FDF/rS5APqRIxU5SKpCOm6TTzs9J0yzTRaP60BQkoaZAFQRtqZbm
 s78HABdQlpPMzLlvzolF7PuDZ8fJvOSpZDlHEt+xOXLyqz9oKh1C5HZN8/kjulnnQha9nlPyGZ0zTmfO
@@ -12422,7 +12422,7 @@ mwkA
 	"/resources/provision/apigateway/inputmapping_default.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_default.vtl",
 		size:    2336,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6yVYWvbPBCAv/tXHE54E5fGKeWFFwLlpbAv7VgXSP/A1b5YWm1JlU5pvdH/PiQ7aWjo
 Fi/7JpJ7nrvTXaLRWbK0eiNLAlSAnnWDLAsw6BywsNpXApgaUyMTsEAGtqjcWtvGAdY1SGU8u0Qq1sCC
@@ -12441,7 +12441,7 @@ Yi9F/6Mww6xbak/k3dBZBuKd4LoixcMtEXuvsuoPRFZlabS8hv/L5DX5GQAA//8PmIw0IAkAAA==
 	"/resources/provision/apigateway/inputmapping_formencoded.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_formencoded.vtl",
 		size:    4445,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6xWW2/bzBF9568YUIItpjZlO0GaGlAKAwkSp7kItYA+BH4YkUNy6+UuszuUwgT+78Uu
 KUqRfFP9GYZhknPOnLnt7GAAiVYLMgwfZ18+w/Tb1QxSZARt4ONsNoUP72fwoybTgGUjVA6s4dPVt6/B
@@ -12473,7 +12473,7 @@ bfetpUNsEVzkpHh/Fg/bpjLq/yAyKgo9y607L4PbIPhfAAAA//+4vtxPXREAAA==
 	"/resources/provision/apigateway/inputmapping_json.vtl": {
 		local:   "resources/provision/apigateway/inputmapping_json.vtl",
 		size:    2374,
-		modtime: 1516201003,
+		modtime: 1517081008,
 		compressed: `
 H4sIAAAAAAAC/6yVYWvbPBCAv/tXHE54G5fGKeWFQaCMwj6sHesCyQ/o1b5Y6mxJlc5pvdH/PiTbaWjo
 Fi/7Zsf3PHenu9ij02hh9UbmBKgAa9YVsszAoHPAwuq6EMBUmRKZgAUysEXl1tpWDrAsQSpTs4ukYg0s
