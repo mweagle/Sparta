@@ -16,8 +16,8 @@
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
   packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
-  version = "v1.12.70"
+  revision = "de28909e9837364f0368d94ddcba085c57af3c12"
+  version = "v1.12.73"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -59,7 +59,7 @@
   branch = "master"
   name = "github.com/google/pprof"
   packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svgpan"]
-  revision = "f6c7e790d074a2fb3cafc1b31711bdf2edeae6c0"
+  revision = "aed84736a01cb76abc2fdae7ecb961c1171a96cd"
 
 [[projects]]
   branch = "master"
@@ -100,7 +100,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "db08826ab78c4b9afe40cb9a9f87b2be1f49ff4b"
+  revision = "397558cba61b0a45fb12959177cbbbb4f91b4edb"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -136,13 +136,13 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "a6600008915114d9c087fad9f03d75087b1a74df"
+  revision = "5119cf507ed5294cc409c092980c7497ee5d6fd2"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix","windows"]
-  revision = "2c42eef0765b9837fbdab12011af7830f55f88f0"
+  revision = "37707fdb30a5b38865cfb95e5aab41707daec7fd"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
@@ -153,12 +153,12 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "48a433ba4bcadc5be9aa16d4bdcb383d3f57a741"
-  version = "v9.9.3"
+  revision = "3620d3c0694119b61c72071ff5a05a976e97b05a"
+  version = "v9.9.4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8756b11a35f7f9b62c5d4c55c886ee3c30fe8d2aa3befd42e1680c76d1c55c9d"
+  inputs-digest = "0b41b06e42e1dcf08124c538bc52f0d19b9f6c4bd23951433e0a0c073bc94417"
   solver-name = "gps-cdcl"
   solver-version = 1

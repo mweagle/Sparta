@@ -27,11 +27,11 @@
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.0.0"
+  version = "1.0.1"
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "1.12.62"
+  version = "1.12.73"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
@@ -50,6 +50,10 @@
   name = "github.com/mweagle/go-cloudformation"
 
 [[constraint]]
+  name = "github.com/pkg/errors"
+  version = "0.8.0"
+
+[[constraint]]
   name = "github.com/sirupsen/logrus"
   version = "1.0.4"
 
@@ -60,3 +64,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/zcalusic/sysinfo"
+
+[[constraint]]
+  name = "gopkg.in/go-playground/validator.v9"
+  version = "9.9.4"
