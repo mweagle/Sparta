@@ -1077,7 +1077,7 @@ func createUploadStep(packagePath string) workflowStep {
 		if len(uploadErrors) > 0 {
 			return nil, errors.Errorf("Encountered multiple errors during upload: %#v", uploadErrors)
 		}
-		return ensureCloudFormationStack(), nil
+		return validateSpartaPostconditions(), nil
 	}
 }
 
@@ -1424,6 +1424,48 @@ func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logr
 				lambdaAWSInfo.Options.Environment[eachKey] = gocf.Ref(eachKey).String()
 			}
 		}
+	}
+}
+
+func validateSpartaPostconditions() workflowStep {
+	return func(ctx *workflowContext) (workflowStep, error) {
+		validateErrs := make([]error, 0)
+
+		requiredEnvVars := []string{envVarDiscoveryInformation,
+			envVarLogLevel}
+
+		// Verify that all Lambda functions have discovery information
+		for eachResourceID, eachResourceDef := range ctx.context.cfTemplate.Resources {
+			switch typedResource := eachResourceDef.Properties.(type) {
+			case *gocf.LambdaFunction:
+				if typedResource.Environment == nil {
+					validateErrs = append(validateErrs,
+						errors.Errorf("Lambda function %s does not include environment info", eachResourceID))
+				} else {
+					vars, varsOk := typedResource.Environment.Variables.(map[string]interface{})
+					if !varsOk {
+						validateErrs = append(validateErrs,
+							errors.Errorf("Lambda function %s environment vars are unsupported type: %T",
+								eachResourceID,
+								typedResource.Environment.Variables))
+					} else {
+						for _, eachKey := range requiredEnvVars {
+							_, exists := vars[eachKey]
+							if !exists {
+								validateErrs = append(validateErrs,
+									errors.Errorf("Lambda function %s environment does not include key: %s",
+										eachResourceID,
+										eachKey))
+							}
+						}
+					}
+				}
+			}
+		}
+		if len(validateErrs) != 0 {
+			return nil, errors.Errorf("Problems validating template contents: %v", validateErrs)
+		}
+		return ensureCloudFormationStack(), nil
 	}
 }
 

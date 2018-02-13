@@ -86,6 +86,26 @@ func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	return cmd.Run()
 }
 
+func lambdaFunctionEnvironment(userEnvMap map[string]*gocf.StringExpr,
+	resourceID string,
+	deps map[string]string,
+	logger *logrus.Logger) (*gocf.LambdaFunctionEnvironment, error) {
+	// Merge everything, add the deps
+	envMap := make(map[string]interface{})
+	for eachKey, eachValue := range userEnvMap {
+		envMap[eachKey] = eachValue
+	}
+	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(resourceID, deps)
+	if discoveryInfoErr != nil {
+		return nil, errors.Wrapf(discoveryInfoErr, "Failed to calculate dependency info")
+	}
+	envMap[envVarLogLevel] = logger.Level.String()
+	envMap[envVarDiscoveryInformation] = discoveryInfo
+	return &gocf.LambdaFunctionEnvironment{
+		Variables: envMap,
+	}, nil
+}
+
 func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
 	discoveryDataTemplateData := &discoveryDataTemplateData{
 		TagLogicalResourceID: resID,
@@ -173,10 +193,12 @@ func ensureCustomResourceHandler(serviceName string,
 		lambdaFunctionName := awsLambdaFunctionName(customResourceTypeName)
 
 		// Don't forget the discovery info...
-		discoveryInfo, discoveryInfoErr := discoveryInfoForResource(subscriberHandlerName,
-			nil)
-		if discoveryInfoErr != nil {
-			return "", discoveryInfoErr
+		lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+			customResourceTypeName,
+			nil,
+			logger)
+		if lambdaEnvErr != nil {
+			return "", errors.Wrapf(lambdaEnvErr, "Failed to create environment for required custom resource")
 		}
 		customResourceHandlerDef := gocf.LambdaFunction{
 			Code: &gocf.LambdaFunctionCode{
@@ -190,12 +212,7 @@ func ensureCustomResourceHandler(serviceName string,
 			Timeout:      gocf.Integer(30),
 			FunctionName: lambdaFunctionName.String(),
 			// DISPATCH INFORMATION
-			Environment: &gocf.LambdaFunctionEnvironment{
-				Variables: map[string]interface{}{
-					envVarLogLevel:             logger.Level.String(),
-					envVarDiscoveryInformation: discoveryInfo,
-				},
-			},
+			Environment: lambdaEnv,
 		}
 
 		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)

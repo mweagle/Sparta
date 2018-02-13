@@ -592,25 +592,30 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 
 	// Create the Lambda Function
 	lambdaFunctionName := awsLambdaFunctionName(resourceInfo.userFunctionName)
+
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+		resourceInfo.userFunctionName,
+		nil,
+		logger)
+	if lambdaEnvErr != nil {
+		return errors.Wrapf(lambdaEnvErr, "Failed to create environment resource for custom info")
+	}
+
 	lambdaResource := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
 			S3Key:    gocf.String(S3Key),
 		},
 		FunctionName: lambdaFunctionName.String(),
+		Description:  gocf.String(lambdaDescription),
+		Handler:      gocf.String(binaryName),
+		MemorySize:   gocf.Integer(resourceInfo.options.MemorySize),
+		Role:         roleNameMap[iamRoleArnName],
+		Runtime:      gocf.String(GoLambdaVersion),
+		Timeout:      gocf.Integer(resourceInfo.options.Timeout),
+		VPCConfig:    resourceInfo.options.VpcConfig,
 		// DISPATCH INFORMATION
-		Environment: &gocf.LambdaFunctionEnvironment{
-			Variables: map[string]string{
-				envVarLogLevel: logger.Level.String(),
-			},
-		},
-		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(binaryName),
-		MemorySize:  gocf.Integer(resourceInfo.options.MemorySize),
-		Role:        roleNameMap[iamRoleArnName],
-		Runtime:     gocf.String(GoLambdaVersion),
-		Timeout:     gocf.Integer(resourceInfo.options.Timeout),
-		VPCConfig:   resourceInfo.options.VpcConfig,
+		Environment: lambdaEnv,
 	}
 
 	lambdaFunctionCFName := CloudFormationResourceName("CustomResourceLambda",

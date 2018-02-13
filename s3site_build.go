@@ -174,6 +174,14 @@ func (s3Site *S3Site) export(serviceName string,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
 	lambdaFunctionName := awsLambdaFunctionName(cfCustomResources.ZipToS3Bucket)
+
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+		cfCustomResources.ZipToS3Bucket,
+		nil,
+		logger)
+	if lambdaEnvErr != nil {
+		return errors.Wrapf(lambdaEnvErr, "Failed to create S3 site resource")
+	}
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
@@ -187,11 +195,7 @@ func (s3Site *S3Site) export(serviceName string,
 		MemorySize:   gocf.Integer(256),
 		Timeout:      gocf.Integer(180),
 		FunctionName: lambdaFunctionName.String(),
-		Environment: &gocf.LambdaFunctionEnvironment{
-			Variables: map[string]interface{}{
-				envVarLogLevel: logger.Level.String(),
-			},
-		},
+		Environment:  lambdaEnv,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
