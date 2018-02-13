@@ -147,54 +147,6 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-// START - LambdaPermission
-//
-
-// LambdaPermission type that creates a Lambda::Permission entry
-// in the generated template, but does NOT automatically register the lambda
-// with the BasePermission.SourceArn.  Typically used to register lambdas with
-// externally managed event producers
-type LambdaPermission struct {
-	BasePermission
-	// The entity for which you are granting permission to invoke the Lambda function
-	Principal string
-}
-
-/*
-func (perm LambdaPermission) export(serviceName string,
-	lambdaFunctionDisplayName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	return perm.BasePermission.export(gocf.String(perm.Principal),
-		lambdaSourceArnParts,
-		lambdaFunctionDisplayName,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-}
-*/
-/*
-func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
-	nodes := []descriptionNode{
-		{
-			Name:     "Source",
-			Relation: describeInfoArn(perm.SourceArn),
-		},
-	}
-	return nodes, nil
-}
-*/
-//
-// END - LambdaPermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
 // START - S3Permission
 //
 var s3SourceArnParts = []gocf.Stringable{
