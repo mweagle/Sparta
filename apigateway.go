@@ -495,6 +495,12 @@ type API struct {
 	CORSOptions *CORSOptions
 }
 
+// LogicalResourceName returns the CloudFormation logical
+// resource name for this API
+func (api *API) LogicalResourceName() string {
+	return CloudFormationResourceName("APIGateway", api.name)
+}
+
 func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
@@ -514,7 +520,6 @@ func (api *API) export(serviceName string,
 		pathParts := strings.Split(fullPath, "/")
 		return CloudFormationResourceName("%sResource", pathParts[0], fullPath)
 	}
-	apiGatewayResName := CloudFormationResourceName("APIGateway", api.name)
 
 	// Create an API gateway entry
 	apiGatewayRes := &gocf.APIGatewayRestAPI{
@@ -530,7 +535,7 @@ func (api *API) export(serviceName string,
 	} else {
 		apiGatewayRes.Description = gocf.String(api.Description)
 	}
-
+	apiGatewayResName := api.LogicalResourceName()
 	template.AddResource(apiGatewayResName, apiGatewayRes)
 	apiGatewayRestAPIID := gocf.Ref(apiGatewayResName)
 
@@ -592,6 +597,7 @@ func (api *API) export(serviceName string,
 
 		// BEGIN - user defined verbs
 		for eachMethodName, eachMethodDef := range eachResourceDef.Methods {
+
 			methodRequestTemplates, methodRequestTemplatesErr := methodRequestTemplates(eachMethodDef)
 			if methodRequestTemplatesErr != nil {
 				return methodRequestTemplatesErr
@@ -641,7 +647,8 @@ func (api *API) export(serviceName string,
 			methodResourceName := CloudFormationResourceName(prefix, eachResourceMethodKey, serviceName)
 			res := template.AddResource(methodResourceName, apiGatewayMethod)
 			res.DependsOn = append(res.DependsOn, apiGatewayPermissionResourceName)
-			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
+			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources,
+				methodResourceName)
 		}
 	}
 	// END
