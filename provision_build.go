@@ -277,17 +277,6 @@ func (ctx *workflowContext) rollback() {
 // Private - START
 //
 
-// userGoPath returns either $GOPATH or the new $HOME/go path
-// introduced with Go 1.8
-func userGoPath() string {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		home := os.Getenv("HOME")
-		gopath = filepath.Join(home, "go")
-	}
-	return gopath
-}
-
 // logFilesize outputs a friendly filesize for the given filepath
 func logFilesize(message string, filePath string, logger *logrus.Logger) {
 	// Binary size
