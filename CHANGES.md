@@ -31,7 +31,7 @@
     - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
   - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
     ```
-    ERRO[0000] Failed to validate preconditions: Please run `go get -u -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be reliably imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored
+    ERRO[0000] Failed to validate preconditions: Please run `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be safely imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored
     ```
 - :bug:  **FIXED**
   - [101 - Doesn't work with Mac OSX ](https://github.com/mweagle/Sparta/issues/101)
