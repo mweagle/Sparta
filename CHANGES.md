@@ -8,18 +8,18 @@
 - :checkered_flag: **CHANGES**
   - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample
     ```
-    	iambuilder.Allow("ssm:GetParameter").ForResource().
-          Literal("arn:aws:ssm:").
-          Region(":").
-          AccountID(":").
-          Literal("parameter/MyReservedParameter").
-          ToPrivilege()
+    iambuilder.Allow("ssm:GetParameter").ForResource().
+      Literal("arn:aws:ssm:").
+      Region(":").
+      AccountID(":").
+      Literal("parameter/MyReservedParameter").
+      ToPrivilege()
     ```
   - Remove _io:gosparta:home_ and _io:gosparta:sha_ Tags from Lambda functions
   - Standardize on Lambda function naming in AWS Console
   - Reduced AWS Go binary size by 20% or more by including the `-s` and `-w` [link flags](https://golang.org/cmd/link/)
     - See [Shrink your Go Binaries with this One Weird Trick](https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/) for more information
-  - Added `github.com/mweagle/Sparta/aws/cloudformation.UserAccountScopedStackName` to produce CloudFormation stackname that are namespaced by AWS account username
+  - Added `github.com/mweagle/Sparta/aws/cloudformation.UserAccountScopedStackName` to produce CloudFormation Stack names that are namespaced by AWS account username
   - Ensure `Pre` and `Post` deploy hooks are granted proper permissions
     - See [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) for more information.
   - Added [Sparta/aws/apigateway.Error](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#Error) to support returning custom API Gateway errors
@@ -29,7 +29,12 @@
     "application/json": "$input.path('$.errorMessage')",
     ```
     - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
+  - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
+    ```
+    ERRO[0000] Failed to validate preconditions: Please run `go get -u -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be reliably imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored
+    ```
 - :bug:  **FIXED**
+  - [101 - Doesn't work with Mac OSX ](https://github.com/mweagle/Sparta/issues/101)
   - Fixed latent bug where `NewAuthorizedMethod` didn't properly preserve the [AuthorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html#cfn-apigateway-method-authorizationtype) when serializing to CloudFormation. This also forced a change to the function signature to accept a `gocf.Stringable` satisfying type for the [authorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-authorizer.html).
 
 ## v1.0.1
