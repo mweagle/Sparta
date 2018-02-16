@@ -4,6 +4,7 @@ package sparta
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
@@ -52,6 +53,25 @@ func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
 	} else {
 		fmt.Fprintf(writer, "%s-->%s\n", sanitizedFrom, sanitizedTo)
 	}
+}
+
+func templateImagesMap() map[string]string {
+	imageMap := make(map[string]string)
+	images := []string{"SpartaHelmet256.png",
+		"/AWSIcons/Compute/Compute_AWSLambda_LambdaFunction.svg",
+		"/AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
+	}
+	for _, eachImagePath := range images {
+		resourcePath := fmt.Sprintf("/resources/describe/%s", eachImagePath)
+		data, dataErr := _escFSString(false, resourcePath)
+		if dataErr == nil {
+			keyParts := strings.Split(resourcePath, "/")
+			keyName := keyParts[len(keyParts)-1]
+			encoded := base64.StdEncoding.EncodeToString([]byte(data))
+			imageMap[keyName] = encoded
+		}
+	}
+	return imageMap
 }
 
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
@@ -103,7 +123,10 @@ func Describe(serviceName string,
 	var b bytes.Buffer
 
 	// Setup the root object
-	writeNode(&b, serviceName, nodeColorService, "color:white,font-weight:bold,stroke-width:4px")
+	writeNode(&b,
+		serviceName,
+		nodeColorService,
+		"color:white,font-weight:bold,stroke-width:4px")
 
 	for _, eachLambda := range lambdaAWSInfos {
 		// Create the node...
@@ -157,27 +180,33 @@ func Describe(serviceName string,
 		SpartaVersion          string
 		ServiceName            string
 		ServiceDescription     string
+		ImagesMap              map[string]string
 		CloudFormationTemplate string
+		SpartaJS               string
+		BootstrapJS            string
 		BootstrapCSS           string
+		MermaidJS              string
 		MermaidCSS             string
+		HighlightsJS           string
 		HighlightsCSS          string
 		JQueryJS               string
-		BootstrapJS            string
-		MermaidJS              string
-		HighlightsJS           string
+		PopperJS               string
 		MermaidData            string
 	}{
-		SpartaVersion,
+		SpartaGitHash[0:8],
 		serviceName,
 		serviceDescription,
+		templateImagesMap(),
 		cloudFormationTemplate.String(),
-		_escFSMustString(false, "/resources/bootstrap/lumen/bootstrap.min.css"),
-		_escFSMustString(false, "/resources/mermaid/mermaid.css"),
-		_escFSMustString(false, "/resources/highlights/styles/vs.css"),
-		_escFSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
-		_escFSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
-		_escFSMustString(false, "/resources/mermaid/mermaid.min.js"),
-		_escFSMustString(false, "/resources/highlights/highlight.pack.js"),
+		_escFSMustString(false, "/resources/describe/sparta.js"),
+		_escFSMustString(false, "/resources/describe/bootstrap-4.0.0/dist/js/bootstrap.min.js"),
+		_escFSMustString(false, "/resources/describe/bootstrap-4.0.0/dist/css/bootstrap.min.css"),
+		_escFSMustString(false, "/resources/describe/mermaid-7.0.0/dist/mermaid.js"),
+		_escFSMustString(false, "/resources/describe/mermaid-7.0.0/dist/mermaid.css"),
+		_escFSMustString(false, "/resources/describe/highlight/highlight.pack.js"),
+		_escFSMustString(false, "/resources/describe/highlight/highlight/github.css"),
+		_escFSMustString(false, "/resources/describe/jquery/jquery-3.3.1.min.js"),
+		_escFSMustString(false, "/resources/describe/popper/popper.min.js"),
 		b.String(),
 	}
 

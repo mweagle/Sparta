@@ -33,7 +33,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.0.2"
+	SpartaVersion = "1.1.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -304,6 +304,13 @@ type LambdaFunctionOptions struct {
 	Environment map[string]*gocf.StringExpr
 	// KMS Key Arn used to encrypt environment variables
 	KmsKeyArn string
+	// The maximum of concurrent executions you want reserved for the function
+	ReservedConcurrentExecutions int64
+	// DeadLetterConfigArn is how Lambda handles events that it can't process.If
+	// you don't specify a Dead Letter Queue (DLQ) configuration, Lambda
+	// discards events after the maximum number of retries. For more information,
+	// see Dead Letter Queues in the AWS Lambda Developer Guide.
+	DeadLetterConfigArn gocf.Stringable
 	// Tags to associate with the Lambda function
 	Tags map[string]string
 	// Tracing options for XRay
@@ -314,12 +321,13 @@ type LambdaFunctionOptions struct {
 
 func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 	return &LambdaFunctionOptions{Description: "",
-		MemorySize:    128,
-		Timeout:       3,
-		VpcConfig:     nil,
-		Environment:   nil,
-		KmsKeyArn:     "",
-		SpartaOptions: nil,
+		MemorySize:                   128,
+		Timeout:                      3,
+		VpcConfig:                    nil,
+		Environment:                  nil,
+		KmsKeyArn:                    "",
+		ReservedConcurrentExecutions: 0,
+		SpartaOptions:                nil,
 	}
 }
 
@@ -905,6 +913,17 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	if "" != S3Version {
 		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}
+	if info.Options.ReservedConcurrentExecutions != 0 {
+		lambdaResource.ReservedConcurrentExecutions = gocf.Integer(info.Options.ReservedConcurrentExecutions)
+	}
+	if info.Options.DeadLetterConfigArn != nil {
+		lambdaResource.DeadLetterConfig = &gocf.LambdaFunctionDeadLetterConfig{
+			TargetArn: info.Options.DeadLetterConfigArn.String(),
+		}
+	}
+	if nil != info.Options.TracingConfig {
+		lambdaResource.TracingConfig = info.Options.TracingConfig
+	}
 	if "" != info.Options.KmsKeyArn {
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
 	}
@@ -917,9 +936,6 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			})
 		}
 		lambdaResource.Tags = &tagList
-	}
-	if nil != info.Options.TracingConfig {
-		lambdaResource.TracingConfig = info.Options.TracingConfig
 	}
 
 	// DISPATCH INFORMATION
