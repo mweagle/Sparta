@@ -1,11 +1,35 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8">
+
     <title>{{ .ServiceName }}</title>
 
-    <style>
-      {{ .BootstrapCSS }}
-    </style>
+    <!-- CSS files -->
+    {{range .CSSFiles}}
+        <!-- File: {{.KeyName}} -->
+        <style>
+          {{.Data}}
+        </style>
+    {{end}}
+
+    <!-- JS Files -->
+    {{range .JSFiles}}
+        <!-- File: {{.KeyName}} -->
+        <script type="text/javascript">
+// <![CDATA[
+
+          {{.Data}}
+
+//]]>
+        </script>
+    {{end}}
+
+    <script charset="UTF-8">
+
+      CLOUDFORMATION_TEMPLATE_RAW = {{ .CloudFormationTemplate }}
+
+    </script>
 
     <style>
       /* Show it is fixed to the top */
@@ -21,32 +45,7 @@
       }
     </style>
 
-    <!-- include the JS files... -->
-    <script charset="UTF-8">
-    {{ .JQueryJS }}
-    </script>
-    <script charset="UTF-8">
-      {{ .PopperJS }}
-    </script>
-    <script charset="UTF-8">
-      {{ .BootstrapJS }}
-    </script>
-
-    <!-- Highlights -->
     <script>
-      {{ .HighlightsJS }}
-    </script>
-    <style>
-    {{ .HighlightsCSS }}
-    </style>
-
-    <!--  Mermaid -->
-    <style>
-    {{ .MermaidCSS }}
-    </style>
-    <script>
-    {{ .MermaidJS}}
-
     mermaid.initialize({startOnLoad:true,
                       htmlLabels: true,
                       flowchart:{
@@ -54,11 +53,6 @@
                       }
                       });
 
-    </script>
-
-    <!-- Our own script -->
-    <script>
-      {{ .SpartaJS}}
     </script>
   </head>
 
@@ -71,7 +65,7 @@
               <a class="nav-link"
               href="#lambda"
               onclick="showView('lambda')">
-              <img src="data:image/png;base64,{{ index .ImagesMap "Compute_AWSLambda_LambdaFunction.svg"}}"  width="32" height="32" class="d-inline-block align-top" alt="" /> Lambdas
+              <img src="data:image/svg+xml;base64,{{ index .ImageMap "Compute_AWSLambda_LambdaFunction.svg"}}"  width="32" height="32" class="d-inline-block align-top" alt="" /> Lambdas
             </a>
           </li>
           <li>
@@ -81,7 +75,7 @@
               <a class="nav-link "
               href="#cloudformation-template"
               onclick="showView('cloudformation-template')">
-              <img src="data:image/png;base64,{{ index .ImagesMap "ManagementTools_AWSCloudFormation_template.svg"}}" width="32" height="32" class="d-inline-block align-top" alt="" />
+              <img src="data:image/svg+xml;base64,{{ index .ImageMap "ManagementTools_AWSCloudFormation.svg"}}" width="32" height="32" class="d-inline-block align-top" alt="" />
               CloudFormation Template</a>
           </li>
         </ul>
@@ -89,14 +83,16 @@
           <li class="nav-item">
               <a class="nav-link"
               target="_blank" href="https://gosparta.io">
-                  <img src="data:image/png;base64,{{ index .ImagesMap "SpartaHelmet256.png"}}" width="32" height="32" class="d-inline-block align-top" alt="">
+                  <img src="data:image/png;base64,{{ index .ImageMap "SpartaHelmet256.png"}}" width="32" height="32" class="d-inline-block align-top" alt="">
                   Sparta
               </a>
           </li>
           <li class="nav-item">
               <a class="nav-link"
               target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ .SpartaVersion }}">
-              (SHA: {{ .SpartaVersion }})
+              <smallest>
+              ({{ .SpartaVersion }})
+              </smallest>
               </a>
           </li>
         </ul>
@@ -116,9 +112,10 @@
 
           <div class="card" id="cloudformation-template-view">
               <div class="card-body">
+
                   <p class="card-text">
-                      <pre>
-                        <code class="JSON" id="rawTemplateContent"></code>
+                      <pre class="hljs">
+                        <code class="json" id="rawTemplateContent"></code>
                       </pre>
                   </p>
               </div>

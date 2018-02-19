@@ -23,6 +23,11 @@ const (
 	nodeNameAPIGateway   = "API Gateway"
 )
 
+type templateResource struct {
+	KeyName string
+	Data    string
+}
+
 // RE for sanitizing golang/JS layer
 var reSanitizeMermaidNodeName = regexp.MustCompile(`[\W\s]+`)
 var reSanitizeMermaidLabelValue = regexp.MustCompile(`[\{\}\"\[\]']+`)
@@ -55,21 +60,62 @@ func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
 	}
 }
 
-func templateImagesMap() map[string]string {
-	imageMap := make(map[string]string)
-	images := []string{"SpartaHelmet256.png",
-		"/AWSIcons/Compute/Compute_AWSLambda_LambdaFunction.svg",
-		"/AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
-	}
-	for _, eachImagePath := range images {
-		resourcePath := fmt.Sprintf("/resources/describe/%s", eachImagePath)
+func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) []*templateResource {
+	resources := make([]*templateResource, 0)
+
+	for _, eachKey := range resourceKeyNames {
+		resourcePath := fmt.Sprintf("/resources/describe/%s",
+			strings.TrimLeft(eachKey, "/"))
 		data, dataErr := _escFSString(false, resourcePath)
 		if dataErr == nil {
 			keyParts := strings.Split(resourcePath, "/")
 			keyName := keyParts[len(keyParts)-1]
-			encoded := base64.StdEncoding.EncodeToString([]byte(data))
-			imageMap[keyName] = encoded
+			resources = append(resources, &templateResource{
+				KeyName: keyName,
+				Data:    data,
+			})
+			logger.WithFields(logrus.Fields{
+				"Path":    resourcePath,
+				"KeyName": keyName,
+			}).Debug("Embedded resource")
+
+		} else {
+			logger.WithFields(logrus.Fields{
+				"Path": resourcePath,
+			}).Warn("Failed to embed resource")
 		}
+	}
+	return resources
+}
+
+func templateCSSFiles(logger *logrus.Logger) []*templateResource {
+	cssFiles := []string{"mermaid-7.1.2/mermaid.css",
+		"bootstrap-4.0.0/dist/css/bootstrap.min.css",
+		"highlight.js/styles/xcode.css",
+	}
+	return templateResourcesForKeys(cssFiles, logger)
+}
+
+func templateJSFiles(logger *logrus.Logger) []*templateResource {
+	jsFiles := []string{"jquery/jquery-3.3.1.min.js",
+		"popper/popper.min.js",
+		"mermaid-7.1.2/mermaid.js",
+		"bootstrap-4.0.0/dist/js/bootstrap.min.js",
+		"highlight.js/highlight.pack.js",
+		"sparta.js",
+	}
+	return templateResourcesForKeys(jsFiles, logger)
+}
+
+func templateImageMap(logger *logrus.Logger) map[string]string {
+	images := []string{"SpartaHelmet256.png",
+		"AWSIcons/Compute/Compute_AWSLambda_LambdaFunction.svg",
+		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
+	}
+	resources := templateResourcesForKeys(images, logger)
+	imageMap := make(map[string]string, 0)
+	for _, eachResource := range resources {
+		imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
 	}
 	return imageMap
 }
@@ -180,33 +226,19 @@ func Describe(serviceName string,
 		SpartaVersion          string
 		ServiceName            string
 		ServiceDescription     string
-		ImagesMap              map[string]string
 		CloudFormationTemplate string
-		SpartaJS               string
-		BootstrapJS            string
-		BootstrapCSS           string
-		MermaidJS              string
-		MermaidCSS             string
-		HighlightsJS           string
-		HighlightsCSS          string
-		JQueryJS               string
-		PopperJS               string
+		CSSFiles               []*templateResource
+		JSFiles                []*templateResource
+		ImageMap               map[string]string
 		MermaidData            string
 	}{
 		SpartaGitHash[0:8],
 		serviceName,
 		serviceDescription,
-		templateImagesMap(),
 		cloudFormationTemplate.String(),
-		_escFSMustString(false, "/resources/describe/sparta.js"),
-		_escFSMustString(false, "/resources/describe/bootstrap-4.0.0/dist/js/bootstrap.min.js"),
-		_escFSMustString(false, "/resources/describe/bootstrap-4.0.0/dist/css/bootstrap.min.css"),
-		_escFSMustString(false, "/resources/describe/mermaid-7.0.0/dist/mermaid.js"),
-		_escFSMustString(false, "/resources/describe/mermaid-7.0.0/dist/mermaid.css"),
-		_escFSMustString(false, "/resources/describe/highlight/highlight.pack.js"),
-		_escFSMustString(false, "/resources/describe/highlight/highlight/github.css"),
-		_escFSMustString(false, "/resources/describe/jquery/jquery-3.3.1.min.js"),
-		_escFSMustString(false, "/resources/describe/popper/popper.min.js"),
+		templateCSSFiles(logger),
+		templateJSFiles(logger),
+		templateImageMap(logger),
 		b.String(),
 	}
 
