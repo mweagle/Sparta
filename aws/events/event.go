@@ -36,12 +36,13 @@ type APIGatewayContext struct {
 // is submitted to a Lambda function. This format matches the
 // inputmapping_default.VTL templates
 type APIGatewayRequest struct {
-	Method      string            `json:"method"`
-	Body        interface{}       `json:"body"`
-	Headers     map[string]string `json:"headers"`
-	QueryParams map[string]string `json:"queryParams"`
-	PathParams  map[string]string `json:"pathParams"`
-	Context     APIGatewayContext `json:"context"`
+	Method      string                 `json:"method"`
+	Body        interface{}            `json:"body"`
+	Headers     map[string]string      `json:"headers"`
+	QueryParams map[string]string      `json:"queryParams"`
+	PathParams  map[string]string      `json:"pathParams"`
+	Context     APIGatewayContext      `json:"context"`
+	Authorizer  map[string]interface{} `json:"authorizer"`
 }
 
 // NewAPIGatewayMockRequest creates a mock API Gateway request.
