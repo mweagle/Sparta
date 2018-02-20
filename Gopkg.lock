@@ -10,14 +10,14 @@
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
   packages = ["lambda","lambda/messages","lambdacontext"]
-  revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
-  version = "v1.0.1"
+  revision = "fafa7e49388b8991caf99308e80655ba91816b72"
+  version = "v1.1.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "de28909e9837364f0368d94ddcba085c57af3c12"
-  version = "v1.12.73"
+  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/sdkrand","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
+  revision = "63324a33d7e42a386c04d4daec764a3de243492e"
+  version = "v1.13.0"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -40,8 +40,8 @@
 [[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
-  revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
-  version = "v1.5.0"
+  revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
+  version = "v1.6.0"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -65,7 +65,7 @@
   branch = "master"
   name = "github.com/google/pprof"
   packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svgpan"]
-  revision = "aed84736a01cb76abc2fdae7ecb961c1171a96cd"
+  revision = "db0be723d40dfbb90c702d493a71d398173358e7"
 
 [[projects]]
   branch = "master"
@@ -112,7 +112,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "397558cba61b0a45fb12959177cbbbb4f91b4edb"
+  revision = "59bfc7932fecb23d2c1d001f73c9a062c187c140"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -142,13 +142,13 @@
   branch = "master"
   name = "github.com/zcalusic/sysinfo"
   packages = ["."]
-  revision = "cb55f814b6ba2adb882cf350bac99b7f77302327"
+  revision = "7a16547e0bde79fb8f37231cdcfc8cacef8d8fbb"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "5119cf507ed5294cc409c092980c7497ee5d6fd2"
+  revision = "432090b8f568c018896cd8a0fb0345872bbac6ce"
 
 [[projects]]
   branch = "master"
@@ -165,8 +165,8 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "3620d3c0694119b61c72071ff5a05a976e97b05a"
-  version = "v9.9.4"
+  revision = "535f85221eb67ab842438877b22cac6274380cf2"
+  version = "v9.10.0"
 
 [solve-meta]
   analyzer-name = "dep"
