@@ -114,8 +114,10 @@ func main() {
 # Running It
 
 Next download the Sparta dependencies via:
- * `go get ./...`
- * `go get github.com/zcalusic/sysinfo`
+
+  * `go get ./...`
+  * `go get github.com/zcalusic/sysinfo`
+
  in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command (replacing `$S3_BUCKET` with an S3 bucket you own):
 
 {{% panel theme="success" header="sysinfo package" %}}
