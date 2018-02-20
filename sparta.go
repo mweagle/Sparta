@@ -16,15 +16,14 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
+	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-
-	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
-	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
 )
 
 ////////////////////////////////////////////////////////////////////////////////
