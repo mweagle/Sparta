@@ -1,13 +1,34 @@
 package sparta
 
 import (
-	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	"github.com/sirupsen/logrus"
+
+	"github.com/pkg/errors"
 )
+
+const mainSysInfoSample = `
+package main
+
+import (
+	"fmt"
+
+	"github.com/zcalusic/sysinfo"
+)
+
+func main() {
+	var si sysinfo.SysInfo
+	si.GetSysInfo()
+	fmt.Printf("%v", si)
+}
+`
 
 // userGoPath returns either $GOPATH or the new $HOME/go path
 // introduced with Go 1.8
@@ -40,6 +61,7 @@ func temporaryFile(name string) (*os.File, error) {
 	if err != nil {
 		return nil, errors.New("Failed to create temporary file: " + err.Error())
 	}
+
 	return tmpFile, nil
 }
 
@@ -54,6 +76,48 @@ func relativePath(logPath string) string {
 		}
 	}
 	return logPath
+}
+
+func buildSysInfoSample(logger *logrus.Logger) error {
+	workingDir, workingDirErr := os.Getwd()
+	if workingDirErr != nil {
+		return errors.Wrapf(workingDirErr, "Failed to determine working directory")
+	}
+	temporaryDir := filepath.Join(workingDir,
+		ScratchDirectory,
+		"buildTest")
+
+	mkdirErr := os.MkdirAll(temporaryDir, os.ModePerm)
+	if mkdirErr != nil {
+		return errors.Wrapf(mkdirErr, "Failed to create tempdir for build")
+	}
+	defer os.RemoveAll(temporaryDir)
+	mainOutputSource := filepath.Join(temporaryDir, "main.go")
+	writeErr := ioutil.WriteFile(mainOutputSource,
+		[]byte(mainSysInfoSample),
+		0644)
+
+	if writeErr != nil {
+		return errors.Wrapf(writeErr, "Failed to create main file")
+	}
+	// Build it...
+	buildArgs := []string{
+		"build",
+	}
+	if logger.Level == logrus.DebugLevel {
+		buildArgs = append(buildArgs, "-v")
+	}
+	buildArgs = append(buildArgs, "main.go")
+	cmd := exec.Command("go", buildArgs...)
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
+	cmd.Dir = temporaryDir
+	logger.Debug("Verifying sysinfo package")
+	cmdError := runOSCommand(cmd, logger)
+	if cmdError != nil {
+		return errors.Wrapf(cmdError, "Failed")
+	}
+	return nil
 }
 
 // workResult is the result from a worker task

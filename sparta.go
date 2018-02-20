@@ -1095,11 +1095,17 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 	}).Debug("Checking installation status of github.com/zcalusic/sysinfo")
 	_, sysinfoErr := os.Stat(sysinfoPath)
 	if os.IsNotExist(sysinfoErr) {
-		logger.WithFields(logrus.Fields{
-			"sysinfoMarkerPath": sysinfoPath,
-			"os":                runtime.GOOS,
-		}).Error("The `github.com/zcalusic/sysinfo` package is not installed")
-		return errors.New("Please run `go get -u -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be reliably imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored")
+		// Let's make sure it's really not there.
+		// In case `gvm` is managing paths
+		sysinfoErr = buildSysInfoSample(logger)
+		if sysinfoErr != nil {
+			logger.WithFields(logrus.Fields{
+				"sysinfoMarkerPath": sysinfoPath,
+				"os":                runtime.GOOS,
+				"gopath":            goPath,
+			}).Error("The `github.com/zcalusic/sysinfo` package is not installed")
+			return errors.New("Please run `go get -u -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be reliably imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored")
+		}
 	}
 	return nil
 }
