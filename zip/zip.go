@@ -12,10 +12,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// AddToZip creates a source object (either a file, or a directory that will be recursively
-// added) to a previously opened zip.Writer.  The archive path of `source` is relative to the
-// `rootSource` parameter.
-func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
+// FileHeaderAnnotator represents a callback function that accepts the current
+// file being added to allow it to customize the ZIP archive values
+type FileHeaderAnnotator func(header *zip.FileHeader) (*zip.FileHeader, error)
+
+// AnnotateAddToZip is an extended Zip writer that accepts an annotation function
+// to customize the FileHeader values written into the archive
+func AnnotateAddToZip(zipWriter *zip.Writer,
+	source string,
+	rootSource string,
+	annotator FileHeaderAnnotator,
+	logger *logrus.Logger) error {
 
 	linuxZipName := func(platformValue string) string {
 		return strings.Replace(platformValue, "\\", "/", -1)
@@ -39,6 +46,13 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		}
 		// Update the name to the proper thing...
 		fileHeader.Name = zipEntryName
+		if annotator != nil {
+			annotatedHeader, annotatedHeaderErr := annotator(fileHeader)
+			if annotatedHeaderErr != nil {
+				return errors.Wrapf(annotatedHeaderErr, "Failed to annotate Zip entry file header")
+			}
+			fileHeader = annotatedHeader
+		}
 
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)
@@ -112,4 +126,11 @@ func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *l
 		return errors.Wrapf(err, "Failed to determine file mode")
 	}
 	return nil
+}
+
+// AddToZip creates a source object (either a file, or a directory that will be recursively
+// added) to a previously opened zip.Writer.  The archive path of `source` is relative to the
+// `rootSource` parameter.
+func AddToZip(zipWriter *zip.Writer, source string, rootSource string, logger *logrus.Logger) error {
+	return AnnotateAddToZip(zipWriter, source, rootSource, nil, logger)
 }

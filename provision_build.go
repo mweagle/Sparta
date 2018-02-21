@@ -977,10 +977,21 @@ func createPackageStep() workflowStep {
 		if nil != archiveErr {
 			return nil, archiveErr
 		}
+		// Issue: https://github.com/mweagle/Sparta/issues/103. If the executable
+		// bit isn't set, then AWS Lambda won't be able to fork the binary
+		var fileHeaderAnnotator spartaZip.FileHeaderAnnotator
+		if runtime.GOOS == "windows" {
+			fileHeaderAnnotator = func(header *zip.FileHeader) (*zip.FileHeader, error) {
+				// Make the binary executable
+				header.ExternalAttrs = 0777 << 16
+				return header, nil
+			}
+		}
 		// File info for the binary executable
-		readerErr := spartaZip.AddToZip(lambdaArchive,
+		readerErr := spartaZip.AnnotateAddToZip(lambdaArchive,
 			ctx.context.binaryName,
 			"",
+			fileHeaderAnnotator,
 			ctx.logger)
 		if nil != readerErr {
 			return nil, readerErr
