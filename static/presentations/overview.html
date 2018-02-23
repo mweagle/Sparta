@@ -14,11 +14,11 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="./reveal.js/reveal.js-3.5.0/css/reveal.css">
-		<link rel="stylesheet" href="./theme.css" id="theme">
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/css/reveal.css">
+		<link rel="stylesheet" href="/css/reveal-theme.css" id="theme">
 
 		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="./reveal.js/reveal.js-3.5.0/lib/css/zenburn.css">
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/lib/css/zenburn.css">
 
 		<!-- Printing and PDF exports -->
 		<script>
@@ -26,8 +26,8 @@
 			link.rel = 'stylesheet';
 			link.type = 'text/css';
 			link.href = window.location.search.match( /print-pdf/gi ) ?
-			'./reveal.js/reveal.js-3.5.0/css/print/pdf.css' :
-			'./reveal.js/reveal.js-3.5.0/css/print/paper.css';
+			'/presentations/reveal.js-3.6.0/css/print/pdf.css' :
+			'/presentations/reveal.js-3.6.0/css/print/paper.css';
 			document.getElementsByTagName( 'head' )[0].appendChild( link );
 		</script>
 
@@ -92,7 +92,6 @@
 						Go: 'nough said. [Ben Kehoe on what's missing](https://www.youtube.com/watch?v=AqhDFbL6Nb4)
 					</aside>
 				</section>
-
 
 				<section data-markdown>
 					<textarea data-template>
@@ -199,7 +198,6 @@
 					</textarea>
 				</section>
 
-
 				<section data-markdown>
 					<textarea data-template>
 						### Verify
@@ -216,7 +214,7 @@
 				<section data-markdown>
 					<textarea data-template>
 						### Workflow
-						<a href="http://gosparta.io/docs/overview/" target="_blank">go run flow</a>
+						<a href="https://gosparta.io/sample_service/step2/" target="_blank">go run flow</a>
 					</textarea>
 				</section>
 
@@ -394,7 +392,6 @@
 					</textarea>
 				</section>
 
-
 				<section data-markdown>
 					<textarea data-template>
 						```bash
@@ -433,7 +430,17 @@
 				<section data-markdown>
 					<textarea data-template>
 						### Making Connections
-						[Manifest.json](https://github.com/mweagle/cloudformationresources/blob/a2efb8eb75fa54dca84d6e63915d4c2cb0210618/zipToS3BucketResource.go#L102)
+
+```json
+{
+	"APIGatewayURL": {
+			"Description": "API Gateway URL",
+			"Value": "https://p0ns30kpnd.execute-api.us-west-2.amazonaws.com/v1"
+	}
+}
+```
+
+[Manifest.json](https://github.com/mweagle/cloudformationresources/blob/a2efb8eb75fa54dca84d6e63915d4c2cb0210618/zipToS3BucketResource.go#L102)
 					</textarea>
 				</section>
 
@@ -443,7 +450,6 @@
 						### Performance
 
 						* Developer experience
-						* Runtime
 					</textarea>
 				</section>
 
@@ -455,7 +461,6 @@
 						* **--inplace**: When safe, concurrent code updates directly via <a href="http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode">Lambda API</a>
 					</textarea>
 				</section>
-
 
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
@@ -469,78 +474,18 @@
 
 				<section data-markdown data-separator-notes="^Note:">
 					<textarea data-template>
-						### Runtime
-
-						* **standard**: NodeJS HTTP proxy
-						* **cgo**: Python <a href="https://golang.org/cmd/cgo/">cgo</a> bindings
-
-					</textarea>
-				</section>
-
-				<section data-markdown data-separator-notes="^Note:">
-					<textarea data-template>
-						<span style="font-size: 512">😱</span>
-					</textarea>
-				</section>
-
-				<section data-markdown data-separator-notes="^Note:">
-					<textarea data-template>
-						```bash
-						$ go get -u -v github.com/mweagle/SpartaPython
-						$ cd $GOPATH/src/github.com/mweagle/SpartaPython
-						$ go get -u -v ./...
-						$ go run main.go help
-						```
-					</textarea>
-				</section>
-
-				<section data-markdown data-separator-notes="^Note:">
-					<textarea data-template>
-						### Migrating to CGO
-						```go
-							import 	"github.com/mweagle/Sparta/cgo"
-							...
-							err = cgo.Main("SpartaHelloPythonCGO",
-								fmt.Sprintf("Test HelloWorld resource command"),
-								lambdaFunctions,
-								apiGateway,
-								nil)
-						```
-						<small>
-							More information: <a target="_blank" href="https://medium.com/@mweagle/see-lambda-go-e39b526c1020">See Lambda Go</a>
-						</small>
-
-						Note:
-						Open up two new terminal windows and provision each stack. Test the warmed performance of each function. There are also
-						platform issues to be aware of: https://blog.symphonia.io/the-occasional-chaos-of-aws-lambda-runtime-performance-880773620a7e,
-						 https://read.acloud.guru/lambda-for-alexa-skills-7-tips-from-the-trenches-684c963e6ad1,
-					</textarea>
-				</section>
-
-				<section data-markdown data-separator-notes="^Note:">
-					<textarea data-template>
-						## Walkthrough
-						<div style="font-size: 96px">λ</div>
-
-						Note:
-						Build the https://github.com/mweagle/SpartaPython cgo version with `make provisionCGO`
-					</textarea>
-				</section>
-
-				<section data-markdown data-separator-notes="^Note:">
-					<textarea data-template>
 						### Testing
 
-						* Use [httptest](https://golang.org/pkg/net/http/httptest/) to test your lambda functions.
-							* See [explore_test.go](https://github.com/mweagle/Sparta/blob/master/explore_test.go)
+						* Use [go test](https://golang.org/pkg/testing/) to test your lambda functions.
+							* See [sparta_test.go](https://github.com/mweagle/Sparta/blob/master/sparta_test.go)
 							* Mock arbitrary event input
+							* Mock API Gateway [requests](https://godoc.org/github.com/mweagle/Sparta/aws/events#NewAPIGatewayMockRequest)
 
 						Note:
 						Sparta shows a sample of this at the root: `go test -v -run TestExplore* .`
 
 					</textarea>
 				</section>
-
 
 				<section data-markdown>
 					<textarea data-template>
@@ -581,7 +526,6 @@
 					</textarea>
 				</section>
 
-
 				<section data-markdown>
 					<textarea data-template>
 						### Alternative Topologies
@@ -610,7 +554,6 @@
 						# Pros & Cons
 					</textarea>
 				</section>
-
 
 				<section data-markdown>
 					<textarea data-template>
@@ -672,8 +615,8 @@
 
 		</div>
 
-		<script src="./reveal.js/reveal.js-3.5.0/lib/js/head.min.js"></script>
-		<script src="./reveal.js/reveal.js-3.5.0/js/reveal.js"></script>
+		<script src="/presentations/reveal.js-3.6.0/lib/js/head.min.js"></script>
+		<script src="/presentations/reveal.js-3.6.0/js/reveal.js"></script>
 
 		<script>
 
@@ -688,12 +631,12 @@
 
 				// More info https://github.com/hakimel/reveal.js#dependencies
 				dependencies: [
-					{ src: './reveal.js/reveal.js-3.5.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
-					{ src: './reveal.js/reveal.js-3.5.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: './reveal.js/reveal.js-3.5.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-					{ src: './reveal.js/reveal.js-3.5.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					{ src: './reveal.js/reveal.js-3.5.0/plugin/zoom-js/zoom.js', async: true },
-					{ src: './reveal.js/reveal.js-3.5.0/plugin/notes/notes.js', async: true }
+					{ src: '/presentations/reveal.js-3.6.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/zoom-js/zoom.js', async: true },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/notes/notes.js', async: true }
 				]
 			});
 

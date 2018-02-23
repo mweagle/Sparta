@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.32.4" />
+<meta name="generator" content="Hugo 0.36.1" />
 <title> :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -385,9 +385,9 @@
     </section>
   </aside>
   <section class="page">
-
+    
     <div class="nav-select">
-      <center>Navigation :
+      <center>Navigation : 
         <select onchange="javascript:location.href = this.value;">
           
     <option value="/overview/" >
@@ -397,6 +397,15 @@
    Sample Service</option>
     <option value="/reference/" >
    Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
@@ -437,7 +446,7 @@
         </script>
         <script type="text/javascript" src="/js/search.js"></script>
       </div>
-
+    
 
     
     
@@ -458,6 +467,49 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 </h1>
 </center>
 <br /></p>
+
+<h2 id="hello-world">Hello World</h2>
+
+<hr />
+
+<h3 id="definition">Definition</h3>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
+
+<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+  <span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
+</span><span style="color:#8f5902;font-style:italic">//
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#4e9a06">&#34;Hello World 🌏&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span>
+
+<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#8f5902;font-style:italic">// Main
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
+  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world test&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
+  <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+
+  <span style="color:#8f5902;font-style:italic">// Delegate to Sparta
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#4e9a06">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="color:#000;font-weight:bold">,</span>
+		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+
+<h3 id="deployment">Deployment</h3>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go provision --s3Bucket MY_S3_BUCKET</code></pre></div>
+
+<h1 id="sparta-features">Sparta Features</h1>
 
 <table style="width:90%">
   <!-- Row 1 -->
@@ -519,43 +571,6 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 <p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="/images/sparta_overview.png" alt="Sparta Overview" /></a></p>
 
 <p>Sparta exclusively relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
-
-<h1 id="hello-lambda-world">Hello Lambda World</h1>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
-
-<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
-  <span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
-<span style="color:#000;font-weight:bold">)</span>
-
-<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
-</span><span style="color:#8f5902;font-style:italic">//
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#4e9a06">&#34;Hello World 🌏&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span>
-
-<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Main
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
-  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world test&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
-  <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-
-  <span style="color:#8f5902;font-style:italic">// Deploy it
-</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
-                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
-                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
-
-<p>Deploy it:</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go provision --s3Bucket MY_S3_BUCKET</code></pre></div>
 
 <h1 id="getting-started">Getting Started</h1>
 
@@ -639,7 +654,7 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 29/01/2018
+        <i class='fa fa-calendar'></i> Last update on 08/03/2016
     </div>
     
 

@@ -15,6 +15,52 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 </center>
 <br />
 
+
+## Hello World
+<hr />
+### Definition
+
+{{< highlight go >}}
+// File: application.go
+package main
+
+import (
+  sparta "github.com/mweagle/Sparta"
+)
+
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloWorld() (string, error) {
+	return "Hello World 🌏", nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.HandleAWSLambda("Hello world test",
+    helloWorld,
+    sparta.IAMRoleDefinition{})
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+  // Delegate to Sparta
+  sparta.Main("SpartaHelloWorld",
+		"Simple Sparta application that creates a single AWS Lambda function",
+		lambdaFunctions,
+                nil,
+                nil)
+}
+{{< /highlight >}}
+
+### Deployment
+
+{{< highlight bash >}}
+$ go run main.go provision --s3Bucket MY_S3_BUCKET
+{{< /highlight >}}
+
+# Sparta Features
+
 <table style="width:90%">
   <!-- Row 1 -->
   <tr>
@@ -75,47 +121,6 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 <a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](/images/sparta_overview.png)</a>
 
 Sparta exclusively relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
-
-# Hello Lambda World
-
-{{< highlight go >}}
-// File: application.go
-package main
-
-import (
-  sparta "github.com/mweagle/Sparta"
-)
-
-////////////////////////////////////////////////////////////////////////////////
-// Hello world event handler
-//
-func helloWorld() (string, error) {
-	return "Hello World 🌏", nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-  var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda("Hello world test",
-    helloWorld,
-    sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-  // Deploy it
-  sparta.Main("SpartaHelloWorld",
-		"Simple Sparta application that creates a single AWS Lambda function",
-		lambdaFunctions,
-                nil,
-                nil)
-}
-{{< /highlight >}}
-
-Deploy it:
-
-{{< highlight bash >}}
-$ go run main.go provision --s3Bucket MY_S3_BUCKET
-{{< /highlight >}}
 
 # Getting Started
 

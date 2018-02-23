@@ -1,8 +1,8 @@
 SPARTA_TEMP_DIR = ./.sparta
-HUGO_BINARY := $(SPARTA_TEMP_DIR)/hugo
 UNAME := $(shell uname)
 HUGO_TARGZ_ARCHIVE_URL := ""
-HUGO_VERSION := 0.32.4
+HUGO_VERSION := 0.36.1
+HUGO_BINARY := $(SPARTA_TEMP_DIR)/hugo-$(HUGO_VERSION)
 ifeq ($(UNAME), Linux)
 	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_$(HUGO_VERSION)_Linux-64bit.tar.gz"
 endif
@@ -22,8 +22,9 @@ else
 	curl -L -o $(SPARTA_TEMP_DIR)/hugo.tar.gz $(HUGO_TARGZ_ARCHIVE_URL)
 	tar -xvf $(SPARTA_TEMP_DIR)/hugo.tar.gz -C $(SPARTA_TEMP_DIR)
 	rm -rf $(SPARTA_TEMP_DIR)/hugo.tar.gz
+	mv $(SPARTA_TEMP_DIR)/hugo $(SPARTA_TEMP_DIR)/hugo-$(HUGO_VERSION)
 endif
-	$(SPARTA_TEMP_DIR)/hugo version
+	$(HUGO_BINARY) version
 
 clean:
 	rm -rf ./public
@@ -50,10 +51,10 @@ pull:
 push:
 	git push -f origin docs
 
-edit: clean
+edit: install_hugo clean
 	$(HUGO_BINARY) server --watch --verbose ./config.toml
 
-publish: build commit push
+publish: install_hugo build commit push
 	# Publish locally committed content to gh-pages
 	# http://stevenclontz.com/blog/2014/05/08/git-subtree-push-for-deployment/
 	# git push origin `git subtree split --prefix public docs`:gh-pages --force
