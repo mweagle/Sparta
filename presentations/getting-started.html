@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Sparta - Getting Started</title>
+
+		<meta name="description" content="A framework for transforming Go applications to AWS Serverless applications">
+		<meta name="author" content="Matt Weagle">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/css/reveal.css">
+		<link rel="stylesheet" href="/css/reveal-theme.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ?
+			'/presentations/reveal.js-3.6.0/css/print/pdf.css' :
+			'/presentations/reveal.js-3.6.0/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!-- Mermaid .JS -->
+		<script src="/external/jquery/jquery-2.2.0.min.js"></script>
+		<script src="/external/mermaid_dist/mermaid.js"></script>
+		<link rel="stylesheet" href="/external/mermaid_dist/mermaid.forest.css">
+		<link rel="stylesheet" href="/css/mermaid-overrides.css">
+		<script>mermaid.initialize({startOnLoad:true});</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section data-markdown>
+					<textarea data-template>
+						![Sparta Helmet](/images/SpartaLogoNoDomain.png "Sparta")
+
+						#### Getting Started
+					</textarea>
+				</section>
+				<!-- Introduction -->
+
+				<section data-markdown>
+					<textarea data-template>
+### Prerequisites
+
+* [Install go](https://golang.org/doc/install)
+* Configure local AWS [account credentials](https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html)
+	* `env.AWS_REGION`
+	* `env.AWS_ACCESS_KEY_ID`
+	* `env.AWS_SECRET_ACCESS_KEY`
+* Create an S3 bucket for [AWS artifacts](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-cli-package.html)
+	* S3 bucket region must match `env.AWS_REGION`
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+### Get Sparta
+
+```bash
+$> go get -u -v https://github.com/mweagle/Sparta
+$> cd $GOPATH/src/github.com/mweagle/Sparta
+Sparta$> go get -u -v ./...
+Sparta$> go get -u -v github.com/zcalusic/sysinfo
+```
+
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea>
+### Get Sample App
+
+```bash
+Sparta$> go get -u -v https://github.com/mweagle/SpartaHelloWorld
+Sparta$> cd $GOPATH/src/github.com/mweagle/SpartaHelloWorld
+SpartaHelloWorld$>
+```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea>
+### Deploy Sample App
+
+```bash
+SpartaHelloWorld$> go run main.go provision --s3Bucket MY_S3_BUCKET
+
+$ go run main.go provision --s3Bucket MY_S3_BUCKET
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.1.0
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : 2380eb0
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=provision UTC="2018-02-23T06:25:47Z"
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Provisioning service                          BuildID=49e010fa0178a44eddab85e4f311c75d97ef6885 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=1
+INFO[0001] Checking S3 versioning                        Bucket=MY_S3_BUCKET VersioningEnabled=true
+INFO[0001] Checking S3 region                            Bucket=MY_S3_BUCKET Region=us-west-2
+INFO[0001] Running `go generate`
+INFO[0001] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0003] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack_mweagle-code.zip
+INFO[0003] Lambda code archive size                      Size="14 MB"
+INFO[0003] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-code.zip Path=./.sparta/MyHelloWorldStack_mweagle-code.zip Size="14 MB"
+INFO[0014] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-cftemplate.json Path=./.sparta/MyHelloWorldStack_mweagle-cftemplate.json Size="2.3 kB"
+INFO[0015] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack-mweagle/6b71c580-1862-11e8-a26e-503f20f2ad82"
+INFO[0047] CloudFormation provisioning metrics:
+INFO[0047] Operation duration                            Duration=29.00s Resource=MyHelloWorldStack-mweagle Type="AWS::CloudFormation::Stack"
+INFO[0047] Operation duration                            Duration=19.36s Resource=IAMRole8ac3388ca48db9dbd6fab6f9410bfef9d10b7b35 Type="AWS::IAM::Role"
+INFO[0047] Operation duration                            Duration=2.14s Resource=HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af Type="AWS::Lambda::Function"
+INFO[0047] Stack provisioned                             CreationTime="2018-02-23 06:26:02.395 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:027159405834:stack/MyHelloWorldStack-mweagle/6b71c580-1862-11e8-a26e-503f20f2ad82" StackName=MyHelloWorldStack-mweagle
+INFO[0047] ════════════════════════════════════════════════
+INFO[0047] MyHelloWorldStack-mweagle Summary
+INFO[0047] ════════════════════════════════════════════════
+INFO[0047] Verifying IAM roles                           Duration (s)=0
+INFO[0047] Verifying AWS preconditions                   Duration (s)=1
+INFO[0047] Creating code bundle                          Duration (s)=2
+INFO[0047] Uploading code                                Duration (s)=11
+INFO[0047] Ensuring CloudFormation stack                 Duration (s)=33
+INFO[0047] Total elapsed time                            Duration (s)=47
+```
+						</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Done
+
+						![AWS Console](/presentations/getting-started/AWS-console.jpg "AWS Console")
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+						<textarea data-template>
+
+						![Sparta Helmet](/images/SpartaHelmet.png "Sparta")
+
+						More examples in [GitHub](https://github.com/mweagle?utf8=%E2%9C%93&tab=repositories&q=Sparta&type=&language=)
+						</textarea>
+					</section>
+
+			</div>
+
+		</div>
+
+		<script src="/presentations/reveal.js-3.6.0/lib/js/head.min.js"></script>
+		<script src="/presentations/reveal.js-3.6.0/js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '/presentations/reveal.js-3.6.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/zoom-js/zoom.js', async: true },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
