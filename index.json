@@ -294,8 +294,8 @@
 	"content": " Thanks! 🎉🙏  Kyle Anderson James Brook Ryan Brown sdbeard Scott Raine Nick Scheiblauer Paul Seiffert Thom Shutt Patrick Steger  "
 },
 {
-	"uri": "/_meta/",
-	"title": "Meta",
+	"uri": "/meta/",
+	"title": "_meta",
 	"tags": [],
 	"description": "",
 	"content": " This outlines how to edit the documentation itself\nRequirements  The Sparta repo Hugo v.0.36.1:\n$ hugo version Hugo Static Site Generator v0.36.1 darwin/amd64 BuildDate: 2018-02-15T09:07:45Z   Note that the required Hugo version will be automatically installed by the docs branch Makefile.\nEditing  git checkout the docs branch Start a preview server with make edit:\n$ hugo server --disableFastRender | EN +------------------+-----+ Pages | 50 Paginator pages | 1 Non-page files | 0 Static files | 457 Processed images | 0 Aliases | 3 Sitemaps | 1 Cleaned | 0 Total in 774 ms Watching for changes in ./github.com/mweagle/Sparta/{content,layouts,static,themes} Serving pages from memory Web Server is available at //localhost:1313/ (bind address 127.0.0.1) Press Ctrl+C to stop  Visit http://localhost:1313\n Edit the /content subdirectory contents\n Push your /docs branch to GitHub and open a PR\n  Visit the docdock site for complete documentation regarding shortcodes and included libraries.\n"
