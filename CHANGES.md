@@ -6,7 +6,10 @@
   - Removed `lambdabinary` build tags from [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
     - AWS native support for **Go** in AWS caused a significant difference in standard vs `lambdabinary` build targets executed which prevented custom application options from being respected.
 - :checkered_flag: **CHANGES**
-  - Updated `describe` output format and upgraded to latest versions of static HTML assets
+  - Updated `describe` output format and upgraded to latest versions of static HTML assets.
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.0/describe.jpg" />
+    </div>
+
   - Exposed [ReservedConcurrentExecutions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-reservedconcurrentexecutions) option for Lambda functions.
   - Exposed [DeadLetterConfigArn](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-deadletterconfig) property to support custom DLQ destinations.
   - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample
