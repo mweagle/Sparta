@@ -72,6 +72,7 @@ docs:
 ################################################################################
 travis-depends: install_requirements
 	go get -u github.com/golang/dep/...
+	dep version
 	dep ensure
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
 	rsync -a --quiet --remove-source-files ./vendor/ $(GOPATH)/src
