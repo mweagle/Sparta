@@ -1,6 +1,7 @@
 language: go
 go:
-- 1.9.2
+  # https://twitter.com/dgryski/status/964626204488695808
+- "1.10"
 - tip
 before_install:
 - echo "before_install"
