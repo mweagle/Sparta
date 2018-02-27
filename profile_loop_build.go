@@ -292,12 +292,17 @@ func syncStackProfileSnapshots(profileType string,
 	// Ok, let's get some user information
 	s3Svc := s3.New(awsSession)
 	downloader := s3manager.NewDownloader(awsSession)
-	downloadKeys, _ := objectKeysForProfileType(profileType,
+	downloadKeys, downloadKeysErr := objectKeysForProfileType(profileType,
 		stackName,
 		s3BucketName,
 		1024,
 		awsSession,
 		logger)
+
+	if downloadKeys != nil {
+		return nil, errors.Wrapf(downloadKeysErr,
+			"Failed to determine pprof download keys")
+	}
 	downloadTasks := make([]*workTask, len(downloadKeys))
 	for index, eachKey := range downloadKeys {
 		taskFunc := downloaderTask(profileType,
@@ -372,7 +377,13 @@ func syncStackProfileSnapshots(profileType string,
 	defer outputFile.Close()
 	// Delete all the other ones, just return the consolidated one...
 	for _, eachResult := range results {
-		os.Remove(eachResult.(string))
+		unlinkErr := os.Remove(eachResult.(string))
+		if unlinkErr != nil {
+			logger.WithFields(logrus.Fields{
+				"File":  consolidatedPath,
+				"Error": unlinkErr,
+			}).Info("Failed to delete file")
+		}
 	}
 	return []string{consolidatedPath}, nil
 }

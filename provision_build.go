@@ -66,13 +66,12 @@ type finalizerFunction func(logger *logrus.Logger)
 // full URL or just the valid S3 Keyname
 type s3UploadURL struct {
 	location string
+	path     string
 	version  string
 }
 
 func (s3URL *s3UploadURL) keyName() string {
-	// Find the hostname in the URL, then strip it out
-	urlParts, _ := url.Parse(s3URL.location)
-	return strings.TrimPrefix(urlParts.Path, "/")
+	return s3URL.path
 }
 
 func newS3UploadURL(s3URL string) *s3UploadURL {
@@ -89,7 +88,9 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 	if len(versionIDValues) == 1 {
 		version = versionIDValues[0]
 	}
-	return &s3UploadURL{location: s3URL, version: version}
+	return &s3UploadURL{location: s3URL,
+		path:    strings.TrimPrefix(urlParts.Path, "/"),
+		version: version}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,8 +256,12 @@ func (ctx *workflowContext) rollback() {
 	ctx.logger.Info("Invoking rollback functions")
 	var wg sync.WaitGroup
 	wg.Add(len(ctx.transaction.rollbackFunctions))
-	callRollbackHook(ctx, &wg)
-
+	rollbackErr := callRollbackHook(ctx, &wg)
+	if rollbackErr != nil {
+		ctx.logger.WithFields(logrus.Fields{
+			"Error": rollbackErr,
+		}).Warning("Rollback Hook failed to execute")
+	}
 	for _, eachCleanup := range ctx.transaction.rollbackFunctions {
 		go func(cleanupFunc spartaS3.RollbackFunction, goLogger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
@@ -308,7 +313,14 @@ func callRollbackHook(ctx *workflowContext, wg *sync.WaitGroup) error {
 			logger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
-			handler.Rollback(context, serviceName, awsSession, noop, logger)
+			rollbackErr := handler.Rollback(context,
+				serviceName,
+				awsSession,
+				noop,
+				logger)
+			logger.WithFields(logrus.Fields{
+				"Error": rollbackErr,
+			}).Warn("Rollback function failed to complete")
 		}(eachRollbackHook,
 			ctx.context.workflowHooksContext,
 			ctx.userdata.serviceName,
@@ -438,7 +450,10 @@ func versionAwareS3KeyName(s3DefaultKey string, s3VersioningEnabled bool, logger
 
 		hash := sha1.New()
 		salt := fmt.Sprintf("%s-%d", s3DefaultKey, time.Now().UnixNano())
-		hash.Write([]byte(salt))
+		_, writeErr := hash.Write([]byte(salt))
+		if writeErr != nil {
+			return "", errors.Wrapf(writeErr, "Failed to update hash digest")
+		}
 		versionKeyName = fmt.Sprintf("%s-%s%s",
 			prefixString,
 			hex.EncodeToString(hash.Sum(nil)),
@@ -1055,7 +1070,10 @@ func createUploadStep(packagePath string) workflowStep {
 				if nil != err {
 					return newTaskResult(nil, err)
 				}
-				zipArchive.Close()
+				errClose := zipArchive.Close()
+				if errClose != nil {
+					return newTaskResult(nil, errClose)
+				}
 
 				// Upload it & save the key
 				s3SiteLambdaZipURL, s3SiteLambdaZipURLErr := uploadLocalFileToS3(tmpFile.Name(), "", ctx)
@@ -1327,8 +1345,10 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	if nil != writeErr {
 		return nil, writeErr
 	}
-	templateFile.Close()
-
+	errClose := templateFile.Close()
+	if errClose != nil {
+		return nil, errClose
+	}
 	// Log the template if needed
 	if nil != ctx.context.templateWriter || ctx.logger.Level <= logrus.DebugLevel {
 		templateBody := string(cfTemplate)
@@ -1340,7 +1360,11 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			"Body": string(formatted),
 		}).Debug("CloudFormation template body")
 		if nil != ctx.context.templateWriter {
-			io.WriteString(ctx.context.templateWriter, string(formatted))
+			_, writeErr := io.WriteString(ctx.context.templateWriter,
+				string(formatted))
+			if writeErr != nil {
+				return nil, errors.Wrapf(writeErr, "Failed to write template")
+			}
 		}
 	}
 
@@ -1543,16 +1567,16 @@ func ensureCloudFormationStack() workflowStep {
 				safeMergeErrs := gocc.SafeMerge(apiGatewayTemplate,
 					ctx.context.cfTemplate)
 				if len(safeMergeErrs) != 0 {
-					err = fmt.Errorf("APIGateway template merge failed: %v", safeMergeErrs)
+					err = errors.Errorf("APIGateway template merge failed: %v", safeMergeErrs)
 				}
 			}
 			if nil != err {
-				return nil, fmt.Errorf("APIGateway template export failed: %s", err)
+				return nil, errors.Wrapf(err, "APIGateway template export failed")
 			}
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.userdata.s3SiteContext.s3Site {
-			ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
+			exportErr := ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
 				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
@@ -1561,6 +1585,9 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.context.lambdaIAMRoleNameMap,
 				ctx.context.cfTemplate,
 				ctx.logger)
+			if exportErr != nil {
+				return nil, errors.Wrapf(exportErr, "Failed to export S3 site")
+			}
 		}
 		// Service decorator?
 		serviceDecoratorErr := callServiceDecoratorHook(ctx)

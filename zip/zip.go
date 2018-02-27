@@ -64,8 +64,12 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 			return readerErr
 		}
 		written, copyErr := io.Copy(binaryWriter, reader)
-		reader.Close()
-
+		errClose := reader.Close()
+		if errClose != nil {
+			logger.WithFields(logrus.Fields{
+				"Error": errClose,
+			}).Warn("Failed to close Zip input stream")
+		}
 		logger.WithFields(logrus.Fields{
 			"WrittenBytes": written,
 			"SourcePath":   fullPathSource,

@@ -253,7 +253,11 @@ func MainEx(serviceName string,
 	executeErr := CommandLineOptions.Root.Execute()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
-			newLogger, _ := NewLogger("info")
+			newLogger, newLoggerErr := NewLogger("info")
+			if newLoggerErr != nil {
+				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
+				newLogger = logrus.New()
+			}
 			OptionsGlobal.Logger = newLogger
 		}
 		if OptionsGlobal.Logger != nil {

@@ -678,13 +678,22 @@ func WaitForStackOperationComplete(stackID string,
 // name is not content-addressable.
 func CloudFormationResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
-	hash.Write([]byte(prefix))
+	_, writeErr := hash.Write([]byte(prefix))
+	if writeErr != nil {
+		// TODO
+	}
 	if len(parts) <= 0 {
 		randValue := rand.Int63()
-		hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+		_, writeErr = hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+		if writeErr != nil {
+			// TODO
+		}
 	} else {
 		for _, eachPart := range parts {
-			hash.Write([]byte(eachPart))
+			_, writeErr = hash.Write([]byte(eachPart))
+			if writeErr != nil {
+				// TODO
+			}
 		}
 	}
 	resourceName := fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))

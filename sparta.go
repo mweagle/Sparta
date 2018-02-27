@@ -527,9 +527,18 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	}
 
 	hash := sha1.New()
-	hash.Write([]byte(mapping.EventSourceArn))
-	binary.Write(hash, binary.LittleEndian, mapping.BatchSize)
-	hash.Write([]byte(mapping.StartingPosition))
+	_, writeErr := hash.Write([]byte(mapping.EventSourceArn))
+	if writeErr != nil {
+		return errors.Wrapf(writeErr, "Failed to update hash")
+	}
+	writeErr = binary.Write(hash, binary.LittleEndian, mapping.BatchSize)
+	if writeErr != nil {
+		return errors.Wrapf(writeErr, "Failed to update hash")
+	}
+	_, writeErr = hash.Write([]byte(mapping.StartingPosition))
+	if writeErr != nil {
+		return errors.Wrapf(writeErr, "Failed to update hash")
+	}
 	resourceName := fmt.Sprintf("LambdaES%s", hex.EncodeToString(hash.Sum(nil)))
 	template.AddResource(resourceName, eventSourceMappingResource)
 	return nil
@@ -562,8 +571,12 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 	// part the CustomResource invocation doesn't change during stack updates. CF
 	// will throw an error if the ServiceToken changes across updates.
 	source := fmt.Sprintf("%#v", resourceInfo.userFunctionName)
-	hash.Write([]byte(source))
-	return CloudFormationResourceName(resourceInfo.userFunctionName, hex.EncodeToString(hash.Sum(nil)))
+	_, writeErr := hash.Write([]byte(source))
+	if writeErr != nil {
+		fmt.Printf("TODO: failed to update hash. Error: %s", writeErr)
+	}
+	return CloudFormationResourceName(resourceInfo.userFunctionName,
+		hex.EncodeToString(hash.Sum(nil)))
 }
 
 func (resourceInfo *customResourceInfo) export(serviceName string,

@@ -113,7 +113,7 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
 	}
 	resources := templateResourcesForKeys(images, logger)
-	imageMap := make(map[string]string, 0)
+	imageMap := make(map[string]string)
 	for _, eachResource := range resources {
 		imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
 	}

@@ -61,8 +61,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "f7f1ee9550cc76ceea731d99c8dbe00a0c39f66d"
-  version = "v1.13.4"
+  revision = "f3a52638aeadcd5d6ba1d747b8c552c8e0066312"
+  version = "v1.13.5"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -212,7 +212,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "49796115aa4b964c318aad4f3084fdb41e9aa067"
+  revision = "beaf6a35706e5032ae4c3fcf342c663c069f44d2"
 
 [[projects]]
   branch = "master"
@@ -221,7 +221,7 @@
     "unix",
     "windows"
   ]
-  revision = "88d2dcc510266da9f7f8c7f34e1940716cab5f5c"
+  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"

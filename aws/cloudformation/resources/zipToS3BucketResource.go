@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -109,7 +110,10 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 				return nil, err
 			}
 		}
-		stream.Close()
+		errClose := stream.Close()
+		if errClose != nil {
+			return nil, errors.Wrapf(errClose, "Failed to close S3 PutObject stream")
+		}
 	}
 	// Need to add the manifest data iff defined
 	if nil != command.Manifest {

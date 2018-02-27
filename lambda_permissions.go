@@ -87,12 +87,15 @@ func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.St
 }
 
 func describeInfoArn(arnExpression interface{}) string {
-	switch arnExpression.(type) {
+	switch typedArn := arnExpression.(type) {
 	case string:
-		return arnExpression.(string)
+		return typedArn
 	case *gocf.StringExpr,
 		gocf.RefFunc:
-		data, _ := json.Marshal(arnExpression)
+		data, dataErr := json.Marshal(typedArn)
+		if dataErr != nil {
+			data = []byte(fmt.Sprintf("%v", typedArn))
+		}
 		return string(data)
 	default:
 		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", arnExpression))

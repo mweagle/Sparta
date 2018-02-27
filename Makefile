@@ -35,6 +35,7 @@ install_requirements:
 	go get -u github.com/fzipp/gocyclo
 	go get -u github.com/golang/lint/golint
 	go get -u github.com/mjibson/esc
+	go get -u github.com/GoASTScanner/gas
 
 .PHONY: vet
 vet: install_requirements
@@ -60,6 +61,7 @@ fmtcheck:install_requirements
 .PHONY: validate
 validate: install_requirements vet lint fmtcheck
 	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
+	gas -exclude=G204 ./...
 
 docs:
 	@echo ""
@@ -80,7 +82,7 @@ travis-depends: install_requirements
 
 .PHONY: travis-ci-test
 travis-ci-test: travis-depends test build
-	go test -v -cover ./...
+	go test -v -cover -race ./...
 
 ################################################################################
 # Sparta commands
@@ -109,7 +111,7 @@ clean:
 
 .PHONY: test
 test: validate
-	go test -v -cover ./...
+	go test -v -cover -race ./...
 
 .PHONY: test-cover
 test-cover: ensure-preconditions

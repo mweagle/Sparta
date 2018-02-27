@@ -65,7 +65,10 @@ var RootCmd = &cobra.Command{
 			return describeStacksResponseErr
 		}
 
-		stackInfo, _ := json.Marshal(describeStacksResponse)
+		stackInfo, stackInfoErr := json.Marshal(describeStacksResponse)
+		if stackInfoErr != nil {
+			return errors.Wrapf(stackInfoErr, "Failed to describe stacks")
+		}
 		outputFilepath := filepath.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
 		err = ioutil.WriteFile(outputFilepath, stackInfo, 0644)
 		if nil != err {

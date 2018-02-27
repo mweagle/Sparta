@@ -39,6 +39,7 @@
     ```
     ERRO[0000] Failed to validate preconditions: Please run `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be safely imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored
     ```
+  - Added additional build-time static analysis check for suspicious coding practices with [gas](https://github.com/GoASTScanner/gas)
 - :bug:  **FIXED**
   - [101 - Doesn't work with Mac OSX ](https://github.com/mweagle/Sparta/issues/101)
   - Fixed latent bug where `NewAuthorizedMethod` didn't properly preserve the [AuthorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html#cfn-apigateway-method-authorizationtype) when serializing to CloudFormation. This also forced a change to the function signature to accept a `gocf.Stringable` satisfying type for the [authorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-authorizer.html).

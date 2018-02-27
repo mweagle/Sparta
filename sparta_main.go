@@ -1,7 +1,7 @@
 package sparta
 
 import (
-	"crypto/rand"
+	cryptoRand "crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
@@ -87,11 +87,14 @@ func provisionBuildID(userSuppliedValue string) (string, error) {
 	if "" == buildID {
 		hash := sha1.New()
 		randomBytes := make([]byte, 256)
-		_, err := rand.Read(randomBytes)
+		_, err := cryptoRand.Read(randomBytes)
 		if err != nil {
 			return "", err
 		}
-		hash.Write(randomBytes)
+		_, err = hash.Write(randomBytes)
+		if err != nil {
+			return "", err
+		}
 		buildID = hex.EncodeToString(hash.Sum(nil))
 	}
 	return buildID, nil
@@ -406,7 +409,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 
 	if nil != executeErr {
 		parseCmdRoot.SetHelpFunc(nil)
-		parseCmdRoot.Root().Help()
+		executeErr = parseCmdRoot.Root().Help()
 	}
 	return executeErr
 }

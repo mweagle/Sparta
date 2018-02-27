@@ -31,7 +31,10 @@ func main() {
 	tagString := strings.Join(tags, " ")
 	fmt.Printf("Prepending tags: %s\n", tagString)
 
-	updatedContents := fmt.Sprintf("// +build %s\n\n%s", tagString, fileContents)
+	// Include the #nosec directive to have gas ignore
+	// the ignored error returns
+	// https://github.com/GoASTScanner/gas
+	updatedContents := fmt.Sprintf("// +build %s\n\n/* #nosec */\n\n%s", tagString, fileContents)
 	err = ioutil.WriteFile(absPath, []byte(updatedContents), 0644)
 	if nil != err {
 		panic(err)
