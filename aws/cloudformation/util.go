@@ -368,25 +368,36 @@ func stackCapabilities(template *gocf.Template) []*string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
+// DynamicValueToStringExpr is a DRY function to type assert
+// a potentiall dynamic value into a gocf.Stringable
+// satisfying type
+func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
+	var stringExpr gocf.Stringable
+	switch typedValue := dynamicValue.(type) {
+	case string:
+		stringExpr = gocf.String(typedValue)
+	case gocf.Stringable:
+		stringExpr = typedValue.String()
+	case *gocf.StringExpr:
+		stringExpr = typedValue
+	case gocf.RefFunc:
+		stringExpr = typedValue.String()
+	default:
+		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
+	}
+	return stringExpr
+}
+
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	arnParts := []gocf.Stringable{
+		gocf.String("arn:aws:s3:::"),
+		DynamicValueToStringExpr(bucket),
+		gocf.String("/*"),
 	}
-	arnParts = append(arnParts, gocf.String("/*"))
 	return gocf.Join("", arnParts...).String()
 }
 
@@ -395,18 +406,9 @@ func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	arnParts := []gocf.Stringable{
+		gocf.String("arn:aws:s3:::"),
+		DynamicValueToStringExpr(bucket),
 	}
 	return gocf.Join("", arnParts...).String()
 }
