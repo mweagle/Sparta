@@ -1,6 +1,7 @@
 package sparta
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -8,9 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
-
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
-
 	"github.com/pkg/errors"
 )
 
@@ -29,6 +29,24 @@ func main() {
 	fmt.Printf("%v", si)
 }
 `
+
+// describeInfoValue is a utility function that accepts
+// some type of dynamic gocf value and transforms it into
+// something that is `describe` output compatible
+func describeInfoValue(dynamicValue interface{}) string {
+	switch typedArn := dynamicValue.(type) {
+	case string:
+		return typedArn
+	case gocf.Stringable:
+		data, dataErr := json.Marshal(typedArn)
+		if dataErr != nil {
+			data = []byte(fmt.Sprintf("%v", typedArn))
+		}
+		return string(data)
+	default:
+		panic(fmt.Sprintf("Unsupported dynamic value type for `describe`: %+v", typedArn))
+	}
+}
 
 // userGoPath returns either $GOPATH or the new $HOME/go path
 // introduced with Go 1.8
