@@ -9,9 +9,10 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+
 	gocf "github.com/mweagle/go-cloudformation"
-	"github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 const mainSysInfoSample = `
