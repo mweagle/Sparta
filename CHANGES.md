@@ -6,6 +6,17 @@
   - Removed `lambdabinary` build tags from [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
     - AWS native support for **Go** in AWS caused a significant difference in standard vs `lambdabinary` build targets executed which prevented custom application options from being respected.
 - :checkered_flag: **CHANGES**
+  - Change [EventSourceMapping.EventSourceArn](https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping) from string to `interface{}` type.
+    - This change was to allow for provisioning of Pull-based event sources being provisioned in the same Sparta application as the lambda definition.
+    - For example, to reference a DynamoDB Stream created by in a [ServiceDecoratorHook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) for the _myDynamoDBResourceName_ resource you can now use:
+    ```
+    lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+      &sparta.EventSourceMapping{
+        EventSourceArn:   gocf.GetAtt(myDynamoDBResourceName, "StreamArn"),
+        StartingPosition: "TRIM_HORIZON",
+        BatchSize:        10,
+      })
+    ```
   - Updated `describe` output format and upgraded to latest versions of static HTML assets.
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.0/describe.jpg" />
     </div>
