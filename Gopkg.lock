@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "0aa8b6a162b391fe2d95648b7677d1d6ac2090a6"
-  version = "v1.4.1"
+  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
+  version = "v1.4.2"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
@@ -14,8 +14,7 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "fafa7e49388b8991caf99308e80655ba91816b72"
-  version = "v1.1.0"
+  revision = "64efb26269cc5d9c363a143a936a7c75b053e06d"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -61,8 +60,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "f3a52638aeadcd5d6ba1d747b8c552c8e0066312"
-  version = "v1.13.5"
+  revision = "ce48e67ca697079662aee65a13202f37a185962b"
+  version = "v1.13.6"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -212,7 +211,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "beaf6a35706e5032ae4c3fcf342c663c069f44d2"
+  revision = "8c653846df49742c4c85ec37e5d9f8d3ba657895"
 
 [[projects]]
   branch = "master"
@@ -229,8 +228,8 @@
     "core",
     "terminal"
   ]
-  revision = "0aa8b6a162b391fe2d95648b7677d1d6ac2090a6"
-  version = "v1.4.1"
+  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
+  version = "v1.4.2"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
@@ -241,6 +240,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "67770d72fc9b9d7bbe35ab77bc7e562f72c181c58de53709b228bcc3bfdb1944"
+  inputs-digest = "b7b299268bfcb529adab5ee09bb15290327bc99e5acb166e9e4477ec755de4d4"
   solver-name = "gps-cdcl"
   solver-version = 1
