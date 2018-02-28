@@ -463,16 +463,9 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 		}).Info("Instrumenting function for profiling")
 
 		// The bucket is either a literal or a gocf.StringExpr - which one?
-		var bucketValue *gocf.StringExpr
+		var bucketValue gocf.Stringable
 		if s3BucketArchive != nil {
-			switch bucketExpr := s3BucketArchive.(type) {
-			case gocf.StringExpr:
-				bucketValue = bucketExpr.String()
-			case string:
-				bucketValue = gocf.String(bucketExpr)
-			default:
-				return errors.Errorf("Unknown S3 profile bucket value type: %T", s3BucketArchive)
-			}
+			bucketValue = spartaCF.DynamicValueToStringExpr(s3BucketArchive)
 		} else {
 			bucketValue = gocf.String(S3Bucket)
 		}
@@ -483,7 +476,7 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 		}
 		info.Options.Environment[envVarStackName] = gocf.Ref("AWS::StackName").String()
 		info.Options.Environment[envVarStackInstanceID] = gocf.Ref("AWS::StackId").String()
-		info.Options.Environment[envVarProfileBucketName] = bucketValue
+		info.Options.Environment[envVarProfileBucketName] = bucketValue.String()
 
 		// Update the IAM role...
 		if info.RoleDefinition != nil {

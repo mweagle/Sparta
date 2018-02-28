@@ -573,7 +573,9 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
 				ctx.context.cfTemplate.AddResource(logicalName,
-					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings, eachLambdaInfo.Options, ctx.logger))
+					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings,
+						eachLambdaInfo.Options,
+						ctx.logger))
 
 				ctx.context.lambdaIAMRoleNameMap[logicalName] = gocf.GetAtt(logicalName, "Arn")
 			}
@@ -588,7 +590,9 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				_, exists := ctx.context.lambdaIAMRoleNameMap[customResourceLogicalName]
 				if !exists {
 					ctx.context.cfTemplate.AddResource(customResourceLogicalName,
-						eachCustomResource.roleDefinition.toResource(nil, eachCustomResource.options, ctx.logger))
+						eachCustomResource.roleDefinition.toResource(nil,
+							eachCustomResource.options,
+							ctx.logger))
 					ctx.context.lambdaIAMRoleNameMap[customResourceLogicalName] = gocf.GetAtt(customResourceLogicalName, "Arn")
 				}
 			}
@@ -1099,55 +1103,6 @@ func createUploadStep(packagePath string) workflowStep {
 	}
 }
 
-func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
-	buildID string,
-	logger *logrus.Logger) (*gocf.Template, error) {
-
-	// Add the build id s.t. the logger can get stamped...
-	if lambdaAWSInfo.Options == nil {
-		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
-	}
-	lambdaEnvironment := lambdaAWSInfo.Options.Environment
-	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-	}
-	return template, nil
-}
-
-func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
-	logger *logrus.Logger) (*gocf.Template, error) {
-	depMap := make(map[string]string)
-
-	// Update the metdata with a reference to the output of each
-	// depended on item...
-	for _, eachDependsKey := range lambdaAWSInfo.DependsOn {
-		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template, eachDependsKey, logger)
-		if dependencyTextErr != nil {
-			return nil, errors.Wrapf(dependencyTextErr, "Failed to determine discovery info for resource")
-		}
-		depMap[eachDependsKey] = string(dependencyText)
-	}
-	if lambdaAWSInfo.Options == nil {
-		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
-	}
-	lambdaEnvironment := lambdaAWSInfo.Options.Environment
-	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-	}
-
-	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(),
-		depMap)
-	if discoveryInfoErr != nil {
-		return nil, errors.Wrap(discoveryInfoErr, "Failed to create resource discovery info")
-	}
-
-	// Update the env map
-	lambdaAWSInfo.Options.Environment[envVarDiscoveryInformation] = discoveryInfo
-	return template, nil
-}
-
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
 // the config files in the package, and the
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
@@ -1429,28 +1384,6 @@ func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logg
 	return nil
 }
 
-func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
-	if nil != codePipelineEnvironments {
-		if nil == lambdaAWSInfo.Options {
-			lambdaAWSInfo.Options = defaultLambdaFunctionOptions()
-		}
-		if nil == lambdaAWSInfo.Options.Environment {
-			lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-		}
-		for _, eachEnvironment := range codePipelineEnvironments {
-
-			logger.WithFields(logrus.Fields{
-				"Environment":    eachEnvironment,
-				"LambdaFunction": lambdaAWSInfo.lambdaFunctionName(),
-			}).Debug("Annotating Lambda environment for CodePipeline")
-
-			for eachKey := range eachEnvironment {
-				lambdaAWSInfo.Options.Environment[eachKey] = gocf.Ref(eachKey).String()
-			}
-		}
-	}
-}
-
 func validateSpartaPostconditions() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
 		validateErrs := make([]error, 0)
@@ -1526,7 +1459,6 @@ func ensureCloudFormationStack() workflowStep {
 			}
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
-
 			verifyErr := verifyLambdaPreconditions(eachEntry, ctx.logger)
 			if verifyErr != nil {
 				return nil, verifyErr
@@ -1635,6 +1567,19 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, postMarshallErr
 			}
 		}
+		// Last step, run the annotation steps to patch
+		// up any references that depends on the entire
+		// template being constructed
+		_, annotateErr := annotateMaterializedTemplate(ctx.userdata.lambdaAWSInfos,
+			ctx.context.cfTemplate,
+			ctx.logger)
+		if annotateErr != nil {
+			return nil, errors.Wrapf(annotateErr,
+				"Failed to perform final template annotations")
+		}
+		// Finally, anything we need to do here to patch up any template references
+		// across resources?
+
 		return applyCloudFormationOperation(ctx)
 	}
 }

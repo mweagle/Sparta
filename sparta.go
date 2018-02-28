@@ -444,31 +444,15 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 	if options != nil && options.VpcConfig != nil {
 		statements = append(statements, CommonIAMStatements.VPC...)
 	}
+	// In the past Sparta used to attach EventSourceMapping policies here.
+	// However, moving everything to dynamic references means that we can't
+	// fully populate the PolicyDocument statement slice until all of
+	// the dynamically provisioned resources are defined. So that logic has
+	// been moved to annotateMaterializedTemplate and annotateEventSourceMappings
+	// which is run as the final step right before the template is marshaled
+	// for creation.
 
 	// http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
-	for _, eachEventSourceMapping := range eventSourceMappings {
-		arnParts := strings.Split(eachEventSourceMapping.EventSourceArn, ":")
-		// 3rd slot is service scope
-		if len(arnParts) >= 2 {
-			awsService := arnParts[2]
-			logger.Debug("Looking up common IAM privileges for EventSource: ", awsService)
-			switch awsService {
-			case "dynamodb":
-				for _, statement := range CommonIAMStatements.DynamoDB {
-					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
-					statements = append(statements, statement)
-				}
-			case "kinesis":
-				for _, statement := range CommonIAMStatements.Kinesis {
-					statement.Resource = gocf.String(eachEventSourceMapping.EventSourceArn)
-					statements = append(statements, statement)
-				}
-			default:
-				logger.Debug("No additional statements found")
-			}
-		}
-	}
-
 	iamPolicies := gocf.IAMRolePolicyList{}
 	iamPolicies = append(iamPolicies, gocf.IAMRolePolicy{
 		PolicyDocument: ArbitraryJSONObject{
@@ -506,7 +490,7 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 // (http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput)
 type EventSourceMapping struct {
 	StartingPosition string
-	EventSourceArn   string
+	EventSourceArn   interface{}
 	Disabled         bool
 	BatchSize        int64
 }
@@ -518,8 +502,9 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 
+	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
-		EventSourceArn:   gocf.String(mapping.EventSourceArn),
+		EventSourceArn:   dynamicArn.String(),
 		FunctionName:     targetLambda,
 		StartingPosition: gocf.String(mapping.StartingPosition),
 		BatchSize:        gocf.Integer(mapping.BatchSize),
@@ -527,7 +512,7 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	}
 
 	hash := sha1.New()
-	_, writeErr := hash.Write([]byte(mapping.EventSourceArn))
+	_, writeErr := hash.Write([]byte(dynamicArn.String().Literal))
 	if writeErr != nil {
 		return errors.Wrapf(writeErr, "Failed to update hash")
 	}

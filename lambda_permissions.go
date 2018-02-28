@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/service/s3"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
@@ -72,34 +73,10 @@ func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.St
 	if nil != joinParts {
 		parts = append(parts, joinParts...)
 	}
-	switch perm.SourceArn.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		parts = []gocf.Stringable{gocf.String(perm.SourceArn.(string))}
-	case *gocf.StringExpr:
-		parts = append(parts, perm.SourceArn.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		parts = append(parts, perm.SourceArn.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", perm.SourceArn))
-	}
+	parts = append(parts,
+		spartaCF.DynamicValueToStringExpr(perm.SourceArn),
+	)
 	return gocf.Join("", parts...)
-}
-
-func describeInfoArn(arnExpression interface{}) string {
-	switch typedArn := arnExpression.(type) {
-	case string:
-		return typedArn
-	case *gocf.StringExpr,
-		gocf.RefFunc:
-		data, dataErr := json.Marshal(typedArn)
-		if dataErr != nil {
-			data = []byte(fmt.Sprintf("%v", typedArn))
-		}
-		return string(data)
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", arnExpression))
-	}
 }
 
 func (perm BasePermission) export(principal *gocf.StringExpr,
@@ -251,7 +228,7 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 
 	nodes := []descriptionNode{
 		{
-			Name:     describeInfoArn(perm.SourceArn),
+			Name:     describeInfoValue(perm.SourceArn),
 			Relation: s3Events,
 		},
 	}
@@ -338,7 +315,7 @@ func (perm SNSPermission) export(serviceName string,
 func (perm SNSPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
 		{
-			Name:     describeInfoArn(perm.SourceArn),
+			Name:     describeInfoValue(perm.SourceArn),
 			Relation: "",
 		},
 	}
@@ -1068,7 +1045,7 @@ func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error
 	var nodes []descriptionNode
 	for eachFilterName, eachFilterDef := range perm.Filters {
 		nodes = append(nodes, descriptionNode{
-			Name:     describeInfoArn(eachFilterDef.LogGroupName),
+			Name:     describeInfoValue(eachFilterDef.LogGroupName),
 			Relation: fmt.Sprintf("%s (%s)", eachFilterName, eachFilterDef.FilterPattern),
 		})
 	}
