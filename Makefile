@@ -2,6 +2,7 @@
 
 GO_LINT := $(GOPATH)/bin/golint
 WORK_DIR := ./sparta
+GO_GET_FLAGS :=
 
 ################################################################################
 # Meta
@@ -25,17 +26,26 @@ generate:
 GO_SOURCE_FILES := find . -type f -name '*.go' \
 	! -path './vendor/*' \
 
+.PHONY: go_get_requirements
+go_get_requirements:
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/megacheck
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/gosimple
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/unused
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/staticcheck
+	go get $(GO_GET_FLAGS) golang.org/x/tools/cmd/goimports
+	go get $(GO_GET_FLAGS) github.com/fzipp/gocyclo
+	go get $(GO_GET_FLAGS) github.com/golang/lint/golint
+	go get $(GO_GET_FLAGS) github.com/mjibson/esc
+	go get $(GO_GET_FLAGS) github.com/GoASTScanner/gas
+
+.PHONY: update_requirements
+update_requirements: GO_GET_FLAGS=-u
+update_requirements: go_get_requirements
+	echo "Updated tooling"
+
 .PHONY: install_requirements
-install_requirements:
-	go get -u honnef.co/go/tools/cmd/megacheck
-	go get -u honnef.co/go/tools/cmd/gosimple
-	go get -u honnef.co/go/tools/cmd/unused
-	go get -u honnef.co/go/tools/cmd/staticcheck
-	go get -u golang.org/x/tools/cmd/goimports
-	go get -u github.com/fzipp/gocyclo
-	go get -u github.com/golang/lint/golint
-	go get -u github.com/mjibson/esc
-	go get -u github.com/GoASTScanner/gas
+install_requirements: go_get_requirements
+	echo "Installed tooling"
 
 .PHONY: vet
 vet: install_requirements
@@ -72,7 +82,7 @@ docs:
 ################################################################################
 # Travis
 ################################################################################
-travis-depends: install_requirements
+travis-depends: update_requirements
 	go get -u github.com/golang/dep/...
 	dep version
 	dep ensure
