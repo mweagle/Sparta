@@ -12,6 +12,7 @@ import (
 	"strings"
 	"text/template"
 
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -199,10 +200,11 @@ func Describe(serviceName string,
 				writeLink(&b, name, eachLambda.lambdaFunctionName(), strings.Replace(link, "\n", "<br><br>", -1))
 			}
 		}
-
 		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			writeNode(&b, eachEventSourceMapping.EventSourceArn, nodeColorEventSource, "border-style:dotted")
-			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFunctionName(), "")
+			dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
+			literalArn := dynamicArn.String().Literal
+			writeNode(&b, literalArn, nodeColorEventSource, "border-style:dotted")
+			writeLink(&b, literalArn, eachLambda.lambdaFunctionName(), "")
 		}
 	}
 
