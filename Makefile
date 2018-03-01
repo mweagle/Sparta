@@ -1,6 +1,7 @@
 .DEFAULT_GOAL=build
 
-GO_LINT := $(GOPATH)/bin/golint
+GO_LINT_PATH := $(GOPATH)/bin/golint
+GAS_PATH := $(GOPATH)/bin/gas
 WORK_DIR := ./sparta
 GO_GET_FLAGS :=
 
@@ -56,7 +57,7 @@ vet: install_requirements
 .PHONY: lint
 lint: install_requirements
 	for file in $(shell $(GO_SOURCE_FILES)); do \
-		$(GO_LINT) "$${file}" || exit 1 ;\
+		$(GO_LINT_PATH) "$${file}" || exit 1 ;\
 	done
 
 .PHONY: fmt
@@ -71,7 +72,7 @@ fmtcheck:install_requirements
 .PHONY: validate
 validate: install_requirements vet lint fmtcheck
 	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
-	gas -exclude=G204 ./...
+	$(GAS_PATH) -exclude=G204 ./...
 
 docs:
 	@echo ""

@@ -20,7 +20,7 @@
   - Updated `describe` output format and upgraded to latest versions of static HTML assets.
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.0/describe.jpg" />
     </div>
-
+  - Delegate CloudFormation template aggregation to [go-cloudcondenser](https://github.com/mweagle/go-cloudcondenser)
   - Exposed [ReservedConcurrentExecutions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-reservedconcurrentexecutions) option for Lambda functions.
   - Exposed [DeadLetterConfigArn](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-deadletterconfig) property to support custom DLQ destinations.
   - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample
@@ -48,7 +48,12 @@
     - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
   - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
     ```
-    ERRO[0000] Failed to validate preconditions: Please run `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be safely imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored
+    ERRO[0000] Failed to validate preconditions: Please run
+    `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package.
+    This package is used when cross-compiling your AWS Lambda binary and cannot
+    be safely imported across platforms. When you `go get` the package, you may
+    see errors as in `undefined: syscall.Utsname`. These are expected and can be
+    ignored
     ```
   - Added additional build-time static analysis check for suspicious coding practices with [gas](https://github.com/GoASTScanner/gas)
 - :bug:  **FIXED**
