@@ -37,8 +37,7 @@ go_get_requirements:
 	go get $(GO_GET_FLAGS) github.com/fzipp/gocyclo
 	go get $(GO_GET_FLAGS) github.com/golang/lint/golint
 	go get $(GO_GET_FLAGS) github.com/mjibson/esc
-	go get $(GO_GET_FLAGS) github.com/GoASTScanner/gas
-	go install -i github.com/GoASTScanner/gas
+	go get $(GO_GET_FLAGS) github.com/GoASTScanner/gas/cmd/gas/...
 
 .PHONY: update_requirements
 update_requirements: GO_GET_FLAGS=-u
