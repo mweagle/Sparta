@@ -5,6 +5,7 @@ package sparta
 import (
 	"bytes"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -31,14 +32,28 @@ type templateResource struct {
 
 // RE for sanitizing golang/JS layer
 var reSanitizeMermaidNodeName = regexp.MustCompile(`[\W\s]+`)
-var reSanitizeMermaidLabelValue = regexp.MustCompile(`[\{\}\"\[\]']+`)
 
 func mermaidNodeName(sourceName string) string {
 	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "x")
 }
 
 func mermaidLabelValue(labelText string) string {
-	return reSanitizeMermaidLabelValue.ReplaceAllString(labelText, "")
+	// Setup the encoding map
+	// Ref: https://mermaidjs.github.io/flowchart.html,
+	// "Entity Codes to Escape Characters"
+	encodingMap := map[string]string{
+		"{": "#123;",
+		"}": "#125;",
+		"[": "#91;",
+		"]": "#93;",
+		// We don't want any inline quotes
+		"\"": "",
+	}
+
+	for eachKey, eachEncoding := range encodingMap {
+		labelText = strings.Replace(labelText, eachKey, eachEncoding, -1)
+	}
+	return labelText
 }
 
 func writeNode(writer io.Writer, nodeName string, nodeColor string, extraStyles string) {
@@ -47,7 +62,8 @@ func writeNode(writer io.Writer, nodeName string, nodeColor string, extraStyles 
 	}
 	sanitizedName := mermaidNodeName(nodeName)
 	fmt.Fprintf(writer, "style %s fill:%s,stroke:#000,stroke-width:1px%s;\n", sanitizedName, nodeColor, extraStyles)
-	fmt.Fprintf(writer, "%s[%s]\n", sanitizedName, mermaidLabelValue(nodeName))
+	fmt.Fprintf(writer, "%s[\"%s\"]\n", sanitizedName,
+		mermaidLabelValue(nodeName))
 }
 
 func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
@@ -200,11 +216,17 @@ func Describe(serviceName string,
 				writeLink(&b, name, eachLambda.lambdaFunctionName(), strings.Replace(link, "\n", "<br><br>", -1))
 			}
 		}
-		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
+		for index, eachEventSourceMapping := range eachLambda.EventSourceMappings {
 			dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
-			literalArn := dynamicArn.String().Literal
-			writeNode(&b, literalArn, nodeColorEventSource, "border-style:dotted")
-			writeLink(&b, literalArn, eachLambda.lambdaFunctionName(), "")
+			jsonBytes, jsonBytesErr := json.Marshal(dynamicArn)
+			if jsonBytesErr != nil {
+				jsonBytes = []byte(fmt.Sprintf("%s-EventSourceMapping[%d]",
+					eachLambda.lambdaFunctionName(),
+					index))
+			}
+			nodeName := string(jsonBytes)
+			writeNode(&b, nodeName, nodeColorEventSource, "border-style:dotted")
+			writeLink(&b, nodeName, eachLambda.lambdaFunctionName(), "")
 		}
 	}
 
@@ -243,6 +265,5 @@ func Describe(serviceName string,
 		templateImageMap(logger),
 		b.String(),
 	}
-
 	return tmpl.Execute(outputWriter, params)
 }
