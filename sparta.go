@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"crypto/sha1"
-	"encoding/binary"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -496,7 +495,8 @@ type EventSourceMapping struct {
 }
 
 func (mapping *EventSourceMapping) export(serviceName string,
-	targetLambda *gocf.StringExpr,
+	targetLambdaName string,
+	targetLambdaArn *gocf.StringExpr,
 	S3Bucket string,
 	S3Key string,
 	template *gocf.Template,
@@ -505,24 +505,28 @@ func (mapping *EventSourceMapping) export(serviceName string,
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
 		EventSourceArn:   dynamicArn.String(),
-		FunctionName:     targetLambda,
+		FunctionName:     targetLambdaArn,
 		StartingPosition: gocf.String(mapping.StartingPosition),
 		BatchSize:        gocf.Integer(mapping.BatchSize),
 		Enabled:          gocf.Bool(!mapping.Disabled),
 	}
 
+	// Unique components for the hash for the EventSource mapping
+	// resource name
+	hashParts := []string{
+		targetLambdaName,
+		dynamicArn.String().Literal,
+		targetLambdaArn.Literal,
+		fmt.Sprintf("%d", mapping.BatchSize),
+		mapping.StartingPosition,
+	}
 	hash := sha1.New()
-	_, writeErr := hash.Write([]byte(dynamicArn.String().Literal))
-	if writeErr != nil {
-		return errors.Wrapf(writeErr, "Failed to update hash")
-	}
-	writeErr = binary.Write(hash, binary.LittleEndian, mapping.BatchSize)
-	if writeErr != nil {
-		return errors.Wrapf(writeErr, "Failed to update hash")
-	}
-	_, writeErr = hash.Write([]byte(mapping.StartingPosition))
-	if writeErr != nil {
-		return errors.Wrapf(writeErr, "Failed to update hash")
+	for _, eachHashPart := range hashParts {
+		_, writeErr := hash.Write([]byte(eachHashPart))
+		if writeErr != nil {
+			return errors.Wrapf(writeErr,
+				"Failed to update EventSourceMapping name: %s", eachHashPart)
+		}
 	}
 	resourceName := fmt.Sprintf("LambdaES%s", hex.EncodeToString(hash.Sum(nil)))
 	template.AddResource(resourceName, eventSourceMappingResource)
@@ -981,6 +985,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Event Source Mappings
 	for _, eachEventSourceMapping := range info.EventSourceMappings {
 		mappingErr := eachEventSourceMapping.export(serviceName,
+			info.lambdaFunctionName(),
 			functionAttr,
 			S3Bucket,
 			S3Key,
