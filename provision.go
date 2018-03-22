@@ -325,7 +325,6 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 				Resource: sourceArn,
 			})
 		}
-
 		return stableRoleName, nil
 	}
 	return "", errors.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)

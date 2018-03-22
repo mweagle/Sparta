@@ -3,6 +3,7 @@ package sparta
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/service/s3"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -69,6 +70,11 @@ type BasePermission struct {
 }
 
 func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.StringExpr {
+	stringARN, stringARNOk := perm.SourceArn.(string)
+	if stringARNOk && strings.Contains(stringARN, "arn:aws:") {
+		return gocf.String(stringARN)
+	}
+
 	var parts []gocf.Stringable
 	if nil != joinParts {
 		parts = append(parts, joinParts...)
@@ -95,11 +101,11 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 	}
 	// If the Arn isn't the wildcard value, then include it.
 	if nil != perm.SourceArn {
-		switch perm.SourceArn.(type) {
+		switch typedARN := perm.SourceArn.(type) {
 		case string:
 			// Don't be smart if the Arn value is a user supplied literal
-			if "*" != perm.SourceArn.(string) {
-				lambdaPermission.SourceArn = gocf.String(perm.SourceArn.(string))
+			if "*" != typedARN {
+				lambdaPermission.SourceArn = gocf.String(typedARN)
 			}
 		default:
 			lambdaPermission.SourceArn = perm.sourceArnExpr(arnPrefixParts...)
