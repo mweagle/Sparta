@@ -4,6 +4,8 @@ package sparta
 
 import (
 	"bytes"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -11,6 +13,7 @@ import (
 	"strings"
 	"text/template"
 
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,16 +25,35 @@ const (
 	nodeNameAPIGateway   = "API Gateway"
 )
 
+type templateResource struct {
+	KeyName string
+	Data    string
+}
+
 // RE for sanitizing golang/JS layer
 var reSanitizeMermaidNodeName = regexp.MustCompile(`[\W\s]+`)
-var reSanitizeMermaidLabelValue = regexp.MustCompile(`[\{\}\"\[\]']+`)
 
 func mermaidNodeName(sourceName string) string {
 	return reSanitizeMermaidNodeName.ReplaceAllString(sourceName, "x")
 }
 
 func mermaidLabelValue(labelText string) string {
-	return reSanitizeMermaidLabelValue.ReplaceAllString(labelText, "")
+	// Setup the encoding map
+	// Ref: https://mermaidjs.github.io/flowchart.html,
+	// "Entity Codes to Escape Characters"
+	encodingMap := map[string]string{
+		"{": "#123;",
+		"}": "#125;",
+		"[": "#91;",
+		"]": "#93;",
+		// We don't want any inline quotes
+		"\"": "",
+	}
+
+	for eachKey, eachEncoding := range encodingMap {
+		labelText = strings.Replace(labelText, eachKey, eachEncoding, -1)
+	}
+	return labelText
 }
 
 func writeNode(writer io.Writer, nodeName string, nodeColor string, extraStyles string) {
@@ -40,7 +62,8 @@ func writeNode(writer io.Writer, nodeName string, nodeColor string, extraStyles 
 	}
 	sanitizedName := mermaidNodeName(nodeName)
 	fmt.Fprintf(writer, "style %s fill:%s,stroke:#000,stroke-width:1px%s;\n", sanitizedName, nodeColor, extraStyles)
-	fmt.Fprintf(writer, "%s[%s]\n", sanitizedName, mermaidLabelValue(nodeName))
+	fmt.Fprintf(writer, "%s[\"%s\"]\n", sanitizedName,
+		mermaidLabelValue(nodeName))
 }
 
 func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
@@ -52,6 +75,66 @@ func writeLink(writer io.Writer, fromNode string, toNode string, label string) {
 	} else {
 		fmt.Fprintf(writer, "%s-->%s\n", sanitizedFrom, sanitizedTo)
 	}
+}
+
+func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) []*templateResource {
+	resources := make([]*templateResource, 0)
+
+	for _, eachKey := range resourceKeyNames {
+		resourcePath := fmt.Sprintf("/resources/describe/%s",
+			strings.TrimLeft(eachKey, "/"))
+		data, dataErr := _escFSString(false, resourcePath)
+		if dataErr == nil {
+			keyParts := strings.Split(resourcePath, "/")
+			keyName := keyParts[len(keyParts)-1]
+			resources = append(resources, &templateResource{
+				KeyName: keyName,
+				Data:    data,
+			})
+			logger.WithFields(logrus.Fields{
+				"Path":    resourcePath,
+				"KeyName": keyName,
+			}).Debug("Embedded resource")
+
+		} else {
+			logger.WithFields(logrus.Fields{
+				"Path": resourcePath,
+			}).Warn("Failed to embed resource")
+		}
+	}
+	return resources
+}
+
+func templateCSSFiles(logger *logrus.Logger) []*templateResource {
+	cssFiles := []string{"mermaid-7.1.2/mermaid.css",
+		"bootstrap-4.0.0/dist/css/bootstrap.min.css",
+		"highlight.js/styles/xcode.css",
+	}
+	return templateResourcesForKeys(cssFiles, logger)
+}
+
+func templateJSFiles(logger *logrus.Logger) []*templateResource {
+	jsFiles := []string{"jquery/jquery-3.3.1.min.js",
+		"popper/popper.min.js",
+		"mermaid-7.1.2/mermaid.js",
+		"bootstrap-4.0.0/dist/js/bootstrap.min.js",
+		"highlight.js/highlight.pack.js",
+		"sparta.js",
+	}
+	return templateResourcesForKeys(jsFiles, logger)
+}
+
+func templateImageMap(logger *logrus.Logger) map[string]string {
+	images := []string{"SpartaHelmet256.png",
+		"AWSIcons/Compute/Compute_AWSLambda_LambdaFunction.svg",
+		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
+	}
+	resources := templateResourcesForKeys(images, logger)
+	imageMap := make(map[string]string)
+	for _, eachResource := range resources {
+		imageMap[eachResource.KeyName] = base64.StdEncoding.EncodeToString([]byte(eachResource.Data))
+	}
+	return imageMap
 }
 
 // Describe produces a graphical representation of a service's Lambda and data sources.  Typically
@@ -103,7 +186,10 @@ func Describe(serviceName string,
 	var b bytes.Buffer
 
 	// Setup the root object
-	writeNode(&b, serviceName, nodeColorService, "color:white,font-weight:bold,stroke-width:4px")
+	writeNode(&b,
+		serviceName,
+		nodeColorService,
+		"color:white,font-weight:bold,stroke-width:4px")
 
 	for _, eachLambda := range lambdaAWSInfos {
 		// Create the node...
@@ -130,10 +216,17 @@ func Describe(serviceName string,
 				writeLink(&b, name, eachLambda.lambdaFunctionName(), strings.Replace(link, "\n", "<br><br>", -1))
 			}
 		}
-
-		for _, eachEventSourceMapping := range eachLambda.EventSourceMappings {
-			writeNode(&b, eachEventSourceMapping.EventSourceArn, nodeColorEventSource, "border-style:dotted")
-			writeLink(&b, eachEventSourceMapping.EventSourceArn, eachLambda.lambdaFunctionName(), "")
+		for index, eachEventSourceMapping := range eachLambda.EventSourceMappings {
+			dynamicArn := spartaCF.DynamicValueToStringExpr(eachEventSourceMapping.EventSourceArn)
+			jsonBytes, jsonBytesErr := json.Marshal(dynamicArn)
+			if jsonBytesErr != nil {
+				jsonBytes = []byte(fmt.Sprintf("%s-EventSourceMapping[%d]",
+					eachLambda.lambdaFunctionName(),
+					index))
+			}
+			nodeName := string(jsonBytes)
+			writeNode(&b, nodeName, nodeColorEventSource, "border-style:dotted")
+			writeLink(&b, nodeName, eachLambda.lambdaFunctionName(), "")
 		}
 	}
 
@@ -158,28 +251,19 @@ func Describe(serviceName string,
 		ServiceName            string
 		ServiceDescription     string
 		CloudFormationTemplate string
-		BootstrapCSS           string
-		MermaidCSS             string
-		HighlightsCSS          string
-		JQueryJS               string
-		BootstrapJS            string
-		MermaidJS              string
-		HighlightsJS           string
+		CSSFiles               []*templateResource
+		JSFiles                []*templateResource
+		ImageMap               map[string]string
 		MermaidData            string
 	}{
-		SpartaVersion,
+		SpartaGitHash[0:8],
 		serviceName,
 		serviceDescription,
 		cloudFormationTemplate.String(),
-		_escFSMustString(false, "/resources/bootstrap/lumen/bootstrap.min.css"),
-		_escFSMustString(false, "/resources/mermaid/mermaid.css"),
-		_escFSMustString(false, "/resources/highlights/styles/vs.css"),
-		_escFSMustString(false, "/resources/jquery/jquery-2.1.4.min.js"),
-		_escFSMustString(false, "/resources/bootstrap/js/bootstrap.min.js"),
-		_escFSMustString(false, "/resources/mermaid/mermaid.min.js"),
-		_escFSMustString(false, "/resources/highlights/highlight.pack.js"),
+		templateCSSFiles(logger),
+		templateJSFiles(logger),
+		templateImageMap(logger),
 		b.String(),
 	}
-
 	return tmpl.Execute(outputWriter, params)
 }

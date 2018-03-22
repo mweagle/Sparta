@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -67,14 +68,14 @@ func ExampleParseOptions() {
 	// Define a validation hook s.t. we can validate the CLI user input
 	validationHook := func(command *cobra.Command) error {
 		if command.Name() == "provision" && len(options.SSHKeyName) <= 0 {
-			return fmt.Errorf("SSHKeyName option is required")
+			return errors.Errorf("SSHKeyName option is required")
 		}
 		fmt.Printf("Command: %s\n", command.Name())
 		switch command.Name() {
 		case "provision",
 			"sync":
 			validationErr := exampleValidator.Struct(options)
-			return validationErr
+			return errors.Wrapf(validationErr, "Validating input")
 		default:
 			return nil
 		}

@@ -1,13 +1,64 @@
 package sparta
 
 import (
-	"errors"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
+
+	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
+
+const mainSysInfoSample = `
+package main
+
+import (
+	"fmt"
+
+	"github.com/zcalusic/sysinfo"
+)
+
+func main() {
+	var si sysinfo.SysInfo
+	si.GetSysInfo()
+	fmt.Printf("%v", si)
+}
+`
+
+// describeInfoValue is a utility function that accepts
+// some type of dynamic gocf value and transforms it into
+// something that is `describe` output compatible
+func describeInfoValue(dynamicValue interface{}) string {
+	switch typedArn := dynamicValue.(type) {
+	case string:
+		return typedArn
+	case gocf.Stringable:
+		data, dataErr := json.Marshal(typedArn)
+		if dataErr != nil {
+			data = []byte(fmt.Sprintf("%v", typedArn))
+		}
+		return string(data)
+	default:
+		panic(fmt.Sprintf("Unsupported dynamic value type for `describe`: %+v", typedArn))
+	}
+}
+
+// userGoPath returns either $GOPATH or the new $HOME/go path
+// introduced with Go 1.8
+func userGoPath() string {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		home := os.Getenv("HOME")
+		gopath = filepath.Join(home, "go")
+	}
+	return gopath
+}
 
 // Create a stable temporary filename in the current working
 // directory
@@ -29,6 +80,7 @@ func temporaryFile(name string) (*os.File, error) {
 	if err != nil {
 		return nil, errors.New("Failed to create temporary file: " + err.Error())
 	}
+
 	return tmpFile, nil
 }
 
@@ -43,6 +95,48 @@ func relativePath(logPath string) string {
 		}
 	}
 	return logPath
+}
+
+func buildSysInfoSample(logger *logrus.Logger) error {
+	workingDir, workingDirErr := os.Getwd()
+	if workingDirErr != nil {
+		return errors.Wrapf(workingDirErr, "Failed to determine working directory")
+	}
+	temporaryDir := filepath.Join(workingDir,
+		ScratchDirectory,
+		"buildTest")
+
+	mkdirErr := os.MkdirAll(temporaryDir, os.ModePerm)
+	if mkdirErr != nil {
+		return errors.Wrapf(mkdirErr, "Failed to create tempdir for build")
+	}
+	defer os.RemoveAll(temporaryDir)
+	mainOutputSource := filepath.Join(temporaryDir, "main.go")
+	writeErr := ioutil.WriteFile(mainOutputSource,
+		[]byte(mainSysInfoSample),
+		0644)
+
+	if writeErr != nil {
+		return errors.Wrapf(writeErr, "Failed to create main file")
+	}
+	// Build it...
+	buildArgs := []string{
+		"build",
+	}
+	if logger.Level == logrus.DebugLevel {
+		buildArgs = append(buildArgs, "-v")
+	}
+	buildArgs = append(buildArgs, "main.go")
+	cmd := exec.Command("go", buildArgs...)
+	cmd.Env = os.Environ()
+	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
+	cmd.Dir = temporaryDir
+	logger.Debug("Verifying sysinfo package")
+	cmdError := runOSCommand(cmd, logger)
+	if cmdError != nil {
+		return errors.Wrapf(cmdError, "Failed")
+	}
+	return nil
 }
 
 // workResult is the result from a worker task

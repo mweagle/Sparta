@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
+	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
+	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
-
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,15 +22,22 @@ func helloWorld(ctx context.Context,
 }
 
 // User defined λ-backed CloudFormation CustomResource
-func userDefinedCustomResource(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 
-	var results = map[string]interface{}{
+	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
+	lambdaCtx, _ := awsLambdaCtx.FromContext(ctx)
+
+	var opResults = map[string]interface{}{
 		"CustomResourceResult": "Victory!",
 	}
-	return results, nil
+
+	opErr := spartaCFResources.SendCloudFormationResponse(lambdaCtx,
+		&event,
+		opResults,
+		nil,
+		logger)
+	return opResults, opErr
 }
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {

@@ -16,6 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -40,15 +41,15 @@ var (
 	// HelloWorld is the typename for HelloWorldResource
 	HelloWorld = cloudFormationResourceType("HelloWorldResource")
 	// S3LambdaEventSource is the typename for S3LambdaEventSourceResource
-	S3LambdaEventSource = cloudFormationResourceType("S3LambdaEventSourceResource")
+	S3LambdaEventSource = cloudFormationResourceType("S3EventSource")
 	// SNSLambdaEventSource is the typename for SNSLambdaEventSourceResource
-	SNSLambdaEventSource = cloudFormationResourceType("SNSLambdaEventSourceResource")
+	SNSLambdaEventSource = cloudFormationResourceType("SNSEventSource")
 	// SESLambdaEventSource is the typename for SESLambdaEventSourceResource
-	SESLambdaEventSource = cloudFormationResourceType("SESLambdaEventSourceResource")
+	SESLambdaEventSource = cloudFormationResourceType("SESEventSource")
 	// CloudWatchLogsLambdaEventSource is the typename for SESLambdaEventSourceResource
-	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsLambdaEventSourceResource")
+	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsEventSource")
 	// ZipToS3Bucket is the typename for ZipToS3Bucket
-	ZipToS3Bucket = cloudFormationResourceType("ZipToS3BucketResource")
+	ZipToS3Bucket = cloudFormationResourceType("ZipToS3Bucket")
 )
 
 func init() {
@@ -81,7 +82,7 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	case SNSLambdaEventSource:
 		return &SNSLambdaEventSourceResource{}
 	case SESLambdaEventSource:
-		return &SNSLambdaEventSourceResource{}
+		return &SESLambdaEventSourceResource{}
 	case ZipToS3Bucket:
 		return &ZipToS3BucketResource{}
 	}
@@ -114,7 +115,10 @@ type CloudFormationLambdaEvent struct {
 	OldResourceProperties json.RawMessage
 }
 
-func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
+// SendCloudFormationResponse sends the given response
+// to the CloudFormation URL that was submitted together
+// with this event
+func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	event *CloudFormationLambdaEvent,
 	results map[string]interface{},
 	responseErr error,
@@ -122,7 +126,7 @@ func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 
 	parsedURL, parsedURLErr := url.ParseRequestURI(event.ResponseURL)
 	if nil != parsedURLErr {
-		return parsedURLErr
+		return errors.Wrap(parsedURLErr, "Attempting to parse CloudFormation response URL")
 	}
 
 	status := "FAILED"
@@ -174,7 +178,7 @@ func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 
 	jsonData, jsonError := json.Marshal(responseData)
 	if nil != jsonError {
-		return jsonError
+		return errors.Wrap(jsonError, "Attempting to marshal Cloudformation response")
 	}
 
 	responseBuffer := strings.NewReader(string(jsonData))
@@ -208,7 +212,7 @@ func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	client := &http.Client{}
 	resp, httpErr := client.Do(req)
 	if httpErr != nil {
-		return httpErr
+		return errors.Wrapf(httpErr, "Sending CloudFormation response")
 	}
 	logger.WithFields(logrus.Fields{
 		"LogicalResourceId":  event.LogicalResourceID,
@@ -222,7 +226,7 @@ func sendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 			logger.Warn("Unable to read body: " + bodyErr.Error())
 			body = []byte{}
 		}
-		return fmt.Errorf("Error sending response: %d. Data: %s", resp.StatusCode, string(body))
+		return errors.Errorf("Error sending response: %d. Data: %s", resp.StatusCode, string(body))
 	}
 	defer resp.Body.Close()
 	return nil
@@ -267,14 +271,14 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		}
 	}
 	if lambdaCmd == nil {
-		return nil
+		return errors.Errorf("Custom resource handler not found for type: %s", resourceType)
 	}
 
 	return func(ctx context.Context,
 		event CloudFormationLambdaEvent) error {
 		lambdaCtx, lambdaCtxOk := awsLambdaCtx.FromContext(ctx)
 		if !lambdaCtxOk {
-			return fmt.Errorf("Failed to access AWS Lambda Context from ctx argument")
+			return errors.Errorf("Failed to access AWS Lambda Context from ctx argument")
 		}
 		customResourceSession := awsSession(logger)
 		var opResults map[string]interface{}
@@ -292,7 +296,7 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		} else {
 			stackDesc := describeStacksOutput.Stacks[0]
 			if nil == stackDesc {
-				opErr = fmt.Errorf("DescribeStack failed: %s", event.StackID)
+				opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
 			} else {
 				executeOperation = ("UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" != *stackDesc.StackStatus)
 			}
@@ -316,7 +320,7 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		}
 		// Notify CloudFormation of the result
 		if event.ResponseURL != "" {
-			sendErr := sendCloudFormationResponse(lambdaCtx,
+			sendErr := SendCloudFormationResponse(lambdaCtx,
 				&event,
 				opResults,
 				opErr,

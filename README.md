@@ -4,47 +4,60 @@
 
 # Sparta <p align="center">
 
-[![Build Status](https://travis-ci.org/mweagle/Sparta.svg?branch=master)](https://travis-ci.org/mweagle/Sparta) [![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta) [![Sourcegraph](https://sourcegraph.com/github.com/mweagle/Sparta/-/badge.svg)](https://sourcegraph.com/github.com/mweagle/Sparta?badge)[![Go Report Card](https://goreportcard.com/badge/github.com/mweagle/Sparta)](https://goreportcard.com/report/github.com/mweagle/Sparta)
+[![Build Status](https://travis-ci.org/mweagle/Sparta.svg?branch=master)](https://travis-ci.org/mweagle/Sparta)
 
-Visit [gosparta.io](http://gosparta.io) for complete documentation.
+[![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/mweagle/Sparta)](https://goreportcard.com/report/github.com/mweagle/Sparta)
+
+Visit [gosparta.io](https://gosparta.io) for complete documentation.
 
 ## Overview
 
 Sparta takes a set of _golang_ functions and automatically provisions them in
 [AWS Lambda](https://aws.amazon.com/lambda/) as a logical unit.
 
-AWS lambda functions are defined as standard [HandlerFunc.ServeHTTP](https://golang.org/pkg/net/http/#HandlerFunc.ServeHTTP) functions as in
+AWS Lambda functions are defined using the standard [AWS Lambda signatures](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/):
+
+ * `func()`
+ * `func() error`
+ * `func(TIn) error`
+ * `func() (TOut, error)`
+ * `func(context.Context) error`
+ * `func(context.Context, TIn) error`
+ * `func(context.Context) (TOut, error)`
+ * `func(context.Context, TIn) (TOut, error)`
+
+ The TIn and TOut parameters represent encoding/json un/marshallable types.
+
+For instance:
 
 ```go
-type myHelloWorldFunction func(w http.ResponseWriter, r *http.Request) {
+// Standard AWS λ function
+func helloWorld(ctx context.Context) (string, error) {
   ...
 }
 ```
 
 where
-  * `w` : The ResponseWriter used to return the lambda response
-  * `r` :  The arbitrary event data provided to the function.
+  * `ctx` : The request context that includes Sparta both the [AWS Context](https://github.com/aws/aws-lambda-go/blob/master/lambdacontext/context.go) as well as Sparta specific [values](https://godoc.org/github.com/mweagle/Sparta#pkg-constants.)
 
-The `http.Request` instance also includes [context](https://golang.org/pkg/net/http/#Request.Context) scoped values as in:
-  * `*logrus.Logger` : A request scoped logger
-    * `_ := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)`
-  * [*sparta.LambdaContext](https://godoc.org/github.com/mweagle/Sparta#LambdaContext) : AWS lambda context parameters
-    * `	lambdaContext, _ := r.Context().Value(sparta.ContextKeyLambdaContext).(*sparta.LambdaContext)`
 
-Consumers define a set of lambda functions and provide them to Sparta to create a self-documentating, self-deploying AWS Lambda binary:
+Consumers define a set of lambda functions and provide them to Sparta to create a self-documenting, self-deploying AWS Lambda binary:
 
 ```go
-  lambdaFn := sparta.HandleAWSLambda("Hello World",
-    http.HandlerFunc(myHelloWorldFunction),
-    sparta.IAMRoleDefinition{})
+	lambdaFn := sparta.HandleAWSLambda("Hello World",
+		helloWorld,
+		sparta.IAMRoleDefinition{})
 
-  var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFunctions = append(lambdaFunctions, lambdaFn)
-  err := sparta.Main("MyHelloWorldStack",
-    "Simple Sparta application that demonstrates core functionality",
-    lambdaFunctions,
-    nil,
-    nil)
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+	err := sparta.Main("HelloWorldStack",
+		"My Hello World stack",
+		lambdaFunctions,
+		nil,
+		nil)
 ```
 
 Given a set of registered _golang_ functions, Sparta will:
@@ -58,11 +71,7 @@ Given a set of registered _golang_ functions, Sparta will:
     * Provision an [API Gateway](https://aws.amazon.com/api-gateway/) service to make your functions publicly available
     * Provision an [S3 static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
 
-Visit [gosparta.io](http://gosparta.io) for complete documentation.
-
-## Limitations
-
-See the [Limitations](http://gosparta.io/docs/limitations/) page for the most up-to-date information.
+Visit [gosparta.io](https://gosparta.io) for complete documentation.
 
 ## Contributors
 

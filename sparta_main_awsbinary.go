@@ -6,14 +6,15 @@ package sparta
 // in the Lambda context
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
 	"runtime"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/zcalusic/sysinfo"
 )
 
@@ -47,26 +48,39 @@ func MainEx(serviceName string,
 	workflowHooks *WorkflowHooks,
 	useCGO bool) error {
 
-	// This can only run in AWS Lambda
-	formatter := &logrus.JSONFormatter{}
-	logger, loggerErr := NewLoggerWithFormatter("info", formatter)
-	if loggerErr != nil {
-		return loggerErr
-	}
-	if logger == nil {
-		return fmt.Errorf("Failed to initialize logger instance")
-	}
-	welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
-	logger.WithFields(logrus.Fields{
-		"SpartaVersion": SpartaVersion,
-		"SpartaSHA":     SpartaGitHash[0:7],
-		"go Version":    runtime.Version(),
-		"BuildID":       StampedBuildID,
-		"UTC":           (time.Now().UTC().Format(time.RFC3339)),
-	}).Info(welcomeMessage)
+	// It's possible the user attached a custom command to the
+	// root command. If there is no command, then just run the
+	// Execute command...
+	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 
-	// All we can do is run the Execute call
-	return Execute(serviceName, lambdaAWSInfos, logger)
+		// This can only run in AWS Lambda
+		formatter := &logrus.JSONFormatter{}
+		logger, loggerErr := NewLoggerWithFormatter("info", formatter)
+		if loggerErr != nil {
+			return loggerErr
+		}
+		if logger == nil {
+			return errors.Errorf("Failed to initialize logger instance")
+		}
+		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
+		logger.WithFields(logrus.Fields{
+			"SpartaVersion": SpartaVersion,
+			"SpartaSHA":     SpartaGitHash[0:7],
+			"go Version":    runtime.Version(),
+			"BuildID":       StampedBuildID,
+			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
+		}).Info(welcomeMessage)
+		OptionsGlobal.ServiceName = StampedServiceName
+		OptionsGlobal.Logger = logger
+		return nil
+	}
+	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) error {
+		// By default run the Execute command
+		return Execute(StampedServiceName,
+			lambdaAWSInfos,
+			OptionsGlobal.Logger)
+	}
+	return CommandLineOptions.Root.Execute()
 }
 
 // Delete is not available in the AWS Lambda binary

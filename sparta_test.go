@@ -3,11 +3,13 @@ package sparta
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"testing"
 
-	"github.com/sirupsen/logrus"
+	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 type StructHandler1 struct {
@@ -62,17 +64,13 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 	return lambdaFunctions
 }
 
-func userDefinedCustomResource1(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource1(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 	return nil, nil
 }
 
-func userDefinedCustomResource2(requestType string,
-	stackID string,
-	properties map[string]interface{},
-	logger *logrus.Logger) (map[string]interface{}, error) {
+func userDefinedCustomResource2(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 	return nil, nil
 }
 
@@ -306,4 +304,27 @@ func TestInvalidFunctionSignature(t *testing.T) {
 	} else {
 		t.Log("Properly rejected invalid function signature")
 	}
+}
+
+func TestNOP(t *testing.T) {
+	template := gocf.NewTemplate()
+	s3Resources := gocf.S3Bucket{
+		BucketEncryption: &gocf.S3BucketBucketEncryption{
+			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeKey"),
+					},
+				},
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeOtherKey"),
+					},
+				},
+			},
+		},
+	}
+	template.AddResource("S3Bucket", s3Resources)
+	json, _ := json.MarshalIndent(template, "", " ")
+	fmt.Printf("\n%s\n", string(json))
 }

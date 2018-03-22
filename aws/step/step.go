@@ -14,6 +14,7 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -1402,7 +1403,7 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 			for index := range machineErrors {
 				errorText[index] = machineErrors[index].Error()
 			}
-			return fmt.Errorf("Invalid state machine. Errors: %s",
+			return errors.Errorf("Invalid state machine. Errors: %s",
 				strings.Join(errorText, ", "))
 		}
 
@@ -1466,7 +1467,7 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 		// ConvertToTemplateExpression can actually parse the inline `Ref` objects
 		jsonBytes, jsonBytesErr := json.Marshal(sm)
 		if jsonBytesErr != nil {
-			return fmt.Errorf("Failed to marshal: %s", jsonBytesErr.Error())
+			return errors.Errorf("Failed to marshal: %s", jsonBytesErr.Error())
 		}
 		logger.WithFields(logrus.Fields{
 			"StateMachine": string(jsonBytes),
@@ -1490,7 +1491,7 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 		smReader := bytes.NewReader([]byte(stateMachineString))
 		templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(smReader, nil)
 		if nil != templateExprErr {
-			return fmt.Errorf("Failed to parser: %s", templateExprErr.Error())
+			return errors.Errorf("Failed to parser: %s", templateExprErr.Error())
 		}
 
 		// Awsome - add an AWS::StepFunction to the template with this info and roll with it...

@@ -3,8 +3,8 @@
 package sparta
 
 import (
-	"fmt"
-
+	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,24 +14,22 @@ func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	logger *logrus.Logger) error {
 	// Execute no longer supported in non AWS binaries...
-	return fmt.Errorf("Execute not supported outside of AWS Lambda environment")
+	return errors.Errorf("Execute not supported outside of AWS Lambda environment")
 }
 
 // awsLambdaFunctionName returns the name of the function, which
 // is set in the CloudFormation template that is published
-// into the container as `AWS_LAMBDA_FUNCTION_NAME`. Rather
-// than publish custom vars which are editable in the Console,
-// tunneling this value through allows Sparta to leverage the
-// built in env vars.
-func awsLambdaFunctionName(serviceName string,
-	internalFunctionName string) string {
-	// Ok, so we need to scope the functionname with the StackName, otherwise
-	// there will be collisions in the account. So how to publish
-	// the stack name into the awsbinary?
-	// How about
-	// Linker flags would be nice...sparta.StampedServiceName ?
-	awsLambdaName := fmt.Sprintf("%s-%s",
-		serviceName,
-		internalFunctionName)
-	return sanitizedName(awsLambdaName)
+// into the container as `AWS_LAMBDA_FUNCTION_NAME`.  The function name
+// is dependent on the CloudFormation stack name so that
+// CodePipeline based builds can properly create unique FunctionNAmes
+// within an account
+func awsLambdaFunctionName(internalFunctionName string) gocf.Stringable {
+	sanitizedName := awsLambdaInternalName(internalFunctionName)
+	// When we build, we return a gocf.Join that
+	// will use the stack name and the internal name. When we run, we're going
+	// to use the name discovered from the environment.
+	return gocf.Join("",
+		gocf.Ref("AWS::StackName"),
+		gocf.String(functionNameDelimiter),
+		gocf.String(sanitizedName))
 }

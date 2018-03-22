@@ -24,7 +24,6 @@ See
   "pathParams": {
     #foreach($param in $input.params().path.keySet())
     "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
     #end
   },
   "context" : {
@@ -47,5 +46,10 @@ See
       "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
       "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
     }
-  }
+  },
+   "authorizer": {
+     #foreach($param in $context.authorizer.keySet())
+     "$param": "$util.escapeJavaScript($context.authorizer.get($param))" #if($foreach.hasNext),#end
+     #end
+   }
 }

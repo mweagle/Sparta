@@ -2,7 +2,6 @@ package sparta
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"strings"
 	"text/template"
@@ -21,19 +20,28 @@ func resourceOutputs(resourceName string,
 	switch typedResource := resource.(type) {
 	case gocf.IAMRole:
 		// NOP
+	case *gocf.DynamoDBTable:
+		if typedResource.StreamSpecification != nil {
+			outputProps = append(outputProps, "StreamArn")
+		}
 	case gocf.DynamoDBTable:
 		if typedResource.StreamSpecification != nil {
 			outputProps = append(outputProps, "StreamArn")
 		}
-	case gocf.KinesisStream:
+	case gocf.KinesisStream,
+		*gocf.KinesisStream:
 		outputProps = append(outputProps, "Arn")
-	case gocf.Route53RecordSet:
-		// TODO
-	case gocf.S3Bucket:
+	case gocf.Route53RecordSet,
+		*gocf.Route53RecordSet:
+		// NOP
+	case gocf.S3Bucket,
+		*gocf.S3Bucket:
 		outputProps = append(outputProps, "DomainName", "WebsiteURL")
-	case gocf.SNSTopic:
+	case gocf.SNSTopic,
+		*gocf.SNSTopic:
 		outputProps = append(outputProps, "TopicName")
-	case gocf.SQSQueue:
+	case gocf.SQSQueue,
+		*gocf.SQSQueue:
 		outputProps = append(outputProps, "Arn", "QueueName")
 	default:
 		logger.WithFields(logrus.Fields{
@@ -123,49 +131,4 @@ func safeMetadataInsert(resource *gocf.Resource, key string, value interface{}) 
 		resource.Metadata = make(map[string]interface{})
 	}
 	resource.Metadata[key] = value
-}
-
-func safeMergeTemplates(sourceTemplate *gocf.Template, destTemplate *gocf.Template, logger *logrus.Logger) error {
-	var mergeErrors []string
-
-	// Append the custom resources
-	for eachKey, eachLambdaResource := range sourceTemplate.Resources {
-		_, exists := destTemplate.Resources[eachKey]
-		if exists {
-			errorMsg := fmt.Sprintf("Duplicate CloudFormation resource name: %s", eachKey)
-			mergeErrors = append(mergeErrors, errorMsg)
-		} else {
-			destTemplate.Resources[eachKey] = eachLambdaResource
-		}
-	}
-
-	// Append the custom Mappings
-	for eachKey, eachMapping := range sourceTemplate.Mappings {
-		_, exists := destTemplate.Mappings[eachKey]
-		if exists {
-			errorMsg := fmt.Sprintf("Duplicate CloudFormation Mapping name: %s", eachKey)
-			mergeErrors = append(mergeErrors, errorMsg)
-		} else {
-			destTemplate.Mappings[eachKey] = eachMapping
-		}
-	}
-
-	// Append the custom outputs
-	for eachKey, eachLambdaOutput := range sourceTemplate.Outputs {
-		_, exists := destTemplate.Outputs[eachKey]
-		if exists {
-			errorMsg := fmt.Sprintf("Duplicate CloudFormation output key name: %s", eachKey)
-			mergeErrors = append(mergeErrors, errorMsg)
-		} else {
-			destTemplate.Outputs[eachKey] = eachLambdaOutput
-		}
-	}
-	if len(mergeErrors) > 0 {
-		logger.Error("Failed to update template. The following collisions were found:")
-		for _, eachError := range mergeErrors {
-			logger.Error("\t" + eachError)
-		}
-		return errors.New("Template merge failed")
-	}
-	return nil
 }

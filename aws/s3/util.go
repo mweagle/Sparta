@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -97,7 +98,7 @@ func UploadLocalFileToS3(localPath string,
 	uploader := s3manager.NewUploader(awsSession)
 	result, err := uploader.Upload(uploadInput)
 	if nil != err {
-		return "", err
+		return "", errors.Wrapf(err, "Failed to upload object to S3")
 	}
 	if result.VersionID != nil {
 		logger.WithFields(logrus.Fields{
@@ -138,4 +139,19 @@ func BucketVersioningEnabled(awsSession *session.Session,
 		versioningEnabled = (strings.ToLower(*resp.Status) == "enabled")
 	}
 	return versioningEnabled, err
+}
+
+// BucketRegion returns the AWS region that hosts the bucket
+func BucketRegion(awsSession *session.Session,
+	S3Bucket string,
+	logger *logrus.Logger) (string, error) {
+	regionHint := ""
+	if awsSession.Config.Region != nil {
+		regionHint = *awsSession.Config.Region
+	}
+	awsContext := aws.BackgroundContext()
+	return s3manager.GetBucketRegion(awsContext,
+		awsSession,
+		S3Bucket,
+		regionHint)
 }

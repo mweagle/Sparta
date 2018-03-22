@@ -21,6 +21,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -161,7 +162,7 @@ func objectKeysForProfileType(profileType string,
 	for {
 		listItemResults, listItemResultsErr := s3Svc.ListObjects(listObjectInput)
 		if listItemResultsErr != nil {
-			return nil, listItemResultsErr
+			return nil, errors.Wrapf(listItemResultsErr, "Attempting to list bucket: %s", s3BucketName)
 		}
 		for _, eachEntry := range listItemResults.Contents {
 			logger.WithFields(logrus.Fields{
@@ -281,22 +282,27 @@ func syncStackProfileSnapshots(profileType string,
 
 	removeErr := os.RemoveAll(cacheRoot)
 	if removeErr != nil {
-		return nil, removeErr
+		return nil, errors.Wrapf(removeErr, "Attempting delete local directory: %s", cacheRoot)
 	}
 	mkdirErr := os.MkdirAll(cacheRoot, os.ModePerm)
 	if nil != mkdirErr {
-		return nil, mkdirErr
+		return nil, errors.Wrapf(mkdirErr, "Attempting to create local directory: %s", cacheRoot)
 	}
 
 	// Ok, let's get some user information
 	s3Svc := s3.New(awsSession)
 	downloader := s3manager.NewDownloader(awsSession)
-	downloadKeys, _ := objectKeysForProfileType(profileType,
+	downloadKeys, downloadKeysErr := objectKeysForProfileType(profileType,
 		stackName,
 		s3BucketName,
 		1024,
 		awsSession,
 		logger)
+
+	if downloadKeys != nil {
+		return nil, errors.Wrapf(downloadKeysErr,
+			"Failed to determine pprof download keys")
+	}
 	downloadTasks := make([]*workTask, len(downloadKeys))
 	for index, eachKey := range downloadKeys {
 		taskFunc := downloaderTask(profileType,
@@ -371,7 +377,13 @@ func syncStackProfileSnapshots(profileType string,
 	defer outputFile.Close()
 	// Delete all the other ones, just return the consolidated one...
 	for _, eachResult := range results {
-		os.Remove(eachResult.(string))
+		unlinkErr := os.Remove(eachResult.(string))
+		if unlinkErr != nil {
+			logger.WithFields(logrus.Fields{
+				"File":  consolidatedPath,
+				"Error": unlinkErr,
+			}).Info("Failed to delete file")
+		}
 	}
 	return []string{consolidatedPath}, nil
 }
@@ -451,16 +463,9 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 		}).Info("Instrumenting function for profiling")
 
 		// The bucket is either a literal or a gocf.StringExpr - which one?
-		var bucketValue *gocf.StringExpr
+		var bucketValue gocf.Stringable
 		if s3BucketArchive != nil {
-			switch bucketExpr := s3BucketArchive.(type) {
-			case gocf.StringExpr:
-				bucketValue = bucketExpr.String()
-			case string:
-				bucketValue = gocf.String(bucketExpr)
-			default:
-				return fmt.Errorf("Unknown S3 profile bucket value type: %T", s3BucketArchive)
-			}
+			bucketValue = spartaCF.DynamicValueToStringExpr(s3BucketArchive)
 		} else {
 			bucketValue = gocf.String(S3Bucket)
 		}
@@ -471,7 +476,7 @@ func ScheduleProfileLoop(s3BucketArchive interface{},
 		}
 		info.Options.Environment[envVarStackName] = gocf.Ref("AWS::StackName").String()
 		info.Options.Environment[envVarStackInstanceID] = gocf.Ref("AWS::StackId").String()
-		info.Options.Environment[envVarProfileBucketName] = bucketValue
+		info.Options.Environment[envVarProfileBucketName] = bucketValue.String()
 
 		// Update the IAM role...
 		if info.RoleDefinition != nil {

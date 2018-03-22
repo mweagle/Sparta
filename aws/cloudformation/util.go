@@ -27,6 +27,7 @@ import (
 	"github.com/briandowns/spinner"
 	humanize "github.com/dustin/go-humanize"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -367,25 +368,36 @@ func stackCapabilities(template *gocf.Template) []*string {
 // Public
 ////////////////////////////////////////////////////////////////////////////////
 
+// DynamicValueToStringExpr is a DRY function to type assert
+// a potentiall dynamic value into a gocf.Stringable
+// satisfying type
+func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
+	var stringExpr gocf.Stringable
+	switch typedValue := dynamicValue.(type) {
+	case string:
+		stringExpr = gocf.String(typedValue)
+	case gocf.Stringable:
+		stringExpr = typedValue.String()
+	case *gocf.StringExpr:
+		stringExpr = typedValue
+	case gocf.RefFunc:
+		stringExpr = typedValue.String()
+	default:
+		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
+	}
+	return stringExpr
+}
+
 // S3AllKeysArnForBucket returns a CloudFormation-compatible Arn expression
 // (string or Ref) for all bucket keys (`/*`).  The bucket
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	arnParts := []gocf.Stringable{
+		gocf.String("arn:aws:s3:::"),
+		DynamicValueToStringExpr(bucket),
+		gocf.String("/*"),
 	}
-	arnParts = append(arnParts, gocf.String("/*"))
 	return gocf.Join("", arnParts...).String()
 }
 
@@ -394,18 +406,9 @@ func S3AllKeysArnForBucket(bucket interface{}) *gocf.StringExpr {
 // parameter may be either a string or an interface{} ("Ref: "myResource")
 // value
 func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
-	arnParts := []gocf.Stringable{gocf.String("arn:aws:s3:::")}
-
-	switch bucket.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		arnParts = append(arnParts, gocf.String(bucket.(string)))
-	case *gocf.StringExpr:
-		arnParts = append(arnParts, bucket.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		arnParts = append(arnParts, bucket.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", bucket))
+	arnParts := []gocf.Stringable{
+		gocf.String("arn:aws:s3:::"),
+		DynamicValueToStringExpr(bucket),
 	}
 	return gocf.Join("", arnParts...).String()
 }
@@ -677,13 +680,22 @@ func WaitForStackOperationComplete(stackID string,
 // name is not content-addressable.
 func CloudFormationResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
-	hash.Write([]byte(prefix))
+	_, writeErr := hash.Write([]byte(prefix))
+	if writeErr != nil {
+		// TODO
+	}
 	if len(parts) <= 0 {
 		randValue := rand.Int63()
-		hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+		_, writeErr = hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+		if writeErr != nil {
+			// TODO
+		}
 	} else {
 		for _, eachPart := range parts {
-			hash.Write([]byte(eachPart))
+			_, writeErr = hash.Write([]byte(eachPart))
+			if writeErr != nil {
+				// TODO
+			}
 		}
 	}
 	resourceName := fmt.Sprintf("%s%s", prefix, hex.EncodeToString(hash.Sum(nil)))
@@ -711,8 +723,7 @@ func UploadTemplate(serviceName string,
 	// Serialize the template and upload it
 	cfTemplateJSON, err := json.Marshal(cfTemplate)
 	if err != nil {
-		logger.Error("Failed to Marshal CloudFormation template: ", err.Error())
-		return "", err
+		return "", errors.Wrap(err, "Failed to Marshal CloudFormation template")
 	}
 
 	// Upload the actual CloudFormation template to S3 to maximize the template
@@ -1061,6 +1072,24 @@ func defaultUserName() string {
 		userName = fmt.Sprintf("user%d", os.Getuid())
 	}
 	return userName
+}
+
+// UserAccountScopedStackName returns a CloudFormation stack
+// name that takes into account the current username that is
+//associated with the supplied AWS credentials
+/*
+A stack name can contain only alphanumeric characters
+(case sensitive) and hyphens. It must start with an alphabetic
+\character and cannot be longer than 128 characters.
+*/
+func UserAccountScopedStackName(basename string,
+	awsSession *session.Session) (string, error) {
+	awsName, awsNameErr := platformAccountUserName(awsSession)
+	if awsNameErr != nil {
+		return "", awsNameErr
+	}
+	userName := strings.Replace(awsName, " ", "-", -1)
+	return fmt.Sprintf("%s-%s", basename, userName), nil
 }
 
 // UserScopedStackName returns a CloudFormation stack

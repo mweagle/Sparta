@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"gopkg.in/go-playground/validator.v9"
 )
@@ -42,7 +43,7 @@ var RootCmd = &cobra.Command{
 			return osStatErr
 		}
 		if !osStat.IsDir() {
-			return fmt.Errorf("--output is not a valid directory")
+			return errors.Errorf("--output (%s) is not a valid directory", optionsLink.OutputDirectory)
 		}
 		return nil
 	},
@@ -50,8 +51,7 @@ var RootCmd = &cobra.Command{
 		// Get the output and stuff it to a file
 		sess, err := session.NewSession()
 		if err != nil {
-			fmt.Println("failed to create session,", err)
-			return err
+			return errors.Wrap(err, "Attempting to create session")
 		}
 
 		svc := cloudformation.New(sess)
@@ -65,11 +65,14 @@ var RootCmd = &cobra.Command{
 			return describeStacksResponseErr
 		}
 
-		stackInfo, _ := json.Marshal(describeStacksResponse)
+		stackInfo, stackInfoErr := json.Marshal(describeStacksResponse)
+		if stackInfoErr != nil {
+			return errors.Wrapf(stackInfoErr, "Failed to describe stacks")
+		}
 		outputFilepath := filepath.Join(optionsLink.OutputDirectory, fmt.Sprintf("%s.json", optionsLink.StackName))
 		err = ioutil.WriteFile(outputFilepath, stackInfo, 0644)
 		if nil != err {
-			return err
+			return errors.Wrap(err, "Attempting to write output file")
 		}
 		fmt.Println("Created file: " + outputFilepath)
 		fmt.Println(describeStacksResponse)

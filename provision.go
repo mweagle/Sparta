@@ -1,16 +1,19 @@
 package sparta
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"os/exec"
 	"regexp"
 	"runtime"
 	"strings"
+	"text/template"
 
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cloudformationresources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -51,6 +54,24 @@ var PushSourceConfigurationActions = struct {
 	},
 }
 
+// This is a literal version of the DiscoveryInfo struct.
+var discoveryData = `
+{
+	"ResourceID": "<< .TagLogicalResourceID >>",
+	"Region": "{"Ref" : "AWS::Region"}",
+	"StackID": "{"Ref" : "AWS::StackId"}",
+	"StackName": "{"Ref" : "AWS::StackName"}",
+	"Resources":{<<range $eachDepResource, $eachOutputString := .Resources>>
+		"<< $eachDepResource >>" : << $eachOutputString >><< trailingComma >><<end>>
+	}
+}`
+
+//
+type discoveryDataTemplateData struct {
+	TagLogicalResourceID string
+	Resources            map[string]string
+}
+
 func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	logger.WithFields(logrus.Fields{
 		"Arguments": cmd.Args,
@@ -65,8 +86,66 @@ func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 	return cmd.Run()
 }
 
+func lambdaFunctionEnvironment(userEnvMap map[string]*gocf.StringExpr,
+	resourceID string,
+	deps map[string]string,
+	logger *logrus.Logger) (*gocf.LambdaFunctionEnvironment, error) {
+	// Merge everything, add the deps
+	envMap := make(map[string]interface{})
+	for eachKey, eachValue := range userEnvMap {
+		envMap[eachKey] = eachValue
+	}
+	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(resourceID, deps)
+	if discoveryInfoErr != nil {
+		return nil, errors.Wrapf(discoveryInfoErr, "Failed to calculate dependency info")
+	}
+	envMap[envVarLogLevel] = logger.Level.String()
+	envMap[envVarDiscoveryInformation] = discoveryInfo
+	return &gocf.LambdaFunctionEnvironment{
+		Variables: envMap,
+	}, nil
+}
+
+func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
+	discoveryDataTemplateData := &discoveryDataTemplateData{
+		TagLogicalResourceID: resID,
+		Resources:            deps,
+	}
+	totalDeps := len(deps)
+	var templateFuncMap = template.FuncMap{
+		// The name "inc" is what the function will be called in the template text.
+		"trailingComma": func() string {
+			totalDeps--
+			if totalDeps > 0 {
+				return ","
+			}
+			return ""
+		},
+	}
+
+	discoveryTemplate, discoveryTemplateErr := template.New("discoveryData").
+		Delims("<<", ">>").
+		Funcs(templateFuncMap).
+		Parse(discoveryData)
+	if nil != discoveryTemplateErr {
+		return nil, discoveryTemplateErr
+	}
+
+	var templateResults bytes.Buffer
+	evalResultErr := discoveryTemplate.Execute(&templateResults, discoveryDataTemplateData)
+	if nil != evalResultErr {
+		return nil, evalResultErr
+	}
+	templateReader := bytes.NewReader(templateResults.Bytes())
+	templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
+	if templateExprErr != nil {
+		return nil, templateExprErr
+	}
+	return gocf.Base64(templateExpr), nil
+}
+
 func awsPrincipalToService(awsPrincipalName string) string {
-	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".", 2)[0])
+	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".:-", 2)[0])
 }
 
 // ensureCustomResourceHandler handles ensuring that the custom resource responsible
@@ -81,22 +160,9 @@ func ensureCustomResourceHandler(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
-	// AWS service basename
-	awsServiceName := awsPrincipalToService(customResourceTypeName)
-
-	// Use a stable resource CloudFormation resource name to represent
-	// the single CustomResource that can configure the different
-	// PushSource's for the given principal.
-	keyName, err := json.Marshal(ArbitraryJSONObject{
-		"Principal":   customResourceTypeName,
-		"ServiceName": awsServiceName,
-	})
-	if err != nil {
-		logger.Error("Failed to create configurator resource name: ", err.Error())
-		return "", err
-	}
-	resourceBaseName := fmt.Sprintf("%sCustomResource", awsServiceName)
-	subscriberHandlerName := CloudFormationResourceName(resourceBaseName, string(keyName))
+	// Prefix
+	prefixName := fmt.Sprintf("%s-Sparta-CFRes", serviceName)
+	subscriberHandlerName := CloudFormationResourceName(prefixName, customResourceTypeName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
@@ -105,7 +171,9 @@ func ensureCustomResourceHandler(serviceName string,
 		template,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrapf(err,
+			"Failed to ensure IAM Role for custom resource: %s",
+			customResourceTypeName)
 	}
 	iamRoleRef := gocf.GetAtt(iamResourceName, "Arn")
 	_, exists := template.Resources[subscriberHandlerName]
@@ -122,9 +190,16 @@ func ensureCustomResourceHandler(serviceName string,
 
 		// The handler name is the resource name & will be set in the
 		// env block
-		lambdaFunctionName := awsLambdaFunctionName(serviceName,
-			customResourceTypeName)
+		lambdaFunctionName := awsLambdaFunctionName(customResourceTypeName)
 
+		// Don't forget the discovery info...
+		lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+			customResourceTypeName,
+			nil,
+			logger)
+		if lambdaEnvErr != nil {
+			return "", errors.Wrapf(lambdaEnvErr, "Failed to create environment for required custom resource")
+		}
 		customResourceHandlerDef := gocf.LambdaFunction{
 			Code: &gocf.LambdaFunctionCode{
 				S3Bucket: gocf.String(S3Bucket),
@@ -135,13 +210,9 @@ func ensureCustomResourceHandler(serviceName string,
 			Handler:      gocf.String(binaryName),
 			Role:         iamRoleRef,
 			Timeout:      gocf.Integer(30),
-			FunctionName: gocf.String(lambdaFunctionName),
+			FunctionName: lambdaFunctionName.String(),
 			// DISPATCH INFORMATION
-			Environment: &gocf.LambdaFunctionEnvironment{
-				Variables: map[string]interface{}{
-					envVarLogLevel: logger.Level.String(),
-				},
-			},
+			Environment: lambdaEnv,
 		}
 
 		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
@@ -172,11 +243,11 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 	case cloudformationresources.CloudWatchLogsLambdaEventSource:
 		principalActions = PushSourceConfigurationActions.CloudWatchLogsLambdaEventSource
 	default:
-		return "", fmt.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
+		return "", errors.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
 	}
 
 	// What's the stable IAMRoleName?
-	resourceBaseName := fmt.Sprintf("CustomResource%sIAMRole", awsPrincipalToService(awsPrincipalName))
+	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", awsPrincipalToService(awsPrincipalName))
 	stableRoleName := CloudFormationResourceName(resourceBaseName, awsPrincipalName)
 
 	// Ensure it exists, then check to see if this Source ARN is already specified...
@@ -254,11 +325,9 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 				Resource: sourceArn,
 			})
 		}
-
 		return stableRoleName, nil
 	}
-
-	return "", fmt.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)
+	return "", errors.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)
 }
 
 func systemGoVersion(logger *logrus.Logger) (string, error) {

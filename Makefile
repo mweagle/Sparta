@@ -1,6 +1,9 @@
 .DEFAULT_GOAL=build
 
-GO_LINT := $(GOPATH)/bin/golint
+GO_LINT_PATH := $(GOPATH)/bin/golint
+GAS_PATH := $(GOPATH)/bin/gas
+WORK_DIR := ./sparta
+GO_GET_FLAGS :=
 
 ################################################################################
 # Meta
@@ -24,16 +27,26 @@ generate:
 GO_SOURCE_FILES := find . -type f -name '*.go' \
 	! -path './vendor/*' \
 
+.PHONY: go_get_requirements
+go_get_requirements:
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/megacheck
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/gosimple
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/unused
+	go get $(GO_GET_FLAGS) honnef.co/go/tools/cmd/staticcheck
+	go get $(GO_GET_FLAGS) golang.org/x/tools/cmd/goimports
+	go get $(GO_GET_FLAGS) github.com/fzipp/gocyclo
+	go get $(GO_GET_FLAGS) github.com/golang/lint/golint
+	go get $(GO_GET_FLAGS) github.com/mjibson/esc
+	go get $(GO_GET_FLAGS) github.com/GoASTScanner/gas/cmd/gas/...
+
+.PHONY: update_requirements
+update_requirements: GO_GET_FLAGS=-u
+update_requirements: go_get_requirements
+	echo "Updated tooling"
+
 .PHONY: install_requirements
-install_requirements:
-	go get -u honnef.co/go/tools/cmd/megacheck
-	go get -u honnef.co/go/tools/cmd/gosimple
-	go get -u honnef.co/go/tools/cmd/unused
-	go get -u honnef.co/go/tools/cmd/staticcheck
-	go get -u golang.org/x/tools/cmd/goimports
-	go get -u github.com/fzipp/gocyclo
-	go get -u github.com/golang/lint/golint
-	go get -u github.com/mjibson/esc
+install_requirements: go_get_requirements
+	echo "Installed tooling"
 
 .PHONY: vet
 vet: install_requirements
@@ -44,7 +57,7 @@ vet: install_requirements
 .PHONY: lint
 lint: install_requirements
 	for file in $(shell $(GO_SOURCE_FILES)); do \
-		$(GO_LINT) "$${file}" || exit 1 ;\
+		$(GO_LINT_PATH) "$${file}" || exit 1 ;\
 	done
 
 .PHONY: fmt
@@ -59,6 +72,7 @@ fmtcheck:install_requirements
 .PHONY: validate
 validate: install_requirements vet lint fmtcheck
 	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
+	$(GAS_PATH) -exclude=G204 ./...
 
 docs:
 	@echo ""
@@ -69,8 +83,9 @@ docs:
 ################################################################################
 # Travis
 ################################################################################
-travis-depends: install_requirements
+travis-depends: update_requirements
 	go get -u github.com/golang/dep/...
+	dep version
 	dep ensure
 	# Move everything in the ./vendor directory to the $(GOPATH)/src directory
 	rsync -a --quiet --remove-source-files ./vendor/ $(GOPATH)/src
@@ -78,7 +93,7 @@ travis-depends: install_requirements
 
 .PHONY: travis-ci-test
 travis-ci-test: travis-depends test build
-	go test -v -cover ./...
+	go test -v -cover -race ./...
 
 ################################################################################
 # Sparta commands
@@ -96,6 +111,10 @@ describe: build
 ################################################################################
 # ALM commands
 ################################################################################
+.PHONY: ensure-preconditions
+ensure-preconditions:
+	mkdir -pv $(WORK_DIR)
+
 .PHONY: clean
 clean:
 	go clean .
@@ -103,7 +122,14 @@ clean:
 
 .PHONY: test
 test: validate
-	go test -v -cover ./...
+	go test -v -cover -race ./...
+
+.PHONY: test-cover
+test-cover: ensure-preconditions
+	go test -coverprofile=$(WORK_DIR)/cover.out -v .
+	go tool cover -html=$(WORK_DIR)/cover.out
+	rm $(WORK_DIR)/cover.out
+	open $(WORK_DIR)/cover.html
 
 .PHONY: build
 build: validate test

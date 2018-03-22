@@ -2,12 +2,14 @@ package sparta
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/service/s3"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -68,35 +70,19 @@ type BasePermission struct {
 }
 
 func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.StringExpr {
+	stringARN, stringARNOk := perm.SourceArn.(string)
+	if stringARNOk && strings.Contains(stringARN, "arn:aws:") {
+		return gocf.String(stringARN)
+	}
+
 	var parts []gocf.Stringable
 	if nil != joinParts {
 		parts = append(parts, joinParts...)
 	}
-	switch perm.SourceArn.(type) {
-	case string:
-		// Don't be smart if the Arn value is a user supplied literal
-		parts = []gocf.Stringable{gocf.String(perm.SourceArn.(string))}
-	case *gocf.StringExpr:
-		parts = append(parts, perm.SourceArn.(*gocf.StringExpr))
-	case gocf.RefFunc:
-		parts = append(parts, perm.SourceArn.(gocf.RefFunc).String())
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", perm.SourceArn))
-	}
+	parts = append(parts,
+		spartaCF.DynamicValueToStringExpr(perm.SourceArn),
+	)
 	return gocf.Join("", parts...)
-}
-
-func describeInfoArn(arnExpression interface{}) string {
-	switch arnExpression.(type) {
-	case string:
-		return arnExpression.(string)
-	case *gocf.StringExpr,
-		gocf.RefFunc:
-		data, _ := json.Marshal(arnExpression)
-		return string(data)
-	default:
-		panic(fmt.Sprintf("Unsupported SourceArn value type: %+v", arnExpression))
-	}
 }
 
 func (perm BasePermission) export(principal *gocf.StringExpr,
@@ -115,11 +101,11 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 	}
 	// If the Arn isn't the wildcard value, then include it.
 	if nil != perm.SourceArn {
-		switch perm.SourceArn.(type) {
+		switch typedARN := perm.SourceArn.(type) {
 		case string:
 			// Don't be smart if the Arn value is a user supplied literal
-			if "*" != perm.SourceArn.(string) {
-				lambdaPermission.SourceArn = gocf.String(perm.SourceArn.(string))
+			if "*" != typedARN {
+				lambdaPermission.SourceArn = gocf.String(typedARN)
 			}
 		default:
 			lambdaPermission.SourceArn = perm.sourceArnExpr(arnPrefixParts...)
@@ -144,54 +130,6 @@ func (perm BasePermission) export(principal *gocf.StringExpr,
 
 //
 // END - BasePermission
-////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////
-// START - LambdaPermission
-//
-
-// LambdaPermission type that creates a Lambda::Permission entry
-// in the generated template, but does NOT automatically register the lambda
-// with the BasePermission.SourceArn.  Typically used to register lambdas with
-// externally managed event producers
-type LambdaPermission struct {
-	BasePermission
-	// The entity for which you are granting permission to invoke the Lambda function
-	Principal string
-}
-
-/*
-func (perm LambdaPermission) export(serviceName string,
-	lambdaFunctionDisplayName string,
-	lambdaLogicalCFResourceName string,
-	template *gocf.Template,
-	S3Bucket string,
-	S3Key string,
-	logger *logrus.Logger) (string, error) {
-
-	return perm.BasePermission.export(gocf.String(perm.Principal),
-		lambdaSourceArnParts,
-		lambdaFunctionDisplayName,
-		lambdaLogicalCFResourceName,
-		template,
-		S3Bucket,
-		S3Key,
-		logger)
-}
-*/
-/*
-func (perm LambdaPermission) descriptionInfo() ([]descriptionNode, error) {
-	nodes := []descriptionNode{
-		{
-			Name:     "Source",
-			Relation: describeInfoArn(perm.SourceArn),
-		},
-	}
-	return nodes, nil
-}
-*/
-//
-// END - LambdaPermission
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -236,7 +174,7 @@ func (perm S3Permission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export S3 permission")
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
@@ -252,7 +190,7 @@ func (perm S3Permission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporting S3 permission")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -296,7 +234,7 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 
 	nodes := []descriptionNode{
 		{
-			Name:     describeInfoArn(perm.SourceArn),
+			Name:     describeInfoValue(perm.SourceArn),
 			Relation: s3Events,
 		},
 	}
@@ -337,7 +275,7 @@ func (perm SNSPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export SNS permission")
 	}
 
 	// Make sure the custom lambda that manages s3 notifications is provisioned.
@@ -352,7 +290,7 @@ func (perm SNSPermission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporing SNS permission handler")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -383,7 +321,7 @@ func (perm SNSPermission) export(serviceName string,
 func (perm SNSPermission) descriptionInfo() ([]descriptionNode, error) {
 	nodes := []descriptionNode{
 		{
-			Name:     describeInfoArn(perm.SourceArn),
+			Name:     describeInfoValue(perm.SourceArn),
 			Relation: "",
 		},
 	}
@@ -667,7 +605,7 @@ func (perm SESPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Failed to export SES permission")
 	}
 
 	// MessageBody storage?
@@ -700,7 +638,7 @@ func (perm SESPermission) export(serviceName string,
 		logger)
 
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Ensuring custom resource handler for SES")
 	}
 
 	// Add a custom resource invocation for this configuration
@@ -1026,7 +964,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 		S3Key,
 		logger)
 	if nil != err {
-		return "", err
+		return "", errors.Wrap(err, "Exporting regional CloudWatch log permission")
 	}
 
 	// Then we need to uniqueify the rule names s.t. we prevent
@@ -1062,7 +1000,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 			S3Key,
 			logger)
 		if nil != ensureCustomHandlerError {
-			return "", err
+			return "", errors.Wrap(err, "Ensuring CloudWatch permissions handler")
 		}
 		configurationResourceNames[configurationResourceName] = 1
 		configurationResourceName = lastConfigurationResourceName
@@ -1113,7 +1051,7 @@ func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error
 	var nodes []descriptionNode
 	for eachFilterName, eachFilterDef := range perm.Filters {
 		nodes = append(nodes, descriptionNode{
-			Name:     describeInfoArn(eachFilterDef.LogGroupName),
+			Name:     describeInfoValue(eachFilterDef.LogGroupName),
 			Relation: fmt.Sprintf("%s (%s)", eachFilterName, eachFilterDef.FilterPattern),
 		})
 	}

@@ -413,7 +413,7 @@ type Integration struct {
 // Method proxies the AWS SDK's Method data.  See
 // http://docs.aws.amazon.com/sdk-for-go/api/service/apigateway.html#type-Method
 type Method struct {
-	authorizationType       string
+	authorizationID         gocf.Stringable
 	httpMethod              string
 	defaultHTTPResponseCode int
 
@@ -495,6 +495,12 @@ type API struct {
 	CORSOptions *CORSOptions
 }
 
+// LogicalResourceName returns the CloudFormation logical
+// resource name for this API
+func (api *API) LogicalResourceName() string {
+	return CloudFormationResourceName("APIGateway", api.name)
+}
+
 func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
@@ -514,7 +520,6 @@ func (api *API) export(serviceName string,
 		pathParts := strings.Split(fullPath, "/")
 		return CloudFormationResourceName("%sResource", pathParts[0], fullPath)
 	}
-	apiGatewayResName := CloudFormationResourceName("APIGateway", api.name)
 
 	// Create an API gateway entry
 	apiGatewayRes := &gocf.APIGatewayRestAPI{
@@ -530,7 +535,7 @@ func (api *API) export(serviceName string,
 	} else {
 		apiGatewayRes.Description = gocf.String(api.Description)
 	}
-
+	apiGatewayResName := api.LogicalResourceName()
 	template.AddResource(apiGatewayResName, apiGatewayRes)
 	apiGatewayRestAPIID := gocf.Ref(apiGatewayResName)
 
@@ -563,7 +568,8 @@ func (api *API) export(serviceName string,
 		}
 
 		// Add the lambda permission
-		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm", eachResourceMethodKey)
+		apiGatewayPermissionResourceName := CloudFormationResourceName("APIGatewayLambdaPerm",
+			eachResourceMethodKey)
 		lambdaInvokePermission := &gocf.LambdaPermission{
 			Action:       gocf.String("lambda:InvokeFunction"),
 			FunctionName: gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
@@ -576,10 +582,13 @@ func (api *API) export(serviceName string,
 		// that are handling the same HTTP resource. In this case, track whether we've already created an
 		// OPTIONS entry for this path and only append iff this is the first time through
 		if api.corsEnabled() {
-			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS", eachResourceDef.pathPart), eachResourceDef.pathPart)
+			methodResourceName := CloudFormationResourceName(fmt.Sprintf("%s-OPTIONS",
+				eachResourceDef.pathPart), eachResourceDef.pathPart)
 			_, resourceExists := optionsMethodPathMap[methodResourceName]
 			if !resourceExists {
-				template.AddResource(methodResourceName, corsOptionsGatewayMethod(api, apiGatewayRestAPIID, parentResource))
+				template.AddResource(methodResourceName, corsOptionsGatewayMethod(api,
+					apiGatewayRestAPIID,
+					parentResource))
 				apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
 				optionsMethodPathMap[methodResourceName] = true
 			}
@@ -588,15 +597,15 @@ func (api *API) export(serviceName string,
 
 		// BEGIN - user defined verbs
 		for eachMethodName, eachMethodDef := range eachResourceDef.Methods {
+
 			methodRequestTemplates, methodRequestTemplatesErr := methodRequestTemplates(eachMethodDef)
 			if methodRequestTemplatesErr != nil {
 				return methodRequestTemplatesErr
 			}
 			apiGatewayMethod := &gocf.APIGatewayMethod{
-				HTTPMethod:        gocf.String(eachMethodName),
-				AuthorizationType: gocf.String("NONE"),
-				ResourceID:        parentResource.String(),
-				RestAPIID:         apiGatewayRestAPIID.String(),
+				HTTPMethod: gocf.String(eachMethodName),
+				ResourceID: parentResource.String(),
+				RestAPIID:  apiGatewayRestAPIID.String(),
 				Integration: &gocf.APIGatewayMethodIntegration{
 					IntegrationHTTPMethod: gocf.String("POST"),
 					Type:             gocf.String("AWS"),
@@ -608,6 +617,14 @@ func (api *API) export(serviceName string,
 						gocf.GetAtt(eachResourceDef.parentLambda.LogicalResourceName(), "Arn"),
 						gocf.String("/invocations")),
 				},
+			}
+			// Handle authorization
+			if eachMethodDef.authorizationID != nil {
+				// See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html#cfn-apigateway-method-authorizationtype
+				apiGatewayMethod.AuthorizationType = gocf.String("CUSTOM")
+				apiGatewayMethod.AuthorizerID = eachMethodDef.authorizationID.String()
+			} else {
+				apiGatewayMethod.AuthorizationType = gocf.String("NONE")
 			}
 			if len(eachMethodDef.Parameters) != 0 {
 				requestParams := make(map[string]string)
@@ -630,7 +647,8 @@ func (api *API) export(serviceName string,
 			methodResourceName := CloudFormationResourceName(prefix, eachResourceMethodKey, serviceName)
 			res := template.AddResource(methodResourceName, apiGatewayMethod)
 			res.DependsOn = append(res.DependsOn, apiGatewayPermissionResourceName)
-			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources, methodResourceName)
+			apiMethodCloudFormationResources = append(apiMethodCloudFormationResources,
+				methodResourceName)
 		}
 	}
 	// END
@@ -748,14 +766,17 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 // Sparta will *ONLY* generate mappings for known codes. This slice need only include the
 // codes in addition to the defaultHTTPStatusCode. If the function can only return a single
 // value, provide the defaultHTTPStatusCode in the possibleHTTPStatusCodeResponses slice
-func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int, possibleHTTPStatusCodeResponses ...int) (*Method, error) {
-	authorizationType := "NONE"
+func (resource *Resource) NewMethod(httpMethod string,
+	defaultHTTPStatusCode int,
+	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 
 	// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-method-settings.html#how-to-method-settings-console
 	keyname := httpMethod
-	_, exists := resource.Methods[keyname]
+	existingMethod, exists := resource.Methods[keyname]
 	if exists {
-		return nil, fmt.Errorf("Method %s (Auth: %s) already defined for resource", httpMethod, authorizationType)
+		return nil, fmt.Errorf("Method %s (Auth: %#v) already defined for resource",
+			httpMethod,
+			existingMethod.authorizationID)
 	}
 	if 0 == defaultHTTPStatusCode {
 		return nil, fmt.Errorf("Invalid default HTTP status (%d) code for method", defaultHTTPStatusCode)
@@ -769,7 +790,6 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 	}
 
 	method := &Method{
-		authorizationType:       authorizationType,
 		httpMethod:              httpMethod,
 		defaultHTTPResponseCode: defaultHTTPStatusCode,
 		Parameters:              make(map[string]bool),
@@ -796,17 +816,23 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
 		if "" == statusText {
-			return nil, fmt.Errorf("Invalid HTTP status code %d provided for method: %s", i, httpMethod)
+			return nil, fmt.Errorf("Invalid HTTP status code %d provided for method: %s",
+				i,
+				httpMethod)
 		}
 		// First the Integration Responses...
-		regExp := fmt.Sprintf(".*%s.*", statusText)
-		if defaultHTTPStatusCode == i {
+		regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
+		isDefaultHTTPStatusCode := (defaultHTTPStatusCode == i)
+		applicationJSONTemplate := "$input.path('$.errorMessage')"
+		if isDefaultHTTPStatusCode {
 			regExp = ""
+			applicationJSONTemplate = "$input.json('$')"
 		}
+		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 		method.Integration.Responses[i] = &IntegrationResponse{
 			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
-				"application/json": "",
+				"application/json": applicationJSONTemplate,
 				"text/*":           "",
 			},
 			SelectionPattern: regExp,
@@ -822,11 +848,21 @@ func (resource *Resource) NewMethod(httpMethod string, defaultHTTPStatusCode int
 	return method, nil
 }
 
-// NewAuthorizedMethod associates the httpMethod name and authorizationType with the given Resource.
-func (resource *Resource) NewAuthorizedMethod(httpMethod string, authorizationType string, defaultHTTPStatusCode int) (*Method, error) {
-	method, err := resource.NewMethod(httpMethod, defaultHTTPStatusCode)
-	if nil != err {
-		method.authorizationType = authorizationType
+// NewAuthorizedMethod associates the httpMethod name and authorizationID with
+// the given Resource. The authorizerID param is a cloudformation.Strinable
+// satisfying value
+func (resource *Resource) NewAuthorizedMethod(httpMethod string,
+	authorizerID gocf.Stringable,
+	defaultHTTPStatusCode int,
+	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
+	if authorizerID == nil {
+		return nil, fmt.Errorf("AuthorizerID must not be `nil` for Authorized Method")
 	}
-	return method, err
+	method, methodErr := resource.NewMethod(httpMethod,
+		defaultHTTPStatusCode,
+		possibleHTTPStatusCodeResponses...)
+	if methodErr == nil {
+		method.authorizationID = authorizerID
+	}
+	return method, methodErr
 }

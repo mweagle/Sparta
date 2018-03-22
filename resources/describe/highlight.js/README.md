@@ -1,0 +1,1 @@
+This is an old version of highlights that is HTML *head* embed friendly. The newer versions of highlights don't support inline source due to invalid token parsing.

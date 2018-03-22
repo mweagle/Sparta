@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -24,9 +25,10 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 // environment variables. The environment key will be transformed into
 // a configuration file for a CodePipeline CloudFormation action:
 // TemplateConfiguration: !Sub "TemplateSource::${environmentName}".
-func RegisterCodePipelineEnvironment(environmentName string, environmentVariables map[string]string) error {
+func RegisterCodePipelineEnvironment(environmentName string,
+	environmentVariables map[string]string) error {
 	if _, exists := codePipelineEnvironments[environmentName]; exists {
-		return fmt.Errorf("Environment (%s) has already been defined", environmentName)
+		return errors.Errorf("Environment (%s) has already been defined", environmentName)
 	}
 	codePipelineEnvironments[environmentName] = environmentVariables
 	return nil
@@ -96,7 +98,8 @@ func MainEx(serviceName string,
 			return validateErr
 		}
 		// Format?
-		enableColors := (runtime.GOOS != "windows")
+		// Running in AWS?
+		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
@@ -250,7 +253,11 @@ func MainEx(serviceName string,
 	executeErr := CommandLineOptions.Root.Execute()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
-			newLogger, _ := NewLogger("info")
+			newLogger, newLoggerErr := NewLogger("info")
+			if newLoggerErr != nil {
+				fmt.Printf("Failed to create new logger: %v", newLoggerErr)
+				newLogger = logrus.New()
+			}
 			OptionsGlobal.Logger = newLogger
 		}
 		if OptionsGlobal.Logger != nil {

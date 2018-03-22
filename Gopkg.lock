@@ -4,26 +4,76 @@
 [[projects]]
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "0aa8b6a162b391fe2d95648b7677d1d6ac2090a6"
-  version = "v1.4.1"
+  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
+  version = "v1.4.2"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
-  packages = ["lambda","lambda/messages","lambdacontext"]
-  revision = "6e2e37798efbb1dfd8e9c6681702e683a6046517"
-  version = "v1.0.1"
+  packages = [
+    "lambda",
+    "lambda/messages",
+    "lambdacontext"
+  ]
+  revision = "64efb26269cc5d9c363a143a936a7c75b053e06d"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
-  packages = ["aws","aws/awserr","aws/awsutil","aws/client","aws/client/metadata","aws/corehandlers","aws/credentials","aws/credentials/ec2rolecreds","aws/credentials/endpointcreds","aws/credentials/stscreds","aws/defaults","aws/ec2metadata","aws/endpoints","aws/request","aws/session","aws/signer/v4","internal/shareddefaults","private/protocol","private/protocol/json/jsonutil","private/protocol/jsonrpc","private/protocol/query","private/protocol/query/queryutil","private/protocol/rest","private/protocol/restjson","private/protocol/restxml","private/protocol/xml/xmlutil","service/apigateway","service/cloudformation","service/cloudwatchlogs","service/dynamodb","service/ecr","service/iam","service/lambda","service/s3","service/s3/s3iface","service/s3/s3manager","service/ses","service/sns","service/sts"]
-  revision = "9ed0c8de252f04ac45a65358377103d5a1aa2d92"
-  version = "v1.12.66"
+  packages = [
+    "aws",
+    "aws/awserr",
+    "aws/awsutil",
+    "aws/client",
+    "aws/client/metadata",
+    "aws/corehandlers",
+    "aws/credentials",
+    "aws/credentials/ec2rolecreds",
+    "aws/credentials/endpointcreds",
+    "aws/credentials/stscreds",
+    "aws/defaults",
+    "aws/ec2metadata",
+    "aws/endpoints",
+    "aws/request",
+    "aws/session",
+    "aws/signer/v4",
+    "internal/sdkrand",
+    "internal/shareddefaults",
+    "private/protocol",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
+    "private/protocol/query",
+    "private/protocol/query/queryutil",
+    "private/protocol/rest",
+    "private/protocol/restjson",
+    "private/protocol/restxml",
+    "private/protocol/xml/xmlutil",
+    "service/apigateway",
+    "service/cloudformation",
+    "service/cloudwatchlogs",
+    "service/dynamodb",
+    "service/ecr",
+    "service/iam",
+    "service/lambda",
+    "service/s3",
+    "service/s3/s3iface",
+    "service/s3/s3manager",
+    "service/ses",
+    "service/sns",
+    "service/sts"
+  ]
+  revision = "ce48e67ca697079662aee65a13202f37a185962b"
+  version = "v1.13.6"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
   packages = ["."]
   revision = "48dbb65d7bd5c74ab50d53d04c949f20e3d14944"
   version = "1.0"
+
+[[projects]]
+  name = "github.com/deckarep/golang-set"
+  packages = ["."]
+  revision = "1d4478f51bed434f1dadf96dcd9b43aabac66795"
+  version = "v1.7"
 
 [[projects]]
   branch = "master"
@@ -34,8 +84,8 @@
 [[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
-  revision = "570b54cabe6b8eb0bc2dfce68d964677d63b5260"
-  version = "v1.5.0"
+  revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
+  version = "v1.6.0"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -45,7 +95,10 @@
 
 [[projects]]
   name = "github.com/go-playground/locales"
-  packages = [".","currency"]
+  packages = [
+    ".",
+    "currency"
+  ]
   revision = "e4cbcb5d0652150d40ad0646651076b6bd2be4f6"
   version = "v0.11.2"
 
@@ -58,8 +111,24 @@
 [[projects]]
   branch = "master"
   name = "github.com/google/pprof"
-  packages = ["driver","internal/binutils","internal/driver","internal/elfexec","internal/graph","internal/measurement","internal/plugin","internal/report","internal/symbolizer","internal/symbolz","profile","third_party/d3","third_party/d3flamegraph","third_party/d3tip","third_party/svgpan"]
-  revision = "532a375ba6b2c215d7e66f538ac0e9adbc03ab98"
+  packages = [
+    "driver",
+    "internal/binutils",
+    "internal/driver",
+    "internal/elfexec",
+    "internal/graph",
+    "internal/measurement",
+    "internal/plugin",
+    "internal/report",
+    "internal/symbolizer",
+    "internal/symbolz",
+    "profile",
+    "third_party/d3",
+    "third_party/d3flamegraph",
+    "third_party/d3tip",
+    "third_party/svgpan"
+  ]
+  revision = "db0be723d40dfbb90c702d493a71d398173358e7"
 
 [[projects]]
   branch = "master"
@@ -98,9 +167,21 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/mweagle/go-cloudcondenser"
+  packages = ["."]
+  revision = "e1ad78f4b7808efe04dcfb8813d55cb64f673f13"
+
+[[projects]]
+  branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "db08826ab78c4b9afe40cb9a9f87b2be1f49ff4b"
+  revision = "59bfc7932fecb23d2c1d001f73c9a062c187c140"
+
+[[projects]]
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -124,35 +205,41 @@
   branch = "master"
   name = "github.com/zcalusic/sysinfo"
   packages = ["."]
-  revision = "cb55f814b6ba2adb882cf350bac99b7f77302327"
+  revision = "7a16547e0bde79fb8f37231cdcfc8cacef8d8fbb"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "a6600008915114d9c087fad9f03d75087b1a74df"
+  revision = "8c653846df49742c4c85ec37e5d9f8d3ba657895"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix","windows"]
-  revision = "2c42eef0765b9837fbdab12011af7830f55f88f0"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
-  packages = ["core","terminal"]
-  revision = "0aa8b6a162b391fe2d95648b7677d1d6ac2090a6"
-  version = "v1.4.1"
+  packages = [
+    "core",
+    "terminal"
+  ]
+  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
+  version = "v1.4.2"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "48a433ba4bcadc5be9aa16d4bdcb383d3f57a741"
-  version = "v9.9.3"
+  revision = "150fe5b6a4ccc9cd6ffdbf5d184b67fbea75efcc"
+  version = "v9.11.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "84407061a01d32674115bf596e9941d1bbeac70502657e17f66484a2543ef7c1"
+  inputs-digest = "b7b299268bfcb529adab5ee09bb15290327bc99e5acb166e9e4477ec755de4d4"
   solver-name = "gps-cdcl"
   solver-version = 1

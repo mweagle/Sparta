@@ -8,7 +8,6 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"go/parser"
@@ -23,7 +22,6 @@ import (
 	"runtime"
 	"strings"
 	"sync"
-	"text/template"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -36,7 +34,9 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
 	spartaZip "github.com/mweagle/Sparta/zip"
+	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -48,20 +48,6 @@ func spartaTagName(baseKey string) string {
 }
 
 var (
-	// SpartaTagHomeKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta home URL.
-	// @enum OutputKey
-	SpartaTagHomeKey = spartaTagName("home")
-
-	// SpartaTagVersionKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta version used to provision/update the service.
-	// @enum OutputKey
-	SpartaTagVersionKey = spartaTagName("version")
-
-	// SpartaTagHashKey is the keyname used in the CloudFormation Output
-	// that stores the Sparta commit ID used to provision/update the service
-	SpartaTagHashKey = spartaTagName("sha")
-
 	// SpartaTagBuildIDKey is the keyname used in the CloudFormation Output
 	// that stores the user-supplied or automatically generated BuildID
 	// for this run
@@ -80,13 +66,12 @@ type finalizerFunction func(logger *logrus.Logger)
 // full URL or just the valid S3 Keyname
 type s3UploadURL struct {
 	location string
+	path     string
 	version  string
 }
 
 func (s3URL *s3UploadURL) keyName() string {
-	// Find the hostname in the URL, then strip it out
-	urlParts, _ := url.Parse(s3URL.location)
-	return strings.TrimPrefix(urlParts.Path, "/")
+	return s3URL.path
 }
 
 func newS3UploadURL(s3URL string) *s3UploadURL {
@@ -103,7 +88,9 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 	if len(versionIDValues) == 1 {
 		version = versionIDValues[0]
 	}
-	return &s3UploadURL{location: s3URL, version: version}
+	return &s3UploadURL{location: s3URL,
+		path:    strings.TrimPrefix(urlParts.Path, "/"),
+		version: version}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -269,8 +256,12 @@ func (ctx *workflowContext) rollback() {
 	ctx.logger.Info("Invoking rollback functions")
 	var wg sync.WaitGroup
 	wg.Add(len(ctx.transaction.rollbackFunctions))
-	callRollbackHook(ctx, &wg)
-
+	rollbackErr := callRollbackHook(ctx, &wg)
+	if rollbackErr != nil {
+		ctx.logger.WithFields(logrus.Fields{
+			"Error": rollbackErr,
+		}).Warning("Rollback Hook failed to execute")
+	}
 	for _, eachCleanup := range ctx.transaction.rollbackFunctions {
 		go func(cleanupFunc spartaS3.RollbackFunction, goLogger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
@@ -290,17 +281,6 @@ func (ctx *workflowContext) rollback() {
 ////////////////////////////////////////////////////////////////////////////////
 // Private - START
 //
-
-// userGoPath returns either $GOPATH or the new $HOME/go path
-// introduced with Go 1.8
-func userGoPath() string {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		home := os.Getenv("HOME")
-		gopath = filepath.Join(home, "go")
-	}
-	return gopath
-}
 
 // logFilesize outputs a friendly filesize for the given filepath
 func logFilesize(message string, filePath string, logger *logrus.Logger) {
@@ -333,7 +313,14 @@ func callRollbackHook(ctx *workflowContext, wg *sync.WaitGroup) error {
 			logger *logrus.Logger) {
 			// Decrement the counter when the goroutine completes.
 			defer wg.Done()
-			handler.Rollback(context, serviceName, awsSession, noop, logger)
+			rollbackErr := handler.Rollback(context,
+				serviceName,
+				awsSession,
+				noop,
+				logger)
+			logger.WithFields(logrus.Fields{
+				"Error": rollbackErr,
+			}).Warn("Rollback function failed to complete")
 		}(eachRollbackHook,
 			ctx.context.workflowHooksContext,
 			ctx.userdata.serviceName,
@@ -380,9 +367,9 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 		if nil != decoratorError {
 			return decoratorError
 		}
-		mergeErr := safeMergeTemplates(serviceTemplate, ctx.context.cfTemplate, ctx.logger)
-		if nil != mergeErr {
-			return mergeErr
+		safeMergeErrs := gocc.SafeMerge(serviceTemplate, ctx.context.cfTemplate)
+		if len(safeMergeErrs) != 0 {
+			return errors.Errorf("Failed to merge templates: %#v", safeMergeErrs)
 		}
 	}
 	return nil
@@ -413,7 +400,7 @@ func callArchiveHook(lambdaArchive *zip.Writer,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return hookErr
+			return errors.Wrapf(hookErr, "Failed call to DecorateArchive")
 		}
 	}
 	return nil
@@ -446,7 +433,7 @@ func callWorkflowHook(hookPhase string,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return hookErr
+			return errors.Wrapf(hookErr, "Failed call to DecorateWorkflow")
 		}
 	}
 	return nil
@@ -463,7 +450,10 @@ func versionAwareS3KeyName(s3DefaultKey string, s3VersioningEnabled bool, logger
 
 		hash := sha1.New()
 		salt := fmt.Sprintf("%s-%d", s3DefaultKey, time.Now().UnixNano())
-		hash.Write([]byte(salt))
+		_, writeErr := hash.Write([]byte(salt))
+		if writeErr != nil {
+			return "", errors.Wrapf(writeErr, "Failed to update hash digest")
+		}
 		versionKeyName = fmt.Sprintf("%s-%s%s",
 			prefixString,
 			hex.EncodeToString(hash.Sum(nil)),
@@ -493,7 +483,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			ctx.context.s3BucketVersioningEnabled,
 			ctx.logger)
 		if nil != s3KeyNameErr {
-			return "", s3KeyNameErr
+			return "", errors.Wrapf(s3KeyNameErr, "Failed to create version aware S3 keyname")
 		}
 		s3ObjectKey = s3KeyName
 	}
@@ -526,7 +516,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 			s3ObjectKey,
 			ctx.logger)
 		if nil != uploadURLErr {
-			return "", uploadURLErr
+			return "", errors.Wrapf(uploadURLErr, "Failed to upload local file to S3")
 		}
 		s3URL = uploadLocation
 		ctx.registerRollback(spartaS3.CreateS3RollbackFunc(ctx.context.awsSession, uploadLocation))
@@ -571,7 +561,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				ctx.userdata.s3Bucket,
 				ctx.logger)
 			if profileErr != nil {
-				return nil, profileErr
+				return nil, errors.Wrapf(profileErr, "Failed to call lambda profile decorator")
 			}
 		}
 
@@ -583,7 +573,9 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				// Insert it into the resource creation map and add
 				// the "Ref" entry to the hashmap
 				ctx.context.cfTemplate.AddResource(logicalName,
-					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings, eachLambdaInfo.Options, ctx.logger))
+					eachLambdaInfo.RoleDefinition.toResource(eachLambdaInfo.EventSourceMappings,
+						eachLambdaInfo.Options,
+						ctx.logger))
 
 				ctx.context.lambdaIAMRoleNameMap[logicalName] = gocf.GetAtt(logicalName, "Arn")
 			}
@@ -598,7 +590,9 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				_, exists := ctx.context.lambdaIAMRoleNameMap[customResourceLogicalName]
 				if !exists {
 					ctx.context.cfTemplate.AddResource(customResourceLogicalName,
-						eachCustomResource.roleDefinition.toResource(nil, eachCustomResource.options, ctx.logger))
+						eachCustomResource.roleDefinition.toResource(nil,
+							eachCustomResource.options,
+							ctx.logger))
 					ctx.context.lambdaIAMRoleNameMap[customResourceLogicalName] = gocf.GetAtt(customResourceLogicalName, "Arn")
 				}
 			}
@@ -640,8 +634,10 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		ctx.logger.WithFields(logrus.Fields{
 			"VersioningEnabled": false,
 			"Bucket":            ctx.userdata.s3Bucket,
-		}).Info(noopMessage("S3 versioning check"))
+			"Region":            *ctx.context.awsSession.Config.Region,
+		}).Info(noopMessage("S3 preconditions check"))
 	} else {
+		// Bucket versioning
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession, ctx.userdata.s3Bucket, ctx.logger)
 		if nil != versioningPolicyErr {
@@ -655,6 +651,33 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 		if "" != ctx.userdata.codePipelineTrigger && !isEnabled {
 			return nil, fmt.Errorf("Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.userdata.s3Bucket)
 		}
+		// Bucket region should match region
+		/*
+			The name of the Amazon S3 bucket where the .zip file that contains your deployment package is stored. This bucket must reside in the same AWS Region that you're creating the Lambda function in. You can specify a bucket from another AWS account as long as the Lambda function and the bucket are in the same region.
+		*/
+
+		bucketRegion, bucketRegionErr := spartaS3.BucketRegion(ctx.context.awsSession,
+			ctx.userdata.s3Bucket,
+			ctx.logger)
+
+		if bucketRegionErr != nil {
+			return nil, fmt.Errorf("Failed to determine region for %s. Error: %s",
+				ctx.userdata.s3Bucket,
+				bucketRegionErr)
+		}
+		ctx.logger.WithFields(logrus.Fields{
+			"Bucket": ctx.userdata.s3Bucket,
+			"Region": bucketRegion,
+		}).Info("Checking S3 region")
+		if bucketRegion != *ctx.context.awsSession.Config.Region {
+			return nil, fmt.Errorf("Target region (%s) does not match bucket region (%s)",
+				*ctx.context.awsSession.Config.Region,
+				bucketRegion)
+		}
+		// Nothing else to do...
+		ctx.logger.WithFields(logrus.Fields{
+			"Region": bucketRegion,
+		}).Debug("Confirmed S3 region match")
 	}
 
 	// If there are codePipeline environments defined, warn if they don't include
@@ -712,7 +735,7 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 	fset := token.NewFileSet()
 	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
 	if parseErr != nil {
-		return fmt.Errorf("Failed to parse source input: %s", parseErr.Error())
+		return errors.Errorf("Failed to parse source input: %s", parseErr.Error())
 	}
 	logger.WithFields(logrus.Fields{
 		"SourcePackages": packageMap,
@@ -782,7 +805,7 @@ func buildGoBinary(serviceName string,
 		"StampedBuildID":     buildID,
 	}
 	for eachFlag, eachValue := range linkerFlags {
-		linkFlags = fmt.Sprintf("%s -X github.com/mweagle/Sparta.%s=%s",
+		linkFlags = fmt.Sprintf("%s -s -w -X github.com/mweagle/Sparta.%s=%s",
 			linkFlags,
 			eachFlag,
 			eachValue)
@@ -973,10 +996,21 @@ func createPackageStep() workflowStep {
 		if nil != archiveErr {
 			return nil, archiveErr
 		}
+		// Issue: https://github.com/mweagle/Sparta/issues/103. If the executable
+		// bit isn't set, then AWS Lambda won't be able to fork the binary
+		var fileHeaderAnnotator spartaZip.FileHeaderAnnotator
+		if runtime.GOOS == "windows" {
+			fileHeaderAnnotator = func(header *zip.FileHeader) (*zip.FileHeader, error) {
+				// Make the binary executable
+				header.ExternalAttrs = 0777 << 16
+				return header, nil
+			}
+		}
 		// File info for the binary executable
-		readerErr := spartaZip.AddToZip(lambdaArchive,
+		readerErr := spartaZip.AnnotateAddToZip(lambdaArchive,
 			ctx.context.binaryName,
 			"",
+			fileHeaderAnnotator,
 			ctx.logger)
 		if nil != readerErr {
 			return nil, readerErr
@@ -1021,14 +1055,14 @@ func createUploadStep(packagePath string) workflowStep {
 				tmpFile, err := temporaryFile(tempName)
 				if err != nil {
 					return newTaskResult(nil,
-						errors.New("Failed to create temporary S3 site archive file: "+err.Error()))
+						errors.Wrapf(err, "Failed to create temporary S3 site archive file"))
 				}
 
 				// Add the contents to the Zip file
 				zipArchive := zip.NewWriter(tmpFile)
 				absResourcePath, err := filepath.Abs(ctx.userdata.s3SiteContext.s3Site.resources)
 				if nil != err {
-					return newTaskResult(nil, err)
+					return newTaskResult(nil, errors.Wrapf(err, "Failed to get absolute filepath"))
 				}
 
 				ctx.logger.WithFields(logrus.Fields{
@@ -1040,12 +1074,16 @@ func createUploadStep(packagePath string) workflowStep {
 				if nil != err {
 					return newTaskResult(nil, err)
 				}
-				zipArchive.Close()
+				errClose := zipArchive.Close()
+				if errClose != nil {
+					return newTaskResult(nil, errClose)
+				}
 
 				// Upload it & save the key
 				s3SiteLambdaZipURL, s3SiteLambdaZipURLErr := uploadLocalFileToS3(tmpFile.Name(), "", ctx)
 				if s3SiteLambdaZipURLErr != nil {
-					return newTaskResult(nil, s3SiteLambdaZipURLErr)
+					return newTaskResult(nil,
+						errors.Wrapf(s3SiteLambdaZipURLErr, "Failed to upload local file to S3"))
 				}
 				ctx.userdata.s3SiteContext.s3UploadURL = newS3UploadURL(s3SiteLambdaZipURL)
 				return newTaskResult(ctx.userdata.s3SiteContext.s3UploadURL, nil)
@@ -1059,117 +1097,10 @@ func createUploadStep(packagePath string) workflowStep {
 		_, uploadErrors := p.Run()
 
 		if len(uploadErrors) > 0 {
-			errorText := "Encountered multiple errors during upload:\n"
-			for _, eachError := range uploadErrors {
-				errorText += fmt.Sprintf("%s%s\n", errorText, eachError.Error())
-				return nil, errors.New(errorText)
-			}
+			return nil, errors.Errorf("Encountered multiple errors during upload: %#v", uploadErrors)
 		}
-		return ensureCloudFormationStack(), nil
+		return validateSpartaPostconditions(), nil
 	}
-}
-
-// This is a literal version of the DiscoveryInfo struct.
-var discoveryData = `
-{
-	"ResourceID": "<< .TagLogicalResourceID >>",
-	"Region": "{"Ref" : "AWS::Region"}",
-	"StackID": "{"Ref" : "AWS::StackId"}",
-	"StackName": "{"Ref" : "AWS::StackName"}",
-	"Resources":{<<range $eachDepResource, $eachOutputString := .Resources>>
-		"<< $eachDepResource >>" : << $eachOutputString >><< trailingComma >><<end>>
-	}
-}`
-
-//
-type discoveryDataTemplateData struct {
-	TagLogicalResourceID string
-	Resources            map[string]string
-}
-
-func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.StringExpr, error) {
-	discoveryDataTemplateData := &discoveryDataTemplateData{
-		TagLogicalResourceID: resID,
-		Resources:            deps,
-	}
-	totalDeps := len(deps)
-	var templateFuncMap = template.FuncMap{
-		// The name "inc" is what the function will be called in the template text.
-		"trailingComma": func() string {
-			totalDeps--
-			if totalDeps > 0 {
-				return ","
-			}
-			return ""
-		},
-	}
-
-	discoveryTemplate, discoveryTemplateErr := template.New("discoveryData").
-		Delims("<<", ">>").
-		Funcs(templateFuncMap).
-		Parse(discoveryData)
-	if nil != discoveryTemplateErr {
-		return nil, discoveryTemplateErr
-	}
-
-	var templateResults bytes.Buffer
-	evalResultErr := discoveryTemplate.Execute(&templateResults, discoveryDataTemplateData)
-	if nil != evalResultErr {
-		return nil, evalResultErr
-	}
-	templateReader := bytes.NewReader(templateResults.Bytes())
-	templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(templateReader, nil)
-	if templateExprErr != nil {
-		return nil, templateExprErr
-	}
-	return gocf.Base64(templateExpr), nil
-}
-
-func annotateBuildInformation(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
-	buildID string,
-	logger *logrus.Logger) (*gocf.Template, error) {
-
-	// Add the build id s.t. the logger can get stamped...
-	if lambdaAWSInfo.Options == nil {
-		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
-	}
-	lambdaEnvironment := lambdaAWSInfo.Options.Environment
-	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-	}
-	return template, nil
-}
-
-func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
-	template *gocf.Template,
-	logger *logrus.Logger) (*gocf.Template, error) {
-	depMap := make(map[string]string)
-
-	// Update the metdata with a reference to the output of each
-	// depended on item...
-	for _, eachDependsKey := range lambdaAWSInfo.DependsOn {
-		dependencyText, dependencyTextErr := discoveryResourceInfoForDependency(template, eachDependsKey, logger)
-		if dependencyTextErr != nil {
-			return nil, dependencyTextErr
-		}
-		depMap[eachDependsKey] = string(dependencyText)
-	}
-	if lambdaAWSInfo.Options == nil {
-		lambdaAWSInfo.Options = &LambdaFunctionOptions{}
-	}
-	lambdaEnvironment := lambdaAWSInfo.Options.Environment
-	if lambdaEnvironment == nil {
-		lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-	}
-
-	discoveryInfo, discoveryInfoErr := discoveryInfoForResource(lambdaAWSInfo.LogicalResourceName(), depMap)
-	if discoveryInfoErr != nil {
-		return nil, discoveryInfoErr
-	}
-	// Update the env map
-	lambdaAWSInfo.Options.Environment[envVarDiscoveryInformation] = discoveryInfo
-	return template, nil
 }
 
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
@@ -1177,7 +1108,7 @@ func annotateDiscoveryInfo(lambdaAWSInfo *LambdaAWSInfo,
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
 	tmpFile, err := temporaryFile(ctx.userdata.codePipelineTrigger)
 	if err != nil {
-		return "", err
+		return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
 	}
 
 	ctx.logger.WithFields(logrus.Fields{
@@ -1346,8 +1277,6 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 // mutations have been accumulated
 func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	stackTags := map[string]string{
-		SpartaTagHomeKey:    "http://gosparta.io",
-		SpartaTagHashKey:    SpartaGitHash,
 		SpartaTagBuildIDKey: ctx.userdata.buildID,
 	}
 	if len(ctx.userdata.buildTags) != 0 {
@@ -1371,8 +1300,10 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	if nil != writeErr {
 		return nil, writeErr
 	}
-	templateFile.Close()
-
+	errClose := templateFile.Close()
+	if errClose != nil {
+		return nil, errClose
+	}
 	// Log the template if needed
 	if nil != ctx.context.templateWriter || ctx.logger.Level <= logrus.DebugLevel {
 		templateBody := string(cfTemplate)
@@ -1384,7 +1315,11 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			"Body": string(formatted),
 		}).Debug("CloudFormation template body")
 		if nil != ctx.context.templateWriter {
-			io.WriteString(ctx.context.templateWriter, string(formatted))
+			_, writeErr := io.WriteString(ctx.context.templateWriter,
+				string(formatted))
+			if writeErr != nil {
+				return nil, errors.Wrapf(writeErr, "Failed to write template")
+			}
 		}
 	}
 
@@ -1449,25 +1384,45 @@ func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logg
 	return nil
 }
 
-func annotateCodePipelineEnvironments(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) {
-	if nil != codePipelineEnvironments {
-		if nil == lambdaAWSInfo.Options {
-			lambdaAWSInfo.Options = defaultLambdaFunctionOptions()
-		}
-		if nil == lambdaAWSInfo.Options.Environment {
-			lambdaAWSInfo.Options.Environment = make(map[string]*gocf.StringExpr)
-		}
-		for _, eachEnvironment := range codePipelineEnvironments {
+func validateSpartaPostconditions() workflowStep {
+	return func(ctx *workflowContext) (workflowStep, error) {
+		validateErrs := make([]error, 0)
 
-			logger.WithFields(logrus.Fields{
-				"Environment":    eachEnvironment,
-				"LambdaFunction": lambdaAWSInfo.lambdaFunctionName(),
-			}).Debug("Annotating Lambda environment for CodePipeline")
+		requiredEnvVars := []string{envVarDiscoveryInformation,
+			envVarLogLevel}
 
-			for eachKey := range eachEnvironment {
-				lambdaAWSInfo.Options.Environment[eachKey] = gocf.Ref(eachKey).String()
+		// Verify that all Lambda functions have discovery information
+		for eachResourceID, eachResourceDef := range ctx.context.cfTemplate.Resources {
+			switch typedResource := eachResourceDef.Properties.(type) {
+			case *gocf.LambdaFunction:
+				if typedResource.Environment == nil {
+					validateErrs = append(validateErrs,
+						errors.Errorf("Lambda function %s does not include environment info", eachResourceID))
+				} else {
+					vars, varsOk := typedResource.Environment.Variables.(map[string]interface{})
+					if !varsOk {
+						validateErrs = append(validateErrs,
+							errors.Errorf("Lambda function %s environment vars are unsupported type: %T",
+								eachResourceID,
+								typedResource.Environment.Variables))
+					} else {
+						for _, eachKey := range requiredEnvVars {
+							_, exists := vars[eachKey]
+							if !exists {
+								validateErrs = append(validateErrs,
+									errors.Errorf("Lambda function %s environment does not include key: %s",
+										eachResourceID,
+										eachKey))
+							}
+						}
+					}
+				}
 			}
 		}
+		if len(validateErrs) != 0 {
+			return nil, errors.Errorf("Problems validating template contents: %v", validateErrs)
+		}
+		return ensureCloudFormationStack(), nil
 	}
 }
 
@@ -1504,7 +1459,6 @@ func ensureCloudFormationStack() workflowStep {
 			}
 		}
 		for _, eachEntry := range ctx.userdata.lambdaAWSInfos {
-
 			verifyErr := verifyLambdaPreconditions(eachEntry, ctx.logger)
 			if verifyErr != nil {
 				return nil, verifyErr
@@ -1542,15 +1496,19 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.userdata.noop,
 				ctx.logger)
 			if nil == err {
-				err = safeMergeTemplates(apiGatewayTemplate, ctx.context.cfTemplate, ctx.logger)
+				safeMergeErrs := gocc.SafeMerge(apiGatewayTemplate,
+					ctx.context.cfTemplate)
+				if len(safeMergeErrs) != 0 {
+					err = errors.Errorf("APIGateway template merge failed: %v", safeMergeErrs)
+				}
 			}
 			if nil != err {
-				return nil, fmt.Errorf("APIGateway template export failed: %s", err)
+				return nil, errors.Wrapf(err, "APIGateway template export failed")
 			}
 		}
 		// If there's a Site defined, include the resources the provision it
 		if nil != ctx.userdata.s3SiteContext.s3Site {
-			ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
+			exportErr := ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
 				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
@@ -1559,6 +1517,9 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.context.lambdaIAMRoleNameMap,
 				ctx.context.cfTemplate,
 				ctx.logger)
+			if exportErr != nil {
+				return nil, errors.Wrapf(exportErr, "Failed to export S3 site")
+			}
 		}
 		// Service decorator?
 		serviceDecoratorErr := callServiceDecoratorHook(ctx)
@@ -1579,6 +1540,22 @@ func ensureCloudFormationStack() workflowStep {
 			if annotateErr != nil {
 				return nil, annotateErr
 			}
+			// Any custom resources? These may also need discovery info
+			// so that they can self-discover the stack name
+			for _, eachCustomResource := range eachEntry.customResources {
+				discoveryInfo, discoveryInfoErr := discoveryInfoForResource(eachCustomResource.logicalName(),
+					nil)
+				if discoveryInfoErr != nil {
+					return nil, discoveryInfoErr
+				}
+				ctx.logger.WithFields(logrus.Fields{
+					"Discovery": discoveryInfo,
+					"Resource":  eachCustomResource.logicalName(),
+				}).Info("Annotating discovery info for custom resource")
+
+				// Update the env map
+				eachCustomResource.options.Environment[envVarDiscoveryInformation] = discoveryInfo
+			}
 		}
 		// PostMarshall Hook
 		if ctx.userdata.workflowHooks != nil {
@@ -1590,6 +1567,19 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, postMarshallErr
 			}
 		}
+		// Last step, run the annotation steps to patch
+		// up any references that depends on the entire
+		// template being constructed
+		_, annotateErr := annotateMaterializedTemplate(ctx.userdata.lambdaAWSInfos,
+			ctx.context.cfTemplate,
+			ctx.logger)
+		if annotateErr != nil {
+			return nil, errors.Wrapf(annotateErr,
+				"Failed to perform final template annotations")
+		}
+		// Finally, anything we need to do here to patch up any template references
+		// across resources?
+
 		return applyCloudFormationOperation(ctx)
 	}
 }
@@ -1627,7 +1617,7 @@ func Provision(noop bool,
 
 	err := validateSpartaPreconditions(lambdaAWSInfos, logger)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to validate preconditions")
 	}
 	startTime := time.Now()
 
@@ -1690,7 +1680,7 @@ func Provision(noop bool,
 		if err != nil {
 			ctx.rollback()
 			// Workflow step?
-			return err
+			return errors.Wrapf(err, "Failed to verify IAM roles")
 		}
 
 		if next == nil {

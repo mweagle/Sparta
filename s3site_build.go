@@ -12,6 +12,7 @@ import (
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -172,8 +173,15 @@ func (s3Site *S3Site) export(serviceName string,
 		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
-	lambdaFunctionName := awsLambdaFunctionName(serviceName,
-		cfCustomResources.ZipToS3Bucket)
+	lambdaFunctionName := awsLambdaFunctionName(cfCustomResources.ZipToS3Bucket)
+
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+		cfCustomResources.ZipToS3Bucket,
+		nil,
+		logger)
+	if lambdaEnvErr != nil {
+		return errors.Wrapf(lambdaEnvErr, "Failed to create S3 site resource")
+	}
 	customResourceHandlerDef := gocf.LambdaFunction{
 		Code: &gocf.LambdaFunctionCode{
 			S3Bucket: gocf.String(S3Bucket),
@@ -186,12 +194,8 @@ func (s3Site *S3Site) export(serviceName string,
 		Runtime:      gocf.String(GoLambdaVersion),
 		MemorySize:   gocf.Integer(256),
 		Timeout:      gocf.Integer(180),
-		FunctionName: gocf.String(lambdaFunctionName),
-		Environment: &gocf.LambdaFunctionEnvironment{
-			Variables: map[string]interface{}{
-				envVarLogLevel: logger.Level.String(),
-			},
-		},
+		FunctionName: lambdaFunctionName.String(),
+		Environment:  lambdaEnv,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
@@ -203,11 +207,11 @@ func (s3Site *S3Site) export(serviceName string,
 	customResourceName := CloudFormationResourceName("S3SiteBuilder")
 	newResource, err := newCloudFormationResource(cfCustomResources.ZipToS3Bucket, logger)
 	if nil != err {
-		return err
+		return errors.Wrapf(err, "Failed to create ZipToS3Bucket CustomResource")
 	}
 	zipResource, zipResourceOK := newResource.(*cfCustomResources.ZipToS3BucketResource)
 	if !zipResourceOK {
-		return fmt.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
+		return errors.Errorf("Failed to type assert *cfCustomResources.ZipToS3BucketResource custom resource")
 	}
 	zipResource.ServiceToken = gocf.GetAtt(lambdaResourceName, "Arn")
 	zipResource.SrcKeyName = gocf.String(S3ResourcesKey)
