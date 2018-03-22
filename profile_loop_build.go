@@ -325,6 +325,7 @@ func syncStackProfileSnapshots(profileType string,
 	var accumulatedProfiles []*profile.Profile
 	for _, eachResult := range results {
 		profileFile := eachResult.(string)
+		/* #nosec */
 		profileInput, profileInputErr := os.Open(profileFile)
 		if profileInputErr != nil {
 			return nil, profileInputErr

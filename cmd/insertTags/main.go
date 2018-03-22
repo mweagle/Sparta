@@ -24,6 +24,7 @@ func main() {
 	if nil != err {
 		panic(err)
 	}
+	/* #nosec */
 	fileContents, err := ioutil.ReadFile(absPath)
 	if nil != err {
 		panic(err)

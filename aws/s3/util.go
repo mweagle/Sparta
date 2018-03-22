@@ -63,6 +63,7 @@ func UploadLocalFileToS3(localPath string,
 	logger *logrus.Logger) (string, error) {
 
 	// Then do the actual work
+	/* #nosec */
 	reader, err := os.Open(localPath)
 	if nil != err {
 		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())

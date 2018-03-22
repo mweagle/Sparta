@@ -59,6 +59,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		if binaryWriterErr != nil {
 			return binaryWriterErr
 		}
+		/* #nosec */
 		reader, readerErr := os.Open(fullPathSource)
 		if readerErr != nil {
 			return readerErr
@@ -102,6 +103,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 		if info.IsDir() {
 			return nil
 		}
+		/* #nosec */
 		file, err := os.Open(path)
 		if err != nil {
 			return errors.Wrapf(err, "Failed to open file: %s", path)
