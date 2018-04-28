@@ -228,21 +228,9 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 		{
 			"Effect": "Allow",
 			"Principal": ArbitraryJSONObject{
-				"Service": []string{LambdaPrincipal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{EC2Principal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{APIGatewayPrincipal},
+				"Service": []string{LambdaPrincipal,
+					EC2Principal,
+					APIGatewayPrincipal},
 			},
 			"Action": []string{"sts:AssumeRole"},
 		},
