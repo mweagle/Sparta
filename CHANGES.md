@@ -1,5 +1,12 @@
 # Change Notes
 
+## v1.1.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Eliminate redundant `Statement` entries in [AssumeRolePolicyDocument](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
+- :bug:  **FIXED**
+
 ## v1.1.0
 
 - :warning: **BREAKING**
