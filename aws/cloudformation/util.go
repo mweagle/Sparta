@@ -11,7 +11,6 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
-	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -611,10 +610,7 @@ func WaitForStackOperationComplete(stackID string,
 	startTime := time.Now()
 
 	// Startup a spinner...
-	charSetIndex := 39
-	if runtime.GOOS == "windows" {
-		charSetIndex = 14
-	}
+	charSetIndex := 11
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 500*time.Millisecond)
 	cliSpinnerStarted := false
 
@@ -623,6 +619,25 @@ func WaitForStackOperationComplete(stackID string,
 		StackName: aws.String(stackID),
 	}
 	for waitComplete := false; !waitComplete; {
+		// Startup the spinner if needed...
+		switch logger.Formatter.(type) {
+		case *logrus.JSONFormatter:
+			{
+				logger.Info(pollingMessage)
+			}
+		default:
+			if !cliSpinnerStarted {
+				cliSpinner.Start()
+				defer cliSpinner.Stop()
+				cliSpinnerStarted = true
+			}
+			spinnerText := fmt.Sprintf(" %s (requested: %s)",
+				pollingMessage,
+				humanize.Time(startTime))
+			cliSpinner.Suffix = spinnerText
+		}
+
+		// Then sleep and figure out if things are done...
 		sleepDuration := time.Duration(11+rand.Int31n(13)) * time.Second
 		time.Sleep(sleepDuration)
 
@@ -652,22 +667,7 @@ func WaitForStackOperationComplete(stackID string,
 			waitComplete = true
 		default:
 			// If this is JSON output, just do the normal thing
-			switch logger.Formatter.(type) {
-			case *logrus.JSONFormatter:
-				{
-					logger.Info(pollingMessage)
-				}
-			default:
-				if !cliSpinnerStarted {
-					cliSpinner.Start()
-					defer cliSpinner.Stop()
-					cliSpinnerStarted = true
-				}
-				spinnerText := fmt.Sprintf(" %s (requested: %s)",
-					pollingMessage,
-					humanize.Time(startTime))
-				cliSpinner.Suffix = spinnerText
-			}
+			// NOP
 		}
 	}
 	return result, nil
