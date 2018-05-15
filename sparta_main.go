@@ -339,6 +339,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 
 	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
 		if handler != nil {
+			StampedBuildID = optionsProvision.BuildID
 			return handler(CommandLineOptions.Provision)
 		}
 		return nil

@@ -155,6 +155,8 @@ func MainEx(serviceName string,
 			if nil != buildIDErr {
 				return buildIDErr
 			}
+			// Save the BuildID
+			StampedBuildID = buildID
 			return Provision(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,

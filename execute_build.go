@@ -8,6 +8,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// StampedBuildID is the buildID stamped into the binary. For the case of a
+// local build this is set by the provision command and the same value
+// is stamped into the cross compiled binary at AWS Lambda execution time
+var StampedBuildID string
+
 // Execute creates an HTTP listener to dispatch execution. Typically
 // called via Main() via command line arguments.
 func Execute(serviceName string,
