@@ -151,7 +151,7 @@ func MainEx(serviceName string,
 
 	if nil == CommandLineOptions.Provision.RunE {
 		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID)
+			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
 			}
