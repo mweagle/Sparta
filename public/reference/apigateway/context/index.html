@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.36.1" />
+<meta name="generator" content="Hugo 0.40.3" />
 <title>Request Context :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -37,6 +37,7 @@
   article section.page code {
       font-family:  monospace; }
 </style>
+
     
   </head>
   <body data-url="/reference/apigateway/context/">
@@ -479,11 +480,11 @@
 
 <p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#000">parsedIP</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">net</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseIP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Identity</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SourceIP</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#000">parsedIP</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">net</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseIP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Identity</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SourceIP</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#000">record</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">dbHandle</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">City</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">parsedIP</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
     <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span>
-  <span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
+  <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>Finally, marshal the data or error result and we&rsquo;re done:</p>
 

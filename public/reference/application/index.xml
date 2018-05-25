@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Application Customization on Sparta Documentation</title>
+    <link>/reference/application/</link>
+    <description>Recent content in Application Customization on Sparta Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    
+	<atom:link href="/reference/application/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Command Line Options</title>
+      <link>/reference/application/commandline/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/commandline/</guid>
+      <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
+var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil) A compiled application provides several command line options which are available by providing the -h/--help option as in:
+$ go run main.go --help Simple Sparta application that demonstrates core functionality Usage: main [command] Available Commands: delete Delete service describe Describe service execute Execute explore Interactively explore service help Help about any command provision Provision service version Sparta framework version Flags: -f, --format string Log format [text, json] (default &amp;#34;text&amp;#34;) -h, --help help for main --ldflags string Go linker string definition flags (https://golang.</description>
+    </item>
+    
+    <item>
+      <title>Custom Application Commands</title>
+      <link>/reference/application/custom_commands/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_commands/</guid>
+      <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
+To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>/reference/application/custom_flags/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_flags/</guid>
+      <description>Introduction Some commands (eg: provision) may require additional options. For instance, your application&amp;rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
+The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
+Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
+For example:</description>
+    </item>
+    
+    <item>
+      <title>Managing Environments</title>
+      <link>/reference/application/environments/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/environments/</guid>
+      <description>Introduction It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
+ Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
+To support this, Sparta uses Go&amp;rsquo;s conditional compliation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+This example will work through the SpartaConfig sample.</description>
+    </item>
+    
+    <item>
+      <title>Workflow Hooks</title>
+      <link>/reference/application/workflow_hooks/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/workflow_hooks/</guid>
+      <description>Introduction While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.
+To support this, Sparta allows you to customize the build pipeline via WorkflowHooks structure. These hooks are called at specific points in the provision lifecycle and support augmenting the standard pipeline:
+mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] postBuild[WorkflowHook - PostBuild] class postBuild userHook; package[ZIP archive] class package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile compile--postBuild postBuild--package package--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
+    </item>
+    
+  </channel>
+</rss>

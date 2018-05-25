@@ -6,19 +6,25 @@ weight: 0
 ---
 
 <br />
-<img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="192">
-<br />
-<center>
-<h1>
-A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
-</h1>
-</center>
-<br />
+<table style="width:90%">
+  <!-- Row 1 -->
+  <tr>
+    <td style="width:50%">
+      <img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128" />
+    </td>
+    <td style="width:50%">
+      <h1>
+Self-deploying <i>go</i> microservices for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
+</h2>
+    </h1>
+  </tr>
+</table>
 
+Sparta is a framework that transforms a standard go application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
 
-## Hello World
-<hr />
-### Definition
+# Sample Application
+
+## 1. Define
 
 {{< highlight go >}}
 // File: application.go
@@ -53,20 +59,60 @@ func main() {
 }
 {{< /highlight >}}
 
-### Deployment
+## 2. Deploy
 
-{{< highlight bash >}}
+{{< highlight shell >}}
 $ go run main.go provision --s3Bucket MY_S3_BUCKET
+[0000]  INFO ════════════════════════════════════════════════
+[0000]  INFO ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.1.1
+[0000]  INFO ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : beb5700
+[0000]  INFO ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+[0000]  INFO ════════════════════════════════════════════════
+[0000]  INFO Service: SpartaHelloWorld                          LinkFlags= Option=provision UTC=2018-05-25T04:36:50Z
+[0000]  INFO ════════════════════════════════════════════════
+[0000]  INFO Using `git` SHA for StampedBuildID                 Command=git rev-parse HEAD SHA=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+[0000]  INFO Provisioning service                               BuildID=7ee3e1bc52f15c4a636e05061eaec7b748db22a9 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+[0000]  INFO Verifying IAM Lambda execution roles
+[0000]  INFO IAM roles verified                                 Count=1
+[0000]  INFO Checking S3 versioning                             Bucket=MY_S3_BUCKET VersioningEnabled=true
+[0000]  INFO Checking S3 region                                 Bucket=MY_S3_BUCKET Region=us-west-2
+[0000]  INFO Running `go generate`
+[0000]  INFO Compiling binary                                   Name=Sparta.lambda.amd64
+[0001]  INFO Creating code ZIP archive for upload               TempName=./.sparta/SpartaHelloWorld-code.zip
+[0001]  INFO Lambda code archive size                           Size=13 MB
+[0001]  INFO Uploading local file to S3                         Bucket=MY_S3_BUCKET Key=SpartaHelloWorld/SpartaHelloWorld-code.zip Path=./.sparta/SpartaHelloWorld-code.zip Size=13 MB
+[0011]  INFO Uploading local file to S3                         Bucket=MY_S3_BUCKET Key=SpartaHelloWorld/SpartaHelloWorld-cftemplate.json Path=./.sparta/SpartaHelloWorld-cftemplate.json Size=2.2 kB
+[0011]  INFO Creating stack                                     StackID=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82
+[0039]  INFO CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+[0039]  INFO     Operation duration                             Duration=24.49s Resource=SpartaHelloWorld Type=AWS::CloudFormation::Stack
+[0039]  INFO     Operation duration                             Duration=15.02s Resource=IAMRolebc3b888fab1664f42799785a6d9a3bb76ea63798 Type=AWS::IAM::Role
+[0039]  INFO     Operation duration                             Duration=2.90s Resource=HelloworldtestLambdaa4a9e95c84255c65c284ce95dd7d3c45776c1a68 Type=AWS::Lambda::Function
+[0039]  INFO Stack provisioned                                  CreationTime=2018-05-25 04:37:02.099 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82 StackName=SpartaHelloWorld
+[0039]  INFO ════════════════════════════════════════════════
+[0039]  INFO SpartaHelloWorld Summary
+[0039]  INFO ════════════════════════════════════════════════
+[0039]  INFO Verifying IAM roles                                Duration (s)=0
+[0039]  INFO Verifying AWS preconditions                        Duration (s)=0
+[0039]  INFO Creating code bundle                               Duration (s)=1
+[0039]  INFO Uploading code                                     Duration (s)=10
+[0039]  INFO Ensuring CloudFormation stack                      Duration (s)=28
+[0039]  INFO Total elapsed time                                 Duration (s)=39
 {{< /highlight >}}
 
-# Sparta Features
+## 3. Invoke
+
+![Console GUI](/images/invoke.jpg "Invoke")
+
+<hr />
+
+# Features
 
 <table style="width:90%">
   <!-- Row 1 -->
   <tr>
     <td style="width:50%">
-      <h2>Unified Language</h2>
-      <p>Use a single <b>go</b> codebase to define your microservice's:
+      <h2>Unified</h2>
+      <p>Use a <b>go</b> monorepo to define and your microservice's:
       <ul>
         <li>Application logic</li>
         <li>AWS infrastructure</li>
@@ -95,7 +141,7 @@ $ go run main.go provision --s3Bucket MY_S3_BUCKET
   <tr>
     <td style="width:50%">
       <h2>Security</h2>
-      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
+      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLA</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
       </p>
     </td>
     <td style="width:50%">
@@ -120,7 +166,7 @@ $ go run main.go provision --s3Bucket MY_S3_BUCKET
 <hr />
 <a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](/images/sparta_overview.png)</a>
 
-Sparta exclusively relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) during updates.
+Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) and minimize resource churn during updates.
 
 # Getting Started
 
@@ -147,6 +193,15 @@ Get in touch via:
     - [Signup page](https://invite.slack.golangbridge.org/)
   - <i class="fa fa-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
     - [Signup page](https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1)
+
+
+## Related Projects
+  - [go-cloudcondensor](https://github.com/mweagle/go-cloudcondenser)
+    - Define AWS CloudFormation templates in `go`
+  - [go-cloudformation](https://github.com/mweagle/go-cloudformation)
+    - `go` types for CloudFormation resources
+  - [ssm-cache](https://github.com/mweagle/ssm-cache)
+    - Lightweight cache for [Systems Manager Paramter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
 
 ## Other resources
   * [Build an S3 website with API Gateway and AWS Lambda for Go using Sparta](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
