@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.36.1" />
+<meta name="generator" content="Hugo 0.40.3" />
 <title> :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -37,6 +37,7 @@
   article section.page code {
       font-family:  monospace; }
 </style>
+
     
   </head>
   <body data-url="/">
@@ -459,20 +460,25 @@
 
 
 <p><br />
-<img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="192">
-<br />
-<center>
-<h1>
-A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
-</h1>
-</center>
-<br /></p>
+<table style="width:90%">
+  <!-- Row 1 -->
+  <tr>
+    <td style="width:50%">
+      <img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128" />
+    </td>
+    <td style="width:50%">
+      <h1>
+Self-deploying <i>go</i> microservices for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
+</h2>
+    </h1>
+  </tr>
+</table></p>
 
-<h2 id="hello-world">Hello World</h2>
+<p>Sparta is a framework that transforms a standard go application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!</p>
 
-<hr />
+<h1 id="sample-application">Sample Application</h1>
 
-<h3 id="definition">Definition</h3>
+<h2 id="1-define">1. Define</h2>
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
@@ -505,18 +511,58 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
                 <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
-<h3 id="deployment">Deployment</h3>
+<h2 id="2-deploy">2. Deploy</h2>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go provision --s3Bucket MY_S3_BUCKET</code></pre></div>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ go run main.go provision --s3Bucket MY_S3_BUCKET
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : <span style="color:#0000cf;font-weight:bold">1</span>.1.1
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : beb5700
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Service: SpartaHelloWorld                          <span style="color:#000">LinkFlags</span><span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">Option</span><span style="color:#ce5c00;font-weight:bold">=</span>provision <span style="color:#000">UTC</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2018</span>-05-25T04:36:50Z
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Using <span style="color:#4e9a06">`</span>git<span style="color:#4e9a06">`</span> SHA <span style="color:#204a87;font-weight:bold">for</span> StampedBuildID                 <span style="color:#000">Command</span><span style="color:#ce5c00;font-weight:bold">=</span>git rev-parse HEAD <span style="color:#000">SHA</span><span style="color:#ce5c00;font-weight:bold">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Provisioning service                               <span style="color:#000">BuildID</span><span style="color:#ce5c00;font-weight:bold">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9 <span style="color:#000">CodePipelineTrigger</span><span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">InPlaceUpdates</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">false</span> <span style="color:#000">NOOP</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">false</span> <span style="color:#000">Tags</span><span style="color:#ce5c00;font-weight:bold">=</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying IAM Lambda execution roles
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO IAM roles verified                                 <span style="color:#000">Count</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">1</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Checking S3 versioning                             <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">VersioningEnabled</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">true</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Checking S3 region                                 <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Region</span><span style="color:#ce5c00;font-weight:bold">=</span>us-west-2
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Running <span style="color:#4e9a06">`</span>go generate<span style="color:#4e9a06">`</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Compiling binary                                   <span style="color:#000">Name</span><span style="color:#ce5c00;font-weight:bold">=</span>Sparta.lambda.amd64
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating code ZIP archive <span style="color:#204a87;font-weight:bold">for</span> upload               <span style="color:#000">TempName</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-code.zip
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Lambda code archive size                           <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">13</span> MB
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading <span style="color:#204a87">local</span> file to S3                         <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld/SpartaHelloWorld-code.zip <span style="color:#000">Path</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-code.zip <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">13</span> MB
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0011</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading <span style="color:#204a87">local</span> file to S3                         <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld/SpartaHelloWorld-cftemplate.json <span style="color:#000">Path</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-cftemplate.json <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2</span>.2 kB
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0011</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating stack                                     <span style="color:#000">StackID</span><span style="color:#ce5c00;font-weight:bold">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">24</span>.49s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::CloudFormation::Stack
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">15</span>.02s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>IAMRolebc3b888fab1664f42799785a6d9a3bb76ea63798 <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::IAM::Role
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2</span>.90s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>HelloworldtestLambdaa4a9e95c84255c65c284ce95dd7d3c45776c1a68 <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::Lambda::Function
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Stack provisioned                                  <span style="color:#000">CreationTime</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2018</span>-05-25 <span style="color:#0000cf;font-weight:bold">04</span>:37:02.099 +0000 UTC <span style="color:#000">StackId</span><span style="color:#ce5c00;font-weight:bold">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82 <span style="color:#000">StackName</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO SpartaHelloWorld Summary
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying IAM roles                                Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying AWS preconditions                        Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating code bundle                               Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">1</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading code                                     Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">10</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Ensuring CloudFormation stack                      Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">28</span>
+<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Total elapsed <span style="color:#204a87">time</span>                                 Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">39</span></code></pre></div>
 
-<h1 id="sparta-features">Sparta Features</h1>
+<h2 id="3-invoke">3. Invoke</h2>
+
+<p><img src="/images/invoke.jpg" alt="Console GUI" title="Invoke" /></p>
+
+<hr />
+
+<h1 id="features">Features</h1>
 
 <table style="width:90%">
   <!-- Row 1 -->
   <tr>
     <td style="width:50%">
-      <h2>Unified Language</h2>
-      <p>Use a single <b>go</b> codebase to define your microservice's:
+      <h2>Unified</h2>
+      <p>Use a <b>go</b> monorepo to define and your microservice's:
       <ul>
         <li>Application logic</li>
         <li>AWS infrastructure</li>
@@ -545,7 +591,7 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
   <tr>
     <td style="width:50%">
       <h2>Security</h2>
-      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLP</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
+      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLA</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
       </p>
     </td>
     <td style="width:50%">
@@ -570,7 +616,7 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 
 <p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="/images/sparta_overview.png" alt="Sparta Overview" /></a></p>
 
-<p>Sparta exclusively relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> during updates.</p>
+<p>Sparta relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> and minimize resource churn during updates.</p>
 
 <h1 id="getting-started">Getting Started</h1>
 
@@ -605,6 +651,26 @@ A <b>go</b> framework for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
 
 <ul>
 <li><a href="https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1">Signup page</a></li>
+</ul></li>
+</ul>
+
+<h2 id="related-projects">Related Projects</h2>
+
+<ul>
+<li><a href="https://github.com/mweagle/go-cloudcondenser">go-cloudcondensor</a>
+
+<ul>
+<li>Define AWS CloudFormation templates in <code>go</code></li>
+</ul></li>
+<li><a href="https://github.com/mweagle/go-cloudformation">go-cloudformation</a>
+
+<ul>
+<li><code>go</code> types for CloudFormation resources</li>
+</ul></li>
+<li><a href="https://github.com/mweagle/ssm-cache">ssm-cache</a>
+
+<ul>
+<li>Lightweight cache for <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html">Systems Manager Paramter Store</a> values</li>
 </ul></li>
 </ul>
 
