@@ -35,6 +35,7 @@ func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus
 		red := func(inputText string) string {
 			return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 		}
+
 		logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
 		logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
 		logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
@@ -168,6 +169,11 @@ func init() {
 		"f",
 		"text",
 		"Log format [text, json]")
+	CommandLineOptions.Root.PersistentFlags().BoolVarP(&OptionsGlobal.TimeStamps,
+		"timestamps",
+		"z",
+		false,
+		"Include UTC timestamp log line prefix")
 	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
 		"tags",
 		"t",
