@@ -5,6 +5,9 @@
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Eliminate redundant `Statement` entries in [AssumeRolePolicyDocument](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
+  - Add `sparta.StampedBuildID` global variable to access the _BuildID_ value (either user defined or automatically generated)
+  - Added `-z/--timestamps` command line flag to optionally include UTC timestamp prefix on every log line.
+  - Prefer `git rev-parse HEAD` value for fallback BuildID value iff `--buildID` isn't provided as a _provision_ command line argument. If an error is detected calling `git`, the previous randomly initialized buffer behavior is used.
 - :bug:  **FIXED**
 
 ## v1.1.0
