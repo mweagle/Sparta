@@ -12,6 +12,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
@@ -97,14 +98,27 @@ func MainEx(serviceName string,
 		if nil != validateErr {
 			return validateErr
 		}
+
 		// Format?
 		// Running in AWS?
 		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
-			formatter = &logrus.TextFormatter{
-				DisableColors: !enableColors,
+			prefixedFormatter := &prefixed.TextFormatter{
+				DisableColors:    !enableColors,
+				SpacePadding:     50,
+				FullTimestamp:    OptionsGlobal.TimeStamps,
+				QuoteEmptyFields: true,
+			}
+			if enableColors {
+				prefixedFormatter.SetColorScheme(&prefixed.ColorScheme{
+					InfoLevelStyle:  "blue",
+					DebugLevelStyle: "black+h",
+					PrefixStyle:     "green+b",
+					TimestampStyle:  "white",
+				})
+				formatter = prefixedFormatter
 			}
 		case "json":
 			formatter = &logrus.JSONFormatter{}

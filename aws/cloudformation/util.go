@@ -557,7 +557,7 @@ func AddAutoIncrementingLambdaVersionResource(serviceName string,
 
 // StackEvents returns the slice of cloudformation.StackEvents for the given stackID or stackName
 func StackEvents(stackID string,
-	eventFilterLowerBound time.Time,
+	eventFilterLowerBoundInclusive time.Time,
 	awsSession *session.Session) ([]*cloudformation.StackEvent, error) {
 
 	cfService := cloudformation.New(awsSession)
@@ -577,7 +577,8 @@ func StackEvents(stackID string,
 			return nil, err
 		}
 		for _, eachEvent := range resp.StackEvents {
-			if eachEvent.Timestamp.After(eventFilterLowerBound) {
+			if eachEvent.Timestamp.Equal(eventFilterLowerBoundInclusive) ||
+				eachEvent.Timestamp.After(eventFilterLowerBoundInclusive) {
 				events = append(events, eachEvent)
 			}
 		}
@@ -610,8 +611,8 @@ func WaitForStackOperationComplete(stackID string,
 	startTime := time.Now()
 
 	// Startup a spinner...
-	charSetIndex := 11
-	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 500*time.Millisecond)
+	charSetIndex := 1
+	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 333*time.Millisecond)
 	cliSpinnerStarted := false
 
 	// Poll for the current stackID state, and
@@ -908,7 +909,8 @@ func ConvergeStackState(serviceName string,
 	tags map[string]string,
 	startTime time.Time,
 	awsSession *session.Session,
-	outputsDivider string,
+	outputsDividerChar string,
+	dividerWidth int,
 	logger *logrus.Logger) (*cloudformation.Stack, error) {
 
 	awsCloudFormation := cloudformation.New(awsSession)
@@ -1034,28 +1036,31 @@ func ConvergeStackState(serviceName string,
 	sort.Slice(resourceStats, func(i, j int) bool {
 		return resourceStats[i].elapsed > resourceStats[j].elapsed
 	})
+
 	// Output the sorted time it took to create the necessary resources...
-	logger.Info("CloudFormation provisioning metrics:")
+	outputHeader := "CloudFormation Metrics "
+	suffix := strings.Repeat(outputsDividerChar, dividerWidth-len(outputHeader))
+	logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
 	for _, eachResourceStat := range resourceStats {
 		logger.WithFields(logrus.Fields{
 			"Resource": eachResourceStat.logicalResourceID,
 			"Type":     eachResourceStat.resourceType,
 			"Duration": fmt.Sprintf("%.2fs", eachResourceStat.elapsed.Seconds()),
-		}).Info("Operation duration")
+		}).Info("    Operation duration")
 	}
 
 	if nil != convergeResult.stackInfo.Outputs {
 		// Add a nice divider if there are Stack specific output
-		logger.Info(outputsDivider)
-		logger.Info("Stack Outputs")
-		logger.Info(outputsDivider)
+		outputHeader := "Stack Outputs "
+		suffix := strings.Repeat(outputsDividerChar, dividerWidth-len(outputHeader))
+		logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
+
 		for _, eachOutput := range convergeResult.stackInfo.Outputs {
 			logger.WithFields(logrus.Fields{
 				"Value":       aws.StringValue(eachOutput.OutputValue),
 				"Description": aws.StringValue(eachOutput.Description),
-			}).Info(fmt.Sprintf("%s", aws.StringValue(eachOutput.OutputKey)))
+			}).Info(fmt.Sprintf("    %s", aws.StringValue(eachOutput.OutputKey)))
 		}
-		logger.Info(outputsDivider)
 	}
 	return convergeResult.stackInfo, nil
 }
