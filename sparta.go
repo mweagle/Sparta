@@ -59,8 +59,6 @@ const (
 var (
 	// internal logging header
 	headerDivider = strings.Repeat("═", dividerLength)
-	// internal subheader divider
-	subheaderDivider = strings.Repeat("─", dividerLength)
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -117,6 +115,7 @@ type optionsGlobalStruct struct {
 	Noop               bool           `validate:"-"`
 	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
 	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
+	TimeStamps         bool           `validate:"-"`
 	Logger             *logrus.Logger `validate:"-"`
 	Command            string         `validate:"-"`
 	BuildTags          string         `validate:"-"`
