@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -27,6 +28,51 @@ import (
 var (
 	progressEmoji = []string{"🌍", "🌎", "🌏"}
 )
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Settings
+
+var mu sync.Mutex
+
+const (
+	settingSelectedARN   = "functionARN"
+	settingSelectedEvent = "selectedEvent"
+)
+
+func settingsFile() string {
+	return filepath.Join(ScratchDirectory, "explore-settings.json")
+}
+func saveSetting(key string, value string) {
+	settingsMap := loadSettings()
+	settingsMap[string(key)] = value
+	output, outputErr := json.MarshalIndent(settingsMap, "", " ")
+	if outputErr != nil {
+		return
+	}
+	/* #nosec */
+	mu.Lock()
+	ioutil.WriteFile(settingsFile(), output, os.ModePerm)
+	mu.Unlock()
+}
+
+func loadSettings() map[string]string {
+	defaultSettings := make(map[string]string)
+	settingsFile := settingsFile()
+	mu.Lock()
+	bytes, bytesErr := ioutil.ReadFile(settingsFile)
+	mu.Unlock()
+	if bytesErr != nil {
+		return defaultSettings
+	}
+	/* #nosec */
+	json.Unmarshal(bytes, &defaultSettings)
+	return defaultSettings
+}
+
+// Settings
+//
+////////////////////////////////////////////////////////////////////////////////
 
 func writePrettyString(writer io.Writer, input string) {
 	colorWriter := tview.ANSIIWriter(writer)
@@ -59,6 +105,7 @@ func newFunctionSelector(awsSession *session.Session,
 	stackResources []*cloudformation.StackResource,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
+	settings map[string]string,
 	onChangeBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
@@ -85,8 +132,16 @@ func newFunctionSelector(awsSession *session.Session,
 		}
 	}
 	sort.Strings(lambdaFunctionARNs)
+	selectedARN := settings[settingSelectedARN]
+	selectedIndex := 0
+	for index, eachARN := range lambdaFunctionARNs {
+		if eachARN == selectedARN {
+			selectedIndex = index
+			break
+		}
+	}
 	dropdown := tview.NewDropDown().
-		SetCurrentOption(0).
+		SetCurrentOption(selectedIndex).
 		SetLabel("Function ARN: ").
 		SetOptions(lambdaFunctionARNs, nil)
 	dropdown.SetBorder(true).SetTitle("Select Function")
@@ -94,6 +149,7 @@ func newFunctionSelector(awsSession *session.Session,
 	dropdownDoneFunc := func(key tcell.Key) {
 		selectedIndex, value := dropdown.GetCurrentOption()
 		if selectedIndex != -1 {
+			saveSetting(settingSelectedARN, value)
 			onChangeBroadcaster.Submit(value)
 		}
 	}
@@ -110,6 +166,7 @@ func newFunctionSelector(awsSession *session.Session,
 func newEventInputSelector(awsSession *session.Session,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
+	settings map[string]string,
 	functionSelectedBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
@@ -149,10 +206,17 @@ func newEventInputSelector(awsSession *session.Session,
 	}
 	// Create all the views...
 	var selectedJSONData []byte
-
+	selectedInput := 0
+	eventSelected := settings[settingSelectedEvent]
+	for index, eachJSONFile := range jsonFiles {
+		if eventSelected == eachJSONFile {
+			selectedInput = index
+			break
+		}
+	}
 	eventDataView := tview.NewTextView().SetScrollable(true).SetDynamicColors(true)
 	dropdown := tview.NewDropDown().
-		SetCurrentOption(0).
+		SetCurrentOption(selectedInput).
 		SetLabel("Event: ").
 		SetOptions(jsonFiles, nil)
 
@@ -163,6 +227,8 @@ func newEventInputSelector(awsSession *session.Session,
 			return
 		}
 		eventDataView.Clear()
+		// Save it...
+		saveSetting(settingSelectedEvent, value)
 		fullPath := curDir + value
 		/* #nosec */
 		jsonFile, jsonFileErr := ioutil.ReadFile(fullPath)
@@ -232,6 +298,7 @@ func newEventInputSelector(awsSession *session.Session,
 func newCloudWatchLogTailView(awsSession *session.Session,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
+	settings map[string]string,
 	functionSelectedBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
@@ -351,6 +418,7 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 func newLogOutputView(awsSession *session.Session,
 	app *tview.Application,
 	lambdaAWSInfos []*LambdaAWSInfo,
+	settings map[string]string,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
 	logDataView := tview.NewTextView().

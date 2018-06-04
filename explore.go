@@ -48,6 +48,9 @@ func Explore(serviceName string,
 		return stackResourceOutputsErr
 	}
 
+	// Load the settings
+	settingsMap := loadSettings()
+
 	// Make the channel map
 	channelMap := make(map[string]broadcast.Broadcaster, 0)
 	channelMap[broadcasterFunctionSelect] = broadcast.NewBroadcaster(1)
@@ -60,21 +63,25 @@ func Explore(serviceName string,
 		stackResourceOutputs.StackResources,
 		application,
 		lambdaAWSInfos,
+		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
 	eventDropdown, eventFocusable := newEventInputSelector(awsSession,
 		application,
 		lambdaAWSInfos,
+		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
 	outputView, outputViewFocusable := newCloudWatchLogTailView(awsSession,
 		application,
 		lambdaAWSInfos,
+		settingsMap,
 		channelMap[broadcasterFunctionSelect],
 		logger)
 	logView, logViewFocusable := newLogOutputView(awsSession,
 		application,
 		lambdaAWSInfos,
+		settingsMap,
 		logger)
 
 	// There are four primary views
