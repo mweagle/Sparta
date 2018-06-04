@@ -101,17 +101,17 @@ func MainEx(serviceName string,
 
 		// Format?
 		// Running in AWS?
-		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
+		disableColors := (runtime.GOOS == "windows") || isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
 			prefixedFormatter := &prefixed.TextFormatter{
-				DisableColors:    !enableColors,
+				DisableColors:    disableColors,
 				SpacePadding:     50,
 				FullTimestamp:    OptionsGlobal.TimeStamps,
 				QuoteEmptyFields: true,
 			}
-			if enableColors {
+			if !disableColors {
 				prefixedFormatter.SetColorScheme(&prefixed.ColorScheme{
 					InfoLevelStyle:  "blue",
 					DebugLevelStyle: "black+h",
@@ -122,7 +122,7 @@ func MainEx(serviceName string,
 			}
 		case "json":
 			formatter = &logrus.JSONFormatter{}
-			enableColors = false
+			disableColors = true
 		}
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
@@ -135,7 +135,7 @@ func MainEx(serviceName string,
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		// Header information...
-		displayPrettyHeader(headerDivider, enableColors, logger)
+		displayPrettyHeader(headerDivider, !disableColors, logger)
 		// Metadata about the build...
 		logger.WithFields(logrus.Fields{
 			"Option":    cmd.Name(),
