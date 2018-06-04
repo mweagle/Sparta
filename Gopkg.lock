@@ -62,8 +62,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "fad131ddc707880428615dc8bc1587b55fb46d74"
-  version = "v1.13.54"
+  revision = "5197757a58a794d49d2d0c50a932997157734100"
+  version = "v1.13.60"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -79,6 +79,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/dustin/go-broadcast"
+  packages = ["."]
+  revision = "f664265f5a662fb4d1df7f3533b1e8d0e0277120"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
   revision = "02af3965c54e8cacf948b97fef38925c4120652c"
@@ -90,10 +96,25 @@
   version = "v1.7.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/gdamore/encoding"
+  packages = ["."]
+  revision = "b23993cbb6353f0e6aa98d0ee318a34728f628b9"
+
+[[projects]]
+  name = "github.com/gdamore/tcell"
+  packages = [
+    ".",
+    "terminfo"
+  ]
+  revision = "061d51a604c546b48e92253cb65190d76cecf4c6"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
-  revision = "6529cf7c58879c08d927016dde4477f18a0634cb"
-  version = "v1.36.0"
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
 
 [[projects]]
   name = "github.com/go-playground/locales"
@@ -129,13 +150,19 @@
     "third_party/d3flamegraph",
     "third_party/svgpan"
   ]
-  revision = "4d67f66d7c9469639518a80f378434bb7e9156b7"
+  revision = "1ddc9e21322e23449cb6709652bf3583969ca167"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hokaccha/go-prettyjson"
+  packages = ["."]
+  revision = "d229c224a219dcf41e9d2af4684b9782f33f5eb7"
 
 [[projects]]
   branch = "master"
   name = "github.com/ianlancetaylor/demangle"
   packages = ["."]
-  revision = "4883227f66371e02c4948937d3e2be1664d9be38"
+  revision = "fc6590592b44fedfff586c5d94647c090fbd6bac"
 
 [[projects]]
   name = "github.com/inconshreveable/mousetrap"
@@ -149,6 +176,12 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  name = "github.com/lucasb-eyer/go-colorful"
+  packages = ["."]
+  revision = "345fbb3dbcdb252d9985ee899a84963c0fa24c82"
+  version = "v1.0"
+
+[[projects]]
   name = "github.com/mattn/go-colorable"
   packages = ["."]
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
@@ -159,6 +192,12 @@
   packages = ["."]
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
   version = "v0.0.3"
+
+[[projects]]
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
 
 [[projects]]
   branch = "master"
@@ -176,13 +215,19 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "79a4c101191931900eea34b8537a33b8f34e084a"
+  revision = "e40a034597a3952017f3bb0c75caa8491616dff1"
 
 [[projects]]
   name = "github.com/pkg/errors"
   packages = ["."]
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/rivo/tview"
+  packages = ["."]
+  revision = "71ecf1f4299c6d72b16d20da72405b7e85ac8720"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -218,7 +263,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "75e913eb8a8e3d31a97b216de09de106a7b07681"
+  revision = "df8d4716b3472e4a531c33cedbe537dae921a1a9"
 
 [[projects]]
   branch = "master"
@@ -227,7 +272,19 @@
     "unix",
     "windows"
   ]
-  revision = "77b0e4315053a57ed2962443614bdb28db152054"
+  revision = "c11f84a56e43e20a78cee75a7c034031ecf57d1f"
+
+[[projects]]
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/internal/identifier",
+    "internal/gen",
+    "transform",
+    "unicode/cldr"
+  ]
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
@@ -247,6 +304,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "fdf628e66c221afef76e7581ff161dfb51645648649b284abfcb1ad7cc18cdee"
+  inputs-digest = "0d567fc1d4e200e8506afbb3bf81ac5f983501fdb611005c00f8d5182af36c11"
   solver-name = "gps-cdcl"
   solver-version = 1
