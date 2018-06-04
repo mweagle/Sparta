@@ -250,6 +250,28 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Describe)
 
 	//////////////////////////////////////////////////////////////////////////////
+	// Explore
+	if nil == CommandLineOptions.Explore.RunE {
+		CommandLineOptions.Explore.RunE = func(cmd *cobra.Command, args []string) error {
+			validateErr := validate.Struct(optionsExplore)
+			if nil != validateErr {
+				return validateErr
+			}
+
+			return Explore(serviceName,
+				serviceDescription,
+				lambdaAWSInfos,
+				api,
+				site,
+				optionsDescribe.S3Bucket,
+				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
+				OptionsGlobal.Logger)
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Explore)
+
+	//////////////////////////////////////////////////////////////////////////////
 	// Profile
 	if nil == CommandLineOptions.Profile.RunE {
 		CommandLineOptions.Profile.RunE = func(cmd *cobra.Command, args []string) error {

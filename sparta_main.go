@@ -136,6 +136,13 @@ type optionsDescribeStruct struct {
 var optionsDescribe optionsDescribeStruct
 
 /******************************************************************************/
+// Explore options?
+type optionsExploreStruct struct {
+}
+
+var optionsExplore optionsExploreStruct
+
+/******************************************************************************/
 // Profile options
 type optionsProfileStruct struct {
 	S3Bucket string `validate:"required"`
@@ -256,7 +263,7 @@ func init() {
 	CommandLineOptions.Explore = &cobra.Command{
 		Use:   "explore",
 		Short: "Interactively explore service",
-		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
+		Long:  `Startup a local CLI GUI to explore and trigger your AWS service`,
 	}
 
 	// Profile
