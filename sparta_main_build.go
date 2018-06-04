@@ -12,7 +12,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
@@ -101,28 +100,17 @@ func MainEx(serviceName string,
 
 		// Format?
 		// Running in AWS?
-		disableColors := (runtime.GOOS == "windows") || isRunningInAWS()
+		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
-			prefixedFormatter := &prefixed.TextFormatter{
-				DisableColors:    disableColors,
-				SpacePadding:     50,
-				FullTimestamp:    OptionsGlobal.TimeStamps,
-				QuoteEmptyFields: true,
-			}
-			if !disableColors {
-				prefixedFormatter.SetColorScheme(&prefixed.ColorScheme{
-					InfoLevelStyle:  "blue",
-					DebugLevelStyle: "black+h",
-					PrefixStyle:     "green+b",
-					TimestampStyle:  "white",
-				})
-				formatter = prefixedFormatter
+			formatter = &logrus.TextFormatter{
+				DisableColors: !enableColors,
+				FullTimestamp: OptionsGlobal.TimeStamps,
 			}
 		case "json":
 			formatter = &logrus.JSONFormatter{}
-			disableColors = true
+			enableColors = false
 		}
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
@@ -135,7 +123,7 @@ func MainEx(serviceName string,
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		// Header information...
-		displayPrettyHeader(headerDivider, !disableColors, logger)
+		displayPrettyHeader(headerDivider, enableColors, logger)
 		// Metadata about the build...
 		logger.WithFields(logrus.Fields{
 			"Option":    cmd.Name(),
