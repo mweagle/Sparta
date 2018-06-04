@@ -1,14 +1,11 @@
 package cloudwatchlogs
 
 import (
-	"fmt"
-	"os"
 	"time"
 
 	"github.com/sirupsen/logrus"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 )
@@ -66,14 +63,16 @@ func TailWithContext(reqContext aws.Context,
 				logParam := tailParams(logGroupName, filter, lastSeenTimestamp)
 				error := cwlogsSvc.FilterLogEventsPagesWithContext(reqContext, logParam, tailHandler)
 				if error != nil {
-					if awsErr, ok := error.(awserr.Error); ok {
-						fmt.Println(awsErr.Message())
-						os.Exit(1)
+					// Just pump the thing back through the channel...
+					errorEvent := &cloudwatchlogs.FilteredLogEvent{
+						EventId:   aws.String("N/A"),
+						Message:   aws.String(error.Error()),
+						Timestamp: aws.Int64(time.Now().Unix() * 1000),
 					}
+					outputChannel <- errorEvent
 				}
 			}
 		}
 	}()
-
 	return outputChannel
 }
