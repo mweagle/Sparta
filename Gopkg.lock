@@ -30,6 +30,7 @@
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
     "aws/credentials/stscreds",
+    "aws/csm",
     "aws/defaults",
     "aws/ec2metadata",
     "aws/endpoints",
@@ -40,6 +41,8 @@
     "internal/sdkrand",
     "internal/shareddefaults",
     "private/protocol",
+    "private/protocol/eventstream",
+    "private/protocol/eventstream/eventstreamapi",
     "private/protocol/json/jsonutil",
     "private/protocol/jsonrpc",
     "private/protocol/query",
@@ -62,8 +65,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "5197757a58a794d49d2d0c50a932997157734100"
-  version = "v1.13.60"
+  revision = "47309c012812d9e9c488a54313e5cdfa7479df93"
+  version = "v1.14.1"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -150,7 +153,7 @@
     "third_party/d3flamegraph",
     "third_party/svgpan"
   ]
-  revision = "1ddc9e21322e23449cb6709652bf3583969ca167"
+  revision = "8b03ce837f3401233d4e32de3a5f0ea3ff1c13c2"
 
 [[projects]]
   branch = "master"
@@ -248,12 +251,6 @@
   version = "v1.0.1"
 
 [[projects]]
-  name = "github.com/x-cray/logrus-prefixed-formatter"
-  packages = ["."]
-  revision = "bb2702d423886830dee131692131d35648c382e2"
-  version = "v0.5.2"
-
-[[projects]]
   branch = "master"
   name = "github.com/zcalusic/sysinfo"
   packages = ["."]
@@ -263,7 +260,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "df8d4716b3472e4a531c33cedbe537dae921a1a9"
+  revision = "b47b1587369238182299fe4dad77d05b8b461e06"
 
 [[projects]]
   branch = "master"
@@ -304,6 +301,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "0d567fc1d4e200e8506afbb3bf81ac5f983501fdb611005c00f8d5182af36c11"
+  inputs-digest = "b0a8c7e386f3ec8ed27e11f2059874019180e7d7a9e215a0748338eb48094576"
   solver-name = "gps-cdcl"
   solver-version = 1
