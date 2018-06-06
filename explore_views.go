@@ -21,6 +21,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/hokaccha/go-prettyjson"
 	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatchlogs"
+	"github.com/pkg/errors"
 	"github.com/rivo/tview"
 	"github.com/sirupsen/logrus"
 )
@@ -170,6 +171,7 @@ func newEventInputSelector(awsSession *session.Session,
 	functionSelectedBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
+	divider := strings.Repeat("━", 20)
 	activeFunction := ""
 	ch := make(chan interface{})
 	functionSelectedBroadcaster.Register(ch)
@@ -267,14 +269,17 @@ func newEventInputSelector(awsSession *session.Session,
 				}).Error("Lambda function produced an error")
 			} else {
 				var m interface{}
-				var entry *logrus.Entry
+
 				jsonErr := json.Unmarshal(invokeOutput.Payload, &m)
+				var responseData interface{}
 				if jsonErr == nil {
-					entry = logger.WithField("Body", m)
+					responseData = m
 				} else {
-					entry = logger.WithField("Body", string(invokeOutput.Payload))
+					responseData = string(invokeOutput.Payload)
 				}
-				entry.Info("AWS Lambda Response")
+				logger.WithFields(logrus.Fields{
+					"payload": responseData,
+				}).Info(divider + " AWS Lambda Response " + divider)
 			}
 		}
 	})
@@ -322,7 +327,7 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	// being the
 	flexView := tview.NewFlex().SetDirection(tview.FlexRow).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexColumn).
-			AddItem(cloudwatchLogInfoView, 0, 1, false), 4, 0, false).
+			AddItem(cloudwatchLogInfoView, 0, 1, false), 3, 0, false).
 		AddItem(logEventDataView, 0, 1, false).
 		AddItem(progressEmojiView, 1, 0, false)
 	flexView.SetBorder(true).SetTitle("CloudWatch Logs")
@@ -335,10 +340,11 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 		if latestTS != 0 {
 			ts = time.Unix(latestTS, 0).Format(time.RFC3339)
 		}
-
-		msg := fmt.Sprintf("[-:-:b]LogGroupName[-:-:-]: [-:-:d]%s\n[-:-:b]Latest Event[-:-:-]: [-:-:d]%s",
-			logGroupName,
-			ts)
+		msg := fmt.Sprintf("[-:-:b]LogGroupName[-:-:-]: [-:-:d]%s",
+			logGroupName)
+		if ts != "" {
+			msg += fmt.Sprintf(" ([-:-:b]Latest Event[-:-:-]: [-:-:d]%s)", ts)
+		}
 		writePrettyString(cloudwatchLogInfoView, msg)
 	}
 	updateCloudWatchLogInfoView("", 0)
@@ -385,10 +391,10 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 						select {
 						case event := <-messages:
 							{
-								logger.WithField("EventID", *event.EventId).Debug("Event received")
 								lastTime = *event.Timestamp / 1000
 								updateCloudWatchLogInfoView(logGroupName, lastTime)
 								writePrettyString(logEventDataView, *event.Message)
+								logger.WithField("EventID", *event.EventId).Debug("Event received")
 								logEventDataView.ScrollToEnd()
 								app.Draw()
 							}
@@ -411,6 +417,41 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	return flexView, []tview.Primitive{logEventDataView}
 }
 
+type colorizingFormatter struct {
+	TimestampFormat  string
+	DisableTimestamp bool
+	FieldMap         logrus.FieldMap
+}
+
+// Format renders a single log entry
+func (cf *colorizingFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+	data := make(logrus.Fields, len(entry.Data)+3)
+	for k, v := range entry.Data {
+		switch v := v.(type) {
+		case error:
+			// Otherwise errors are ignored by `encoding/json`
+			// https://github.com/sirupsen/logrus/issues/137
+			data[k] = v.Error()
+		default:
+			data[k] = v
+		}
+	}
+	timestampFormat := cf.TimestampFormat
+	if timestampFormat == "" {
+		timestampFormat = time.RFC3339
+	}
+	if !cf.DisableTimestamp {
+		data[logrus.FieldKeyTime] = entry.Time.Format(timestampFormat)
+	}
+	data[logrus.FieldKeyMsg] = entry.Message
+	data[logrus.FieldKeyLevel] = entry.Level.String()
+	prettyString, prettyStringErr := prettyjson.Marshal(data)
+	if prettyStringErr != nil {
+		return nil, errors.Wrapf(prettyStringErr, "Failed to marshal fields to JSON")
+	}
+	return append(prettyString, '\n'), nil
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Redirect the logger to the log view
@@ -421,13 +462,15 @@ func newLogOutputView(awsSession *session.Session,
 	settings map[string]string,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
+	// Log to JSON
+	logger.Formatter = &colorizingFormatter{}
 	logDataView := tview.NewTextView().
 		SetScrollable(true).
 		SetDynamicColors(true)
 	logDataView.SetChangedFunc(func() {
 		logDataView.ScrollToEnd()
 	})
-	logDataView.SetBorder(true).SetTitle("Log")
+	logDataView.SetBorder(true).SetTitle("Output")
 
 	colorWriter := tview.ANSIIWriter(logDataView)
 	logger.Out = colorWriter

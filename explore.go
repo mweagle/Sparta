@@ -91,12 +91,13 @@ func Explore(serviceName string,
 	if eventFocusable != nil {
 		focusTargets = append(focusTargets, eventFocusable...)
 	}
-	if outputViewFocusable != nil {
-		focusTargets = append(focusTargets, outputViewFocusable...)
-	}
 	if logViewFocusable != nil {
 		focusTargets = append(focusTargets, logViewFocusable...)
 	}
+	if outputViewFocusable != nil {
+		focusTargets = append(focusTargets, outputViewFocusable...)
+	}
+
 	// Make it easy and use a Flex layout...
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
@@ -104,8 +105,8 @@ func Explore(serviceName string,
 		AddItem(tview.NewFlex().
 			SetDirection(tview.FlexColumn).
 			AddItem(eventDropdown, 0, 1, false).
-			AddItem(outputView, 0, 2, false), 0, 1, false).
-		AddItem(logView, 10, 1, false)
+			AddItem(logView, 0, 2, false), 0, 1, false).
+		AddItem(outputView, 0, 1, false)
 
 	// Run  it...
 	application.SetRoot(flex, true).SetFocus(flex)
