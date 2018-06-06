@@ -53,8 +53,8 @@ func saveSetting(key string, value string) {
 	if outputErr != nil {
 		return
 	}
-	/* #nosec */
 	mu.Lock()
+	/* #nosec */
 	ioutil.WriteFile(settingsFile(), output, os.ModePerm)
 	mu.Unlock()
 }
@@ -63,6 +63,7 @@ func loadSettings() map[string]string {
 	defaultSettings := make(map[string]string)
 	settingsFile := settingsFile()
 	mu.Lock()
+	/* #nosec */
 	bytes, bytesErr := ioutil.ReadFile(settingsFile)
 	mu.Unlock()
 	if bytesErr != nil {
