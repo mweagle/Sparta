@@ -126,6 +126,21 @@ func Describe(serviceName string,
 	return errors.New("Describe not supported for this binary")
 }
 
+// Explore is an interactive command that brings up a GUI to test
+// lambda functions previously deployed into AWS lambda. It's not supported in the
+// AWS binary build
+func Explore(serviceName string,
+	serviceDescription string,
+	lambdaAWSInfos []*LambdaAWSInfo,
+	api *API,
+	site *S3Site,
+	s3BucketName string,
+	buildTags string,
+	linkerFlags string,
+	logger *logrus.Logger) error {
+	return errors.New("Explore not supported for this binary")
+}
+
 // Profile is the interactive command used to pull S3 assets locally into /tmp
 // and run ppro against the cached profiles
 func Profile(serviceName string,

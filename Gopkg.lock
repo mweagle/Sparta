@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
-  version = "v1.4.2"
+  revision = "e752db451e07e09c7d7dc8cada807a44bdb0fd47"
+  version = "v1.5.3"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
@@ -14,7 +14,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "64efb26269cc5d9c363a143a936a7c75b053e06d"
+  revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
+  version = "v1.2.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -35,6 +36,7 @@
     "aws/request",
     "aws/session",
     "aws/signer/v4",
+    "internal/sdkio",
     "internal/sdkrand",
     "internal/shareddefaults",
     "private/protocol",
@@ -60,8 +62,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "ce48e67ca697079662aee65a13202f37a185962b"
-  version = "v1.13.6"
+  revision = "5197757a58a794d49d2d0c50a932997157734100"
+  version = "v1.13.60"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -77,21 +79,42 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/dustin/go-broadcast"
+  packages = ["."]
+  revision = "f664265f5a662fb4d1df7f3533b1e8d0e0277120"
+
+[[projects]]
+  branch = "master"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
-  revision = "bb3d318650d48840a39aa21a027c6630e198e626"
+  revision = "02af3965c54e8cacf948b97fef38925c4120652c"
 
 [[projects]]
   name = "github.com/fatih/color"
   packages = ["."]
-  revision = "507f6050b8568533fb3f5504de8e5205fa62a114"
-  version = "v1.6.0"
+  revision = "5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4"
+  version = "v1.7.0"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/gdamore/encoding"
+  packages = ["."]
+  revision = "b23993cbb6353f0e6aa98d0ee318a34728f628b9"
+
+[[projects]]
+  name = "github.com/gdamore/tcell"
+  packages = [
+    ".",
+    "terminfo"
+  ]
+  revision = "061d51a604c546b48e92253cb65190d76cecf4c6"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/go-ini/ini"
   packages = ["."]
-  revision = "32e4c1e6bc4e7d0d8451aa6b75200d19e37a536a"
-  version = "v1.32.0"
+  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
+  version = "v1.37.0"
 
 [[projects]]
   name = "github.com/go-playground/locales"
@@ -99,8 +122,8 @@
     ".",
     "currency"
   ]
-  revision = "e4cbcb5d0652150d40ad0646651076b6bd2be4f6"
-  version = "v0.11.2"
+  revision = "f63010822830b6fe52288ee52d5a1151088ce039"
+  version = "v0.12.1"
 
 [[projects]]
   name = "github.com/go-playground/universal-translator"
@@ -125,16 +148,21 @@
     "profile",
     "third_party/d3",
     "third_party/d3flamegraph",
-    "third_party/d3tip",
     "third_party/svgpan"
   ]
-  revision = "db0be723d40dfbb90c702d493a71d398173358e7"
+  revision = "1ddc9e21322e23449cb6709652bf3583969ca167"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/hokaccha/go-prettyjson"
+  packages = ["."]
+  revision = "d229c224a219dcf41e9d2af4684b9782f33f5eb7"
 
 [[projects]]
   branch = "master"
   name = "github.com/ianlancetaylor/demangle"
   packages = ["."]
-  revision = "4883227f66371e02c4948937d3e2be1664d9be38"
+  revision = "fc6590592b44fedfff586c5d94647c090fbd6bac"
 
 [[projects]]
   name = "github.com/inconshreveable/mousetrap"
@@ -148,6 +176,12 @@
   revision = "0b12d6b5"
 
 [[projects]]
+  name = "github.com/lucasb-eyer/go-colorful"
+  packages = ["."]
+  revision = "345fbb3dbcdb252d9985ee899a84963c0fa24c82"
+  version = "v1.0"
+
+[[projects]]
   name = "github.com/mattn/go-colorable"
   packages = ["."]
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
@@ -158,6 +192,12 @@
   packages = ["."]
   revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
   version = "v0.0.3"
+
+[[projects]]
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
 
 [[projects]]
   branch = "master"
@@ -175,7 +215,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "59bfc7932fecb23d2c1d001f73c9a062c187c140"
+  revision = "e40a034597a3952017f3bb0c75caa8491616dff1"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -184,22 +224,34 @@
   version = "v0.8.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/rivo/tview"
+  packages = ["."]
+  revision = "71ecf1f4299c6d72b16d20da72405b7e85ac8720"
+
+[[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "d682213848ed68c0a260ca37d6dd5ace8423f5ba"
-  version = "v1.0.4"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
 
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
-  version = "v0.0.1"
+  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
+  version = "v0.0.3"
 
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
-  version = "v1.0.0"
+  revision = "583c0c0531f06d5278b7d917446061adc344b5cd"
+  version = "v1.0.1"
+
+[[projects]]
+  name = "github.com/x-cray/logrus-prefixed-formatter"
+  packages = ["."]
+  revision = "bb2702d423886830dee131692131d35648c382e2"
+  version = "v0.5.2"
 
 [[projects]]
   branch = "master"
@@ -211,7 +263,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "8c653846df49742c4c85ec37e5d9f8d3ba657895"
+  revision = "df8d4716b3472e4a531c33cedbe537dae921a1a9"
 
 [[projects]]
   branch = "master"
@@ -220,7 +272,19 @@
     "unix",
     "windows"
   ]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "c11f84a56e43e20a78cee75a7c034031ecf57d1f"
+
+[[projects]]
+  name = "golang.org/x/text"
+  packages = [
+    "encoding",
+    "encoding/internal/identifier",
+    "internal/gen",
+    "transform",
+    "unicode/cldr"
+  ]
+  revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
+  version = "v0.3.0"
 
 [[projects]]
   name = "gopkg.in/AlecAivazis/survey.v1"
@@ -228,18 +292,18 @@
     "core",
     "terminal"
   ]
-  revision = "9f89d9dd66613216993dc300f9f3dbae9c3c9bda"
-  version = "v1.4.2"
+  revision = "e752db451e07e09c7d7dc8cada807a44bdb0fd47"
+  version = "v1.5.3"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "150fe5b6a4ccc9cd6ffdbf5d184b67fbea75efcc"
-  version = "v9.11.0"
+  revision = "f28cb45dc0f0f406ba2015cdb59a5203ad220bc2"
+  version = "v9.17.1"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b7b299268bfcb529adab5ee09bb15290327bc99e5acb166e9e4477ec755de4d4"
+  inputs-digest = "0d567fc1d4e200e8506afbb3bf81ac5f983501fdb611005c00f8d5182af36c11"
   solver-name = "gps-cdcl"
   solver-version = 1

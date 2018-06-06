@@ -1350,7 +1350,8 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 					stackTags,
 					ctx.transaction.startTime,
 					ctx.context.awsSession,
-					subheaderDivider,
+					"▬",
+					dividerLength,
 					ctx.logger)
 			}
 			if nil != stackErr {

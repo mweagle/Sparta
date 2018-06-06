@@ -1,13 +1,16 @@
 package sparta
 
 import (
+	"bytes"
 	cryptoRand "crypto/rand"
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
 	"runtime"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -32,6 +35,7 @@ func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus
 		red := func(inputText string) string {
 			return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 		}
+
 		logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
 		logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
 		logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
@@ -82,20 +86,42 @@ type optionsProvisionStruct struct {
 
 var optionsProvision optionsProvisionStruct
 
-func provisionBuildID(userSuppliedValue string) (string, error) {
+func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
 	buildID := userSuppliedValue
 	if "" == buildID {
-		hash := sha1.New()
-		randomBytes := make([]byte, 256)
-		_, err := cryptoRand.Read(randomBytes)
-		if err != nil {
-			return "", err
+		// That's cool, let's see if we can find a git SHA
+		cmd := exec.Command("git",
+			"rev-parse",
+			"HEAD")
+		var stdout bytes.Buffer
+		var stderr bytes.Buffer
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+		cmdErr := cmd.Run()
+		if cmdErr == nil {
+			// Great, let's use the SHA
+			buildID = strings.TrimSpace(string(stdout.Bytes()))
+			if buildID != "" {
+				logger.WithField("SHA", buildID).
+					WithField("Command", "git rev-parse HEAD").
+					Info("Using `git` SHA for StampedBuildID")
+			}
 		}
-		_, err = hash.Write(randomBytes)
-		if err != nil {
-			return "", err
+		// Ignore any errors and make up a random one
+		if buildID == "" {
+			// No problem, let's use an arbitrary SHA
+			hash := sha1.New()
+			randomBytes := make([]byte, 256)
+			_, err := cryptoRand.Read(randomBytes)
+			if err != nil {
+				return "", err
+			}
+			_, err = hash.Write(randomBytes)
+			if err != nil {
+				return "", err
+			}
+			buildID = hex.EncodeToString(hash.Sum(nil))
 		}
-		buildID = hex.EncodeToString(hash.Sum(nil))
 	}
 	return buildID, nil
 }
@@ -108,6 +134,13 @@ type optionsDescribeStruct struct {
 }
 
 var optionsDescribe optionsDescribeStruct
+
+/******************************************************************************/
+// Explore options?
+type optionsExploreStruct struct {
+}
+
+var optionsExplore optionsExploreStruct
 
 /******************************************************************************/
 // Profile options
@@ -143,6 +176,11 @@ func init() {
 		"f",
 		"text",
 		"Log format [text, json]")
+	CommandLineOptions.Root.PersistentFlags().BoolVarP(&OptionsGlobal.TimeStamps,
+		"timestamps",
+		"z",
+		false,
+		"Include UTC timestamp log line prefix")
 	CommandLineOptions.Root.PersistentFlags().StringVarP(&OptionsGlobal.BuildTags,
 		"tags",
 		"t",
@@ -225,7 +263,7 @@ func init() {
 	CommandLineOptions.Explore = &cobra.Command{
 		Use:   "explore",
 		Short: "Interactively explore service",
-		Long:  `Startup a localhost HTTP server to explore the exported Go functions`,
+		Long:  `Startup a local CLI GUI to explore and trigger your AWS service`,
 	}
 
 	// Profile
@@ -339,6 +377,7 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 
 	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
 		if handler != nil {
+			StampedBuildID = optionsProvision.BuildID
 			return handler(CommandLineOptions.Provision)
 		}
 		return nil

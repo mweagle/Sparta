@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.1.0"
+	SpartaVersion = "1.1.1"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -59,8 +59,6 @@ const (
 var (
 	// internal logging header
 	headerDivider = strings.Repeat("═", dividerLength)
-	// internal subheader divider
-	subheaderDivider = strings.Repeat("─", dividerLength)
 )
 
 // AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
@@ -117,6 +115,7 @@ type optionsGlobalStruct struct {
 	Noop               bool           `validate:"-"`
 	LogLevel           string         `validate:"eq=panic|eq=fatal|eq=error|eq=warn|eq=info|eq=debug"`
 	LogFormat          string         `validate:"eq=txt|eq=text|eq=json"`
+	TimeStamps         bool           `validate:"-"`
 	Logger             *logrus.Logger `validate:"-"`
 	Command            string         `validate:"-"`
 	BuildTags          string         `validate:"-"`
@@ -228,21 +227,9 @@ var AssumePolicyDocument = ArbitraryJSONObject{
 		{
 			"Effect": "Allow",
 			"Principal": ArbitraryJSONObject{
-				"Service": []string{LambdaPrincipal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{EC2Principal},
-			},
-			"Action": []string{"sts:AssumeRole"},
-		},
-		{
-			"Effect": "Allow",
-			"Principal": ArbitraryJSONObject{
-				"Service": []string{APIGatewayPrincipal},
+				"Service": []string{LambdaPrincipal,
+					EC2Principal,
+					APIGatewayPrincipal},
 			},
 			"Action": []string{"sts:AssumeRole"},
 		},

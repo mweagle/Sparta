@@ -97,6 +97,7 @@ func MainEx(serviceName string,
 		if nil != validateErr {
 			return validateErr
 		}
+
 		// Format?
 		// Running in AWS?
 		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
@@ -105,6 +106,7 @@ func MainEx(serviceName string,
 		case "text", "txt":
 			formatter = &logrus.TextFormatter{
 				DisableColors: !enableColors,
+				FullTimestamp: OptionsGlobal.TimeStamps,
 			}
 		case "json":
 			formatter = &logrus.JSONFormatter{}
@@ -151,10 +153,12 @@ func MainEx(serviceName string,
 
 	if nil == CommandLineOptions.Provision.RunE {
 		CommandLineOptions.Provision.RunE = func(cmd *cobra.Command, args []string) error {
-			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID)
+			buildID, buildIDErr := provisionBuildID(optionsProvision.BuildID, OptionsGlobal.Logger)
 			if nil != buildIDErr {
 				return buildIDErr
 			}
+			// Save the BuildID
+			StampedBuildID = buildID
 			return Provision(OptionsGlobal.Noop,
 				serviceName,
 				serviceDescription,
@@ -232,6 +236,28 @@ func MainEx(serviceName string,
 		}
 	}
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Describe)
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Explore
+	if nil == CommandLineOptions.Explore.RunE {
+		CommandLineOptions.Explore.RunE = func(cmd *cobra.Command, args []string) error {
+			validateErr := validate.Struct(optionsExplore)
+			if nil != validateErr {
+				return validateErr
+			}
+
+			return Explore(serviceName,
+				serviceDescription,
+				lambdaAWSInfos,
+				api,
+				site,
+				optionsDescribe.S3Bucket,
+				OptionsGlobal.BuildTags,
+				OptionsGlobal.LinkerFlags,
+				OptionsGlobal.Logger)
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Explore)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Profile

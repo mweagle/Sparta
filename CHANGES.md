@@ -1,5 +1,19 @@
 # Change Notes
 
+## v1.1.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Re-implemented the `explore` command.
+    - The `explore` command provides a terminal-based UI to interactively submit events to provisioned Lambda functions.
+    - The set of JSON files are determined by [walking]() the working directory for all _*.json_ files
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.1/explore.jpg" />
+  - Eliminate redundant `Statement` entries in [AssumeRolePolicyDocument](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
+  - Add `sparta.StampedBuildID` global variable to access the _BuildID_ value (either user defined or automatically generated)
+  - Added `-z/--timestamps` command line flag to optionally include UTC timestamp prefix on every log line.
+  - Prefer `git rev-parse HEAD` value for fallback BuildID value iff `--buildID` isn't provided as a _provision_ command line argument. If an error is detected calling `git`, the previous randomly initialized buffer behavior is used.
+- :bug:  **FIXED**
+
 ## v1.1.0
 
 - :warning: **BREAKING**
