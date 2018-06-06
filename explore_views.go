@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 	"sync"
@@ -27,7 +28,8 @@ import (
 )
 
 var (
-	progressEmoji = []string{"🌍", "🌎", "🌏"}
+	progressEmoji        = []string{"🌍", "🌎", "🌏"}
+	windowsProgressEmoji = []string{"◐", "◓", "◑", "◒"}
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -307,6 +309,12 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 	functionSelectedBroadcaster broadcast.Broadcaster,
 	logger *logrus.Logger) (tview.Primitive, []tview.Primitive) {
 
+	osEmojiSet := progressEmoji
+	switch runtime.GOOS {
+	case "windows":
+		osEmojiSet = windowsProgressEmoji
+	}
+
 	// Great - so what we need to do is listen for both the selected function
 	// and a change in input. If we have values for both, then
 	// go ahead and issue the request. We can do this with two
@@ -400,9 +408,9 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 							}
 						case <-ticker.C:
 							/* #nosec */
-							animationIndex = (animationIndex + 1) % len(progressEmoji)
+							animationIndex = (animationIndex + 1) % len(osEmojiSet)
 							progressEmojiView.Clear()
-							progressText := fmt.Sprintf("%s Waiting for events...", progressEmoji[animationIndex])
+							progressText := fmt.Sprintf("%s Waiting for events...", osEmojiSet[animationIndex])
 							/* #nosec */
 							io.WriteString(progressEmojiView, progressText)
 							// Update the other stuff

@@ -58,6 +58,13 @@ func Explore(serviceName string,
 	application := tview.NewApplication()
 
 	// That's the list of functions, which we can map up against the operations to perform
+	// Create the logger first, since it will change the output sink
+	logView, logViewFocusable := newLogOutputView(awsSession,
+		application,
+		lambdaAWSInfos,
+		settingsMap,
+		logger)
+
 	focusTargets := []tview.Primitive{}
 	dropdown, selectorFocusable := newFunctionSelector(awsSession,
 		stackResourceOutputs.StackResources,
@@ -77,11 +84,6 @@ func Explore(serviceName string,
 		lambdaAWSInfos,
 		settingsMap,
 		channelMap[broadcasterFunctionSelect],
-		logger)
-	logView, logViewFocusable := newLogOutputView(awsSession,
-		application,
-		lambdaAWSInfos,
-		settingsMap,
 		logger)
 
 	// There are four primary views
