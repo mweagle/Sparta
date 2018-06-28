@@ -32,17 +32,22 @@ type APIGatewayContext struct {
 	Identity     APIGatewayIdentity `json:"identity"`
 }
 
-// APIGatewayRequest represents the API Gateway request that
-// is submitted to a Lambda function. This format matches the
-// inputmapping_default.VTL templates
-type APIGatewayRequest struct {
+// APIGatewayEnvelope is the type that maps to the VTL properties
+type APIGatewayEnvelope struct {
 	Method      string                 `json:"method"`
-	Body        interface{}            `json:"body"`
 	Headers     map[string]string      `json:"headers"`
 	QueryParams map[string]string      `json:"queryParams"`
 	PathParams  map[string]string      `json:"pathParams"`
 	Context     APIGatewayContext      `json:"context"`
 	Authorizer  map[string]interface{} `json:"authorizer"`
+}
+
+// APIGatewayRequest represents the API Gateway request that
+// is submitted to a Lambda function. This format matches the
+// inputmapping_default.VTL templates
+type APIGatewayRequest struct {
+	APIGatewayEnvelope
+	Body interface{} `json:"body"`
 }
 
 // NewAPIGatewayMockRequest creates a mock API Gateway request.
@@ -54,11 +59,13 @@ func NewAPIGatewayMockRequest(lambdaName string,
 	eventData interface{}) (*APIGatewayRequest, error) {
 
 	apiGatewayRequest := &APIGatewayRequest{
-		Method:      httpMethod,
-		Body:        eventData,
-		Headers:     make(map[string]string, 0),
-		QueryParams: make(map[string]string, 0),
-		PathParams:  make(map[string]string, 0),
+		Body: eventData,
+		APIGatewayEnvelope: APIGatewayEnvelope{
+			Method:      httpMethod,
+			Headers:     make(map[string]string, 0),
+			QueryParams: make(map[string]string, 0),
+			PathParams:  make(map[string]string, 0),
+		},
 	}
 	for eachWhitelistKey, eachWhitelistValue := range whitelistParamValues {
 		// Whitelisted params include their
