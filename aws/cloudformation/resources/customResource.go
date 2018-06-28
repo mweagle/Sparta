@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"os"
 	"strings"
 
@@ -124,11 +123,6 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	responseErr error,
 	logger *logrus.Logger) error {
 
-	parsedURL, parsedURLErr := url.ParseRequestURI(event.ResponseURL)
-	if nil != parsedURLErr {
-		return errors.Wrap(parsedURLErr, "Attempting to parse CloudFormation response URL")
-	}
-
 	status := "FAILED"
 	if nil == responseErr {
 		status = "SUCCESS"
@@ -193,21 +187,32 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 	// which are supposed to be roundtripped to AWS.
 	// Ref: https://tools.ietf.org/html/rfc3986#section-2.2
 	// Ref: https://golang.org/pkg/net/url/#URL
-	req.URL = &url.URL{
-		Scheme:   parsedURL.Scheme,
-		Host:     parsedURL.Host,
-		Opaque:   parsedURL.RawPath,
-		RawQuery: parsedURL.RawQuery,
+	// Ref: https://github.com/aws/aws-sdk-go/issues/337
+	// parsedURL, parsedURLErr := url.ParseRequestURI(event.ResponseURL)
+
+	// https://en.wikipedia.org/wiki/Percent-encoding
+	mapReplace := map[string]string{
+		":": "%3A",
+		"|": "%7C",
 	}
+	req.URL.Opaque = req.URL.Path
+	for eachKey, eachValue := range mapReplace {
+		req.URL.Opaque = strings.Replace(req.URL.Opaque, eachKey, eachValue, -1)
+	}
+	req.URL.Path = ""
+	req.URL.RawPath = ""
+
 	logger.WithFields(logrus.Fields{
-		"URL": req.URL,
+		"RawURL": event.ResponseURL,
+		"URL":    req.URL,
+		"Body":   responseData,
 	}).Debug("Created URL response")
 
 	// Although it seems reasonable to set the Content-Type to "application/json" - don't.
 	// The Content-Type must be an empty string in order for the
 	// AWS Signature checker to pass.
 	// Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-lambda-function-code.html
-	req.Header.Set("Content-Type", "")
+	req.Header.Set("content-type", "")
 
 	client := &http.Client{}
 	resp, httpErr := client.Do(req)
@@ -328,7 +333,8 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 			if nil != sendErr {
 				logger.WithFields(logrus.Fields{
 					"Error": sendErr.Error(),
-				}).Info("Failed to notify CloudFormation of result.")
+					"URL":   event.ResponseURL,
+				}).Info("Failed to ACK status to CloudFormation")
 			} else {
 				// If the cloudformation notification was complete, then this
 				// execution functioned properly and we can clear the Error
