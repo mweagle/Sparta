@@ -216,7 +216,8 @@ func (perm S3Permission) export(serviceName string,
 	// Name?
 	resourceInvokerName := CloudFormationResourceName("ConfigS3",
 		lambdaLogicalCFResourceName,
-		perm.BasePermission.SourceAccount)
+		perm.BasePermission.SourceAccount,
+		fmt.Sprintf("%#v", s3Resource.Filter))
 
 	// Add it
 	cfResource := template.AddResource(resourceInvokerName, s3Resource)
