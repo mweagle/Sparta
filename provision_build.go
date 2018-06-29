@@ -1689,7 +1689,7 @@ func Provision(noop bool,
 		if err != nil {
 			ctx.rollback()
 			// Workflow step?
-			return errors.Wrapf(err, "Failed to verify IAM roles")
+			return errors.Wrapf(err, "Failed to provision service")
 		}
 
 		if next == nil {
