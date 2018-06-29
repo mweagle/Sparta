@@ -503,11 +503,13 @@ func (mapping *EventSourceMapping) export(serviceName string,
 
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
-		EventSourceArn:   dynamicArn.String(),
-		FunctionName:     targetLambdaArn,
-		StartingPosition: gocf.String(mapping.StartingPosition),
-		BatchSize:        gocf.Integer(mapping.BatchSize),
-		Enabled:          gocf.Bool(!mapping.Disabled),
+		EventSourceArn: dynamicArn.String(),
+		FunctionName:   targetLambdaArn,
+		BatchSize:      gocf.Integer(mapping.BatchSize),
+		Enabled:        gocf.Bool(!mapping.Disabled),
+	}
+	if mapping.StartingPosition != "" {
+		eventSourceMappingResource.StartingPosition = gocf.String(mapping.StartingPosition)
 	}
 
 	// Unique components for the hash for the EventSource mapping
