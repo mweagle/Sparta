@@ -1,5 +1,49 @@
 # Change Notes
 
+## v1.2
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added support for SQS event triggers.
+    - SQS event sources use the same [EventSourceMappings]() entry that is used by DynamoDB and Kinesis. For example:
+      ```
+      lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+          &sparta.EventSourceMapping{
+            EventSourceArn: gocf.GetAtt(sqsResourceName, "Arn"),
+            BatchSize:      2,
+          })
+      ```
+      - Where `sqsResourceName` is the name of a CloudFormation resource provisioned by the stack
+      - Use the [aws.SQSEvent](https://godoc.org/github.com/aws/aws-lambda-go/events#SQSEvent) value type as the incoming message
+    - See the [SpartaSQS](https://github.com/mweagle/SpartaSQS) project for a complete example
+  - Added `APIGatewayEnvelope` type to allow struct embedding and overriding of the `Body` field. Example:
+    ```
+    // FeedbackBody is the typed body submitted in a FeedbackRequest
+    type FeedbackBody struct {
+      Language string `json:"lang"`
+      Comment  string `json:"comment"`
+    }
+
+    // FeedbackRequest is the typed input to the
+    // onFeedbackDetectSentiment
+    type FeedbackRequest struct {
+      spartaEvents.APIGatewayEnvelope
+      Body FeedbackBody `json:"body"`
+    }
+    ```
+  - The previous [APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest) remains unchanged:
+    ```
+    type APIGatewayRequest struct {
+      APIGatewayEnvelope
+      Body interface{} `json:"body"`
+    }
+    ```
+- :bug:  **FIXED**
+  - Fixed latent bug where dynamically created DynamoDB and Kinesis Event Source mappings had insufficient IAM privileges
+  - Fixed latent bug where the [S3Site](https://godoc.org/github.com/mweagle/Sparta#S3Site) source directory was validated before `go:generate` could have been executed. This resulted in cases where fresh-cloned repositories would not self-deploy.
+    - The filepath existence requirement was moved further into the provision workflow to support inline JS build operations.
+
+
 ## v1.1.1
 
 - :warning: **BREAKING**
