@@ -4,6 +4,7 @@ package sparta
 
 import (
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"runtime"
 	"strings"
@@ -70,6 +71,7 @@ func resolveResourceRef(expr interface{}) (*resourceRef, error) {
 func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	template *gocf.Template,
 	logger *logrus.Logger) ([]spartaIAM.PolicyStatement, error) {
+
 	// String literal?
 	policyStatements := []spartaIAM.PolicyStatement{}
 	if resource.RefType == resourceLiteral {
@@ -90,14 +92,17 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 				resource.ResourceName)
 		}
 		// What permissions do we need to add?
-		switch existingResource.Properties.(type) {
-		case gocf.DynamoDBTable:
+		switch typedResource := existingResource.Properties.(type) {
+		case *gocf.DynamoDBTable:
 			policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
-		case gocf.KinesisStream:
+		case *gocf.KinesisStream:
 			policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
+		case *gocf.SQSQueue:
+			policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
 		default:
 			logger.WithFields(logrus.Fields{
 				"ResourceType": existingResource.Properties.CfnResourceType(),
+				"Type":         fmt.Sprintf("%T", typedResource),
 			}).Debug("No additional permissions found for dynamic resource reference type")
 		}
 	}
