@@ -22,6 +22,7 @@ const (
 	resourceLiteral resourceRefType = iota
 	resourceRefFunc
 	resourceGetAttrFunc
+	resourceStringFunc
 )
 
 type resourceRef struct {
@@ -33,7 +34,7 @@ type resourceRef struct {
 // and tries to determine the CloudFormation resource name it resolves to
 func resolveResourceRef(expr interface{}) (*resourceRef, error) {
 
-	// Is ther any chance it's just a string?
+	// Is there any chance it's just a string?
 	typedString, typedStringOk := expr.(string)
 	if typedStringOk {
 		return &resourceRef{
@@ -56,11 +57,18 @@ func resolveResourceRef(expr interface{}) (*resourceRef, error) {
 	}
 
 	var getAttFunc gocf.GetAttFunc
-	if json.Unmarshal(marshalled, &getAttFunc) == nil &&
-		len(getAttFunc.Resource) != 0 {
+	if json.Unmarshal(marshalled, &getAttFunc) == nil && len(getAttFunc.Resource) != 0 {
 		return &resourceRef{
 			RefType:      resourceGetAttrFunc,
 			ResourceName: getAttFunc.Resource,
+		}, nil
+	}
+	// Any chance it's a string?
+	var stringExprFunc gocf.StringExpr
+	if json.Unmarshal(marshalled, &stringExprFunc) == nil && len(stringExprFunc.Literal) != 0 {
+		return &resourceRef{
+			RefType:      resourceStringFunc,
+			ResourceName: stringExprFunc.Literal,
 		}, nil
 	}
 
@@ -72,26 +80,32 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	template *gocf.Template,
 	logger *logrus.Logger) ([]spartaIAM.PolicyStatement, error) {
 
-	// String literal?
 	policyStatements := []spartaIAM.PolicyStatement{}
-	if resource.RefType == resourceLiteral {
+
+	// String literal or gocf.StringExpr that's has a literal value?
+	if resource.RefType == resourceLiteral ||
+		resource.RefType == resourceStringFunc {
+		// Add the EventSourceMapping specific permissions
 		if strings.Contains(resource.ResourceName, ":dynamodb:") {
 			policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
 		} else if strings.Contains(resource.ResourceName, ":kinesis:") {
 			policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
+		} else if strings.Contains(resource.ResourceName, ":sqs:") {
+			policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
 		} else {
 			logger.WithFields(logrus.Fields{
 				"ARN": resource.ResourceName,
 			}).Debug("No additional permissions found for static resource type")
 		}
 	} else {
+		// Dynamically provisioned resource closed over by the template?
 		existingResource, existingResourceExists := template.Resources[resource.ResourceName]
 
 		if !existingResourceExists {
 			return policyStatements, errors.Errorf("Failed to find resource %s in template",
 				resource.ResourceName)
 		}
-		// What permissions do we need to add?
+		// Add the EventSourceMapping specific permissions
 		switch typedResource := existingResource.Properties.(type) {
 		case *gocf.DynamoDBTable:
 			policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
