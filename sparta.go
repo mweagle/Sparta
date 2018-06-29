@@ -149,6 +149,7 @@ var CommonIAMStatements = struct {
 	VPC      []spartaIAM.PolicyStatement
 	DynamoDB []spartaIAM.PolicyStatement
 	Kinesis  []spartaIAM.PolicyStatement
+	SQS      []spartaIAM.PolicyStatement
 }{
 	Core: []spartaIAM.PolicyStatement{
 		{
@@ -208,6 +209,17 @@ var CommonIAMStatements = struct {
 				"kinesis:GetShardIterator",
 				"kinesis:DescribeStream",
 				"kinesis:ListStreams",
+			},
+		},
+	},
+	// https://docs.aws.amazon.com/lambda/latest/dg/with-sqs-create-execution-role.html
+	SQS: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{"SQS:GetQueueAttributes",
+				"SQS:ChangeMessageVisibility",
+				"SQS:DeleteMessage",
+				"SQS:ReceiveMessage",
 			},
 		},
 	},
