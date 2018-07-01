@@ -3,11 +3,8 @@
 package sparta
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 	"runtime"
-	"strings"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
@@ -16,109 +13,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type resourceRefType int
-
-const (
-	resourceLiteral resourceRefType = iota
-	resourceRefFunc
-	resourceGetAttrFunc
-	resourceStringFunc
-)
-
-type resourceRef struct {
-	RefType      resourceRefType
-	ResourceName string
-}
-
-// resolveResourceRef takes an interface representing a dynamic ARN
-// and tries to determine the CloudFormation resource name it resolves to
-func resolveResourceRef(expr interface{}) (*resourceRef, error) {
-
-	// Is there any chance it's just a string?
-	typedString, typedStringOk := expr.(string)
-	if typedStringOk {
-		return &resourceRef{
-			RefType:      resourceLiteral,
-			ResourceName: typedString,
-		}, nil
-	}
-	// Some type of intrinsic function?
-	marshalled, marshalledErr := json.Marshal(expr)
-	if marshalledErr != nil {
-		return nil, errors.Errorf("Failed to unmarshal dynamic resource ref %v", expr)
-	}
-	var refFunc gocf.RefFunc
-	if json.Unmarshal(marshalled, &refFunc) == nil &&
-		len(refFunc.Name) != 0 {
-		return &resourceRef{
-			RefType:      resourceRefFunc,
-			ResourceName: refFunc.Name,
-		}, nil
-	}
-
-	var getAttFunc gocf.GetAttFunc
-	if json.Unmarshal(marshalled, &getAttFunc) == nil && len(getAttFunc.Resource) != 0 {
-		return &resourceRef{
-			RefType:      resourceGetAttrFunc,
-			ResourceName: getAttFunc.Resource,
-		}, nil
-	}
-	// Any chance it's a string?
-	var stringExprFunc gocf.StringExpr
-	if json.Unmarshal(marshalled, &stringExprFunc) == nil && len(stringExprFunc.Literal) != 0 {
-		return &resourceRef{
-			RefType:      resourceStringFunc,
-			ResourceName: stringExprFunc.Literal,
-		}, nil
-	}
-
-	// Nope
-	return nil, nil
-}
-
+// eventSourceMappingPoliciesForResource returns the IAM specific privileges for each
+// type of supported AWS Lambda EventSourceMapping
 func eventSourceMappingPoliciesForResource(resource *resourceRef,
 	template *gocf.Template,
 	logger *logrus.Logger) ([]spartaIAM.PolicyStatement, error) {
 
 	policyStatements := []spartaIAM.PolicyStatement{}
 
-	// String literal or gocf.StringExpr that's has a literal value?
-	if resource.RefType == resourceLiteral ||
-		resource.RefType == resourceStringFunc {
-		// Add the EventSourceMapping specific permissions
-		if strings.Contains(resource.ResourceName, ":dynamodb:") {
-			policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
-		} else if strings.Contains(resource.ResourceName, ":kinesis:") {
-			policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
-		} else if strings.Contains(resource.ResourceName, ":sqs:") {
-			policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
-		} else {
-			logger.WithFields(logrus.Fields{
-				"ARN": resource.ResourceName,
-			}).Debug("No additional permissions found for static resource type")
-		}
+	if isResolvedResourceType(resource, template, ":dynamodb:", &gocf.DynamoDBTable{}) {
+		policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
+	} else if isResolvedResourceType(resource, template, ":kinesis:", &gocf.KinesisStream{}) {
+		policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
+	} else if isResolvedResourceType(resource, template, ":sqs:", &gocf.SQSQueue{}) {
+		policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
 	} else {
-		// Dynamically provisioned resource included in the template definition?
-		existingResource, existingResourceExists := template.Resources[resource.ResourceName]
-
-		if !existingResourceExists {
-			return policyStatements, errors.Errorf("Failed to find resource %s in template",
-				resource.ResourceName)
-		}
-		// Add the EventSourceMapping specific permissions
-		switch typedResource := existingResource.Properties.(type) {
-		case *gocf.DynamoDBTable:
-			policyStatements = append(policyStatements, CommonIAMStatements.DynamoDB...)
-		case *gocf.KinesisStream:
-			policyStatements = append(policyStatements, CommonIAMStatements.Kinesis...)
-		case *gocf.SQSQueue:
-			policyStatements = append(policyStatements, CommonIAMStatements.SQS...)
-		default:
-			logger.WithFields(logrus.Fields{
-				"ResourceType": existingResource.Properties.CfnResourceType(),
-				"Type":         fmt.Sprintf("%T", typedResource),
-			}).Debug("No additional permissions found for dynamic resource reference type")
-		}
+		logger.WithFields(logrus.Fields{
+			"Resource": resource,
+		}).Debug("No additional EventSource IAM permissions found for event type")
 	}
 	return policyStatements, nil
 }
@@ -210,6 +122,7 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 	// an eventSourceMapping entry.
 	annotatePermissions := func(lambdaAWSInfo *LambdaAWSInfo,
 		eventSourceMapping *EventSourceMapping,
+		mappingIndex int,
 		resource *resourceRef) error {
 
 		annotateStatements, annotateStatementsErr := eventSourceMappingPoliciesForResource(resource,
@@ -288,36 +201,14 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 	//
 	// END
 
-	// Iterate through every lambda function. If there is an EventSourceMapping
-	// that points to a piece of infastructure provisioned by this stack,
-	// figure out the resourcename used by that infrastructure and ensure
-	// that the IAMRole the lambda function is using includes permissions to
-	// perform the necessary pull-based operations against the source.
-	for _, eachLambda := range lambdaAWSInfos {
-		for _, eachEventSource := range eachLambda.EventSourceMappings {
-			resourceRef, resourceRefErr := resolveResourceRef(eachEventSource.EventSourceArn)
-			if resourceRefErr != nil {
-				return errors.Wrapf(resourceRefErr,
-					"Failed to resolve EventSourceArn: %#v", eachEventSource)
-			}
+	annotationErr := visitResolvedEventSourceMapping(annotatePermissions,
+		lambdaAWSInfos,
+		template,
+		logger)
 
-			// At this point everything is a string, so we need to unmarshall
-			// and see if the Arn is supplied by either a Ref or a GetAttr
-			// function. In those cases, we need to look around in the template
-			// to go from: EventMapping -> Type -> Lambda -> LambdaIAMRole
-			// so that we can add the permissions
-			if resourceRef != nil {
-				annotationErr := annotatePermissions(eachLambda,
-					eachEventSource,
-					resourceRef)
-				// Anything go wrong?
-				if annotationErr != nil {
-					return errors.Wrapf(annotationErr,
-						"Failed to annotate template for EventSourceMapping: %#v",
-						eachEventSource)
-				}
-			}
-		}
+	if annotationErr != nil {
+		return errors.Wrapf(annotationErr,
+			"Failed to annotate template for EventSourceMappings")
 	}
 	return nil
 }
