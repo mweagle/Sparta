@@ -8,12 +8,13 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"math/rand"
 	"strings"
 	"text/template"
+
+	"github.com/pkg/errors"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/sirupsen/logrus"
@@ -62,8 +63,13 @@ func writeNode(nodes *[]*cytoscapeNode,
 	nodeName string,
 	nodeColor string,
 	nodeImage string,
-	logger *logrus.Logger) {
-	nodeID, _ := cytoscapeNodeID(nodeName)
+	logger *logrus.Logger) error {
+	nodeID, nodeErr := cytoscapeNodeID(nodeName)
+	if nodeErr != nil {
+		return errors.Wrapf(nodeErr,
+			"Failed to create nodeID for entry: %s",
+			nodeName)
+	}
 	appendNode := &cytoscapeNode{
 		Data: cytoscapeData{
 			ID:    nodeID,
@@ -78,12 +84,25 @@ func writeNode(nodes *[]*cytoscapeNode,
 		}
 	}
 	*nodes = append(*nodes, appendNode)
-
+	return nil
 }
 
-func writeLink(nodes *[]*cytoscapeNode, fromNode string, toNode string, label string) {
-	nodeSource, _ := cytoscapeNodeID(fromNode)
-	nodeTarget, _ := cytoscapeNodeID(toNode)
+func writeLink(nodes *[]*cytoscapeNode,
+	fromNode string,
+	toNode string,
+	label string) error {
+	nodeSource, nodeSourceErr := cytoscapeNodeID(fromNode)
+	if nodeSourceErr != nil {
+		return errors.Wrapf(nodeSourceErr,
+			"Failed to create nodeID for entry: %s",
+			fromNode)
+	}
+	nodeTarget, nodeTargetErr := cytoscapeNodeID(toNode)
+	if nodeTargetErr != nil {
+		return errors.Wrapf(nodeSourceErr,
+			"Failed to create nodeID for entry: %s",
+			toNode)
+	}
 
 	*nodes = append(*nodes, &cytoscapeNode{
 		Data: cytoscapeData{
@@ -93,6 +112,7 @@ func writeLink(nodes *[]*cytoscapeNode, fromNode string, toNode string, label st
 			Label:  label,
 		},
 	})
+	return nil
 }
 func templateResourceForKey(resourceKeyName string, logger *logrus.Logger) *templateResource {
 	var resource *templateResource
@@ -167,7 +187,10 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 // looking at the referred resource to understand it's
 // type
 func iconForAWSResource(rawEmitter interface{}) string {
-	jsonBytes, _ := json.Marshal(rawEmitter)
+	jsonBytes, jsonBytesErr := json.Marshal(rawEmitter)
+	if jsonBytesErr != nil {
+		jsonBytes = make([]byte, 0)
+	}
 	canonicalRaw := strings.ToLower(string(jsonBytes))
 	if strings.Contains(canonicalRaw, "dynamodb") {
 		return "AWSIcons/Database/Database_AmazonDynamoDB.svg"
@@ -237,7 +260,7 @@ func Describe(serviceName string,
 	}
 
 	cytoscapeElements := make([]*cytoscapeNode, 0)
-
+	var writeErr error
 	// Instead of inline mermaid stuff, we're going to stuff raw
 	// json through. We can also include AWS images in the icon
 	// using base64/encoded:
@@ -247,25 +270,32 @@ func Describe(serviceName string,
 	// Which is dynamically updated at: https://cytoscape.github.io/cytoscape.js-tutorial-demo/
 
 	// Setup the root object
-	writeNode(&cytoscapeElements,
+	writeErr = writeNode(&cytoscapeElements,
 		serviceName,
 		nodeColorService,
 		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation_stack.svg",
 		logger)
-
+	if writeErr != nil {
+		return writeErr
+	}
 	for _, eachLambda := range lambdaAWSInfos {
 		// Other cytoscape nodes
 		// Create the node...
-		writeNode(&cytoscapeElements,
+		writeErr = writeNode(&cytoscapeElements,
 			eachLambda.lambdaFunctionName(),
 			nodeColorLambda,
 			"AWSIcons/Compute/Compute_AWSLambda.svg",
 			logger)
-		writeLink(&cytoscapeElements,
+		if writeErr != nil {
+			return writeErr
+		}
+		writeErr = writeLink(&cytoscapeElements,
 			eachLambda.lambdaFunctionName(),
 			serviceName,
 			"")
-
+		if writeErr != nil {
+			return writeErr
+		}
 		// Create permission & event mappings
 		// functions declared in this
 		for _, eachPermission := range eachLambda.Permissions {
@@ -283,15 +313,21 @@ func Describe(serviceName string,
 					nodeColor = nodeColorEventSource
 				}
 
-				writeNode(&cytoscapeElements,
+				writeErr = writeNode(&cytoscapeElements,
 					name,
 					nodeColor,
 					iconForAWSResource(eachNode.Name),
 					logger)
-				writeLink(&cytoscapeElements,
+				if writeErr != nil {
+					return writeErr
+				}
+				writeErr = writeLink(&cytoscapeElements,
 					name,
 					eachLambda.lambdaFunctionName(),
 					link)
+				if writeErr != nil {
+					return writeErr
+				}
 			}
 		}
 		for index, eachEventSourceMapping := range eachLambda.EventSourceMappings {
@@ -303,47 +339,68 @@ func Describe(serviceName string,
 					index))
 			}
 			nodeName := string(jsonBytes)
-			writeNode(&cytoscapeElements,
+			writeErr = writeNode(&cytoscapeElements,
 				nodeName,
 				nodeColorEventSource,
 				iconForAWSResource(dynamicArn),
 				logger)
-			writeLink(&cytoscapeElements,
+			if writeErr != nil {
+				return writeErr
+			}
+			writeErr = writeLink(&cytoscapeElements,
 				nodeName,
 				eachLambda.lambdaFunctionName(),
 				"")
+			if writeErr != nil {
+				return writeErr
+			}
 		}
 	}
 
 	// API?
 	if nil != api {
 		// Create the APIGateway virtual node && connect it to the application
-		writeNode(&cytoscapeElements,
+		writeErr = writeNode(&cytoscapeElements,
 			nodeNameAPIGateway,
 			nodeColorAPIGateway,
 			"AWSIcons/Application Services/ApplicationServices_AmazonAPIGateway.svg",
 			logger)
+		if writeErr != nil {
+			return writeErr
+		}
 		for _, eachResource := range api.resources {
 			for eachMethod := range eachResource.Methods {
 				// Create the PATH node
 				var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
-				writeNode(&cytoscapeElements,
+				writeErr = writeNode(&cytoscapeElements,
 					nodeName,
 					nodeColorAPIGateway,
 					"AWSIcons/General/General_Internet.svg",
 					logger)
-				writeLink(&cytoscapeElements,
+				if writeErr != nil {
+					return writeErr
+				}
+				writeErr = writeLink(&cytoscapeElements,
 					nodeNameAPIGateway,
 					nodeName,
 					"")
-				writeLink(&cytoscapeElements,
+				if writeErr != nil {
+					return writeErr
+				}
+				writeErr = writeLink(&cytoscapeElements,
 					nodeName,
 					eachResource.parentLambda.lambdaFunctionName(),
 					"")
+				if writeErr != nil {
+					return writeErr
+				}
 			}
 		}
 	}
-	cytoscapeBytes, _ := json.MarshalIndent(cytoscapeElements, "", " ")
+	cytoscapeBytes, cytoscapeBytesErr := json.MarshalIndent(cytoscapeElements, "", " ")
+	if cytoscapeBytesErr != nil {
+		return errors.Wrapf(cytoscapeBytesErr, "Failed to marshal cytoscape data")
+	}
 	params := struct {
 		SpartaVersion          string
 		ServiceName            string
