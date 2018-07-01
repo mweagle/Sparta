@@ -67,7 +67,7 @@ func writeNode(nodes *[]*cytoscapeNode,
 	appendNode := &cytoscapeNode{
 		Data: cytoscapeData{
 			ID:    nodeID,
-			Label: nodeName,
+			Label: strings.Trim(nodeName, "\""),
 		},
 	}
 	if nodeImage != "" {
