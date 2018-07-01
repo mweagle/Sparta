@@ -1,126 +1,135 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
 
-    <title>{{ .ServiceName }}</title>
+<head>
+  <meta charset="UTF-8">
 
-    <!-- CSS files -->
-    {{range .CSSFiles}}
-        <!-- File: {{.KeyName}} -->
-        <style>
-          {{.Data}}
-        </style>
-    {{end}}
+  <title>{{ .ServiceName }}</title>
 
-    <!-- JS Files -->
-    {{range .JSFiles}}
-        <!-- File: {{.KeyName}} -->
-        <script type="text/javascript">
-// <![CDATA[
+  <!-- CSS files -->
+  {{range .CSSFiles}}
 
-          {{.Data}}
+  <!-- File: {{.KeyName}} -->
+  <style>
+    {{.Data}}
+  </style>
+  {{end}}
 
-//]]>
-        </script>
-    {{end}}
 
-    <script charset="UTF-8">
+  <!-- Make sure the global JSON values are initialized
+  before we try and load the deferred initializers -->
+  <script charset="UTF-8">
+    CLOUDFORMATION_TEMPLATE_RAW = {{ .CloudFormationTemplate }}
 
-      CLOUDFORMATION_TEMPLATE_RAW = {{ .CloudFormationTemplate }}
+    CYTOSCAPE_DATA = {{ .CytoscapeData }};
+  </script>
 
-    </script>
 
-    <style>
-      /* Show it is fixed to the top */
+  <!-- JS Files -->
+  {{range .JSFiles}}
+  <!-- File: {{.KeyName}} -->
+  <script type="text/javascript">
+    // <![CDATA[
+    {{.Data}}
+    //]]>
+  </script>
+  {{end}}
 
-      body {
-        min-height: 75rem;
-        padding-top: 4.5rem;
-      }
+  <style>
+    /* Show it is fixed to the top */
+    body {
+      min-height: 75rem;
+      padding-top: 4.5rem;
+    }
 
-      .spartaLayout {
-        font-family: "Hasklig", "Ubuntu Mono", "Menlo", "Courier New", "Lucida Console";
-        font-size: 12px;
-      }
-    </style>
+    .spartaLayout {
+      font-family: "Hasklig", "Ubuntu Mono", "Menlo", "Courier New", "Lucida Console";
+      font-size: 12px;
+    }
 
-    <script>
-    mermaid.initialize({startOnLoad:true,
-                      htmlLabels: true,
-                      flowchart:{
-                          useMaxWidth: true
-                      }
-                      });
+    #cytoscapeDIVTarget {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      padding-top: 4.5rem;
+      top: 0px;
+      left: 0px;
+    }
+  </style>
+</head>
 
-    </script>
-  </head>
-
-  <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">{{ .ServiceName }}</a>
-      <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul id="navBarItems" class="navbar-nav mr-auto">
-          <li class="nav-item" id="lambda-tab">
-              <a class="nav-link"
-              href="#lambda"
-              onclick="showView('lambda')">
-              <img src="data:image/svg+xml;base64,{{ index .ImageMap "Compute_AWSLambda_LambdaFunction.svg"}}"  width="32" height="32" class="d-inline-block align-top" alt="" /> Lambdas
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="#">{{ .ServiceName }}</a>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+      <ul id="navBarItems" class="navbar-nav mr-auto">
+        <li class="nav-item" id="lambda-tab">
+          <a class="nav-link" href="#lambda" onclick="showView('lambda')">
+            <img src="data:image/svg+xml;base64,{{ index .ImageMap "Compute_AWSLambda_LambdaFunction.svg"}}" width="32" height="32"
+              class="d-inline-block align-top" alt="" /> Lambdas
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false">
+              Layout
             </a>
-          </li>
-          <li>
-            <span style="display: inline-block; width:1px; height:100%; background:#000; margin: 0 2px;"></span>
-          </li>
-          <li class="nav-item" id="cloudformation-template-tab">
-              <a class="nav-link "
-              href="#cloudformation-template"
-              onclick="showView('cloudformation-template')">
-              <img src="data:image/svg+xml;base64,{{ index .ImageMap "ManagementTools_AWSCloudFormation.svg"}}" width="32" height="32" class="d-inline-block align-top" alt="" />
-              CloudFormation Template</a>
-          </li>
-        </ul>
-        <ul class="nav navbar-nav ml-auto">
-          <li class="nav-item">
-              <a class="nav-link"
-              target="_blank" href="https://gosparta.io">
-                  <img src="data:image/png;base64,{{ index .ImageMap "SpartaHelmet256.png"}}" width="32" height="32" class="d-inline-block align-top" alt="">
-                  Sparta
-              </a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link"
-              target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ .SpartaVersion }}">
-              <smallest>
-              ({{ .SpartaVersion }})
-              </smallest>
-              </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-      <main role="main" class="container-fluid">
-        <div id="view-container">
-          <div id="lambda-view">
-            <div class="mermaid spartaLayout" id="mermaidGraph">
-              %% Sparta Graph
-              graph RL
-
-              {{ .MermaidData}}
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" id="layout-breadthfirst" href="#">Breadth First</a>
+              <a class="dropdown-item" id="layout-dagre" href="#">Dagre</a>
+              <a class="dropdown-item" id="layout-cose" href="#">COSE</a>
+              <a class="dropdown-item" id="layout-grid" href="#">Grid</a>
+              <a class="dropdown-item" id="layout-circle" href="#">Circle</a>
+              <a class="dropdown-item" id="layout-concentric" href="#">Concentric</a>
             </div>
-          </div>
+          </li>
+        <li>
+          <span style="display: inline-block; width:1px; height:100%; background:#000; margin: 0 2px;"></span>
+        </li>
+        <li class="nav-item" id="cloudformation-template-tab">
+          <a class="nav-link " href="#cloudformation-template" onclick="showView('cloudformation-template')">
+            <img src="data:image/svg+xml;base64,{{ index .ImageMap "ManagementTools_AWSCloudFormation.svg"}}" width="32" height="32"
+              class="d-inline-block align-top" alt="" /> CloudFormation Template</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" target="_blank" href="https://gosparta.io">
+            <img src="data:image/png;base64,{{ index .ImageMap "SpartaHelmet256.png"}}" width="32" height="32" class="d-inline-block align-top"
+              alt=""> Sparta
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ .SpartaVersion }}">
+            <smallest>
+              ({{ .SpartaVersion }})
+            </smallest>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-          <div class="card" id="cloudformation-template-view">
-              <div class="card-body">
-
-                  <p class="card-text">
-                      <pre class="hljs">
-                        <code class="json" id="rawTemplateContent"></code>
-                      </pre>
-                  </p>
-              </div>
+  <main role="main" class="container-fluid">
+    <div id="view-container">
+      <div id="lambda-view">
+        <div id="cytoscapeDIVTarget"></div>
+      </div>
+      <div class="card" id="cloudformation-template-view">
+          <div class="card-body">
+            <p class="card-text">
+              <pre class="hljs">
+                <code class="json" id="rawTemplateContent"></code>
+              </pre>
+            </p>
           </div>
-        </div>
-      </main>
+      </div>
+    </div>
+  </main>
   </body>
 </html>

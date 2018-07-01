@@ -3,10 +3,6 @@
 package sparta
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
@@ -238,16 +234,9 @@ func (s3Site *S3Site) export(serviceName string,
 // the contents will be recursively archived and used to populate
 // the new S3 bucket.
 func NewS3Site(resources string) (*S3Site, error) {
-	absPath, err := filepath.Abs(resources)
-	if nil != err {
-		return nil, err
-	}
-	_, err = os.Stat(absPath)
-	if nil != err {
-		if os.IsNotExist(err) {
-			return nil, fmt.Errorf("Path does not exist: %s", absPath)
-		}
-	}
+	// We'll ensure its valid during the build step, since
+	// there could be a go:generate command in the source that
+	// actually builds it.
 	site := &S3Site{
 		resources: resources,
 	}

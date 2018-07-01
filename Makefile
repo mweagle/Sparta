@@ -3,7 +3,7 @@
 GO_LINT_PATH := $(GOPATH)/bin/golint
 GAS_PATH := $(GOPATH)/bin/gas
 WORK_DIR := ./sparta
-GO_GET_FLAGS :=
+GO_GET_FLAGS := -u
 
 ################################################################################
 # Meta

@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.1.1"
+	SpartaVersion = "1.2.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -149,6 +149,7 @@ var CommonIAMStatements = struct {
 	VPC      []spartaIAM.PolicyStatement
 	DynamoDB []spartaIAM.PolicyStatement
 	Kinesis  []spartaIAM.PolicyStatement
+	SQS      []spartaIAM.PolicyStatement
 }{
 	Core: []spartaIAM.PolicyStatement{
 		{
@@ -208,6 +209,17 @@ var CommonIAMStatements = struct {
 				"kinesis:GetShardIterator",
 				"kinesis:DescribeStream",
 				"kinesis:ListStreams",
+			},
+		},
+	},
+	// https://docs.aws.amazon.com/lambda/latest/dg/with-sqs-create-execution-role.html
+	SQS: []spartaIAM.PolicyStatement{
+		{
+			Effect: "Allow",
+			Action: []string{"SQS:GetQueueAttributes",
+				"SQS:ChangeMessageVisibility",
+				"SQS:DeleteMessage",
+				"SQS:ReceiveMessage",
 			},
 		},
 	},
@@ -491,11 +503,13 @@ func (mapping *EventSourceMapping) export(serviceName string,
 
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
-		EventSourceArn:   dynamicArn.String(),
-		FunctionName:     targetLambdaArn,
-		StartingPosition: gocf.String(mapping.StartingPosition),
-		BatchSize:        gocf.Integer(mapping.BatchSize),
-		Enabled:          gocf.Bool(!mapping.Disabled),
+		EventSourceArn: dynamicArn.String(),
+		FunctionName:   targetLambdaArn,
+		BatchSize:      gocf.Integer(mapping.BatchSize),
+		Enabled:        gocf.Bool(!mapping.Disabled),
+	}
+	if mapping.StartingPosition != "" {
+		eventSourceMappingResource.StartingPosition = gocf.String(mapping.StartingPosition)
 	}
 
 	// Unique components for the hash for the EventSource mapping

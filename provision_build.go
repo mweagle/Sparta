@@ -1064,6 +1064,14 @@ func createUploadStep(packagePath string) workflowStep {
 				if nil != err {
 					return newTaskResult(nil, errors.Wrapf(err, "Failed to get absolute filepath"))
 				}
+				// Ensure that the directory exists...
+				_, existsErr := os.Stat(ctx.userdata.s3SiteContext.s3Site.resources)
+				if existsErr != nil && os.IsNotExist(existsErr) {
+					return newTaskResult(nil,
+						errors.Wrapf(existsErr,
+							"TheS3 Site resources directory (%s) does not exist",
+							ctx.userdata.s3SiteContext.s3Site.resources))
+				}
 
 				ctx.logger.WithFields(logrus.Fields{
 					"S3Key":      path.Base(tmpFile.Name()),
@@ -1681,7 +1689,7 @@ func Provision(noop bool,
 		if err != nil {
 			ctx.rollback()
 			// Workflow step?
-			return errors.Wrapf(err, "Failed to verify IAM roles")
+			return errors.Wrapf(err, "Failed to provision service")
 		}
 
 		if next == nil {

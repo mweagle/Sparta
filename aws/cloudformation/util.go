@@ -611,7 +611,7 @@ func WaitForStackOperationComplete(stackID string,
 	startTime := time.Now()
 
 	// Startup a spinner...
-	charSetIndex := 1
+	charSetIndex := 6
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 333*time.Millisecond)
 	cliSpinnerStarted := false
 

@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "e752db451e07e09c7d7dc8cada807a44bdb0fd47"
-  version = "v1.5.3"
+  revision = "db8e629a54ae1a4442be0deae7be60062c69d111"
+  version = "v1.6.0"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
@@ -65,14 +65,14 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "47309c012812d9e9c488a54313e5cdfa7479df93"
-  version = "v1.14.1"
+  revision = "852052a10992d92f68b9a60862a3312292524903"
+  version = "v1.14.17"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
   packages = ["."]
-  revision = "48dbb65d7bd5c74ab50d53d04c949f20e3d14944"
-  version = "1.0"
+  revision = "5b875a9171af19dbde37e70a8fcbe2ebd7285e05"
+  version = "1.1"
 
 [[projects]]
   name = "github.com/deckarep/golang-set"
@@ -153,7 +153,7 @@
     "third_party/d3flamegraph",
     "third_party/svgpan"
   ]
-  revision = "8b03ce837f3401233d4e32de3a5f0ea3ff1c13c2"
+  revision = "2b5d4350d687b058368c98ab141d34d08162ec7b"
 
 [[projects]]
   branch = "master"
@@ -230,7 +230,7 @@
   branch = "master"
   name = "github.com/rivo/tview"
   packages = ["."]
-  revision = "71ecf1f4299c6d72b16d20da72405b7e85ac8720"
+  revision = "83483397e826c343edb7b8c1f33fb7983dda9fc5"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
@@ -260,7 +260,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "b47b1587369238182299fe4dad77d05b8b461e06"
+  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
 
 [[projects]]
   branch = "master"
@@ -269,7 +269,7 @@
     "unix",
     "windows"
   ]
-  revision = "c11f84a56e43e20a78cee75a7c034031ecf57d1f"
+  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -289,14 +289,14 @@
     "core",
     "terminal"
   ]
-  revision = "e752db451e07e09c7d7dc8cada807a44bdb0fd47"
-  version = "v1.5.3"
+  revision = "db8e629a54ae1a4442be0deae7be60062c69d111"
+  version = "v1.6.0"
 
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "f28cb45dc0f0f406ba2015cdb59a5203ad220bc2"
-  version = "v9.17.1"
+  revision = "ce9336f6e200cbb2e7c5672b36095b03f8bf5af7"
+  version = "v9.19.0"
 
 [solve-meta]
   analyzer-name = "dep"
