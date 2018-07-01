@@ -232,13 +232,25 @@ func (perm S3Permission) descriptionInfo() ([]descriptionNode, error) {
 	for _, eachEvent := range perm.Events {
 		s3Events = fmt.Sprintf("%s\n%s", eachEvent, s3Events)
 	}
-
-	nodes := []descriptionNode{
-		{
+	nodes := make([]descriptionNode, 0)
+	if perm.Filter.Key == nil || len(perm.Filter.Key.FilterRules) == 0 {
+		nodes = append(nodes, descriptionNode{
 			Name:     describeInfoValue(perm.SourceArn),
 			Relation: s3Events,
-		},
+		})
+	} else {
+		for _, eachFilter := range perm.Filter.Key.FilterRules {
+			filterRel := fmt.Sprintf("%s (%s = %s)",
+				s3Events,
+				*eachFilter.Name,
+				*eachFilter.Value)
+			nodes = append(nodes, descriptionNode{
+				Name:     describeInfoValue(perm.SourceArn),
+				Relation: filterRel,
+			})
+		}
 	}
+
 	return nodes, nil
 }
 
