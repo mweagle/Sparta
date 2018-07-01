@@ -163,10 +163,13 @@ func templateImageMap(logger *logrus.Logger) map[string]string {
 	return imageMap
 }
 
+// TODO - this should really be smarter, including
+// looking at the referred resource to understand it's
+// type
 func iconForAWSResource(rawEmitter interface{}) string {
 	jsonBytes, _ := json.Marshal(rawEmitter)
 	canonicalRaw := strings.ToLower(string(jsonBytes))
-	if strings.Contains(canonicalRaw, "dynamo") {
+	if strings.Contains(canonicalRaw, "dynamodb") {
 		return "AWSIcons/Database/Database_AmazonDynamoDB.svg"
 	}
 	if strings.Contains(canonicalRaw, "sqs") {
