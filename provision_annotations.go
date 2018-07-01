@@ -98,7 +98,7 @@ func eventSourceMappingPoliciesForResource(resource *resourceRef,
 			}).Debug("No additional permissions found for static resource type")
 		}
 	} else {
-		// Dynamically provisioned resource closed over by the template?
+		// Dynamically provisioned resource included in the template definition?
 		existingResource, existingResourceExists := template.Resources[resource.ResourceName]
 
 		if !existingResourceExists {
