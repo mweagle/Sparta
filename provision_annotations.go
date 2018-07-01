@@ -296,9 +296,10 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 		for _, eachEventSource := range eachLambda.EventSourceMappings {
 			resourceRef, resourceRefErr := resolveResourceRef(eachEventSource.EventSourceArn)
 			if resourceRefErr != nil {
-				return errors.Wrapf(resourceRefErr, "Failed to resolve EventSourceArn: %#v",
-					eachEventSource)
+				return errors.Wrapf(resourceRefErr,
+					"Failed to resolve EventSourceArn: %#v", eachEventSource)
 			}
+
 			// At this point everything is a string, so we need to unmarshall
 			// and see if the Arn is supplied by either a Ref or a GetAttr
 			// function. In those cases, we need to look around in the template
@@ -311,7 +312,8 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 				// Anything go wrong?
 				if annotationErr != nil {
 					return errors.Wrapf(annotationErr,
-						"Failed to annotate template for EventSourceMapping: %#v", eachEventSource)
+						"Failed to annotate template for EventSourceMapping: %#v",
+						eachEventSource)
 				}
 			}
 		}
