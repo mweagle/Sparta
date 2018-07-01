@@ -65,8 +65,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "5e98666858b97db54a61044bb1150d3b81436860"
-  version = "v1.14.16"
+  revision = "852052a10992d92f68b9a60862a3312292524903"
+  version = "v1.14.17"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -295,8 +295,8 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "9d03e2526a4863972a3954d9704088b8670c72ff"
-  version = "v9.18"
+  revision = "ce9336f6e200cbb2e7c5672b36095b03f8bf5af7"
+  version = "v9.19.0"
 
 [solve-meta]
   analyzer-name = "dep"
