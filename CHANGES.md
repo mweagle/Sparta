@@ -16,6 +16,8 @@
       - Where `sqsResourceName` is the name of a CloudFormation resource provisioned by the stack
       - Use the [aws.SQSEvent](https://godoc.org/github.com/aws/aws-lambda-go/events#SQSEvent) value type as the incoming message
     - See the [SpartaSQS](https://github.com/mweagle/SpartaSQS) project for a complete example
+  - Migrated `describe` command to use [Cytoscape.JS](http://js.cytoscape.org/) library
+    - Cytoscape supports several layout algorithms and per-service node icons.
   - Added `APIGatewayEnvelope` type to allow struct embedding and overriding of the `Body` field. Example:
     ```
     // FeedbackBody is the typed body submitted in a FeedbackRequest
