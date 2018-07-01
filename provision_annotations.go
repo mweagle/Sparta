@@ -256,7 +256,8 @@ func annotateEventSourceMappings(lambdaAWSInfos []*LambdaAWSInfo,
 		}
 		// If it's not nil and also not a literal, go ahead and try and update it
 		if resourceRef != nil &&
-			resourceRef.RefType != resourceLiteral {
+			resourceRef.RefType != resourceLiteral &&
+			resourceRef.RefType != resourceStringFunc {
 			// Excellent, go ahead and find the role in the template
 			// and stitch things together
 			iamRole, iamRoleExists := template.Resources[resourceRef.ResourceName]
