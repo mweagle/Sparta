@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sparta Documentation</title>
+    
+      <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="generator" content="Hugo 0.42.2" />
+<title>SQS :: Sparta Documentation</title>
+<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link href="/css/font-awesome.min.css" rel="stylesheet">
+<link href="/css/nucleus.css" rel="stylesheet">
+<link href="/theme-flex/style.css" rel="stylesheet">
+
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<script src="/js/jquery-2.x.min.js"></script>
+<script type="text/javascript">
+      var baseurl = "\/";
+</script>
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
+<meta name="description" content="">
+
+
+
+<style>
+  article section.page code {
+      font-family:  monospace; }
+</style>
+
+    
+  </head>
+  <body data-url="/reference/eventsources/sqs/">
+    
+      <header>
+  <div class="logo">
+    
+	
+  
+    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+  
+
+  </div>
+  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
+    <nav class="shortcuts">
+            <li class="" role="">
+                <a href="/credits"  rel="noopener">
+                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
+                </a>
+            </li>
+            <li class="" role="">
+                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
+                  <i class='fa fa-github'></i> <label>Github</label>
+                </a>
+            </li>
+    </nav>
+</header>
+<article>
+  <aside>
+    <ul class="menu">
+          <li data-nav-id="/" class="dd-item">
+          <a href="/">
+            <i class="fa fa-fw fa-home"></i>
+          </a>
+          </li>
+    <li data-nav-id="/overview/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/sample_service/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/sample_service/step1/" class="dd-item">
+        <div>
+          <a href="/sample_service/step1/">
+            Overview
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/sample_service/step2/" class="dd-item">
+        <div>
+          <a href="/sample_service/step2/">
+            Details
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+        ">
+      <div>
+      <a href="/reference/">Reference</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+    <li data-nav-id="/reference/eventsources/" class="dd-item parent haschildren
+        ">
+      <div>
+      <a href="/reference/eventsources/">Event Sources</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudformation/">
+            CloudFormation
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchevents/">
+            CloudWatch Events
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cloudwatchlogs/">
+            CloudWatch Logs
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/cognito/">
+            Cognito
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/dynamodb/">
+            DynamoDB
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/kinesis/">
+            Event Sources - Kinesis
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/s3/">
+            S3
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/ses/">
+            SES
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sns/">
+            SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item active">
+        <div>
+          <a href="/reference/eventsources/sqs/">
+            SQS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/echo_event/">
+            Echo Event
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/user_input/">
+            User Input
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/context/">
+            Request Context
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/cors/">
+            CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
+        <div>
+          <a href="/reference/apigateway/slack/">
+            Slack SlashCommand
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
+        ">
+      <div>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+        <ul>
+      <li data-nav-id="/reference/application/commandline/" class="dd-item">
+        <div>
+          <a href="/reference/application/commandline/">
+            Command Line Options
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_commands/">
+            Custom Application Commands
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
+        <div>
+          <a href="/reference/application/custom_flags/">
+            Custom Flags
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/environments/" class="dd-item">
+        <div>
+          <a href="/reference/application/environments/">
+            Managing Environments
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
+        <div>
+          <a href="/reference/application/workflow_hooks/">
+            Workflow Hooks
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+      <li data-nav-id="/reference/cicd/" class="dd-item">
+        <div>
+          <a href="/reference/cicd/">
+            CI/CD
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/custom_resources/" class="dd-item">
+        <div>
+          <a href="/reference/custom_resources/">
+            Custom Resources
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
+        <div>
+          <a href="/reference/deployment_strategies/">
+            Deployment Strategies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/discovery/" class="dd-item">
+        <div>
+          <a href="/reference/discovery/">
+            Discovery Service
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/docker/" class="dd-item">
+        <div>
+          <a href="/reference/docker/">
+            Docker
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
+        <div>
+          <a href="/reference/dynamic_infrastructure/">
+            Dynamic Infrastructure
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
+        <div>
+          <a href="/reference/hybrid_topologies/">
+            Hybrid Topologies
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/local_testing/" class="dd-item">
+        <div>
+          <a href="/reference/local_testing/">
+            Local Testing
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/profiling/" class="dd-item">
+        <div>
+          <a href="/reference/profiling/">
+            Profiling
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/s3site/" class="dd-item">
+        <div>
+          <a href="/reference/s3site/">
+            S3 Sites with CORS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/step_functions/" class="dd-item">
+        <div>
+          <a href="/reference/step_functions/">
+            Step Functions
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/limitations/" class="dd-item">
+        <div>
+          <a href="/reference/limitations/">
+            Limitations
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/faq/" class="dd-item">
+        <div>
+          <a href="/reference/faq/">
+            FAQ
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+        </ul>
+    </li>
+    <li data-nav-id="/presentations/" class="dd-item
+        ">
+      <div>
+      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/credits/" class="dd-item
+        ">
+      <div>
+      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/meta/" class="dd-item
+        ">
+      <div>
+      <a href="/meta/">_meta</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+
+
+
+
+    </ul>
+    <section>
+    </section>
+  </aside>
+  <section class="page">
+    
+    <div class="nav-select">
+      <center>Navigation : 
+        <select onchange="javascript:location.href = this.value;">
+          
+    <option value="/overview/" >
+   Overview</option> 
+  
+    <option value="/sample_service/" >
+   Sample Service</option>
+    <option value="/reference/" >
+   Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option> 
+      <option value="/reference/eventsources/cloudformation/" >-- CloudFormation</option>
+      <option value="/reference/eventsources/cloudwatchevents/" >-- CloudWatch Events</option>
+      <option value="/reference/eventsources/cloudwatchlogs/" >-- CloudWatch Logs</option>
+      <option value="/reference/eventsources/cognito/" >-- Cognito</option>
+      <option value="/reference/eventsources/dynamodb/" >-- DynamoDB</option>
+      <option value="/reference/eventsources/kinesis/" >-- Event Sources - Kinesis</option>
+      <option value="/reference/eventsources/s3/" >-- S3</option>
+      <option value="/reference/eventsources/ses/" >-- SES</option>
+      <option value="/reference/eventsources/sns/" >-- SNS</option>
+      <option value="/reference/eventsources/sqs/"  selected>-- SQS</option>
+  
+    <option value="/reference/apigateway/" >
+  - 
+   API Gateway</option>
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
+      <option value="/reference/cicd/" >- CI/CD</option>
+      <option value="/reference/custom_resources/" >- Custom Resources</option>
+      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
+      <option value="/reference/discovery/" >- Discovery Service</option>
+      <option value="/reference/docker/" >- Docker</option>
+      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
+      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
+      <option value="/reference/local_testing/" >- Local Testing</option>
+      <option value="/reference/profiling/" >- Profiling</option>
+      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
+      <option value="/reference/step_functions/" >- Step Functions</option>
+      <option value="/reference/limitations/" >- Limitations</option>
+      <option value="/reference/faq/" >- FAQ</option>
+  
+    <option value="/presentations/" >
+   Presentations</option>
+    <option value="/credits/" >
+   Credits</option>
+    <option value="/meta/" >
+   _meta</option>
+
+
+
+        </select>
+      </center>
+    </div>
+      <div>
+        <div class="searchbox">
+          <input data-search-input id="search-by" type="text" placeholder="Search...">
+        </div>
+        <script type="text/javascript" src="/js/lunr.min.js"></script>
+        <script type="text/javascript" src="/js/auto-complete.js"></script>
+        <link href="/css/auto-complete.css" rel="stylesheet">
+        <script type="text/javascript">
+          
+              var baseurl = "\/";
+          
+        </script>
+        <script type="text/javascript" src="/js/search.js"></script>
+      </div>
+    
+
+    <h1>SQS</h1>
+    
+    
+    
+    
+
+<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events.  This overview is based on the <a href="https://github.com/mweagle/SpartaSQS">SpartaSQS</a> sample code if you&rsquo;d rather jump to the end result.</p>
+
+<h1 id="goal">Goal</h1>
+
+<p>The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue</p>
+
+<h1 id="getting-started">Getting Started</h1>
+
+<p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#4e9a06">&#34;context&#34;</span>
+
+	<span style="color:#000">awsLambdaGo</span> <span style="color:#4e9a06">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+	<span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+	<span style="color:#000">spartaCF</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/cloudformation&#34;</span>
+	<span style="color:#000">gocf</span> <span style="color:#4e9a06">&#34;github.com/mweagle/go-cloudformation&#34;</span>
+	<span style="color:#4e9a06">&#34;github.com/sirupsen/logrus&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
+
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsRequest</span> <span style="color:#000">awsLambdaGo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SQSEvent</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithField</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Event&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsRequest</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SQS Event Received&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+
+<p>Since the <code>sqsHandler</code> function subscribes to SQS messages, it can use the AWS provided <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#SQSEvent">SQSEvent</a> to automatically unmarshal the incoming event.</p>
+
+<p>Typically the lambda function would process each record in the event, but for this example we&rsquo;ll just log the entire batch and then return.</p>
+
+<h1 id="sparta-integration">Sparta Integration</h1>
+
+<p>The next step is to integrate the lambda function with Sparta:</p>
+
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// 1. Create the Sparta Lambda function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div></p>
+
+<p>Once the lambda function is integrated with Sparta, we can use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler">TemplateDecoratorHandler</a> to include the SQS provisioning request as part of the overall service creation.</p>
+
+<h1 id="sqs-topic-definition">SQS Topic Definition</h1>
+
+<p>Decorators enable a Sparta service to provision other types of infrastructure together with the core lambda functions. In this example, our <code>sqsHandler</code> function should also provision an SQS queue from which it will receive events. This is done as in the following:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">sqsResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;LambdaSQSFTW&#34;</span>
+<span style="color:#000">sqsDecorator</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">template</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+
+  <span style="color:#8f5902;font-style:italic">// Include the SQS resource in the application
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sqsResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SQSQueue</span><span style="color:#000;font-weight:bold">{}</span>
+  <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsResource</span><span style="color:#000;font-weight:bold">)</span>
+  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
+<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorators</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TemplateDecoratorHandler</span><span style="color:#000;font-weight:bold">{</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TemplateDecoratorHookFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsDecorator</span><span style="color:#000;font-weight:bold">)}</span></code></pre></div>
+
+<p>This function-level decorator includes an AWS CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS::Queue</a> definition that will be included with the stack definition.</p>
+
+<h1 id="connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</h1>
+
+<p>The final step is to make the <code>sqsHandler</code> the Lambda&rsquo;s <a href="https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping">EventSourceMapping</a> target for the dynamically provisioned Queue&rsquo;s <em>ARN</em>:</p>
+
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMapping</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">EventSourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Arn&#34;</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">BatchSize</span><span style="color:#000;font-weight:bold">:</span>      <span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">})</span></code></pre></div></p>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  It&rsquo;s also possible to use a pre-existing SQS resource by providing a string literal as the <code>EventSourceArn</code> value.</p>
+
+<h1 id="other-resources">Other Resources</h1>
+
+<ul>
+<li>The AWS docs have an excellent <a href="https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/">SQS event source</a> walkthrough.</li>
+</ul>
+
+
+    
+    
+        <div class="chevrons">
+    <div id="navigation">
+<a class="nav nav-prev" href="/reference/eventsources/sns/" title="SNS"> <i class="fa fa-chevron-left"></i><label>SNS</label></a>
+    <a class="nav nav-next" href="/reference/apigateway/" title="API Gateway" style="margin-right: 0px;"><label>API Gateway</label><i class="fa fa-chevron-right"></i></a></div>
+  </div>
+
+  </section>
+</article>
+
+<footer>
+
+<div class="footline">
+    
+
+    
+
+  
+    <div class="date">
+        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+    </div>
+    
+
+    <div class="github-link">
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/eventsources/sqs.md" target="blank"><i class="fa fa-code-fork"></i>
+        Improve this page</a>
+    </div>
+  </div>
+
+
+	<div>
+
+
+  
+    
+  
+
+
+
+	</div>
+</footer>
+
+<script src="/js/clipboard.min.js"></script>
+
+<link href="/css/featherlight.min.css" rel="stylesheet">
+<script src="/js/featherlight.min.js"></script>
+
+
+
+<script src="/theme-flex/script.js"></script>
+
+    
+
+    
+    
+
+    
+  </body>
+</html>
