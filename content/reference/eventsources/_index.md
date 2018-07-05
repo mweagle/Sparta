@@ -13,6 +13,7 @@ There are several [event sources](http://docs.aws.amazon.com/lambda/latest/dg/in
 
   * [DynamoDB](/reference/eventsources/dynamodb)
   * [Kinesis](/reference/eventsources/kinesis)
+  * [SQS](/reference/eventsources/sqs)
 
 ## Push Based
 
