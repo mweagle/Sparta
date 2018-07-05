@@ -108,6 +108,11 @@
   </url>
   
   <url>
+    <loc>/reference/eventsources/sqs/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/sample_service/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>

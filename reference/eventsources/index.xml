@@ -107,5 +107,16 @@ Goal Assume that we have an SNS topic that broadcasts notifications. We&amp;rsqu
 Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
     </item>
     
+    <item>
+      <title>SQS</title>
+      <link>/reference/eventsources/sqs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/sqs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events. This overview is based on the SpartaSQS sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
   </channel>
 </rss>

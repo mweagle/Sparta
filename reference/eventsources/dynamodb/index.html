@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.40.3" />
+<meta name="generator" content="Hugo 0.42.2" />
 <title>DynamoDB :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -176,6 +176,13 @@
         <div>
           <a href="/reference/eventsources/sns/">
             SNS
+          </a><i class="fa fa-circle-thin read-icon"></i>
+        </div>
+    </li>
+      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
+        <div>
+          <a href="/reference/eventsources/sqs/">
+            SQS
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
@@ -411,6 +418,7 @@
       <option value="/reference/eventsources/s3/" >-- S3</option>
       <option value="/reference/eventsources/ses/" >-- SES</option>
       <option value="/reference/eventsources/sns/" >-- SNS</option>
+      <option value="/reference/eventsources/sqs/" >-- SQS</option>
   
     <option value="/reference/apigateway/" >
   - 
@@ -490,7 +498,7 @@
 <p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
 to access the record.</p>
 
-<h1 id="a-href-hahahugoshortcode-0xc420152f00-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-0xc420494500-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 

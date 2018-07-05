@@ -6,7 +6,7 @@
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="generator" content="Hugo 0.42.2" />
-<title>Custom Flags :: Sparta Documentation</title>
+<title>SQS :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -40,7 +40,7 @@
 
     
   </head>
-  <body data-url="/reference/application/custom_flags/">
+  <body data-url="/reference/eventsources/sqs/">
     
       <header>
   <div class="logo">
@@ -109,10 +109,11 @@
             <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
+    <li data-nav-id="/reference/eventsources/" class="dd-item parent haschildren
         ">
       <div>
-      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/reference/eventsources/">Event Sources</a>
+            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
@@ -178,7 +179,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
+      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item active">
         <div>
           <a href="/reference/eventsources/sqs/">
             SQS
@@ -230,11 +231,10 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/reference/application/" class="dd-item parent haschildren
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
         ">
       <div>
-      <a href="/reference/application/">Application Customization</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
       <li data-nav-id="/reference/application/commandline/" class="dd-item">
@@ -251,7 +251,7 @@
           </a><i class="fa fa-circle-thin read-icon"></i>
         </div>
     </li>
-      <li data-nav-id="/reference/application/custom_flags/" class="dd-item active">
+      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
         <div>
           <a href="/reference/application/custom_flags/">
             Custom Flags
@@ -408,19 +408,24 @@
    Reference</option> 
     <option value="/reference/eventsources/" >
   - 
-   Event Sources</option>
+   Event Sources</option> 
+      <option value="/reference/eventsources/cloudformation/" >-- CloudFormation</option>
+      <option value="/reference/eventsources/cloudwatchevents/" >-- CloudWatch Events</option>
+      <option value="/reference/eventsources/cloudwatchlogs/" >-- CloudWatch Logs</option>
+      <option value="/reference/eventsources/cognito/" >-- Cognito</option>
+      <option value="/reference/eventsources/dynamodb/" >-- DynamoDB</option>
+      <option value="/reference/eventsources/kinesis/" >-- Event Sources - Kinesis</option>
+      <option value="/reference/eventsources/s3/" >-- S3</option>
+      <option value="/reference/eventsources/ses/" >-- SES</option>
+      <option value="/reference/eventsources/sns/" >-- SNS</option>
+      <option value="/reference/eventsources/sqs/"  selected>-- SQS</option>
+  
     <option value="/reference/apigateway/" >
   - 
    API Gateway</option>
     <option value="/reference/application/" >
   - 
-   Application Customization</option> 
-      <option value="/reference/application/commandline/" >-- Command Line Options</option>
-      <option value="/reference/application/custom_commands/" >-- Custom Application Commands</option>
-      <option value="/reference/application/custom_flags/"  selected>-- Custom Flags</option>
-      <option value="/reference/application/environments/" >-- Managing Environments</option>
-      <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
-  
+   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
@@ -463,67 +468,105 @@
       </div>
     
 
-    <h1>Custom Flags</h1>
+    <h1>SQS</h1>
     
     
     
     
 
-<h1 id="introduction">Introduction</h1>
+<p>In this section we&rsquo;ll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events.  This overview is based on the <a href="https://github.com/mweagle/SpartaSQS">SpartaSQS</a> sample code if you&rsquo;d rather jump to the end result.</p>
 
-<p>Some commands (eg: <code>provision</code>) may require additional options.  For instance, your application&rsquo;s provision logic may require VPC <a href="https://aws.amazon.com/blogs/aws/new-access-resources-in-a-vpc-from-your-lambda-functions/">subnets</a> or EC2 <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html">SSH Key Names</a>.</p>
+<h1 id="goal">Goal</h1>
 
-<p>The default Sparta command line option flags may be extended and validated by building on the exposed <a href="https://github.com/spf13/cobra">Cobra</a> command objects.</p>
+<p>The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue</p>
 
-<h2 id="adding-flags">Adding Flags</h2>
+<h1 id="getting-started">Getting Started</h1>
 
-<p>To add a flag, use one of the <a href="https://github.com/spf13/pflag">pflag</a> functions to register your custom flag with one of the standard <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L17">CommandLineOption</a> values.</p>
+<p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<p>For example:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
+	<span style="color:#4e9a06">&#34;context&#34;</span>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// SSHKeyName is the SSH KeyName to use when provisioning new EC2 instance
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">SSHKeyName</span> <span style="color:#204a87;font-weight:bold">string</span>
+	<span style="color:#000">awsLambdaGo</span> <span style="color:#4e9a06">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+	<span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
+	<span style="color:#000">spartaCF</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/cloudformation&#34;</span>
+	<span style="color:#000">gocf</span> <span style="color:#4e9a06">&#34;github.com/mweagle/go-cloudformation&#34;</span>
+	<span style="color:#4e9a06">&#34;github.com/sirupsen/logrus&#34;</span>
+<span style="color:#000;font-weight:bold">)</span>
 
-<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#8f5902;font-style:italic">// And add the SSHKeyName option to the provision step
-</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">CommandLineOptions</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Provision</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Flags</span><span style="color:#000;font-weight:bold">().</span><span style="color:#000">StringVarP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;key&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;k&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#4e9a06">&#34;SSH Key Name to use for EC2 instances&#34;</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsRequest</span> <span style="color:#000">awsLambdaGo</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SQSEvent</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithField</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Event&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsRequest</span><span style="color:#000;font-weight:bold">).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SQS Event Received&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
-<h2 id="validating-input">Validating Input</h2>
+<p>Since the <code>sqsHandler</code> function subscribes to SQS messages, it can use the AWS provided <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#SQSEvent">SQSEvent</a> to automatically unmarshal the incoming event.</p>
 
-<p>Flags may be used to conditionalize which Sparta lambda functions are provided and/or their content.  In this case, your application may first need to parse and validate the command line input before calling <code>sparta.Main()</code>.</p>
+<p>Typically the lambda function would process each record in the event, but for this example we&rsquo;ll just log the entire batch and then return.</p>
 
-<p>To validate user input, define a <a href="https://godoc.org/github.com/mweagle/Sparta#CommandLineOptionsHook">CommandLineOptionsHook</a> function and provide it to <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">sparta.ParseOptions</a>.  This function is called after the <em>pflag</em> bindings are invoked so that your application can validate user input.</p>
+<h1 id="sparta-integration">Sparta Integration</h1>
 
-<p>The <code>ParseOptions</code> result is the optional error returned from your <em>CommandLineOptionsHook</em> function. If there is an error, your application can then exit with an application specific exit code.  For instance:</p>
+<p>The next step is to integrate the lambda function with Sparta:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// Define a validation hook s.t. we can verify the SSHKey is valid
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">validationHook</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">command</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">cobra</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Command</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">command</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Name</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#34;provision&#34;</span> <span style="color:#ce5c00;font-weight:bold">&amp;&amp;</span> <span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">SSHKeyName</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">&lt;=</span> <span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SSHKeyName option is required&#34;</span><span style="color:#000;font-weight:bold">)</span>
-  <span style="color:#000;font-weight:bold">}</span>
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// 1. Create the Sparta Lambda function
+</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">),</span>
+  <span style="color:#000">sqsHandler</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span></code></pre></div></p>
+
+<p>Once the lambda function is integrated with Sparta, we can use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler">TemplateDecoratorHandler</a> to include the SQS provisioning request as part of the overall service creation.</p>
+
+<h1 id="sqs-topic-definition">SQS Topic Definition</h1>
+
+<p>Decorators enable a Sparta service to provision other types of infrastructure together with the core lambda functions. In this example, our <code>sqsHandler</code> function should also provision an SQS queue from which it will receive events. This is done as in the following:</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">sqsResourceName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;LambdaSQSFTW&#34;</span>
+<span style="color:#000">sqsDecorator</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">func</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serviceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResourceName</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">lambdaResource</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaFunction</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">resourceMetadata</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#000">S3Bucket</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">S3Key</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">buildID</span> <span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">template</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Template</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000">context</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span>
+  <span style="color:#000">logger</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">error</span> <span style="color:#000;font-weight:bold">{</span>
+
+  <span style="color:#8f5902;font-style:italic">// Include the SQS resource in the application
+</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sqsResource</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SQSQueue</span><span style="color:#000;font-weight:bold">{}</span>
+  <span style="color:#000">template</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">AddResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">sqsResource</span><span style="color:#000;font-weight:bold">)</span>
   <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span>
-  <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#8f5902;font-style:italic">// Extract &amp; validate the SSH Key
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#000">parseErr</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseOptions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">validationHook</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">parseErr</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">os</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Exit</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">3</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
+<span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Decorators</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TemplateDecoratorHandler</span><span style="color:#000;font-weight:bold">{</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">TemplateDecoratorHookFunc</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsDecorator</span><span style="color:#000;font-weight:bold">)}</span></code></pre></div>
 
-<p>Sparta itself uses the <a href="https://github.com/asaskevich/govalidator/">govalidator</a> package to simplify validating command line arguments.  See <a href="https://github.com/mweagle/Sparta/blob/master/sparta_main.go">sparta_main.go</a> for an example.</p>
+<p>This function-level decorator includes an AWS CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS::Queue</a> definition that will be included with the stack definition.</p>
+
+<h1 id="connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</h1>
+
+<p>The final step is to make the <code>sqsHandler</code> the Lambda&rsquo;s <a href="https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping">EventSourceMapping</a> target for the dynamically provisioned Queue&rsquo;s <em>ARN</em>:</p>
+
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMappings</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#ce5c00;font-weight:bold">&amp;</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">EventSourceMapping</span><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#000">EventSourceArn</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">gocf</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">GetAtt</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sqsResourceName</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;Arn&#34;</span><span style="color:#000;font-weight:bold">),</span>
+    <span style="color:#000">BatchSize</span><span style="color:#000;font-weight:bold">:</span>      <span style="color:#0000cf;font-weight:bold">2</span><span style="color:#000;font-weight:bold">,</span>
+  <span style="color:#000;font-weight:bold">})</span></code></pre></div></p>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  It&rsquo;s also possible to use a pre-existing SQS resource by providing a string literal as the <code>EventSourceArn</code> value.</p>
+
+<h1 id="other-resources">Other Resources</h1>
+
+<ul>
+<li>The AWS docs have an excellent <a href="https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/">SQS event source</a> walkthrough.</li>
+</ul>
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/application/custom_commands/" title="Custom Application Commands"> <i class="fa fa-chevron-left"></i><label>Custom Application Commands</label></a>
-    <a class="nav nav-next" href="/reference/application/environments/" title="Managing Environments" style="margin-right: 0px;"><label>Managing Environments</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/reference/eventsources/sns/" title="SNS"> <i class="fa fa-chevron-left"></i><label>SNS</label></a>
+    <a class="nav nav-next" href="/reference/apigateway/" title="API Gateway" style="margin-right: 0px;"><label>API Gateway</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -543,7 +586,7 @@
     
 
     <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/application/custom_flags.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/eventsources/sqs.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>
