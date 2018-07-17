@@ -1181,3 +1181,13 @@ func HandleAWSLambda(functionName string,
 	}
 	return lambda
 }
+
+// IsExecutingInLambda is a utility function to return a boolean
+// indicating whether the application is running in AWS Lambda.
+// See the list of environment variables defined at:
+// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+// for more information.
+func IsExecutingInLambda() bool {
+	return os.Getenv("LAMBDA_TASK_ROOT") != "" ||
+		os.Getenv("AWS_EXECUTION_ENV") != ""
+}
