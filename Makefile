@@ -1,7 +1,7 @@
 SPARTA_TEMP_DIR = ./.sparta
 UNAME := $(shell uname)
 HUGO_TARGZ_ARCHIVE_URL := ""
-HUGO_VERSION := 0.42.2
+HUGO_VERSION := 0.44
 HUGO_BINARY := $(SPARTA_TEMP_DIR)/hugo-$(HUGO_VERSION)
 ifeq ($(UNAME), Linux)
 	HUGO_TARGZ_ARCHIVE_URL="https://github.com/gohugoio/hugo/releases/download/v$(HUGO_VERSION)/hugo_$(HUGO_VERSION)_Linux-64bit.tar.gz"

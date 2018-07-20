@@ -12,17 +12,6 @@
     
     
     <item>
-      <title>Command Line Options</title>
-      <link>/reference/application/commandline/</link>
-      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
-      
-      <guid>/reference/application/commandline/</guid>
-      <description>Introduction Sparta provides a Main function that transforms a set of lambda functions into an application. This function should be called from your application&amp;rsquo;s package main as in:
-var lambdaFunctions []*sparta.LambdaAWSInfo lambdaFunctions = append(lambdaFunctions, lambdaFn) err := sparta.Main(&amp;#34;SpartaHelloWorld&amp;#34;, fmt.Sprintf(&amp;#34;Test HelloWorld resource command&amp;#34;), lambdaFunctions, nil, nil) A compiled application provides several command line options which are available by providing the -h/--help option as in:
-$ go run main.go --help Simple Sparta application that demonstrates core functionality Usage: main [command] Available Commands: delete Delete service describe Describe service execute Execute explore Interactively explore service help Help about any command provision Provision service version Sparta framework version Flags: -f, --format string Log format [text, json] (default &amp;#34;text&amp;#34;) -h, --help help for main --ldflags string Go linker string definition flags (https://golang.</description>
-    </item>
-    
-    <item>
       <title>Custom Application Commands</title>
       <link>/reference/application/custom_commands/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>

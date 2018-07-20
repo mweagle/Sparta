@@ -5,7 +5,7 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.42.2" />
+<meta name="generator" content="Hugo 0.44" />
 <title>DynamoDB :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
@@ -101,6 +101,12 @@
         </div>
     </li>
         </ul>
+    </li>
+    <li data-nav-id="/cli_options/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
     </li>
     <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
         ">
@@ -237,13 +243,6 @@
       <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/application/commandline/" class="dd-item">
-        <div>
-          <a href="/reference/application/commandline/">
-            Command Line Options
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
         <div>
           <a href="/reference/application/custom_commands/">
@@ -404,6 +403,9 @@
   
     <option value="/sample_service/" >
    Sample Service</option>
+    <option value="/cli_options/" >
+   CLI Options</option> 
+  
     <option value="/reference/" >
    Reference</option> 
     <option value="/reference/eventsources/" >
@@ -498,7 +500,7 @@
 <p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
 to access the record.</p>
 
-<h1 id="a-href-hahahugoshortcode-0xc420117400-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-0xc420ca1400-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 

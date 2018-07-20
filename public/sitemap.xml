@@ -53,11 +53,6 @@
   </url>
   
   <url>
-    <loc>/reference/application/commandline/</loc>
-    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/reference/application/custom_commands/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
   </url>
@@ -130,6 +125,11 @@
   <url>
     <loc>/reference/apigateway/context/</loc>
     <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/cli_options/</loc>
+    <lastmod>2018-01-22T21:49:38+00:00</lastmod>
   </url>
   
   <url>
