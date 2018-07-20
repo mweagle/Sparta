@@ -5,8 +5,8 @@
     
       <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.42.2" />
-<title>Command Line Options :: Sparta Documentation</title>
+<meta name="generator" content="Hugo 0.44" />
+<title>CLI Options :: Sparta Documentation</title>
 <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link href="/css/font-awesome.min.css" rel="stylesheet">
 <link href="/css/nucleus.css" rel="stylesheet">
@@ -40,7 +40,7 @@
 
     
   </head>
-  <body data-url="/reference/application/commandline/">
+  <body data-url="/cli_options/">
     
       <header>
   <div class="logo">
@@ -102,7 +102,13 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
+    <li data-nav-id="/cli_options/" class="dd-item parent active alwaysopen
+        ">
+      <div>
+      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
+    <li data-nav-id="/reference/" class="dd-item alwaysopen haschildren
         ">
       <div>
       <a href="/reference/">Reference</a>
@@ -230,20 +236,12 @@
     </li>
         </ul>
     </li>
-    <li data-nav-id="/reference/application/" class="dd-item parent haschildren
+    <li data-nav-id="/reference/application/" class="dd-item haschildren
         ">
       <div>
-      <a href="/reference/application/">Application Customization</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
+      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
       </div>
         <ul>
-      <li data-nav-id="/reference/application/commandline/" class="dd-item active">
-        <div>
-          <a href="/reference/application/commandline/">
-            Command Line Options
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
       <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
         <div>
           <a href="/reference/application/custom_commands/">
@@ -404,6 +402,9 @@
   
     <option value="/sample_service/" >
    Sample Service</option>
+    <option value="/cli_options/"  selected>
+   CLI Options</option> 
+  
     <option value="/reference/" >
    Reference</option> 
     <option value="/reference/eventsources/" >
@@ -414,13 +415,7 @@
    API Gateway</option>
     <option value="/reference/application/" >
   - 
-   Application Customization</option> 
-      <option value="/reference/application/commandline/"  selected>-- Command Line Options</option>
-      <option value="/reference/application/custom_commands/" >-- Custom Application Commands</option>
-      <option value="/reference/application/custom_flags/" >-- Custom Flags</option>
-      <option value="/reference/application/environments/" >-- Managing Environments</option>
-      <option value="/reference/application/workflow_hooks/" >-- Workflow Hooks</option>
-  
+   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
@@ -463,58 +458,45 @@
       </div>
     
 
-    <h1>Command Line Options</h1>
+    <h1>CLI Options</h1>
     
     
     
-    
 
-<h1 id="introduction">Introduction</h1>
 
-<p>Sparta provides a <a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a> function that transforms a set of <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">lambda functions</a> into an application.  This function should be called from your application&rsquo;s <code>package main</code> as in:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
-<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Test HelloWorld resource command&#34;</span><span style="color:#000;font-weight:bold">),</span>
-  <span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+<p>Sparta applications delegate <code>func main()</code> responsibilities to one of Sparta&rsquo;s Main entrypoints (<a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a>, <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">MainEx</a>). This provides each application with some standard command line options as shown below:</p>
 
-<p>A compiled application provides several command line options which are available by providing the <code>-h/--help</code> option as in:</p>
-
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ go run main.go --help
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go --help
 Simple Sparta application that demonstrates core functionality
 
 Usage:
-  main [command]
+  main <span style="color:#ce5c00;font-weight:bold">[</span>command<span style="color:#ce5c00;font-weight:bold">]</span>
 
 Available Commands:
   delete      Delete service
   describe    Describe service
   execute     Execute
   explore     Interactively explore service
-  help        Help about any command
+  <span style="color:#204a87">help</span>        Help about any <span style="color:#204a87">command</span>
+  profile     Interactively examine service pprof output
   provision   Provision service
-  version     Sparta framework version
+  version     Display version information
 
 Flags:
-  -f, --format string    Log format [text, json] (default &#34;text&#34;)
-  -h, --help             help for main
-      --ldflags string   Go linker string definition flags (https://golang.org/cmd/link/)
-  -l, --level string     Log level [panic, fatal, error, warn, info, debug] (default &#34;info&#34;)
-  -n, --noop             Dry-run behavior only (do not perform mutations)
-  -t, --tags string      Optional build tags for conditional compilation
-
-Use &#34;main [command] --help&#34; for more information about a command.</code></pre></div>
+  -f, --format string    Log format <span style="color:#ce5c00;font-weight:bold">[</span>text, json<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+  -h, --help             <span style="color:#204a87">help</span> <span style="color:#204a87;font-weight:bold">for</span> main
+      --ldflags string   Go linker string definition flags <span style="color:#ce5c00;font-weight:bold">(</span>https://golang.org/cmd/link/<span style="color:#ce5c00;font-weight:bold">)</span>
+  -l, --level string     Log level <span style="color:#ce5c00;font-weight:bold">[</span>panic, fatal, error, warn, info, debug<span style="color:#ce5c00;font-weight:bold">]</span> <span style="color:#ce5c00;font-weight:bold">(</span>default <span style="color:#4e9a06">&#34;info&#34;</span><span style="color:#ce5c00;font-weight:bold">)</span>
+  -n, --noop             Dry-run behavior only <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">do</span> not perform mutations<span style="color:#ce5c00;font-weight:bold">)</span>
+  -t, --tags string      Optional build tags <span style="color:#204a87;font-weight:bold">for</span> conditional compilation
+  -z, --timestamps       Include UTC timestamp log line prefix</code></pre></div>
 
 <p>It&rsquo;s also possible to add <a href="/reference/application/custom_flags">custom flags</a> and/or <a href="/reference/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
 
+<p>These command line options are briefly described in the following sections. For the most up to date information, use the <code>--help</code> subcommand option.</p>
+
 <h1 id="standard-commands">Standard Commands</h1>
-
-<h2 id="provision">Provision</h2>
-
-<p>The <code>provision</code> option is the verb most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
 <h2 id="delete">Delete</h2>
 
@@ -528,25 +510,43 @@ Use &#34;main [command] --help&#34; for more information about a command.</code>
 
 <h2 id="execute">Execute</h2>
 
-<p>The <code>execute</code> option is typically used when the compiled application is launched in the AWS Lambda environment.  It starts up an HTTP listener to which the NodeJS proxing tier forwards requests.</p>
+<p>This command is used when the cross compiled binary is provisioned in AWS lambda. It is not (typically) applicable to the local development workflow.</p>
 
 <h2 id="explore">Explore</h2>
 
-<p>The <code>explore</code> option creates a <em>localhost</em> server to allow Sparta lambda functions to be tested locally.</p>
+<p>The <code>explore</code> option creates a terminal GUI that supports interactive exploration of lambda functions deployed to AWS. This ui recursively searches for all <em>*.json</em> files in the source tree to populate the set of eligible events that can be submitted.</p>
 
-<p>NOTE: API Gateway mapping templates are not currently supported.</p>
+<p><img src="/images/explore.jpg" alt="Explore" title="Explore" /></p>
+
+<h2 id="profile">Profile</h2>
+
+<p>The <code>profile</code> command line option enters an interactive session where a previously profiled application can be locally visualized using snapshots posted to S3 and provided to a local <a href="https://rakyll.org/pprof-ui/">pprof ui</a>.</p>
+
+<h2 id="provision">Provision</h2>
+
+<p>The <code>provision</code> option is the subcommand most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
 <h2 id="version">Version</h2>
 
 <p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
+
+<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go version
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ════════════════════════════════════════════════
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : <span style="color:#0000cf;font-weight:bold">1</span>.2.1
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b76b71d
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ════════════════════════════════════════════════
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> Service: MyHelloWorldStack-mweagle            <span style="color:#000">LinkFlags</span><span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">Option</span><span style="color:#ce5c00;font-weight:bold">=</span>version <span style="color:#000">UTC</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#4e9a06">&#34;2018-07-20T04:44:17Z&#34;</span>
+INFO<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span> ════════════════════════════════════════════════</code></pre></div></p>
+
 
 
     
     
         <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-prev" href="/reference/application/" title="Application Customization"> <i class="fa fa-chevron-left"></i><label>Application Customization</label></a>
-    <a class="nav nav-next" href="/reference/application/custom_commands/" title="Custom Application Commands" style="margin-right: 0px;"><label>Custom Application Commands</label><i class="fa fa-chevron-right"></i></a></div>
+<a class="nav nav-prev" href="/sample_service/step2/" title="Details"> <i class="fa fa-chevron-left"></i><label>Details</label></a>
+    <a class="nav nav-next" href="/reference/" title="Reference" style="margin-right: 0px;"><label>Reference</label><i class="fa fa-chevron-right"></i></a></div>
   </div>
 
   </section>
@@ -561,12 +561,12 @@ Use &#34;main [command] --help&#34; for more information about a command.</code>
 
   
     <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 09/03/2016
+        <i class='fa fa-calendar'></i> Last update on 22/01/2018
     </div>
     
 
     <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/application/commandline.md" target="blank"><i class="fa fa-code-fork"></i>
+      <a href="https://github.com/mweagle/Sparta/tree/docs/content/cli_options/_index.md" target="blank"><i class="fa fa-code-fork"></i>
         Improve this page</a>
     </div>
   </div>
