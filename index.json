@@ -273,6 +273,13 @@
 	"content": ""
 },
 {
+	"uri": "/related_projects/",
+	"title": "Related Projects",
+	"tags": [],
+	"description": "",
+	"content": " In addition to Sparta, there are some related projects that are often useful for serverless-based applications. These packages do not require Sparta integration.\ngo-cloudcondensor go-cloudcondensor is a standalone utility that produces CloudFormation templates via functional composition.\ngo-cloudformation go-cloudformation provides a Go object model for the official CloudFormation JSON Schema.\nSparta Vault Use KMS to encrypt values into Go types that can be safely committed to source control.\nssm-cache An in memory, expiring cache for AWS Systems Manager. SSM is a suggested option for managing Lambda secrets.\nExamples There are also many Sparta example repos that demonstrate core concepts.\n"
+},
+{
 	"uri": "/presentations/",
 	"title": "Presentations",
 	"tags": [],
