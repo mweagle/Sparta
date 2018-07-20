@@ -366,6 +366,12 @@
     </li>
         </ul>
     </li>
+    <li data-nav-id="/related_projects/" class="dd-item alwaysopen
+        ">
+      <div>
+      <a href="/related_projects/">Related Projects</a><i class="fa fa-circle-thin read-icon"></i>
+      </div>
+    </li>
     <li data-nav-id="/presentations/" class="dd-item
         ">
       <div>
@@ -442,6 +448,9 @@
       <option value="/reference/limitations/" >- Limitations</option>
       <option value="/reference/faq/" >- FAQ</option>
   
+    <option value="/related_projects/" >
+   Related Projects</option> 
+  
     <option value="/presentations/" >
    Presentations</option>
     <option value="/credits/" >
@@ -500,7 +509,7 @@
 <p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
 to access the record.</p>
 
-<h1 id="a-href-hahahugoshortcode-0xc420ca1400-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-0xc420102f00-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
