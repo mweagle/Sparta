@@ -1,5 +1,8 @@
 .DEFAULT_GOAL=build
 
+GOPATH ?= $HOME/go
+$(info $$GOPATH is [${GOPATH}])
+
 GO_LINT_PATH := $(GOPATH)/bin/golint
 GAS_PATH := $(GOPATH)/bin/gosec
 WORK_DIR := ./sparta
