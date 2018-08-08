@@ -1,7 +1,7 @@
 .DEFAULT_GOAL=build
 
 GO_LINT_PATH := $(GOPATH)/bin/golint
-GAS_PATH := $(GOPATH)/bin/gas
+GAS_PATH := $(GOPATH)/bin/gosec
 WORK_DIR := ./sparta
 GO_GET_FLAGS := -u
 
@@ -37,7 +37,7 @@ go_get_requirements:
 	go get $(GO_GET_FLAGS) github.com/fzipp/gocyclo
 	go get $(GO_GET_FLAGS) github.com/golang/lint/golint
 	go get $(GO_GET_FLAGS) github.com/mjibson/esc
-	go get $(GO_GET_FLAGS) github.com/GoASTScanner/gas/cmd/gas/...
+	go get $(GO_GET_FLAGS) github.com/securego/gosec/cmd/gosec/...
 
 .PHONY: update_requirements
 update_requirements: GO_GET_FLAGS=-u
