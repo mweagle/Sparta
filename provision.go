@@ -319,11 +319,12 @@ func ensureIAMRoleForCustomResource(awsPrincipalName string,
 			rootPolicy := (*existingIAMRole.Policies)[0]
 			rootPolicyDoc := rootPolicy.PolicyDocument.(ArbitraryJSONObject)
 			rootPolicyStatements := rootPolicyDoc["Statement"].([]spartaIAM.PolicyStatement)
-			rootPolicyDoc["Statement"] = append(rootPolicyStatements, spartaIAM.PolicyStatement{
-				Effect:   "Allow",
-				Action:   principalActions,
-				Resource: sourceArn,
-			})
+			rootPolicyDoc["Statement"] = append(rootPolicyStatements,
+				spartaIAM.PolicyStatement{
+					Effect:   "Allow",
+					Action:   principalActions,
+					Resource: sourceArn,
+				})
 		}
 		return stableRoleName, nil
 	}
