@@ -378,6 +378,9 @@ type WorkflowHooks struct {
 	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
 	Rollbacks []RollbackHookHandler
+
+	// Allow minimal customization of the runtime logger
+	RuntimeLoggerHook RuntimeLoggerHook
 }
 
 ////////////////////////////////////////////////////////////////////////////////

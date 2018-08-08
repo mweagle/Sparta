@@ -52,7 +52,6 @@ func MainEx(serviceName string,
 	// root command. If there is no command, then just run the
 	// Execute command...
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-
 		// This can only run in AWS Lambda
 		formatter := &logrus.JSONFormatter{}
 		logger, loggerErr := NewLoggerWithFormatter("info", formatter)
@@ -61,6 +60,10 @@ func MainEx(serviceName string,
 		}
 		if logger == nil {
 			return errors.Errorf("Failed to initialize logger instance")
+		}
+		hookErr := applyLoggerHooks(serviceName, workflowHooks, logger)
+		if hookErr != nil {
+			return hookErr
 		}
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 		logger.WithFields(logrus.Fields{
@@ -183,6 +186,9 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 	logger.Level = logLevel
 	// We always use JSON in AWS
 	logger.Formatter = &logrus.JSONFormatter{}
+
+	// TODO - consider adding a buffered logger that only
+	// writes output following an error.
 	logger.Out = os.Stdout
 	return logger, nil
 }
