@@ -79,7 +79,7 @@ func loadSettings() map[string]string {
 ////////////////////////////////////////////////////////////////////////////////
 
 func writePrettyString(writer io.Writer, input string) {
-	colorWriter := tview.ANSIIWriter(writer)
+	colorWriter := tview.ANSIWriter(writer)
 	var jsonData map[string]interface{}
 	jsonErr := json.Unmarshal([]byte(input), &jsonData)
 	if jsonErr == nil {
@@ -481,7 +481,7 @@ func newLogOutputView(awsSession *session.Session,
 	})
 	logDataView.SetBorder(true).SetTitle("Output")
 
-	colorWriter := tview.ANSIIWriter(logDataView)
+	colorWriter := tview.ANSIWriter(logDataView)
 	logger.Out = colorWriter
 	return logDataView, []tview.Primitive{logDataView}
 }
