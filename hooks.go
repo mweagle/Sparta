@@ -138,6 +138,14 @@ type WorkflowHookHandler interface {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+// RuntimeLoggerHook is responsible for adding custom hooks to the Logrus
+// logger for things like publishing to StackDriver
+type RuntimeLoggerHook func(context map[string]interface{},
+	serviceName string,
+	logger *logrus.Logger) error
+
+////////////////////////////////////////////////////////////////////////////////
 // ArchiveHandler
 
 // ArchiveHook provides callers an opportunity to insert additional
