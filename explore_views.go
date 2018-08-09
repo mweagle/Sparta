@@ -95,7 +95,7 @@ func writePrettyString(writer io.Writer, input string) {
 	} else {
 		/* #nosec */
 
-		io.WriteString(colorWriter, fmt.Sprintf("%s", strings.TrimSpace(input)))
+		io.WriteString(colorWriter, strings.TrimSpace(input))
 	}
 	/* #nosec */
 	io.WriteString(writer, "\n")

@@ -52,7 +52,7 @@ func Explore(serviceName string,
 	settingsMap := loadSettings()
 
 	// Make the channel map
-	channelMap := make(map[string]broadcast.Broadcaster, 0)
+	channelMap := make(map[string]broadcast.Broadcaster)
 	channelMap[broadcasterFunctionSelect] = broadcast.NewBroadcaster(1)
 	channelMap[broadcasterFileSubmit] = broadcast.NewBroadcaster(1)
 	application := tview.NewApplication()

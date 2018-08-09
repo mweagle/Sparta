@@ -260,7 +260,6 @@ func Describe(serviceName string,
 	}
 
 	cytoscapeElements := make([]*cytoscapeNode, 0)
-	var writeErr error
 	// Instead of inline mermaid stuff, we're going to stuff raw
 	// json through. We can also include AWS images in the icon
 	// using base64/encoded:
@@ -270,7 +269,7 @@ func Describe(serviceName string,
 	// Which is dynamically updated at: https://cytoscape.github.io/cytoscape.js-tutorial-demo/
 
 	// Setup the root object
-	writeErr = writeNode(&cytoscapeElements,
+	writeErr := writeNode(&cytoscapeElements,
 		serviceName,
 		nodeColorService,
 		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation_stack.svg",

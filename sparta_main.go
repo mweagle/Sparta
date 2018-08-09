@@ -115,7 +115,7 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 		cmdErr := cmd.Run()
 		if cmdErr == nil {
 			// Great, let's use the SHA
-			buildID = strings.TrimSpace(string(stdout.Bytes()))
+			buildID = strings.TrimSpace(string(stdout.String()))
 			if buildID != "" {
 				logger.WithField("SHA", buildID).
 					WithField("Command", "git rev-parse HEAD").
