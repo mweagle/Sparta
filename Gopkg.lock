@@ -66,8 +66,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "f9728bfcd31e85d264b4ab20299bbbba241c00ca"
-  version = "v1.15.7"
+  revision = "36aaf21bb9b41f47fdc9b477577d0b604925d489"
+  version = "v1.15.8"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -302,6 +302,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "c25cc7609cadf96dc4e764f7c43128be0afdd72cc7fd738379e06da4fb8c0334"
+  inputs-digest = "ba8295c8b985d8897b58687bc9b5fc42ba05b3f0c9caa023966ece9b773b0691"
   solver-name = "gps-cdcl"
   solver-version = 1
