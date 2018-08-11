@@ -65,6 +65,7 @@ func tappedHandler(handlerSymbol interface{},
 	handlerType := reflect.TypeOf(handlerSymbol)
 	takesContext := takesContext(handlerType)
 
+	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
 
