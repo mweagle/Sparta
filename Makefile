@@ -75,7 +75,7 @@ fmtcheck:install_requirements
 .PHONY: validate
 validate: install_requirements vet lint fmtcheck
 	megacheck -ignore github.com/mweagle/Sparta/CONSTANTS.go:*
-	$(GAS_PATH) -exclude=G204 ./...
+	$(GAS_PATH) -exclude=G204,G505,G401 ./...
 
 docs:
 	@echo ""
