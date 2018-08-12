@@ -12,6 +12,7 @@
         1. See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example that relays log entries to Google StackDriver.
   - Added `decorator.PublishAttOutputDecorator` and `decorator.PublishRefOutputDecorator` as convenience functions to update the Stack [Outputs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) section.
   - Added `RuntimeLoggerHook` to [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) to support logrus logger [hooks](https://github.com/sirupsen/logrus#hooks).
+  - Added `IsExecutingInLambda () bool` to return execution environment
 - :bug:  **FIXED**
   - [`$GOPATH` is no longer present by default](https://github.com/mweagle/Sparta/issues/111)
   - [`gas` was replaced by `gosec`](https://github.com/mweagle/Sparta/issues/112)
