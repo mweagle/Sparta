@@ -347,18 +347,23 @@ func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
 }
 
 func stackCapabilities(template *gocf.Template) []*string {
+	capabilitiesMap := make(map[string]bool, 0)
+
 	// Only require IAM capability if the definition requires it.
-	capabilities := make([]*string, 0)
 	for _, eachResource := range template.Resources {
 		if eachResource.Properties.CfnResourceType() == "AWS::IAM::Role" {
-			found := false
-			for _, eachElement := range capabilities {
-				found = (found || (*eachElement == "CAPABILITY_IAM"))
-			}
-			if !found {
-				capabilities = append(capabilities, aws.String("CAPABILITY_IAM"))
+			capabilitiesMap["CAPABILITY_IAM"] = true
+			switch typedResource := eachResource.Properties.(type) {
+			case gocf.IAMRole:
+				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
+			case *gocf.IAMRole:
+				capabilitiesMap["CAPABILITY_NAMED_IAM"] = (typedResource.RoleName != nil)
 			}
 		}
+	}
+	capabilities := make([]*string, 0)
+	for eachKey := range capabilitiesMap {
+		capabilities = append(capabilities, aws.String(eachKey))
 	}
 	return capabilities
 }

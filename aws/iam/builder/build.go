@@ -2,6 +2,7 @@ package iambuilder
 
 import (
 	sparta "github.com/mweagle/Sparta"
+	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 )
 
@@ -117,7 +118,17 @@ func (iamRes *IAMPrivilegeBuilder) Literal(arnPart string) *IAMPrivilegeBuilder 
 	return iamRes
 }
 
-// ToPrivilege finalizes the builder and returns a sparta.IAMRolePrivilege
+// ToPolicyStatement finalizes the builder and returns a spartaIAM.PolicyStatements
+func (iamRes *IAMPrivilegeBuilder) ToPolicyStatement() spartaIAM.PolicyStatement {
+	return spartaIAM.PolicyStatement{
+		Action:   iamRes.resource.apiCalls,
+		Effect:   "Allow",
+		Resource: gocf.Join("", iamRes.resourceParts...),
+	}
+}
+
+// ToPrivilege returns a legacy sparta.IAMRolePrivilege type for this
+// entry
 func (iamRes *IAMPrivilegeBuilder) ToPrivilege() sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
 		Actions:  iamRes.resource.apiCalls,

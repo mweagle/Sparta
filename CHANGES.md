@@ -1,5 +1,23 @@
 # Change Notes
 
+## v1.2.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `decorator.LogAggregatorDecorator`
+    - This is a decorator that:
+        1. Creates a [CloudWatchLogs Subscription Filter](https://t.co/C0cbo99Tsr) for the Lambda functions
+        1. Creates a Kinesis sink with the user defined shard count to receive the log events.
+        1. Subscribes the relay lambda function to the Kinesis stream
+        1. See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example that relays log entries to Google StackDriver.
+  - Added `decorator.PublishAttOutputDecorator` and `decorator.PublishRefOutputDecorator` as convenience functions to update the Stack [Outputs](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html) section.
+  - Added `RuntimeLoggerHook` to [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) to support logrus logger [hooks](https://github.com/sirupsen/logrus#hooks).
+  - Added `IsExecutingInLambda () bool` to return execution environment
+- :bug:  **FIXED**
+  - [`$GOPATH` is no longer present by default](https://github.com/mweagle/Sparta/issues/111)
+  - [`gas` was replaced by `gosec`](https://github.com/mweagle/Sparta/issues/112)
+  - [`tview.ANSIIWriter` has been renamed to `tview.ANSIWriter`](https://github.com/mweagle/Sparta/issues/110)
+
 ## v1.2
 
 - :warning: **BREAKING**

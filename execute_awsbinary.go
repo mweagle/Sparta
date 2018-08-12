@@ -65,6 +65,7 @@ func tappedHandler(handlerSymbol interface{},
 	handlerType := reflect.TypeOf(handlerSymbol)
 	takesContext := takesContext(handlerType)
 
+	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
 
@@ -131,8 +132,9 @@ func Execute(serviceName string,
 	// Find the function name based on the dispatch
 	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	requestedLambdaFunctionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
+
 	// Log any info when we start up...
-	//platformLogSysInfo(requestedLambdaFunctionName, logger)
+	platformLogSysInfo(requestedLambdaFunctionName, logger)
 
 	/*
 		There are three types of targets:

@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"gopkg.in/go-playground/validator.v9"
@@ -29,6 +30,20 @@ func isRunningInAWS() bool {
 	return len(os.Getenv("AWS_LAMBDA_FUNCTION_NAME")) != 0
 }
 
+func applyLoggerHooks(serviceName string, workflowHooks *WorkflowHooks, logger *logrus.Logger) error {
+	// Anything to customize ?
+	if workflowHooks != nil && workflowHooks.RuntimeLoggerHook != nil {
+		loggerHookErr := workflowHooks.RuntimeLoggerHook(nil,
+			serviceName,
+			logger)
+		if loggerHookErr != nil {
+			logger.Errorf("Failed to hook logger: %s", loggerHookErr.Error())
+			return errors.Wrapf(loggerHookErr, "Attempting to customize logger")
+		}
+	}
+	logger.Info("Registered runtime logger hook")
+	return nil
+}
 func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
 	logger.Info(headerDivider)
 	if enableColors {
@@ -100,7 +115,7 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 		cmdErr := cmd.Run()
 		if cmdErr == nil {
 			// Great, let's use the SHA
-			buildID = strings.TrimSpace(string(stdout.Bytes()))
+			buildID = strings.TrimSpace(string(stdout.String()))
 			if buildID != "" {
 				logger.WithField("SHA", buildID).
 					WithField("Command", "git rev-parse HEAD").

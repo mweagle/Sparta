@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.2.0"
+	SpartaVersion = "1.2.1"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -378,6 +378,9 @@ type WorkflowHooks struct {
 	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
 	Rollbacks []RollbackHookHandler
+
+	// Allow minimal customization of the runtime logger
+	RuntimeLoggerHook RuntimeLoggerHook
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1180,4 +1183,14 @@ func HandleAWSLambda(functionName string,
 		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
 	}
 	return lambda
+}
+
+// IsExecutingInLambda is a utility function to return a boolean
+// indicating whether the application is running in AWS Lambda.
+// See the list of environment variables defined at:
+// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
+// for more information.
+func IsExecutingInLambda() bool {
+	return os.Getenv("LAMBDA_TASK_ROOT") != "" ||
+		os.Getenv("AWS_EXECUTION_ENV") != ""
 }

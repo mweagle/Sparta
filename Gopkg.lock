@@ -4,8 +4,8 @@
 [[projects]]
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "db8e629a54ae1a4442be0deae7be60062c69d111"
-  version = "v1.6.0"
+  revision = "17861e192dc11fd2f5081df1932c94cce262fa1e"
+  version = "v1.6.1"
 
 [[projects]]
   name = "github.com/aws/aws-lambda-go"
@@ -14,8 +14,8 @@
     "lambda/messages",
     "lambdacontext"
   ]
-  revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
-  version = "v1.2.0"
+  revision = "e630af386f8aad6ec9fc899b951cf62d37cfe56f"
+  version = "v1.4.0"
 
 [[projects]]
   name = "github.com/aws/aws-sdk-go"
@@ -39,6 +39,7 @@
     "aws/signer/v4",
     "internal/sdkio",
     "internal/sdkrand",
+    "internal/sdkuri",
     "internal/shareddefaults",
     "private/protocol",
     "private/protocol/eventstream",
@@ -65,8 +66,8 @@
     "service/sns",
     "service/sts"
   ]
-  revision = "852052a10992d92f68b9a60862a3312292524903"
-  version = "v1.14.17"
+  revision = "36aaf21bb9b41f47fdc9b477577d0b604925d489"
+  version = "v1.15.8"
 
 [[projects]]
   name = "github.com/briandowns/spinner"
@@ -153,7 +154,7 @@
     "third_party/d3flamegraph",
     "third_party/svgpan"
   ]
-  revision = "2b5d4350d687b058368c98ab141d34d08162ec7b"
+  revision = "3e1e08e68eaed0faefa67fe1c1e10e004cec2c9a"
 
 [[projects]]
   branch = "master"
@@ -218,7 +219,7 @@
   branch = "master"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
-  revision = "e40a034597a3952017f3bb0c75caa8491616dff1"
+  revision = "accd0c0dac9d6a1d6ce1aab8f862d182dd3ed787"
 
 [[projects]]
   name = "github.com/pkg/errors"
@@ -230,13 +231,13 @@
   branch = "master"
   name = "github.com/rivo/tview"
   packages = ["."]
-  revision = "83483397e826c343edb7b8c1f33fb7983dda9fc5"
+  revision = "768070ef7b6ca9718833b7b1cc19fa029c0a9eeb"
 
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
-  version = "v1.0.5"
+  revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
+  version = "v1.0.6"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -295,12 +296,12 @@
 [[projects]]
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "ce9336f6e200cbb2e7c5672b36095b03f8bf5af7"
-  version = "v9.19.0"
+  revision = "ab2a8a99087e827c9af87ed6777ba897348fb178"
+  version = "v9.20.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b0a8c7e386f3ec8ed27e11f2059874019180e7d7a9e215a0748338eb48094576"
+  inputs-digest = "ba8295c8b985d8897b58687bc9b5fc42ba05b3f0c9caa023966ece9b773b0691"
   solver-name = "gps-cdcl"
   solver-version = 1

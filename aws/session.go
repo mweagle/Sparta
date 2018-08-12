@@ -11,6 +11,7 @@ type logrusProxy struct {
 	logger *logrus.Logger
 }
 
+// Log is a utility function to comply with the AWS signature
 func (proxy *logrusProxy) Log(args ...interface{}) {
 	proxy.logger.Info(args...)
 }
