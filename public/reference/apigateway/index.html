@@ -414,6 +414,21 @@
   
     <option value="/reference/" >
    Reference</option> 
+    <option value="/reference/eventsources/" >
+  - 
+   Event Sources</option>
+    <option value="/reference/apigateway/"  selected>
+  - 
+   API Gateway</option> 
+      <option value="/reference/apigateway/echo_event/" >-- Echo Event</option>
+      <option value="/reference/apigateway/user_input/" >-- User Input</option>
+      <option value="/reference/apigateway/context/" >-- Request Context</option>
+      <option value="/reference/apigateway/cors/" >-- CORS</option>
+      <option value="/reference/apigateway/slack/" >-- Slack SlashCommand</option>
+  
+    <option value="/reference/application/" >
+  - 
+   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
@@ -515,24 +530,22 @@
 
 <p>To use the <code>APIGatewayEnvelope</code> type with your own custom request body, create a set of types as in:</p>
 
-<pre><code>type FeedbackBody struct {
-	Language string `json:&quot;lang&quot;`
-	Comment  string `json:&quot;comment&quot;`
-}
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">FeedbackBody</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">Language</span> <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;lang&#34;`</span>
+	<span style="color:#000">Comment</span>  <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;comment&#34;`</span>
+<span style="color:#000;font-weight:bold">}</span>
 
-type FeedbackRequest struct {
-	spartaEvents.APIGatewayEnvelope
-	Body FeedbackBody `json:&quot;body&quot;`
-}
-</code></pre>
+<span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">FeedbackRequest</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
+	<span style="color:#000">spartaEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayEnvelope</span>
+	<span style="color:#000">Body</span> <span style="color:#000">FeedbackBody</span> <span style="color:#4e9a06">`json:&#34;body&#34;`</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>Then reference your custom type in your lambda function as in:</p>
 
-<pre><code>func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
-  language := apiGatewayRequest.Body.Language
-  ...
-}
-</code></pre>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">myLambdaFunction</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiGatewayRequest</span> <span style="color:#000">FeedbackRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
+  <span style="color:#000">language</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGatewayRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Language</span>
+  <span style="color:#ce5c00;font-weight:bold">...</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <h2 id="custom-http-headers">Custom HTTP Headers</h2>
 

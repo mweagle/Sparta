@@ -49,7 +49,7 @@ To simplify handling API Gateway requests, Sparta exposes the [APIGatewayEnvelop
 
 To use the `APIGatewayEnvelope` type with your own custom request body, create a set of types as in:
 
-```
+{{< highlight go >}}
 type FeedbackBody struct {
 	Language string `json:"lang"`
 	Comment  string `json:"comment"`
@@ -59,16 +59,16 @@ type FeedbackRequest struct {
 	spartaEvents.APIGatewayEnvelope
 	Body FeedbackBody `json:"body"`
 }
-```
+{{< /highlight >}}
 
 Then reference your custom type in your lambda function as in:
 
-```
+{{< highlight go >}}
 func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
   language := apiGatewayRequest.Body.Language
   ...
 }
-```
+{{< /highlight >}}
 
 ## Custom HTTP Headers
 
