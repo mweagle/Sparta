@@ -414,21 +414,6 @@
   
     <option value="/reference/" >
    Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/"  selected>
-  - 
-   API Gateway</option> 
-      <option value="/reference/apigateway/echo_event/" >-- Echo Event</option>
-      <option value="/reference/apigateway/user_input/" >-- User Input</option>
-      <option value="/reference/apigateway/context/" >-- Request Context</option>
-      <option value="/reference/apigateway/cors/" >-- CORS</option>
-      <option value="/reference/apigateway/slack/" >-- Slack SlashCommand</option>
-  
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
       <option value="/reference/cicd/" >- CI/CD</option>
       <option value="/reference/custom_resources/" >- Custom Resources</option>
       <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
@@ -520,7 +505,34 @@
 <li>Deploy the given stage</li>
 </ol>
 
-<p>With that overview, let&rsquo;s start with a simple <a href="/reference/apigateway/echo_event">example</a>.</p>
+<p>See a the <a href="/reference/apigateway/echo_event">echo example</a> for a complete version.</p>
+
+<h2 id="api-gateway-request-types">API Gateway Request Types</h2>
+
+<p>AWS Lambda supports multiple <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html">function signatures</a>. Some supported signatures include structured types, which are JSON un/marshalable structs that are automatically managed.</p>
+
+<p>To simplify handling API Gateway requests, Sparta exposes the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope">APIGatewayEnvelope</a> type. This type provides an embeddable struct type whose fields and JSON serialization match up with the <a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">Velocity Template</a> that&rsquo;s applied to the incoming API Gateway request.</p>
+
+<p>To use the <code>APIGatewayEnvelope</code> type with your own custom request body, create a set of types as in:</p>
+
+<pre><code>type FeedbackBody struct {
+	Language string `json:&quot;lang&quot;`
+	Comment  string `json:&quot;comment&quot;`
+}
+
+type FeedbackRequest struct {
+	spartaEvents.APIGatewayEnvelope
+	Body FeedbackBody `json:&quot;body&quot;`
+}
+</code></pre>
+
+<p>Then reference your custom type in your lambda function as in:</p>
+
+<pre><code>func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
+  language := apiGatewayRequest.Body.Language
+  ...
+}
+</code></pre>
 
 <h2 id="custom-http-headers">Custom HTTP Headers</h2>
 
@@ -530,8 +542,8 @@
 
 <div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// API response struct
 </span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">type</span> <span style="color:#000">helloWorldResponse</span> <span style="color:#204a87;font-weight:bold">struct</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#000">Location</span> <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;location&#34;`</span>
-  <span style="color:#000">Body</span>     <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;body&#34;`</span>
+  <span style="color:#000">Location</span>    <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;location&#34;`</span>
+  <span style="color:#000">Message</span>     <span style="color:#204a87;font-weight:bold">string</span> <span style="color:#4e9a06">`json:&#34;message&#34;`</span>
 <span style="color:#000;font-weight:bold">}</span></code></pre></div>
 
 <p>To extract the <code>location</code> field and promote it to the HTTP <code>Location</code> header, you must configure the <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html">response data mappings</a>:</p>
@@ -551,6 +563,8 @@
 <span style="color:#000;font-weight:bold">}</span>
 <span style="color:#000">apiGWMethod</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Integration</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Responses</span><span style="color:#000;font-weight:bold">[</span><span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">].</span><span style="color:#000">Parameters</span><span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#34;method.response.header.Location&#34;</span><span style="color:#000;font-weight:bold">]</span> <span style="color:#000;font-weight:bold">=</span>
   <span style="color:#4e9a06">&#34;integration.response.body.location&#34;</span></code></pre></div>
+
+<p>Note that as the <code>helloWorldResponse</code> structured type is serialized to the <em>body</em> property of the response, we include that path selector in the <em>integration.response.body.location</em> value.</p>
 
 <p>See the related <a href="https://forums.aws.amazon.com/thread.jspa?threadID=199443">AWS Forum thread</a>.</p>
 

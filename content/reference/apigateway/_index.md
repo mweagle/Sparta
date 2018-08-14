@@ -39,8 +39,36 @@ The API Gateway presents a powerful and complex domain model.  In brief, to inte
   1. Create a stage for a REST API
   1. Deploy the given stage
 
-With that overview, let's start with a simple [example](/reference/apigateway/echo_event).
+See a the [echo example](/reference/apigateway/echo_event) for a complete version.
 
+## API Gateway Request Types
+
+AWS Lambda supports multiple [function signatures](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html). Some supported signatures include structured types, which are JSON un/marshalable structs that are automatically managed.
+
+To simplify handling API Gateway requests, Sparta exposes the [APIGatewayEnvelope](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope) type. This type provides an embeddable struct type whose fields and JSON serialization match up with the [Velocity Template](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl) that's applied to the incoming API Gateway request.
+
+To use the `APIGatewayEnvelope` type with your own custom request body, create a set of types as in:
+
+```
+type FeedbackBody struct {
+	Language string `json:"lang"`
+	Comment  string `json:"comment"`
+}
+
+type FeedbackRequest struct {
+	spartaEvents.APIGatewayEnvelope
+	Body FeedbackBody `json:"body"`
+}
+```
+
+Then reference your custom type in your lambda function as in:
+
+```
+func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
+  language := apiGatewayRequest.Body.Language
+  ...
+}
+```
 
 ## Custom HTTP Headers
 
@@ -51,13 +79,14 @@ Assume your Sparta lambda function returns a JSON struct as in:
 {{< highlight go >}}
 // API response struct
 type helloWorldResponse struct {
-  Location string `json:"location"`
-  Body     string `json:"body"`
+  Location    string `json:"location"`
+  Message     string `json:"message"`
 }
 {{< /highlight >}}
 
 To extract the `location` field and promote it to the HTTP `Location` header, you must configure the [response data mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html
 ):
+
 
 
 {{< highlight go >}}
@@ -78,8 +107,9 @@ apiGWMethod.Integration.Responses[http.StatusOK].Parameters["method.response.hea
   "integration.response.body.location"
 {{< /highlight >}}
 
-See the related [AWS Forum thread](https://forums.aws.amazon.com/thread.jspa?threadID=199443).
+Note that as the `helloWorldResponse` structured type is serialized to the _body_ property of the response, we include that path selector in the _integration.response.body.location_ value.
 
+See the related [AWS Forum thread](https://forums.aws.amazon.com/thread.jspa?threadID=199443).
 
 ## Other Resources
   * [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)
