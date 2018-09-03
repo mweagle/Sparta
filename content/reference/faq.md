@@ -107,6 +107,66 @@ This set of privileges should be sufficient to deploy a Sparta application simil
 
 You can view the exact set of AWS API calls by enabling `--level debug` log verbosity. This log level includes all AWS API calls starting with release [0.20.0](https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200).
 
+### What are the minimum IAM privileges to provision a Sparta app and API Gateway
+
+Your AWS user must have the following privileges. Ensure to update the `YOUR_S3_BUCKETNAME_HERE` value with your own S3 bucket name.
+
+{{< highlight json >}}
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:DescribeStacks",
+                "cloudformation:DescribeStackEvents",
+                "cloudformation:CreateStack",
+                "cloudformation:DeleteStack",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "iam:GetRole",
+                "iam:DeleteRole",
+                "iam:CreateRole",
+                "iam:PutRolePolicy",
+                "iam:PassRole",
+                "iam:DeleteRolePolicy",
+                "lambda:CreateFunction",
+                "lambda:GetFunction",
+                "lambda:GetFunctionConfiguration",
+                "lambda:AddPermission",
+                "lambda:DeleteFunction",
+                "lambda:RemovePermission"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:DELETE",
+                "apigateway:PUT",
+                "apigateway:PATCH",
+                "apigateway:POST",
+                "apigateway:GET",
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:GetBucketVersioning",
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:*::*",
+                "arn:aws:s3:::<YOUR_S3_BUCKETNAME_HERE>"
+                "arn:aws:s3:::<YOUR_S3_BUCKETNAME_HERE>/*"
+            ]
+        }
+    ]
+}
+{{< /highlight >}}
+
+
 ### What flags are defined during AWS AMI compilation?
 
 * **TAGS**:         `-tags lambdabinary`
