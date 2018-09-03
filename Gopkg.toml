@@ -1,6 +1,6 @@
 # Gopkg.toml example
 #
-# Refer to https://github.com/golang/dep/blob/master/docs/Gopkg.toml.md
+# Refer to https://golang.github.io/dep/docs/Gopkg.toml.html
 # for detailed Gopkg.toml documentation.
 #
 # required = ["github.com/user/thing/cmd/thing"]
@@ -27,19 +27,23 @@
 
 [[constraint]]
   name = "github.com/AlecAivazis/survey"
-  version = "1.5.3"
+  version = "1.6.2"
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.4.0"
+  version = "1.6.0"
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "1.15.8"
+  version = "1.15.26"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
-  version = "1.1"
+  version = "1.2.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/dustin/go-broadcast"
 
 [[constraint]]
   branch = "master"
@@ -47,7 +51,27 @@
 
 [[constraint]]
   branch = "master"
+  name = "github.com/fzipp/gocyclo"
+
+[[constraint]]
+  name = "github.com/gdamore/tcell"
+  version = "1.1.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/golang/lint"
+
+[[constraint]]
+  branch = "master"
   name = "github.com/google/pprof"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hokaccha/go-prettyjson"
+
+[[constraint]]
+  name = "github.com/mjibson/esc"
+  version = "0.1.0"
 
 [[constraint]]
   branch = "master"
@@ -62,20 +86,36 @@
   version = "0.8.0"
 
 [[constraint]]
+  branch = "master"
+  name = "github.com/rivo/tview"
+
+[[constraint]]
+  name = "github.com/securego/gosec"
+  version = "1.1.0"
+
+[[constraint]]
   name = "github.com/sirupsen/logrus"
-  version = "1.0.5"
+  version = "1.0.6"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
-  version = "0.0.2"
+  version = "0.0.3"
 
 [[constraint]]
   branch = "master"
   name = "github.com/zcalusic/sysinfo"
 
 [[constraint]]
+  branch = "master"
+  name = "golang.org/x/tools"
+
+[[constraint]]
   name = "gopkg.in/go-playground/validator.v9"
-  version = "9.20.2"
+  version = "9.21.0"
+
+[[constraint]]
+  name = "honnef.co/go/tools"
+  version = "2017.2.2"
 
 [prune]
   go-tests = true

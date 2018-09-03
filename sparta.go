@@ -31,7 +31,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.2.1"
+	SpartaVersion = "1.3.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -733,11 +733,17 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		otherPackage := strings.Contains(lambdaFuncName, "/")
 		canonicalName := lambdaFuncName
 		if structDefined {
-			var reCapture = regexp.MustCompile(`\(([^\(\)]+)\)`)
-			parts := reCapture.FindAllString(lambdaFuncName, -1)
-			// (*StructHandler1),(github.com/mweagle/Sparta.handler)
-			funcNameParts := strings.Split(parts[1], "/")
-			intermediateName := fmt.Sprintf("%s-%s", parts[0], funcNameParts[len(funcNameParts)-1])
+			var reSplit = regexp.MustCompile(`[*\(\)\[\]]+`)
+			// Function name:
+			// github.com/mweagle/Sparta.(*StructHandler1).handler-fm
+			parts := reSplit.Split(lambdaFuncName, -1)
+			lastPart := parts[len(parts)-1]
+			penultimatePart := lastPart
+			if len(parts) > 1 {
+				penultimatePart = parts[len(parts)-2]
+			}
+			fmt.Printf("FUNCTION NAME: %s\nPARTS: %#v\n", lambdaFuncName, parts)
+			intermediateName := fmt.Sprintf("%s-%s", penultimatePart, lastPart)
 			reClean := regexp.MustCompile(`[\*\(\)]+`)
 			canonicalName = reClean.ReplaceAllString(intermediateName, "")
 		} else if otherPackage {

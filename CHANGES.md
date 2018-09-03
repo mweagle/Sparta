@@ -1,5 +1,13 @@
 # Change Notes
 
+## v1.3.0
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Update branchname and release tag to support Go 1.11 [modules](https://github.com/golang/go/wiki/Modules).
+- :bug:  **FIXED**
+  - Fixed `panic` when extracting [lambda function name](https://github.com/mweagle/Sparta/commit/c10a7a88c403ecf5b1f06784f0027fb35e0220a7).
+
 ## v1.2.1
 
 - :warning: **BREAKING**

@@ -129,7 +129,7 @@ func visitResolvedEventSourceMapping(visitor resolvedResourceVisitor,
 		// Early exit?
 		if annotateStatementsErr != nil {
 			return errors.Wrapf(annotateStatementsErr,
-				"Visiting event source mapping: %s",
+				"Visiting event source mapping: %#v",
 				eventSourceMapping)
 		}
 		return nil

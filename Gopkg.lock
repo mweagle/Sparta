@@ -2,22 +2,27 @@
 
 
 [[projects]]
+  digest = "1:eef8210380ea673503a5896d00df18c6a39cd8602213a44007976d6bf35b8ebc"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
-  revision = "17861e192dc11fd2f5081df1932c94cce262fa1e"
-  version = "v1.6.1"
+  pruneopts = "UT"
+  revision = "f30c5d1830c892f533140f29a1de89141dc217f5"
+  version = "v1.6.2"
 
 [[projects]]
+  digest = "1:7637de64e2bad97a7b9d1665e9cb0f9b709b1ef28d09232da908ead542bf89f0"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "lambda",
     "lambda/messages",
-    "lambdacontext"
+    "lambdacontext",
   ]
-  revision = "e630af386f8aad6ec9fc899b951cf62d37cfe56f"
-  version = "v1.4.0"
+  pruneopts = "UT"
+  revision = "2d482ef09017ae953b1e8d5a6ddac5b696663a3c"
+  version = "v1.6.0"
 
 [[projects]]
+  digest = "1:158b930e54b128fcc625b89795416055a819da27a5d956c455e801d472c95f0c"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -64,79 +69,101 @@
     "service/s3/s3manager",
     "service/ses",
     "service/sns",
-    "service/sts"
+    "service/sts",
   ]
-  revision = "36aaf21bb9b41f47fdc9b477577d0b604925d489"
-  version = "v1.15.8"
+  pruneopts = "UT"
+  revision = "04abd557eeaab3cfdded45467eea00fc03db9cb9"
+  version = "v1.15.26"
 
 [[projects]]
+  digest = "1:89e98f6335a3ca6d6ae179bb030d7d73326b809c3ba87e9a4b7dffd458ab85d7"
   name = "github.com/briandowns/spinner"
   packages = ["."]
-  revision = "5b875a9171af19dbde37e70a8fcbe2ebd7285e05"
-  version = "1.1"
+  pruneopts = "UT"
+  revision = "9f016caa1359c8ecdc1d95243e92c0d28b524368"
+  version = "1.2"
 
 [[projects]]
+  digest = "1:c166378e8ab0f794f293dfb941d250dd70b035b05dec58879f717621d0fe1714"
   name = "github.com/deckarep/golang-set"
   packages = ["."]
+  pruneopts = "UT"
   revision = "1d4478f51bed434f1dadf96dcd9b43aabac66795"
   version = "v1.7"
 
 [[projects]]
   branch = "master"
+  digest = "1:09caacaac48b388502b23d8afbc58003d0e3ec8d4faf78a866d4cde554d946f7"
   name = "github.com/dustin/go-broadcast"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f664265f5a662fb4d1df7f3533b1e8d0e0277120"
 
 [[projects]]
   branch = "master"
+  digest = "1:6f9339c912bbdda81302633ad7e99a28dfa5a639c864061f1929510a9a64aa74"
   name = "github.com/dustin/go-humanize"
   packages = ["."]
-  revision = "02af3965c54e8cacf948b97fef38925c4120652c"
+  pruneopts = "UT"
+  revision = "9f541cc9db5d55bce703bd99987c9d5cb8eea45e"
 
 [[projects]]
+  digest = "1:865079840386857c809b72ce300be7580cb50d3d3129ce11bf9aa6ca2bc1934a"
   name = "github.com/fatih/color"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5b77d2a35fb0ede96d138fc9a99f5c9b6aef11b4"
   version = "v1.7.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:40d0056c1b1f503c366ba441df92a82b5a2654d6f3747b1689a611eb5c9ce0a2"
   name = "github.com/gdamore/encoding"
   packages = ["."]
+  pruneopts = "UT"
   revision = "b23993cbb6353f0e6aa98d0ee318a34728f628b9"
 
 [[projects]]
+  digest = "1:00b9cce210566117aff926677c005aeaea6c85374e67bdcb72783af237c48f97"
   name = "github.com/gdamore/tcell"
   packages = [
     ".",
-    "terminfo"
+    "terminfo",
   ]
-  revision = "061d51a604c546b48e92253cb65190d76cecf4c6"
-  version = "v1.0.0"
+  pruneopts = "UT"
+  revision = "de7e78efa4a71b3f36c7154989c529dbdf9ae623"
+  version = "v1.1.0"
 
 [[projects]]
+  digest = "1:5abd6a22805b1919f6a6bca0ae58b13cef1f3412812f38569978f43ef02743d4"
   name = "github.com/go-ini/ini"
   packages = ["."]
-  revision = "06f5f3d67269ccec1fe5fe4134ba6e982984f7f5"
-  version = "v1.37.0"
+  pruneopts = "UT"
+  revision = "5cf292cae48347c2490ac1a58fe36735fb78df7e"
+  version = "v1.38.2"
 
 [[projects]]
+  digest = "1:e1ff887e232b2d8f4f7c7db15a5fac7be418025afc4dda53c59c765dbb5aa6b4"
   name = "github.com/go-playground/locales"
   packages = [
     ".",
-    "currency"
+    "currency",
   ]
+  pruneopts = "UT"
   revision = "f63010822830b6fe52288ee52d5a1151088ce039"
   version = "v0.12.1"
 
 [[projects]]
+  digest = "1:e022cf244bcac1b6ef933f1a2e0adcf6a6dfd7b872d8d41e4d4179bb09a87cbc"
   name = "github.com/go-playground/universal-translator"
   packages = ["."]
+  pruneopts = "UT"
   revision = "b32fa301c9fe55953584134cb6853a13c87ec0a1"
   version = "v0.16.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:26fcd5801e409b8883ab1e89ae2432284d0f5aad0e44236a172a13401299db17"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -152,156 +179,243 @@
     "profile",
     "third_party/d3",
     "third_party/d3flamegraph",
-    "third_party/svgpan"
+    "third_party/svgpan",
   ]
-  revision = "3e1e08e68eaed0faefa67fe1c1e10e004cec2c9a"
+  pruneopts = "UT"
+  revision = "d723c7237b64c7871a69e4c411acb04245bcd23d"
 
 [[projects]]
   branch = "master"
+  digest = "1:0bc83661c08d37ec8898b9c998f6107a47209e36a3a190a725d74f90c54cd816"
   name = "github.com/hokaccha/go-prettyjson"
   packages = ["."]
+  pruneopts = "UT"
   revision = "d229c224a219dcf41e9d2af4684b9782f33f5eb7"
 
 [[projects]]
   branch = "master"
+  digest = "1:1e3627a2bf5ba3a9093159f89acc9ddb274d208c0cd643435c9f1e7e1cb80fb4"
   name = "github.com/ianlancetaylor/demangle"
   packages = ["."]
-  revision = "fc6590592b44fedfff586c5d94647c090fbd6bac"
+  pruneopts = "UT"
+  revision = "fcd258a6f0b45dc345a407ee5568cf9a4d24a0ae"
 
 [[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
+  pruneopts = "UT"
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
+  pruneopts = "UT"
   revision = "0b12d6b5"
 
 [[projects]]
+  branch = "master"
+  digest = "1:400e113a367b511b9b09ca642ee11d9885485a93838526d697033af334a2fdde"
+  name = "github.com/kballard/go-shellquote"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "95032a82bc518f77982ea72343cc1ade730072f0"
+
+[[projects]]
+  digest = "1:c65a16ac77d0b1aefc7009cabb6ac5ad05def02025f5be85f450c03f52cc6f86"
   name = "github.com/lucasb-eyer/go-colorful"
   packages = ["."]
+  pruneopts = "UT"
   revision = "345fbb3dbcdb252d9985ee899a84963c0fa24c82"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
+  pruneopts = "UT"
   revision = "167de6bfdfba052fa6b2d3664c8f5272e23c9072"
   version = "v0.0.9"
 
 [[projects]]
+  digest = "1:0981502f9816113c9c8c4ac301583841855c8cf4da8c72f696b3ebedf6d0e4e5"
   name = "github.com/mattn/go-isatty"
   packages = ["."]
-  revision = "0360b2af4f38e8d38c7fce2a9f4e702702d73a39"
+  pruneopts = "UT"
+  revision = "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c"
+  version = "v0.0.4"
+
+[[projects]]
+  digest = "1:cdb899c199f907ac9fb50495ec71212c95cb5b0e0a8ee0800da0238036091033"
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ce7b0b5c7b45a81508558cd1dba6bb1e4ddb51bb"
   version = "v0.0.3"
 
 [[projects]]
-  name = "github.com/mattn/go-runewidth"
-  packages = ["."]
-  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
-  version = "v0.0.2"
-
-[[projects]]
   branch = "master"
+  digest = "1:2b32af4d2a529083275afc192d1067d8126b578c7a9613b26600e4df9c735155"
   name = "github.com/mgutz/ansi"
   packages = ["."]
+  pruneopts = "UT"
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
   branch = "master"
+  digest = "1:16629496e071dfea3cb76bfb2787768ac9ca06df46723be4bc1567972bf11717"
   name = "github.com/mweagle/go-cloudcondenser"
   packages = ["."]
+  pruneopts = "UT"
   revision = "e1ad78f4b7808efe04dcfb8813d55cb64f673f13"
 
 [[projects]]
   branch = "master"
+  digest = "1:f95ebaa96b4ce704da4bfec7145528967af8baef1dd74a2c29803d8a931dbc0f"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
+  pruneopts = "UT"
   revision = "accd0c0dac9d6a1d6ce1aab8f862d182dd3ed787"
 
 [[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
+  pruneopts = "UT"
   revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
   version = "v0.8.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:9deb696e9739b45e91369ffb3876d4e0d2bc45e0d35062fb3c5aa44fa77eff6c"
   name = "github.com/rivo/tview"
   packages = ["."]
-  revision = "768070ef7b6ca9718833b7b1cc19fa029c0a9eeb"
+  pruneopts = "UT"
+  revision = "77bcb6c6b90013b92d068f114f3d1b9b9f9e5a0b"
 
 [[projects]]
+  digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
   version = "v1.0.6"
 
 [[projects]]
+  digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
   name = "github.com/spf13/cobra"
   packages = ["."]
+  pruneopts = "UT"
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
   version = "v0.0.3"
 
 [[projects]]
+  digest = "1:dab83a1bbc7ad3d7a6ba1a1cc1760f25ac38cdf7d96a5cdd55cd915a4f5ceaf9"
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "583c0c0531f06d5278b7d917446061adc344b5cd"
-  version = "v1.0.1"
+  pruneopts = "UT"
+  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
+  version = "v1.0.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:99d277291edebdb371ab06ef3283676d15e59567e888a81b6ab80b8c06b845c0"
   name = "github.com/zcalusic/sysinfo"
   packages = ["."]
+  pruneopts = "UT"
   revision = "7a16547e0bde79fb8f37231cdcfc8cacef8d8fbb"
 
 [[projects]]
   branch = "master"
+  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "a49355c7e3f8fe157a85be2f77e6e269a0f89602"
+  pruneopts = "UT"
+  revision = "182538f80094b6a8efaade63a8fd8e0d9d5843dd"
 
 [[projects]]
   branch = "master"
+  digest = "1:629034aef6b53eb8ea737e6d82cb5402907e2757fbab5ddf5e74c08b4c6473af"
   name = "golang.org/x/sys"
   packages = [
     "unix",
-    "windows"
+    "windows",
   ]
-  revision = "7138fd3d9dc8335c567ca206f4333fb75eb05d56"
+  pruneopts = "UT"
+  revision = "fa5fdf94c78965f1aa8423f0cc50b8b8d728b05a"
 
 [[projects]]
+  digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
   name = "golang.org/x/text"
   packages = [
     "encoding",
     "encoding/internal/identifier",
     "internal/gen",
     "transform",
-    "unicode/cldr"
+    "unicode/cldr",
   ]
+  pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [[projects]]
+  digest = "1:b0e2a9ee778a41537e07b6ee0e569c32f73d68832d610b35d5aeb84eed73f4ef"
   name = "gopkg.in/AlecAivazis/survey.v1"
   packages = [
     "core",
-    "terminal"
+    "terminal",
   ]
-  revision = "db8e629a54ae1a4442be0deae7be60062c69d111"
-  version = "v1.6.0"
+  pruneopts = "UT"
+  revision = "f30c5d1830c892f533140f29a1de89141dc217f5"
+  version = "v1.6.2"
 
 [[projects]]
+  digest = "1:e2f64cca6e235f32cd4c2f9be9ae0cda1f8608fc6fdb68936e8d10e4e0bb074d"
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
-  revision = "ab2a8a99087e827c9af87ed6777ba897348fb178"
-  version = "v9.20.2"
+  pruneopts = "UT"
+  revision = "e69e9a28bb62b977fdc58d051f1bb477b7cbe486"
+  version = "v9.21.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ba8295c8b985d8897b58687bc9b5fc42ba05b3f0c9caa023966ece9b773b0691"
+  input-imports = [
+    "github.com/AlecAivazis/survey",
+    "github.com/aws/aws-lambda-go/lambda",
+    "github.com/aws/aws-lambda-go/lambdacontext",
+    "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/request",
+    "github.com/aws/aws-sdk-go/aws/session",
+    "github.com/aws/aws-sdk-go/service/apigateway",
+    "github.com/aws/aws-sdk-go/service/cloudformation",
+    "github.com/aws/aws-sdk-go/service/cloudwatchlogs",
+    "github.com/aws/aws-sdk-go/service/dynamodb",
+    "github.com/aws/aws-sdk-go/service/ecr",
+    "github.com/aws/aws-sdk-go/service/iam",
+    "github.com/aws/aws-sdk-go/service/lambda",
+    "github.com/aws/aws-sdk-go/service/s3",
+    "github.com/aws/aws-sdk-go/service/s3/s3manager",
+    "github.com/aws/aws-sdk-go/service/ses",
+    "github.com/aws/aws-sdk-go/service/sns",
+    "github.com/aws/aws-sdk-go/service/sts",
+    "github.com/briandowns/spinner",
+    "github.com/dustin/go-broadcast",
+    "github.com/dustin/go-humanize",
+    "github.com/gdamore/tcell",
+    "github.com/google/pprof/driver",
+    "github.com/google/pprof/profile",
+    "github.com/hokaccha/go-prettyjson",
+    "github.com/mweagle/go-cloudcondenser",
+    "github.com/mweagle/go-cloudformation",
+    "github.com/pkg/errors",
+    "github.com/rivo/tview",
+    "github.com/sirupsen/logrus",
+    "github.com/spf13/cobra",
+    "github.com/zcalusic/sysinfo",
+    "gopkg.in/go-playground/validator.v9",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
