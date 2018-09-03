@@ -571,6 +571,63 @@ resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 
 <p>You can view the exact set of AWS API calls by enabling <code>--level debug</code> log verbosity. This log level includes all AWS API calls starting with release <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200">0.20.0</a>.</p>
 
+<h3 id="what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</h3>
+
+<p>Your AWS user must have the following privileges. Ensure to update the <code>YOUR_S3_BUCKETNAME_HERE</code> value with your own S3 bucket name.</p>
+
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Version&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;2012-10-17&#34;</span><span style="color:#000;font-weight:bold">,</span>
+    <span style="color:#204a87;font-weight:bold">&#34;Statement&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;VisualEditor0&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeStacks&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeStackEvents&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:CreateStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DeleteStack&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:DescribeChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;cloudformation:ExecuteChangeSet&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:GetRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:CreateRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:PutRolePolicy&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:PassRole&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;iam:DeleteRolePolicy&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:CreateFunction&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:GetFunction&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:GetFunctionConfiguration&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:AddPermission&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:DeleteFunction&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;lambda:RemovePermission&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;*&#34;</span>
+        <span style="color:#000;font-weight:bold">},</span>
+        <span style="color:#000;font-weight:bold">{</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Sid&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;VisualEditor1&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Effect&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Allow&#34;</span><span style="color:#000;font-weight:bold">,</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Action&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;apigateway:DELETE&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;apigateway:PUT&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;apigateway:PATCH&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;apigateway:POST&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;apigateway:GET&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:PutObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:GetObject&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:GetBucketVersioning&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;s3:DeleteObject&#34;</span>
+            <span style="color:#000;font-weight:bold">],</span>
+            <span style="color:#204a87;font-weight:bold">&#34;Resource&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">[</span>
+                <span style="color:#4e9a06">&#34;arn:aws:apigateway:*::*&#34;</span><span style="color:#000;font-weight:bold">,</span>
+                <span style="color:#4e9a06">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;&#34;</span>
+                <span style="color:#4e9a06">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;/*&#34;</span>
+            <span style="color:#000;font-weight:bold">]</span>
+        <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000;font-weight:bold">]</span>
+<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+
 <h3 id="what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</h3>
 
 <ul>
