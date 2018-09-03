@@ -117,14 +117,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:445e571d0cfbf1cd91abbbe0b6f07a5d49f99a5a38b16872fdba7afe7f83a758"
-  name = "github.com/fzipp/gocyclo"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "6acd4345c835499920e8426c7e4e8d7a34f1bb83"
-
-[[projects]]
-  branch = "master"
   digest = "1:40d0056c1b1f503c366ba441df92a82b5a2654d6f3747b1689a611eb5c9ce0a2"
   name = "github.com/gdamore/encoding"
   packages = ["."]
@@ -168,14 +160,6 @@
   pruneopts = "UT"
   revision = "b32fa301c9fe55953584134cb6853a13c87ec0a1"
   version = "v0.16.0"
-
-[[projects]]
-  branch = "master"
-  digest = "1:4ee452f8994700dcab9e816aef1cb9eb2317218734c6ccf5135746e6c19f3dce"
-  name = "github.com/golang/lint"
-  packages = ["golint"]
-  pruneopts = "UT"
-  revision = "06c8688daad7faa9da5a0c2f163a3d14aac986ca"
 
 [[projects]]
   branch = "master"
@@ -240,17 +224,6 @@
   revision = "95032a82bc518f77982ea72343cc1ade730072f0"
 
 [[projects]]
-  digest = "1:15ec2166e33ef6c60b344a04d050eec79193517e7f5082b6233b2d09ef0d10b8"
-  name = "github.com/kisielk/gotool"
-  packages = [
-    ".",
-    "internal/load",
-  ]
-  pruneopts = "UT"
-  revision = "80517062f582ea3340cd4baf70e86d539ae7d84d"
-  version = "v1.0.0"
-
-[[projects]]
   digest = "1:c65a16ac77d0b1aefc7009cabb6ac5ad05def02025f5be85f450c03f52cc6f86"
   name = "github.com/lucasb-eyer/go-colorful"
   packages = ["."]
@@ -291,17 +264,6 @@
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
-  digest = "1:9c032d03b1641ccdff4c200f05c06876d37d96ac536673af9e4d8cbac55ebec8"
-  name = "github.com/mjibson/esc"
-  packages = [
-    ".",
-    "embed",
-  ]
-  pruneopts = "UT"
-  revision = "58d9cde84f237ecdd89bd7f61c2de2853f4c5c6e"
-  version = "v0.1.0"
-
-[[projects]]
   branch = "master"
   digest = "1:16629496e071dfea3cb76bfb2787768ac9ca06df46723be4bc1567972bf11717"
   name = "github.com/mweagle/go-cloudcondenser"
@@ -332,14 +294,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "77bcb6c6b90013b92d068f114f3d1b9b9f9e5a0b"
-
-[[projects]]
-  digest = "1:c4986b5c5467699ce5647ae3b2361f6d0b96690e33554c34eaa29cdfc67e05fc"
-  name = "github.com/securego/gosec"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "e4ba96adc310ea1fe64f43af8e26dd076361b57c"
-  version = "1.1.0"
 
 [[projects]]
   digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
@@ -383,14 +337,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9238d4d6fdc7b3859e37764c86d02625b74e0c76cd1faae3677735d5c5129724"
-  name = "golang.org/x/lint"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "06c8688daad7faa9da5a0c2f163a3d14aac986ca"
-
-[[projects]]
-  branch = "master"
   digest = "1:629034aef6b53eb8ea737e6d82cb5402907e2757fbab5ddf5e74c08b4c6473af"
   name = "golang.org/x/sys"
   packages = [
@@ -415,25 +361,6 @@
   version = "v0.3.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:98e0c9d40237a75fe3fc7a24a14fb8f6319f95439bd76bd4ee43ed7a2d0aef94"
-  name = "golang.org/x/tools"
-  packages = [
-    "cmd/goimports",
-    "go/ast/astutil",
-    "go/buildutil",
-    "go/gcexportdata",
-    "go/internal/cgo",
-    "go/internal/gcimporter",
-    "go/loader",
-    "go/types/typeutil",
-    "imports",
-    "internal/fastwalk",
-  ]
-  pruneopts = "UT"
-  revision = "7ca132754999accbaa5c1735eda29e7ce0f3bf03"
-
-[[projects]]
   digest = "1:b0e2a9ee778a41537e07b6ee0e569c32f73d68832d610b35d5aeb84eed73f4ef"
   name = "gopkg.in/AlecAivazis/survey.v1"
   packages = [
@@ -451,33 +378,6 @@
   pruneopts = "UT"
   revision = "e69e9a28bb62b977fdc58d051f1bb477b7cbe486"
   version = "v9.21.0"
-
-[[projects]]
-  digest = "1:c5281db7db2b3956e9d80b66aab57310d46c15c2b076351469d888aedeff3779"
-  name = "honnef.co/go/tools"
-  packages = [
-    "callgraph",
-    "callgraph/static",
-    "cmd/gosimple",
-    "cmd/megacheck",
-    "cmd/staticcheck",
-    "cmd/unused",
-    "deprecated",
-    "functions",
-    "internal/sharedcheck",
-    "lint",
-    "lint/lintutil",
-    "simple",
-    "ssa",
-    "ssa/ssautil",
-    "staticcheck",
-    "staticcheck/vrp",
-    "unused",
-    "version",
-  ]
-  pruneopts = "UT"
-  revision = "d73ab98e7c39fdcf9ba65062e43d34310f198353"
-  version = "2017.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -504,27 +404,18 @@
     "github.com/briandowns/spinner",
     "github.com/dustin/go-broadcast",
     "github.com/dustin/go-humanize",
-    "github.com/fzipp/gocyclo",
     "github.com/gdamore/tcell",
-    "github.com/golang/lint/golint",
     "github.com/google/pprof/driver",
     "github.com/google/pprof/profile",
     "github.com/hokaccha/go-prettyjson",
-    "github.com/mjibson/esc",
     "github.com/mweagle/go-cloudcondenser",
     "github.com/mweagle/go-cloudformation",
     "github.com/pkg/errors",
     "github.com/rivo/tview",
-    "github.com/securego/gosec",
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/zcalusic/sysinfo",
-    "golang.org/x/tools/cmd/goimports",
     "gopkg.in/go-playground/validator.v9",
-    "honnef.co/go/tools/cmd/gosimple",
-    "honnef.co/go/tools/cmd/megacheck",
-    "honnef.co/go/tools/cmd/staticcheck",
-    "honnef.co/go/tools/cmd/unused",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
