@@ -98,9 +98,9 @@ func NewAPIGatewayMockRequest(lambdaName string,
 	apiGatewayRequest.Context.ResourcePath = "/mock"
 	apiGatewayRequest.Context.Stage = "mock"
 	apiGatewayRequest.Context.Identity = APIGatewayIdentity{
-		AccountID: "123412341234",
-		APIKey:    "",
-		Caller:    "",
+		AccountID:                     "123412341234",
+		APIKey:                        "",
+		Caller:                        "",
 		CognitoAuthenticationProvider: "",
 		CognitoAuthenticationType:     "",
 		CognitoIdentityID:             "",

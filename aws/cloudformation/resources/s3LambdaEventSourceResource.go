@@ -81,7 +81,7 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	config.LambdaFunctionConfigurations = lambdaConfigurations
 
 	putBucketNotificationConfigurationInput := &s3.PutBucketNotificationConfigurationInput{
-		Bucket: aws.String(bucketName),
+		Bucket:                    aws.String(bucketName),
 		NotificationConfiguration: config,
 	}
 
