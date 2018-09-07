@@ -232,6 +232,18 @@
   version = "v1.0"
 
 [[projects]]
+  digest = "1:d08b9723bbea0b16db49cda5309976d244105485c15a1e1204a8ac38a0e712a1"
+  name = "github.com/magefile/mage"
+  packages = [
+    "mg",
+    "sh",
+    "types",
+  ]
+  pruneopts = "UT"
+  revision = "b0bfbc25e9471eaab0d92757ad084123cd2a0bc9"
+  version = "v1.2.4"
+
+[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -408,6 +420,8 @@
     "github.com/google/pprof/driver",
     "github.com/google/pprof/profile",
     "github.com/hokaccha/go-prettyjson",
+    "github.com/magefile/mage/mg",
+    "github.com/magefile/mage/sh",
     "github.com/mweagle/go-cloudcondenser",
     "github.com/mweagle/go-cloudformation",
     "github.com/pkg/errors",
