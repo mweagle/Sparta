@@ -4,8 +4,8 @@ go:
 - "1.11"
 - tip
 before_install:
-- echo "before_install"
-script: make travis-ci-test
+- go get -v github.com/magefile/mage
+script: mage TravisBuild
 env:
   global:
   - S3_BUCKET=weagle

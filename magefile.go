@@ -304,3 +304,10 @@ func TestCover() error {
 	}
 	return mageScript(testCoverCommands)
 }
+
+// TravisBuild is the task to build in the context of a Travis CI pipeline
+func TravisBuild() error {
+	mg.SerialDeps(EnsureTravisBuildEnvironment,
+		Build,
+		Test)
+}
