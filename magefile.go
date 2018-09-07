@@ -310,4 +310,5 @@ func TravisBuild() error {
 	mg.SerialDeps(EnsureTravisBuildEnvironment,
 		Build,
 		Test)
+	return nil
 }
