@@ -1,8 +1,8 @@
 language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
+- "1.10.4"
 - "1.11"
-- tip
 before_install:
 - go get -v github.com/magefile/mage
 script: mage -v travisBuild
