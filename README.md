@@ -19,14 +19,14 @@ Sparta takes a set of _golang_ functions and automatically provisions them in
 
 AWS Lambda functions are defined using the standard [AWS Lambda signatures](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/):
 
- * `func()`
- * `func() error`
- * `func(TIn) error`
- * `func() (TOut, error)`
- * `func(context.Context) error`
- * `func(context.Context, TIn) error`
- * `func(context.Context) (TOut, error)`
- * `func(context.Context, TIn) (TOut, error)`
+* `func()`
+* `func() error`
+* `func(TIn) error`
+* `func() (TOut, error)`
+* `func(context.Context) error`
+* `func(context.Context, TIn) error`
+* `func(context.Context) (TOut, error)`
+* `func(context.Context, TIn) (TOut, error)`
 
  The TIn and TOut parameters represent encoding/json un/marshallable types.
 
@@ -60,28 +60,58 @@ Consumers define a set of lambda functions and provide them to Sparta to create 
 		nil)
 ```
 
-Given a set of registered _golang_ functions, Sparta will:
-
-  * Either verify or provision the defined [IAM roles](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html)
-  * Build a deployable application via `Provision()`
-  * Zip the contents and associated proxying logic
-  * Dynamically create a CloudFormation template to either create or update the service state.
-  * Optionally:
-    * Register with S3 and SNS for push source configuration
-    * Provision an [API Gateway](https://aws.amazon.com/api-gateway/) service to make your functions publicly available
-    * Provision an [S3 static website](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html)
-
 Visit [gosparta.io](https://gosparta.io) for complete documentation.
+
+## Contributing
+
+Sparta contributions are most welcome. Please consult the latest [issues](https://github.com/mweagle/Sparta/issues) for open issues.
+
+### Building
+
+Locally building or testing Sparta itself is typically only needed to make package
+changes. Sparta is more often used as a required import of another application.
+Building is done via [mage](https://magefile.org/).
+
+To get started building and verifying local changes:
+
+  1. `go get -u -d github.com/magefile/mage`
+  1. In the .../mweagle/Sparta directory, run `mage -l` to list the current targets:
+
+    Targets:
+      build                           the application
+      clean                           the working directory
+      describe                        runs the `TestDescribe` test to generate a describe HTML output file at graph.html
+      ensureAllPreconditions          ensures that the source passes *ALL* static `ensure*` precondition steps
+      ensureFormatted                 ensures that the source code is formatted with goimports
+      ensureLint                      ensures that the source is `golint`ed
+      ensureStaticChecks              ensures that the source code passes static code checks
+      ensureTravisBuildEnvironment    is the command that sets up the Travis environment to run the build.
+      ensureVet                       ensures that the source has been `go vet`ted
+      generateBuildInfo               creates the automatic buildinfo.go file so that we can stamp the SHA into the binaries we build...
+      generateConstants               runs the set of commands that update the embedded CONSTANTS for both local and AWS Lambda execution
+      installBuildRequirements        installs or updates the dependent packages that aren't referenced by the source, but are needed to build the Sparta source
+      publish                         the latest source
+      test                            runs the Sparta tests
+      testCover                       runs the test and opens up the resulting report
+      travisBuild                     is the task to build in the context of a Travis CI pipeline
+
+Confirm tests are passing on `HEAD` by first running `mage -v test`.
+
+As you periodically make local changes, run `mage -v test` to confirm backward compatibility.
+
+### Tests
+
+When possible, please include a [test case](https://golang.org/pkg/testing/) that verifies the local change and ensures compatibility.
 
 ## Contributors
 
-_Thanks to all Sparta contributors (alphabetical)_
+Thanks to all Sparta contributors (alphabetical):
 
-  - **Kyle Anderson**
-  - [James Brook](https://github.com/jbrook)
-  - [Ryan Brown](https://github.com/ryansb)
-  - [sdbeard](https://github.com/sdbeard)
-  - [Scott Raine](https://github.com/nylar)
-  - [Paul Seiffert](https://github.com/seiffert)
-  - [Thom Shutt](https://github.com/thomshutt)
+* **Kyle Anderson**
+* [James Brook](https://github.com/jbrook)
+* [Ryan Brown](https://github.com/ryansb)
+* [sdbeard](https://github.com/sdbeard)
+* [Scott Raine](https://github.com/nylar)
+* [Paul Seiffert](https://github.com/seiffert)
+* [Thom Shutt](https://github.com/thomshutt)
 
