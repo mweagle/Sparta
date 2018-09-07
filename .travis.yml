@@ -5,7 +5,7 @@ go:
 - tip
 before_install:
 - go get -v github.com/magefile/mage
-script: mage travisBuild
+script: mage -v travisBuild
 env:
   global:
   - S3_BUCKET=weagle

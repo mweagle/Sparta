@@ -152,7 +152,7 @@ func InstallBuildRequirements() error {
 	mageLog("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
-		"github.com/golang/dep",
+		"github.com/golang/dep/...",
 		"honnef.co/go/tools/cmd/megacheck",
 		"honnef.co/go/tools/cmd/gosimple",
 		"honnef.co/go/tools/cmd/unused",
