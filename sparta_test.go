@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
+	"time"
 
 	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -327,4 +329,74 @@ func TestNOP(t *testing.T) {
 	template.AddResource("S3Bucket", s3Resources)
 	json, _ := json.MarshalIndent(template, "", " ")
 	fmt.Printf("\n%s\n", string(json))
+}
+
+func TestGlobalTransform(t *testing.T) {
+	transformName := fmt.Sprintf("Echo%d", time.Now().Unix())
+	template := gocf.NewTemplate()
+	s3Resources := gocf.S3Bucket{
+		BucketEncryption: &gocf.S3BucketBucketEncryption{
+			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeKey"),
+					},
+				},
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeOtherKey"),
+					},
+				},
+			},
+		},
+	}
+	template.AddResource("S3Bucket", s3Resources)
+	template.Transform = []string{transformName}
+	json, _ := json.MarshalIndent(template, "", " ")
+	output := string(json)
+	fmt.Printf("\n%s\n", output)
+
+	if !strings.Contains(output, transformName) {
+		t.Fatalf("Failed to find global Transform in template")
+	}
+}
+
+func TestResourceTransform(t *testing.T) {
+	transformName := fmt.Sprintf("Echo%d", time.Now().Unix())
+	template := gocf.NewTemplate()
+	s3Resources := gocf.S3Bucket{
+		BucketEncryption: &gocf.S3BucketBucketEncryption{
+			ServerSideEncryptionConfiguration: &gocf.S3BucketServerSideEncryptionRuleList{
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeKey"),
+					},
+				},
+				gocf.S3BucketServerSideEncryptionRule{
+					ServerSideEncryptionByDefault: &gocf.S3BucketServerSideEncryptionByDefault{
+						KMSMasterKeyID: gocf.String("SomeOtherKey"),
+					},
+				},
+			},
+		},
+	}
+	bucketResource := template.AddResource("S3Bucket", s3Resources)
+	bucketResource.Transform = &gocf.FnTransform{
+		Name: gocf.String(transformName),
+		Parameters: map[string]interface{}{
+			"SomeValue": gocf.Integer(42),
+		},
+	}
+
+	template.Transform = []string{transformName}
+	json, _ := json.MarshalIndent(template, "", " ")
+	output := string(json)
+	fmt.Printf("\n%s\n", output)
+
+	if !strings.Contains(output, transformName) {
+		t.Fatalf("Failed to find resource Transform in template")
+	}
+	if !strings.Contains(output, "SomeValue") {
+		t.Fatalf("Failed to find resource Parameters in template")
+	}
 }
