@@ -285,11 +285,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f95ebaa96b4ce704da4bfec7145528967af8baef1dd74a2c29803d8a931dbc0f"
+  digest = "1:00f8fd60c55a351dde2c2eb8f756eda4f4d98e01977ee4537caafcb3cfabcfe8"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
   pruneopts = "UT"
-  revision = "accd0c0dac9d6a1d6ce1aab8f862d182dd3ed787"
+  revision = "9c0b967a1b12060d76ce1179c13c3ed598e19fb8"
 
 [[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
