@@ -65,6 +65,9 @@ func (s3Site *S3Site) export(serviceName string,
 		AccessControl:        gocf.String("PublicRead"),
 		WebsiteConfiguration: s3WebsiteConfig,
 	}
+	if s3Site.BucketName != nil {
+		s3Bucket.BucketName = s3Site.BucketName
+	}
 	s3BucketResourceName := s3Site.CloudFormationS3ResourceName()
 	cfResource := template.AddResource(s3BucketResourceName, s3Bucket)
 	cfResource.DeletionPolicy = "Delete"

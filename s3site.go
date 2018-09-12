@@ -2,6 +2,7 @@ package sparta
 
 import (
 	"github.com/aws/aws-sdk-go/service/s3"
+	gocf "github.com/mweagle/go-cloudformation"
 )
 
 func stableCloudformationResourceName(prefix string) string {
@@ -17,6 +18,9 @@ type S3Site struct {
 	resources string
 	// If nil, defaults to ErrorDocument: error.html and IndexDocument: index.html
 	WebsiteConfiguration *s3.WebsiteConfiguration
+	// BucketName is the name of the bucket to create. Required
+	// to specify a CloudFront Distribution
+	BucketName *gocf.StringExpr
 }
 
 // CloudFormationS3ResourceName returns the stable CloudformationResource name that
