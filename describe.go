@@ -139,7 +139,7 @@ func templateResourceForKey(resourceKeyName string, logger *logrus.Logger) *temp
 	return resource
 }
 func templateResourcesForKeys(resourceKeyNames []string, logger *logrus.Logger) []*templateResource {
-	resources := make([]*templateResource, 0)
+	var resources []*templateResource
 
 	for _, eachKey := range resourceKeyNames {
 		loadedResource := templateResourceForKey(eachKey, logger)
