@@ -1,5 +1,30 @@
 # Change Notes
 
+## v1.4.0
+
+- :warning: **BREAKING**
+  - Updated [util.ConvergeStackState]() to accept a timeout parameter
+- :checkered_flag: **CHANGES**
+  - Added [decorator.]CloudFrontSiteDistributionDecorator]() to provision a CloudFormation distribution with a custom Route53 name. Sample usage:
+      ```
+      func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
+
+        hooks := &sparta.WorkflowHooks{}
+        siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+          "mysubdomain",
+          "myAWSHostedZone.com)
+        hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+          siteHookDecorator,
+        }
+        return hooks
+      }
+      ```
+      - Supply the `WorkflowHooks` struct to `MainEx` to annotate your template with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay. 
+  - Replaced _Makefile_ with [magefile]() to better support cross platform builds.
+    - This is an internal only change and does not impact clients
+- :bug:  **FIXED**
+
+
 ## v1.3.0
 
 - :warning: **BREAKING**
