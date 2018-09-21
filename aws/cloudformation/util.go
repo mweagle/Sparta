@@ -361,7 +361,7 @@ func stackCapabilities(template *gocf.Template) []*string {
 			}
 		}
 	}
-	capabilities := make([]*string, 0)
+	var capabilities []*string
 	for eachKey := range capabilitiesMap {
 		capabilities = append(capabilities, aws.String(eachKey))
 	}
@@ -913,6 +913,7 @@ func ConvergeStackState(serviceName string,
 	templateURL string,
 	tags map[string]string,
 	startTime time.Time,
+	operationTimeout time.Duration,
 	awsSession *session.Session,
 	outputsDividerChar string,
 	dividerWidth int,
@@ -950,9 +951,9 @@ func ConvergeStackState(serviceName string,
 	} else {
 		// Create stack
 		createStackInput := &cloudformation.CreateStackInput{
-			StackName:        aws.String(serviceName),
-			TemplateURL:      aws.String(templateURL),
-			TimeoutInMinutes: aws.Int64(20),
+			StackName:   aws.String(serviceName),
+			TemplateURL: aws.String(templateURL),
+			TimeoutInMinutes: aws.Int64(int64(operationTimeout.Minutes())),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
 			Capabilities:     stackCapabilities(cfTemplate),
 		}
