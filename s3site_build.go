@@ -38,28 +38,35 @@ func (s3Site *S3Site) export(serviceName string,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 
-	websiteConfig := s3Site.WebsiteConfiguration
-	if nil == websiteConfig {
-		websiteConfig = &s3.WebsiteConfiguration{}
+	if s3Site.WebsiteConfiguration == nil {
+		s3Site.WebsiteConfiguration = &s3.WebsiteConfiguration{
+			ErrorDocument: &s3.ErrorDocument{
+				Key: aws.String("error.html"),
+			},
+			IndexDocument: &s3.IndexDocument{
+				Suffix: aws.String("index.html"),
+			},
+		}
+	}
+	// Ensure everything is set
+	if s3Site.WebsiteConfiguration.ErrorDocument == nil {
+		s3Site.WebsiteConfiguration.ErrorDocument = &s3.ErrorDocument{
+			Key: aws.String("error.html"),
+		}
+	}
+	if s3Site.WebsiteConfiguration.IndexDocument == nil {
+		s3Site.WebsiteConfiguration.IndexDocument = &s3.IndexDocument{
+			Suffix: aws.String("index.html"),
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 1 - Create the S3 bucket.  The "BucketName" property is empty s.t.
 	// AWS will assign a unique one.
-	if nil == websiteConfig.ErrorDocument {
-		websiteConfig.ErrorDocument = &s3.ErrorDocument{
-			Key: aws.String("error.html"),
-		}
-	}
-	if nil == websiteConfig.IndexDocument {
-		websiteConfig.IndexDocument = &s3.IndexDocument{
-			Suffix: aws.String("index.html"),
-		}
-	}
 
 	s3WebsiteConfig := &gocf.S3BucketWebsiteConfiguration{
-		ErrorDocument: gocf.String(aws.StringValue(websiteConfig.ErrorDocument.Key)),
-		IndexDocument: gocf.String(aws.StringValue(websiteConfig.IndexDocument.Suffix)),
+		ErrorDocument: gocf.String(aws.StringValue(s3Site.WebsiteConfiguration.ErrorDocument.Key)),
+		IndexDocument: gocf.String(aws.StringValue(s3Site.WebsiteConfiguration.IndexDocument.Suffix)),
 	}
 	s3Bucket := &gocf.S3Bucket{
 		AccessControl:        gocf.String("PublicRead"),
