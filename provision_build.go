@@ -1111,6 +1111,26 @@ func createUploadStep(packagePath string) workflowStep {
 	}
 }
 
+// maximumStackOperationTimeout returns the timeout
+// value to use for a stack operation based on the type
+// of resources that it provisions. In general the timeout
+// is short with an exception made for CloudFront
+// distributions
+func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger) time.Duration {
+	stackOperationTimeout := 20 * time.Minute
+	// If there is a CloudFront distributon in there then
+	// let's give that a bit more time to settle down...In general
+	// the initial CloudFront distribution takes ~30 minutes
+	for _, eachResource := range template.Resources {
+		if eachResource.Properties.CfnResourceType() == "AWS::CloudFront::Distribution" {
+			stackOperationTimeout = 60 * time.Minute
+			break
+		}
+	}
+	logger.WithField("OperationTimeout", stackOperationTimeout).Debug("Computed operation timeout value")
+	return stackOperationTimeout
+}
+
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
 // the config files in the package, and the
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
@@ -1351,12 +1371,14 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			if ctx.userdata.inPlace {
 				stack, stackErr = applyInPlaceFunctionUpdates(ctx, uploadURL)
 			} else {
+				operationTimeout := maximumStackOperationTimeout(ctx.context.cfTemplate, ctx.logger)
 				// Regular update, go ahead with the CloudFormation changes
 				stack, stackErr = spartaCF.ConvergeStackState(ctx.userdata.serviceName,
 					ctx.context.cfTemplate,
 					uploadURL,
 					stackTags,
 					ctx.transaction.startTime,
+					operationTimeout,
 					ctx.context.awsSession,
 					"▬",
 					dividerLength,
