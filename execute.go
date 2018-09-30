@@ -24,8 +24,12 @@ const functionNameDelimiter = "_"
 // tunneling this value through allows Sparta to leverage the
 // built in env vars.
 func awsLambdaInternalName(internalFunctionName string) string {
+
 	var internalNameParts []string
 
+	// If this is something that implements something else, trim the
+	// leading *
+	internalFunctionName = strings.TrimPrefix(internalFunctionName, "*")
 	customTypeParts := reSplitCustomType.Split(internalFunctionName, -1)
 	if len(customTypeParts) > 1 {
 		internalNameParts = []string{customTypeParts[len(customTypeParts)-1]}

@@ -359,6 +359,7 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 			ctx.userdata.serviceName,
 			serviceTemplate,
 			ctx.userdata.s3Bucket,
+			ctx.context.s3CodeZipURL.keyName(),
 			ctx.userdata.buildID,
 			ctx.context.awsSession,
 			ctx.userdata.noop,
@@ -1497,7 +1498,6 @@ func ensureCloudFormationStack() workflowStep {
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
-				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
 				ctx.context.s3CodeZipURL.version,

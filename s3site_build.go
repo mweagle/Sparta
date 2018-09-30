@@ -131,7 +131,6 @@ func (s3Site *S3Site) export(serviceName string,
 	statements = append(statements, spartaIAM.PolicyStatement{
 		Action: []string{"s3:DeleteObject",
 			"s3:PutObject",
-			"s3:DeleteObjects",
 			"s3:DeleteObjects"},
 		Effect:   "Allow",
 		Resource: s3SiteBucketAllKeysResourceValue,
@@ -172,16 +171,18 @@ func (s3Site *S3Site) export(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// 4 - Create the lambda function definition that executes with the
 	// dynamically provisioned IAM policy.  This is similar to what happens in
-	// ensureCustomResourceHandler, but due to the more complex IAM rules
+	// EnsureCustomResourceHandler, but due to the more complex IAM rules
 	// there's a bit of duplication
 	//	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
 	logger.WithFields(logrus.Fields{
 		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
-	lambdaFunctionName := awsLambdaFunctionName(cfCustomResources.ZipToS3Bucket)
-
-	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+	// Since this is a custom resource command, stuff the type in the environment
+	userDispatchMap := map[string]*gocf.StringExpr{
+		EnvVarCustomResourceTypeName: gocf.String(cfCustomResources.ZipToS3Bucket),
+	}
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(userDispatchMap,
 		cfCustomResources.ZipToS3Bucket,
 		nil,
 		logger)
@@ -195,13 +196,16 @@ func (s3Site *S3Site) export(serviceName string,
 		},
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
-		Handler:      gocf.String(binaryName),
-		Role:         iamRoleRef,
-		Runtime:      gocf.String(GoLambdaVersion),
-		MemorySize:   gocf.Integer(256),
-		Timeout:      gocf.Integer(180),
-		FunctionName: lambdaFunctionName.String(),
-		Environment:  lambdaEnv,
+		Handler:    gocf.String(binaryName),
+		Role:       iamRoleRef,
+		Runtime:    gocf.String(GoLambdaVersion),
+		MemorySize: gocf.Integer(256),
+		Timeout:    gocf.Integer(180),
+		// Let AWS assign the function name
+		/*
+			FunctionName: lambdaFunctionName.String(),
+		*/
+		Environment: lambdaEnv,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
