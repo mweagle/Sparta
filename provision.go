@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"reflect"
 	"regexp"
 	"runtime"
-	"strings"
 	"text/template"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
-	cloudformationresources "github.com/mweagle/Sparta/aws/cloudformation/resources"
+	cfCustomResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
@@ -21,38 +21,11 @@ const (
 	// ScratchDirectory is the cwd relative path component
 	// where intermediate build artifacts are created
 	ScratchDirectory = ".sparta"
+	// EnvVarCustomResourceTypeName is the environment variable
+	// name that stores the CustomResource TypeName that should be
+	// instantiated
+	EnvVarCustomResourceTypeName = "SPARTA_CUSTOM_RESOURCE_TYPE"
 )
-
-// PushSourceConfigurationActions map stores common IAM Policy Actions for Lambda
-// push-source configuration management.
-// The configuration is handled by CustomResources inserted into the generated
-// CloudFormation template.
-var PushSourceConfigurationActions = struct {
-	SNSLambdaEventSource            []string
-	S3LambdaEventSource             []string
-	SESLambdaEventSource            []string
-	CloudWatchLogsLambdaEventSource []string
-}{
-	SNSLambdaEventSource: []string{"sns:ConfirmSubscription",
-		"sns:GetTopicAttributes",
-		"sns:ListSubscriptionsByTopic",
-		"sns:Subscribe",
-		"sns:Unsubscribe"},
-	S3LambdaEventSource: []string{"s3:GetBucketLocation",
-		"s3:GetBucketNotification",
-		"s3:PutBucketNotification",
-		"s3:GetBucketNotificationConfiguration",
-		"s3:PutBucketNotificationConfiguration"},
-	SESLambdaEventSource: []string{"ses:CreateReceiptRuleSet",
-		"ses:CreateReceiptRule",
-		"ses:DeleteReceiptRule",
-		"ses:DeleteReceiptRuleSet",
-		"ses:DescribeReceiptRuleSet"},
-	CloudWatchLogsLambdaEventSource: []string{"logs:DescribeSubscriptionFilters",
-		"logs:DeleteSubscriptionFilter",
-		"logs:PutSubscriptionFilter",
-	},
-}
 
 // This is a literal version of the DiscoveryInfo struct.
 var discoveryData = `
@@ -144,15 +117,14 @@ func discoveryInfoForResource(resID string, deps map[string]string) (*gocf.Strin
 	return gocf.Base64(templateExpr), nil
 }
 
-func awsPrincipalToService(awsPrincipalName string) string {
-	return strings.ToUpper(strings.SplitN(awsPrincipalName, ".:-", 2)[0])
-}
-
-// ensureCustomResourceHandler handles ensuring that the custom resource responsible
-// for supporting the operation is actually part of this stack.
-func ensureCustomResourceHandler(serviceName string,
-	binaryName string,
-	customResourceTypeName string,
+// EnsureCustomResourceHandler handles ensuring that the custom resource responsible
+// for supporting the operation is actually part of this stack. The returned
+// string value is the CloudFormation resource name that implements this
+// resource. The customResourceCloudFormationTypeName must have already
+// been registered with gocf and implement the resources.CustomResourceCommand
+// interface
+func EnsureCustomResourceHandler(serviceName string,
+	customResourceCloudFormationTypeName string,
 	sourceArn *gocf.StringExpr,
 	dependsOn []string,
 	template *gocf.Template,
@@ -160,65 +132,91 @@ func ensureCustomResourceHandler(serviceName string,
 	S3Key string,
 	logger *logrus.Logger) (string, error) {
 
+	// Ok, we need a way to round trip this type as the AWS lambda function name.
+	// The problem with this is that the full CustomResource::Type value isn't an
+	// AWS Lambda friendly name. We want to do this so that in the AWS lambda handler
+	// we can attempt to instantiate a new CustomAction resource, typecast it to a
+	// CustomResourceCommand type and then apply the workflow. Doing this means
+	// we can decouple the lookup logic for custom resource...
+
+	resource := gocf.NewResourceByType(customResourceCloudFormationTypeName)
+	if resource == nil {
+		return "", errors.Errorf("Unable to create custom resource handler of type: %v", customResourceCloudFormationTypeName)
+	}
+	command, commandOk := resource.(cfCustomResources.CustomResourceCommand)
+	if !commandOk {
+		return "", errors.Errorf("Cannot type assert resource type %s to CustomResourceCommand", customResourceCloudFormationTypeName)
+	}
+
 	// Prefix
+	commandType := reflect.TypeOf(command)
+	customResourceTypeName := fmt.Sprintf("%T", command)
 	prefixName := fmt.Sprintf("%s-Sparta-CFRes", serviceName)
 	subscriberHandlerName := CloudFormationResourceName(prefixName, customResourceTypeName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// IAM Role definition
-	iamResourceName, err := ensureIAMRoleForCustomResource(customResourceTypeName,
+	iamResourceName, err := ensureIAMRoleForCustomResource(command,
 		sourceArn,
 		template,
 		logger)
 	if nil != err {
 		return "", errors.Wrapf(err,
-			"Failed to ensure IAM Role for custom resource: %s",
-			customResourceTypeName)
+			"Failed to ensure IAM Role for custom resource: %T",
+			command)
 	}
 	iamRoleRef := gocf.GetAtt(iamResourceName, "Arn")
 	_, exists := template.Resources[subscriberHandlerName]
-	if !exists {
-		logger.WithFields(logrus.Fields{
-			"Service": customResourceTypeName,
-		}).Debug("Including Lambda CustomResource for AWS Service")
+	if exists {
+		return subscriberHandlerName, nil
+	}
 
-		configuratorDescription := customResourceDescription(serviceName,
-			customResourceTypeName)
+	// Encode the resourceType...
+	configuratorDescription := customResourceDescription(serviceName, customResourceTypeName)
 
-		//////////////////////////////////////////////////////////////////////////////
-		// Custom Resource Lambda Handler
+	//////////////////////////////////////////////////////////////////////////////
+	// Custom Resource Lambda Handler
 
-		// The handler name is the resource name & will be set in the
-		// env block
-		lambdaFunctionName := awsLambdaFunctionName(customResourceTypeName)
+	// What if we skip the function name and just stuff it into the environment for a match?
 
-		// Don't forget the discovery info...
-		lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
-			customResourceTypeName,
-			nil,
-			logger)
-		if lambdaEnvErr != nil {
-			return "", errors.Wrapf(lambdaEnvErr, "Failed to create environment for required custom resource")
-		}
-		customResourceHandlerDef := gocf.LambdaFunction{
-			Code: &gocf.LambdaFunctionCode{
-				S3Bucket: gocf.String(S3Bucket),
-				S3Key:    gocf.String(S3Key),
-			},
-			Runtime:      gocf.String(GoLambdaVersion),
-			Description:  gocf.String(configuratorDescription),
-			Handler:      gocf.String(binaryName),
-			Role:         iamRoleRef,
-			Timeout:      gocf.Integer(30),
-			FunctionName: lambdaFunctionName.String(),
-			// DISPATCH INFORMATION
-			Environment: lambdaEnv,
-		}
+	// Insert it into the template resources...
+	logger.WithFields(logrus.Fields{
+		"CloudFormationResourceType": customResourceCloudFormationTypeName,
+		"Resource":                   customResourceTypeName,
+		"TypeOf":                     commandType.String(),
+	}).Info("Including Lambda CustomResource")
 
-		cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
-		if nil != dependsOn && (len(dependsOn) > 0) {
-			cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
-		}
+	// Don't forget the discovery info...
+	userDispatchMap := map[string]*gocf.StringExpr{
+		EnvVarCustomResourceTypeName: gocf.String(customResourceCloudFormationTypeName),
+	}
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(userDispatchMap,
+		customResourceTypeName,
+		nil,
+		logger)
+	if lambdaEnvErr != nil {
+		return "", errors.Wrapf(lambdaEnvErr, "Failed to create environment for required custom resource")
+	}
+	// Add the special key that's the custom resource type name
+	customResourceHandlerDef := gocf.LambdaFunction{
+		Code: &gocf.LambdaFunctionCode{
+			S3Bucket: gocf.String(S3Bucket),
+			S3Key:    gocf.String(S3Key),
+		},
+		Runtime:     gocf.String(GoLambdaVersion),
+		Description: gocf.String(configuratorDescription),
+		Handler:     gocf.String(SpartaBinaryName),
+		Role:        iamRoleRef,
+		Timeout:     gocf.Integer(30),
+		// Let AWS assign a name here...
+		//		FunctionName: lambdaFunctionName.String(),
+		// DISPATCH INFORMATION
+		Environment: lambdaEnv,
+	}
+
+	cfResource := template.AddResource(subscriberHandlerName, customResourceHandlerDef)
+	if nil != dependsOn && (len(dependsOn) > 0) {
+		cfResource.DependsOn = append(cfResource.DependsOn, dependsOn...)
 	}
 	return subscriberHandlerName, nil
 }
@@ -227,28 +225,15 @@ func ensureCustomResourceHandler(serviceName string,
 // AWS principal (eg, s3.*.*) exists, and includes statements for the given
 // sourceArn.  Sparta uses a single IAM::Role for the CustomResource configuration
 // lambda, which is the union of all Arns in the application.
-func ensureIAMRoleForCustomResource(awsPrincipalName string,
+func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceCommand,
 	sourceArn *gocf.StringExpr,
 	template *gocf.Template,
 	logger *logrus.Logger) (string, error) {
 
-	var principalActions []string
-	switch awsPrincipalName {
-	case cloudformationresources.SNSLambdaEventSource:
-		principalActions = PushSourceConfigurationActions.SNSLambdaEventSource
-	case cloudformationresources.S3LambdaEventSource:
-		principalActions = PushSourceConfigurationActions.S3LambdaEventSource
-	case cloudformationresources.SESLambdaEventSource:
-		principalActions = PushSourceConfigurationActions.SESLambdaEventSource
-	case cloudformationresources.CloudWatchLogsLambdaEventSource:
-		principalActions = PushSourceConfigurationActions.CloudWatchLogsLambdaEventSource
-	default:
-		return "", errors.Errorf("Unsupported principal for IAM role creation: %s", awsPrincipalName)
-	}
-
 	// What's the stable IAMRoleName?
-	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", awsPrincipalToService(awsPrincipalName))
-	stableRoleName := CloudFormationResourceName(resourceBaseName, awsPrincipalName)
+	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", fmt.Sprintf("%T", command))
+	stableRoleName := CloudFormationResourceName(resourceBaseName, resourceBaseName)
+	principalActions := command.IAMPrivileges()
 
 	// Ensure it exists, then check to see if this Source ARN is already specified...
 	// Checking equality with Stringable?

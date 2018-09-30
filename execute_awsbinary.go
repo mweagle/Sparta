@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 	"reflect"
-	"strings"
 	"sync"
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
@@ -147,6 +146,10 @@ func Execute(serviceName string,
 	testAWSName := ""
 	var handlerSymbol interface{}
 	knownNames := []string{}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// User registered commands?
+	//////////////////////////////////////////////////////////////////////////////
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
 		testAWSName = lambdaFunctionName.String().Literal
@@ -168,47 +171,41 @@ func Execute(serviceName string,
 			break
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Request to instantiate a CustomResourceHandler that implements
+	// the CustomResourceCommand interface?
+	//////////////////////////////////////////////////////////////////////////////
 	if handlerSymbol == nil {
-		// So the sanitized name is what we use to dispatch. For
-		// that we need a reverse lookup?
-		customResourceTypes := []string{
-			cloudformationResources.HelloWorld,
-			cloudformationResources.S3LambdaEventSource,
-			cloudformationResources.SNSLambdaEventSource,
-			cloudformationResources.SESLambdaEventSource,
-			cloudformationResources.CloudWatchLogsLambdaEventSource,
-			cloudformationResources.ZipToS3Bucket,
-		}
-		customResourceType := ""
-		for _, eachCustomResourceType := range customResourceTypes {
-			lambdaFunctionName = awsLambdaFunctionName(eachCustomResourceType)
-			testAWSName = lambdaFunctionName.String().Literal
-
+		requestCustomResourceType := os.Getenv(EnvVarCustomResourceTypeName)
+		if requestCustomResourceType != "" {
+			knownNames = append(knownNames, fmt.Sprintf("CloudFormation Custom Resource: %s", requestCustomResourceType))
 			logger.WithFields(logrus.Fields{
-				"customResourceType": eachCustomResourceType,
-				"computedLambdaName": testAWSName,
-			}).Debug("Checking custom resource")
+				"customResourceTypeName": requestCustomResourceType,
+			}).Debug("Checking to see if there is a custom resource")
 
-			knownNames = append(knownNames, testAWSName)
-
-			if requestedLambdaFunctionName == testAWSName {
-				customResourceType = eachCustomResourceType
-				break
-			}
-		}
-		if customResourceType != "" {
-			customHandler := cloudformationResources.NewCustomResourceLambdaHandler(customResourceType,
-				logger)
-			if customHandler != nil {
-				handlerSymbol = customHandler
+			resource := gocf.NewResourceByType(requestCustomResourceType)
+			if resource != nil {
+				// Handler?
+				command, commandOk := resource.(cloudformationResources.CustomResourceCommand)
+				if !commandOk {
+					logger.Error("CloudFormation type %s doesn't implement cloudformationResources.CustomResourceCommand", requestCustomResourceType)
+				} else {
+					customHandler := cloudformationResources.CloudFormationLambdaCustomResourceHandler(command, logger)
+					if customHandler != nil {
+						handlerSymbol = customHandler
+					}
+				}
+			} else {
+				logger.Error("Failed to create CloudFormation custom resource of type: %s", requestCustomResourceType)
 			}
 		}
 	}
 
 	if handlerSymbol == nil {
-		errorMessage := fmt.Errorf("No handler found for lambdaName: %s. Known: %s",
+		errorMessage := fmt.Errorf("No handler found for AWS Lambda function: %s. Registered function name: %#v",
 			requestedLambdaFunctionName,
-			strings.Join(knownNames, ","))
+			knownNames)
 		logger.Error(errorMessage)
 		return errorMessage
 	}
