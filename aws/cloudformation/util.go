@@ -951,8 +951,8 @@ func ConvergeStackState(serviceName string,
 	} else {
 		// Create stack
 		createStackInput := &cloudformation.CreateStackInput{
-			StackName:   aws.String(serviceName),
-			TemplateURL: aws.String(templateURL),
+			StackName:        aws.String(serviceName),
+			TemplateURL:      aws.String(templateURL),
 			TimeoutInMinutes: aws.Int64(int64(operationTimeout.Minutes())),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
 			Capabilities:     stackCapabilities(cfTemplate),
