@@ -40,25 +40,22 @@ func applyLoggerHooks(serviceName string, workflowHooks *WorkflowHooks, logger *
 			logger.Errorf("Failed to hook logger: %s", loggerHookErr.Error())
 			return errors.Wrapf(loggerHookErr, "Attempting to customize logger")
 		}
+		logger.Info("Registered runtime logger hook")
 	}
-	logger.Info("Registered runtime logger hook")
 	return nil
 }
 func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
 	logger.Info(headerDivider)
-	if enableColors {
-		red := func(inputText string) string {
+	red := func(inputText string) string {
+		if enableColors {
 			return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 		}
-
-		logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
-		logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
-		logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
-	} else {
-		logger.Info(fmt.Sprintf(`╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : %s`, SpartaVersion))
-		logger.Info(fmt.Sprintf(`╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : %s`, SpartaGitHash[0:7]))
-		logger.Info(fmt.Sprintf(`╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : %s`, runtime.Version()))
+		return inputText
 	}
+	logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
+	logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
+
 	logger.Info(headerDivider)
 }
 
