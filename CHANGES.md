@@ -4,6 +4,7 @@
 
 - :warning: **BREAKING**
   - Updated [util.ConvergeStackState]() to accept a timeout parameter
+  - Updated [ServiceDecorator]() to accept the S3Key parameter
 - :checkered_flag: **CHANGES**
   - Added [decorator.]CloudFrontSiteDistributionDecorator]() to provision a CloudFormation distribution with a custom Route53 name. Sample usage:
       ```
@@ -19,7 +20,7 @@
         return hooks
       }
       ```
-      - Supply the `WorkflowHooks` struct to `MainEx` to annotate your template with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay. 
+      - Supply the `WorkflowHooks` struct to `MainEx` to annotate your template with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
   - Replaced _Makefile_ with [magefile]() to better support cross platform builds.
     - This is an internal only change and does not impact clients
 - :bug:  **FIXED**
