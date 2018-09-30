@@ -146,19 +146,29 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 	// All good
 	return nil, nil
 }
-func (command ZipToS3BucketResource) create(awsSession *session.Session,
+
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *ZipToS3BucketResource) IAMPrivileges() []string {
+	// Empty implementation - s3Site.go handles setting up the IAM privs for this.
+	return []string{}
+}
+
+// Create implements the custom resource create operation
+func (command ZipToS3BucketResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsSession, event, logger)
 }
 
-func (command ZipToS3BucketResource) update(awsSession *session.Session,
+// Update implements the custom resource update operation
+func (command ZipToS3BucketResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.unzip(awsSession, event, logger)
 }
 
-func (command ZipToS3BucketResource) delete(awsSession *session.Session,
+// Delete implements the custom resource delete operation
+func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 

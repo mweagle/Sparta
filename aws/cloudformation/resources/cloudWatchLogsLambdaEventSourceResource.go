@@ -34,6 +34,13 @@ type CloudWatchLogsLambdaEventSourceResource struct {
 	CloudWatchEventSourceResourceRequest
 }
 
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *CloudWatchLogsLambdaEventSourceResource) IAMPrivileges() []string {
+	return []string{"logs:DescribeSubscriptionFilters",
+		"logs:DeleteSubscriptionFilter",
+		"logs:PutSubscriptionFilter"}
+}
+
 func cloudWatchEventSourceProperties(event *CloudFormationLambdaEvent) (*CloudWatchEventSourceResourceRequest, error) {
 	eventProperties := CloudWatchEventSourceResourceRequest{}
 	unmarshalErr := json.Unmarshal(event.ResourceProperties, &eventProperties)
@@ -111,19 +118,23 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 	}
 	return nil, opErr
 }
-func (command CloudWatchLogsLambdaEventSourceResource) create(awsSession *session.Session,
+
+// Create implements the create operation
+func (command CloudWatchLogsLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
-func (command CloudWatchLogsLambdaEventSourceResource) update(awsSession *session.Session,
+// Update implements the update operation
+func (command CloudWatchLogsLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
-func (command CloudWatchLogsLambdaEventSourceResource) delete(awsSession *session.Session,
+// Delete implements the delete operation
+func (command CloudWatchLogsLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsSession, event, logger)

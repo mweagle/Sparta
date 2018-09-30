@@ -53,7 +53,7 @@ func TestExecuteCreateHelloWorld(t *testing.T) {
 
 	logger := logrus.New()
 	awsSession := awsSession(logger)
-	createOutputs, createError := customResource1.create(awsSession,
+	createOutputs, createError := customResource1.Create(awsSession,
 		mockHelloWorldResourceEvent(t),
 		logger)
 	if nil != createError {

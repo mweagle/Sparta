@@ -35,6 +35,15 @@ type S3LambdaEventSourceResource struct {
 	S3LambdaEventSourceResourceRequest
 }
 
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *S3LambdaEventSourceResource) IAMPrivileges() []string {
+	return []string{"s3:GetBucketLocation",
+		"s3:GetBucketNotification",
+		"s3:PutBucketNotification",
+		"s3:GetBucketNotificationConfiguration",
+		"s3:PutBucketNotificationConfiguration"}
+}
+
 func (command S3LambdaEventSourceResource) updateNotification(isTargetActive bool,
 	session *session.Session,
 	event *CloudFormationLambdaEvent,
@@ -93,19 +102,22 @@ func (command S3LambdaEventSourceResource) updateNotification(isTargetActive boo
 	return nil, putErr
 }
 
-func (command S3LambdaEventSourceResource) create(awsSession *session.Session,
+// Create implements the custom resource create operation
+func (command S3LambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsSession, event, logger)
 }
 
-func (command S3LambdaEventSourceResource) update(awsSession *session.Session,
+// Update implements the custom resource update operation
+func (command S3LambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(true, awsSession, event, logger)
 }
 
-func (command S3LambdaEventSourceResource) delete(awsSession *session.Session,
+// Delete implements the custom resource delete operation
+func (command S3LambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateNotification(false, awsSession, event, logger)

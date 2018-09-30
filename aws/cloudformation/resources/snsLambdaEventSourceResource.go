@@ -84,19 +84,32 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 
 	return nil, opErr
 }
-func (command SNSLambdaEventSourceResource) create(awsSession *session.Session,
+
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *SNSLambdaEventSourceResource) IAMPrivileges() []string {
+	return []string{"sns:ConfirmSubscription",
+		"sns:GetTopicAttributes",
+		"sns:ListSubscriptionsByTopic",
+		"sns:Subscribe",
+		"sns:Unsubscribe"}
+}
+
+// Create implements the custom resource create operation
+func (command SNSLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
-func (command SNSLambdaEventSourceResource) update(awsSession *session.Session,
+// Update implements the custom resource update operation
+func (command SNSLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(true, awsSession, event, logger)
 }
 
-func (command SNSLambdaEventSourceResource) delete(awsSession *session.Session,
+// Delete implements the custom resource delete operation
+func (command SNSLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateRegistration(false, awsSession, event, logger)
