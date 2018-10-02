@@ -3,6 +3,8 @@ package cloudwatchlogs
 import (
 	"encoding/json"
 	"testing"
+
+	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 )
 
 const logMessageTestData = `
@@ -15,12 +17,12 @@ const logMessageTestData = `
 `
 
 func TestUnmarshal(t *testing.T) {
-	var event Event
+	var event awsLambdaEvents.CloudwatchLogsEvent
 	err := json.Unmarshal([]byte(logMessageTestData), &event)
 	if nil != err {
 		t.Errorf("Failed to unmarshal log event message")
 	}
-	data, err := event.AWSLogs.DecodedData()
+	data, err := event.AWSLogs.Parse()
 	if nil != err {
 		t.Error("Failed to decode event data: " + err.Error())
 	}
