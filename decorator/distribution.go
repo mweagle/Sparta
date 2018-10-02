@@ -11,9 +11,14 @@ import (
 
 // CloudFrontSiteDistributionDecorator returns a ServiceDecoratorHookHandler
 // function that provisions a CloudFront distribution whose origin
-// is the supplied S3Site bucket
+// is the supplied S3Site bucket. If the acmCertificateARN
+// value is non-nil, the CloudFront distribution will support SSL
+// access via the ViewerCertificate struct
 func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
-	subdomain string, domainName string) sparta.ServiceDecoratorHookHandler {
+	subdomain string,
+	domainName string,
+	acmCertificateARN gocf.Stringable) sparta.ServiceDecoratorHookHandler {
+
 	bucketName := domainName
 	if subdomain != "" {
 		bucketName = fmt.Sprintf("%s.%s", subdomain, domainName)
@@ -76,10 +81,23 @@ func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 				ViewerProtocolPolicy: gocf.String("allow-all"),
 			},
 		}
+		if acmCertificateARN != nil {
+			distroConfig.ViewerCertificate = &gocf.CloudFrontDistributionViewerCertificate{
+				AcmCertificateArn: acmCertificateARN.String(),
+				SslSupportMethod:  gocf.String("vip"),
+			}
+		}
+
 		cloudfrontDistro := &gocf.CloudFrontDistribution{
 			DistributionConfig: distroConfig,
 		}
 		template.AddResource(cloudFrontDistroResourceName, cloudfrontDistro)
+
+		// Log the created record
+		template.Outputs["CloudFrontDistribution"] = &gocf.Output{
+			Description: "CloudFront Distribution Route53 entry",
+			Value:       s3Site.BucketName,
+		}
 		return nil
 	}
 	return sparta.ServiceDecoratorHookFunc(distroDecorator)
