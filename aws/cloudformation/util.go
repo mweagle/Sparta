@@ -997,7 +997,11 @@ func ConvergeStackState(serviceName string,
 				aws.StringValue(eachEvent.ResourceType),
 				aws.StringValue(eachEvent.LogicalResourceId),
 				aws.StringValue(eachEvent.ResourceStatusReason))
-			errorMessages = append(errorMessages, errMsg)
+			// Only append if the resource failed because something else failed
+			// and this resource was canceled.
+			if !strings.Contains(errMsg, "cancelled") {
+				errorMessages = append(errorMessages, errMsg)
+			}
 		case cloudformation.ResourceStatusCreateInProgress,
 			cloudformation.ResourceStatusUpdateInProgress:
 			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]
