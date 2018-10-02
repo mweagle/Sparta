@@ -1004,6 +1004,8 @@ func createPackageStep() workflowStep {
 		if runtime.GOOS == "windows" {
 			fileHeaderAnnotator = func(header *zip.FileHeader) (*zip.FileHeader, error) {
 				// Make the binary executable
+				// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
+				header.CreatorVersion = 3 << 8
 				header.ExternalAttrs = 0777 << 16
 				return header, nil
 			}
