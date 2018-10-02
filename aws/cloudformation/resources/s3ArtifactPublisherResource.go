@@ -16,7 +16,7 @@ import (
 type S3ArtifactPublisherResourceRequest struct {
 	Bucket *gocf.StringExpr
 	Key    *gocf.StringExpr
-	Body   *gocf.StringExpr
+	Body   map[string]interface{}
 }
 
 // S3ArtifactPublisherResource is a simple POC showing how to create custom resources
@@ -40,7 +40,11 @@ func (command S3ArtifactPublisherResource) Create(awsSession *session.Session,
 	if unmarshalErr != nil {
 		return nil, unmarshalErr
 	}
-	itemInput := bytes.NewReader([]byte(command.Body.Literal))
+	mapData, mapDataErr := json.Marshal(command.Body)
+	if mapDataErr != nil {
+		return nil, mapDataErr
+	}
+	itemInput := bytes.NewReader(mapData)
 	s3PutObjectParams := &s3.PutObjectInput{
 		Body:   itemInput,
 		Bucket: aws.String(command.Bucket.Literal),
