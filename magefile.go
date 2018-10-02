@@ -24,6 +24,7 @@ var ignoreSubdirectoryPaths = []string{
 	".vendor",
 	".sparta",
 	".vscode",
+	"/resources/describe",
 }
 
 // Default target to run when none is specified
@@ -54,7 +55,10 @@ func mageLog(formatSpecifier string, args ...interface{}) {
 	}
 }
 
-func goSourceFiles() ([]string, error) {
+func sourceFilesOfType(extension string) ([]string, error) {
+	testExtension := strings.TrimPrefix(extension, ".")
+	testExtension = fmt.Sprintf(".%s", testExtension)
+
 	files := make([]string, 0)
 	walker := func(path string, info os.FileInfo, err error) error {
 		contains := false
@@ -64,7 +68,7 @@ func goSourceFiles() ([]string, error) {
 				break
 			}
 		}
-		if !contains && (filepath.Ext(path) == ".go") {
+		if !contains && (filepath.Ext(path) == testExtension) {
 			files = append(files, path)
 		}
 		return nil
@@ -73,15 +77,15 @@ func goSourceFiles() ([]string, error) {
 	return files, goSourceFilesErr
 }
 
-func goSourceApply(commandParts ...string) error {
-	goSourceFiles, goSourceFilesErr := goSourceFiles()
-	if goSourceFilesErr != nil {
-		return goSourceFilesErr
+func applyToSource(fileExtension string, commandParts ...string) error {
+	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension)
+	if eligibleSourceFilesErr != nil {
+		return eligibleSourceFilesErr
 	}
-	mageLog("Found %d `go` source files", len(goSourceFiles))
+	mageLog("Found %d `%s` source files", len(eligibleSourceFiles), fileExtension)
 
 	if len(commandParts) <= 0 {
-		return errors.New("goSourceApply requires a command to apply to source files")
+		return errors.New("applyToSource requires a command to apply to source files")
 	}
 	commandArgs := []string{}
 	if len(commandParts) > 1 {
@@ -89,7 +93,7 @@ func goSourceApply(commandParts ...string) error {
 			commandArgs = append(commandArgs, eachPart)
 		}
 	}
-	for _, eachFile := range goSourceFiles {
+	for _, eachFile := range eligibleSourceFiles {
 		applyArgs := append(commandArgs, eachFile)
 		applyErr := sh.Run(commandParts[0], applyArgs...)
 		if applyErr != nil {
@@ -97,6 +101,13 @@ func goSourceApply(commandParts ...string) error {
 		}
 	}
 	return nil
+}
+
+func markdownSourceApply(commandParts ...string) error {
+	return applyToSource("md", commandParts...)
+}
+func goSourceApply(commandParts ...string) error {
+	return applyToSource("go", commandParts...)
 }
 
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
@@ -162,6 +173,7 @@ func InstallBuildRequirements() error {
 		"github.com/golang/lint/golint",
 		"github.com/mjibson/esc",
 		"github.com/securego/gosec/cmd/gosec/...",
+		"github.com/client9/misspell/cmd/misspell",
 	}
 	for _, eachDep := range requirements {
 		cmdErr := sh.Run("go",
@@ -174,6 +186,20 @@ func InstallBuildRequirements() error {
 			return cmdErr
 		}
 	}
+	return nil
+}
+
+// EnsureSpelling ensures that there are no misspellings in the source
+func EnsureSpelling() error {
+	goSpelling := func() error {
+		return goSourceApply("misspell", "-error")
+	}
+	mdSpelling := func() error {
+		return markdownSourceApply("misspell", "-error")
+	}
+	mg.SerialDeps(
+		goSpelling,
+		mdSpelling)
 	return nil
 }
 
@@ -216,6 +242,7 @@ func EnsureAllPreconditions() error {
 		EnsureLint,
 		EnsureFormatted,
 		EnsureStaticChecks,
+		EnsureSpelling,
 	)
 	return nil
 }

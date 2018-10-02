@@ -3,25 +3,33 @@
 ## v1.4.0
 
 - :warning: **BREAKING**
-  - Updated [util.ConvergeStackState]() to accept a timeout parameter
-  - Updated [ServiceDecorator]() to accept the S3Key parameter
+  - Moved `sparta.LambdaVersioningDecorator` to `decorator.LambdaVersioningDecorator`
+  - Updated [cloudformation.ConvergeStackState](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvergeStackState) to accept a timeout parameter
+  - Updated [ServiceDecorator.DecorateService](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookFunc.DecorateService) to accept the S3Key parameter
+    - This allows `ServiceDecorators` to add additional Lambda functions that are embedded in the same code bundle (eg: CloudFormation [Lambda-backed custom resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) )
 - :checkered_flag: **CHANGES**
+  - Simplified CustomResource creation and dispatch logic
+    - The upshot of this is that users can define `CustomResourceCommand` implementing CustomResources and add them to the code bundle.
+  - When a service `provision` fails, only report resources that failed to succeed. Previously, resources that were cancelled due to other resource failures were also logged as *ERROR* statements.
+  - Added `decorator.NewLogAggregatorDecorator` which forwards all CloudWatch log messages to a Kinesis stream.
+    - See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example of forwarding CloudWatch log messages to Google Stack Driver
   - Added [decorator.]CloudFrontSiteDistributionDecorator]() to provision a CloudFormation distribution with a custom Route53 name. Sample usage:
-      ```
+      ```go
       func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
-
         hooks := &sparta.WorkflowHooks{}
         siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
-          "mysubdomain",
-          "myAWSHostedZone.com)
+          "subdomainNameHere",
+          "myAWSHostedZone.com",
+          "arn:aws:acm:us-east-1:OPTIONAL-ACM-CERTIFICATE-FOR-SSL")
         hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
           siteHookDecorator,
         }
         return hooks
       }
       ```
-      - Supply the `WorkflowHooks` struct to `MainEx` to annotate your template with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
-  - Replaced _Makefile_ with [magefile]() to better support cross platform builds.
+    - Supply the `WorkflowHooks` struct to `MainEx` to annotate your service with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
+  - Added `decorator.S3ArtifactPublisherDecorator` to publish an arbitrary JSON file as a CustomResource
+  - Replaced _Makefile_ with [magefile](https://magefile.org/) to better support cross platform builds.
     - This is an internal only change and does not impact clients
 - :bug:  **FIXED**
 
@@ -157,7 +165,7 @@
     ```
     "application/json": "$input.path('$.errorMessage')",
     ```
-    - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
+    - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more information
   - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
     ```
     ERRO[0000] Failed to validate preconditions: Please run
@@ -244,7 +252,7 @@
   - Added `SupportedRequestContentTypes` to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) to limit API Gateway generated content.
   - Added `apiGateway.CORSOptions` field to configure _CORS_ settings
   - Added `Add S3Site.CloudFormationS3ResourceName()`
-    - This value can be used to scope _CORS_ accesss to a dynamoc S3 website as in:
+    - This value can be used to scope _CORS_ access to a dynamoc S3 website as in:
     ```
     apiGateway.CORSOptions = &sparta.CORSOptions{
       Headers: map[string]interface{}{
@@ -352,7 +360,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Changed `codePipelineTrigger` CLI arg name to `codePipelinePackage`
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
-    - Prior to this release, the NodeJS proxying code would copy the embedded binary to _/tmp_ and add the executable flag prior to actually launching the binary. This had a noticable performance penalty for startup.
+    - Prior to this release, the NodeJS proxying code would copy the embedded binary to _/tmp_ and add the executable flag prior to actually launching the binary. This had a noticeable performance penalty for startup.
     - This release embeds the application or library in a _./bin_ directory with the file permissions set so that there is no additional filesystem overhead on cold-start. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
   - Migrated all IPC calls to [protocolBuffers](https://developers.google.com/protocol-buffers/).
     - Message definitions are in the [proxy](https://github.com/mweagle/Sparta/tree/master/proxy) directory.
@@ -476,7 +484,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
       - _xray:PutTelemetryRecords_
     - See [AWS blog](https://aws.amazon.com/blogs/aws/aws-lambda-support-for-aws-x-ray/) for more information
   - added [LambdaFunctionOptions.Tags](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions) to support tagging AWS Lambda functions
-  - added _SpartaGitHash_ output to both CLI and CloudWatch Dashboard output. This is in addition to the _SpartaVersion_ value (which I occassionally have failed to update).
+  - added _SpartaGitHash_ output to both CLI and CloudWatch Dashboard output. This is in addition to the _SpartaVersion_ value (which I occasionally have failed to update).
 - :bug: **FIXED**
   - Fixed latent issue where `SpartaOptions.Name` field wasn't consistently used for function names.
 
