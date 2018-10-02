@@ -10,9 +10,10 @@
   version = "v1.6.2"
 
 [[projects]]
-  digest = "1:7637de64e2bad97a7b9d1665e9cb0f9b709b1ef28d09232da908ead542bf89f0"
+  digest = "1:014e79cf5c422dd0547a87bde33c7f7b3cd29116a96fac8897c7e50f18531dea"
   name = "github.com/aws/aws-lambda-go"
   packages = [
+    "events",
     "lambda",
     "lambda/messages",
     "lambdacontext",
@@ -22,7 +23,7 @@
   version = "v1.6.0"
 
 [[projects]]
-  digest = "1:02ba7cae7589b97ba41bf9b97b3d1aa90b1aae6145fddf6ccc07a5bcc5e1ae06"
+  digest = "1:748d8103523bfc4b3c82011190591da50183c8091f234cde4c899f8301ca1013"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -72,8 +73,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "a8ff9e4804fc89c994b731b1c057640ab2aecff3"
-  version = "v1.15.45"
+  revision = "53e36ebb6b2c26d228ba9563d06caf306227f110"
+  version = "v1.15.46"
 
 [[projects]]
   digest = "1:5627be48bc0061b4ed6a158e593112cd3eb6322da6ec91f73b5c70a7c9cfb01a"
@@ -355,7 +356,7 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "5295e8364332db77d75fce11f1d19c053919a9c9"
+  revision = "e3636079e1a4c1f337f212cc5cd2aca108f6c900"
 
 [[projects]]
   branch = "master"
@@ -406,6 +407,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/AlecAivazis/survey",
+    "github.com/aws/aws-lambda-go/events",
     "github.com/aws/aws-lambda-go/lambda",
     "github.com/aws/aws-lambda-go/lambdacontext",
     "github.com/aws/aws-sdk-go/aws",
