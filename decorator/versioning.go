@@ -1,6 +1,7 @@
-package sparta
+package decorator
 
 import (
+	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
@@ -9,7 +10,7 @@ import (
 // LambdaVersioningDecorator returns a TemplateDecorator
 // that is responsible for including a versioning resource
 // with the given lambda function
-func LambdaVersioningDecorator() TemplateDecorator {
+func LambdaVersioningDecorator() sparta.TemplateDecorator {
 	return func(serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
@@ -28,12 +29,12 @@ func LambdaVersioningDecorator() TemplateDecorator {
 		if incrementerErr != nil {
 			return nil
 		}
-		versionsMap, versionsMapExists := context[ContextKeyLambdaVersions].(map[string]*spartaCF.AutoIncrementingLambdaVersionInfo)
+		versionsMap, versionsMapExists := context[sparta.ContextKeyLambdaVersions].(map[string]*spartaCF.AutoIncrementingLambdaVersionInfo)
 		if !versionsMapExists {
 			versionsMap = make(map[string]*spartaCF.AutoIncrementingLambdaVersionInfo)
 		}
 		versionsMap[lambdaResourceName] = incrementer
-		context[ContextKeyLambdaVersions] = versionsMap
+		context[sparta.ContextKeyLambdaVersions] = versionsMap
 		return nil
 	}
 }
