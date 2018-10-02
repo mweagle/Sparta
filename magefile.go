@@ -20,6 +20,8 @@ import (
 
 const WORK_DIR = "./sparta"
 
+var header = strings.Repeat("-", 80)
+
 var ignoreSubdirectoryPaths = []string{
 	".vendor",
 	".sparta",
@@ -78,15 +80,18 @@ func sourceFilesOfType(extension string) ([]string, error) {
 }
 
 func applyToSource(fileExtension string, commandParts ...string) error {
+	if len(commandParts) <= 0 {
+		return errors.New("applyToSource requires a command to apply to source files")
+	}
 	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension)
 	if eligibleSourceFilesErr != nil {
 		return eligibleSourceFilesErr
 	}
-	mageLog("Found %d `%s` source files", len(eligibleSourceFiles), fileExtension)
 
-	if len(commandParts) <= 0 {
-		return errors.New("applyToSource requires a command to apply to source files")
-	}
+	mageLog(header)
+	mageLog("Applying `%s` to %d *.%s` source files", commandParts[0], len(eligibleSourceFiles), fileExtension)
+	mageLog(header)
+
 	commandArgs := []string{}
 	if len(commandParts) > 1 {
 		for _, eachPart := range commandParts[1:] {
