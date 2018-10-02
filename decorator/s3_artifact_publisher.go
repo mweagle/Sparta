@@ -12,10 +12,10 @@ import (
 
 // S3ArtifactPublisherDecorator returns a ServiceDecoratorHookHandler
 // function that publishes the given data to an S3 Bucket
-// using the given bucket and key
+// using the given bucket and key.
 func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 	key gocf.Stringable,
-	data gocf.Stringable) sparta.ServiceDecoratorHookHandler {
+	data map[string]interface{}) sparta.ServiceDecoratorHookHandler {
 
 	// Setup the CF distro
 	artifactDecorator := func(context map[string]interface{},
@@ -52,7 +52,7 @@ func S3ArtifactPublisherDecorator(bucket gocf.Stringable,
 		s3PublishResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
 		s3PublishResource.Bucket = bucket.String()
 		s3PublishResource.Key = key.String()
-		s3PublishResource.Body = data.String()
+		s3PublishResource.Body = data
 
 		// Name?
 		resourceInvokerName := sparta.CloudFormationResourceName("ArtifactS3",
