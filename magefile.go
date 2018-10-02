@@ -89,7 +89,7 @@ func applyToSource(fileExtension string, commandParts ...string) error {
 	}
 
 	mageLog(header)
-	mageLog("Applying `%s` to %d *.%s` source files", commandParts[0], len(eligibleSourceFiles), fileExtension)
+	mageLog("Applying `%s` to %d `*.%s` source files", commandParts[0], len(eligibleSourceFiles), fileExtension)
 	mageLog(header)
 
 	commandArgs := []string{}
