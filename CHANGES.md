@@ -30,7 +30,32 @@
     - Supply the `WorkflowHooks` struct to `MainEx` to annotate your service with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
   - Added `decorator.S3ArtifactPublisherDecorator` to publish an arbitrary JSON file as a CustomResource
   - Replaced _Makefile_ with [magefile](https://magefile.org/) to better support cross platform builds.
-    - This is an internal only change and does not impact clients
+    - This is an internal only change and does not impact users
+    - To use the new _mage_ targets:
+      ```plain
+      $> go get -u github.com/magefile/mage
+      $> mage -l
+
+      Targets:
+        build                           the application
+        clean                           the working directory
+        describe                        runs the `TestDescribe` test to generate a describe HTML output file at graph.html
+        ensureAllPreconditions          ensures that the source passes *ALL* static `ensure*` precondition steps
+        ensureFormatted                 ensures that the source code is formatted with goimports
+        ensureLint                      ensures that the source is `golint`ed
+        ensureSpelling                  ensures that there are no misspellings in the source
+        ensureStaticChecks              ensures that the source code passes static code checks
+        ensureTravisBuildEnvironment    is the command that sets up the Travis environment to run the build.
+        ensureVet                       ensures that the source has been `go vet`ted
+        generateBuildInfo               creates the automatic buildinfo.go file so that we can stamp the SHA into the binaries we build...
+        generateConstants               runs the set of commands that update the embedded CONSTANTS for both local and AWS Lambda execution
+        installBuildRequirements        installs or updates the dependent packages that aren't referenced by the source, but are needed to build the Sparta source
+        publish                         the latest source
+        test                            runs the Sparta tests
+        testCover                       runs the test and opens up the resulting report
+        travisBuild                     is the task to build in the context of a Travis CI pipeline
+      ```
+  - Added [misspell](https://github.com/client9/misspell) static check for common misspellings
 - :bug:  **FIXED**
 
 
