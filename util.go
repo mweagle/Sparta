@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/mweagle/Sparta/system"
+
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -132,7 +134,7 @@ func buildSysInfoSample(logger *logrus.Logger) error {
 	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 	cmd.Dir = temporaryDir
 	logger.Debug("Verifying sysinfo package")
-	cmdError := runOSCommand(cmd, logger)
+	cmdError := system.RunOSCommand(cmd, logger)
 	if cmdError != nil {
 		return errors.Wrapf(cmdError, "Failed")
 	}

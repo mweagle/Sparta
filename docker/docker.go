@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-sdk-go/service/sts"
+	"github.com/mweagle/Sparta/system"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -24,20 +25,6 @@ const (
 	// supplies the local statically built Go binary
 	BinaryNameArgument = "SPARTA_DOCKER_BINARY"
 )
-
-func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
-	outputWriter := logger.Writer()
-	defer outputWriter.Close()
-	cmd.Stdout = outputWriter
-	cmd.Stderr = outputWriter
-	return cmd.Run()
-}
 
 // BuildDockerImage creates the smallest docker image for this Golang binary
 // using the serviceName as the image name and including the supplied tags
@@ -79,7 +66,7 @@ func BuildDockerImage(serviceName string,
 	logger.WithFields(logrus.Fields{
 		"Name": executableOutput,
 	}).Info("Compiling Docker binary")
-	buildErr := runOSCommand(cmd, logger)
+	buildErr := system.RunOSCommand(cmd, logger)
 	if nil != buildErr {
 		return errors.Wrapf(buildErr, "Attempting to build Docker binary")
 	}
@@ -118,7 +105,7 @@ func BuildDockerImage(serviceName string,
 	}
 	dockerArgs = append(dockerArgs, ".")
 	dockerCmd := exec.Command("docker", dockerArgs...)
-	return runOSCommand(dockerCmd, logger)
+	return system.RunOSCommand(dockerCmd, logger)
 }
 
 // PushDockerImageToECR pushes a local Docker image to an ECR repository
@@ -147,7 +134,7 @@ func PushDockerImageToECR(localImageTag string,
 
 	// 3. Tag the local image with the ECR tag
 	dockerTagCmd := exec.Command("docker", "tag", localImageTag, ecrTagValue)
-	dockerTagCmdErr := runOSCommand(dockerTagCmd, logger)
+	dockerTagCmdErr := system.RunOSCommand(dockerTagCmd, logger)
 	if nil != dockerTagCmdErr {
 		return "", errors.Wrapf(dockerTagCmdErr, "Attempting to tag Docker image")
 	}
@@ -156,7 +143,7 @@ func PushDockerImageToECR(localImageTag string,
 	// client and try again
 	var pushError error
 	dockerPushCmd := exec.Command("docker", "push", ecrTagValue)
-	pushError = runOSCommand(dockerPushCmd, logger)
+	pushError = system.RunOSCommand(dockerPushCmd, logger)
 	if nil != pushError {
 		logger.WithFields(logrus.Fields{
 			"Error": pushError,
@@ -182,13 +169,13 @@ func PushDockerImageToECR(localImageTag string,
 					"-p",
 					authTokenParts[1],
 					dockerURL)
-				dockerLoginCmdErr := runOSCommand(dockerLoginCmd, logger)
+				dockerLoginCmdErr := system.RunOSCommand(dockerLoginCmd, logger)
 				if nil != dockerLoginCmdErr {
 					pushError = dockerLoginCmdErr
 				} else {
 					// Try it again...
 					dockerRetryPushCmd := exec.Command("docker", "push", ecrTagValue)
-					dockerRetryPushCmdErr := runOSCommand(dockerRetryPushCmd, logger)
+					dockerRetryPushCmdErr := system.RunOSCommand(dockerRetryPushCmd, logger)
 					pushError = dockerRetryPushCmdErr
 				}
 			}

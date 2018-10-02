@@ -33,6 +33,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
+	"github.com/mweagle/Sparta/system"
 	spartaZip "github.com/mweagle/Sparta/zip"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -778,7 +779,7 @@ func buildGoBinary(serviceName string,
 	cmd.Env = os.Environ()
 	commandString := fmt.Sprintf("%s", cmd.Args)
 	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
-	goGenerateErr := runOSCommand(cmd, logger)
+	goGenerateErr := system.RunOSCommand(cmd, logger)
 	if nil != goGenerateErr {
 		return goGenerateErr
 	}
@@ -824,7 +825,7 @@ func buildGoBinary(serviceName string,
 		if nil != currentDirErr {
 			return currentDirErr
 		}
-		gopathVersion, gopathVersionErr := systemGoVersion(logger)
+		gopathVersion, gopathVersionErr := system.GoVersion(logger)
 		if nil != gopathVersionErr {
 			return gopathVersionErr
 		}
@@ -887,7 +888,7 @@ func buildGoBinary(serviceName string,
 			"Name": executableOutput,
 			"Args": dockerBuildArgs,
 		}).Info("Building `cgo` library in Docker")
-		cmdError = runOSCommand(cmd, logger)
+		cmdError = system.RunOSCommand(cmd, logger)
 
 		// If this succeeded, let's find the .h file and move it into the scratch
 		// Try to keep things tidy...
@@ -929,7 +930,7 @@ func buildGoBinary(serviceName string,
 		logger.WithFields(logrus.Fields{
 			"Name": executableOutput,
 		}).Info("Compiling binary")
-		cmdError = runOSCommand(cmd, logger)
+		cmdError = system.RunOSCommand(cmd, logger)
 	}
 	return cmdError
 }

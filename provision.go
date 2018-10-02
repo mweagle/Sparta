@@ -3,10 +3,7 @@ package sparta
 import (
 	"bytes"
 	"fmt"
-	"os/exec"
 	"reflect"
-	"regexp"
-	"runtime"
 	"text/template"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
@@ -43,20 +40,6 @@ var discoveryData = `
 type discoveryDataTemplateData struct {
 	TagLogicalResourceID string
 	Resources            map[string]string
-}
-
-func runOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
-	logger.WithFields(logrus.Fields{
-		"Arguments": cmd.Args,
-		"Dir":       cmd.Dir,
-		"Path":      cmd.Path,
-		"Env":       cmd.Env,
-	}).Debug("Running Command")
-	outputWriter := logger.Writer()
-	defer outputWriter.Close()
-	cmd.Stdout = outputWriter
-	cmd.Stderr = outputWriter
-	return cmd.Run()
 }
 
 func lambdaFunctionEnvironment(userEnvMap map[string]*gocf.StringExpr,
@@ -314,20 +297,4 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 		return stableRoleName, nil
 	}
 	return "", errors.Errorf("Unable to find Policies entry for IAM role: %s", stableRoleName)
-}
-
-func systemGoVersion(logger *logrus.Logger) (string, error) {
-	runtimeVersion := runtime.Version()
-	// Get the golang version from the output:
-	// Matts-MBP:Sparta mweagle$ go version
-	// go version go1.8.1 darwin/amd64
-	golangVersionRE := regexp.MustCompile(`go(\d+\.\d+(\.\d+)?)`)
-	matches := golangVersionRE.FindStringSubmatch(runtimeVersion)
-	if len(matches) > 2 {
-		return matches[1], nil
-	}
-	logger.WithFields(logrus.Fields{
-		"Output": runtimeVersion,
-	}).Warn("Unable to find Golang version using RegExp - using current version")
-	return runtimeVersion, nil
 }
