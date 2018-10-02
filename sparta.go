@@ -19,6 +19,7 @@ import (
 	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	"github.com/mweagle/Sparta/system"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
@@ -1091,7 +1092,8 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 	// Check that the sysinfo package is installed. This
 	// may not be installed on OSX, since it's excluded
 	// via a build tag
-	goPath := userGoPath()
+	goPath := system.GoPath()
+
 	// Check that the file exists
 	sysinfoPath := filepath.Join(goPath, "src",
 		"github.com",

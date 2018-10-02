@@ -1,6 +1,8 @@
 package system
 
 import (
+	"os"
+	"path/filepath"
 	"regexp"
 	"runtime"
 
@@ -22,4 +24,15 @@ func GoVersion(logger *logrus.Logger) (string, error) {
 		"Output": runtimeVersion,
 	}).Warn("Unable to find Golang version using RegExp - using current version")
 	return runtimeVersion, nil
+}
+
+// GoPath returns either $GOPATH or the new $HOME/go path
+// introduced with Go 1.8
+func GoPath() string {
+	gopath := os.Getenv("GOPATH")
+	if gopath == "" {
+		home := os.Getenv("HOME")
+		gopath = filepath.Join(home, "go")
+	}
+	return gopath
 }

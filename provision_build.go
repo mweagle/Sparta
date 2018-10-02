@@ -830,7 +830,7 @@ func buildGoBinary(serviceName string,
 			return gopathVersionErr
 		}
 
-		gopath := userGoPath()
+		gopath := system.GoPath()
 		containerGoPath := "/usr/src/gopath"
 		// Get the package path in the current directory
 		// so that we can it to the container path

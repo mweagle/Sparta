@@ -51,17 +51,6 @@ func describeInfoValue(dynamicValue interface{}) string {
 	}
 }
 
-// userGoPath returns either $GOPATH or the new $HOME/go path
-// introduced with Go 1.8
-func userGoPath() string {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		home := os.Getenv("HOME")
-		gopath = filepath.Join(home, "go")
-	}
-	return gopath
-}
-
 // Create a stable temporary filename in the current working
 // directory
 func temporaryFile(name string) (*os.File, error) {
