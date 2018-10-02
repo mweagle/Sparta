@@ -52,10 +52,9 @@ func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus
 		}
 		return inputText
 	}
-	logger.Info(fmt.Sprintf(red("╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐")+"   Version : %s", SpartaVersion))
-	logger.Info(fmt.Sprintf(red("╚═╗├─┘├─┤├┬┘ │ ├─┤")+"   SHA     : %s", SpartaGitHash[0:7]))
-	logger.Info(fmt.Sprintf(red("╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴")+"   Go      : %s", runtime.Version()))
-
+	logger.Info(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
+	logger.Info(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
+	logger.Info(fmt.Sprintf(red("╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩")+"   Go      : %s", runtime.Version()))
 	logger.Info(headerDivider)
 }
 
