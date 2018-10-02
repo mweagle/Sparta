@@ -20,14 +20,6 @@ func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 	domainName string,
 	acmCertificateARN gocf.Stringable) sparta.ServiceDecoratorHookHandler {
 
-	// If there isn't a BucketName, then there's a problem...
-	bucketName := domainName
-	if subdomain != "" {
-		bucketName = fmt.Sprintf("%s.%s", subdomain, domainName)
-	}
-	// If there is a name set, but it doesn't match what we're going to setup, then it's
-	// an eror
-
 	// Setup the CF distro
 	distroDecorator := func(context map[string]interface{},
 		serviceName string,
@@ -39,12 +31,18 @@ func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 		noop bool,
 		logger *logrus.Logger) error {
 
+		// Computed name
+		bucketName := domainName
+		if subdomain != "" {
+			bucketName = fmt.Sprintf("%s.%s", subdomain, domainName)
+		}
+
 		// If there isn't a domain name, then it's an issue...
 		if s3Site.BucketName == nil {
 			return errors.Errorf("CloudFrontDistribution requires an s3Site.BucketName value in the form of a DNS entry")
 		}
 		if s3Site.BucketName.Literal != "" && s3Site.BucketName.Literal != bucketName {
-			return errors.Errorf("Mismatch between S3Site.BucketName literal (%s) and CloudFront DNS entry (%s)",
+			return errors.Errorf("Mismatch between S3Site.BucketName Literal (%s) and CloudFront DNS entry (%s)",
 				s3Site.BucketName.Literal,
 				bucketName)
 		}
