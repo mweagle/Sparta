@@ -6,10 +6,10 @@
   - Moved `sparta.LambdaVersioningDecorator` to `decorator.LambdaVersioningDecorator`
   - Updated [cloudformation.ConvergeStackState](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvergeStackState) to accept a timeout parameter
   - Updated [ServiceDecorator.DecorateService](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookFunc.DecorateService) to accept the S3Key parameter
-    - This allows `ServiceDecorators` to add additional Lambda functions that are embedded in the same code bundle (eg: CloudFormation [Lambda-backed custom resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) )
+    - This allows `ServiceDecorators` to add their own Lambda-backed CloudFormation custom resources and have them instantiated at AWS Lambda runtime. (eg: CloudFormation [Lambda-backed custom resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) )
 - :checkered_flag: **CHANGES**
   - Simplified CustomResource creation and dispatch logic
-    - The upshot of this is that users can define `CustomResourceCommand` implementing CustomResources and add them to the code bundle.
+    - The benefit of this is that users can define `CustomResourceCommand` implementing CustomResources and have them roundtripped and instantiated at AWS Lambda execution time.
   - When a service `provision` fails, only report resources that failed to succeed. Previously, resources that were cancelled due to other resource failures were also logged as *ERROR* statements.
   - Added `decorator.NewLogAggregatorDecorator` which forwards all CloudWatch log messages to a Kinesis stream.
     - See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example of forwarding CloudWatch log messages to Google Stack Driver
@@ -29,6 +29,24 @@
       ```
     - Supply the `WorkflowHooks` struct to `MainEx` to annotate your service with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
   - Added `decorator.S3ArtifactPublisherDecorator` to publish an arbitrary JSON file as a CustomResource
+  - Added `status` command to produce a report of a provisioned service. Sample usage:
+    ```bash
+    $ go run main.go status --redact
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.4.0
+    INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 3681d28
+    INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=status UTC="2018-10-05T12:24:57Z"
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] StackId                                       Id="arn:aws:cloudformation:us-west-2:************:stack/SpartaPProf-mweagle/da781540-c764-11e8-9bf1-0aceeffcea3c"
+    INFO[0000] Stack status                                  State=CREATE_COMPLETE
+    INFO[0000] Created                                       Time="2018-10-03 23:34:21.142 +0000 UTC"
+    INFO[0000] Tag                                           io:gosparta:buildTags=googlepprof
+    INFO[0000] Tag                                           io:gosparta:buildId=c3fbe8c289c3184efec842dca56b9bf541f39d21
+    INFO[0000] Output                                        HelloWorldFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_Hello_World"
+    INFO[0000] Output                                        KinesisLogConsumerFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_KinesisLogConsumer"
+    ```
   - Replaced _Makefile_ with [magefile](https://magefile.org/) to better support cross platform builds.
     - This is an internal only change and does not impact users
     - To use the new _mage_ targets:
