@@ -18,7 +18,7 @@ import (
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 )
 
-const WORK_DIR = "./sparta"
+const localWorkDir = "./sparta"
 
 var header = strings.Repeat("-", 80)
 
@@ -327,12 +327,12 @@ func TestCover() error {
 	// mg.SerialDeps(
 	// 	EnsureAllPreconditions,
 	// )
-	coverageReport := fmt.Sprintf("%s/cover.out", WORK_DIR)
+	coverageReport := fmt.Sprintf("%s/cover.out", localWorkDir)
 	testCoverCommands := [][]string{
 		[]string{"go", "test", fmt.Sprintf("-coverprofile=%s", coverageReport), "."},
 		[]string{"go", "tool", "cover", fmt.Sprintf("-html=%s", coverageReport)},
 		[]string{"rm", coverageReport},
-		[]string{"open", fmt.Sprintf("%s/cover.html", WORK_DIR)},
+		[]string{"open", fmt.Sprintf("%s/cover.html", localWorkDir)},
 	}
 	return mageScript(testCoverCommands)
 }
