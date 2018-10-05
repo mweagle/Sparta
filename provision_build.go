@@ -1719,7 +1719,6 @@ func Provision(noop bool,
 
 		if next == nil {
 			summaryLine := fmt.Sprintf("%s Summary", ctx.userdata.serviceName)
-
 			ctx.logger.Info(headerDivider)
 			ctx.logger.Info(summaryLine)
 			ctx.logger.Info(headerDivider)

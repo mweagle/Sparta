@@ -83,9 +83,10 @@ var CommandLineOptions = struct {
 	Describe  *cobra.Command
 	Explore   *cobra.Command
 	Profile   *cobra.Command
+	Status    *cobra.Command
 }{}
 
-/******************************************************************************/
+/*============================================================================*/
 // Provision options
 // Ref: http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html
 type optionsProvisionStruct struct {
@@ -137,7 +138,7 @@ func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, 
 	return buildID, nil
 }
 
-/******************************************************************************/
+/*============================================================================*/
 // Describe options
 type optionsDescribeStruct struct {
 	OutputFile string `validate:"required"`
@@ -146,14 +147,14 @@ type optionsDescribeStruct struct {
 
 var optionsDescribe optionsDescribeStruct
 
-/******************************************************************************/
+/*============================================================================*/
 // Explore options?
 type optionsExploreStruct struct {
 }
 
 var optionsExplore optionsExploreStruct
 
-/******************************************************************************/
+/*============================================================================*/
 // Profile options
 type optionsProfileStruct struct {
 	S3Bucket string `validate:"required"`
@@ -162,10 +163,18 @@ type optionsProfileStruct struct {
 
 var optionsProfile optionsProfileStruct
 
-/******************************************************************************/
+/*============================================================================*/
+// Status options
+type optionsStatusStruct struct {
+	Redact bool `validate:"-"`
+}
+
+var optionsStatus optionsStatusStruct
+
+/*============================================================================*/
 // Initialization
 // Initialize all the Cobra commands and their associated flags
-/******************************************************************************/
+/*============================================================================*/
 func init() {
 	// Root
 	CommandLineOptions.Root = &cobra.Command{
@@ -249,8 +258,8 @@ func init() {
 	// Execute
 	CommandLineOptions.Execute = &cobra.Command{
 		Use:   "execute",
-		Short: "Execute",
-		Long:  `Startup the localhost HTTP server to handle requests`,
+		Short: "Start the application and begin handling events",
+		Long:  `Start the application and begin handling events`,
 	}
 
 	// Describe
@@ -273,7 +282,7 @@ func init() {
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
 		Use:   "explore",
-		Short: "Interactively explore service",
+		Short: "Interactively explore a provisioned service",
 		Long:  `Startup a local CLI GUI to explore and trigger your AWS service`,
 	}
 
@@ -293,6 +302,17 @@ func init() {
 		"p",
 		8080,
 		"Alternative port for `pprof` web UI (default=8080)")
+
+	// Status
+	CommandLineOptions.Status = &cobra.Command{
+		Use:   "status",
+		Short: "Produce a report for a provisioned service",
+		Long:  `Produce a report for a provisioned service`,
+	}
+	CommandLineOptions.Status.Flags().BoolVarP(&optionsStatus.Redact, "redact",
+		"r",
+		false,
+		"Redact AWS Account ID from report")
 }
 
 // CommandLineOptionsHook allows embedding applications the ability
@@ -377,63 +397,20 @@ func ParseOptions(handler CommandLineOptionsHook) error {
 		CommandLineOptions.Describe,
 		CommandLineOptions.Explore,
 		CommandLineOptions.Profile,
+		CommandLineOptions.Status,
 	}
-	CommandLineOptions.Version.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Version)
+	for _, eachCommand := range spartaCommands {
+		eachCommand.PreRunE = func(cmd *cobra.Command, args []string) error {
+			if eachCommand == CommandLineOptions.Provision {
+				StampedBuildID = optionsProvision.BuildID
+			}
+			if handler != nil {
+				return handler(eachCommand)
+			}
+			return nil
 		}
-		return nil
+		parseCmdRoot.AddCommand(CommandLineOptions.Version)
 	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Version)
-
-	CommandLineOptions.Provision.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			StampedBuildID = optionsProvision.BuildID
-			return handler(CommandLineOptions.Provision)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Provision)
-
-	CommandLineOptions.Delete.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Delete)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Delete)
-
-	CommandLineOptions.Execute.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Execute)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Execute)
-
-	CommandLineOptions.Describe.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Describe)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Describe)
-
-	CommandLineOptions.Explore.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Explore)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Explore)
-
-	CommandLineOptions.Profile.PreRunE = func(cmd *cobra.Command, args []string) error {
-		if handler != nil {
-			return handler(CommandLineOptions.Profile)
-		}
-		return nil
-	}
-	parseCmdRoot.AddCommand(CommandLineOptions.Profile)
 
 	// Assign each command an empty RunE func s.t.
 	// Cobra doesn't print out the command info
