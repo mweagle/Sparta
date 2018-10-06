@@ -121,6 +121,7 @@ type optionsGlobalStruct struct {
 	Command            string         `validate:"-"`
 	BuildTags          string         `validate:"-"`
 	LinkerFlags        string         `validate:"-"` // no requirements
+	DisableColors      bool           `validate:"-"`
 }
 
 // OptionsGlobal stores the global command line options

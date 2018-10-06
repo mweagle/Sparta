@@ -44,13 +44,13 @@ func applyLoggerHooks(serviceName string, workflowHooks *WorkflowHooks, logger *
 	}
 	return nil
 }
-func displayPrettyHeader(headerDivider string, enableColors bool, logger *logrus.Logger) {
+func displayPrettyHeader(headerDivider string, disableColors bool, logger *logrus.Logger) {
 	logger.Info(headerDivider)
 	red := func(inputText string) string {
-		if enableColors {
-			return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
+		if disableColors {
+			return inputText
 		}
-		return inputText
+		return fmt.Sprintf("\x1b[%dm%s\x1b[0m", redCode, inputText)
 	}
 	logger.Info(fmt.Sprintf(red("╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗")+"   Version : %s", SpartaVersion))
 	logger.Info(fmt.Sprintf(red("╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣")+"   SHA     : %s", SpartaGitHash[0:7]))
@@ -211,6 +211,13 @@ func init() {
 		"ldflags",
 		"",
 		"Go linker string definition flags (https://golang.org/cmd/link/)")
+
+	// Support disabling log colors for CLI friendliness
+	CommandLineOptions.Root.PersistentFlags().BoolVarP(&OptionsGlobal.DisableColors,
+		"nocolor",
+		"",
+		false,
+		"Boolean flag to suppress colorized TTY output")
 
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
