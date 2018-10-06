@@ -23,7 +23,7 @@
   version = "v1.6.0"
 
 [[projects]]
-  digest = "1:748d8103523bfc4b3c82011190591da50183c8091f234cde4c899f8301ca1013"
+  digest = "1:13c9923511095ab1089fa5a340869faf4b74c87e3f46191f1a0421007dfbc3e4"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -43,6 +43,7 @@
     "aws/request",
     "aws/session",
     "aws/signer/v4",
+    "internal/s3err",
     "internal/sdkio",
     "internal/sdkrand",
     "internal/sdkuri",
@@ -61,7 +62,6 @@
     "service/apigateway",
     "service/cloudformation",
     "service/cloudwatchlogs",
-    "service/dynamodb",
     "service/ecr",
     "service/iam",
     "service/lambda",
@@ -73,8 +73,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "53e36ebb6b2c26d228ba9563d06caf306227f110"
-  version = "v1.15.46"
+  revision = "3c7ce80a3b6d9b952022a6c5e5dd758486ff4de1"
+  version = "v1.15.48"
 
 [[projects]]
   digest = "1:5627be48bc0061b4ed6a158e593112cd3eb6322da6ec91f73b5c70a7c9cfb01a"
@@ -164,7 +164,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:a1633b1cdc037883dc3ded7a8e8ba42dc3989774cd513ba651405b9ea49ace9a"
+  digest = "1:d8018037285627f7afad0cfc4ecd296c8a32bf3b6408c556e25b568b7f5b90eb"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -183,7 +183,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "782e5fd74720effda64d76da82067cf2b8d22a0d"
+  revision = "f36417847b1c5107a5b7a34d0ec3f5f74857b10f"
 
 [[projects]]
   branch = "master"
@@ -225,12 +225,12 @@
   revision = "95032a82bc518f77982ea72343cc1ade730072f0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:f44d34fda864bed6d6c71514cd40b2ee097e6e67f745d5d014113e1faa5af8b7"
+  digest = "1:0a69a1c0db3591fcefb47f115b224592c8dfa4368b7ba9fae509d5e16cdc95c8"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
   pruneopts = "UT"
-  revision = "b729f2633dfe35f4d1d8a32385f6685610ce1cb5"
+  revision = "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:c65a16ac77d0b1aefc7009cabb6ac5ad05def02025f5be85f450c03f52cc6f86"
@@ -293,11 +293,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:00f8fd60c55a351dde2c2eb8f756eda4f4d98e01977ee4537caafcb3cfabcfe8"
+  digest = "1:8049040e5ec2605f662dcb3c1898d3607123da9bf8daeff25bb94ba0f40bf586"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9c0b967a1b12060d76ce1179c13c3ed598e19fb8"
+  revision = "eeee4706c65f3d969bc24fe8f9478ace48e59d6d"
 
 [[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
@@ -332,12 +332,12 @@
   version = "v0.0.3"
 
 [[projects]]
-  digest = "1:dab83a1bbc7ad3d7a6ba1a1cc1760f25ac38cdf7d96a5cdd55cd915a4f5ceaf9"
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
-  version = "v1.0.2"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
@@ -360,14 +360,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:6f82ed211591ecb407897ca46ff6149d618223088aecad72675804f106033629"
+  digest = "1:8a35cf7e4a316cee63d627d7de15b81901a19f8a3f9aff0d1a80c746a57234d6"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "e4b3c5e9061176387e7cea65e4dc5853801f3fb7"
+  revision = "8469e314837c2e2471561de5c47bbf8bfd0d9099"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -416,7 +416,6 @@
     "github.com/aws/aws-sdk-go/service/apigateway",
     "github.com/aws/aws-sdk-go/service/cloudformation",
     "github.com/aws/aws-sdk-go/service/cloudwatchlogs",
-    "github.com/aws/aws-sdk-go/service/dynamodb",
     "github.com/aws/aws-sdk-go/service/ecr",
     "github.com/aws/aws-sdk-go/service/iam",
     "github.com/aws/aws-sdk-go/service/lambda",
