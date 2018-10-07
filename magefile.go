@@ -260,7 +260,7 @@ func EnsureTravisBuildEnvironment() error {
 	// Super run some commands
 	travisComands := [][]string{
 		[]string{"dep", "version"},
-		[]string{"dep", "ensure"},
+		[]string{"dep", "ensure", "-v"},
 		[]string{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
 	}
 	return mageScript(travisComands)
