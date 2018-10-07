@@ -4,6 +4,13 @@ go:
 - "1.11"
 before_install:
 - go get -v github.com/magefile/mage
+install:
+  # Suppress the default installation behavior, which is to
+  # `go get` everything. The default installation behavior is suppressed
+  # when there is a Makefile. Since Sparta uses magefiles,
+  # we need to override the default behavior
+  # Ref: https://docs.travis-ci.com/user/languages/go/#dependency-management
+- go version
 script: mage -v travisBuild
 env:
   global:
