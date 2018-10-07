@@ -320,7 +320,6 @@ func Publish() error {
 		[]string{"echo", "Checking `git` tree status"},
 		[]string{"git", "diff", "--exit-code"},
 		// TODO - migrate to Go
-		[]string{"./buildinfo.sh"},
 		[]string{"git", "commit", "-a", "-m", "Tagging Sparta commit"},
 		[]string{"git", "push", "origin"},
 	}
