@@ -41,6 +41,16 @@
   - Added `--nocolor` command line option to suppress colorized output. Default value: `false`.
   - When a service `provision` fails, only report resources that failed to succeed.
     - Previously, resources that were cancelled due to other resource failures were also logged as *ERROR* statements.
+  - Added `decorator.CloudWatchErrorAlarmDecorator(...)` to create per-Lambda CloudWatch Alarms.
+    - Sample usage:
+      ```go
+        lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
+          spartaDecorators.CloudWatchErrorAlarmDecorator(1, // Number of periods
+            1, // Number of minutes per period
+            1, // GreaterThanOrEqualToThreshold value
+            gocf.String("SNS_TOPIC_ARN_OR_RESOURCE_REF")),
+        }
+      ```
   - Added `decorator.NewLogAggregatorDecorator` which forwards all CloudWatch log messages to a Kinesis stream.
     - See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example of forwarding CloudWatch log messages to Google StackDriver
   - Added [decorator.CloudFrontSiteDistributionDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CloudFrontSiteDistributionDecorator) to provision a CloudFront distribution with a custom Route53 name and optional SSL support.
