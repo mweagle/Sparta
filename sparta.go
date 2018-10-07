@@ -852,7 +852,12 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 			context,
 			logger)
 		if decoratorErr != nil {
-			return decoratorErr
+			// Can we get the name?
+			decoratorName := fmt.Sprintf("%T", eachDecorator)
+			errorValue := errors.Errorf("TemplateDecorator %s failed to apply. Error: %s",
+				decoratorName,
+				decoratorErr)
+			return errorValue
 		}
 		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
 		// unmarshalled via sparta.Discover.  We're going to just stuff it into
