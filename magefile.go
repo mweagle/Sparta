@@ -126,7 +126,7 @@ func EnsureCleanTree() error {
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
 func GenerateBuildInfo() error {
-	mage.SerialDeps(EnsureCleanTree)
+	mg.SerialDeps(EnsureCleanTree)
 
 	// The first thing we need is the `git` SHA
 	cmd := exec.Command("git", "rev-parse", "HEAD")
