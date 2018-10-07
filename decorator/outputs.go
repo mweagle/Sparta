@@ -14,7 +14,7 @@ func sanitizedKeyName(userValue string) string {
 	return reInvalidOutputChars.ReplaceAllString(userValue, "")
 }
 
-// PublishAttOutputDecorator returns an TemplateDecoratorHookFunc
+// PublishAttOutputDecorator returns a TemplateDecoratorHookFunc
 // that publishes an Att value for a given Lambda
 func PublishAttOutputDecorator(keyName string, description string, fieldName string) sparta.TemplateDecoratorHookFunc {
 	attrDecorator := func(serviceName string,
@@ -35,7 +35,6 @@ func PublishAttOutputDecorator(keyName string, description string, fieldName str
 		}
 		return nil
 	}
-
 	return sparta.TemplateDecoratorHookFunc(attrDecorator)
 }
 
