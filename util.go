@@ -10,6 +10,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/mweagle/Sparta/system"
+
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -47,17 +49,6 @@ func describeInfoValue(dynamicValue interface{}) string {
 	default:
 		panic(fmt.Sprintf("Unsupported dynamic value type for `describe`: %+v", typedArn))
 	}
-}
-
-// userGoPath returns either $GOPATH or the new $HOME/go path
-// introduced with Go 1.8
-func userGoPath() string {
-	gopath := os.Getenv("GOPATH")
-	if gopath == "" {
-		home := os.Getenv("HOME")
-		gopath = filepath.Join(home, "go")
-	}
-	return gopath
 }
 
 // Create a stable temporary filename in the current working
@@ -132,7 +123,7 @@ func buildSysInfoSample(logger *logrus.Logger) error {
 	cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
 	cmd.Dir = temporaryDir
 	logger.Debug("Verifying sysinfo package")
-	cmdError := runOSCommand(cmd, logger)
+	cmdError := system.RunOSCommand(cmd, logger)
 	if cmdError != nil {
 		return errors.Wrapf(cmdError, "Failed")
 	}

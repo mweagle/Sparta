@@ -1,0 +1,113 @@
+package archetype
+
+import (
+	"context"
+	"fmt"
+
+	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/mweagle/Sparta"
+	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
+	gocf "github.com/mweagle/go-cloudformation"
+)
+
+// S3Reactor represents a lambda function that responds to typical S3 operations
+type S3Reactor interface {
+	// OnS3Event when an S3 event occurs. Check the event.EventName field
+	// for the specific event
+	OnS3Event(ctx context.Context, event awsLambdaEvents.S3Event) (interface{}, error)
+}
+
+// S3ReactorFunc is a free function that adapts a S3Reactor
+// compliant signature into a function that exposes an OnS3Event
+// function
+type S3ReactorFunc func(ctx context.Context, event awsLambdaEvents.S3Event) (interface{}, error)
+
+// OnS3Event satisfies the S3Reactor interface
+func (reactorFunc S3ReactorFunc) OnS3Event(ctx context.Context, event awsLambdaEvents.S3Event) (interface{}, error) {
+	return reactorFunc(ctx, event)
+}
+
+// s3NotificationPrefixFilter is a DRY spec for setting up a notification configuration
+// filter
+func s3NotificationPrefixBasedPermission(bucketName gocf.Stringable, keyPathPrefix string) sparta.S3Permission {
+
+	permission := sparta.S3Permission{
+		BasePermission: sparta.BasePermission{
+			SourceArn: bucketName.String(),
+		},
+		Events: []string{"s3:ObjectCreated:*",
+			"s3:ObjectRemoved:*"},
+	}
+
+	if keyPathPrefix != "" {
+		permission.Filter = s3.NotificationConfigurationFilter{
+			Key: &s3.KeyFilter{
+				FilterRules: []*s3.FilterRule{
+					&s3.FilterRule{
+						Name:  aws.String("prefix"),
+						Value: aws.String(keyPathPrefix),
+					},
+				},
+			},
+		}
+	}
+	return permission
+}
+
+// NewS3Reactor returns an S3 reactor lambda function
+func NewS3Reactor(reactor S3Reactor, s3Bucket gocf.Stringable, additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
+	return NewS3ScopedReactor(reactor, s3Bucket, "", additionalLambdaPermissions)
+}
+
+// NewS3ScopedReactor returns an S3 reactor lambda function scoped to the given S3 key prefix
+func NewS3ScopedReactor(reactor S3Reactor,
+	s3Bucket gocf.Stringable,
+	keyPathPrefix string,
+	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
+
+	reactorLambda := func(ctx context.Context, event awsLambdaEvents.S3Event) (interface{}, error) {
+		return reactor.OnS3Event(ctx, event)
+	}
+
+	// Privilege must include access to the S3 bucket for GetObjectRequest
+	lambdaFn := sparta.HandleAWSLambda(fmt.Sprintf("%T", reactor),
+		reactorLambda,
+		sparta.IAMRoleDefinition{})
+
+	bucketName := ""
+	if s3Bucket.String().Literal != "" {
+		bucketName = s3Bucket.String().Literal
+	} else {
+		bucketName = fmt.Sprintf("%#v", s3Bucket.String().Func)
+	}
+
+	lambdaFn.Options = &sparta.LambdaFunctionOptions{
+		Description: fmt.Sprintf("Handler %T responds to S3 events from bucket: %#v", reactor, bucketName),
+		MemorySize:  256,
+		Timeout:     10,
+		TracingConfig: &gocf.LambdaFunctionTracingConfig{
+			Mode: gocf.String("Active"),
+		},
+	}
+
+	privileges := []sparta.IAMRolePrivilege{
+		sparta.IAMRolePrivilege{
+			Actions:  []string{"s3:GetObject"},
+			Resource: spartaCF.S3AllKeysArnForBucket(s3Bucket),
+		},
+	}
+	if len(additionalLambdaPermissions) != 0 {
+		privileges = append(privileges, additionalLambdaPermissions...)
+	}
+
+	// IAM Role privileges
+	lambdaFn.RoleDefinition.Privileges = privileges
+
+	// Event Triggers
+	lambdaFn.Permissions = append(lambdaFn.Permissions,
+		s3NotificationPrefixBasedPermission(s3Bucket, keyPathPrefix))
+
+	return lambdaFn, nil
+}

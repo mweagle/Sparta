@@ -2,10 +2,16 @@ language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
 - "1.11"
-- tip
 before_install:
-- echo "before_install"
-script: make travis-ci-test
+- go get -v github.com/magefile/mage
+install:
+  # Suppress the default installation behavior, which is to
+  # `go get` everything. The default installation behavior is suppressed
+  # when there is a Makefile. Since Sparta uses magefiles,
+  # we need to override the default behavior
+  # Ref: https://docs.travis-ci.com/user/languages/go/#dependency-management
+- go version
+script: mage -v travisBuild
 env:
   global:
   - S3_BUCKET=weagle

@@ -1,5 +1,125 @@
 # Change Notes
 
+## v1.4.0
+
+- :warning: **BREAKING**
+  - Moved `sparta.LambdaVersioningDecorator` to `decorator.LambdaVersioningDecorator`
+  - Updated [cloudformation.ConvergeStackState](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvergeStackState) to accept a timeout parameter
+  - Updated [ServiceDecorator.DecorateService](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookFunc.DecorateService) to accept the S3Key parameter
+    - This allows `ServiceDecorators` to add their own Lambda-backed CloudFormation custom resources and have them instantiated at AWS Lambda runtime. (eg: CloudFormation [Lambda-backed custom resources](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) ). See next section for more information.
+- :checkered_flag: **CHANGES**
+  - Simplified CustomResource creation and dispatch logic
+    - The benefit of this is that users can define new `CustomResourceCommand` implementing CustomResources and have them roundtripped and instantiated at AWS Lambda execution time. 🎉
+    - I'll write up more documentation, but the steps to defining your own Lambda-backed custom resource:
+      1. Create a resource that embeds [gocf.CloudFormationCustomResource](https://godoc.org/github.com/mweagle/go-cloudformation#CloudFormationCustomResource) and your custom event properties:
+        ```go
+          type HelloWorldResourceRequest struct {
+            Message *gocf.StringExpr
+          }
+          type HelloWorldResource struct {
+            gocf.CloudFormationCustomResource
+            HelloWorldResourceRequest
+          }
+        ```
+      1. Register the custom resource provider with [RegisterCustomResourceProvider](https://godoc.org/github.com/mweagle/go-cloudformation#RegisterCustomResourceProvider)
+      1. Implement [CustomResourceCommand](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand)
+    - At provisioning time, an instance of your CustomResource will be created and the appropriate functions will be called with the incoming [CloudFormationLambdaEvent](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CloudFormationLambdaEvent).
+      - Unmarshal the `event.ResourceProperties` map into your command handler instance and perform the requested operation.
+  - Added a set of `archetype.*` convenience functions to create `sparta.LambdaAWSInfo` for specific event types.
+    - The `archetype.*` package exposes creation functions to simplify common lambda types. Sample S3 _Reactor_ handler:
+      ```go
+        func echoS3Event(ctx context.Context, s3Event awsLambdaEvents.S3Event) (interface{}, error) {
+          // Respond to s3:ObjectCreated:*", "s3:ObjectRemoved:*" S3 events
+        }
+        func main() {
+          lambdaFn, _ := spartaArchetype.NewS3Reactor(spartaArchetype.S3ReactorFunc(echoS3Event),
+            gocf.String("MY_S3_BUCKET"),
+            nil)
+            // ...
+        }
+      ```
+  - Added `--nocolor` command line option to suppress colorized output. Default value: `false`.
+  - When a service `provision` fails, only report resources that failed to succeed.
+    - Previously, resources that were cancelled due to other resource failures were also logged as *ERROR* statements.
+  - Added `decorator.CloudWatchErrorAlarmDecorator(...)` to create per-Lambda CloudWatch Alarms.
+    - Sample usage:
+      ```go
+        lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
+          spartaDecorators.CloudWatchErrorAlarmDecorator(1, // Number of periods
+            1, // Number of minutes per period
+            1, // GreaterThanOrEqualToThreshold value
+            gocf.String("SNS_TOPIC_ARN_OR_RESOURCE_REF")),
+        }
+      ```
+  - Added `decorator.NewLogAggregatorDecorator` which forwards all CloudWatch log messages to a Kinesis stream.
+    - See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example of forwarding CloudWatch log messages to Google StackDriver
+  - Added [decorator.CloudFrontSiteDistributionDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CloudFrontSiteDistributionDecorator) to provision a CloudFront distribution with a custom Route53 name and optional SSL support.
+    - Sample usage:
+      ```go
+      func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
+        hooks := &sparta.WorkflowHooks{}
+        siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+          "subdomainNameHere",
+          "myAWSHostedZone.com",
+          "arn:aws:acm:us-east-1:OPTIONAL-ACM-CERTIFICATE-FOR-SSL")
+        hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+          siteHookDecorator,
+        }
+        return hooks
+      }
+      ```
+    - Supply the `WorkflowHooks` struct to `MainEx` to annotate your service with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
+    - See [SpartaHTML](https://github.com/mweagle/SpartaHTML) for more
+  - Added `decorator.S3ArtifactPublisherDecorator` to publish an arbitrary JSON file to an S3 location
+    - This is implemented as Sparta-backed CustomResource
+  - Added `status` command to produce a report of a provisioned service. Sample usage:
+    ```bash
+    $ go run main.go status --redact
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.4.0
+    INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 3681d28
+    INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=status UTC="2018-10-05T12:24:57Z"
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] StackId                                       Id="arn:aws:cloudformation:us-west-2:************:stack/SpartaPProf-mweagle/da781540-c764-11e8-9bf1-0aceeffcea3c"
+    INFO[0000] Stack status                                  State=CREATE_COMPLETE
+    INFO[0000] Created                                       Time="2018-10-03 23:34:21.142 +0000 UTC"
+    INFO[0000] Tag                                           io:gosparta:buildTags=googlepprof
+    INFO[0000] Tag                                           io:gosparta:buildId=c3fbe8c289c3184efec842dca56b9bf541f39d21
+    INFO[0000] Output                                        HelloWorldFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_Hello_World"
+    INFO[0000] Output                                        KinesisLogConsumerFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_KinesisLogConsumer"
+    ```
+  - Replaced _Makefile_ with [magefile](https://magefile.org/) to better support cross platform builds.
+    - This is an internal only change and does not impact users
+    - For **CONTRIBUTORS**, to use the new _mage_ targets:
+      ```plain
+      $> go get -u github.com/magefile/mage
+      $> mage -l
+
+      Targets:
+        build                           the application
+        clean                           the working directory
+        describe                        runs the `TestDescribe` test to generate a describe HTML output file at graph.html
+        ensureAllPreconditions          ensures that the source passes *ALL* static `ensure*` precondition steps
+        ensureFormatted                 ensures that the source code is formatted with goimports
+        ensureLint                      ensures that the source is `golint`ed
+        ensureSpelling                  ensures that there are no misspellings in the source
+        ensureStaticChecks              ensures that the source code passes static code checks
+        ensureTravisBuildEnvironment    is the command that sets up the Travis environment to run the build.
+        ensureVet                       ensures that the source has been `go vet`ted
+        generateBuildInfo               creates the automatic buildinfo.go file so that we can stamp the SHA into the binaries we build...
+        generateConstants               runs the set of commands that update the embedded CONSTANTS for both local and AWS Lambda execution
+        installBuildRequirements        installs or updates the dependent packages that aren't referenced by the source, but are needed to build the Sparta source
+        publish                         the latest source
+        test                            runs the Sparta tests
+        testCover                       runs the test and opens up the resulting report
+        travisBuild                     is the task to build in the context of a Travis CI pipeline
+      ```
+  - Added [misspell](https://github.com/client9/misspell) static check as part of `mage test` to catch misspellings
+- :bug:  **FIXED**
+
+
 ## v1.3.0
 
 - :warning: **BREAKING**
@@ -31,8 +151,8 @@
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Added support for SQS event triggers.
-    - SQS event sources use the same [EventSourceMappings]() entry that is used by DynamoDB and Kinesis. For example:
-      ```
+    - SQS event sources use the same [EventSourceMappings](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html) entry that is used by DynamoDB and Kinesis. For example:
+      ```go
       lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
           &sparta.EventSourceMapping{
             EventSourceArn: gocf.GetAtt(sqsResourceName, "Arn"),
@@ -45,7 +165,7 @@
   - Migrated `describe` command to use [Cytoscape.JS](http://js.cytoscape.org/) library
     - Cytoscape supports several layout algorithms and per-service node icons.
   - Added `APIGatewayEnvelope` type to allow struct embedding and overriding of the `Body` field. Example:
-    ```
+    ```go
     // FeedbackBody is the typed body submitted in a FeedbackRequest
     type FeedbackBody struct {
       Language string `json:"lang"`
@@ -60,7 +180,7 @@
     }
     ```
   - The previous [APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest) remains unchanged:
-    ```
+    ```go
     type APIGatewayRequest struct {
       APIGatewayEnvelope
       Body interface{} `json:"body"`
@@ -71,14 +191,13 @@
   - Fixed latent bug where the [S3Site](https://godoc.org/github.com/mweagle/Sparta#S3Site) source directory was validated before `go:generate` could have been executed. This resulted in cases where fresh-cloned repositories would not self-deploy.
     - The filepath existence requirement was moved further into the provision workflow to support inline JS build operations.
 
-
 ## v1.1.1
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Re-implemented the `explore` command.
     - The `explore` command provides a terminal-based UI to interactively submit events to provisioned Lambda functions.
-    - The set of JSON files are determined by [walking]() the working directory for all _*.json_ files
+    - The set of JSON files are determined by walking the working directory for all _*.json_ files
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.1/explore.jpg" />
   - Eliminate redundant `Statement` entries in [AssumeRolePolicyDocument](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
   - Add `sparta.StampedBuildID` global variable to access the _BuildID_ value (either user defined or automatically generated)
@@ -131,7 +250,7 @@
     ```
     "application/json": "$input.path('$.errorMessage')",
     ```
-    - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more infomation
+    - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more information
   - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
     ```
     ERRO[0000] Failed to validate preconditions: Please run
@@ -218,7 +337,7 @@
   - Added `SupportedRequestContentTypes` to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) to limit API Gateway generated content.
   - Added `apiGateway.CORSOptions` field to configure _CORS_ settings
   - Added `Add S3Site.CloudFormationS3ResourceName()`
-    - This value can be used to scope _CORS_ accesss to a dynamoc S3 website as in:
+    - This value can be used to scope _CORS_ access to a dynamoc S3 website as in:
     ```
     apiGateway.CORSOptions = &sparta.CORSOptions{
       Headers: map[string]interface{}{
@@ -326,7 +445,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Changed `codePipelineTrigger` CLI arg name to `codePipelinePackage`
 - :checkered_flag: **CHANGES**
   - Eliminated NodeJS cold start `cp & chmod` penalty! :fire:
-    - Prior to this release, the NodeJS proxying code would copy the embedded binary to _/tmp_ and add the executable flag prior to actually launching the binary. This had a noticable performance penalty for startup.
+    - Prior to this release, the NodeJS proxying code would copy the embedded binary to _/tmp_ and add the executable flag prior to actually launching the binary. This had a noticeable performance penalty for startup.
     - This release embeds the application or library in a _./bin_ directory with the file permissions set so that there is no additional filesystem overhead on cold-start. h/t to [StackOverflow](https://stackoverflow.com/questions/41651134/cant-run-binary-from-within-python-aws-lambda-function) for the tips.
   - Migrated all IPC calls to [protocolBuffers](https://developers.google.com/protocol-buffers/).
     - Message definitions are in the [proxy](https://github.com/mweagle/Sparta/tree/master/proxy) directory.
@@ -450,7 +569,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
       - _xray:PutTelemetryRecords_
     - See [AWS blog](https://aws.amazon.com/blogs/aws/aws-lambda-support-for-aws-x-ray/) for more information
   - added [LambdaFunctionOptions.Tags](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions) to support tagging AWS Lambda functions
-  - added _SpartaGitHash_ output to both CLI and CloudWatch Dashboard output. This is in addition to the _SpartaVersion_ value (which I occassionally have failed to update).
+  - added _SpartaGitHash_ output to both CLI and CloudWatch Dashboard output. This is in addition to the _SpartaVersion_ value (which I occasionally have failed to update).
 - :bug: **FIXED**
   - Fixed latent issue where `SpartaOptions.Name` field wasn't consistently used for function names.
 

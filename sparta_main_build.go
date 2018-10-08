@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"runtime"
 	"time"
 
 	"github.com/pkg/errors"
@@ -100,17 +99,17 @@ func MainEx(serviceName string,
 
 		// Format?
 		// Running in AWS?
-		enableColors := (runtime.GOOS != "windows") && !isRunningInAWS()
+		disableColors := OptionsGlobal.DisableColors || isRunningInAWS()
 		var formatter logrus.Formatter
 		switch OptionsGlobal.LogFormat {
 		case "text", "txt":
 			formatter = &logrus.TextFormatter{
-				DisableColors: !enableColors,
+				DisableColors: disableColors,
 				FullTimestamp: OptionsGlobal.TimeStamps,
 			}
 		case "json":
 			formatter = &logrus.JSONFormatter{}
-			enableColors = false
+			disableColors = true
 		}
 		logger, loggerErr := NewLoggerWithFormatter(OptionsGlobal.LogLevel, formatter)
 		if nil != loggerErr {
@@ -128,7 +127,7 @@ func MainEx(serviceName string,
 		welcomeMessage := fmt.Sprintf("Service: %s", serviceName)
 
 		// Header information...
-		displayPrettyHeader(headerDivider, enableColors, logger)
+		displayPrettyHeader(headerDivider, disableColors, logger)
 		// Metadata about the build...
 		logger.WithFields(logrus.Fields{
 			"Option":    cmd.Name(),
@@ -280,6 +279,23 @@ func MainEx(serviceName string,
 		}
 	}
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Profile)
+
+	//////////////////////////////////////////////////////////////////////////////
+	// Status
+	if nil == CommandLineOptions.Status.RunE {
+		CommandLineOptions.Status.RunE = func(cmd *cobra.Command, args []string) error {
+			validateErr := validate.Struct(optionsStatus)
+			if nil != validateErr {
+				return validateErr
+			}
+			return Status(serviceName,
+				serviceDescription,
+				optionsStatus.Redact,
+				OptionsGlobal.Logger)
+		}
+	}
+	CommandLineOptions.Root.AddCommand(CommandLineOptions.Status)
+
 	// Run it!
 	executeErr := CommandLineOptions.Root.Execute()
 	if executeErr != nil {

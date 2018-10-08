@@ -33,6 +33,7 @@ import (
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaS3 "github.com/mweagle/Sparta/aws/s3"
+	"github.com/mweagle/Sparta/system"
 	spartaZip "github.com/mweagle/Sparta/zip"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
@@ -359,6 +360,7 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 			ctx.userdata.serviceName,
 			serviceTemplate,
 			ctx.userdata.s3Bucket,
+			ctx.context.s3CodeZipURL.keyName(),
 			ctx.userdata.buildID,
 			ctx.context.awsSession,
 			ctx.userdata.noop,
@@ -777,7 +779,7 @@ func buildGoBinary(serviceName string,
 	cmd.Env = os.Environ()
 	commandString := fmt.Sprintf("%s", cmd.Args)
 	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
-	goGenerateErr := runOSCommand(cmd, logger)
+	goGenerateErr := system.RunOSCommand(cmd, logger)
 	if nil != goGenerateErr {
 		return goGenerateErr
 	}
@@ -823,12 +825,12 @@ func buildGoBinary(serviceName string,
 		if nil != currentDirErr {
 			return currentDirErr
 		}
-		gopathVersion, gopathVersionErr := systemGoVersion(logger)
+		gopathVersion, gopathVersionErr := system.GoVersion(logger)
 		if nil != gopathVersionErr {
 			return gopathVersionErr
 		}
 
-		gopath := userGoPath()
+		gopath := system.GoPath()
 		containerGoPath := "/usr/src/gopath"
 		// Get the package path in the current directory
 		// so that we can it to the container path
@@ -886,7 +888,7 @@ func buildGoBinary(serviceName string,
 			"Name": executableOutput,
 			"Args": dockerBuildArgs,
 		}).Info("Building `cgo` library in Docker")
-		cmdError = runOSCommand(cmd, logger)
+		cmdError = system.RunOSCommand(cmd, logger)
 
 		// If this succeeded, let's find the .h file and move it into the scratch
 		// Try to keep things tidy...
@@ -928,7 +930,7 @@ func buildGoBinary(serviceName string,
 		logger.WithFields(logrus.Fields{
 			"Name": executableOutput,
 		}).Info("Compiling binary")
-		cmdError = runOSCommand(cmd, logger)
+		cmdError = system.RunOSCommand(cmd, logger)
 	}
 	return cmdError
 }
@@ -1002,6 +1004,8 @@ func createPackageStep() workflowStep {
 		if runtime.GOOS == "windows" {
 			fileHeaderAnnotator = func(header *zip.FileHeader) (*zip.FileHeader, error) {
 				// Make the binary executable
+				// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
+				header.CreatorVersion = 3 << 8
 				header.ExternalAttrs = 0777 << 16
 				return header, nil
 			}
@@ -1109,6 +1113,26 @@ func createUploadStep(packagePath string) workflowStep {
 		}
 		return validateSpartaPostconditions(), nil
 	}
+}
+
+// maximumStackOperationTimeout returns the timeout
+// value to use for a stack operation based on the type
+// of resources that it provisions. In general the timeout
+// is short with an exception made for CloudFront
+// distributions
+func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger) time.Duration {
+	stackOperationTimeout := 20 * time.Minute
+	// If there is a CloudFront distributon in there then
+	// let's give that a bit more time to settle down...In general
+	// the initial CloudFront distribution takes ~30 minutes
+	for _, eachResource := range template.Resources {
+		if eachResource.Properties.CfnResourceType() == "AWS::CloudFront::Distribution" {
+			stackOperationTimeout = 60 * time.Minute
+			break
+		}
+	}
+	logger.WithField("OperationTimeout", stackOperationTimeout).Debug("Computed operation timeout value")
+	return stackOperationTimeout
 }
 
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
@@ -1351,12 +1375,14 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 			if ctx.userdata.inPlace {
 				stack, stackErr = applyInPlaceFunctionUpdates(ctx, uploadURL)
 			} else {
+				operationTimeout := maximumStackOperationTimeout(ctx.context.cfTemplate, ctx.logger)
 				// Regular update, go ahead with the CloudFormation changes
 				stack, stackErr = spartaCF.ConvergeStackState(ctx.userdata.serviceName,
 					ctx.context.cfTemplate,
 					uploadURL,
 					stackTags,
 					ctx.transaction.startTime,
+					operationTimeout,
 					ctx.context.awsSession,
 					"▬",
 					dividerLength,
@@ -1475,7 +1501,6 @@ func ensureCloudFormationStack() workflowStep {
 			annotateCodePipelineEnvironments(eachEntry, ctx.logger)
 
 			err := eachEntry.export(ctx.userdata.serviceName,
-				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
 				ctx.context.s3CodeZipURL.keyName(),
 				ctx.context.s3CodeZipURL.version,
@@ -1694,7 +1719,6 @@ func Provision(noop bool,
 
 		if next == nil {
 			summaryLine := fmt.Sprintf("%s Summary", ctx.userdata.serviceName)
-
 			ctx.logger.Info(headerDivider)
 			ctx.logger.Info(summaryLine)
 			ctx.logger.Info(headerDivider)

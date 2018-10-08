@@ -68,6 +68,10 @@ type LogAggregatorDecorator struct {
 	logRelay                  *sparta.LambdaAWSInfo
 }
 
+// Ensure compliance
+var _ sparta.ServiceDecoratorHookHandler = (*LogAggregatorDecorator)(nil)
+var _ sparta.TemplateDecoratorHandler = (*LogAggregatorDecorator)(nil)
+
 // KinesisLogicalResourceName returns the name of the Kinesis stream that will be provisioned
 // by this Decorator
 func (lad *LogAggregatorDecorator) KinesisLogicalResourceName() string {
@@ -79,6 +83,7 @@ func (lad *LogAggregatorDecorator) DecorateService(context map[string]interface{
 	serviceName string,
 	template *gocf.Template,
 	S3Bucket string,
+	S3Key string,
 	buildID string,
 	awsSession *session.Session,
 	noop bool,

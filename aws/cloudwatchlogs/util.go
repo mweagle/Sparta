@@ -23,7 +23,7 @@ func tailParams(logGroupName string, filter string, lastEvent int64) *cloudwatch
 	return params
 }
 
-// TailWithContext is a utiltiy function that support tailing the given log stream
+// TailWithContext is a utility function that support tailing the given log stream
 // name using the optional filter. It returns a channel for log messages
 func TailWithContext(reqContext aws.Context,
 	closeChan chan bool,

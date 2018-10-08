@@ -38,32 +38,42 @@ func (s3Site *S3Site) export(serviceName string,
 	template *gocf.Template,
 	logger *logrus.Logger) error {
 
-	websiteConfig := s3Site.WebsiteConfiguration
-	if nil == websiteConfig {
-		websiteConfig = &s3.WebsiteConfiguration{}
+	if s3Site.WebsiteConfiguration == nil {
+		s3Site.WebsiteConfiguration = &s3.WebsiteConfiguration{
+			ErrorDocument: &s3.ErrorDocument{
+				Key: aws.String("error.html"),
+			},
+			IndexDocument: &s3.IndexDocument{
+				Suffix: aws.String("index.html"),
+			},
+		}
+	}
+	// Ensure everything is set
+	if s3Site.WebsiteConfiguration.ErrorDocument == nil {
+		s3Site.WebsiteConfiguration.ErrorDocument = &s3.ErrorDocument{
+			Key: aws.String("error.html"),
+		}
+	}
+	if s3Site.WebsiteConfiguration.IndexDocument == nil {
+		s3Site.WebsiteConfiguration.IndexDocument = &s3.IndexDocument{
+			Suffix: aws.String("index.html"),
+		}
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 1 - Create the S3 bucket.  The "BucketName" property is empty s.t.
 	// AWS will assign a unique one.
-	if nil == websiteConfig.ErrorDocument {
-		websiteConfig.ErrorDocument = &s3.ErrorDocument{
-			Key: aws.String("error.html"),
-		}
-	}
-	if nil == websiteConfig.IndexDocument {
-		websiteConfig.IndexDocument = &s3.IndexDocument{
-			Suffix: aws.String("index.html"),
-		}
-	}
 
 	s3WebsiteConfig := &gocf.S3BucketWebsiteConfiguration{
-		ErrorDocument: gocf.String(aws.StringValue(websiteConfig.ErrorDocument.Key)),
-		IndexDocument: gocf.String(aws.StringValue(websiteConfig.IndexDocument.Suffix)),
+		ErrorDocument: gocf.String(aws.StringValue(s3Site.WebsiteConfiguration.ErrorDocument.Key)),
+		IndexDocument: gocf.String(aws.StringValue(s3Site.WebsiteConfiguration.IndexDocument.Suffix)),
 	}
 	s3Bucket := &gocf.S3Bucket{
 		AccessControl:        gocf.String("PublicRead"),
 		WebsiteConfiguration: s3WebsiteConfig,
+	}
+	if s3Site.BucketName != nil {
+		s3Bucket.BucketName = s3Site.BucketName
 	}
 	s3BucketResourceName := s3Site.CloudFormationS3ResourceName()
 	cfResource := template.AddResource(s3BucketResourceName, s3Bucket)
@@ -121,7 +131,6 @@ func (s3Site *S3Site) export(serviceName string,
 	statements = append(statements, spartaIAM.PolicyStatement{
 		Action: []string{"s3:DeleteObject",
 			"s3:PutObject",
-			"s3:DeleteObjects",
 			"s3:DeleteObjects"},
 		Effect:   "Allow",
 		Resource: s3SiteBucketAllKeysResourceValue,
@@ -162,16 +171,18 @@ func (s3Site *S3Site) export(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// 4 - Create the lambda function definition that executes with the
 	// dynamically provisioned IAM policy.  This is similar to what happens in
-	// ensureCustomResourceHandler, but due to the more complex IAM rules
+	// EnsureCustomResourceHandler, but due to the more complex IAM rules
 	// there's a bit of duplication
 	//	handlerName := lambdaExportNameForCustomResourceType(cloudformationresources.ZipToS3Bucket)
 	logger.WithFields(logrus.Fields{
 		"CustomResourceType": cfCustomResources.ZipToS3Bucket,
 	}).Debug("Sparta CloudFormation custom resource handler info")
 
-	lambdaFunctionName := awsLambdaFunctionName(cfCustomResources.ZipToS3Bucket)
-
-	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(nil,
+	// Since this is a custom resource command, stuff the type in the environment
+	userDispatchMap := map[string]*gocf.StringExpr{
+		EnvVarCustomResourceTypeName: gocf.String(cfCustomResources.ZipToS3Bucket),
+	}
+	lambdaEnv, lambdaEnvErr := lambdaFunctionEnvironment(userDispatchMap,
 		cfCustomResources.ZipToS3Bucket,
 		nil,
 		logger)
@@ -185,13 +196,16 @@ func (s3Site *S3Site) export(serviceName string,
 		},
 		Description: gocf.String(customResourceDescription(serviceName,
 			"S3 static site")),
-		Handler:      gocf.String(binaryName),
-		Role:         iamRoleRef,
-		Runtime:      gocf.String(GoLambdaVersion),
-		MemorySize:   gocf.Integer(256),
-		Timeout:      gocf.Integer(180),
-		FunctionName: lambdaFunctionName.String(),
-		Environment:  lambdaEnv,
+		Handler:    gocf.String(binaryName),
+		Role:       iamRoleRef,
+		Runtime:    gocf.String(GoLambdaVersion),
+		MemorySize: gocf.Integer(256),
+		Timeout:    gocf.Integer(180),
+		// Let AWS assign the function name
+		/*
+			FunctionName: lambdaFunctionName.String(),
+		*/
+		Environment: lambdaEnv,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)

@@ -220,7 +220,7 @@ KxKD8dCeJQE2/yy8KBICJQJC/DI+AwAA//9Gw8deBBgAAA==
 	"/resources/describe/AWSIcons/AI/AI_AmazonLex.svg": {
 		local:   "resources/describe/AWSIcons/AI/AI_AmazonLex.svg",
 		size:    1691,
-		modtime: 1484075676,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xVXWsiSxB9D+Q/FH2fb9kf9dF9cQJ33xb2PywmmahgNMQhJv9+qZ6JtqCLD+KxOFZN
 nT6nZ77/WML6uXO/Fl/9++/g4HkxLP7dLl77qQbBwefrZrvv3GoY3v6bzQ6HAx4S7t6Xs+i9n+0/lg4O
@@ -239,7 +239,7 @@ Cq2Xbr7Mzo78FPize6BZqKFfvmrmM7v85/ZCebi/+xMAAP//LsPC55sGAAA=
 	"/resources/describe/AWSIcons/AI/AI_AmazonMachineLearning.svg": {
 		local:   "resources/describe/AWSIcons/AI/AI_AmazonMachineLearning.svg",
 		size:    2564,
-		modtime: 1484075676,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWXW9aMQx9r9T/YGXP802c7wkqbW+T9h8m2lK4EoWqXJX230+JA+QWOsJDW9ece47j
 Y5w72b4toH+cij+zj/nrXyXgcTbMvq9nz/OSAyXg/Xm13k7FchhefnTdbrfDncbN66IjKWW3fVsI2PWP
@@ -259,7 +259,7 @@ AAD//5JKwfEECgAA
 	"/resources/describe/AWSIcons/AI/AI_AmazonPolly.svg": {
 		local:   "resources/describe/AWSIcons/AI/AI_AmazonPolly.svg",
 		size:    2076,
-		modtime: 1484075676,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVy27jOBC8B8g/NLTnbbHJ7ia5sAPs3haYfxg4iWMLcOwgFuLk7wckJYUazGTkg+ES
 WawS+6XV+W0H3eO6+bb52L5+pwYeN/3m7+PmeTusATXw/nw4ntfNvu9f/mnby+WCF4en111rjTHt+W3X
@@ -278,7 +278,7 @@ aMARZu6v9Vdt+vqu0hf97vbmRwAAAP//3JJlRBwIAAA=
 	"/resources/describe/AWSIcons/AI/AI_AmazonRekognition.svg": {
 		local:   "resources/describe/AWSIcons/AI/AI_AmazonRekognition.svg",
 		size:    1529,
-		modtime: 1484075676,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RU0W7bOgx9L9B/IHSfLy1REiUOdoHtbcD+YUgb1zGQJkFjxO3fD5YcRwPWwn0IQkuH
 51DioerzpYN+26hfm/f29bdRsN0Mm/8Pm5d2XgOj4O1lfzg3ajcMp29VNY4jjhaPr11FWuvqfOkUjP12
@@ -295,7 +295,7 @@ uqlkDpNxiy5Yg2JuaxNuNTVH1OHv3JL6ur2+o8l8XpBNSclxmtvg0IVbo0ujFnlfNOeUTzfSQjTv51oK
 	"/resources/describe/AWSIcons/Analytics/Analytics_AWSDataPipeline.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AWSDataPipeline.svg",
 		size:    896,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTz46yMBTF9ya+w02/9Xf7j0I7AZOZ9bzDBAWhCYKRRvTtJ1AVNDK6IFzuOfxoTg5x
 eyzAZgn5Ts/54YcTyFKX/q/TXX7ZASdw2lV1m5DSuf0HpV3XYSexORRUMMZoeywIdDZzZUI4YwTK3Bal
@@ -309,7 +309,7 @@ ySvsQz0ijfeN0BxN+LwdL+J46NiE7BVPnrienzmmfbXj/q9ZLRe/AQAA//9xq5NBgAMAAA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AWSGlue.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AWSGlue.svg",
 		size:    1503,
-		modtime: 1499374630,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTXU/jOhCGr5tfMcfn6kjpxB9xvkiKqM6CkPZipZW4XZXWpBEhiWK3SbXiv6/itMBC
 Qblo7b7jeTwzb51e9k8l7FWri7rKCENKQFXrelNUeUZ25mEekcuFk/4zn8ONqlS7MnWbwNWmvldwW5Y7
@@ -328,7 +328,7 @@ Xzh/AgAA//+u6SzE3wUAAA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonAthena.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonAthena.svg",
 		size:    1942,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xVzW7bMAy+F+g7ENp5tCRSlDQkBbbz3mHImjQx4CZFYzTt2w+S7FRpG0yHIDT98ePP
 R8mL48sW+vVS/V69bZ7/GAXr1bj6vl89biYfGAWvj8P+uFS7cXz60XWn0wlPhIfnbWe11t3xZavg1K/H
@@ -347,7 +347,7 @@ AA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonCloudSearch.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonCloudSearch.svg",
 		size:    1605,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUXW/bMAx8L9D/QGjPo/VFiRrsAtvz/sOQNoljwE2Cxoibfz/YFBIFawY/FGalE4+X
 O6k+nVvo1o36vbpsPv4YBevVsPq+X71v8hoYBZ/v/f7UqN0wHH9U1TiOODo8fLSV1VpXp3OrYOzWw65R
@@ -364,7 +364,7 @@ BE8suD4Sie9fNQnnbEGBX8zhErJ9aIHsigUF8uvudTW9z/X09L88P/0NAAD//0Ov/VRFBgAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonCloudSearch_searchdocuments.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonCloudSearch_searchdocuments.svg",
 		size:    1046,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STu46jTBCF85HmHUr9p7joe9Mj2tK/0QY7qQMnKzRgaKkNlmkZ8/Yrc/FMYu3FAeJQ
 xen6VAfy/lKDLx35UYzV+ScjUBax2LTFsVpqwAhcj6HtHWliPL2l6TAMOAjsznXKKaVpf6kJDL6MjSOM
@@ -380,7 +380,7 @@ AA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR-HDFScluster.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR-HDFScluster.svg",
 		size:    1978,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SVUW/bOAzH3wfsOxi6V+kfiSIp+RAX2N3LHtJXP+TlEKRZHcDpiiZw2m9/kN3d3K4d
 sgOGIKBMUSRF8mcvj8Nttb9pzGrztHv4J5jqZnPauLvNYfesq4KpHg/93bEx3el0/+dicT6fcY74+nC7
@@ -401,7 +401,7 @@ MSOhpnp4bEyZHFM9PDWG3vPzja5JLsv39urjh38DAAD//y4rtm+6BwAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR.svg",
 		size:    1272,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xUwW7bOhC8B8g/LPjOb0VySS5ZSAbac/+hUGpFFqBIRkRY8d8XEhWbDWLU7cHwiJqd
 0Sy5LKdTC92+Et/rc/P6QwnY17H+f6hfmm0NlIC3l36YKnGI8filKOZ5xplwfG0LLaUsplMrYO728VAJ
@@ -417,7 +417,7 @@ nPxJ+cOwZcrpTVLOWJ93pCyWK6Vcbqvd48OvAAAA//9uRjDl+AQAAA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengine.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengine.svg",
 		size:    1278,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SUTW/zNgzH7wX6HQzvSjEiKVLykBTIevFhu/qwy2A4aRwgfUFjOO23HyRn2Frs6aEP
 DFGUaNp/kT9ofZ4P1XG3qX/v3/evf1Fd7fqpd0/94/66V1FdvT2ens6bepyml19Xq8vlghfB59fDir33
@@ -436,7 +436,7 @@ yzrfWXe3N38HAAD//8IYrNj+BAAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM3.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM3.svg",
 		size:    2952,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RWy24bxxLdB8g/ELzb7qOuqq5+BJIBXW9mkawMcOHNxWAkiwRoOwiJUfz3F1VNyVbg
 BIIDYqqL/aipx6nTc31aHzaHu5vtr/OX+z/+R9vN3Xye46f54/1lbkPbzZ8fj59ON9v9+fz7L1dXj4+P
@@ -466,7 +466,7 @@ giIh/V3mr6+eP2gv2hiv7ev5zc8//T8AAP//M2x05YgLAAA=
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM5.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM5.svg",
 		size:    2786,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SWz4/bxg7H7wX6Pwh+V853h+RwfhS7Afxy0aE9BfAhlwdBu1kbcJKiNrzNf//AGbvd
 Fm1TtDDEoaXRiMPvh5TuT5fn6fD4sPl++fL00/94Mz0u5yV8Wj4+Xc9NvJl+/nj8dHrY7M/nH7+7u3t5
@@ -495,7 +495,7 @@ LvMwN0FyQtVjGNNQxd+CZZ+gf5KX+7vx0TjGe/8uffPtN/8PAAD//7ghipbiCgAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM7.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_EMRengineMapRM7.svg",
 		size:    2613,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SWTW/kNhKG7wHyH4Tea/E1q4rFj8AewDsXHZKTgT74shDkj26gbQfphpz594ui2okz
 mJ0ZzKIhsloUqZdVTxV1eVweh/3d1ebX6dP9H//hzXA3nabwPD3dn+8NvBn+fDo8H682u9Pp918uLl5f
@@ -523,7 +523,7 @@ x5KRlsA7Q/nyqy4v1u+wtb/0T70PP//03wAAAP//CdyI+jUKAAA=
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_cluster.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonEMR_cluster.svg",
 		size:    1752,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SVz47bNhfF9wHyDoK+LXnM+4+kPtgDTFez8Gy10KYwascyIE+CjCAnb19QcTsaN2k6
 KArDEHzoK/Kce3/g+nk6Vqf9pt7uvh4+/0p1td+NO/+0Ox+uWkV19eU8PD1v6n4cP/1/tbpcLrgIPn4+
@@ -543,7 +543,7 @@ jHW5je7ev/s9AAD//+DLkzLYBgAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonES.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonES.svg",
 		size:    1137,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUQU/jPhDF70h8h5H/1zKxPTMe+68GafcMVw5cVoGWNFJoEY0a+PYru4FmVwvqIcqL
 Pc+/eY6T5f7QQreqzU3zvn795QysmqG52jbP62kMnIG35367r81mGF7+r6pxHHEk3L22lbfWVvtDa2Ds
@@ -560,7 +560,7 @@ haCm+38fhWWVv+Vl/k1cX178DgAA//+DpNKLcQQAAA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis.svg",
 		size:    1599,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUzY6bMBSF9yPNO1y56178/1PBSO2671DRCSFIDEQDCpO3r2yT1LSh9SLKjXPszz7H
 1+V0aaE7VOR7fW3efzACh3quPw/1W7OOASPw8dYPU0VO83z+UhTLsuAicHxvC04pLaZLS2DpDvOpIoxS
@@ -577,7 +577,7 @@ AP//uvbD3T8GAAA=
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesis-enabledapp.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesis-enabledapp.svg",
 		size:    1077,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3RTTWvrOhDdF/ofhN52NNFImpFU4kJeN1n0rQpddPMwjpMY3KQkJmn+/cVy+sHtvRgf
 j3U8o5mj4/nxtFHdqtKP9aU9/E9areqhNrv6tb2uKdLq/bXfHSu9HYa3u9nsfD7j2eP+sJk5a+3seNpo
@@ -595,7 +595,7 @@ FzH73yU2xSkj/yy5DpgCFJjEvJKRlzye0uLn9h99v/zZupM55uOvfn978ysAAP//ZI9ohzUEAAA=
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisAnalytics.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisAnalytics.svg",
 		size:    3051,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xWTU8juxLdjzT/weq3eSPZB1eVP5/ISLzVLHjbWczmqRUCidRDUIjC8O+vyt2EAInI
 la4QlUra5XPq47h9+bi7M6ubWXfdPy82/6fO3PTb3t33vxfTb4Y68+f3cP8465bb7cN/Li6enp7wJFhv
@@ -622,7 +622,7 @@ MZvo4cNbv60f/XQQe+hnjxTNAdYJcvvDO9sYkcIcFPVlxQkpQaqldpFr97jpsuYt+WVBCTtH4YdEEB27
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisFirehose.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisFirehose.svg",
 		size:    1959,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7xVTY/bNhC9B8h/INTr8Jmc4fCjsBfY9uLD9lRgD70Ugu21DSj2Ihbk7L8vKDldd5FF
 jCDowU9PEj18j29IzU/D1uzXi+ahfdl8/ts3Zt32rT20nzaXZ8Y35sun7nBaNLu+f/51NjufzzgLjp+3
@@ -642,7 +642,7 @@ SZdh11zktpmEIcVoRBQz8Tjy0d1/uF5zRrwMv6Z1xDemnc/qF3BeP653Hz/8EwAA//+I5y46pwcAAA==
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisStreams.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonKinesis_AmazonKinesisStreams.svg",
 		size:    878,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5zTzYqjQBAH8PvAvEPRe96yu6urYi92YPe877DIxBjB0aBNjG+/+DUxsAPDHkJ+ltX1
 L0Gz/lZCdQrqdz4W3R+j4JTH/HuTvxdrDYyC+3vd9EFdYrz+SJJhGHAgbLsysVrrpL+VCobqFC9BGa0V
@@ -657,7 +657,7 @@ ImfTN3J8ffkbAAD//8SY5OZuAwAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonQuickSight.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonQuickSight.svg",
 		size:    487,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yRX8ubMBSH7wv9DofsNh7j8U/KUOHdYLywtjcFL3ojWbUalpqimbbffmjdxbaXcAI5
 D0/OjyQdxgZ0lbG9etZ9GTColFNep2712oOAweNmuiFjrXP3z74/TRNOIdq+8UkI4Q9jw2DSlWszFgjB
@@ -671,7 +671,7 @@ ydgnIX7Ia8T81wP6Tb7dpPPn5NvN7wAAAP//1UOhnucBAAA=
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift.svg",
 		size:    871,
-		modtime: 1484075734,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STz46bMBDG7yvtO4zccwd7/L+CSO2571CxCUsssRAFKyRvX2FbhUva7gEx2N98vw8z
 1POth3Bq2M/20V1/CQanNrZfx/ajK2sgGNw/hnFu2DnGy7eqWpYFF4nTta+Ic17Nt57BEk7x3DDBOYNz
@@ -686,7 +686,7 @@ POVQGNj1/jdPyfU7Z54kJF94uc68rMk8TSkBh13j03O7dscI9wJh8GhYMtnGW6Kx24BbjcJsZp2Vb66Y
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift_densecomputenode.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift_densecomputenode.svg",
 		size:    2540,
-		modtime: 1484075948,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SWzW7bRhDH7wHyDgR73f2L87W7LOwAbnvQwT4V0EGXQrFl0wCVBJFApW9fDCVHtBIn
 NYpCIHY4u7PzsfPj6mI7PFSPd5f19erv9ee/qK7uVrtV/LDarI+6iurqy6b/sL2su93u06+z2X6/x17w
@@ -710,7 +710,7 @@ LZGPrJXfnWjxQ1BxS5JRaGBbiPh32bm2o5CK7yMHyf29jMLxcA7jhf9De/f2zT8BAAD//9+qfXvsCQAA
 	"/resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift_densestoragenode.svg": {
 		local:   "resources/describe/AWSIcons/Analytics/Analytics_AmazonRedshift_densestoragenode.svg",
 		size:    2674,
-		modtime: 1484075946,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SWzW4bNxDH7wHyDoJ6Jf/e+SS3sAOk7cEH+6qDLsXGlr0GVkkQC+v07YtZydXaiZMa
 RWFQHA45HM5wflyf3o+3i7vrs+VF99fmy5+0XFx3uy5/7Labg25By8XX7fDx/mzZ73affz05eXh4wIPg
@@ -735,7 +735,7 @@ eM0Ms6vYYcqR13gKo4+FMoL1XB2Tx0rx/MQT3ub4joTQobao7ePrnihiMAE5qqONGOoQ6MFqx5FC3ucx
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AWSStepFunctions.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AWSStepFunctions.svg",
 		size:    3209,
-		modtime: 1484075790,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xXTW8jNwy9L7D/gZieS4v6oKTCDtCee+sPKIy11xnAaxvxIN799wWlGQ8dezdKD0EU
 zRMfyfeomSzPrzvoN6vu7/WP7cu/1MFmPax/P6y/bcc9oA6+f9sfzqvueRhOfywWl8sFLw6PL7uFNcYs
@@ -758,7 +758,7 @@ Ue2aihGnTObnkql2g1ZdMkhSB4FK5nGTlgv5sl/Kvw9Pnz/9FwAA//9xABYViQwAAA==
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonAPIGateway.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonAPIGateway.svg",
 		size:    2330,
-		modtime: 1484075790,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWzW7bPBC8B8g7LPidvxX/fwo7QHvurQ9QCLFiC1AsIxas5O0LcumIKupYOgTZMKMZ
 cWZ3oc35sod2t2U/64/m7bdgsKuH+v9j/drkMxAM3l+743nLDsNw+lZV4zjiqLB/21eSc16dL3sGY7sb
@@ -777,7 +777,7 @@ xKNPkj4fTU8vvlQi/FswMxdiE+zfSWyq+Kmxid8zT48PfwIAAP//jW85rhoJAAA=
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonElasticTranscoder.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonElasticTranscoder.svg",
 		size:    3299,
-		modtime: 1484075790,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RX3W7yOBC9r9R3GGWvd/DYjn9WUGn3eu++B/gUlRQiUUAlgvbtP9njgkNCMRdVg31y
 jufMj5X54biCbrmo/m++2o/fVMGy6Zu/t817m9aAKvh832wPi2rd9/t/ZrPT6YQnhbuP1UwKIWaH46qC
@@ -799,7 +799,7 @@ TwAAAP//7rQHguMMAAA=
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF.svg",
 		size:    1121,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUz26jMBDG75X6DiPvlQwe//cKcthzeu2hlxUSlCARiAoK7duv7JDEKzVVDohh/M38
 7PlkiunUQleXbFd9NR9/iUFdzdVmqA7NmgNi8Hnoh6lk+3k+/s7zZVlwkTh+tLngnOfTqWWwdPW8Lxlx
@@ -815,7 +815,7 @@ zX2A4SjAmXCxNIdoTQiCfRDXoj1wk32/9SIPd7cIv4Xt89O/AAAA//8/vk8JYQQAAA==
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF_decider.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF_decider.svg",
 		size:    1308,
-		modtime: 1484076696,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xUTY/aMBC9r7T/YeRencFfM2NXZA895bCcKnHgUkUQQiQWEEQL/Psqhi5U6nZbtYck
 zy+eN09vLI8Pry10i1I91+dm/80qWNR9XWzql+bKgVVwellvDqVa9f3u82h0PB7x6HG7b0fOGDM6vLYK
@@ -833,7 +833,7 @@ G4+Ga2c83GhPjw/fAwAA//9Bc2hzHAUAAA==
 	"/resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF_worker.svg": {
 		local:   "resources/describe/AWSIcons/Application Services/ApplicationServices_AmazonSWF_worker.svg",
 		size:    1216,
-		modtime: 1484076696,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xUy26jPBTeV+o7WP63h4Mv+IB/QaTOqguyzaKbkTUhgETTKkGQvv3IJiFJQzejiA/F
 /m6+JPlxqFm7LXjpvqrDb8nZ1vUu2rv36jzGJGen925/LHjT95//x/E4jjhq/DjUsRJCxMeh5mxst31T
@@ -850,7 +850,7 @@ tvCPQnqbr+But5vv3+21M+SrhZW6FLMMAlxOVeoAftBMMM343QcBSwJYEoCAIPkmgJ8FywnwY6VzqeUF
 	"/resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonChime.svg": {
 		local:   "resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonChime.svg",
 		size:    2662,
-		modtime: 1499991008,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xWXY/aOBR9hl9x1/u0krnYzpfNEKqlGlWV9mGllfq6YsBloqYJIuFLq/731XUCdqeM
 yMOMD05y7jnn4hvmH87fSzjafVPUVc4kCga2Wtebotrm7NB+nWj2YTGe/zaZwCdb2f2qrfcz+HNTv1j4
@@ -873,7 +873,7 @@ Ad59oDTKAxTm6rMecjRuPF5Ir6wnHjLdbkYzzSms0ObN+pCZdi+7n38O+FenQ/5Nfy3tyrjpMqcfZ4vx
 	"/resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonWorkDocs.svg": {
 		local:   "resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonWorkDocs.svg",
 		size:    1178,
-		modtime: 1484075834,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xUT2+bThC9R8p3GE0uiRQP+wcWNoIccvn58ItaqY0PuVTILHhVDBa7/vftK9ZO7KRJ
 pUo9IGbevjc78xiRu00Dtirw/3Jvhh8coSp9OenKpTliwBF2y7ZzBS68X91F0Xa7pa2kfmgiwRiL3KY5
@@ -891,7 +891,7 @@ iwnXMykoU1OVEH/+oy+Hdz7+T+4vL34FAAD//x4VdGCaBAAA
 	"/resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonWorkMail.svg": {
 		local:   "resources/describe/AWSIcons/Business Productivity/BusinessProductivity_AmazonWorkMail.svg",
 		size:    996,
-		modtime: 1484075834,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTTW+bTBDH75HyHUaTSyKZYV+AZSPIIZcnhzxqpTY55FKhsNirYrDYNba/fbVA3DRt
 pR6Q/vOf386bROHGNdi6xMfqZIZvHKGufBV11dYsHnCE47btXIkb73e3cXw4HOggqR/WsWCMxW5cL8jt
@@ -909,7 +909,7 @@ xw/kAwAA
 	"/resources/describe/AWSIcons/Compute/Compute_AWSBatch.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AWSBatch.svg",
 		size:    2089,
-		modtime: 1506354458,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xV227bMAz9FcJ7Li1KpC5tkoftdf8wpI1zAdwkqL2mxdB/H2TJiRq0iB8CyMThIXkO
 pcy61w3sVvPq9/K9eflDFayW/fJuv3xucgyogrfndt/Nq23fH+/r+nQ64cng4WVTa6VU3b1uKjjtVv12
@@ -929,7 +929,7 @@ P/jF/wAAAP//iXBIlikIAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk.svg",
 		size:    1235,
-		modtime: 1506354456,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUz27bOBDGX2XAvewC6xH/S3IkAU1QoIeilx56LBiLsoXSkmEylt0g715IZmIlbpCD
 gJnRzO+bjwRY+MMa2rokX83J7n8yArUJZtGZrY01YASOW9f5kmxC2C2TZBgGHAT2+3XCKaWJP6wJDG0d
@@ -947,7 +947,7 @@ gz2GOVgRCHvT+abfb0syhc4E+++CI81gIRgK9R+pPv34Dp+d8aFdQRH8znRwHN8RlDmB0+SXk+rWms4H
 	"/resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk_application.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk_application.svg",
 		size:    801,
-		modtime: 1506354468,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SST4+bTAzGvwqa9+p5wJ5/zC5EeptLD+01h14qSkiCRDbRQsOuqv3u1UCkrVT1UFUI
 8/jBxuYH1Xg7Zv2+Vp+a1+75K6ts30yNfmrO3d3LWGUv5+FprNVpmq4PeT7PM2aDy/Mxl6Io8vF2VNnc
@@ -963,7 +963,7 @@ FxIObmGRfuzNzwAAAP//8Zn/SyEDAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk_deployment.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AWSElasticBeanstalk_deployment.svg",
 		size:    1081,
-		modtime: 1506354468,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STTU/DRhCG/4q1vc6+3tnZT4gjUS490GsOXCrXceJIDqDYTUAV/72ynQpU6IGDR9pH
 8uzM+2hXw3lfHLaVeqjf2tMfrIptPdb6qT62V1awKl6P/dNQqW4cX27K8nK54CJ4Pu1La4wph/NeFZfD
@@ -1014,7 +1014,7 @@ JFKwYlVZR9qCNes8lsmpV/zYcH2M9XMVvwMAAP//nY2mw6UCAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2.svg",
 		size:    992,
-		modtime: 1506354456,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4STwW6cMBCGX2XknjN4xhjbCXBor32HCgWWRWKXVewuWVV598qYdFmpEQeQPXz/PzMe
 U/prD0NbiZ/NrXv7RQLaJjRP5+bUrTEgAe+n8ewrcQzh8pxl8zzjrHB66zOWUmb+2guYhzYcK0FSCjh2
@@ -1030,7 +1030,7 @@ AwAA//8sdy7F4AMAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_AMI.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_AMI.svg",
 		size:    955,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6TTyW6DMBAG4FexpueMN8ySYA7tte9QoWAWyVmE3QCq8u5VgCZRqkhVOSB5/sMH8yOn
 7lSRptDwng+m/eBAitznq32+M3NGOJB+Z/dOQ+39cU1p13XYSTy0FRWMMepOFZCuKXytgTMGpDZNVft5
@@ -1044,7 +1044,7 @@ paUsQG6l/Am5XLnsOwAA//93kdEBuwMAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_AutoScaling.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_AutoScaling.svg",
 		size:    1412,
-		modtime: 1506354464,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUz47aMBCHX8Vyzzvxv7Gd3YRDe+07VGgJECkQtEnJomrfvYpnXALbFQesL6PJ+Gfn
 E9Vw3ol2U8uf60vz9ktLsVmP66fj+tBwTWgp3g/dcajlfhxPz0UxTRNMFvq3XWGUUsVw3kkxtZtxX0ut
@@ -1062,7 +1062,7 @@ AAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_DBoninstance.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_DBoninstance.svg",
 		size:    1632,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xVTW/jNhD9K4J6HT5xhhyS2rUNbHvZQ3oqkEMvhSArtgFlE0SqnaDIfy8oOv1IG+ey
 hxz8TNLmzHvzZqTVdNxVh+26vuqehoffuK623dyZb93tcD6ruK4eb8dv07rez/P9p6Y5nU44Odw97Bqx
@@ -1081,7 +1081,7 @@ jfmPTHZvwOkqOAqZ+GignqxB8gY2Gngt360Byxf2kEAFiy8vGi51YjHFJ6Q3PclN5KBqctl9a5ayh+m7
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_EC2rescue.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_EC2rescue.svg",
 		size:    867,
-		modtime: 1507857952,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6ST3Y6bMBCFX8WavW0G/7JAMBftbd+hQmAStw5E2BtA1b57FcNutn9qo71AjI9nPp0z
 kkt/ORDbavhcL2b8woC0dah3fX0ym0YYkPnkeq/hGMK5SJJpmnASOIyHhFNKE385AJlsG44aGKVAjsYe
@@ -1096,7 +1096,7 @@ foBKMeX/F+H6NKofAQAA//+6JWJbYwMAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_ElasticIPaddress.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_ElasticIPaddress.svg",
 		size:    513,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2zRPa+bMBQG4L9iuat9fPwJ3AtIbZc70DVDlwoFB5CcD8UuJKry36sAQ5t2AOm88nv8
 SC7j1JOxq2jT3v31h6Ska1PLT+3RbxmRlNyO4RQrOqR0eRNinmeYNZyvvVCIKOLUUzKPXRoqKhEpGfzY
@@ -1110,7 +1110,7 @@ MpCKg9KAOd9qE3cfGiErPmdgHVt+yJBJJh2zEpTaLeua5RAzxcdy93cq/sWpv3AIxr7gXoiBW7AFU4DZ
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_SpotFleet.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_SpotFleet.svg",
 		size:    2022,
-		modtime: 1506354464,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xUzW7iSBB+Fatz2ZXc5a7qXxODNLuXOexKe8ohl5UFBltjILI9BhTNu4/abhNCSEYj
 Raibrqqur/6+dtb2m6hazdk/+alo/kcWrfIu57t8WwRdhCw6butdO2dl1z3NkuRwOMBBwr7ZJCSESNp+
@@ -1131,7 +1131,7 @@ cnAEwvdDuBHC+eiqBekRtHcbVEaNH9C23yx+BgAA//+En3Gn5gcAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_SpotInstance.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_SpotInstance.svg",
 		size:    712,
-		modtime: 1506354464,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SSzY6bMBSFX8Vyt/bB1/+egSzaTRftdhazqRCQgERmouCGRNW8ewVh2qpddYF07of0
 XR/L5XQ5sKGt+Jf61p2/EWdtnWv5Uh+7jTHi7HocX6aK9zmfHopinmfMBq/nQ6GVUsV0OXA2D23uK05K
@@ -1147,7 +1147,7 @@ AAD//yQQHxbIAgAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_X1instance.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_X1instance.svg",
 		size:    749,
-		modtime: 1506354464,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SSza6bMBCFX8Xy3dqDmfHwkwCLdpNFu72LbioUTEB1fgRuSFTdd68g5LZqpW66sHzO
 kfXN0cjFeD2Ivinlp/ruhq+xFE0dan2qj27NRCzF7ehPYym7EC6bKJqmCSaC83CI0BgTjdeDFFPfhK6U
@@ -1163,7 +1163,7 @@ HvWkLi6qiksdut8ZVoqmlJ+tAU6UNZDvrPWoGEyiUM9XR2Ct1wQJqRRSUgS5SueHGaDXCMiagWZBioF2
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instance.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instance.svg",
 		size:    384,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SQzWrDMBCEX2XZnqM/R2mTSD60175DMbZsC+Q4WFvLpuTdS2zTQnvKYWFmYD6GNXFs
 wFcW34vZDR8SoSqo2F2Kzm0ZSISpC5dosSW6njhPKbGUsX5ouBJC8Dg2CMlX1FqUQiC0zjctbWb0Lr32
@@ -1176,7 +1176,7 @@ s4ABAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instances.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instances.svg",
 		size:    894,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STQYvbMBCF/4qYXuWxPCPJ2V3L0PaSQ3vNYS/FxEpscDbBUuOEsv+92Em7qbtsF4ox
 Yh7Me08fqAjHrWhrB1+qs++/ZSDqKlbJU7XzV01kIE677ik4aGI83KfpMAw4MO77bUpKqTQctyCGto6N
@@ -1191,7 +1191,7 @@ WJJskXjJi3/ENwaNWRmFOc0KWHPpdZP+y3aKnhOlOVGDpP+TKP1BlJDse4lazM3rRA2S/Zvo6P34RoXx
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instancewithCloudWatch.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_instancewithCloudWatch.svg",
 		size:    796,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SSwY6bMBCGX8WanncY2xjDLubQXvsOFQqGIJEQYTcEVfvuFdjZsqnSSw9I3/zSfPyD
 KN21Y31j4Hu92OkHB9bUvn451ycbM8aB3U7D2Rk4en95TZJ5nnGWOE5dIogocdcO2Nw3/miAEwE72r47
@@ -1206,7 +1206,7 @@ cxn7s3cGNKHkLNNIGVMcU31nwix95Dy/c7FuBdaEXMTdwMEZmSOXnzjsRt6cH0wZ2/VZy6//dPU7AAD/
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonEC2_optimizedinstance.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonEC2_optimizedinstance.svg",
 		size:    968,
-		modtime: 1506354464,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STTYvcPBCE/4rRe5XK6tand+05vLnkkFxzyCUYj2c84N0dxs58EPa/B0mTTUggkIOl
 pwtU3V3gdjnvq8O2Ex/623j6QqLa9muvnvun8a5VJKrr0/y8dGJa1+NDXV8uF1wMXk77mrXW9XLei+py
@@ -1223,7 +1223,7 @@ aaGQpilgFoX0OKZY2WQaFMMGqZWBbxSlkDMZNHxW0C7nmf6/zfcAAAD//0eqZbTIAwAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECR.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECR.svg",
 		size:    1754,
-		modtime: 1506354458,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RV7W7aQBB8ldX1r1nfx+7dObGR0v5tXyB/KgcMWDIfwm4AVXn36s42IWnaICHE+m7N
 zNyMvSJvn5dQzwvxvTxV+59KwLzsysmmXFdDD5SA47rZtIVYdd3uLk0PhwMeDG73y1RLKdP2eSngUM+7
@@ -1242,7 +1242,7 @@ mv4JAAD//9NjiZ/aBgAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECR_ECRRegistry.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECR_ECRRegistry.svg",
 		size:    4030,
-		modtime: 1506354466,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6TXTY/aPBDA8a9i+bk+TPwa27sJh/bCob1y6KWKSCCRwoKIS0DVfvdqgdhtVq1az4FD
 Rsovmcj6SxTDeUe6uqSfqmtz+sopqStfLV6qffOYEU7JZd+/DCVtvT8+Zdk4jjBKOJx2mWCMZcN5R8nY
@@ -1260,7 +1260,7 @@ AA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECS.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECS.svg",
 		size:    2274,
-		modtime: 1506354456,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWXa/aOBD9K6Pscye2xzNjt8DD7uv+hxW3hA8pF1CTvfRq1f++chzAaYvCfQA5w/GZ
 kzPHCYvubQeHzbL6e/3efPvHVrBZ9+tPx/VrM9bAVvD9tT12y2rf9+fPdX25XPBCePq2q50xpu7edhVc
@@ -1280,7 +1280,7 @@ fIK0CNejXGSMi+kRXuCfVTy9z7SQaToK2LOCyyDkuZWhyBgd3owFPpGnfyar/wMAAP//2x8N+OIIAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer-Alt1.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer-Alt1.svg",
 		size:    3409,
-		modtime: 1506354466,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SXTW+jPBDHvwryc4XBb2ObFiL12UsP22sPuaxoQ0KkpK0Cmxet+t1XNoRQNiVtoYpi
 4f+E33+YsYHExXbhLWcJ+Zkess0vRrxZWqbBU7rOas1jxNuvV09FQvKyfLkKw91uBzsBz5tFyCmlYbFd
@@ -1300,7 +1300,7 @@ EJpNhwHg9o3mOy3vSIBbvGkpLeR0HUiQKmC53AbyVlY3U/tHaPI3AAD//wUiynlRDQAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer-Alt2.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer-Alt2.svg",
 		size:    1638,
-		modtime: 1506354466,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVQW+bQBCF/wraXpdhZ3aHhQR8aC8+NNcecqlIAIOEE8tQY6vKf69YMLbcRFXKgdXO
 e/DtvtFIJO1h49V5Kr5np2L/E4WXZ13mv2TbYtI8FN5x27y0qai6bncXBH3fQ6/hdb8JSCkVtIeN8Po6
@@ -1317,7 +1317,7 @@ OJ4dRxsyD3+H1Z8AAAD//y4dAGBmBgAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonECS_ECScontainer.svg",
 		size:    1897,
-		modtime: 1484075882,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6zVyWrzMBAH8Hsg7zDMd/7G2kayi51De+07FKdewVlI1Dh5+5K90BQKnYMxsuEn6T8S
 k293LfRVga/lod68aYSqjOX/ZbmoL99AI+wXw3JbYBfj+ilJxnGk0dJq0yZGKZVsdy3C2FexK1ArhdDV
@@ -1331,7 +1331,7 @@ lFlGSWVS9lYmZR9kUg7mDynnybGL5cf2OJtOPgMAAP//0tHqBmkHAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonLightsail.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonLightsail.svg",
 		size:    1866,
-		modtime: 1506354458,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SV3W7iPhDFX2Xk/3Un/pqx3QYu/nu777CiJUCkFFCTLa1WffeVPxBGbRX2AskZHZ84
 v3MS2vF1C/16IX6u3ruXX0rAejWt7var567MQAl4ex7240Lspul43zSn0wlPBg8v20ZLKZvxdSvg1K+n
@@ -1350,7 +1350,7 @@ JtQNqdTz1p9TzvDrsLImh1Xp580ryLn41kNuvbJXyVyEt35+MlH2kXEkymUdiVZhmDqA6B3/AZd/AwAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC.svg",
 		size:    1383,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yU3W7iPhDFX2Xk/3Un/hp/tAkX/73dd1ilJUCkQFCTJUWrvvvKsVO8pYhegJzh+Ocz
 J2PK4bSFdl2xn/W5ef0lGKzrsX441Psm1UAweNt3h6Fiu3E8PhbFNE04Kexft4XknBfDactgatfjrmKC
@@ -1367,7 +1367,7 @@ eMf3ydcvOfP2iRwFToSUM3Egh7/H1d8AAAD//yyqM1NnBQAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_Internetgateway.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_Internetgateway.svg",
 		size:    881,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xTTY+bQAz9K6Pp1WPGnvEM7EKk7V72sL3uoZcKEZIgsR8KNCSq9r9XMGybfijKw362
 n/2QKIfTXnXbSj/Wl/b4jbTa1mNtXurnduUUaXV+7l+GSh/G8e0my6Zpwsnh63GfsbU2G057raZuOx4q
@@ -1384,7 +1384,7 @@ AkYPC6RpZ2clodUSo4/gQNDNXbks0UNwjZsTO3PeMOYxRXP1SaixhtHnhjFGIxjFBBPm06M3SP4xMHiH
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPCNATgateway.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPCNATgateway.svg",
 		size:    1041,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yT3YrbMBCFX2WYXu9Y0ujH2bV80d72HUpwlMTgjUOsxgll371YVrLJUqgvDEeHOd+R
 B1QN5x20G48/19dw+iURNuu4fjms30P2QCJc3rvD4HEf4/G1KMZxpJGpP+0KJYQohvMOYWw3ce9RCoGw
@@ -1400,7 +1400,7 @@ bFuSvuk0MvGmh1z/DQAA//+yRe6OEQQAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPCpeering.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPCpeering.svg",
 		size:    1373,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xUy47jNhD8FYK5kuUmm89dy0CSyx42P5BLIMiyLUAzHowUewbB/ntASvZ6Bntwo1Rs
 dldXE95Ol6MY9o383r73r/8YKfbt3Orn9qlfOWGkeHsan6dGnub55ctmc71ecWWcX48bS0Sb6XKU4jrs
@@ -1420,7 +1420,7 @@ NMMaFYs/Naw0EmtGXjZb/hR3/wcAAP//Ugs7mF0FAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPNconnection.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPNconnection.svg",
 		size:    815,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4zSzW6bQBAH8FdB2+vun/3+SMBS20sO8akSB18qZLBBwrEVKCSq8u4Vu3bUKKrUA6ud
 0czO8oNinI9Z35TksX5tn38KkjX1VLOn+tRec5kg2ctpeBpL0k3T5S7Pl2XBonB+PuaSc56P85FkS99M
@@ -1436,7 +1436,7 @@ fLM6MckRaIAwN6u14qNVvMg/uepPXLBujUP0Wn/zzZ8AAAD//xKQOPwvAwAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPNgateway.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_VPNgateway.svg",
 		size:    502,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yRy4rbMBSGX0WcbuWju+3OWF60myzabRazKcKWLyBPgqXaCWXevdhxIS1F6Ifzoe+X
 QFVcejK2Fr65u59/CCCtSy57d5M/GBFAblN4jxaGlK4vjK3riqvCy9wzyTlncemBrGObBguCcyCDH/sh
@@ -1450,7 +1450,7 @@ agTVKIpMYWGopvqJ0Y29bS/cfqv+HQAA///lKlmm9gEAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_customergateway.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_customergateway.svg",
 		size:    787,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4ySwY6bMBRFf+XpdT0PY/sZMoNZtNv+Q4XAECQnRNgNQdX8exVgUjpqNbNg4aN7D1yL
 Ilw76BuL36vZjT9ShKaK1dO5OrmNQYpwO/lzsHiM8fKcJNM00aRoGLtECiGScO0Qpr6JR4upEAhH13fH
@@ -1465,7 +1465,7 @@ LnL33X/l8ncAAAD//z9mSEwTAwAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_elasticnetworkadapter.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_elasticnetworkadapter.svg",
 		size:    1310,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SUQW+jMBCF/4rlvcJgjz0DtJDD7qWH7nUPe1mhQhIkEqLChkar/vdVMC0maRVVUaJv
 nt/MPPuQrDtuRF3m8rE4Vc9/tBRl0RfhvthVkya0FC+7Zt/lctv3h7soGoYBBgPt8yZCpVTUHTdSDHXZ
@@ -1482,7 +1482,7 @@ bfU/AAD//0FBtP8eBQAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_elasticnetworkinterface.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_elasticnetworkinterface.svg",
 		size:    1188,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUz66bPBDFX2U03/oO/jcG7sUsvm77DhUCkiCREAU3JKruu1cJbjFJr7KI9PPJOXPG
 XlCM5y10jcPv1bU9/ZAITeWrt0O1b4MGEuGy7w+jw533x/ckmaaJJk3DaZsoIUQynrcIU9f4nUMpBMKu
@@ -1498,7 +1498,7 @@ r4uZSeahYkFrSGYx3ttmQ4SPsQVvxbdvS/k7AAD///1zQrekBAAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_endpoints.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_endpoints.svg",
 		size:    1169,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3yUT4/bNhDFv4rAXofPnBn+TSwDbi45NNcccikEWV4b0GYXlmrvosh3L0R5m7QNCsM/
 gTOcmadHQtvp+tCcD635rXsdLr+zaQ7d3Nmv3eNwjzVsmpfH8evUmtM8P7/bbG63G26Kp8vDRpxzm+n6
@@ -1517,7 +1517,7 @@ RP9ZC0L+EOrhe0ZIFBJYaNlDP7SuCpYPye6vAAAA//+9J4dCkQQAAA==
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_flowlogs.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_flowlogs.svg",
 		size:    1046,
-		modtime: 1506354462,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6ST24qcQBCGX6WoXG/Zp+rWXXsuktu8QxBtHcEdB+2MM4R99+BhWWcJZEguhL8/rK9+
 Gs3HSwNt5fF7cQvDD4lQFbF4OhWvYWMgEa6v3Wn0eIzx/Jwk0zTRpKkfmkQJIZLx0iBMbRWPHqUQCMfQ
@@ -1532,7 +1532,7 @@ jN7q7jNLyrJt/T4vxgequLm9kZRJcEzWwvLNwsqZKU1h984snP/mw+8AAAD//wGdrvkWBAAA
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_networkaccesscontrollist.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_networkaccesscontrollist.svg",
 		size:    1112,
-		modtime: 1506354468,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUT2+jPhD9KpZ/Vxhsj21MC0i/7aWH3VOlHnqJKCEJWgJR8IZGq373lf+kza5aqUKM
 nh9v3jxbFuV82pJ+XdHvzbk7rjgl68Y26djsu8gRTsnLfhjniu6sPdxk2bIssCBMx20mGGPZfNpSsvRr
@@ -1550,7 +1550,7 @@ w9SPdq6o0KCIYqBzEiCC0AQ5KCILBz0r1TvMwegvGOd4EZMAvYU2b8aeDeMCdCGccbatS/c/qP8EAAD/
 	"/resources/describe/AWSIcons/Compute/Compute_AmazonVPC_router.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_AmazonVPC_router.svg",
 		size:    855,
-		modtime: 1506354460,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yTT4+bMBDFv8poet7B2B6H7GIO7bXfoUJgCJITIuyGoGq/e8WfdOmqq/bQAwf/ePN4
 84TzcGuhqy1+LSc3fEsR6jKWT5fy7DYGKcL97C/B4inG63OSjONIo6J+aBMphEjCrUUYuzqeLKZCIJxc
@@ -1565,7 +1565,7 @@ hNkiaU3ZI9LK10g7zWw4X4fiZwAAAP//IOWLN1cDAAA=
 	"/resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing.svg",
 		size:    2150,
-		modtime: 1506354458,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yWUW+jOBDHv8rI93InXQZ7bGM7JTx0ddI9rO4rnGggKRKBqHib5Fb73U82dGN2t6IP
 RcPwn9/8PUxRivH1CG29Y5+rW/Pyr2BQV77a9NWpmXMgGFxPXT/u2LP3522WXS4XvEgcXo4Zcc6z8fXI
@@ -1586,7 +1586,7 @@ qgs/nqserjtm0TG47RhpJFY+Vl3V79v+WGRRURZZ6FYW4ddB+X8AAAD//6ii/P9mCAAA
 	"/resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing_ApplicationLoadBalancer.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing_ApplicationLoadBalancer.svg",
 		size:    1562,
-		modtime: 1506354468,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SUz27aQBDGX2U0vTQHxju73n+Jl0N77TtUllmDJQORvcWgKu9eYUigValcohwseT5p
 vt/M55GLfreEZhHwW3mI3XdGWJSpnG3KdTxrwAj7dbvpA65Sen7MsmEYaFC07ZaZFEJk/W6JMDSLtArI
@@ -1602,7 +1602,7 @@ UE98ulalSPubY5gpUzAp9+YgDTk7OQ0moyevcvyjz38FAAD//9yBPrsaBgAA
 	"/resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing_ELLoadBalancer.svg": {
 		local:   "resources/describe/AWSIcons/Compute/Compute_ElasticLoadBalancing_ELLoadBalancer.svg",
 		size:    1037,
-		modtime: 1506354468,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6ST3Y7aMBCFX2U0vd6J7fH4Zzfhor3tO1QoBIiUJYikBFTtu1c2SWFXrVqpF0jj45lv
 jg9KOZx30G4q/Lq+NqdvGmGzHtdPh/VrM2ugES6v3WGocD+Ox+eimKaJJqb+tCuMUqoYzjuEqd2M+wq1
@@ -1619,7 +1619,7 @@ AAD//2KvPusNBAAA
 	"/resources/describe/AWSIcons/Contact Center/ContactCenter_AmazonConnect.svg": {
 		local:   "resources/describe/AWSIcons/Contact Center/ContactCenter_AmazonConnect.svg",
 		size:    1211,
-		modtime: 1499987488,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTX2vbShDFn6NPMXfv0wVptLv6s5JiOdyENgT6UCjktTj2RhbZSEK7tmRKvnvRyGmc
 kuJijM+enfntmQEvrsZnA3vd27ptSiaQM9DNut3UTVWynXsMMna19Bb/BAHc6kb3K9f2Bfy/aR803Bmz
@@ -1637,7 +1637,7 @@ Bb0uO8kwn5dN6t2yCTL945fezwAAAP//3XiK9rsEAAA=
 	"/resources/describe/AWSIcons/Database/Database_AWSDMS.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AWSDMS.svg",
 		size:    1821,
-		modtime: 1506354494,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yV327iPBDFX2WU77oT2+O/LXDxaS/3HVYBUoiUQtVEpdWq776yPU7S1dJygXUyjM/4
 x0nCang9QLdfVz+b9/bll6xg34zN3al5arkGsoK3p/40rKvjOD7f1/XlcsEL4fnlUCshRD28Hiq4dPvx
@@ -1656,7 +1656,7 @@ EnGypeH7N9D8JihMBVh6fu5Ky01m/CYtQBOq58ettESz+Ke2+RMAAP//fEDODR0HAAA=
 	"/resources/describe/AWSIcons/Database/Database_AWSDMS_databasemigrationworkflowjob.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AWSDMS_databasemigrationworkflowjob.svg",
 		size:    2236,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SWXWsbSROF/4qY97b6qKuqPxPJ8K73cvcq4Iu9WcZj2RIoH2SElbDkvy81M7bGcrAg
 i5BEl6hznqqubs2qf3xY7O7WzR/t983Xv7lZ3LWH1n1qP26m2IKbxbeP+0/9utkeDl/eLZfH4xFHxeev
@@ -1679,7 +1679,7 @@ WLGhuFRAsZGay59S33Kwf4Bqs/eqhihI5yapvqxhln3ZpCSkfN6oBDlr1GOF1lceQ/LgYc8cV/8GAAD/
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB.svg",
 		size:    1732,
-		modtime: 1506354494,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3yVz27jNhDGX4VQLy1Qj0gO/zqygaY59FD0FQolph0BshREbBzvYt+9IIeMtUB2DwZ+
 Gn2ab2Y4krvl7cSGw675u7+G139Fww597DdTfw4lxkTD3s/jtOya5xhftm17uVzggjC/nlrJOW+Xt1PD
@@ -1700,7 +1700,7 @@ cJ368/xw37Upz75L/z37/wMAAP//lMkopcQGAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDBAccelerator.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDBAccelerator.svg",
 		size:    3581,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xXTW8bOQ/+K8S81xlaIkV9tHYOL/awB+81h14WTuLEBqZJUBtOg0X/+4KSJpa7LTyH
 oo85FD8eUhSzPJyeYP+w6tab9+23v20HD5vjZnjefN1WGdgOvn8dnw+rbnc8vn5aLN7e3vCN8eXb04KM
@@ -1728,7 +1728,7 @@ Hn3xfLTPinrkWq26m3r0vmIXFLPRCemCLhWNI41K/2i7+TcAAP//cO0aif0NAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_attribute.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_attribute.svg",
 		size:    890,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STUY+jIBSF/8rN3edBBAE7Iz5s9nH/w4axaEmY2gipNZv57xuVOr5sOkkfTC4n53z3
 JEIVrh24o8bfZrLDnxzhaKJ5OZsPmzTIEW4f/hw0nmK8vGbZOI5k5KQfuoxRSrNw7RBGd4wnjTmlCCfr
@@ -1743,7 +1743,7 @@ AgAA//+JqCHfegMAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_attributes.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_attributes.svg",
 		size:    1574,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RUzY6bMBh8lU9fL93DGuN/7+Icqh77DhVLTILEhghbIVG1715hYJdLlZ8eIg2j8cxk
 4lCE0w6arcNf5cX3v3OEbRnL50P57mcOcoTze3sIDvcxHl+ybBgGMnDS9buMUUqzcNohDM027h3mlCLs
@@ -1760,7 +1760,7 @@ AwAA//8lrSlOJgYAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_globalsecondaryindex.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_globalsecondaryindex.svg",
 		size:    2095,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RV247aMBT8Fct9Xse32GY34aHqY/+hyoKBSFlA2CKgav+98jVGqkSAh9WOj87M8RmP
 QmPOW9CvW/i7u+rTHwLBurPd27770rEGCASXr2FvWriz9vheVeM4opGhw2lbUYxxZc5bCMZ+bXctJBhD
@@ -1777,7 +1777,7 @@ V3+Ufbv5o+zbxWezXRxfevUs8Oy7Z4FnXz4L3H979zO//BcAAP//BDRxcy8IAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_item.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_item.svg",
 		size:    890,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STUY+jIBSF/8rN3edBBAE7Iz5s9nH/w4axaEmY2gipNZv57xuVOr5sOkkfTC4n53z3
 xEAVrh24o8bfZrLDnxzhaKJ5OZsPmzTIEW4f/hw0nmK8vGbZOI5k5KQfuoxRSrNw7RBGd4wnjTmlCCfr
@@ -1792,7 +1792,7 @@ AgAA//8cfsPDegMAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_items.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_items.svg",
 		size:    1305,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SUzW6jMBSFX+XqzrrG+BdanMVolvMOI0oMQaIhwlZINOq7j2xDyy5Mu0C6Pjrn41xh
 UblrB/3R4O/6bqc/OcKx9vXTuX6ziwY5wu1tODuDJ+8vz1k2zzOZORmnLmOU0sxdO4S5P/qTwZxShJPt
@@ -1808,7 +1808,7 @@ CD+0w78AAAD//+JD53MZBQAA
 	"/resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_table.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonDynamoDB_table.svg",
 		size:    1495,
-		modtime: 1506354496,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RU3YqjMBh9lY9vryfmR2OcUS+Wvdx3WJw2tYJTSxNqyzLvvjQx0cLA2O1F4XjI+cmB
 tDTnFrpthb+bqz79YQjbxjYvh+ZDTxwwhMtHfzAV7q09vibJOI5kFGQ4tQmnlCbm3CKM3dbuK2SUIux1
@@ -1824,7 +1824,7 @@ xi6tOcKlwpsDwrVCTkku41NN5Y0Ob7Ug2QoHIQl/ziFjz3aQ+X924PSLFYpH5fcTPCy/v//D8vvLfyW/
 	"/resources/describe/AWSIcons/Database/Database_AmazonElasticCache.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonElasticCache.svg",
 		size:    1087,
-		modtime: 1506354494,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yT0YrbOhCGX2XQuTmFWpYsybYS29DdFnpR+gpFseXEoNghUuNkl333Yklt3W4XchEY
 /Rp9zDfElb3sYehq9EXd9PkbRdApp5JRHXXMgCK4Hs1oa3Rw7rRJ03me8czwdN6nGSEktZc9gnno3KFG
@@ -1841,7 +1841,7 @@ PBKCZqgLjgmLyrHrLlyeYb6MQuWywYzFmkks/VCswCXkfoeCYM9enrzB5n9Zhz0F6/Vu77Dmr60DIViH
 	"/resources/describe/AWSIcons/Database/Database_AmazonElasticCache_Memcached.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonElasticCache_Memcached.svg",
 		size:    1231,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5TUTY+iMBjA8a/SdK9S2qcv4Ax42OzBw+4X2MuGURCSjhppQLOZ774BnvKY2dMcND/6
 15K2aNEPJ9YdS/6zetS3P4qzYxWq5Fy91zjGFGf3d3/uS96GcH1J03EcxajF5XZKQUqZ9sOJs7E7hrbk
@@ -1858,7 +1858,7 @@ Mpc/zwQAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonElasticCache_Redis.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonElasticCache_Redis.svg",
 		size:    1153,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5TUvW7bOhTA8VcheFfyiDzn8EOJ5eHiDh5up25ZCsWWbQGKHViCP1Dk3QtSVFukU4f8
 Iv0BH5GU4dV4PYh+18j/20d3+Wal2LVTq0/tW1easFLc34bT2MjjNL0/VdXtdoMbwflyqNAYU43XgxS3
@@ -1876,7 +1876,7 @@ B201MGqEGDR41AwYNWDQFqLTViME1JT/bdhfw4bx5Y1VPDI42loIrEx6cK0h+PkCwfFXh4BBMSlnwJFi
 	"/resources/describe/AWSIcons/Database/Database_AmazonElasticCache_cachenode.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonElasticCache_cachenode.svg",
 		size:    1155,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8SUT4+jOBDFvwryXu2Hq8o2dnfIYbWHHHqvOfRlRRMSItF/FBBJtOrvPoIwPaMZqaW5
 zBwQrx74V3rv4FU/HrLjrlQP1bU5/Ucq21VDZV6q52bxMlLZ5bl76UvVDsPbXZ6fz2ecBa+nQ87W2rwf
@@ -1893,7 +1893,7 @@ DIl6KoGn3J5a2xmCiJ6GzxZ7QeF+Q7+eENOf69d/LZdQxK0IpBVw2n6YaevsJljYYisOcePD9KOzG+8/
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS.svg",
 		size:    821,
-		modtime: 1506354494,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3ySzY6bMBSFX+XK3bRSMf7hxySA1Oksuqi6aB+gcoIhlgyOYjckM5p3rzAwzKLTBRb3
 3MPHuVcu3bUD3VTou7yry2+KoJFeRoPs1aIBRXDrzeAqdPL+vIvjcRzxyLG9dDEjhMTu2iEYdeNPFaKE
@@ -1909,7 +1909,7 @@ yQ7w8/FXGU+Eupwue/03AAD//4+PmOQ1AwAA
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_DBinstance.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_DBinstance.svg",
 		size:    786,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SSz46bPBTFX8W639Zc/IdrzAxk8bWLLKbbLrqpGDAByTMTxRYkqubdqxiidJEuukC6
 59ic3+GKOswHNvUNvLQXd/opgfVtbLP39s1tHpPAzm/+PTQwxnh8yvNlWXDR+HE65EoIkYf5AGyZ+jg2
@@ -1925,7 +1925,7 @@ AAAA//9AkCVfEgMAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_MSSQLinstance.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_MSSQLinstance.svg",
 		size:    3082,
-		modtime: 1506354500,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+xWT2/bxhL/KgTf5T1gd7Qzs38dSUDyetDBKVAY0CGXgqEoUwAtByYrOQ3y3YvZpZ00
 TZRDe8ihB49+O0vO/OavuRxPt9Vht6qvm/fdw69YV7tmavSxuetmXYV19Xg3HMdV3U/Tu6vF4nw+w5nh
@@ -1952,7 +1952,7 @@ f7hb1RkOzdT911S5W/5Xr1/fVDe/XFeH4zg1x1Y+X7vHab2UL/j1HwEAAP//pB4rHAoMAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_MSSQLinstancealternate.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_MSSQLinstancealternate.svg",
 		size:    1545,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+yUT4vjRhDFv4roXLufu6r6n3YtH0IOc8ieAj7sJWhleWTQ/sES9gxhv3vobmUmJDAQ
 cl2M2796yK+rXtu9X26PzeXUqV/75/H6O6nm1K+9+dJ/HjetIdU8fZ6/LJ2a1vXbu93ufr/jLvh6fdyx
@@ -1971,7 +1971,7 @@ ciUc693BsO0tIbhJEG+EWL+fL/DDnwEAAP//MS5rzQkGAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_MySQLDBinstance.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_MySQLDBinstance.svg",
 		size:    2741,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xWS4/bRgz+K4Z6nfk8JOeZeBdI0cMenFMAH3IpFK13ZUB5IDLsBEX+e8EZOWnTxHvp
 IYelKY6G/D6+tJv59Lg63N902/7z/uOf1K3u+2Nv3/Vv94ttRd3q09vp3XzTjcfjh2fr9fl8xlnw/uPj
@@ -1997,7 +1997,7 @@ Ao6Wd1F3pJ7GOu5qvoseibaRtUGW891y4mpg/Wfz9u8AAAD//wLER+e1CgAA
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_MySQLinstancealternate.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_MySQLinstancealternate.svg",
 		size:    1372,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RUTY/bNhD9KwJ7JZ85M6RIJZYPRQ972JwK+JBLocjyyoDyAUuwd1HkvxdDKZuiBRYI
 DItvxtKbN29G3s+3p+pyas1j9zJc/yJTnbqlc1+6z8OWq8hUz5+nL3NrxmX59m63u9/vuAu+Xp927L3f
@@ -2017,7 +2017,7 @@ UVf7llGHUZBuhLQ+rv+Jh38CAAD//4zPMV1cBQAA
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_OracleDBinstancealternate.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_OracleDBinstancealternate.svg",
 		size:    1401,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RUTY/bNhD9KwJ7JZ/JGX4psXwoevChPQXoYS+FIssrA3ISWIK8iyL/vRhK2S7awkAP
 y33zTLzHeTP2flqeq8upUb+2r/3tD6eqUzu35kt77Teucqp6uY5fpkYN8/ztw253v99xZ3y9Pe/IWrub
@@ -2037,7 +2037,7 @@ arfaFW35wTz8FQAA//+OJeweeQUAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_PIOP.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_PIOP.svg",
 		size:    1405,
-		modtime: 1506354500,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xUS2vjPBT9K0Lf9upab9mtHejHLLqYWRW6yGZQEyc2OE2JTR6U/vdBj7ZJWwoDs5B9
 dHR1zj3cxPW4X5N+2dCf/tTufgtKln7y7NFv2swRQclxMzyODe2m6emqKA6HAx4UbnfrQnLOi3G/puTQ
@@ -2056,7 +2056,7 @@ KzkyFCYi9sZFhKWIbwjMnamCc/jFvyoH+G0yjVKk0d3az4OzFQoNVvmLwbHwv5KXg4tC/2JwxXpWh4/m
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_PostgreSQLinstance.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_PostgreSQLinstance.svg",
 		size:    2690,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWT2/bzhH9KgJ73X3amdm/iWUgbQ8+pKcAPvhSMLRsGZCTwBRoG0W+ezGzku2mgIDf
 QcvhkJydP++91cW83K8ebjfD1/F1+/RvGla342H0P8bH7dG3omH18rj/MW+G3eHw69N6/fz8jGfBz6f7
@@ -2085,7 +2085,7 @@ MupOFh3jlT2zj/Wf4+V/AwAA//8bWAaZggoAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_SQLmaster.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_SQLmaster.svg",
 		size:    1772,
-		modtime: 1506354500,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xVTa/bRgz8K4J65Y6X5HJ3ldgGUvTwDu6pgA+9FIo/ngwoH4gEO0GR/16spNeP18S5
 5JCD6RVpD2c4XHs9XB+ry3FT79pPpw9/cF0d27F1b9s3pyVXcV19fNO/HTZ1N47vX6xWt9sNN8W7D48r
@@ -2105,7 +2105,7 @@ xU+Ny3/U9q8AAAD//1dTK7XsBgAA
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_SQLslave.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_SQLslave.svg",
 		size:    1960,
-		modtime: 1506354500,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xVPY8bRwz9K8KmJZ+GnG9bOsBBiisuVYAr0gTrPekkYP0BryDZCPzfA+7s5eNiy40L
 F+JyKIl8j3yc3Uznx9XxYdvd9Z92H/6QbvXQn3p+27/ZLbGVdKuPb8a307Y7nE7vX6zXl8sFF493Hx7X
@@ -2126,7 +2126,7 @@ GX0Qu06rFRGOpoXZm0nOqvcsJo5otQJSnptm79ebvwIAAP//rsd1N6gHAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_instancereadreplica.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_instancereadreplica.svg",
 		size:    951,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STTY+bPhDGv4rl/3U8jF/GNruQw7895NBee9hLxRISkNgXBQSJqv3uFYZVekgPFTLM
 PMDzexiLYphOojuU8lt1bc4/tRSHaqzUa/XSbJrQUlxe+tehlO04vj9k2TzPOFt8O58yQ0TZMJ2kmLvD
@@ -2143,7 +2143,7 @@ LIvSYZWtSWmMQWl0i2cwK2ep9s5/jmf53Xa/AwAA//8xr58RtwMAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_instancestandby.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_instancestandby.svg",
 		size:    1005,
-		modtime: 1506354498,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STvY7bMBCEX4Vg2uWKu+SS1J3lIpciRdKmSBPoZNkWoPuBJfgHwb17QMoHp7gUKWzP
 jk1+s2NoNR13atg0+lt76Q+/SKtNO7fmuX3qr54irc5P4/PU6P08v95V1el0wpPDl8OuYmttNR13Wp2G
@@ -2161,7 +2161,7 @@ AAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonRDS_oracleDBinstance.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRDS_oracleDBinstance.svg",
 		size:    3048,
-		modtime: 1506354500,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xWQW/buBL+K4Le5T2AHHNmyCGV2gba14MPeW8PBXLoZaHKcmRAcYJI6yRb9L8vhpK9
 2W7rXvbQQ5jhkJyZb76PtJbD8bbYb1fldf3SPv6KZbGtx9oe6rt29hVYFs93/WFYld04PlwtFk9PT/DE
@@ -2190,7 +2190,7 @@ u59XJSFEOa33bfH+XbE/DGN9aNrz5oVWtF7q9/n6jwAAAP//M+LrLegLAAA=
 	"/resources/describe/AWSIcons/Database/Database_AmazonRedshift.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRedshift.svg",
 		size:    889,
-		modtime: 1506354494,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yTQYvbMBCF/8qgnncsjSRL3rV9KD32PxQnURyDNw6RiBPK/vdiSSU6bFnowTAav/e+
 h41afxthOnTs5/Bw11+CwWEIw8t5eHd5B4LB/X0++46dQri8VtW6rrhKXK5jRZzzyt9GBut0CKeOCc4Z
@@ -2205,7 +2205,7 @@ ojkUxo1ydftQIiSDe05n8OhYdD/vgsTaPG+D0SjqLWW7MP2fAAAA//+gx17keQMAAA==
 	"/resources/describe/AWSIcons/Database/Database_AmazonRedshift_densecomputenode.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRedshift_densecomputenode.svg",
 		size:    2520,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SWTW/bRhPHv4rA57r7F+dtd5nIBvy0Bx3sUwEddCkUWTYNUEkQCXSCIt+9GIqJaSV1
 axSFIXD4X87Oy86P9OLQ388ebi+q682X3affqZrdbo6b+H6z343ajKrZ5333/nBRtcfjxzfz+ePjIx4F
@@ -2230,7 +2230,7 @@ dP84BfLAbv2m2ZOUJrhBMF5qQd56piVHqDtoiTziUn5xKMX7q+KeJINRww4Q8Vero2mjkYrvIyfL4w2V
 	"/resources/describe/AWSIcons/Database/Database_AmazonRedshift_densestoragenode.svg": {
 		local:   "resources/describe/AWSIcons/Database/Database_AmazonRedshift_densestoragenode.svg",
 		size:    2654,
-		modtime: 1506354502,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SWTW/bSBKG/4rAvXa/Yn11NxPZQHb3oIN91UGXBSPLpgEqCSKBTrDIfx8UKY9pO5MZ
 YzAwKHa/ZHd1fTxFr47D3eL+5qK6ar/vv/6PqsVNe2rjp/awP2sLqhbfDv2n40XVnU5f3i2XDw8PeBB8
@@ -2256,7 +2256,7 @@ Ci9/CwAA//8bUf4ZXgoAAA==
 	"/resources/describe/AWSIcons/Desktop & App Streaming/.BridgeSort": {
 		local:   "resources/describe/AWSIcons/Desktop & App Streaming/.BridgeSort",
 		size:    675,
-		modtime: 1484179690,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6TSv2rDQAzH8d1PcZum2tLRNBlsB0P/LJ2alo7hiBVz2NYdlglNn75TTQgtlOuq4cOX
 Hyq3H+NgTjypD1IB5QiG5RBaL10Fb6+PNxswOjtp3RCEKzizgtnWWdn6ycsx1Fl59ANrnZV+5tH0fK7g
@@ -2268,7 +2268,7 @@ nrWfQ2xi3M0Tu9FLt29G9xlkOdkc98/Ny9NDHqWzSGskQrqzZC2YIkHLOerikEW7SXSuenCd6Oipu+yh
 	"/resources/describe/AWSIcons/Desktop & App Streaming/DesktopAppStreaming_AmazonAppStream2.0.svg": {
 		local:   "resources/describe/AWSIcons/Desktop & App Streaming/DesktopAppStreaming_AmazonAppStream2.0.svg",
 		size:    1440,
-		modtime: 1484076016,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xUTYvbQAy9L+x/ENNz5dF8T7EXWnrsrT+gGOJ1TJPYJEO8++/LzCSxvSSs6SFEkV+e
 np5kladzC92mYr/q9+b4hxhs6lB/PdT75pIDYvC23x1OFduGMHwrinEccZTYH9tCcM6L07llMHabsK0Y
@@ -2284,7 +2284,7 @@ fOVcSucovdQzjvXTiifBeNT0eFjT1biBV/PfVfdZJ/ddK4t48Mp4VV+en/4FAAD//96H1iCgBQAA
 	"/resources/describe/AWSIcons/Desktop & App Streaming/DesktopAppStreaming_AmazonWorkSpaces.svg": {
 		local:   "resources/describe/AWSIcons/Desktop & App Streaming/DesktopAppStreaming_AmazonWorkSpaces.svg",
 		size:    926,
-		modtime: 1484076016,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3STXWukShCG7wP5D0Xn5hzQsr/bDhrI4cDOxYa9CPFibhaJ7QdxVLQzM/n3SzsmkOwu
 TYlV9bx2vQVmy7GBrsrJ9/LNzT8Zgar0ZTyUB7fVgBE4H/phyUnr/XSbJKfTCU8Cx7lJOKU0WY7Nhtye
@@ -2302,7 +2302,7 @@ ngMAAA==
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeBuild.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeBuild.svg",
 		size:    2822,
-		modtime: 1500057122,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVTW/bRhA9W79iuj0VoEb7/SGLCmI3CAL0UKBAroVsMbQQhhREWpJR5L8Xs0tKspGo
 7MHWaMR9fG/mzezi3fFbBfti126aOmcCOYOifmzWm7rM2XP3ZerZu+Vk8ct0Ch+LutitumY3h/fr5qGA
@@ -2327,7 +2327,7 @@ cvJvAAAA//9OIyRrBgsAAA==
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeCommit.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeCommit.svg",
 		size:    1668,
-		modtime: 1500057120,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xTTY/bNhA9r3/FlD0VoEf8Fum1HGS3QRCghwIFci28NqMVokiGKH+hyH8vSGtjxcgu
 dLAEP3LevPdmtHx3+lbDwXehapuCcGQEfLNpt1VTFmTff5lb8m41W/42n8NH3/hu3bfdAt5v2ycPn+p6
@@ -2347,7 +2347,7 @@ VKQZzRny5CVRWTHRSv5zktd0raKGTxuO5Oio5UOWHLRFGb/Pix5Ix3zabBgKavWViVEXlybCXL2xdfxm
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeDeploy.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeDeploy.svg",
 		size:    1196,
-		modtime: 1500057120,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SRXW+jOhCGr8OvmONzdSQw/gCDKaRqcqqq0l6stFJvV2niElQXEHYC0ar/fYWhH+q2
 UvYinvDOzON3xvnl8KThqDpTNXWBKCYIVL1tdlVdFuhgH4IUXS69/J8ggBtVq25jmy6Dq11zr+BW64Ox
@@ -2365,7 +2365,7 @@ eViOhzmWS+93AAAA//+pV1Q8rAQAAA==
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodePipeline.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodePipeline.svg",
 		size:    1556,
-		modtime: 1500057120,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTT2/iPBDGz+RTzOv3tFKY+E/ixJRQFbaqKu1hpZV6XVFwQ9Q0iWIDQat+9xUObVra
 rnIAwmP75+eZmUwv26cCdroxeVWmhCEloMtVtc7LLCVb+zBOyOXMm/43HsONLnWztFUzgat1da/htii2
@@ -2384,7 +2384,7 @@ HnDmL+EYDkH1FXYdd/7O3mnXCYeaBtnxy+yymfc3AAD//yRKsksUBgAA
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeStar.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSCodeStar.svg",
 		size:    1493,
-		modtime: 1500057122,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUS2/rNhCF19avmLKrAvKID4mUHMtB7AZBgC4KFMi2cGxGFqJIgki/UOS/F6TkXOfm
 4bswOD5DfTqHQ3t6fXipYKc7UzZ1ThhSArpeNeuyLnKytU/jlFzPgulv4zHc6Vp3S9t0E7hZN48a7qtq
@@ -2403,7 +2403,7 @@ GhWXEgoHc2OS8Wl0vuoTuq4f3eXzzjALVYrqDaTOQL7LGf7KPRxOSbLeGe+rd6d0ESJTd/skClCJwwiM
 	"/resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSX-Ray.svg": {
 		local:   "resources/describe/AWSIcons/Developer Tools/DeveloperTools_AWSX-Ray.svg",
 		size:    1627,
-		modtime: 1500057122,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTT4/bNhDFz6tPMWVPBegRSfGfvJaDrBsEAXooUCDXwmszshBFEkT5H4p894KUUqtB
 YviwO/Ab8sc3j9TqzeVLDSfX+6ptCsKREXDNrt1XTVmQ4/BpYcmbdbL6ZbGA965x/XZo+yW83bevDj7U
@@ -2423,7 +2423,7 @@ nTZ/w47VwO29xhjshF+lZfjnT+U6+TcAAP//lyiBd1sGAAA=
 	"/resources/describe/AWSIcons/Game Development/GameDevelopment_AmazonGameLift.svg": {
 		local:   "resources/describe/AWSIcons/Game Development/GameDevelopment_AmazonGameLift.svg",
 		size:    1519,
-		modtime: 1484076098,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yUzW7bMBCE7wHyDgv23BV/ln+FlENRoJe+Q6HEiixAtoxYsJK3L8SlAx7s1u7B8Fr6
 PCPsjFgfTz0Mm0b8aj+6t99KwKad26/7dtfla6AEvO/G/bER23k+fKuqZVlwMTi99ZWWUlbHUy9gGTbz
@@ -2440,7 +2440,7 @@ ej2knx4f/gQAAP//GJHZOu8FAAA=
 	"/resources/describe/AWSIcons/General/General_AWSManagementConsole.svg": {
 		local:   "resources/describe/AWSIcons/General/General_AWSManagementConsole.svg",
 		size:    1249,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUz26cMBDG75HyDpZ7tQfbYxtTLZHSSzm01z3kUiEtWZDIJkoQpG9fefizhUWtVow0
 +8Pjb74Zcfjoz6w55fxH+bt6/6U5O5VdKS/lSzX9xzRnny/t5SPndde9fU2SYRhgQHh9PydGKZV89GfO
@@ -2457,7 +2457,7 @@ yZaP+aR1vUdKLHxajx0+1t8z7BA/Sw/3d38CAAD//288jTDhBAAA
 	"/resources/describe/AWSIcons/General/General_AWScloud.svg": {
 		local:   "resources/describe/AWSIcons/General/General_AWScloud.svg",
 		size:    3495,
-		modtime: 1509130584,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RX3W4btxK+lp9iz56rA5A0/7k0LAcnRpMGiIECBXxbONRGErKRDEmWFT99MT+UVq7b
 omiAXSpD7gznm5lvxtfvDt+HZt9vtsv1atoapdumX5X1bLmaT9un3VfZte9uLq7/I2XzsV/1m4fdenPV
@@ -2489,7 +2489,7 @@ l/jXAbz5td3Pby5+DwAA//8vQJaSpw0AAA==
 	"/resources/describe/AWSIcons/General/General_Internet.svg": {
 		local:   "resources/describe/AWSIcons/General/General_Internet.svg",
 		size:    955,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xTTWvbQBC9B/Ifhu119byzn7PFCqQ5NIf2mkMvxUiyLXDsYAsr+fdFH0lMcaEHDW9m
 HrNv3mqXp/OG2rpUP1ZvzfE3K6pX3arYr56buUas6PV5tz+Vatt1L18Xi77v0TscjpuFNcYsTueNor6t
@@ -2506,7 +2506,7 @@ MghCIcE6kgRJ5BNsmOsTjgKmiX4BR8Y//ot3E4KDdaMJfrLjqgk2jr2rdl5XPcqYRQe4fF3otZHL4cHd
 	"/resources/describe/AWSIcons/General/General_Internetalternate1.svg": {
 		local:   "resources/describe/AWSIcons/General/General_Internetalternate1.svg",
 		size:    843,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RTzW7bPBC8B8g7EPyu1JhLLsnlBytAmkNzaK859FIYkmwLUOzAFqzk7Qv9JDHa3nrQ
 YnY4GI52wfX5slNtXepvm7fm9JO0qjf9pjhsnpuFU6TV63N3OJd63/cv/69WwzBg8DieditnrV2dLzut
@@ -2522,7 +2522,7 @@ AoNlCsbjdv81WBRwUpzhpxwsKkZEnoPN9JXkD8f1+ADubm9+BQAA//8Ys5M+SwMAAA==
 	"/resources/describe/AWSIcons/General/General_Internetalternate2.svg": {
 		local:   "resources/describe/AWSIcons/General/General_Internetalternate2.svg",
 		size:    986,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STu2/bQAzG9wD5H4TrSn0+8h68K+wAaYZmaNcMXQrBkh+A80AiWOl/X0gnx0iTpYM+
 8I4fyB8pafly3Fb7dmV+NH+6599sqrbpm/qhue/mu4pN9Xp/eHhZmV3fP31dLIZhwODw+LxdiLV28XLc
@@ -2539,7 +2539,7 @@ Wo7/49Xlxd8AAAD//8TPY03aAwAA
 	"/resources/describe/AWSIcons/General/General_SAMLtoken.svg": {
 		local:   "resources/describe/AWSIcons/General/General_SAMLtoken.svg",
 		size:    699,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3RSTYvbMBC9L+x/EOqlC+OxRhp9pMSB9NIekusecinCdhKDkiyOiLP/vtjJtoFtEXpo
 3gwzbx6any870TWVXMX3tv9FUjQxx+IYD+2dEyTF9ZCO50ruc377VpbDMOBg8NTvSq2UKs+XnRRD1+R9
@@ -2555,7 +2555,7 @@ yCRF/V5Jw2hnUvSVHC2XIvfxeN6e+kMlp2eKuf1aWDTCOjThRfSnPFFsX/4M2m6305T5+OEWz0+/AwAA
 	"/resources/describe/AWSIcons/General/General_SSLpadlock.svg": {
 		local:   "resources/describe/AWSIcons/General/General_SSLpadlock.svg",
 		size:    1847,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xVQW/jOA+9DzD/wfB3pV5EUhKlD02B7h62h91rD70sDCdtA7idQRsks/9+QdszKTC9
 DrBI8ixRtvT4HhlfvZ0eu8Nu2/85/LN//Zv7bjcch/AyPO/XWMd99+15ennb9k/H49f/bzbn8xlnxZfX
@@ -2577,7 +2577,7 @@ AAA=
 	"/resources/describe/AWSIcons/General/General_client.svg": {
 		local:   "resources/describe/AWSIcons/General/General_client.svg",
 		size:    1249,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUT4+bPBDG7yvtd7D8Xu3B9hgbXoWVtpdyaK857KVCCw1IJFklCLbfvvLwJ4VErSJG
 mvzw+JlnRuyu/YE1Zca/Fb+qyw/NWVl0hTwVx2r6j2nOPo/t6Zrxuus+/o+iYRhgQDhfDpFRSkXX/sDZ
@@ -2594,7 +2594,7 @@ LU2JJd53GswKonS8sYzcxWBpsg+bk265nHk6zW49EuKGLN+bBGK75WLmyduRJo4KjJ3eDSOnvRjHR3si
 	"/resources/describe/AWSIcons/General/General_corporatedatacenter.svg": {
 		local:   "resources/describe/AWSIcons/General/General_corporatedatacenter.svg",
 		size:    875,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yTwYrbMBBA7wv7D0K9jseSRuNRSpxDL+1he80hl2LWTmSws0si7O3fF8eh3qYpPbUY
 g+aNZt6ApPV5OKi2LvVT9b05fbNa1VWqsmPVN1emrFZvfXc8lzqm9Poxz8dxxJHw5XTInTEmPw8Hrca2
@@ -2609,7 +2609,7 @@ t55x5Xf9tP7Za8u8VDCs0M57WdBfmu56hyvOXIH0b+XFXTn9L/MXFnRhUdvlVPf7+RqtpweyeXz4EQAA
 	"/resources/describe/AWSIcons/General/General_disk.svg": {
 		local:   "resources/describe/AWSIcons/General/General_disk.svg",
 		size:    1167,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yUz46bMBDG7yvtO1jeSysNg23sOKxgpfbSSyv1lEMvFQID1hISETdk376yDen2z0o5
 VCiTTGbm+31kHIrTuSO2Kenn6sVM3zklTeWqZKz2ZvmOcEou+2E8lbR37viYpvM845zhYepSwRhLT+du
@@ -2626,7 +2626,7 @@ wjcJKxTyashr+aHCP0Se7u9+BgAA//9n5yRzjwQAAA==
 	"/resources/describe/AWSIcons/General/General_forums.svg": {
 		local:   "resources/describe/AWSIcons/General/General_forums.svg",
 		size:    1156,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yUvQ6bMBCA90h5h5M79/C/nQoydOnSd6hQMT8SgQiskLx9BRhC1A5EzYB0Pnyfv5MP
 4v5WQJUl5Gf6cN0vRiBLffq1SS8u5IARuF/qpk9I6f31WxQNw4CDwLYrIk4pjfpbQWCoMl8mhFFKoHRV
@@ -2641,7 +2641,7 @@ icc/x/l4+BMAAP//WzNkkoQEAAA=
 	"/resources/describe/AWSIcons/General/General_genericdatabase.svg": {
 		local:   "resources/describe/AWSIcons/General/General_genericdatabase.svg",
 		size:    2452,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9xWT28btxO9B8h3WGwuvx8wfOIM/wwZSAFSH3pxgQIBfOilWKwVSejGSW1VSr99MdyV
 k7Qx4FMPhSFyhxw+Due9GXj9cNp1h9tNfz38ub3/lfvudjgO7m74sF3WOu67zx+mu4dNvz8eP71erc7n
@@ -2666,7 +2666,7 @@ bWnzVU7mrclamAqpGE324SE6eRfKVa4m0hBQIuVMVuB0Sc9387i2/6TevHzxVwAAAP//fH6Jk5QJAAA=
 	"/resources/describe/AWSIcons/General/General_mobileclient.svg": {
 		local:   "resources/describe/AWSIcons/General/General_mobileclient.svg",
 		size:    743,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4ySMW/bMBCF9wD5DwS7nk5HHinKhWUgXeohXj14KYhQtgQoTmATVvrvC1KO06hDM+hB
 d+/0+B2h5flyEH1o5KP/3Z5+KSmCj744+uf22hNKirfn4XhuZBfj6/eyHMcRR8aX06HURFSeLwcpxj7E
@@ -2681,7 +2681,7 @@ jyvY7/d5/2X6OVf3d38CAAD//y7yk9bnAgAA
 	"/resources/describe/AWSIcons/General/General_multimedia.svg": {
 		local:   "resources/describe/AWSIcons/General/General_multimedia.svg",
 		size:    2082,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVz27bMAzG7wX6DoZ3lRhR/0gNSYHsshzWaw6+DEadxAHitmgNp3v7QVLadYnbBRmC
 EJY/ir9PlG1Nn4dNsW1m5Y/61+rpJ5ZFU/e1vK+71eFegWXx0u3un2dl2/ePXyeT/X4PewMPT5uJVkpN
@@ -2700,7 +2700,7 @@ oXAB2Cwdg7Hz47W7AESvi4tbKYwFumS7306Q9Xqdjo9pPNdvrq9+BwAA///2l2MsIggAAA==
 	"/resources/describe/AWSIcons/General/General_officebuilding.svg": {
 		local:   "resources/describe/AWSIcons/General/General_officebuilding.svg",
 		size:    3275,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6zXUavaMBTA8fcL9zuEs+edJk3StKP1YS972XcYRdNa6PUODVa//bDVngzu2MUTRGoU
 fz2pf0Tr07kXw66Bn+3VH38pELs2tF8P7Zu/PycUiMvbeDg1sA/h97csm6YJJ43vxz7LpZTZ6dyDmIZd
@@ -2716,7 +2716,7 @@ CRqLn8RqJUhitRIkQdZzSdRZ/5+fGCafL961gVyiYn5xk2WxUoksreaLwLFK1DrVHsni73G1+Hu0Gssq
 	"/resources/describe/AWSIcons/General/General_tapestorage.svg": {
 		local:   "resources/describe/AWSIcons/General/General_tapestorage.svg",
 		size:    1872,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7RVTW/jNhC9L7D/QWAvXYB85gyHX0UUIL30kv6BXgrBlmMDTLJQhDj77wtSQXYLKWkv
 C0MDiU96897MkL56er7rzode3Q7fxulvUt1hmAfzMNyPr2sdqe7lvjw89eo0z19/2+0ulwsuDo/T3Y6t
@@ -2736,7 +2736,7 @@ x1oDg6SeBzFvjK1E40CuDbaBcxt2yNXzIRar4WijqhJ1o2CkDYKG1UThv4YmRITwNjRJfhiaeRoeno6P
 	"/resources/describe/AWSIcons/General/General_traditionalserver.svg": {
 		local:   "resources/describe/AWSIcons/General/General_traditionalserver.svg",
 		size:    517,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SRTWvjMBCG74H8B6G9ymONRvJ4FzuHvWwO2WsOuRQRyx/gfJAIO/33JYnbpi2lCB3m
 fZCeV6g4D43oqlKu/HM4PaEUlY8+2ftdmDKBUlx2/f5cyjbG4580HccRRoLDqUmN1jo9D40UY1fFtpSo
@@ -2750,7 +2750,7 @@ sZDzd06ueMvbr04LiMpayJbkIM/XFsHky1u82enEQYYTIQcZP5KcJ2J+w+uRN19d3x9YXL9uMZ+9BAAA
 	"/resources/describe/AWSIcons/General/General_user.svg": {
 		local:   "resources/describe/AWSIcons/General/General_user.svg",
 		size:    658,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yST4vbMBDF7wv7HYR6HY9nNPpjlzjQXrqH9ppDL8VEbmzwZpdExNtvX6wotBRK9uBh
 3jN6mt+gzflyUFPs9Nf+13D6wVrFPvXVsX8eiqdYq7fn+Xju9JjS68e6XpYFF8GX06E2RFSfLwetlimm
@@ -2764,7 +2764,7 @@ eYNWdj6gM0+ekbn40iK3xZeAjb/6Y9XsvCC1e6oCigdf5bScXPr7MxIY84kZfQPXSsDAIA0agcyZNyCl
 	"/resources/describe/AWSIcons/General/General_users.svg": {
 		local:   "resources/describe/AWSIcons/General/General_users.svg",
 		size:    1719,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yVT2/jNhDF7wvsdxDUK/nMPzMcsrADbC/Vob3q0EshSK5lQJtdJIKcfvuClNsmhhOn
 OfRgYihBM+898gdvH5dDdRx29S/dn/uH321dDd3c6fvu6/78rLJ19fR1un/c1eM8f/9xszmdTjh5fHs4
@@ -2783,7 +2783,7 @@ rFulxQ9JO2N9427mKqdWXjz75Gr7bf6zufv86a8AAAD//92Vwy63BgAA
 	"/resources/describe/AWSIcons/General/General_virtualprivatecloud.svg": {
 		local:   "resources/describe/AWSIcons/General/General_virtualprivatecloud.svg",
 		size:    1046,
-		modtime: 1484076136,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3yTT4sjNxDF7wv7HZrOtfSsKlXpTxgPbPYQHzanwBz2EkzbYxs8s8u4aW++fZDUsCED
 Obj8q5J4/fRa/XBbTsPlsB2/7P8+vv3F43DYz3v3un85rrOBx+HHy/X1th3P8/z9183mfr/jHvDt7bQR
@@ -2801,7 +2801,7 @@ pD1+g5oTxNwpw+KNIaURGTQ1mhSxXjOjUG+XkYHTk4VdVARZHCRP1bKJg0YXINkJglXiW3NPDOkQYfxn
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT.svg",
 		size:    2373,
-		modtime: 1484076182,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RWTW/bMAy9F+h/ILTzaH1QX0PSw24DBuyy+5C2jmMgdYrGaNp/P1iUE3nNGnc7FFHp
 J5Lie8/yYv/cQHu/FN9Xr/XTLyXgftWvPnerhzrHQAl4edh2+6XY9P3jl6o6HA54MLh7aiotpaz2z42A
@@ -2821,7 +2821,7 @@ z8311e8AAAD//8uHdxVFCQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AVSenableddevice.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AVSenableddevice.svg",
 		size:    1921,
-		modtime: 1506354532,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVTW/bPAzHv4qg5yrToiTrpbUD9Dl1wIZdhh56GVxHSQy4aRELSYOh332QnHVp0jVt
 jCAERPlH8i+Tctmv56SdVvRrvfWrn0jJtA51tqzv/c5HkJKn+27ZV3QRwuNFnm82G9hIeFjNc8E5z/v1
@@ -2839,7 +2839,7 @@ GHLQas1f5YxTjiBUFpOaNGDxwzn5HQAA///aHlPLgQcAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AWSGreengrass.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AWSGreengrass.svg",
 		size:    1551,
-		modtime: 1506354516,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUTW/iMBD9KyPvuRPbYztxm3DY20or7WXvKwohREoDIhEpWvW/V/6guLQoHGq5L8/v
 zYyfKYdjA+26Yr+Xp/rwTzBYL8flQ798qSMGgsHrS9cPFduO4/4xy6Zpwolwd2gyyTnPhmPDYGrX47Zi
@@ -2857,7 +2857,7 @@ AA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AWSIoT.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_AWSIoT.svg",
 		size:    2301,
-		modtime: 1506354514,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWTW/rNhD8Kwv1nBXJXX4ltg+9FSjQS++FY8u2AMUOIiFOUOS/P4hLx/SL86x3CMKs
 hsPV7AyVWf+6hXY9r/5evjcv/+kK1sthebdfPjW5BrqCt6du38+r3TA839f18XjEI+HhZVsbpVTdv24r
@@ -2877,7 +2877,7 @@ Nbs8Qz4ZCuK02eduhOqnzi6oxn9aFj8CAAD//8bWLi39CAAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_HTTP2protocol.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_HTTP2protocol.svg",
 		size:    1524,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xTzY7jNhN8FYLflSqT3fzTrGXgy0kBNsgl8GEvgWLLkgCNPRgJ8gwW++4BJcVjbLJO
 DiKaxe7qrmpoO0yN6I6F/Fy916+/GymO1Vhl5+q5XjFhpHh77s9DIdtxfHnabK7XK66My2uzIa31Zpga
@@ -2897,7 +2897,7 @@ crEkL/BH4T/tju71anj6d8EW7r9IphzB/kByarSsYJia3Z8BAAD//3332jb0BQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_HTTPprotocol.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_HTTPprotocol.svg",
 		size:    1241,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUz26jSBDGX6XVe22Krqr+AwlY2j2x0q7mMvIhlxFjY0Ai2DLIjhXl3Uc0JLE8UTIH
 SlVfV/3qc2ORDadatNtc/ldequMPlGJbjmXUl4/VogmU4umx64dcNuN4uIvj8/kMZ4b9sY5Jax0Pp1qK
@@ -2915,7 +2915,7 @@ m/LmPHqr187fHqq3ukG9tsmHV0c3NigF//GaEL62YcD+kZHpg7T6FQAA///X/+QR2QQAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_MQTTprotocol.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_MQTTprotocol.svg",
 		size:    1407,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUX4vjNhTFv4pQX6VjXf3XbBxon1LY0oeWPOxLcRMnNniSYWySGZb97kWydzekw84S
 cjk6uv7dI4tkNV6OrN/X/GPz2j7/Q5ztm6mRp+axXTxGnL08Dqex5t00PT1U1fV6xdXg/HystFKqGi9H
@@ -2935,7 +2935,7 @@ SxEubo2G1r8mkBalzEf0HiS0AW0Mwdjmbl9+W299uN8U39Zd2Lr45qH0XQqdEN6eUsr7KSzcz+TIf5vr
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_action.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_action.svg",
 		size:    543,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2SRTYvbMBCG/8qgXpXRt2zv2ob2VmjppfTQS3HXsi3Q2iES8Yay/73EUiHQg17Qw8zz
 CtTG6wx+7MiX4eYuvwSBcUjDaR1eXWEgCLy9hjV2ZEnp/MTYvu+4K9wuM5OccxavM4Hdj2npiOCcwOL8
@@ -2949,7 +2949,7 @@ U4MSoBq0CpRBpcAINBIML9BqtFWZtA3kdWNQW7AcVXWffHDeH3D/1v5vAAAA///7CCy3HwIAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_actuator.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_actuator.svg",
 		size:    1477,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yUTYvbMBCG/4pQr9JYM/retQPbUwstvZQeeimuYycGr7PYJtlQ9r8Xf3STZjfQQikh
 YjQaP3rnteS0329Yvc74h/xYdt+Qs3U+5LLN78slx5Czx/um7TO+HYaHmyQ5HA5w0LDrNgkppZJ+v+Hs
@@ -2968,7 +2968,7 @@ ycUFAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexaskill.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexaskill.svg",
 		size:    3514,
-		modtime: 1506354532,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9RXS28byRH+K4PxZRfo/tjV1U9HFKBc4gBe7CG7PuwloEdDkciYkjlcPRDkvwdVTTs2
 PQmc3ALDpZl6dfVXX9VIV/PjXbe/XfdvNy/j8a/Ud7eb08YeNh/Gs66jvnv+MB3mdb87nR5er1ZPT094
@@ -3000,7 +3000,7 @@ yTTZnGUyTZERi8gybMXffLvpPjVImyh/cV3/MwAA//9+hf2Lug0AAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexasmarthomeskill.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexasmarthomeskill.svg",
 		size:    3550,
-		modtime: 1506354532,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9RXTW/kxhH9K0TvxQa633R19edmKGBziQOs4UPsPfgScCmOZhDuSDukpRGC/PegmrNr
 74iA7c0pEFQUuz666tWrIrSdHu+aw22r3nbPw+mfpJrbbu7MsfswXM4aUs35w3icWrWf54fXm83T0xOe
@@ -3032,7 +3032,7 @@ K7v5bwAAAP//LoIYUt4NAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexavoiceservice.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_alexavoiceservice.svg",
 		size:    874,
-		modtime: 1506354532,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTX2vbMBTFv4rRXqVj3at/dmsHsqcMNvYy8rCX4SZ2bHDTEpu4ZfS7D1tZ6boMhvGB
 e46QfkfGxXA+JN2+FJ+r5/r0g0Syr8ZKHav7+uIlJJKn+/44lKIdx8ebNJ2mCZPBw+mQstY6Hc4HkUzd
@@ -3048,7 +3048,7 @@ sE5m8FZ5mFySR7CKHHQuWcPTGTqs/8SYL/w34dJi/kNWvwIAAP//1Ng+fGoDAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_certificate.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_certificate.svg",
 		size:    2407,
-		modtime: 1506354528,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SWTW8bNxPHvwqxz3V3RM5whmQiGfBzagEHvfTkS6HKqxdAkQxrEcUo8t0LcrgRq6AN
 DBN/D7nzxt/ueHn5sjOHl1X3tH4f3/5wnXlZT+vhtP48Vptxnfn6+Xi6rLr9NL1+WCyu1ytcCc5vuwVa
@@ -3073,7 +3073,7 @@ FAF9nz8BsYx7zOMeQ21+Hvfs7zZc6XneKB3N/x49/B0AAP//Fcu5FWcJAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_desiredstate.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_desiredstate.svg",
 		size:    897,
-		modtime: 1506354528,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6TTS4vbMBAH8K8yTM+rt/zYtXzorVDopffiJvIDtHawRBxT9rsX2dqkbEl66MEw/hv9
 PDOgyp87GI4GvzarnX9whGMTmqexebUpA45weXWjN9iHcHqmdFkWskgyzR0VjDHqzx3CMhxDb5AzhtDb
@@ -3088,7 +3088,7 @@ IxUvTv07AAD//wiGzauBAwAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_echo.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_echo.svg",
 		size:    1867,
-		modtime: 1506354532,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVz67jNBSHX8Xy3YDknPj4X+I7dRfMAiGBZgHDgg1KE6eNyKRVnGlToXl3lDS9HYKB
 Lq6u+/Pnc75YPekmnPekqRz9sbj6/nekpCqGIumKT37JCFIyfmq74OhhGE6vaXq5XOAi4djvU8E5T8N5
@@ -3108,7 +3108,7 @@ D/RZPud/TuQijxqMYCabHgENoGRfic3+00/g9q8AAAD//9H1A3FLBwAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_fireTV.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_fireTV.svg",
 		size:    1698,
-		modtime: 1506354534,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVQYsbORP9K01/V+lZVSWppMQ2zHfywoa9LHPIZel4esaGjhPGjT3Dkv++qNXtSQJZ
 WLAe+JWkqlf1ZK/Pl6fm+LBpf+9e++e/qG0eurGzp+5zP3MNtc3L5+F03rSHcfz6brW6Xq+4Cr48P63Y
@@ -3130,7 +3130,7 @@ WacVKusMkiEBVai+LbnUD7boS+UZ8duQqqni0gQzuejNiwYqkx8jZFqzGepLSKV9zBWW/bk0ku9SafAE
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_fireTVstick.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_fireTVstick.svg",
 		size:    1880,
-		modtime: 1506354534,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xVW4/bNhP9K4K+V/KYM0NyqMRewN9TCrToS5GHvBSKV74AijdYC/Euivz3giK13lxQ
 BJYOxofjuR7J68uXQ3O637S/98/D49/UNvf91Ntz/2moXENt8/RpPF827XGaPr9Zra7XK66Ch8fDip1z
@@ -3153,7 +3153,7 @@ AAD//1deGWxYBwAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_hardwareboard.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_hardwareboard.svg",
 		size:    2603,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWzW7rNhN9FYLf5rsANeYMySF5rxXgdpUCKbopssimUB35B1DswBLsBMV994KUHDv+
 S7IQQVMzZ84cnlEybjczsXgs5V31Wq//Rikeq64qltVTPZwJlOLlqVm2pZx33fP30Wi73cLWwGo9G5HW
@@ -3176,7 +3176,7 @@ EjsRUp0IeUjtPbgaimZe6V+8m/8CAAD//02yqBYrCgAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_lambdafunction.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_lambdafunction.svg",
 		size:    707,
-		modtime: 1506354534,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2SSTY+bPBSF/8rVfddz8de18Qxm8e4qVeqm+yolhiAxJMJWSFTNf6/4SJtRF0iHx5xz
 Lleu0rWD/hjw6+Eepx8S4XjIh5fx8B53BhLh9j6MKeAp58trUczzTLOm89QVSghRpGuHMPfHfAoohUA4
@@ -3192,7 +3192,7 @@ AA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_policy.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_policy.svg",
 		size:    1944,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yVS4/bNhDHvwqhXskx58GHNvYCaS9bIEEvxR5yKRRbtgQo8mIl2FkE+e4FSW3i7KNB
 gaLY1WD0nyHnR2pIr6fTQfW7TfWueWjv/8JK7Zq5MWPzqV00hZX6/GkYp03VzfPd1Wp1Pp/hzHC8P6zI
@@ -3214,7 +3214,7 @@ sZiig4sGXJI4P4sqYsD7dBqkmEUnZ8BhFweICUz4w3vn03jP6WZIrY6p1ZGWz5JandyTAOb9pse9TL+n
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_reportedstate.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_reportedstate.svg",
 		size:    822,
-		modtime: 1506354528,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6TSzYrbMBAH8FcZpufVt2J7V/Kht0Khl96Lm8i2QGsHS8QxZd+92NEmsCXpYQ+G8d/o
 p5nBJp468AeL35vFTb84wqFJzdPQvLqcAUc4v4YhWuxTOj5TOs8zmSUZp44KxhiNpw5h9ofUW+SMIfTO
@@ -3229,7 +3229,7 @@ NgMAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_rule.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_rule.svg",
 		size:    1993,
-		modtime: 1506354530,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4RVT4/bxg/9KoJ+l1+AmechOX8Ta4HtXlogRS+FD70Urla7NqDYgS3sHxT57gVHcrPd
 pNuDKIlDvkc9kTPr88N9s7/t2o/b5+H0O7XN7Xba2sP207D4Gmqbp0/j4dy1u2n6/H61enx8xKPgeLpf
@@ -3254,7 +3254,7 @@ AAD//6y2pgzJBwAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_sensor.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_sensor.svg",
 		size:    1424,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yUX4vbOBTFv4rQvkrH0tX/GTsw+7QLu/Sl9KEvxU2cxOBxhtgkE8p89+I/naSZGVpK
 KSHi6ujy09FBct4dNqxeFfy/8lTtP2nOVmVfyra8r2aNac4e75u2K/i27x9usux4POJosNtvMlJKZd1h
@@ -3272,7 +3272,7 @@ UcEkZgnhuY5IiY17souet416DbI/ZzRb5MN3dPE1AAD//1TVgvaQBQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_servo.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_servo.svg",
 		size:    1485,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUTY/jNgyG/4qhXqXXIvW9GwdoTy0wRS899VK4E+cD0CaD2JhMUOx/LySnMzvOtFgE
 IWySeviSFLwan3fNYdOJh/46nP8k0Wz6qVfH/stw8zUkmpcv+Th2Yj9NT5/a9nK54GJwOu9a1lq34/NO
@@ -3292,7 +3292,7 @@ BAAA//95I43szQUAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_shadow.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_shadow.svg",
 		size:    1494,
-		modtime: 1506354528,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yUTY/TMBCG/4plrvbE47EzyW5SCU4gLeKCOHBBIU3aSNl01Vj9ENr/jvLBthQKuxJC
 UZzxO6PXkyexs363Es0yl3fFsdp+QSmWRSh0V9xXsyZQisN92/W5XIfwcBNF+/0e9gSb7Sqyxpio362k
@@ -3310,7 +3310,7 @@ azNaZMNpvPgeAAD//1UxGNnWBQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_simulator.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_simulator.svg",
 		size:    1903,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yVTWvbTBCA/8qy73U92t3ZLyWS4e3JhZZeesqlqLJkCxQnSIsVU/Lfy66ULzV20mCK
 0bAaZp4ZpAcr6/cb0qxz+qU4VN0PQcm68MViV1xXU44ISu6u212f0633txdJMgwDDAg33SaRnPOk328o
@@ -3328,7 +3328,7 @@ FOea2vC3+6IpfCaXvwMAAP//ypr7KG8HAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingbank.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingbank.svg",
 		size:    2361,
-		modtime: 1506354520,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWwY/qNhDG/5XIvdoftsf22O8RDj21Uqteqh72UtEQCFIWViSCRdX73ysn2QXtdtUt
 PKHEZpzvN57xR8S8O26K7aoUvyzP9eFPI4rVsl+q3fKxnmKFEcXzY7vrStH0/dOX2ex0OuFE2B82M6u1
@@ -3348,7 +3348,7 @@ oYKRlKsBj6MdiAakDCwrg0RqWnD8kI8s/+FZ/BMAAP//aQqOQjkJAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingbicycle.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingbicycle.svg",
 		size:    3309,
-		modtime: 1506354518,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xX32/jNgz+VwztVWJEkZTlu6RA9nQDbtjLsIe+DF7q/ADctIiNpsFw//tA22lybq93
 lwyFWYny95EfSRnItHlaZZu7mflcHqrd32iyu7It3ba8rwZfhiZ7vq+3zcys2/bxw2Sy3+9hT/CwW02C
@@ -3373,7 +3373,7 @@ bv4LAAD//9RP4krtDAAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcamera.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcamera.svg",
 		size:    2066,
-		modtime: 1506354522,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVzW6cMBDHX8Vyr+zgb+wEkNJbpVa99NRLRVnzIRE2AissqvLulYGE1aZRU6gQ0njk
 33+Y8TCO+8cS1ccEf85G2/2gGB0zlx3a7N4uPkQxOt83bZ/gyrmHmzAchgEGDqeuDBkhJOwfS4yG+uiq
@@ -3391,7 +3391,7 @@ AP//Atc7qRIIAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcar.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcar.svg",
 		size:    3326,
-		modtime: 1506354520,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+yXz47iRhDGX8XqXLuLrq6u7vIuRpqciLRRLtEc9hIRYzCSh12BBYOiffeojWdg+TPZ
 gdwSjexpqv37yl9V2YjhejPPFtNCfZrsqtUfqLLppJ2Y5eSp6mMZquz5qVmuC1W37dcPg8F2u4UtwZfV
@@ -3412,7 +3412,7 @@ xUUQcPGSiyPoqpHAPXxqZA8fvFy5MRZwvH84PEKg84dj3F1y5fWefrWM/g4AAP//ig85Af4MAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcart.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcart.svg",
 		size:    3057,
-		modtime: 1506354522,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xWTY/bNhD9KwJ7pZ45Qw5FJtYC6WkLuOilyGEvhWrLH4DiBLawXqPIfy9oqVnZu3E3
 Vg4y5OG89+aLA033j6tssyjVrDrWu79IZYuqrfJt9anubRmp7OlTs92Xat22X95NJofDAQeLz7vVhI0x
@@ -3433,7 +3433,7 @@ NkmhGaHJkzXSzJu0krw0Di5ofyGXtgfDXUtIopYIoSZnhyTupGIUpE8/HQ3D+VM0M2tgJO24k1Py6QNn
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcoffeepot.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingcoffeepot.svg",
 		size:    2456,
-		modtime: 1506354524,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWW2vjOBTHv4rQvsrHOjq6tnGg+5SFXfZl6UNfFk/ixAY3KbHJhaHfffBlGpNm0jYe
 goRypN9fOkd/gSfVbsWKRcL/To/Z9n/kbJHWabROn7M+xpCzw3O5rhKe1/XLXRzv93vYE2y2q1hJKeNq
@@ -3453,7 +3453,7 @@ T01/BAAA///RNv6+mAkAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingdoorlock.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingdoorlock.svg",
 		size:    2072,
-		modtime: 1506354522,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVz2+bMBTH/xXLu5KHf2O3EKm7Tdq0y069TIyYBImSCqwSNPV/nwxOydJO62AH0OOF
 z9d+731j0u5pj6pdhj/ng22/U4x2ucs3Tf5gQw5RjE4PddNl+ODc400c930PPYdju48ZISTunvYY9dXO
@@ -3471,7 +3471,7 @@ b2+f/b59mYDg4/YZ6Gn7x3rYH5sr5vFYNa7LsPSvIaXACCQSoPQcG5BIKkgUkmQO57e9tP+eb38FAAD/
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingfactory.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingfactory.svg",
 		size:    2359,
-		modtime: 1506354518,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWwW+bMBTG/xXLu8LD9rON3UIOO3VSp12mHXaZWAIBiaYVWCHR1P99IniFrenaQhRF
 cj7x+5z33gcmafdbUm1Sepsd8+YHp2STuSzcZXe51win5HBX79qUls49XEVR13XQIdw320gwxqJ2v6Wk
@@ -3489,7 +3489,7 @@ AA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinggeneric.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinggeneric.svg",
 		size:    2020,
-		modtime: 1506354516,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVTY+bMBCG/4rlXsngTzC7mENPqdSql556qSgxAYnNrsAKQdX+9wrjbmj2oynsAWkY
 8bzjGb/YaXfco3qn8ed8MO0PitEut/nmkN8Zn0MUo9Ndc+g0rqx9uAnDvu+h53Df7kNGCAm74x6jvt7Z
@@ -3506,7 +3506,7 @@ iP+ixrs5+x0AAP//i8McdeQHAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinghouse.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinghouse.svg",
 		size:    2101,
-		modtime: 1506354518,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVz26bQBDGX2W1veJhZ/+xJOBDT63Uqpcqh14qai8GiTgRrIxRlXevYGlASaw6UFmW
 xiP/vtHMfAxJczqQcp/SL1ln659IyT5z2eaY3dsxR5CS8311bFJaOPd4E4Zt20Ir4KE+hJwxFjanAyVt
@@ -3523,7 +3523,7 @@ CNrMcxu8G/78o9fuX/bbPwEAAP//i3MKtjUIAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinglightbulb.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thinglightbulb.svg",
 		size:    2556,
-		modtime: 1506354516,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWy27bOhCGX0Xg2UojDofXxDKQs2oBF90UXXRTqLFkCVCcwBJ8QZF3LygpsaPYjmsV
 Bgl6yO+fn8Mx4Em9XgTlPGGzdJetfiIL5mmTRsv0IetjAbJg+1At64QVTfN0E8ebzQY2BI+rRSw453G9
@@ -3542,7 +3542,7 @@ SrcO/H+26Z8AAAD//87CSND8CQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingmedicalemergency.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingmedicalemergency.svg",
 		size:    2042,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVy46bMBSGX8Vyt+bgC4fLDERqV1Opo26qWcymogk3iSERWCGomnevMHRiJak6hS6Q
 jn/z/fa5IOLuWJBql9Av6ZC13wUlu1SnTpO+ZLNGBCWnl7rpElpqfbhz3b7voVewbwtXcs7d7lhQ0lc7
@@ -3559,7 +3559,7 @@ Na3t0L+1dYmayDibtR2qW1sjMN51/GNvfgUAAP//Lx0/zfoHAAA=
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingpoliceemergency.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingpoliceemergency.svg",
 		size:    2463,
-		modtime: 1506354522,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xWTY8jNRD9Ky1zdb24/NXu3SQHOCGBOMCJCwpJ50Pqze6mW5OJ0P53VLbZRMwghoTD
 uF1V8+rj1bOU+fi0aw6bhfphdelPv7FqNqtpRcfVh776GlbN84fhOC7Ufpo+vZvNzuczzg4fT7uZNcbM
@@ -3580,7 +3580,7 @@ Bi13lntgfX0Av8ozkZ9Vyz8DAAD//8vFUKmfCQAA
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingthermostat.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingthermostat.svg",
 		size:    3021,
-		modtime: 1506354526,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xWzW6jSBB+lVbvZSN1F139R5MYS9lTVtrVXlY55LJibbCRiB0Bim2N8u6jBsbG2ONJ
 jA+gpuD7qaovkSfV+4Lk85j+lezS8j+kZJ7UCV8lr2lXI0jJ9rVYVTFd1vXbfRBsNhvYKFiXi0AKIYLq
@@ -3600,7 +3600,7 @@ OINWAZomgxpCvLQ4wawGa07kfJzMs0aQKhm4ZOK54R/upKO6NBcdgrRMS5DqSRswYQJmTyA4LhFsdFRj
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingtravel.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingtravel.svg",
 		size:    2680,
-		modtime: 1506354524,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWT28iRxDFv0qpc8lKw6Orq/rfLsMhe4rkKJeccokIDH8kDBYzMkbRfvdohok9snc3
 BvbgVrvo33tT1VUDk/pxRZtFae5mp+rwFxtazJrZaDe7r/oYsaGn++2uLs26aR4+jsfH4xFHwf6wGjtr
@@ -3620,7 +3620,7 @@ HIPCcT9UkHy5YwjITOwF2T1bjli+a9qO1vktxrBXVDYyWIglwvJb0/b34vTfAAAA//9lG04GeAoAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingutility.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingutility.svg",
 		size:    3484,
-		modtime: 1506354520,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+yXUWvbMBDHv4rQXuWzpJNkqbUD21422NjL6MNehpfYscFNSyzihNHvPix7SWi7rbPH
 nkLIcbno9z/udD5w2u7WpF5l9EN+KLZfBSWr3OfRJr8txhgRlOxvm02b0cr7+6s47roOOoS77TqWnPO4
@@ -3638,7 +3638,7 @@ cwTULBjOxFHtnZKA8umfIWuPKsZ3CqR8Ng/rTRUJseuPV0K8flz72JMvv2mbkYBMO3DLSEBi+3YkETIN
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingwindfarm.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_thingwindfarm.svg",
 		size:    2110,
-		modtime: 1506354518,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yVzW7bOhCFX0Xg3ZJHnOGPqMTy4u4KtOimq24KV5ZsAYoTSEJso8i7F5TV2EgaNLW6
 MESP+Z3xnBlSi/5xkzTrQnxcHavuG4lkvRpWare6q6ZYQiI53LW7vhDbYXi4SdP9fo+9wX23SVlrnfaP
@@ -3656,7 +3656,7 @@ MKYluKCgHXSuzNfoUdl0ZVu9cKmM50OLpBxbPLrcFcKcXH1N8FsExf3xrb/8GQAA//9GmCWnPggAAA==
 	"/resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_topic.svg": {
 		local:   "resources/describe/AWSIcons/Internet Of Things/InternetOfThings_AWSIoT_topic.svg",
 		size:    1557,
-		modtime: 1506354528,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUwW4jNwyGX2UwvVK/RVIiNbt2gG0uLbBFL4UPvRSu49gGZp0gHsQbFPvuhTQOmhaL
 9DDUDIc/KX2itDw/77vj3ar/vHnZPf3BfXe3mTbhtPmyu/o67ruvX8bTedUfpunxw2JxuVxwUTw87RcS
@@ -3742,7 +3742,7 @@ AAD//7FnFXIxAwAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSCloudTrail.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSCloudTrail.svg",
 		size:    1551,
-		modtime: 1506354536,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUTW+jTBCE/0pr3nOa+eiejwR8eM+7t72vCCYYiUAUUEi0yn9fwZAFrFj2wVJTLh5q
 ihZp/1ZBfczEj/yjfP2tBBzzIb9r8+dy0UAJeH9u2j4Tp2F4uU+ScRxxNNi9VomWUib9WyVgrI/DKRNK
@@ -3759,7 +3759,7 @@ gehSFpWHzR3Xs3szraAjlBv8FzX+qRmDh41xok6f8cPfAAAA//95LxylDwYAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSConfig.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSConfig.svg",
 		size:    1476,
-		modtime: 1506354536,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUT2+jMBDFv8rIe+5ge/wHt5DDnndve19RQgkShaqg0GjV777CdgLNKkuk5MDLyy9v
 5jnOhmMNzT5nP4pT9f5bMNgXY/HQFa9V1EAw+HhtuyFnh3F8e0ySaZpwIuzf60RyzpPhWDOYmv14yJng
@@ -3776,7 +3776,7 @@ Mi+Tn8eNG/Djni3b/zGTIk9BWjQ+Gon5RJFAJxfRwcq1vcGrb8/3QdhX5Ip03ufKtT3yVcoVMnwSkFcp
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSManagedServices.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSManagedServices.svg",
 		size:    1900,
-		modtime: 1506354538,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SVy27bPBCFX2XAf50RyeE1kb341+2u+0KxFVuAIgWRECUo8u4FL6kZo4LShQV6dPjN
 6OjQrqeXE3THHfvWvLXPPwWDYzM3N0Pz2OYaCAavj/0w7dh5np9uq2pZFlwIx+dTJTnn1fRyYrB0x/m8
@@ -3795,7 +3795,7 @@ v58S6JB0zklap5wUaSzkgR3+I/e/AwAA//+tgy3PbAcAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks.svg",
 		size:    1145,
-		modtime: 1506354536,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yUyW7bMBCGX2XAnjPiviSSDj23t94L1WZkAbJkhIQVo8i7FyKJxHYXGz0YGA/4L/xM
 uA7HHoZtQ750J//ynRHYdrF7mLq9LztgBF734xQasovx8FhVy7LgInB+6StOKa3CsSewDNu4awijlMDO
@@ -3811,7 +3811,7 @@ iTlF2/WA5XCmXYPWP4z2VwAAAP//UmURLHkEAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_apps.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_apps.svg",
 		size:    353,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yQy2rrMBCGX2WYs45uceLTRPKi63bXfVHtiS2Q7WIJy6bk3YsvtIV2MQzzwcf8/DqM
 NbjK4JOdaXiVCJWN9tDZlnYGEmFqfRcMNjG+XzhPKbF0ZP1QcyWE4GGsEZKrYmNQCoHQkKubuB+jo/TY
@@ -3824,7 +3824,7 @@ VOthAQAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_deployments.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_deployments.svg",
 		size:    814,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yST6+bMBDEv8rKPb94bfyHvmc49Nzeeq8oOIDkQBRbIajKd6+8kFat1LTqIaMw6x/j
 HeHitYexq9jHZvWXL4JB16TmZWpOfvdAMLidwhQrNqR0fuV8WZbDUhzmS88lIvJ47RksY5eGiglEBoMf
@@ -3839,7 +3839,7 @@ ewAAAP//LmYFcS4DAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_instances.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_instances.svg",
 		size:    1288,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SUT2v7IBjH34o8v3Pjnyb9Za3msPN22324xCaCTUaV2jL63kfbB5rDytAdRPzCh+9H
 hUf6Q09sp+BFn8z+nQPpdNCLUe8MZoQDOe7c6BUMIXyuKY0xFnFZTPueCsYY9YceSLRdGBRwxoAMxvZD
@@ -3853,7 +3853,7 @@ sbWqMu+ZDqJqOoiqtchUTQdRNQUU88bUvxTz1jwYH+kikA6jdh6M2nkwaq/qP2jnwaj9G3yZX813AAAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_layers.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_layers.svg",
 		size:    468,
-		modtime: 1506354546,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5TRT0+DMBjH8bfy5PE8+gc23NZy8Kw376bCM2hSwNCGQszeuxGIejAuHnroN/mkv6TK
 jzXYSuOjmWl4EQiVCWbXmZa2BgJhal3nNTYhvJ0YizEmMU36oWaSc878WCNEW4VGo+AcoSFbN2G7jJbi
@@ -3866,7 +3866,7 @@ AAD//wNWXOXUAQAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_monitoring.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_monitoring.svg",
 		size:    401,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/0yQy27rIBRFf+Xo3HF4+ZkEPLjjdtZ5RW1iIxETBRRiVfn3CsdqOkBaLGmzt5DhNoId
 FL7pxVw/OcKgo97N+mw2BxzhfnZzUDjFeDlQmlIiqSD+OlLBGKPhNiIkO8RJIWcMYTJ2nOJ2uVmT/vu7
@@ -3879,7 +3879,7 @@ feayyVzWmcU+s2gz83KTvISmJryAtn7B+k5uzB/Z/QQAAP//vF8OVZEBAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_permissions.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_permissions.svg",
 		size:    651,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SSzW6dMBSEX8Vyt3D8j7kJIKUrFs2uYtFN5YIDSAai2LokqvLulQ2bNqmuECMYz5mj
 T3LlryOahxp/M2/25SfDaDDB5KtZ7OkhhtHr4lZf4ymE5ztC9n2HXcD2MhJOKSX+OmK0z0OYaswoxWiy
@@ -3893,7 +3893,7 @@ Uv/nEqBvYcWCLnYlMA5cJzAB+gMXvQX18O95kfaJsy8ixSvU/AkAAP//5PylcosCAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_resources.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_resources.svg",
 		size:    706,
-		modtime: 1506354548,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xSTY+bMBT8K0/ueZ+/wd4FDj23t94rCg4gORDFVkhU5b9XBqJSKdXmYGk8ejPzRnYR
 Lh0MbUm+1Td3/skJtHWs38b66DYOOIHr0Y+hJH2Mp3dK53nGWeJ07qhgjNFw6QjMQxv7knDGCPRu6Pq4
@@ -3907,7 +3907,7 @@ x41G9cBJSuhnMblBbRZvDVqgMEknzYaNTtgwFCLlCLHhNX+n/U+QeNpn6yDRPnCmdx34Sx121k/25ru9
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_stack.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSOpsWorks_stack.svg",
 		size:    351,
-		modtime: 1506354546,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2zQT2uDMBjH8bfy8Ozc/Guta5t42Hm77T4yfaqBqMMEo4y+91GVUdgOOeQLH/IjOow1
 uMrgq51p+JAIlY1219mWtgYSYWp9Fww2MX6dOU8psbRn/VBzJYTgYawRkqtiY1AKgdCQq5u4XUZH6aWf
@@ -3920,7 +3920,7 @@ XwEAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSServiceCatalog.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSServiceCatalog.svg",
 		size:    2219,
-		modtime: 1506354536,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xWwW7bOhD8lYXeOSuSSy7JxPbhnd+79V4otmIbUOwgEuIERf69WJKqmbaBcgjAjEaj
 0e5MlNX4sofjbt381731z991A7tu6m5O3WNfMNANvD4Op3HdHKbp6bZtL5cLXgjPz/vWKKXa8WXfwOW4
@@ -3941,7 +3941,7 @@ BrHYyXuvv6V/7F3+xdj8DAAA///kyIZ+qwgAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor.svg",
 		size:    1067,
-		modtime: 1506354538,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTQY+bMBCF/8rIPe9ge2xj7wKHnttb7xUlXoJEIFpbYaNq/3sFpq23apQ95JDnN988
 P4sqXHoYDjX70l79y3fB4NDG9mFqT37XQDB4PY1TqNkxxvNjUSzLggvh/NIXknNehEvPYBkO8VgzwTmD
@@ -3957,7 +3957,7 @@ VZHZ71f+z4NlVaSTVEXmuo+UFpUFy1EmkgDjkFswGrVZFSXQOEg2RegkZCP36ygFanrH/8NMR4mZ2Vbm
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklist.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklist.svg",
 		size:    1307,
-		modtime: 1506354544,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SUwY6bMBCGX8VyL12pO9jjsR1ngUNPPXRv1R56qWhiCBKBFbZCotW+ewVhk6hVq016
 iOT5A99ne0akYVexep3xr8XB9z8kZ+siFvdtsfVzxiRn+23ThoxvYnxeJskwDDAo6PoqQSFEEnYVZ0O9
@@ -3973,7 +3973,7 @@ sJaRBqL3O+d2EoG7oZtIoCRTCyBztdIIkLdMkNIgHCMEh384x09a/isAAP//qAMzPhsFAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistcost.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistcost.svg",
 		size:    1742,
-		modtime: 1506354544,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVy27bOhCGX4Xg2ZwA8ogzw2siGWhXXSS7ootsCtWWL4AsGRYRxyjy7oVk+Za0ReIu
 TPz+Cc43HJKjrH2ai+U0l/fFrtx8RymmRSxGdbEqB0+gFM+rqm5zuYhxfZum2+0WtgzNZp6SUiptn+ZS
@@ -3992,7 +3992,7 @@ VN2hzgYAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistfaulttolerance.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistfaulttolerance.svg",
 		size:    1749,
-		modtime: 1506354546,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yVT2/aQBDFv8pqe2kkPN6Z2dn1JphDTz0kt6qHXCoXDEYyOMIrCKry3SsbJ5A2fzmA
 Hk8777frHQ/jdrtQy1mur4t9ufmFWs2KWCTrYlUOnkKt7lf1us11FePdZZrudjvYMTSbRUrGmLTdLrTa
@@ -4011,7 +4011,7 @@ H9/9GU3+BgAA//+x+/J+1QYAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistperformance.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistperformance.svg",
 		size:    3018,
-		modtime: 1506354546,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+yWS2/jNhDHv8qAvXQP+ZvD4fCxa/vQc3vrvVAd2TGgWIElxAmK/e6FHom8Rpoq3msO
 AoYDcX5/zUPksnnc0f52ZX4vnsvjX2zotmiLm0NxX44+YkNP99WhWZm7tn34ulicTiecBPVxt3DW2kXz
@@ -4031,7 +4031,7 @@ i9n9h+jGIvEls7uBr/8NAAD//xPNyNjKCwAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistsecurity.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AWSTrustedAdvisor_checklistsecurity.svg",
 		size:    1779,
-		modtime: 1506354546,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yVS2/jRhCE/8pgcskCw+J0z3tXFOCcdMjeAh32EjAS9QAoaSESko1g/3vAhy3Hlg1b
 BzXEAqfqA3q6OWlOa7FdFvLP8qE6/k1SLMu2zPblrho1QVLc7+p9U8hN2/78mufn8xlng8NxnbPWOm9O
@@ -4050,7 +4050,7 @@ p723zUZCg2jnLiB8BLC7/I+A3cErgHcvAbu9yMrZ8i2+7lM1/S8AAP//LPirWvMGAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch.svg",
 		size:    1168,
-		modtime: 1506354534,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUT2+cMBDFv8rIPWfwjP8nsIee21vvFdklLBKBVUBLVlW+ewUmwo0S0QPS8Hj+zfPY
 Ih+uNTSnQvwob9XLbxJwKsfyriufq1UDEvD63HZDIc7jeLnPsmmacFLYv9QZSymz4VoLmJrTeC4ESSng
@@ -4066,7 +4066,7 @@ FJoAifk/prEQHCHbjRAzG4OW/2mRmPenkWZOgR9yWoNOf8w8/0cOfwMAAP//lax87pAEAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_alarm.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_alarm.svg",
 		size:    1078,
-		modtime: 1506354542,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yTQW+bMBTHv4r1dlkl8rCfjY1byGGnHdbblMMukwdOgkRCBVZINPW7Txi2dtHaqT3w
 BD/r/R7vjyiG0441dQlf3MX33wWw2gW3OrqDXxgTwM6H9jiUsA/h4TZNx3HEUWLX71LinKfDaQdsbOqw
@@ -4082,7 +4082,7 @@ QisTviGDUrXTwUrN5yoqq6avWv9cqoBV5xK0RkvAqkv8YFIB60uYGqeu6W9f/woAAP//Zl9ZWTYEAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_eventeventbased.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_eventeventbased.svg",
 		size:    1051,
-		modtime: 1506354544,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yTP2/bMBDFvwpxXRrAOfE/rUTU0KlDsxUZuhSsREsCZCkQCctGke9emDIS14iDpoP+
 8AH3u3sPxyLsGtLVFr65g59+MiC1i+52cFt/0ggDst/2Q7DQxvh0l2XzPOMscJyajFNKs7BrgMxdHVsL
@@ -4098,7 +4098,7 @@ j1e6/BMAAP//77o2LhsEAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_eventtimebased.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_eventtimebased.svg",
 		size:    1469,
-		modtime: 1506354544,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xUQW+jPBD9K5a/y1eJDB57bKCFSN3THra3VQ97WXmJSZBIUoFVWq3631c2NE2zbVat
 LEb4wXvMex5RDvdr1q4q/s0+uv4ncray3i52dutmjCFnD9tuN1R84/3dZZqO4wijgn2/TqUQIh3u15yN
@@ -4116,7 +4116,7 @@ Cectk1jiQCyioUS8eaD0Ok/KQu4fzZNO85SR98E86TRPA5+LE5lCEPpfWdKrLAlUfpvRc5BhezbI8NNd
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_rule.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch_rule.svg",
 		size:    1824,
-		modtime: 1506354544,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yVy27bPBCFX4Xgv/mzyIh3UonkRdftrvtCtWlbgCwFFhHHKPLuBS8KGQRJlSwMfCbI
 OWeGR1IzPx5Qv2vx9+5qz78oRrvOdbdjd7JpDVGMnk7DOLf46NzDXVVdLhe4cJjOh4oRQqr58YDRpd+5
@@ -4134,7 +4134,7 @@ putFU5+iLkXX90lrYNQngvFPNypqqM1XGqUKTB1eIPKN6JrAMQl0SSo1nmOeSuaiSLMoUk49p/QXnGrm
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager.svg",
 		size:    1730,
-		modtime: 1506354538,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SVQWvjPhDFv8qg/7ljjaQZSa2Tw/+8e9v74iZuYnDjUpu6Zel3X2y5VIYGdw+Bl+Hp
 N5M3Ayn7lxM0x536Ub3Vz79JwbEaqptL9VgvNSAFr4/tpd+p8zA83RbFOI44WuyeT4XRWhf9y0nB2ByH
@@ -4152,7 +4152,7 @@ hCSLFjcFnDxCaBky/3bkOdDq6YTDDElaNLJbNcr82/A8CWeRaaVJkHyeUGbfvvJrA+ZJOEYflkPM/BN8
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_Automation.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_Automation.svg",
 		size:    1542,
-		modtime: 1506354538,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xUwW7bMAz9FcO7UrQkSrLUOgG2Uw/pbcihl8FLnDiAmhS14bQY+u+DZK1pG6fYhsBM
 Qj/yPYrPrrphm+3Ws3xRPzePP0Sereu+Zvv6vkm5TOTZ073fd7O87fuHq6I4Ho94JDw8bgvJOS+6YZtn
@@ -4171,7 +4171,7 @@ hsMGBgAA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_Inventory.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_Inventory.svg",
 		size:    1330,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SUT4vbMBDFv4pQr8pY0uifd23D9rSH5lZyyKW4iZIYnGSJhZ1Q9rsXy2683W5LSTAW
 zBvzGz+Gp6xpt6Ra5/RLefGnb4KSdRnK2aHc+1EjgpLzvj40Od2F8PKQJF3XQYdwPG0TyTlPmnZLSVet
@@ -4187,7 +4187,7 @@ GYoD4p0MLUDKOxmTF20AzZ1ebmdMXm5nTF6UBmXv9HI7w0gQ4r/38j53+FvuJGgbc2dA4K/c9eKHudPA
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_MaintenanceWindow.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_MaintenanceWindow.svg",
 		size:    1715,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xVTW/iMBD9K5H36kw8/ordEqTuqQd6W3HoZZWGAJFSqEgUqFb97yt/LGlLqHZXKKMw
 vHnz7Hk2s27YJM2qIIvytT78RJKsyr5Md+VzHXMJkuT03O66gmz7/uUmy47HIxwF7A+bjDPGsm7YkOTY
@@ -4207,7 +4207,7 @@ AP//qVf6vLMGAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_ParameterStore.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_ParameterStore.svg",
 		size:    1251,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6RUT2+jOBT/Kpb3ah62n+1ntxBp98Rhe1tx6GXFJCQgkVAVlDQa9buP7NBpptNWlebA
 0+Mn//4Y+1FMxx3rNyX/tzm3j/8rzjbN3GSHZt8uGFOcPe2Hw1Tybp4fbvL8dDrBCWF83OVaSplPxx1n
@@ -4225,7 +4225,7 @@ Q20kKF8lPB16/DWtfgQAAP//kd86FuMEAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_PatchManager.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_PatchManager.svg",
 		size:    3505,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yXTY/jNgyG/4rgXrpAwkjU926cQ8/dW097KdzE+QCcZBAbmxkU+98LUnIiFNjazWGC
 J8LrVyZFUpN1//0gTru6+r35aG9/qkrsmqFZXppzm9eEqsT7ubv0dXUchrfPq9X9foe7huvtsEIp5ar/
@@ -4250,7 +4250,7 @@ MqcfWpt/AgAA///V4Jh/sQ0AAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_RunC ommand.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_RunC ommand.svg",
 		size:    1040,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTT2ujQBjGv8rL7NW+zrzzv9VA99RDetvTXhY3MUYwGuoQG5Z+92XUtIYS2sMMPx8e
 fj4IZv2pgnqbs3VxLl/+CAbbIhR3bXEo5wwEg9dD0/Y524dwvE/TYRhwkNi9VClxztP+VDEY6m3Y50xw
@@ -4266,7 +4266,7 @@ fy03HqUHHReDJOTmwjaysqg8WBU7Ey/6N+T0IRcOjQOjolAI9OKaeWTiSGrmRf9rOUlUDjTNtndQDkgj
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_RunCommand.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_RunCommand.svg",
 		size:    1255,
-		modtime: 1498698622,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SQ22+jOBjFn+Gv+Nb7tJL58AVjSEOqJtvtVupKK43U11FKXIJKAWHnNqP+7yMubSPN
 PLQPEyn24fDxO8eeXx6fK9ibzpZNnRGOjICp82ZT1kVGdu4xSMjlwp//EQRwY2rTrV3TzeBq0zwYuK2q
@@ -4285,7 +4285,7 @@ QEcYjepDXP7O5QlqGkeogXNMzxVDDYKhGNVnuUL2tyxG1useJSBUv36alqCkMkU5cs6UQgkifVXn3Gmx
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_StateManager.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_StateManager.svg",
 		size:    1528,
-		modtime: 1498698622,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xTXW+rOBB9hl/h9T6tZIw/MIQ0pGqy3W6lrrTSlfp6lRKXoFJA2CHQq/73KztO0q/o
 vtxIgeHMzJkz4/HscniuQC87VTZ1BikmEMg6b9ZlXWRwqx+DCbyc+7M/ggDcyFp2K910U3C1bh4kuK2q
@@ -4305,7 +4305,7 @@ SXx5POmpqfTQUVONRVO/i26bstbKHrOwlUAkDpYgyNADzzttoXuovpj7PwMAAP//WdcrrvgFAAA=
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_StatemManager.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_StatemManager.svg",
 		size:    1092,
-		modtime: 1506354540,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STT4+bMBDFv4o1Pe/gvzjsAoee21vvFes4BMmBCFshqNrvXtnQsNqWvfQQafLQ/Jj3
 Zij9rSXdsYJvzWzHnwzIsQnNU99c7KoRBuR+cb2v4BzC9TnLpmnCSeAwthmnlGb+1gKZumM4V8AoBXK2
@@ -4321,7 +4321,7 @@ J1I9SkVJgpLtcUTFb7/+HQAA//8Nnb3wRAQAAA==
 	"/resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_documents.svg": {
 		local:   "resources/describe/AWSIcons/Management Tools/ManagementTools_AmazonEC2SystemsManager_documents.svg",
 		size:    1150,
-		modtime: 1506354538,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SUT4+bMBDFv8rIPe/g/4Zd4NBze+u9osQQJAJRbIVE1X73CsMGt9oozQHrMfL8Hn4j
 k7tzC92uIN+qqz39ZAR2la9ehupg1xowApdDP7iC7L0/vibJNE04CRxPbcIppYk7twSmbuf3BWGUEtjb
@@ -4337,7 +4337,7 @@ TzMMRf6IMf81yj8BAAD//1yxuyZ+BAAA
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonPinpoint.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonPinpoint.svg",
 		size:    7210,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RY3U5cuw6+r9R3iOZcH0/i/Dg5gl6c672fYYsWOoxEoSojaN9+y3bWiodCybpoCYsv
 dvLli+344vHp4I7Xl7u/rn7d/Pgn7Nz11enqv/dX3276Nxd27ue3u/vHy93t6fT9f/v98/MzPEd4+HHY
@@ -4373,7 +4373,7 @@ Yfr3vvsfG81bTGPgB9ZZc9gWEdofpqVjXDa20ddeded94feNSnRjJ7yzvFK/UGxzikFutN6JXtlfWLZJ
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSES.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSES.svg",
 		size:    926,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xTzYqcQBC+L+w7fHTOKbu6u7rboHPIOXmGIIxxBFeHVcbdtw/+MNOBHfAgluX30/WV
 FuOtQXsu1a/qs37/wwrnaqq+99VbvffACh9vXT+W6jJN1x9ZNs8zzZaG9yYzWutsvDUKc3ueLqVirRUu
@@ -4388,7 +4388,7 @@ ds6E+vXMRbZ8+MXyT51eX/4FAAD//0w66SeeAwAA
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSES_email.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSES_email.svg",
 		size:    2494,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7RWTW/bOBC9F+h/ENTLFiCfOR8UycIukD310AJ7yqGXhWC7trFuUsReO/33i6Fkxy3i
 bg67SPxEzfDj8c2jpOnusGo2i1n7sf++fPiT2mbR73t/139djrGG2ubx6/ZuN2vX+/23d5PJ8XjEUXD/
@@ -4413,7 +4413,7 @@ LCOOtg1WrAjuLNzpiCd35c5TAtv5EHUDjrnOMaNIT+JIzgNUwHJD5OjE9eKYff7qKTgKvYLM8XQupB0R
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS.svg",
 		size:    1390,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUTW7bQAyF9wFyh4fputSQw/kr7Cy6bs9QuLAqC3DsIBai5PYFJaNRgAbWwtaYfuSn
 RxKzubx06Pdb92P31j7/Yof9bth9Pe0e22sM7PD6eDxdtu4wDE/fmmYcRxoDnZ+7Rrz3zeWlcxj7/XDY
@@ -4430,7 +4430,7 @@ o01jF9nG7siH+7u/AQAA//+yjPrJbgUAAA==
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_HTTPnotification.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_HTTPnotification.svg",
 		size:    1932,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8RVPY/jNhDtD7j/QPCaBJCeOBx+iAfrilQqckAqF9sEgq21hGhtw1bk3X8fkPJXkPVl
 UwWLpR9nOG+e5wNeHKeN6NeV/LV5aw+/kxTrZmzybfPSnm2CpHh9GbbHSnbjuP9aFKfTCSfG7rAptFKq
@@ -4451,7 +4451,7 @@ IihzgrEJdTnKB6ov+zx/LuIv6LfPn/4KAAD//xSKmUuMBwAA
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_emailnotification.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_emailnotification.svg",
 		size:    2347,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8RWzW7jNhC+L7DvQHAvLUCOOcP/hRVge/KhAXryYS+FIDuWUcUJbFdO3r4YSpZdJN5N
 T0Xg0ZDz/82QzPzQb8R2Vcnf69f1/k+UYlUfa72rH9fjnkApXh673aGS7fH4/HU2O51OcLLwtN/MyBgz
@@ -4475,7 +4475,7 @@ raPAF9t/dDSgNud/cO4+f/onAAD//wyEiNQrCQAA
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_topic.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSNS_topic.svg",
 		size:    778,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SSv46cMBDG+5PuHUaTNhn83zjCW6S6ItemSBOhAMYSB6vFWnbfPgI2hIbkUlgez+j7
 zTfyFOM1QKw8fi3v9eUHR6jKVH7qy7f6kQOOcHvr+tFjm9L5c5ZN00STpOESMsEYy8ZrQJhilVqPnDGE
@@ -4489,7 +4489,7 @@ nKxYP8CQ2OawhrT9M4cloTZU0zR/4xhJWv8nqMjmJSvm/T09P/0KAAD//8wszTMKAwAA
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS.svg",
 		size:    1294,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RUy27bMBC8B8g/LNhzV+TyXUg+9Nx+QyFAiixAkYxIsJK/L0gqMpvmYR8Mr5fD2cHM
 muV87qBvKvarfmmf/ggGTb3U38f6sd16IBg8Pw7jXLHjspx+FMW6rrhKnJ66gjjnxXzuGKx9sxwrJjhn
@@ -4505,7 +4505,7 @@ kPv//U+HSqJ7DToC3w+3LMJDU4Y37HB/9zcAAP//T/ZKNg4FAAA=
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS_message.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS_message.svg",
 		size:    907,
-		modtime: 1484076696,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+TTQWvDIBQH8Huh3+Hxdl58JiZphuaw8/YZhizGCGk6osT0249mXVu2y2h360HEJ/6e
 f1DpJwuuUfii92Z84wiNDvpx0FtzrAFHmLf94BV2IXw8MRZjTGKW7EbLUiJifrII0TWhU8iJEDrjbBeO
@@ -4518,7 +4518,7 @@ r1efAQAA///UkVSCiwMAAA==
 	"/resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS_queue.svg": {
 		local:   "resources/describe/AWSIcons/Messaging/Messaging_AmazonSQS_queue.svg",
 		size:    693,
-		modtime: 1484076694,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SSP8+bMBDG90j5Dqfr2h628R+ocIZOGZq1Q5cKFTCWCKBgheTbVzGBVGqHV+87IJ57
 fPe7Z7hiujrwlcXv5b2+/OIIVRnKL315rp8ecITbuesni20I49ckmeeZ5pSGi0sEYyyZrg5h9lVoLXLG
@@ -4532,7 +4532,7 @@ hC56gRoZ/Qj9q+c/0CJ53EPxOLXDfvcnAAD//x5CPm+1AgAA
 	"/resources/describe/AWSIcons/Migration/Migration_AWSApplicationDiscoveryService.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSApplicationDiscoveryService.svg",
 		size:    1497,
-		modtime: 1484775320,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RUwU4jMQy9I/EPVvba9cRxnDirDoc9lysHLqtCy3Sk0iI6ovD3q2QGmApYZg9VXdd+
 L34vzvzw1EC7qs1i+bJ+/EMGVstu+XO3vF8POSADz/fb3aE2m657+FVVx+MRj4z7x6Zy1trq8NQYOLar
@@ -4550,7 +4550,7 @@ fzP2yNef34V5ld/MeX6OL87P/gYAAP//OsNqA9kFAAA=
 	"/resources/describe/AWSIcons/Migration/Migration_AWSDMS.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSDMS.svg",
 		size:    1817,
-		modtime: 1484076824,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RV3W7bPAy9L9B3IPRdf7QkivoZkl7senuGIW1dx0CaFI2RtG8/UJJ/OmxpehHlmKYO
 dY4oeXU8ddA/rtWPzXv7+ssoeNwMm//3m+e2xsAoeHve7Y9rtR2Gl29Ncz6f8Ux4eO0aq7VujqdOwbl/
@@ -4569,7 +4569,7 @@ uWrkm7OSz9nd7c3vAAAA//9TDFwpGQcAAA==
 	"/resources/describe/AWSIcons/Migration/Migration_AWSDMS_databasemigrationworkflow-job.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSDMS_databasemigrationworkflow-job.svg",
 		size:    2266,
-		modtime: 1484076824,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yWy27bSBOF9wHyDgT/bfVR16VvPyQDGW8nqwBezGag0IokwLEDS5Aybz9oimPSyhhD
 GIJEdreqzneqiw0uD6dts79ftb+v/9o8/8ltc78+rt3j+vtmmGu4bX5+f3g8rNrd8fjj/4vF+XzGWfH0
@@ -4591,7 +4591,7 @@ H/yG1OUoX9b3kZuPH/4OAAD//zoOaNzaCAAA
 	"/resources/describe/AWSIcons/Migration/Migration_AWSMigrationHub.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSMigrationHub.svg",
 		size:    2053,
-		modtime: 1499468696,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7RV3W7jNhO9tp5iPn5XBcgxSfFHciwvkjRZLJACBQrktnBkrSysVjIs+a/FvnsxlJzN
 dp20e1EYEu3D4Tkzc0h6/u74uYZ9se2qtsmYQsmgaPJ2VTVlxnb9R5Gwd4to/j8h4H3RFNtl325ncL1q
@@ -4614,7 +4614,7 @@ lGidRA82pfuDkHCdhKhAS/+di+ivAAAA//+uSUKHBQgAAA==
 	"/resources/describe/AWSIcons/Migration/Migration_AWSSMS.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSSMS.svg",
 		size:    3754,
-		modtime: 1484076824,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RXzW4jNwy+L7DvQEzPpUfij6TCzqHn9hmK7MbrGPDaQWLEu29fUNJ4NPlBlEMSRv7I
 TyTFT/L66XkH+7vN8M/t7+3jf26Au9vz7Z/H25/bugZugF8/D8enzXB/Pj/8tVpdLhe8EJ4edys/juPq
@@ -4639,7 +4639,7 @@ FC5icst7c8b3F2t5QUq5/ny1rQnLu3KGv02xXtmXwLV9v7z5+uX/AAAA///y2z6qqg4AAA==
 	"/resources/describe/AWSIcons/Migration/Migration_AWSSnowball.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSSnowball.svg",
 		size:    2054,
-		modtime: 1484076824,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVzW6bQBDH75HyDqPtucN+L1TgQ8/tM1S0xhjJMZaNTPL21TJAxq2rbJpDlPXy398s
 //mgvFxb6LaV+Fa/NOcfSsC2HurPx/qpmfdACXh+OhwvldgPw+lLlo3jiKPB/txmWkqZXa6tgLHbDvtK
@@ -4657,7 +4657,7 @@ y4cmE73zynfAvFWZ6P6Nyyx+YMv47d48PvwOAAD//2L7kCgGCAAA
 	"/resources/describe/AWSIcons/Migration/Migration_AWSSnowball_importexport.svg": {
 		local:   "resources/describe/AWSIcons/Migration/Migration_AWSSnowball_importexport.svg",
 		size:    1735,
-		modtime: 1484076826,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVT4/bNhDF7wHyHQj1Sj1zZjj8U9h7aC89OKcFcsilMHZd24CyXqwFO/n2BSnK8bb5
 swdLzxQ180i9n7Q8nXfm8Ljq1puv25e/qTOPm3HTP20+b9uYoc58+Tw8nVbdfhyff18sLpcLLoLjy27B
@@ -4678,7 +4678,7 @@ F2JZPj5379/9GwAA///Q34PZxwYAAA==
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AWSDeviceFarm.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AWSDeviceFarm.svg",
 		size:    1641,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xVTY/aMBS8r7T/4ck998V2/J7tKtlDz+2pP6DiI4RIWYIgIrv/vnK8BacEwfYADGY0
 Y8/zkOJ4qqFZl+LH4r06/FYC1ot+8XW3eK0+1kAJeHttd8dSbPt+/y3LhmHAIcfuUGdaSpkdT7WAoVn3
@@ -4695,7 +4695,7 @@ QSQ4Chc3Ic8nVGTh77sIj4eX56c/AQAA//+QPzVJaQYAAA==
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AWSMobileHub.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AWSMobileHub.svg",
 		size:    1952,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVzW7bSBO8B8g7NMaX7wPk1nT3/AaiD3vZS4w9BPEhlwVjkTKxjChIjGW//WJ+JHu1
 doA92CoWe2q6anqk1eFxA8O6UZ/b527/JylYt3N7vW1/dJUDUvD0Y9weGvUwz7tPy+XxeMSj4LTfLFlr
@@ -4718,7 +4718,7 @@ F5zrX/yfI2vXLoT2/cgMoQjEdI+iVFsVO7QhGSrBEJDHwDUv4jwbKcYCkymT1uhYTZFDqodBjGxqjxXn
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonAPIGateway.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonAPIGateway.svg",
 		size:    2325,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWzW7bPBC8B8g7LPidvxX/fwo7h57bUx+gUGvFFqBYQSxYydsX5NIRVdS2dAiyJkYz
 4szuQpvTeQ/tbsu+1R/N20/BYFcP9f/H+qXJZyAYvL90x9OWHYbh9UtVjeOIo8L+bV9Jznl1Ou8ZjO1u
@@ -4737,7 +4737,7 @@ z0fT04svlQj/FszMhdgE+3cSmyp+amzip8zT48OfAAAA//8vf5boFQkAAA==
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonCognito.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonCognito.svg",
 		size:    1537,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUzW7bMAy+F+g7ENp5NEVJlDQkPey8nfYAQ9q4iYE0KRojbt9+oJSm6rBgPgShpY8f
 /z5qcTxtYFgvzY/VW//y2xpYr8bV1/3qqT+fgTXw+rTbH5dmO47P37pumiacHB5eNh0TUXc8bQxMw3rc
@@ -4755,7 +4755,7 @@ Z69Y2+1AwEGlruwfo7AJKbRjmZ26FVUIB020yrJGgHrhgs6lAc3OushdN4db97MdfbtxH9B/sy86fVYX
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonMobileAnalytics.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonMobileAnalytics.svg",
 		size:    1721,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVwW7aQBC9R8o/jLbnjndmd2ZnK8ih5/bUD6hIcMASgShYkPx9tTY4pgSFHJDXy/N7
 nvfGs5PtbgHNfOp+zd7ql7/kYD5rZ9/Xs6f6sAfk4PVptd5O3bJtn39U1X6/x33AzcuiYu99td0tHOyb
@@ -4773,7 +4773,7 @@ em+Y0kIZo55M6hJMKvsUj+Z+XNekKsfBpBw3d7c3/wIAAP//W6eZ6bkGAAA=
 	"/resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonPinpoint.svg": {
 		local:   "resources/describe/AWSIcons/Mobile Services/MobileServices_AmazonPinpoint.svg",
 		size:    7215,
-		modtime: 1484077058,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RYTW8cOQ69B8h/EHrPy5aoD0oLO4c9757mBwycuGM34NhB3LCTfz8gqSqxHTtWHWai
 dF6R0tPTI6WLx6cbd7y+3P3v6tfhx99h566vTlf/vr/6dui/ubBzP7/d3T9e7m5Pp+//2e+fn5/hOcLD
@@ -4810,7 +4810,7 @@ HAAA
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AWSDirectConnect.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AWSDirectConnect.svg",
 		size:    1136,
-		modtime: 1506354552,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yU326bMBjFX+WTd90P/we3kIttl9NeYSLFIdZciGIrNJr67lMwadyqVbmIFB8f//iO
 D6IOpx5c15Bf7dke/zACXRvbu6F9sosGjMDzkx9CQ/YxHu6LYpomnASOx77glNIinHoCk+viviGMUgJ7
@@ -4826,7 +4826,7 @@ QV6+E5v/AQAA///Ks8efcAQAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront.svg",
 		size:    1870,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yV326bMBTGX+XIu+7Bf7Hdklxsu5z2ChNtCEGjUAUrNJr67pNtVtxGDC4SKYfPPz5/
 5xylGC41NIcd+VFeq/MvRuBQuvKuK5+rqQaMwOtz2w07cnLu5T7LxnHEUWB/rjNOKc2GS01gbA7utCOM
@@ -4844,7 +4844,7 @@ N4R5Y/O9FykzPjIctU1b5pn+X3D/NwAA//9ffzFyTgcAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_downloaddistribution.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_downloaddistribution.svg",
 		size:    970,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3yTT8/iNhCHv0rkXu2JZ8Z/4l3Coe2BA/SYQy4VgoCjJrAikXlRtd+9cgBtW73aQxzl
 keeZyU/2akrnoj/WYrt/dLc/URTH/bxXl/3YvViBovgYh8tUizjP376U5f1+hzvD9XYuSWtdTuksint/
@@ -4862,7 +4862,7 @@ zxSjBe+UBWe3zr5VgL6xblCApJacOL+a5dzkCKs2n7F8A9f/BAAA///la9a1ygMAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_edgelocation.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_edgelocation.svg",
 		size:    1532,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7xTTW+jSBD9K6hz2ZWg6K7+dgBpN3vIYWc0Jw65jJBNMArBkekBW1H++6gBO07Gzmgu
 kUUZqqpfvXpVnXR9FdSrlPxf7Mvtd0aCVeGKqC0ey9kXMBLsHpu2S8nauadFHA/DAAOHzbaKkVIad301
@@ -4880,7 +4880,7 @@ eRhTSC9xONkDcV9agMm1BOS3/mr0EdJCGkATTvbYowTLegVob0fU6XJ2fZX9DAAA///7A3cM/AUAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_streamingdistribution.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonCloudFront_streamingdistribution.svg",
 		size:    489,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yRzY6bMBSFX8W63ZKL/y4mM5hF20UWM11mMZsKgQGrHjLCVkhU5d0rEiq1VRde+PP5
 jo7kKp4H5jsLL83Vzd8FsK5JzW5q3t3GmAB2eQ9TtDCm9PGU58uy4KLwNA+55Jzn8TwAW3yXRguCc2Cj
@@ -4894,7 +4894,7 @@ mYx4VuxR6UwZ1CZbn0eDqjjKPZbmsJaVRzJv64T1g+pfAQAA///0l/ez6QEAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53.svg",
 		size:    860,
-		modtime: 1506354552,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4STUW+bMBSF/8qV99yL7Ws7dgt52PY47S9MrDjEmgtRbIVGU//7FEwXKjXKA3A499yP
 AxJ1OvUQuob9aM/++Esw6NrcPgzti188EAxeX+KQGrbP+fBYVdM04UQ4HvtKcs6rdOoZTKHL+4YJzhns
@@ -4909,7 +4909,7 @@ RaGue8peYWX+fr3kLszLP7H9FwAA//9kZoPzXAMAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53_hostedzone.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53_hostedzone.svg",
 		size:    1163,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yUT2vzRhDGv4pQr7OPdmZn/yW2IW2PbY8+9FKErNiiih0sYSeUfPeysnMoJfDCCy9C
 s6Nh55md+S1aTZd9NezW9W/te3/+i+tq186tObYv/T1WcV29vYzHaV0f5vn1oWmu1yuuDqfzvhFrbTNd
@@ -4927,7 +4927,7 @@ bMYMdabcwvTEiqh0s3Z5lEk8Uui+GU8Z/UKo/EI2/wYAAP//VFM0mosEAAA=
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53_routetable.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonRoute53_routetable.svg",
 		size:    4269,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8xWTW8buRL8K8K8a7M03c0mOYnlw8s7+PC8FwM+6LIQZNkSVrIDjyDHWOS/L0hKjuIP
 2cka2UUQssUZVndVszg+6jdXg8XFqPn/5H52+zs3g4vJeuKuJ6vZdm3AzeDLanndj5r5ev35w3B4d3eH
@@ -4956,7 +4956,7 @@ HVOtEAAA
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC.svg",
 		size:    1401,
-		modtime: 1506354552,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUy27bPBCFX2XAf50Rb8NLInvxt8uir1A4sSwLVaTAIqwYRd69oCjFbBzDWdigx4cf
 zxwNVQ7HGprtiv3YnKrDL8Fguwmbu27zXM01EAxen9tuWLF9CC/3RTGOI44K+0NdSM55MRxrBmOzDfsV
@@ -4973,7 +4973,7 @@ YlRAJr4dV05OBCNjBx9oVsdnfJt8+ZAzbx/ISeBETDkTR3J8Ya7/BgAA//+a0pjfeQUAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPCNATgateway.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPCNATgateway.svg",
 		size:    1059,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yT3W6bQBCFX2U0vc6wu7M/OAEu2l5WfYXKwmuMSiCClTGq8u4VsHbsqFK5QDoczfnO
 MBLZcK6gPuT4Yz/5/pdEOOzD/qndv/rogUS4vDbtkOMphLfnJBnHkUamrq8SJYRIhnOFMNaHcMpRCoFw
@@ -4989,7 +4989,7 @@ gtRVLyNbecaR2q28eJLFtinpq15GZt78axd/AwAA//8CDaAzIwQAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPCpeering.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPCpeering.svg",
 		size:    1391,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xUzY7jNhN8FYLflSw32fzdtQx8SQ572OQBcgkEWbaFaOyBLdhjBPvuASnZmRnsQY1y
 sdisLhJeX657MWwb+b299+e/jBTbdmr1sX3pF04YKd5exuOlkYdpev2yWt1uN9wYp/N+ZYlodbnupbgN
@@ -5009,7 +5009,7 @@ wD8fzue+HpS0n++S41zmlaAZ1qhY8qlloZFYM/J8s+VvcvNvAAAA///hB+m7bwUAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPNconnection.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPNconnection.svg",
 		size:    829,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5zSTY+bPBAH8K+C/FztwR57/LILOTztIYduL5VyyKVCwQmoJFkFCzaq9rtXQFKl7ak9
 YHn+9niknyj64ZC1dck+Vdd4+apYVlepEqfqGG9Zplj2duxOfcmalF6f8nwcRxg1nC+HHKWUeT8cWDa2
@@ -5025,7 +5025,7 @@ WQ9G36UUEN6xHqWOAiUEHkDR3eo3qHn+v0JNP/3qRwAAAP//rx6BGT0DAAA=
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPNgateway.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_VPNgateway.svg",
 		size:    520,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yRTaucMBSG/0o43erJt9p7jYu2i1m0Xc7ibkrQqKEZ52KCzlDufy86Fm5LCXkhD+d5
 OZA6LgPxnYGv9u7mHxxIZ5PNJ3txByMcyO0SpmhgTOn1idJ1XXGVeJ0HKhhjNC4DkNV3aTTAGQMyOj+M
@@ -5039,7 +5039,7 @@ nyP+dlSF5T/Oq03je0MC6Qx80xXyIlMVFvysBKrS7mAPtp2cFygythTI1UmWWJbnQqAQpy3leTdfLrnK
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_customergateway.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_customergateway.svg",
 		size:    805,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4ySwW6cMBRFf+XpdZ2Hsf3MTIJZtF1W/YUKgWGsOjACaxhU5d+rATKlUatkwYKje498
 LefjpQVfW/xWzm74kSLUZSwfuvLZbQxShOtz6EaLpxjPj0kyTRNNivqhTaQQIhkvLcLk63iymAqBcHK+
@@ -5054,7 +5054,7 @@ NiTVBneBj9oMkzQ3W2ZIvNpWuAv8f5xKKcuWddqQ4vu6ddJ9Ib9/HqWIj8BM4ghS0gH0gQ4MK9aSjIRd
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_elasticnetworkadapter.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_elasticnetworkadapter.svg",
 		size:    1328,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SUQW+cPhDFv4rl/xUGe+wxkMAe/u0hh7THHnqpUGBZVAeixYKsqnz3aoEGk020ihDo
 5+c3M88+kPVDzZoy5/fFqTr+kpyVhSvCtnisFo1Jzp4fbdvn/ODc000UjeMIo4LuWEcohIj6oeZsbEp3
@@ -5071,7 +5071,7 @@ IBMfp2mzwcO3ZSueB5//c7u/AQAA//8cSq24MAUAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_elasticnetworkinterface.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_elasticnetworkinterface.svg",
 		size:    1206,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SUz46bPBTFX+XK33ou/ncNzGAWX7us+goVAoegMhCBFYKqefcqgRaTdJQF0o/DOfdc
 e0E2nmtoKsu+FbMbfggGVeGLl654d6sGgsHlve1Gy47en16jaJomnBT2Qx1Jznk0nmsGU1P5o2WCcwZH
@@ -5087,7 +5087,7 @@ IUCSqGWIJJFWQ4D3sQ2fFxOhSNeKDY1GkYR4a1sMAd7HNrwWX/82+e8AAAD//y9f4Oe2BAAA
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_endpoints.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_endpoints.svg",
 		size:    1187,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3yUza7bNhCFX0Vgt8Njzgx/E9uAmy6yaLrMIptCkGVbqOIb2IJ9L4q8eyHKt0nboBD0
 CZo/Hh0SWl9vx2bYb8yv7Ut/+Z1Ns2+n1p7bz/0j1rBpnj+P5+vGnKbpy5vV6n6/4654uhxX4pxbXW9H
@@ -5106,7 +5106,7 @@ HZiQ9GbjewnzMfQBvrz3BdF/1IKQ34W6+Z4REoUEFppr6LvRVcH8a9n+FQAA//9fcg5MowQAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_flowlogs.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_flowlogs.svg",
 		size:    1064,
-		modtime: 1506354558,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6ST24qcQBCGX6WoXG/Z59Zdey6SXIa8Qhic1mnSq4s240jYdw8elnWWQIbkQvj96frq
 o9FyuDQQTg6/HSff/+AIp2M6PrTHZ791wBGuz7EdHJ5TennMsnEcaZTU9U0mGGPZcGkQxnBKZ4ecMYSz
@@ -5122,7 +5122,7 @@ GWNJqA24z5pTvu3fRaNIyU13nzWnotjW7/NCvEPFzvaKU8HBajIGlm8W1l5rynPYnZmB8/99+B0AAP//
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_internetgateway.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_internetgateway.svg",
 		size:    899,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xTS2+bQBD+K6vtdXbYmd3ZhQQspekhh7THHHqpEMY2KrEjQMZWlf9e8UibPoT4mPnm
 9c1I5P15r5ptoR/La919I6225VCaY/lcr5wirS7P7bEv9GEYXm6SZBxHHB2eun3C1tqkP++1GpvtcCg0
@@ -5139,7 +5139,7 @@ MRrBKCaYMEmP3iD5x8DgHZIvHYYIMywq51zGNJvPMf06m58BAAD//5n9u+WDAwAA
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_networkaccesscontrollist.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_networkaccesscontrollist.svg",
 		size:    1130,
-		modtime: 1506354560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUX2vbMBTFv4rQXuVr/bfd2oate+jDtpdCH/oSXEdJzFQ7RCJuGP3uQ5LTZqOFEiJ+
 OTn33BOBU7vjFg3rBv/oTuawYhitO99lY/dkFg0xjJ6f7OgavPN+f5Xn8zzDLGA6bHNOKc3dcYvRPKz9
@@ -5157,7 +5157,7 @@ wz9E+zcAAP//aDupemoEAAA=
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_router.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_AmazonVPC_router.svg",
 		size:    873,
-		modtime: 1506354556,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yTzY6cMBCEX6XVOW9jbLdnZhdzSHKM8goRAsNY8cIIrGFQtO8e8TNZssoqOeTAgc/V
 peqSnQ3XBnxl8Usxuf5bilAVsXhoi2e3MUgRbs+hHSyeY7w8Jsk4jjQq6vomkUKIZLg2CKOv4tliKgTC
@@ -5172,7 +5172,7 @@ S2IJO837kaScj/9HJKVJmC2S1nS8R1r5GmmnmQ3nB5L/DAAA//8pqZHOaQMAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing.svg",
 		size:    2168,
-		modtime: 1506354552,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yW226kRhCGX6XUuUmkTNFHunsMXHgTKRerfYUIDz1jFAyjoTOHrPbdo27wTrNrC18Y
 FcVfX/1dlNEU4/kAbVOSz/XNnf5mBJra15u+fnFzDhiB60vXjyV59v64zbLL5YIXgcPpkHFKaTaeDwQu
@@ -5194,7 +5194,7 @@ eAgAAA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing_ApplicationLoadBalancer.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing_ApplicationLoadBalancer.svg",
 		size:    1580,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SUz46bMBDGX2U0vXQPGTw2/rcLObQ9Vn2FChGToBKowAqJqn33KiS7Saumoln1gASf
 mO8383nkbNitoV7l+Lk4hP4rI6yKWCzaYhvOGjDCftu0Q46bGL8/Jsk4jjQq6vp1IoUQybBbI4z1Km5y
@@ -5211,7 +5211,7 @@ AA==
 	"/resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing_ClassicLoadBalancer.svg": {
 		local:   "resources/describe/AWSIcons/Networking & Content Delivery/NetworkingContentDelivery_ElasticLoadBalancing_ClassicLoadBalancer.svg",
 		size:    1055,
-		modtime: 1506354554,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6ST3YrbMBCFX2VQr3esv9HPrp2Ltpelr1CCozimXnuxRRxT9t2LFLvJLi0t9CIwOpr5
 5ugEl9O5gfZQsS/7JYzfBIPDPu4f+v1zWDUQDC7PXT9V7BTjy2NRzPOMs8JhbArJOS+mc8Ngbg/xVDHB
@@ -5228,7 +5228,7 @@ EazZDMjNPKVbQemB0q/9RmQzmWNUsnrlG41CrXuNRiVWP0avJo1CaVbnRmaT+UVk0cn1peSzmZzAmmpO
 	"/resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk.svg": {
 		local:   "resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk.svg",
 		size:    1053,
-		modtime: 1484170412,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STz46bMBDGX2XknnfwP4zZBQ5Vj5V67LFCwSGoBCJshY2qfffKsWmddqukspCGb775
 MZoxlT33MHQ1+dxezPKNEeha1z5N7dFEDRiB1+M42ZocnDs9Z9m6rrgKnJc+45TSzJ57AuvQuUNNGKUE
@@ -5244,7 +5244,7 @@ Nh0EAAA=
 	"/resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_assignmenttask.svg": {
 		local:   "resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_assignmenttask.svg",
 		size:    953,
-		modtime: 1484170412,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7yTz4ucMBTH/5WQXpNnkpeYzK56KD30sKW3KcylhDGOUp1ZxqC7lP3fiz+o2+1Ae2l5
 CPp5vu/niSTrhxNpypw++Odw/SopKX30/Oy7sDIiKXnq2nOf0zrGx7skGccRRoTL9ZQoIUTSDydKxqaM
@@ -5259,7 +5259,7 @@ GTJspQRrmDaDAuu2HkeGNUfzmnDcWwWpfNAKrGTKwus+Q44Hmvy+glpWSC0YxZQEl/66whL6R7XS4Oxf
 	"/resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_humanintelligencetasks.svg": {
 		local:   "resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_humanintelligencetasks.svg",
 		size:    1475,
-		modtime: 1484170412,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9SUTY+bPBDHvwryc7UHv8fehUhP1cMesuqNSnuprEACqpOsAoJdVfvdKxuabBpStb1V
 FqNk+M+LPT+Ttf02acocrdxrdfzCUFK6zpG921WTL2Eoedn5fZujuuue79J0GAYYBByO25RTStO236Jk
@@ -5276,7 +5276,7 @@ HPQTSq9h4xewSRB2Zlpag+V4Gn88tfM2yCUS87xxBVpOvIUT/RVvlzXihlYjLsL8CXU3xhq1K0FB6cDf
 	"/resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_requester.svg": {
 		local:   "resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_requester.svg",
 		size:    772,
-		modtime: 1484170414,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SST2vcMBDFv4qYXpvRX8tWIvlQeuihpbcUeinCltem3nWwxHqXku9e/Id1KJSWhEGH
 94R+b2aQjecD6WoHn/01jD84kNonf3fyx7B5hAO5HPtTdNCm9HRP6TRNOEkcxgMVjDEazwcgU1en1gFn
@@ -5290,7 +5290,7 @@ G0NwzMyL/v+HoDTm5k0ELVDkryDsm1AKlX7VJnZGZtCofzDmv1v+DgAA//+ZxGVpBAMAAA==
 	"/resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_workers.svg": {
 		local:   "resources/describe/AWSIcons/On Demand Workforce/OnDemandWorkforce_AmazonMechanicalTurk_workers.svg",
 		size:    1731,
-		modtime: 1484170414,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SVX4vjNhTFv4pxX6Vj/blXf3aTwJY++KGlby70pRjHMw71TJbYOLuU/e5FstvODLtp
 81BMhCyjc3/nSofspuWxOB335Y/t5/7ymy6LYzu38rl96re1QpfFp6fxedqXwzx/fFdV1+sVV4vz5bEy
@@ -5310,7 +5310,7 @@ K6e/nsOfAQAA//9owLfwwwYAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_AWSCLI.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_AWSCLI.svg",
 		size:    5112,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+xWTY/jNgy9F+h/ENxLF5AZfZCiVCR7KHqr51TAh1yKYCaTBHAmg8RIZv59QcnZdYCd
 rYE97CWHxM/U4yP1QZnz03mjdk+Lqlm9r4//2ko9rfpV/bLarwebspV623cvp0W17fvXP2azy+UCFw+H
@@ -5335,7 +5335,7 @@ e8wOPvgTAAA=
 	"/resources/describe/AWSIcons/SDKs/SDKs_AWSToolkitForEclipse.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_AWSToolkitForEclipse.svg",
 		size:    2658,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWzW4qORPdX+m+Q6m/zXcld+GfKpc9grsYzW7IaiQWbEYoIYDUhCtoheTtR2U3k0ZK
 MmSR9OnyqXPKP9VmenrewO5h1sxXr+vj366Bh1W/ap9W+/UQA9fAy757Os2abd//+m0yOZ/PeA54OG4m
@@ -5359,7 +5359,7 @@ G1hhuUdJrdOrUpBZE1NBRtHWFma8eimczy+i+pzq78Kf37/9EwAA//+U+IFQYgoAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_AWSToolkitForVisualStudio.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_AWSToolkitForVisualStudio.svg",
 		size:    2658,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWTW/jNhC9L7D/gVAvXYAa82OGQxZ2DkVvVU4FdPCl8Dr+AuQ4sIU4+ffFkHIjA0nW
 OSR6Gr55b/gxoqen543aPcyqZvG6Ov5rK/Ww6Bf142K/GmLKVupl3z2eZtW275/+mEzO5zOcPRyOm4kz
@@ -5383,7 +5383,7 @@ Bpaf74FjbeWqZCCSxJiRFrQ1mRmuXjLn84uoPKfyu/Du+7f/AgAA//864dJGYgoAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_AWSToolsForWindowsPowerShell.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_AWSToolsForWindowsPowerShell.svg",
 		size:    2658,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RWTWsjRxC9L+x/KCaXLPSU+qOqqztIewi5RT4FdNAlCFuWBCNrkQbL/vehuke7I7Ad
 GWPPm+pX71V/1LSnp+cN7B5mzXz1uj7+6xp4WPWr9mm1Xw8xcA287Lun06zZ9v2PPyaT8/mM54CH42bi
@@ -5407,7 +5407,7 @@ FZZ7lNQ6vSoFmTUxFWQUbW1hxquXwvn4IqrPqf5f+P3rl/8CAAD//29Q3iJiCgAA
 	"/resources/describe/AWSIcons/SDKs/SDKs_Android.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Android.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/6RhDG738p32G0vS7Dzs6+VjiHqrfCqRIHLhXlzZYciIIVkm9fzdoQqwoRh6wn
 s88+szP8MLPz+wGabaXm68/d2z+kYLvu1pPj+mU35IAUfLy0x3Ol6q57/X06vVwueGE8vR2m1hgzPb8f
@@ -5427,7 +5427,7 @@ EyhIbAYAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_Java.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Java.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVT2/yRhDG76/0fofR9roMOzv7t8I5VL2VnCpx4FJRMNiSA1GwQvLtq1kbYlUvEYes
 J7PPPjOz/DCL8/sB2l2llpvP+u0fUrDb9JvZcfNSjzkgBR8v3fFcqabvX3+fzy+XC14YT2+HuTXGzM/v
@@ -5447,7 +5447,7 @@ Iy/KhCEV2MtWN7tm48oRpnSFPayfy8i6jCyNMaEnMbFRJwy+ufFuG7Mst1fEcf2Lb/diLu/yhfxCPP38
 	"/resources/describe/AWSIcons/SDKs/SDKs_JavaScript.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_JavaScript.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/6RhDG738p32G0vS7Dzs6+VjiHqrfCqRIHLhXlzZYciIIVkm9fzdoQqwoRh6wn
 s88+M7P8MLPz+wGabaXm68/d2z+kYLvu1pPj+mU35IAUfLy0x3Ol6q57/X06vVwueGE8vR2m1hgzPb8f
@@ -5467,7 +5467,7 @@ BQAA//9TTA7ubAYAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_Net.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Net.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/6RhDG738p32G0vS7Dzs6+VjiHqrfCqRIHLhXlzZYciIIVkm9fzdoQqwoRh6wn
 s88+M7P8MLPz+wGabaXm68/d2z+kYLvu1pPj+mU35IAUfLy0x3Ol6q57/X06vVwueGE8vR2m1hgzPb8f
@@ -5487,7 +5487,7 @@ AAD//+i6AypsBgAA
 	"/resources/describe/AWSIcons/SDKs/SDKs_Nodejs.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Nodejs.svg",
 		size:    1643,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVy27rRgyG9wc470BMt2N6OJxrYWVRdFd7VcALbwrXNwlQ7CAW4uTtC45kRyiODS8i
 MZx/fpKjT/Ls/HGAZlup+fpr9/4PKdiuu/XkuH7dDTkgBZ+v7fFcqbrr3n6fTi+XC14YT++HqTXGTM8f
@@ -5507,7 +5507,7 @@ x38BAAD//z2+nU9rBgAA
 	"/resources/describe/AWSIcons/SDKs/SDKs_PHP.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_PHP.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/yRhDH74/0fIfR9roMOzv7WuEcqt4Kp0ocuFSUN1tyIApWSL59NWtDrOoBcch6
 Mvvf/8wsP8zs/HGAZlup+fpr9/4PKdiuu/XkuH7dDTkgBZ+v7fFcqbrr3n6fTi+XC14YT++HqTXGTM8f
@@ -5527,7 +5527,7 @@ XwAAAP//FcsG3mwGAAA=
 	"/resources/describe/AWSIcons/SDKs/SDKs_Python.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Python.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTY/yRgzH74/0fAdreh3MeDyvFdlD1VvhVIkDl4rylkhZWC3RsvvtK08CG1UPiAOJ
 8fznb4/zI8zOHwdotpWar7927/+Qgu26W0+O69fdkANS8PnaHs+Vqrvu7ffp9HK54IXx9H6YWmPM9Pxx
@@ -5547,7 +5547,7 @@ AAD//7Njh3hsBgAA
 	"/resources/describe/AWSIcons/SDKs/SDKs_Ruby.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Ruby.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/6RhDG738p32G0vS7Dzs6+VjiHqrfCqRIHLhXlzZYciIIVkm9fzdoQqwoRh6wn
 s88+M7P8MLPz+wGabaXm68/d2z+kYLvu1pPj+mU35IAUfLy0x3Ol6q57/X06vVwueGE8vR2m1hgzPb8f
@@ -5567,7 +5567,7 @@ FwAA//8XdiS4bAYAAA==
 	"/resources/describe/AWSIcons/SDKs/SDKs_Xamarin.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_Xamarin.svg",
 		size:    3120,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+xWTW/yRhC+v9L7H0bb6zLs7OxnhXOoeis5VeLApaLhw5YciIIVkn9fzdqAVZWIayUO
 rIeZZ5/58KORZ8ePHTTrSs1XX5v3v0jBetWtJvvV62bwASn4fG33x0rVXff263R6Op3wxHh4302tMWZ6
@@ -5587,7 +5587,7 @@ Dn/s8P/JDp9N5Xt8Jl/5Tz9//BMAAP//PSVGNDAMAAA=
 	"/resources/describe/AWSIcons/SDKs/SDKs_iOS.svg": {
 		local:   "resources/describe/AWSIcons/SDKs/SDKs_iOS.svg",
 		size:    1644,
-		modtime: 1484077560,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVTW/6RhDG738p32G0vS7Dzs6+VjiHqrfCqRIHLhXlzZYciIIVkm9fzdoQqwoRQtjD
 7LPPzCw/zOz8foBmW6n5+nP39g8p2K679eS4ftkNOSAFHy/t8Vypuutef59OL5cLXhhPb4epNcZMz+8H
@@ -5607,7 +5607,7 @@ AAD//yeUtg1sBgAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_ACM_certificatemanager.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_ACM_certificatemanager.svg",
 		size:    1578,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUTY/bOAz9K4L26siSSEr2TBxgdy+7QHsqMIdeCtdxEgOeJIjdSYJi/ntByvnAtAPM
 IRZFUe89PgqZDy9r1S0r/ak+t4dvTqtlPdazbf3cTjnltDo999uh0ptx3D/k+fF4NEcwu8M699bafHhZ
@@ -5627,7 +5627,7 @@ SaZ5eZmp83ceA9weAxZsm4yF0uMV6x3nyvtoemTSlcxr2iKyPRcUJuR/+MWvAAAA///l1VAHKgYAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSArtifact.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSArtifact.svg",
 		size:    1391,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yU326bMBSHX+XIu+7B/41byMV2NWl3e4CJgptYohAFLzSa+u4T4BR3SssuIiU/H3/n
 87GVYjjvwTcl+VFd3OkXI9BUobrrqmcXM2AEXp7bbijJIYTjfZaN44ijwP60zzilNBvOewKjb8KhJIxS
@@ -5644,7 +5644,7 @@ bwUAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCertificateManager.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCertificateManager.svg",
 		size:    786,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5ySzYrbMBSFX+Wiruda/5ZmbC/aVaG7PkDxyBpHoNghUuOYMu9e4ijNUNpSZhE4+Tic
 +4HcpNMIYWjJl371x2+MwNDn/mHq974wYATO+zilluxyPjxW1bIsuAicj2PFKaVVOo0EljDkXUsYpQR2
@@ -5659,7 +5659,7 @@ dUvK/nomJVGatw+F1v5FS961aorSgtAoJXCLmt8yR8NBCFQG6hrFLd7r/2OoNUr+HkP1u6EWqHQxLHkz
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCertificateManager_certificatemanager.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCertificateManager_certificatemanager.svg",
 		size:    1557,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUTW8aSRC9W/J/KPVeh6Y/qvpjxVjazSWRklMkH3KJyDDASBgQTAz8+6iqZ8BSsOSD
 6erq6vdevWrP7Pi6gm5Rq6/zS3v4aRUs5v18sp2/tEMOrILzy2Z7rNW67/f/Tqen00mfvN4dVlNnjJke
@@ -5679,7 +5679,7 @@ iOzSiHLnX3M25c/rjD/lT48PfwIAAP//lo/DCBUGAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCloudHSM.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSCloudHSM.svg",
 		size:    1072,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4RTTY+bPBD+KyO/5x38bbwLObw9VeqtP6CixJtYIhAFNyyq9r9XxpD1Sq04IA3j52P8
 DFTj/QT+WJNvzexuPxiBYxOap765uLUHjMDbpevHmpxDuD4XxTRNOAkcbqeCU0qL8X4iMPljONeEUUrg
@@ -5695,7 +5695,7 @@ RZafNpvh98WTiKLriI8ixZtOU7wbMmrG//zwJwAA///gAhQzMAQAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSDirectoryService.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSDirectoryService.svg",
 		size:    1515,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SU3W7bMAyFX4XQrkuLkqif1snFdjVgd3uAwXXcxICbBLXXNBj67oMldVGKFd6ABHDo
 T4dHR4zq8XkL/WYlvjXn7ukHCdg0U3Ozbx67XAMS8PI47MeV2E3T8baqTqcTnjQenraVklJW4/NWwKnf
@@ -5713,7 +5713,7 @@ NtM9lS3LyyeqzFf0+ncAAAD//+oM8lLrBQAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM.svg",
 		size:    1699,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xVQW9aPRC8R8p/WL3v/C1er722K8ihPVXqrT+gIvAKTyKAwmsI/75a24CjJi2HKIM1
 3p2dHcP08LKCYTnrvs1P/fMP6mA5H+f/b+dPfT0D6uD1abM9zLr1OO4/TSbH4xGPjLvn1cQaYyaHl1UH
@@ -5732,7 +5732,7 @@ N+es1XsxxCK5nDFpdb/R8K6jH7zC9weeTvTLfqo/LA/3d78DAAD///22El2jBgAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_AWSSTS-2.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_AWSSTS-2.svg",
 		size:    1416,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+RUzYrbMBC+L+w7CPU6msyPJdtLvLDtJYX2VNjDXopxnMTgJEvi5ufti+ysk8Iu+wDF
 6NNoPPNp9AnNdH9YmmZe2B/lud79ZmvmZVe6TbmuLz7D1pzW7WZf2FXXvT5MJsfjEY+K291yIkQ02R+W
@@ -5751,7 +5751,7 @@ BQAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_AWSSTS.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_AWSSTS.svg",
 		size:    688,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SSzYrbMBCA7wv7DsP0qow1+rNcrBzaSwq7p8Iecimuo8YC5wdHteO3L8mmWyib4x40
 QmJGfN9o6tO4hbQJ+NTMcfjBCJsmN4t9s4u3O2CE867fnwJ2OR8/F8U0TTRpOgzbQkkpi9O4RZjSJncB
@@ -5766,7 +5766,7 @@ MmXLx4c/AQAA//+8gwwhsAIAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_addon.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_addon.svg",
 		size:    789,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SS366bMAzG74903sHyrmfyxwlhIr3Yribtbg8wMZrSSBQqmpXy9hMUtk6nR7uAfLFs
 f/FPLi/XBuLe47dqCsMPibCvUvWxq05hjYFEuJ3a7uLxmNL5U5aN40ijpn5oMiWEyC7XBmGM+3T0KIVA
@@ -5781,7 +5781,7 @@ c5JuzmF+JL/S1vN/pf2gF6vnM5bZvF7lvMq715ffAQAA//+z33dkFQMAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_dataencryptionkey.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_dataencryptionkey.svg",
 		size:    813,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xSwYrbMBS8L+w/PNSr/CzpPUl2sRe2vaTQngo57KWY2HUMjh0SNd78fZESGkMX4fFo
 NKM3B1XnSw9DW4vvzbU7/dIC2iY02dQcursGWsD7YZzOtdiHcPyc58uy4EI4n/rcKKXy86UXsAxt2NdC
@@ -5797,7 +5797,7 @@ sTTACtmCLdEZII/agfVoiztfT0r846ZVHp9dFZ/4y/PT3wAAAP//XQKksC0DAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_encrypteddata.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSIAM_encrypteddata.svg",
 		size:    490,
-		modtime: 1484078198,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/1SRT4vbMBDF74F8h0GFPcljyfrn7do5tIduoT0VcthLECvVFii2SbR2/O2LHRO6DBqN
 fjw9Hkx1HRsIria/7OwvJ07A2WSzzp79xoATuJ1jd61Jm9LwNc+nacJJYH9p8oIxll/HhsAUXGprwhkj
@@ -5811,7 +5811,7 @@ rm2x4VQiN5lAo6ik8j9GF/b2CCrMUlvQKm8O+1217Oew3/0LAAD//wDhhQzqAQAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSKMS.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSKMS.svg",
 		size:    900,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTT4+bMBDFv8rIPe9gj//hXcihPVXqrR+gosRLLBGIghsWVfvdq2B3E6RWuwekh3l+
 7zcjUU2XDsK+Zt+axZ9/CAb7JjYPQ3P0+QwEg5djP0w1O8R4eiyKeZ5xljieu4I458V06RjMYR8PNROc
@@ -5827,7 +5827,7 @@ QiHBStRZkkIhrt9LLBXclb0/9DrdWpVGXvstIVHGutdGoRJ5jL9tmqdVaw5Wob1RWo5SZfS3livQ9d/Z
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSOrganizations.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSOrganizations.svg",
 		size:    1572,
-		modtime: 1506354574,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUTW+bTBDHv8pon3OG3Z19IwEfnp4q9dYPUBEgNhIBK2xDrCrfvYJdJ2tLLjnYwsN/
 fvPuYnrdQ9eU7Ed1al9+CQZN5au7oXpuow0Eg7fnfphKdvD+eJ9l8zzjTDi+7DPJOc+m1z2DuWv8oWSC
@@ -5845,7 +5845,7 @@ wJf/9t3fAAAA///lvQKbJAYAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSShield.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSShield.svg",
 		size:    1075,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4STz46bPBTFX+XK33outq//4BnI4uuqUnd9gIoBT4JEIApumKiad6/ATuNKjUZKFhwd
 /87xvVDNlz30Xc2+NVd//iEYdE1onsbm6JMGgsH7cRjnmh1COD0XxbIsuBBO530hOefFfNkzWPouHGom
@@ -5862,7 +5862,7 @@ lglHMwQAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSWAF.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSWAF.svg",
 		size:    1569,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUzW6kPBB8lZa/cxr/2yQwh29PK+1tH2BFgMwgERgFb8holXdf2WZia5UROYzU05Sr
 i+oy1fJ6hKGryY/m0r/8YgS6xjV3U/Pcbz1gBN6ex2mpycm5831RrOuKq8D55VhwSmmxvB4JrEPnTjVh
@@ -5880,7 +5880,7 @@ ZiYknOf0H/bD3wAAAP//oaxuECEGAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSWAF_filteringrule.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AWSWAF_filteringrule.svg",
 		size:    475,
-		modtime: 1506354574,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yRy2rjMBSGX+VwZh1dLTsXy4uZ1cDs5gGKK8u2QLGNpcYxJe9eEquQli4Evz7O90tw
 ynDpwDUa/9WrnV84QlPHejfUZ5sYcITr2Q9BYx/jdKR0WRaySDLOHRWMMRouHcLimthr5Iwh9NZ1fUyX
@@ -5894,7 +5894,7 @@ RwAAAP///MS+2NsBAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonCloudDirectory.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonCloudDirectory.svg",
 		size:    2633,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xW3W7iSgx+FSvnus5k/qcFLs65OtLe7QOs0pBCpBRQky1Fq777asaDcJatkgskYz5/
 /vewGt530G3Xxbf60r79qArY1mP9cKhf26yDqoCP1/4wrIv9OJ4ey/J8PuNZ4fFtV0ohRDm87wo4d9tx
@@ -5915,7 +5915,7 @@ PF58ppNM48jHlOEjefwDuPkdAAD///3+wiRJCgAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonInspector.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonInspector.svg",
 		size:    992,
-		modtime: 1506354568,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTzY6bMBSFX+XKXc/Ff9gwA1m0q0rd9QEqBjzEkgNR7IZB1bx7BXYaWKSaRaSbw/HH
 5ytR+WsPtqvJj2Y2l1+MQNeE5mloTiZlwAi8n9zga3IM4fycZdM04SRwvPQZp5Rm/toTmGwXjjVhlBI4
@@ -5931,7 +5931,7 @@ JLr+F729zr3+WWumkN94JSiBOl8Eb1GeI5fJOJdIS9gc+6x+PLgF/nvf+jw6bLoLePkuD38DAAD//36A
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonInspector_agent.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonInspector_agent.svg",
 		size:    2642,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yWz27jNhDGX0VgL12A/MzhzPDPbhzA3UsLpKfecilcRUkMyMnCVpMYxb57QUlZe1PE
 eymCjO2hOPPjfENSF/unu2ZzszRX60O3+5NMc7Me1u5hve1mX0Omedn2D/uluR+GLx8Xi+fnZzwzHnd3
@@ -5958,7 +5958,7 @@ uqdKbVIKAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonMacie.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_AmazonMacie.svg",
 		size:    1154,
-		modtime: 1506354574,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/1xUy44iRxD8lVb7mhVUZtar14C09skSe/JtLlYv9A4tFTOjoT0ssvzvVlUBGvlQIcgM
 5SMi1evzx3M3Hzb9brxO739x3x3GZTQv42m6xTruu5+n/HLe9MdlefuyWl0uF1wUr+/PK7HWrs4fz313
@@ -5977,7 +5977,7 @@ hrKGKyK5ZuutMIMHU8ZjuNDgkQgIQzYeLJSQwlO/2q7Ll2P7XwAAAP//A7RIAIIEAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM.svg",
 		size:    1718,
-		modtime: 1506354566,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xV3W4yNxB9ldH2OrMejz22E+CivarUuz5ARZYNrLQBlN2GoCrvXvmH4LQf4rtAOozG
 Z84cH8Niet/CsFk2f6zP/dtf1MBmPa8f9uvXvtSAGvh4HffTstnN8/GxbU+nE54YD2/bViul2ul928Bp
@@ -5997,7 +5997,7 @@ v83q3wAAAP//kNaCLrYGAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_AWSSTS-2.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_AWSSTS-2.svg",
 		size:    1409,
-		modtime: 1506354574,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+RUzW7bPBB8FYHflVztD0lJiWQgXy8u0J4K5JBLIciyLUC2A0v1D4K8e0HRSYy0yQsU
 gobLIXc5HIIsh8Mq6RaV+laf2/1PUsmiHmuzrTfthUtIJadNvx0qtR7Hx5s0PR6PcBTY7VcpI2I6HFYq
@@ -6016,7 +6016,7 @@ GRT/lOHpalY23b7p23dONadKOVRJc66UFJCRSvaVIvmbsTYa61A7C0w12eBTgHAvaApNgLsArCPGW/OS
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_AWSSTS.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_AWSSTS.svg",
 		size:    700,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7SSTW/cLBSF/wri3eJrLl/GifHi7WYqJatKWWRTuZiMkZgP2XQ8VpX/XnlmlFTTdRdc
 wRHnwnN0m+m0JbF39KlbwvgdKem73BX7bhduGkFKzru0nxwdcj4+lOU8zzBLOIzbUnDOy+m0pWSOfR4c
@@ -6031,7 +6031,7 @@ jbKgdYccKsOulTNkyHhRA+rBgDQJASUTTIHAAmTNEIxYi2EIyoIUTIJVhQD5VAmmEbR9Xb/0dxbiPosb
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_MFAtoken.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_MFAtoken.svg",
 		size:    861,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5STz4rbMBCHX0WoV2ms0d9k1w5se3Fheyr0sJdibG0sUJIlVu2EZd+9RFbLll5ajGXp
 m/l5Ph9cT/OehKGhj93Vn78jJUOXOn7sDr4wgpRcDvE4NXRM6eWuqpZlgUXB6byvpBCimuY9JUsY0thQ
@@ -6048,7 +6048,7 @@ AwAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_addon.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_addon.svg",
 		size:    815,
-		modtime: 1506354570,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2yS346bPBDFX2Xk73oH/8fsYi6+XlXqXR+goo6TWHIgAjcEVfvulYOjjTZ7AToceWbO
 /Ew7Xw4Qdpb86Fc//WIEdn3qX4b+5IsHjMD1FIfZkmNK59eqWpYFF4HjdKg4pbSaLwcCS9iloyWMUgJH
@@ -6064,7 +6064,7 @@ XwAAAP//8xSdSy8DAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_dataencryptionkey.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_dataencryptionkey.svg",
 		size:    853,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/2xTwYrbMBT8FaFe5WdJ70lydu3AtpcU2lMhh70UYXsTg2OHtRpvKPvvRbJpTVuEh9Ho
 zby5uJxuJ9Y1Ff/i7+3rd8VZ44PPBn9pV40pzt4u/TBV/BzC9SHP53mGGWF8PeVaSplPtxNnc9eEc8WV
@@ -6081,7 +6081,7 @@ FQAA//+NyBeKVQMAAA==
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_encrypteddata.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_encrypteddata.svg",
 		size:    530,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/1SRwWrcMBCGX0VMISd7JFmW5WRlH9pDU2hPhT3ksoiVYgu0tlkp65iSdy/2mpIyaDT6
 +P9hBul464i3Dfw0i7ueOBBrkskHc3E7IxzI+yUMsYE+pemJ0nmecRY4XjtaMMZovHVAZm9T3wBnDEjv
@@ -6096,7 +6096,7 @@ bhXy8lkoVOpYqbWuCizEcXO+XPIyY8+lxLoKLF+lRmDNsy2tbXhWIle5QCWzMis/sWxlL+uEtGv1+pPt
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_long-termsecuritycredential.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_long-termsecuritycredential.svg",
 		size:    960,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5xTzW6cMBB+lZF7zoBnbGwnsIf2VKm3PkCFjHcXicAK3LCoyrtXBtKk26iqegB9DN8P
 3yCX09MJ2qYSX+oljN+kgKaO9V1fP4Z9BlLA9bHrp0qcY7zcZ9k8zzgzDuMpozzPs+npJGBum3iuhMxz
@@ -6112,7 +6112,7 @@ C9AKnQNtU3GtkSwUEq1JHFJQFJg70AUqBwWjMak4KdhS3uI1KH1eOneHnwEAAP//hG8E/8ADAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_permissions.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_permissions.svg",
 		size:    940,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5yTQWvcPBCG/4rQd5XGsmYk2Ym9h6+XFNJToYdeirEVW6DYS6zuZgn578VrhzqEQunB
 8PrxeB7Bi6r51LPQ1fy+ufinHzlnXZMaOTaPfmMs5+z5MY5zzYeUjjdZdj6f4YwwPfWZVkpl86nn7By6
@@ -6129,7 +6129,7 @@ UVppgAYNpY4ExgoCJEHgnFzSoMHpKK0wQPdUCOtAF4PEKAlKLQlMKQ0oJ5a0VIZ0rSLrD9Vyxw6/AgAA
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_role.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_role.svg",
 		size:    2685,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3xWTY9cuQ38K43OlaoRSUmUdmcGcHwKkJxyyyV4+6bXM0D7A+6OZ41g/3tQUnthIAsf
 zHmWnvTIYlWx7y9f3h1enh6Of9++nj7/W4+Hp+26pQ/b+9Nt7aDHw2/vzx8uD8fn6/XTT3d3r6+veHV8
@@ -6160,7 +6160,7 @@ AP//SAhyEH0KAAA=
 	"/resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_temporarysecuritycredential.svg": {
 		local:   "resources/describe/AWSIcons/Security Identity & Compliance/SecurityIdentityCompliance_IAM_temporarysecuritycredential.svg",
 		size:    1324,
-		modtime: 1506354572,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RUTW/bOBD9KwPu1R5xOBxSTCwD2T0tsHvqrZdCkGVbgPwBSY0tFPnvBSklcdM0aEFo
 8PjEN8MZ4WnVP+6g2RTqv3Ksuy+kYFMO5fJYHuqZA1JwPbTHvlD7YTjfZdnlcsEL46nbZUZrnfWPOwWX
@@ -6179,7 +6179,7 @@ AAD///n5IJ0sBQAA
 	"/resources/describe/AWSIcons/Storage/Storage_AWSSnowball.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSSnowball.svg",
 		size:    2052,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6SVz46bMBDG7yvtO4zccwf/N1SQQ8+99QEq2hCClA1RgsLu21dmgJ20qdbbPUQx5vNv
 7G9mTHm5ttBtK/GtfmnOP5SAbT3Un4/1UzPPgRLw/HQ4XiqxH4bTlywbxxFHg/25zbSUMrtcWwFjtx32
@@ -6197,7 +6197,7 @@ fmky0Tu3fAfMW5WJ7u+4zOIHtoxf7s3jw+8AAAD//9Pq+48ECAAA
 	"/resources/describe/AWSIcons/Storage/Storage_AWSSnowball_importexport.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSSnowball_importexport.svg",
 		size:    1733,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yVT4/bNhDF7wHyHQj1Sj1zZjj8U9h7aC89uKcFcsilMHZd24CyXqwFO/n2BSnK8bZJ
 dw+2nihq5pF6P2l5Ou/M4XHVrTffti9/UWceN+Omf9p82bYxQ535+mV4Oq26/Tg+/7pYXC4XXATHl92C
@@ -6218,7 +6218,7 @@ Zfn03H388E8AAAD//+ITLgrFBgAA
 	"/resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway.svg",
 		size:    895,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTwW7bMAyG7wX6DoR2Hi1SoiQOdg4777YHGILFdQy4cZAIcfv2g2yvc4Bt7cEwJZH8
 RP5Ufb110B8a823/2l5+kIHDPu8/n/bP7boHZODleThdG3PM+fylqqZpwsnheOkqttZW11tnYOoP+dgY
@@ -6233,7 +6233,7 @@ E7/eI9giUxJUXm1O6OWuE3cqzKmXeVtsJygLMsy2wuYqf1e9rsps1+XR7B4ffgUAAP//mk1cD38DAAA=
 	"/resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_cachedvolume.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_cachedvolume.svg",
 		size:    1289,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6yUT2sjORDF74F8B9F7lZ5VVZJKvdg57MmH7GnBh1wW439t6NghbtrJtx/6j2OHCWRg
 5mDqV+VS6dUT9vTU7sx+PSsel++b1/+pMOtls3SH5fNmrBkqzNtzfTjNiqppXv6eTM7nM86C4+tuwt77
@@ -6251,7 +6251,7 @@ yfCrGeK0+/t6uL/7EQAA///L/0mRCQUAAA==
 	"/resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_non-cachedvolume.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_non-cachedvolume.svg",
 		size:    458,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4SQy2rrMBCG94G8wzBnfUY3J3KLlEXX3fUBimlUWeBYIRZW8vbFtzpedSH0jTT8fPym
 6z2Es8X36uFunwLhXKXqf1td3PwGAuF+adrOYp3S9ZWxnDNlRfHmmeScs673CDmcU21RcI5Qu+DrNA99
@@ -6264,7 +6264,7 @@ LDaGDTWZof/TfvcTAAD//995YdPKAQAA
 	"/resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_virtualtapelibrary.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AWSStorageGateway_virtualtapelibrary.svg",
 		size:    3320,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8RXQW8bOQ+9F+h/GMx3lZ5FSqJGRVwgXy85NKcFcvBlMUgc28A4LhrDaf/9gtI4thN3
 uwgCFEFojkiR1CP1xr543C2a1d20/dr/nH//m9rmrt/29qFfz8e1htrmx3p4eJy2y+3226fJ5OnpCU8e
@@ -6291,7 +6291,7 @@ IsHzTa1RPd87e0zwpiYlRL7xDJ+XMiZP8P+esH5e6K+Vzx8//BMAAP//0Wr/QPgMAAA=
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonEBS.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonEBS.svg",
 		size:    537,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xRwU7DMAy9T9o/WOaMEydpQ1GzA2dufACqtpBG6tqpjdbt71HLNlaEEIcoz4n9nt5z
 ORwDxJ3D1+rs+3dG2FWpemyrvb+8ASOc9k07OKxTOjwLMY4jjZq6PgglpRTDMSCMcZdqhywlQu1jqNOl
@@ -6304,7 +6304,7 @@ l5eZMndcP3PIMypyYAvakJwMLlwrS3YZ0oyvQ7+rlGJKvZzWuVmvPgMAAP//8iWqUxkCAAA=
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonEFS.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonEFS.svg",
 		size:    1927,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5RVyW7bMBC9B8g/DNhzR9yGSyH50HNv/YBCrWVZgGMZtmAlf1+QVGy6Vmrl4EXDx3mz
 vAeVp3ML3bpiP+q35vhLMFjXQ/11X780UwwEg9eX3f5Use0wHL4VxTiOOCrsj20hOefF6dwyGLv1sK2Y
@@ -6322,7 +6322,7 @@ EzlcIcunET0zkzY3Uwaan0VZhHdcGV6eq+envwEAAP//ntyuWYcHAAA=
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonEFS_EFSfilesystem.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonEFS_EFSfilesystem.svg",
 		size:    3245,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9SXz27jNhDG7wvsOxDqVR5zZjj8U9gBticf2lOBHHop1I1jGfDGgSPYydsXFEVJdmLH
 DVKgRRD6J3Gob4bzWYRnT/uVWt/Ni1+rl+XuTyzUXdVUk4fqx7K7p7BQzz82D0/zom6ax5+n08PhAAeG
@@ -6344,7 +6344,7 @@ nuIf9dVsGn8JzOJPjJuvX/4OAAD//2nnmq+tDAAA
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonGlacier.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonGlacier.svg",
 		size:    745,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SSz46jMAzG75X6Dlb2vMbOH5KsoIc9720fYISmDCBRqEpU2rcfQTIjRppKnQPiS2L/
 PttyMV0b6I6l+Ffd68sLCzhWofo9VKc63QELuJ36YSpFG8L5T5bN84yzwvHSZJKIsunaCJi7Y2hLwUQC
@@ -6358,7 +6358,7 @@ cI6kQBr0LmmrkSTEGJujNaA0KgeGYJMo4K3r+1L8cq+KpRLZIzNDkHt0GqxD7RPRKZRyIcbLWIohUISs
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonGlacier_archive.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonGlacier_archive.svg",
 		size:    881,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6STzW6rMBBG95HyDqO56zv4N+AKZ9F1d32ACiUuIBGIwArJ21cmkJBWaaN2gfgM43Ns
 M6TdIYdya/ElO7n2jSNsM5/9r7OdG58BRzjuqrqzWHi/f4qivu+pl9S0eSQYY1F3yBH6cusLi5wxhMKV
@@ -6372,7 +6372,7 @@ V/O1W4Qhru5/Yfkz69otv2SlUejmNPwm6+XiIwAA///MgMCHcQMAAA==
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonGlacier_vault.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonGlacier_vault.svg",
 		size:    1594,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xUTW/jNhC9L7D/gVCvw2fOkMMhCzvAttf0tLdeCiFxHAPaOEgEO/n3BSXlw8Wmm4Oe
 RjI5773Ro9ePx53bX2+6y/55+/APd+66H3t/1//YLu8cd+7px3D3uOlux/H+99XqdDrhFHF42K0khLB6
@@ -6392,7 +6392,7 @@ cUT5YNxLXub7uv3fX3z98m8AAAD//2HGHpA6BgAA
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonS3.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonS3.svg",
 		size:    1316,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/5SUz47aMBDG7yvtO4zccyfj8f8q4dBzb32AKi0hRGIJgojsvn0VO2QtSrXZAxCPx79v
 5mPi8nJtodtW4kf91px/SQHbeqi/HuuXZo6BFPD6cjheKrEfhtO3ohjHEUeF/bktmIiKy7UVMHbbYV8J
@@ -6408,7 +6408,7 @@ LPNxxWUxXUDldLNtnp/+BgAA///cuPjDJAUAAA==
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonS3_bucket.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonS3_bucket.svg",
 		size:    786,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4ySP2/cMAzF9wD5DoK6Us8SKcpyYWdo1nYKkKFLYdy5PgPOH+SMc/rtC/ku6dIAGQw/
 USD54xPb42k0076z3/s/w8uvYM2+X3r32D8Ml5gJ1rw+zI/Hzh6W5flrVa3rilXw9DJW7L2vjqfRmnXa
@@ -6424,7 +6424,7 @@ yvEDAmnKYwVB0kIQkbNjxFAIJDqFymecuxOGCNWCQBfpkd+Nu2VFEJJUUiUV2K0xvRF8ANtWZd3assc3
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonS3_bucketwithobjects.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonS3_bucketwithobjects.svg",
 		size:    1033,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yTvW7jOhCF+wB5B4K3JY/JGQ5JXVgpbtq7VYAU2ywMWbYFKLZhaf3z9gvKzs8CCZDC
 1seheObwiJwPx7XqlrX+f3FpD7+8VsvFuLDbxUt7qymv1fml3w613ozj/t/Z7HQ64cTYHdYzcs7NhuNa
@@ -6442,7 +6442,7 @@ AAD//5UTs1AJBAAA
 	"/resources/describe/AWSIcons/Storage/Storage_AmazonS3_object.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_AmazonS3_object.svg",
 		size:    365,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/3SQsW60MBCE+5PuHVb717+9xpBDkZcidbo8QISMYyxxR2QsDG8fHXBKkaSwrLFnRt+u
 mWYPoWN8bVcX3xVC16b2/629uuMNFMJyHW4TY5/S57OUOWeRtRijlwURyWn2CDl0qWdURAi9C75Ph5iD
@@ -6455,7 +6455,7 @@ AQAA
 	"/resources/describe/AWSIcons/Storage/Storage_snapshot.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_snapshot.svg",
 		size:    1167,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4yUP2/jOBDF+wD5DgSvJZ85M/yng5Xi0t5WBlKkWRi2Vhag2IEt2Mm3X1Cykyx2jXUh
 6MchNfM0b6T54diqbl3r/5fvzf47abVeDku7Xb4055gird5e+u2h1ptheP13NjudTjgJdvt2xs652eHY
@@ -6472,7 +6472,7 @@ EG8Dgtxi9kIYEk3K8OaMEfTh9SMHUDCeweOESp4Km4uCK2Lns/Ktz8tP5OH+7mcAAAD//8ogzc+PBAAA
 	"/resources/describe/AWSIcons/Storage/Storage_volume.svg": {
 		local:   "resources/describe/AWSIcons/Storage/Storage_volume.svg",
 		size:    537,
-		modtime: 1484077794,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/4xRwU7DMAy9T9o/WOaMEydpQ1GzA2dufACqtpBG6tqpjdbt71HLNlaEEIcoz4n9nt5z
 ORwDxJ3D1+rs+3dG2FWpemyrvb+8ASOc9k07OKxTOjwLMY4jjZq6PgglpRTDMSCMcZdqhywlQu1jqNOl
@@ -7832,7 +7832,7 @@ eU7o6uPNBXrQ8xJtCI1+LaNNnP+/AQAA//+GhhUXML8AAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.1/cytoscape.js-dagre-2.2.1/cytoscape-dagre.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.1/cytoscape.js-dagre-2.2.1/cytoscape-dagre.js",
 		size:    10572,
-		modtime: 1522784045,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6w6XXPbRpLP4q9o62EJJBQky7kXMlpXHCtbrnM2riR7uSqVijUEmsBY4AxuZmAKpdV/
 v+r5AAYgaTu18YuMnv7+mm6AybYVueFSwB43Dcsf/iX4J1Sa1T/Loq3xLW654ISQKCnNArYsN1J1KTzN
@@ -7897,7 +7897,7 @@ YoYvru5He6v/DwAA//+tX98XTCkAAA==
 	"/resources/describe/cytoscapejs/cytoscape.js": {
 		local:   "resources/describe/cytoscapejs/cytoscape.js",
 		size:    785864,
-		modtime: 1530327604,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/+y97XYbN7Io+jt6Cth7rklKFCVScj6kKF6O4+zts/LhY3vPjI+2tqbZDZKwm41Od1Ni
 J/YD3ee4L3YXqvBRQKMpxZOZ2T9O1orFBgqFAlAoFAqFwnCxKdJGyILd8nmZpO//sxA3vKqT/EeZbXL+
@@ -10857,7 +10857,7 @@ AX9fCcTrjf5vAAAA///IV0HnyP0LAA==
 	"/resources/describe/cytoscapejs/cytoscape.min.js": {
 		local:   "resources/describe/cytoscapejs/cytoscape.min.js",
 		size:    315813,
-		modtime: 1530327638,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/9z9e5PbtpIwDv+/n2KkPUdLSBBH1FxsUwOrEtt5Nm/l4sf2nrO1jE4OhoQkHlOgTIIz
 o4z43d/qBsCLRM04yVY9Vb+krAFxaQCNRqMBdDd6y0KGKk6lI6gij/309l8iVH3G1G4r0uWZeNimmcoH
@@ -12465,7 +12465,7 @@ ol5p2w5/F7mhn69OA/+OxY4AJDMCFW0uRcMBFe8gpKV3fF6BnFe4rzOJqmXEjaK4nMCJS8JxZMvyXnE+
 	"/resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.core.js": {
 		local:   "resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.core.js",
 		size:    81623,
-		modtime: 1517934270,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8S9/XIbN7I4+r+eos2qn0NGI+oj2T27lJmUbMuJ7rEll6TYSalUzpADkhMPZ3gGM6S4
 tl7rvsB9sVvoxkcDM6TkxDm/rdpYHAANoNEAGv3ZndT5uEqLvDvpfUon3Wq9EMUExN2iKCs5HA47xegP
@@ -12839,7 +12839,7 @@ q3/UOcYu7m/Vf6Kbw9te97C3c987/v8DAAD//8LcHLrXPgEA
 	"/resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.core.min.js": {
 		local:   "resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.core.min.js",
 		size:    66908,
-		modtime: 1517934270,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7y9+XLbxtI4+r+eYsyqT4eIhtSSc853PtJISrblRPdnSy5LieNSqRwQGJJzBAL8MACX
 0Hit+wL3xW5N96wAKCnL+aVSFjFLT0/P1tPTS39aZXHJ86w/DXZ82i+3S5ZPCdss86IUYRj28sm/WVz2
@@ -13183,7 +13183,7 @@ BQEA
 	"/resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.js": {
 		local:   "resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.js",
 		size:    650734,
-		modtime: 1517934270,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/8S9/XIbN7I4+r+eAmbVz0tGI0qynT1ZykpKlmmb98iSf5Jsx6VSOcMZkEQ0nOEOhqS4
 jl7rvsB9sVvoxkcDM6SkxDlnqzYWB0ADaHz1d7dH8zypRJG3R51vYtSuVjNejBi/nRVlJQ8PD1vF8Hee
@@ -15267,7 +15267,7 @@ Q+wUaz4lr+AG1WTgpMaX6k1TvwjFIhLVPOh08NPATrtDnsqMI7naCpaMPWDwWgFdxmmUXXrARMYR+XzT
 	"/resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.min.js": {
 		local:   "resources/describe/dagre-0.8.2/dagre-0.8.2/dist/dagre.min.js",
 		size:    566648,
-		modtime: 1517934270,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7z9+3LbuLI4Cv+fp0BUtb3EGJIvyay9lhTOfI6jJPq2Y+dnO8mkXK4MTUISxhSpRVC3
 UfRa5wXOi51CN64k5Tgzs39TU7GIS6PRuDUafWmP5llc8jxrj4INH7XL9YzlI8JWs7woRRiGrfzudxaX
@@ -17966,7 +17966,7 @@ EKDMKPRKAAA=
 	"/resources/describe/sparta.js": {
 		local:   "resources/describe/sparta.js",
 		size:    2370,
-		modtime: 1530418007,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/6xWXW8iNxR9n19xtUllWwuzUduXEuWBAKtSJWEFNFW1WkXGvsx4Y+yRx8DSiv9e2fMB
 pNmUh46UZOx77vH1uR+TDXcwG00fx4PR00P/fgQ3QOa3Q5IEg9h5Wwpe4KPCLdyAWWt9nSTJcm2EV9ZA
@@ -17990,7 +17990,7 @@ m6oyD+5tVbLUrU1zfF2d8Xf73w7RfLWQnLDrZM/+CQAA//9ED34nQgkAAA==
 	"/resources/describe/template.html": {
 		local:   "resources/describe/template.html",
 		size:    4283,
-		modtime: 1530417989,
+		modtime: 1530941615,
 		compressed: `
 H4sIAAAAAAAC/7RYbW/bOBL+nl8xZXHYl1tZaW937+BIBrJOc9te0izWbheHxSIYiWOZDUUKJGXHNfzf
 D5QsWZLTNpe7zReLw+HDmWdGM6NEz7hO3aYgWLpcTk4i/wMSVRYzUmxychItCfnkBCDKySGkSzSWXMze

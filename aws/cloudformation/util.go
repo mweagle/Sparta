@@ -361,7 +361,7 @@ func stackCapabilities(template *gocf.Template) []*string {
 			}
 		}
 	}
-	capabilities := make([]*string, 0)
+	var capabilities []*string
 	for eachKey := range capabilitiesMap {
 		capabilities = append(capabilities, aws.String(eachKey))
 	}
@@ -913,6 +913,7 @@ func ConvergeStackState(serviceName string,
 	templateURL string,
 	tags map[string]string,
 	startTime time.Time,
+	operationTimeout time.Duration,
 	awsSession *session.Session,
 	outputsDividerChar string,
 	dividerWidth int,
@@ -952,7 +953,7 @@ func ConvergeStackState(serviceName string,
 		createStackInput := &cloudformation.CreateStackInput{
 			StackName:        aws.String(serviceName),
 			TemplateURL:      aws.String(templateURL),
-			TimeoutInMinutes: aws.Int64(20),
+			TimeoutInMinutes: aws.Int64(int64(operationTimeout.Minutes())),
 			OnFailure:        aws.String(cloudformation.OnFailureDelete),
 			Capabilities:     stackCapabilities(cfTemplate),
 		}
@@ -996,7 +997,11 @@ func ConvergeStackState(serviceName string,
 				aws.StringValue(eachEvent.ResourceType),
 				aws.StringValue(eachEvent.LogicalResourceId),
 				aws.StringValue(eachEvent.ResourceStatusReason))
-			errorMessages = append(errorMessages, errMsg)
+			// Only append if the resource failed because something else failed
+			// and this resource was canceled.
+			if !strings.Contains(errMsg, "cancelled") {
+				errorMessages = append(errorMessages, errMsg)
+			}
 		case cloudformation.ResourceStatusCreateInProgress,
 			cloudformation.ResourceStatusUpdateInProgress:
 			existingMetric, existingMetricExists := resourceMetrics[*eachEvent.LogicalResourceId]

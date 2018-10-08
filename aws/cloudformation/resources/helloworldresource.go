@@ -20,7 +20,13 @@ type HelloWorldResource struct {
 	HelloWorldResourceRequest
 }
 
-func (command HelloWorldResource) create(awsSession *session.Session,
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *HelloWorldResource) IAMPrivileges() []string {
+	return []string{}
+}
+
+// Create implements resource create
+func (command HelloWorldResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 
@@ -34,7 +40,8 @@ func (command HelloWorldResource) create(awsSession *session.Session,
 	}, nil
 }
 
-func (command HelloWorldResource) update(awsSession *session.Session,
+// Update implements resource update
+func (command HelloWorldResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
@@ -50,7 +57,8 @@ func (command HelloWorldResource) update(awsSession *session.Session,
 	return nil, nil
 }
 
-func (command HelloWorldResource) delete(awsSession *session.Session,
+// Delete implements resource delete
+func (command HelloWorldResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)

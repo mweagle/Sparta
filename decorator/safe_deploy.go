@@ -10,7 +10,7 @@ import (
 )
 
 // codeDeployLambdaUpdateDecorator is the per-function decorator
-// that adds the necessary
+// that adds the necessary information for CodeDeploy
 func codeDeployLambdaUpdateDecorator(updateType string,
 	codeDeployApplicationName string,
 	codeDeployRoleName string) sparta.TemplateDecorator {
@@ -125,6 +125,7 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 		serviceName string,
 		template *gocf.Template,
 		S3Bucket string,
+		S3Key string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,

@@ -47,7 +47,7 @@ func TestUnzip(t *testing.T) {
 	// Put it
 	logger := logrus.New()
 	awsSession := awsSession(logger)
-	createOutputs, createError := zipResource.create(awsSession,
+	createOutputs, createError := zipResource.Create(awsSession,
 		event,
 		logger)
 	if nil != createError {
@@ -55,7 +55,7 @@ func TestUnzip(t *testing.T) {
 	}
 	t.Logf("TestUnzip outputs: %#v", createOutputs)
 
-	deleteOutputs, deleteError := zipResource.delete(awsSession,
+	deleteOutputs, deleteError := zipResource.Delete(awsSession,
 		event,
 		logger)
 	if nil != deleteError {

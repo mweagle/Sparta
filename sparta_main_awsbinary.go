@@ -154,6 +154,15 @@ func Profile(serviceName string,
 	return errors.New("Profile not supported for this binary")
 }
 
+// Status is the command that produces a simple status report for a given
+// stack
+func Status(serviceName string,
+	serviceDescription string,
+	redact bool,
+	logger *logrus.Logger) error {
+	return errors.New("Status not supported for this binary")
+}
+
 func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 	var si sysinfo.SysInfo
 	si.GetSysInfo()

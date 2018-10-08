@@ -49,26 +49,9 @@ var (
 	CloudWatchLogsLambdaEventSource = cloudFormationResourceType("CloudWatchLogsEventSource")
 	// ZipToS3Bucket is the typename for ZipToS3Bucket
 	ZipToS3Bucket = cloudFormationResourceType("ZipToS3Bucket")
+	// S3ArtifactPublisher is the typename for publishing an S3Artifact
+	S3ArtifactPublisher = cloudFormationResourceType("S3ArtifactPublisher")
 )
-
-func init() {
-	gocf.RegisterCustomResourceProvider(customTypeProvider)
-}
-
-// CustomResourceCommand defines operations that a CustomResource must implement.
-type CustomResourceCommand interface {
-	create(session *session.Session,
-		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
-
-	update(session *session.Session,
-		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
-
-	delete(session *session.Session,
-		event *CloudFormationLambdaEvent,
-		logger *logrus.Logger) (map[string]interface{}, error)
-}
 
 func customTypeProvider(resourceType string) gocf.ResourceProperties {
 	switch resourceType {
@@ -84,8 +67,31 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 		return &SESLambdaEventSourceResource{}
 	case ZipToS3Bucket:
 		return &ZipToS3BucketResource{}
+	case S3ArtifactPublisher:
+		return &S3ArtifactPublisherResource{}
 	}
 	return nil
+}
+
+func init() {
+	gocf.RegisterCustomResourceProvider(customTypeProvider)
+}
+
+// CustomResourceCommand defines operations that a CustomResource must implement.
+type CustomResourceCommand interface {
+	Create(session *session.Session,
+		event *CloudFormationLambdaEvent,
+		logger *logrus.Logger) (map[string]interface{}, error)
+
+	Update(session *session.Session,
+		event *CloudFormationLambdaEvent,
+		logger *logrus.Logger) (map[string]interface{}, error)
+
+	Delete(session *session.Session,
+		event *CloudFormationLambdaEvent,
+		logger *logrus.Logger) (map[string]interface{}, error)
+
+	IAMPrivileges() []string
 }
 
 // cloudFormationResourceType a string for the resource name that represents a
@@ -264,21 +270,11 @@ func awsSession(logger *logrus.Logger) *session.Session {
 	return sess
 }
 
-// NewCustomResourceLambdaHandler returns a handler for the given
-// type
-func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) interface{} {
-	var lambdaCmd CustomResourceCommand
-	cfResource := customTypeProvider(resourceType)
-	if cfResource != nil {
-		cmd, cmdOK := cfResource.(CustomResourceCommand)
-		if cmdOK {
-			lambdaCmd = cmd
-		}
-	}
-	if lambdaCmd == nil {
-		return errors.Errorf("Custom resource handler not found for type: %s", resourceType)
-	}
-
+// CloudFormationLambdaCustomResourceHandler is an adapter
+// function that transforms an implementing CustomResourceCommand
+// into something that that can respond to the lambda custom
+// resource lifecycle
+func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, logger *logrus.Logger) interface{} {
 	return func(ctx context.Context,
 		event CloudFormationLambdaEvent) error {
 		lambdaCtx, lambdaCtxOk := awsLambdaCtx.FromContext(ctx)
@@ -316,11 +312,11 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
 			case CreateOperation:
-				opResults, opErr = lambdaCmd.create(customResourceSession, &event, logger)
+				opResults, opErr = command.Create(customResourceSession, &event, logger)
 			case DeleteOperation:
-				opResults, opErr = lambdaCmd.delete(customResourceSession, &event, logger)
+				opResults, opErr = command.Delete(customResourceSession, &event, logger)
 			case UpdateOperation:
-				opResults, opErr = lambdaCmd.update(customResourceSession, &event, logger)
+				opResults, opErr = command.Update(customResourceSession, &event, logger)
 			}
 		}
 		// Notify CloudFormation of the result
@@ -343,4 +339,24 @@ func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) 
 		}
 		return opErr
 	}
+}
+
+// NewCustomResourceLambdaHandler returns a handler for the given
+// type
+func NewCustomResourceLambdaHandler(resourceType string, logger *logrus.Logger) interface{} {
+
+	// TODO - eliminate this factory stuff and just register
+	// the custom resources as normal lambda handlers...
+	var lambdaCmd CustomResourceCommand
+	cfResource := customTypeProvider(resourceType)
+	if cfResource != nil {
+		cmd, cmdOK := cfResource.(CustomResourceCommand)
+		if cmdOK {
+			lambdaCmd = cmd
+		}
+	}
+	if lambdaCmd == nil {
+		return errors.Errorf("Custom resource handler not found for type: %s", resourceType)
+	}
+	return CloudFormationLambdaCustomResourceHandler(lambdaCmd, logger)
 }

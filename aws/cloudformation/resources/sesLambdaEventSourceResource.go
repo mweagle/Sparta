@@ -153,19 +153,31 @@ func (command SESLambdaEventSourceResource) updateSESRules(areRulesActive bool,
 	return nil, opError
 }
 
-func (command SESLambdaEventSourceResource) create(awsSession *session.Session,
+// IAMPrivileges returns the IAM privs for this custom action
+func (command *SESLambdaEventSourceResource) IAMPrivileges() []string {
+	return []string{"ses:CreateReceiptRuleSet",
+		"ses:CreateReceiptRule",
+		"ses:DeleteReceiptRule",
+		"ses:DeleteReceiptRuleSet",
+		"ses:DescribeReceiptRuleSet"}
+}
+
+// Create implements the custom resource create operation
+func (command SESLambdaEventSourceResource) Create(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsSession, event, logger)
 }
 
-func (command SESLambdaEventSourceResource) update(awsSession *session.Session,
+// Update implements the custom resource update operation
+func (command SESLambdaEventSourceResource) Update(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(true, awsSession, event, logger)
 }
 
-func (command SESLambdaEventSourceResource) delete(awsSession *session.Session,
+// Delete implements the custom resource delete operation
+func (command SESLambdaEventSourceResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	return command.updateSESRules(false, awsSession, event, logger)

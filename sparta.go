@@ -19,6 +19,7 @@ import (
 	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
+	"github.com/mweagle/Sparta/system"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
@@ -31,7 +32,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.3.0"
+	SpartaVersion = "1.4.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -120,6 +121,7 @@ type optionsGlobalStruct struct {
 	Command            string         `validate:"-"`
 	BuildTags          string         `validate:"-"`
 	LinkerFlags        string         `validate:"-"` // no requirements
+	DisableColors      bool           `validate:"-"`
 }
 
 // OptionsGlobal stores the global command line options
@@ -574,7 +576,6 @@ func (resourceInfo *customResourceInfo) logicalName() string {
 
 func (resourceInfo *customResourceInfo) export(serviceName string,
 	targetLambda *gocf.StringExpr,
-	binaryName string,
 	S3Bucket string,
 	S3Key string,
 	roleNameMap map[string]*gocf.StringExpr,
@@ -623,7 +624,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 		},
 		FunctionName: lambdaFunctionName.String(),
 		Description:  gocf.String(lambdaDescription),
-		Handler:      gocf.String(binaryName),
+		Handler:      gocf.String(SpartaBinaryName),
 		MemorySize:   gocf.Integer(resourceInfo.options.MemorySize),
 		Role:         roleNameMap[iamRoleArnName],
 		Runtime:      gocf.String(GoLambdaVersion),
@@ -851,7 +852,12 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 			context,
 			logger)
 		if decoratorErr != nil {
-			return decoratorErr
+			// Can we get the name?
+			decoratorName := fmt.Sprintf("%T", eachDecorator)
+			errorValue := errors.Errorf("TemplateDecorator %s failed to apply. Error: %s",
+				decoratorName,
+				decoratorErr)
+			return errorValue
 		}
 		// This data is marshalled into a DiscoveryInfo struct s.t. it can be
 		// unmarshalled via sparta.Discover.  We're going to just stuff it into
@@ -874,7 +880,6 @@ func (info *LambdaAWSInfo) applyDecorators(template *gocf.Template,
 // Marshal this object into 1 or more CloudFormation resource definitions that are accumulated
 // in the resources map
 func (info *LambdaAWSInfo) export(serviceName string,
-	binaryName string,
 	S3Bucket string,
 	S3Key string,
 	S3Version string,
@@ -914,7 +919,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 			S3Key:    gocf.String(S3Key),
 		},
 		Description: gocf.String(lambdaDescription),
-		Handler:     gocf.String(binaryName),
+		Handler:     gocf.String(SpartaBinaryName),
 		MemorySize:  gocf.Integer(info.Options.MemorySize),
 		Role:        roleNameMap[iamRoleArnName],
 		Runtime:     gocf.String(GoLambdaVersion),
@@ -980,7 +985,6 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	// Permissions
 	for _, eachPermission := range info.Permissions {
 		_, err := eachPermission.export(serviceName,
-			binaryName,
 			info.lambdaFunctionName(),
 			info.LogicalResourceName(),
 			template,
@@ -1011,7 +1015,6 @@ func (info *LambdaAWSInfo) export(serviceName string,
 
 		resourceErr := eachCustomResource.export(serviceName,
 			functionAttr,
-			binaryName,
 			S3Bucket,
 			S3Key,
 			roleNameMap,
@@ -1095,7 +1098,8 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 	// Check that the sysinfo package is installed. This
 	// may not be installed on OSX, since it's excluded
 	// via a build tag
-	goPath := userGoPath()
+	goPath := system.GoPath()
+
 	// Check that the file exists
 	sysinfoPath := filepath.Join(goPath, "src",
 		"github.com",
