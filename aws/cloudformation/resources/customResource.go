@@ -229,7 +229,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 		"LogicalResourceId":  event.LogicalResourceID,
 		"Result":             responseData["Status"],
 		"ResponseStatusCode": resp.StatusCode,
-	}).Info("Sent CloudFormation response")
+	}).Debug("Sent CloudFormation response")
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		body, bodyErr := ioutil.ReadAll(resp.Body)
@@ -307,7 +307,7 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 			"ExecuteOperation": event.LogicalResourceID,
 			"Stacks":           fmt.Sprintf("%#+v", describeStacksOutput),
 			"RequestType":      event.RequestType,
-		}).Info("CustomResource Request")
+		}).Debug("CustomResource Request")
 
 		if opErr == nil && executeOperation {
 			switch event.RequestType {
