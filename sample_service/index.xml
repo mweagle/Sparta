@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sample Service on Documentation for Hugo Learn Theme</title>
+    <title>Sample Service on Sparta - AWS Lambda Microservices</title>
     <link>/sample_service/</link>
-    <description>Recent content in Sample Service on Documentation for Hugo Learn Theme</description>
+    <description>Recent content in Sample Service on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
     <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
