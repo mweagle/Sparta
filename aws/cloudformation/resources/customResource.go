@@ -90,7 +90,12 @@ type CustomResourceCommand interface {
 	Delete(session *session.Session,
 		event *CloudFormationLambdaEvent,
 		logger *logrus.Logger) (map[string]interface{}, error)
+}
 
+// CustomResourcePrivilegedCommand is a command that also has IAM privileges
+// which implies there must be an ARN associated with the command
+type CustomResourcePrivilegedCommand interface {
+	// The IAMPrivileges this command requires of the IAM role
 	IAMPrivileges() []string
 }
 
