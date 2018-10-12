@@ -2,7 +2,8 @@ package archetype
 
 import (
 	"context"
-	"fmt"
+	"reflect"
+	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/mweagle/Sparta"
@@ -29,6 +30,11 @@ func (reactorFunc DynamoDBReactorFunc) OnDynamoEvent(ctx context.Context,
 	return reactorFunc(ctx, dynamoEvent)
 }
 
+// ReactorName provides the name of the reactor func
+func (reactorFunc DynamoDBReactorFunc) ReactorName() string {
+	return runtime.FuncForPC(reflect.ValueOf(reactorFunc).Pointer()).Name()
+}
+
 // NewDynamoDBReactor returns an Kinesis reactor lambda function
 func NewDynamoDBReactor(reactor DynamoDBReactor,
 	dynamoDBARN gocf.Stringable,
@@ -40,7 +46,7 @@ func NewDynamoDBReactor(reactor DynamoDBReactor,
 		return reactor.OnDynamoEvent(ctx, dynamoEvent)
 	}
 
-	lambdaFn := sparta.HandleAWSLambda(fmt.Sprintf("%T", reactor),
+	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
 

@@ -2,7 +2,8 @@ package archetype
 
 import (
 	"context"
-	"fmt"
+	"reflect"
+	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/mweagle/Sparta"
@@ -29,6 +30,11 @@ func (reactorFunc CloudWatchLogsReactorFunc) OnLogMessage(ctx context.Context,
 	return reactorFunc(ctx, cwLogs)
 }
 
+// ReactorName provides the name of the reactor func
+func (reactorFunc CloudWatchLogsReactorFunc) ReactorName() string {
+	return runtime.FuncForPC(reflect.ValueOf(reactorFunc).Pointer()).Name()
+}
+
 // NewCloudWatchLogsReactor returns a CloudWatch logs reactor lambda function
 func NewCloudWatchLogsReactor(reactor CloudWatchLogsReactor,
 	subscriptions map[string]sparta.CloudWatchEventsRule,
@@ -40,7 +46,7 @@ func NewCloudWatchLogsReactor(reactor CloudWatchLogsReactor,
 	reactorLambda := func(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
 		return reactor.OnLogMessage(ctx, cwLogs)
 	}
-	lambdaFn := sparta.HandleAWSLambda(fmt.Sprintf("%T", reactor),
+	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
 	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
