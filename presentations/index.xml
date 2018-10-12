@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Presentations on Sparta Documentation</title>
+    <title>Presentations on Documentation for Hugo Learn Theme</title>
     <link>/presentations/</link>
-    <description>Recent content in Presentations on Sparta Documentation</description>
+    <description>Recent content in Presentations on Documentation for Hugo Learn Theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-US</language>
     <lastBuildDate>Wed, 04 Oct 2017 22:12:35 +0000</lastBuildDate>
     
 	<atom:link href="/presentations/index.xml" rel="self" type="application/rss+xml" />

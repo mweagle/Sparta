@@ -1,7 +1,0 @@
-/*
-This overrides the CSS in the material application.css theme so that the
-Chroma markup doesn't have per-line backgrounds
-*/
-.article code{
-  background: inherit
-}

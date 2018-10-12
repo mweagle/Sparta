@@ -1,571 +1,1340 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="js csstransforms3d">
   <head>
-    <title>Sparta Documentation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.49.1" />
+    <meta name="description" content="Documentation for Sparta">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title> :: Documentation for Hugo Learn Theme</title>
+
     
-      <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.44" />
-<title> :: Sparta Documentation</title>
-<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link href="/css/font-awesome.min.css" rel="stylesheet">
-<link href="/css/nucleus.css" rel="stylesheet">
-<link href="/theme-flex/style.css" rel="stylesheet">
+    <link href="/css/nucleus.css?1539321771" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539321771" rel="stylesheet">
+    <link href="/css/hybrid.css?1539321771" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539321771" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539321771" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539321771" rel="stylesheet">
+    <link href="/css/theme.css?1539321771" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539321771" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1539321771" rel="stylesheet">
+    
 
-<link rel="stylesheet" href="/css/bootstrap.min.css">
-<script src="/js/jquery-2.x.min.js"></script>
-<script type="text/javascript">
-      var baseurl = "\/";
-</script>
+    <script src="/js/jquery-2.x.min.js?1539321771"></script>
 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-70794971-2');
-</script>
-
-<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
-<meta name="description" content="">
-
-
-
-<style>
-  article section.page code {
-      font-family:  monospace; }
-</style>
-
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
     
   </head>
-  <body data-url="/">
-    
-      <header>
-  <div class="logo">
-    
-	
-  
-    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
-
-  
-
-  </div>
-  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
-    <nav class="shortcuts">
-            <li class="" role="">
-                <a href="/credits"  rel="noopener">
-                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
-                </a>
-            </li>
-            <li class="" role="">
-                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
-                  <i class='fa fa-github'></i> <label>Github</label>
-                </a>
-            </li>
-    </nav>
-</header>
-<article>
-  <aside>
-    <ul class="menu">
-          <li data-nav-id="/" class="dd-item">
-          <a href="/">
-            <i class="fa fa-fw fa-home"></i>
-          </a>
-          </li>
-    <li data-nav-id="/overview/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/sample_service/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/sample_service/step1/" class="dd-item">
-        <div>
-          <a href="/sample_service/step1/">
-            Overview
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/sample_service/step2/" class="dd-item">
-        <div>
-          <a href="/sample_service/step2/">
-            Details
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/cli_options/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/reference/" class="dd-item alwaysopen haschildren
-        ">
-      <div>
-      <a href="/reference/">Reference</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudformation/">
-            CloudFormation
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchevents/">
-            CloudWatch Events
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchlogs/">
-            CloudWatch Logs
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cognito/">
-            Cognito
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/dynamodb/">
-            DynamoDB
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/kinesis/">
-            Event Sources - Kinesis
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/s3/">
-            S3
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/ses/">
-            SES
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sns/">
-            SNS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sqs/">
-            SQS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/echo_event/">
-            Echo Event
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/user_input/">
-            User Input
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/context/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/cors/">
-            CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/application/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_commands/">
-            Custom Application Commands
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_flags/">
-            Custom Flags
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/environments/" class="dd-item">
-        <div>
-          <a href="/reference/application/environments/">
-            Managing Environments
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
-        <div>
-          <a href="/reference/application/workflow_hooks/">
-            Workflow Hooks
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
-        <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/custom_resources/" class="dd-item">
-        <div>
-          <a href="/reference/custom_resources/">
-            Custom Resources
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
-        <div>
-          <a href="/reference/deployment_strategies/">
-            Deployment Strategies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/discovery/" class="dd-item">
-        <div>
-          <a href="/reference/discovery/">
-            Discovery Service
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/docker/" class="dd-item">
-        <div>
-          <a href="/reference/docker/">
-            Docker
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
-        <div>
-          <a href="/reference/dynamic_infrastructure/">
-            Dynamic Infrastructure
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
-        <div>
-          <a href="/reference/hybrid_topologies/">
-            Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/local_testing/" class="dd-item">
-        <div>
-          <a href="/reference/local_testing/">
-            Local Testing
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/profiling/" class="dd-item">
-        <div>
-          <a href="/reference/profiling/">
-            Profiling
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/s3site/" class="dd-item">
-        <div>
-          <a href="/reference/s3site/">
-            S3 Sites with CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/related_projects/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/related_projects/">Related Projects</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/presentations/" class="dd-item
-        ">
-      <div>
-      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/credits/" class="dd-item
-        ">
-      <div>
-      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/meta/" class="dd-item
-        ">
-      <div>
-      <a href="/meta/">_meta</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
+  <body class="" data-url="/">
+    <nav id="sidebar" class="">
 
 
 
-
-    </ul>
-    <section>
-    </section>
-  </aside>
-  <section class="page">
-    
-    <div class="nav-select">
-      <center>Navigation : 
-        <select onchange="javascript:location.href = this.value;">
-          
-    <option value="/overview/" >
-   Overview</option> 
-  
-    <option value="/sample_service/" >
-   Sample Service</option>
-    <option value="/cli_options/" >
-   CLI Options</option> 
-  
-    <option value="/reference/" >
-   Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option>
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/custom_resources/" >- Custom Resources</option>
-      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
-      <option value="/reference/discovery/" >- Discovery Service</option>
-      <option value="/reference/docker/" >- Docker</option>
-      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/local_testing/" >- Local Testing</option>
-      <option value="/reference/profiling/" >- Profiling</option>
-      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
-      <option value="/reference/limitations/" >- Limitations</option>
-      <option value="/reference/faq/" >- FAQ</option>
-  
-    <option value="/related_projects/" >
-   Related Projects</option> 
-  
-    <option value="/presentations/" >
-   Presentations</option>
-    <option value="/credits/" >
-   Credits</option>
-    <option value="/meta/" >
-   _meta</option>
-
-
-
-        </select>
-      </center>
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
     </div>
-      <div>
-        <div class="searchbox">
-          <input data-search-input id="search-by" type="text" placeholder="Search...">
-        </div>
-        <script type="text/javascript" src="/js/lunr.min.js"></script>
-        <script type="text/javascript" src="/js/auto-complete.js"></script>
-        <link href="/css/auto-complete.css" rel="stylesheet">
-        <script type="text/javascript">
-          
-              var baseurl = "\/";
-          
-        </script>
-        <script type="text/javascript" src="/js/search.js"></script>
-      </div>
     
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1539321771"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539321771"></script>
+<script type="text/javascript">
+    
+        var baseurl = '\/';
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1539321771"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="Event Sources" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          Event Sources
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
+        <a href="/reference/service_scoped_custom_resource/">
+        Service Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="Decorators" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          Decorators
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="API Gateway" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          API Gateway
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="Application Customization" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          Application Customization
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Application Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Application Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/application/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
 
     
     
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+        </ul>
+      </section>
     
+
     
+    <section id="footer">
+      
+  Build: 84ff1c2b<p/>
+  Date: 2018-05-24 22:24:08 -0700 PDT
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+
+        
+        <div id="body-inner">
+          
+
+        
+
 <span id="sidebar-toggle-span">
-<a href="#" id="sidebar-toggle" data-sidebar-toggle=""><i class="fa fa-bars"></i> navigation</a>
+<a href="#" id="sidebar-toggle" data-sidebar-toggle=""><i class="fas fa-bars"></i> navigation</a>
 </span>
+
  
 
 
-<p><br />
-<table style="width:90%">
-  <!-- Row 1 -->
-  <tr>
-    <td style="width:50%">
-      <img src="/images/SpartaLogoNoDomain.png" alt="Sparta shield" height="128" />
-    </td>
-    <td style="width:50%">
-      <h1>
-Self-deploying <i>go</i> microservices for <a href="https://aws.amazon.com/lambda">AWS Lambda</a>
-</h2>
-    </h1>
-  </tr>
-</table></p>
+<p><br /></p>
 
-<p>Sparta is a framework that transforms a standard go application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!</p>
+<p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
+
+<h1 id="self-deploying-go-microservices-for-aws-lambda-https-aws-amazon-com-lambda">Self-deploying <em>go</em> microservices for <a href="https://aws.amazon.com/lambda">AWS Lambda</a></h1>
+
+<p>Sparta is a framework that transforms a standard <em>go</em> application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!</p>
 
 <h1 id="sample-application">Sample Application</h1>
 
-<h2 id="1-define">1. Define</h2>
+<h2 id="1-definition">1. Definition</h2>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">// File: application.go
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">package</span> <span style="color:#000">main</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// File: application.go
+</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
 
-<span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
-  <span style="color:#000">sparta</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta&#34;</span>
-<span style="color:#000;font-weight:bold">)</span>
+<span style="color:#f92672">import</span> (
+  <span style="color:#a6e22e">sparta</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span>
+)
 
-<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
-</span><span style="color:#8f5902;font-style:italic">//
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#4e9a06">&#34;Hello World 🌏&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span>
+<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Hello world event handler
+</span><span style="color:#75715e">//
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>() (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World 🌏&#34;</span>, <span style="color:#66d9ef">nil</span>
+}
 
-<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Main
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
-  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Hello world test&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">helloWorld</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
-  <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Main
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
+  <span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#e6db74">&#34;Hello world test&#34;</span>,
+    <span style="color:#a6e22e">helloWorld</span>,
+    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+  <span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
 
-  <span style="color:#8f5902;font-style:italic">// Delegate to Sparta
-</span><span style="color:#8f5902;font-style:italic"></span>  <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaHelloWorld&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
-                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span>
-                <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+  <span style="color:#75715e">// Delegate to Sparta
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;SpartaHelloWorld&#34;</span>,
+		<span style="color:#e6db74">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span>,
+		<span style="color:#a6e22e">lambdaFunctions</span>,
+                <span style="color:#66d9ef">nil</span>,
+                <span style="color:#66d9ef">nil</span>)
+}</code></pre></div>
 
-<h2 id="2-deploy">2. Deploy</h2>
+<h2 id="2-deployment">2. Deployment</h2>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ go run main.go provision --s3Bucket MY_S3_BUCKET
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : <span style="color:#0000cf;font-weight:bold">1</span>.1.1
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : beb5700
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Service: SpartaHelloWorld                          <span style="color:#000">LinkFlags</span><span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">Option</span><span style="color:#ce5c00;font-weight:bold">=</span>provision <span style="color:#000">UTC</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2018</span>-05-25T04:36:50Z
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Using <span style="color:#4e9a06">`</span>git<span style="color:#4e9a06">`</span> SHA <span style="color:#204a87;font-weight:bold">for</span> StampedBuildID                 <span style="color:#000">Command</span><span style="color:#ce5c00;font-weight:bold">=</span>git rev-parse HEAD <span style="color:#000">SHA</span><span style="color:#ce5c00;font-weight:bold">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Provisioning service                               <span style="color:#000">BuildID</span><span style="color:#ce5c00;font-weight:bold">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9 <span style="color:#000">CodePipelineTrigger</span><span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">InPlaceUpdates</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">false</span> <span style="color:#000">NOOP</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">false</span> <span style="color:#000">Tags</span><span style="color:#ce5c00;font-weight:bold">=</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying IAM Lambda execution roles
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO IAM roles verified                                 <span style="color:#000">Count</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">1</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Checking S3 versioning                             <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">VersioningEnabled</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#204a87">true</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Checking S3 region                                 <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Region</span><span style="color:#ce5c00;font-weight:bold">=</span>us-west-2
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Running <span style="color:#4e9a06">`</span>go generate<span style="color:#4e9a06">`</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0000</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Compiling binary                                   <span style="color:#000">Name</span><span style="color:#ce5c00;font-weight:bold">=</span>Sparta.lambda.amd64
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating code ZIP archive <span style="color:#204a87;font-weight:bold">for</span> upload               <span style="color:#000">TempName</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-code.zip
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Lambda code archive size                           <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">13</span> MB
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0001</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading <span style="color:#204a87">local</span> file to S3                         <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld/SpartaHelloWorld-code.zip <span style="color:#000">Path</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-code.zip <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">13</span> MB
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0011</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading <span style="color:#204a87">local</span> file to S3                         <span style="color:#000">Bucket</span><span style="color:#ce5c00;font-weight:bold">=</span>MY_S3_BUCKET <span style="color:#000">Key</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld/SpartaHelloWorld-cftemplate.json <span style="color:#000">Path</span><span style="color:#ce5c00;font-weight:bold">=</span>./.sparta/SpartaHelloWorld-cftemplate.json <span style="color:#000">Size</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2</span>.2 kB
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0011</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating stack                                     <span style="color:#000">StackID</span><span style="color:#ce5c00;font-weight:bold">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">24</span>.49s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::CloudFormation::Stack
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">15</span>.02s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>IAMRolebc3b888fab1664f42799785a6d9a3bb76ea63798 <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::IAM::Role
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO     Operation duration                             <span style="color:#000">Duration</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2</span>.90s <span style="color:#000">Resource</span><span style="color:#ce5c00;font-weight:bold">=</span>HelloworldtestLambdaa4a9e95c84255c65c284ce95dd7d3c45776c1a68 <span style="color:#000">Type</span><span style="color:#ce5c00;font-weight:bold">=</span>AWS::Lambda::Function
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Stack provisioned                                  <span style="color:#000">CreationTime</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">2018</span>-05-25 <span style="color:#0000cf;font-weight:bold">04</span>:37:02.099 +0000 UTC <span style="color:#000">StackId</span><span style="color:#ce5c00;font-weight:bold">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82 <span style="color:#000">StackName</span><span style="color:#ce5c00;font-weight:bold">=</span>SpartaHelloWorld
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO SpartaHelloWorld Summary
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO ════════════════════════════════════════════════
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying IAM roles                                Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Verifying AWS preconditions                        Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">0</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Creating code bundle                               Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">1</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Uploading code                                     Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">10</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Ensuring CloudFormation stack                      Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">28</span>
-<span style="color:#ce5c00;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0039</span><span style="color:#ce5c00;font-weight:bold">]</span>  INFO Total elapsed <span style="color:#204a87">time</span>                                 Duration <span style="color:#ce5c00;font-weight:bold">(</span>s<span style="color:#ce5c00;font-weight:bold">)=</span><span style="color:#0000cf;font-weight:bold">39</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ go run main.go provision --s3Bucket MY_S3_BUCKET
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : <span style="color:#ae81ff">1</span>.1.1
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : beb5700
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Service: SpartaHelloWorld                          LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>provision UTC<span style="color:#f92672">=</span><span style="color:#ae81ff">2018</span>-05-25T04:36:50Z
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Using <span style="color:#e6db74">`</span>git<span style="color:#e6db74">`</span> SHA <span style="color:#66d9ef">for</span> StampedBuildID                 Command<span style="color:#f92672">=</span>git rev-parse HEAD SHA<span style="color:#f92672">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Provisioning service                               BuildID<span style="color:#f92672">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9 CodePipelineTrigger<span style="color:#f92672">=</span> InPlaceUpdates<span style="color:#f92672">=</span>false NOOP<span style="color:#f92672">=</span>false Tags<span style="color:#f92672">=</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Verifying IAM Lambda execution roles
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO IAM roles verified                                 Count<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Checking S3 versioning                             Bucket<span style="color:#f92672">=</span>MY_S3_BUCKET VersioningEnabled<span style="color:#f92672">=</span>true
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Checking S3 region                                 Bucket<span style="color:#f92672">=</span>MY_S3_BUCKET Region<span style="color:#f92672">=</span>us-west-2
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Running <span style="color:#e6db74">`</span>go generate<span style="color:#e6db74">`</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span>  INFO Compiling binary                                   Name<span style="color:#f92672">=</span>Sparta.lambda.amd64
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span>  INFO Creating code ZIP archive <span style="color:#66d9ef">for</span> upload               TempName<span style="color:#f92672">=</span>./.sparta/SpartaHelloWorld-code.zip
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span>  INFO Lambda code archive size                           Size<span style="color:#f92672">=</span><span style="color:#ae81ff">13</span> MB
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span>  INFO Uploading local file to S3                         Bucket<span style="color:#f92672">=</span>MY_S3_BUCKET Key<span style="color:#f92672">=</span>SpartaHelloWorld/SpartaHelloWorld-code.zip Path<span style="color:#f92672">=</span>./.sparta/SpartaHelloWorld-code.zip Size<span style="color:#f92672">=</span><span style="color:#ae81ff">13</span> MB
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0011</span><span style="color:#f92672">]</span>  INFO Uploading local file to S3                         Bucket<span style="color:#f92672">=</span>MY_S3_BUCKET Key<span style="color:#f92672">=</span>SpartaHelloWorld/SpartaHelloWorld-cftemplate.json Path<span style="color:#f92672">=</span>./.sparta/SpartaHelloWorld-cftemplate.json Size<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>.2 kB
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0011</span><span style="color:#f92672">]</span>  INFO Creating stack                                     StackID<span style="color:#f92672">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO     Operation duration                             Duration<span style="color:#f92672">=</span><span style="color:#ae81ff">24</span>.49s Resource<span style="color:#f92672">=</span>SpartaHelloWorld Type<span style="color:#f92672">=</span>AWS::CloudFormation::Stack
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO     Operation duration                             Duration<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span>.02s Resource<span style="color:#f92672">=</span>IAMRolebc3b888fab1664f42799785a6d9a3bb76ea63798 Type<span style="color:#f92672">=</span>AWS::IAM::Role
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO     Operation duration                             Duration<span style="color:#f92672">=</span><span style="color:#ae81ff">2</span>.90s Resource<span style="color:#f92672">=</span>HelloworldtestLambdaa4a9e95c84255c65c284ce95dd7d3c45776c1a68 Type<span style="color:#f92672">=</span>AWS::Lambda::Function
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Stack provisioned                                  CreationTime<span style="color:#f92672">=</span><span style="color:#ae81ff">2018</span>-05-25 <span style="color:#ae81ff">04</span>:37:02.099 +0000 UTC StackId<span style="color:#f92672">=</span>arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82 StackName<span style="color:#f92672">=</span>SpartaHelloWorld
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO SpartaHelloWorld Summary
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO ════════════════════════════════════════════════
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Verifying IAM roles                                Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">0</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Verifying AWS preconditions                        Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">0</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Creating code bundle                               Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">1</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Uploading code                                     Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">10</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Ensuring CloudFormation stack                      Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">28</span>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Total elapsed time                                 Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">39</span></code></pre></div>
 
 <h2 id="3-invoke">3. Invoke</h2>
 
@@ -659,13 +1428,13 @@ Self-deploying <i>go</i> microservices for <a href="https://aws.amazon.com/lambd
 <p>Get in touch via:</p>
 
 <ul>
-<li><i class="fa fa-twitter">&nbsp; @mweagle</i></li>
-<li><i class="fa fa-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
+<li><i class="fas fas-twitter">&nbsp; @mweagle</i></li>
+<li><i class="fas fas-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
 
 <ul>
 <li><a href="https://invite.slack.golangbridge.org/">Signup page</a></li>
 </ul></li>
-<li><i class="fa fa-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
+<li><i class="fas fas-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
 
 <ul>
 <li><a href="https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1">Signup page</a></li>
@@ -715,66 +1484,946 @@ Self-deploying <i>go</i> microservices for <a href="https://aws.amazon.com/lambd
 <li><a href="https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/">The Twelve Days of Lambda</a></li>
 <li><a href="http://cloudcraft.co">CloudCraft</a> is a great tool for AWS architecture diagrams</li>
 </ul>
+	
+  
+        
+        </div> 
+        
 
+      </div>
 
-
-
-    
-    
-        <div class="chevrons">
     <div id="navigation">
-<a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><label>Overview</label><i class="fa fa-chevron-right"></i></a></div>
-  </div>
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
 
-  </section>
-</article>
+                    
+                    
+                        
+                    
+                    
 
-<footer>
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
 
-<div class="footline">
-    
+                    
+                    
+                    
 
-    
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
 
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 08/03/2016
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+        
+        
+            <a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
+        
     </div>
-    
 
-    <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/_index.md" target="blank"><i class="fa fa-code-fork"></i>
-        Improve this page</a>
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-  </div>
+    <script src="/js/clipboard.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539321771"></script>
+    <script src="/js/jquery.sticky.js?1539321771"></script>
+    <script src="/js/featherlight.min.js?1539321771"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539321771"></script>
+    <script src="/js/highlight.pack.js?1539321771"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1539321771"></script>
+    <script src="/js/learn.js?1539321771"></script>
+    <script src="/js/hugo-learn.js?1539321771"></script>
 
-
-	<div>
-
-
-  
+    <link href="/mermaid/mermaid.css?1539321771" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539321771"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
     
-  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-
-
-	</div>
-</footer>
-
-<script src="/js/clipboard.min.js"></script>
-
-<link href="/css/featherlight.min.css" rel="stylesheet">
-<script src="/js/featherlight.min.js"></script>
-
-
-
-<script src="/theme-flex/script.js"></script>
-
-    
-
-    
-    
-
-    
+  gtag('config', 'UA-70794971-2');
+</script>
   </body>
 </html>
+

@@ -1,24 +1,2308 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="js csstransforms3d">
   <head>
-    <title>Sparta Documentation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.49.1" />
+    <meta name="description" content="Documentation for Sparta">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>_Meta :: Documentation for Hugo Learn Theme</title>
+
     
-      <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.44" />
-<title>_meta :: Sparta Documentation</title>
-<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link href="/css/font-awesome.min.css" rel="stylesheet">
-<link href="/css/nucleus.css" rel="stylesheet">
-<link href="/theme-flex/style.css" rel="stylesheet">
+    <link href="/css/nucleus.css?1539321771" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539321771" rel="stylesheet">
+    <link href="/css/hybrid.css?1539321771" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539321771" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539321771" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539321771" rel="stylesheet">
+    <link href="/css/theme.css?1539321771" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539321771" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1539321771" rel="stylesheet">
+    
 
-<link rel="stylesheet" href="/css/bootstrap.min.css">
-<script src="/js/jquery-2.x.min.js"></script>
+    <script src="/js/jquery-2.x.min.js?1539321771"></script>
+
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+  </head>
+  <body class="" data-url="/meta/">
+    <nav id="sidebar" class="">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1539321771"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539321771"></script>
 <script type="text/javascript">
-      var baseurl = "\/";
+    
+        var baseurl = '\/';
+    
 </script>
+<script type="text/javascript" src="/js/search.js?1539321771"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
 
 
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="Event Sources" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          Event Sources
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
+        <a href="/reference/service_scoped_custom_resource/">
+        Service Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="Decorators" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          Decorators
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="API Gateway" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          API Gateway
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="Application Customization" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          Application Customization
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Application Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Application Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/application/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        parent
+        active
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="footer">
+      
+  Build: 5208c947<p/>
+  Date: 2018-02-24 06:38:06 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/meta/_index.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                    
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > _Meta
+          
+         
+          
+           
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#editing">Editing</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>_Meta</h1>
+          
+
+        
+
+
+
+
+<p>Documentation contributions are most appreciated. The documentation is built using:</p>
+
+<ul>
+<li><a href="http://gohugo.io">Hugo</a></li>
+<li><a href="https://magefile.org">Mage</a></li>
+</ul>
+
+<h2 id="requirements">Requirements</h2>
+
+<ul>
+<li>The <a href="https://github.com/mweagle/Sparta">Sparta repo</a></li>
+
+<li><p>Hugo v.0.49.1:</p>
+
+<pre><code>$ hugo version
+Hugo Static Site Generator v0.49.1 darwin/amd64 BuildDate: 2018-10-10T10:36:40Z
+</code></pre></li>
+</ul>
+
+<p>Note that the required Hugo version will be automatically installed by the <code>docs</code> branch <a href="https://github.com/mweagle/Sparta/blob/docs/magefile.go">magefile.go</a>.</p>
+
+<h2 id="editing">Editing</h2>
+
+<ol>
+<li><code>git checkout</code> the <em>docs</em> branch</li>
+<li><code>go get -u -v github.com/magefile/mage</code></li>
+<li><code>mage InstallHugo</code></li>
+<li><code>mage -v edit</code></li>
+</ol>
+
+<p>The last step will startup a server with the documentation made available at <a href="http://localhost:1313">http://localhost:1313</a>.</p>
+
+<pre><code class="language-bash">$ mage -v edit
+Running target: Edit
+
+Visit http://localhost:1313 for latest documentation
+exec: .sparta/hugo server --disableFastRender --watch --enableGitInfo --forceSyncStatic --verbose config.toml
+INFO 2018/10/11 06:51:38 Using config file: /Users/mweagle/Documents/gopath111/src/github.com/mweagle/SpartaDOCUMENTATION/config.toml
+Building sites … INFO 2018/10/11 06:51:38 syncing static files to /
+#...
+Serving pages from memory
+Web Server is available at //localhost:1313/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+</code></pre>
+
+<p>To make changes to the documentation:</p>
+
+<ul>
+<li>Edit the <em>/content</em> subdirectory contents</li>
+<li>Push your <em>/docs</em> branch to GitHub and open a PR</li>
+</ul>
+
+<p>Visit the <a href="https://themes.gohugo.io/theme/hugo-theme-learn/en">Hugo Learn Theme</a> site for complete documentation regarding shortcodes and included libraries.</p>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+        
+            <a class="nav nav-prev" href="/credits/" title="Credits"> <i class="fas fa-chevron-left"></i></a>
+        
+        
+            <a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
+        
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539321771"></script>
+    <script src="/js/jquery.sticky.js?1539321771"></script>
+    <script src="/js/featherlight.min.js?1539321771"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539321771"></script>
+    <script src="/js/highlight.pack.js?1539321771"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1539321771"></script>
+    <script src="/js/learn.js?1539321771"></script>
+    <script src="/js/hugo-learn.js?1539321771"></script>
+
+    <link href="/mermaid/mermaid.css?1539321771" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539321771"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -27,565 +2311,5 @@
 
   gtag('config', 'UA-70794971-2');
 </script>
-
-<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
-<meta name="description" content="">
-
-
-
-<style>
-  article section.page code {
-      font-family:  monospace; }
-</style>
-
-    
-  </head>
-  <body data-url="/meta/">
-    
-      <header>
-  <div class="logo">
-    
-	
-  
-    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
-
-  
-
-  </div>
-  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
-    <nav class="shortcuts">
-            <li class="" role="">
-                <a href="/credits"  rel="noopener">
-                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
-                </a>
-            </li>
-            <li class="" role="">
-                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
-                  <i class='fa fa-github'></i> <label>Github</label>
-                </a>
-            </li>
-    </nav>
-</header>
-<article>
-  <aside>
-    <ul class="menu">
-          <li data-nav-id="/" class="dd-item">
-          <a href="/">
-            <i class="fa fa-fw fa-home"></i>
-          </a>
-          </li>
-    <li data-nav-id="/overview/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/sample_service/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/sample_service/step1/" class="dd-item">
-        <div>
-          <a href="/sample_service/step1/">
-            Overview
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/sample_service/step2/" class="dd-item">
-        <div>
-          <a href="/sample_service/step2/">
-            Details
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/cli_options/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/reference/" class="dd-item alwaysopen haschildren
-        ">
-      <div>
-      <a href="/reference/">Reference</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudformation/">
-            CloudFormation
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchevents/">
-            CloudWatch Events
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchlogs/">
-            CloudWatch Logs
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cognito/">
-            Cognito
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/dynamodb/">
-            DynamoDB
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/kinesis/">
-            Event Sources - Kinesis
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/s3/">
-            S3
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/ses/">
-            SES
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sns/">
-            SNS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sqs/">
-            SQS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/apigateway/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/apigateway/">API Gateway</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/echo_event/">
-            Echo Event
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/user_input/">
-            User Input
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/context/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/cors/">
-            CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/application/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_commands/">
-            Custom Application Commands
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_flags/">
-            Custom Flags
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/environments/" class="dd-item">
-        <div>
-          <a href="/reference/application/environments/">
-            Managing Environments
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
-        <div>
-          <a href="/reference/application/workflow_hooks/">
-            Workflow Hooks
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
-        <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/custom_resources/" class="dd-item">
-        <div>
-          <a href="/reference/custom_resources/">
-            Custom Resources
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
-        <div>
-          <a href="/reference/deployment_strategies/">
-            Deployment Strategies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/discovery/" class="dd-item">
-        <div>
-          <a href="/reference/discovery/">
-            Discovery Service
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/docker/" class="dd-item">
-        <div>
-          <a href="/reference/docker/">
-            Docker
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
-        <div>
-          <a href="/reference/dynamic_infrastructure/">
-            Dynamic Infrastructure
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
-        <div>
-          <a href="/reference/hybrid_topologies/">
-            Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/local_testing/" class="dd-item">
-        <div>
-          <a href="/reference/local_testing/">
-            Local Testing
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/profiling/" class="dd-item">
-        <div>
-          <a href="/reference/profiling/">
-            Profiling
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/s3site/" class="dd-item">
-        <div>
-          <a href="/reference/s3site/">
-            S3 Sites with CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/related_projects/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/related_projects/">Related Projects</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/presentations/" class="dd-item
-        ">
-      <div>
-      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/credits/" class="dd-item
-        ">
-      <div>
-      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/meta/" class="dd-item parent active
-        ">
-      <div>
-      <a href="/meta/">_meta</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-
-
-
-
-    </ul>
-    <section>
-    </section>
-  </aside>
-  <section class="page">
-    
-    <div class="nav-select">
-      <center>Navigation : 
-        <select onchange="javascript:location.href = this.value;">
-          
-    <option value="/overview/" >
-   Overview</option> 
-  
-    <option value="/sample_service/" >
-   Sample Service</option>
-    <option value="/cli_options/" >
-   CLI Options</option> 
-  
-    <option value="/reference/" >
-   Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option>
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/custom_resources/" >- Custom Resources</option>
-      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
-      <option value="/reference/discovery/" >- Discovery Service</option>
-      <option value="/reference/docker/" >- Docker</option>
-      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/local_testing/" >- Local Testing</option>
-      <option value="/reference/profiling/" >- Profiling</option>
-      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
-      <option value="/reference/limitations/" >- Limitations</option>
-      <option value="/reference/faq/" >- FAQ</option>
-  
-    <option value="/related_projects/" >
-   Related Projects</option> 
-  
-    <option value="/presentations/" >
-   Presentations</option>
-    <option value="/credits/" >
-   Credits</option>
-    <option value="/meta/"  selected>
-   _meta</option> 
-  
-
-
-
-        </select>
-      </center>
-    </div>
-      <div>
-        <div class="searchbox">
-          <input data-search-input id="search-by" type="text" placeholder="Search...">
-        </div>
-        <script type="text/javascript" src="/js/lunr.min.js"></script>
-        <script type="text/javascript" src="/js/auto-complete.js"></script>
-        <link href="/css/auto-complete.css" rel="stylesheet">
-        <script type="text/javascript">
-          
-              var baseurl = "\/";
-          
-        </script>
-        <script type="text/javascript" src="/js/search.js"></script>
-      </div>
-    
-
-    <h1>_meta</h1>
-    
-    
-    
-
-
-
-<p>This outlines how to edit the documentation itself</p>
-
-<h2 id="requirements">Requirements</h2>
-
-<ul>
-<li>The <a href="https://github.com/mweagle/Sparta">Sparta repo</a></li>
-
-<li><p>Hugo v.0.36.1:</p>
-
-<pre><code>$ hugo version
-Hugo Static Site Generator v0.36.1 darwin/amd64 BuildDate: 2018-02-15T09:07:45Z
-</code></pre></li>
-</ul>
-
-<p>Note that the required Hugo version will be automatically installed by the <code>docs</code> branch <a href="https://github.com/mweagle/Sparta/blob/docs/Makefile">Makefile</a>.</p>
-
-<h2 id="editing">Editing</h2>
-
-<ul>
-<li><code>git checkout</code> the <em>docs</em> branch</li>
-
-<li><p>Start a preview server with <code>make edit</code>:</p>
-
-<pre><code>$ hugo server --disableFastRender
-
-                  | EN
-+------------------+-----+
-  Pages            |  50
-  Paginator pages  |   1
-  Non-page files   |   0
-  Static files     | 457
-  Processed images |   0
-  Aliases          |   3
-  Sitemaps         |   1
-  Cleaned          |   0
-
-Total in 774 ms
-Watching for changes in ./github.com/mweagle/Sparta/{content,layouts,static,themes}
-Serving pages from memory
-Web Server is available at //localhost:1313/ (bind address 127.0.0.1)
-Press Ctrl+C to stop
-</code></pre></li>
-
-<li><p>Visit <a href="http://localhost:1313">http://localhost:1313</a></p></li>
-
-<li><p>Edit the <em>/content</em> subdirectory contents</p></li>
-
-<li><p>Push your <em>/docs</em> branch to GitHub and open a PR</p></li>
-</ul>
-
-<p>Visit the <a href="http://docdock.netlify.com/">docdock</a> site for complete documentation regarding shortcodes and included libraries.</p>
-
-
-
-    
-    
-        <div class="chevrons">
-    <div id="navigation">
-<a class="nav nav-prev" href="/credits/" title="Credits"> <i class="fa fa-chevron-left"></i><label>Credits</label></a>
-    <a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><label>Overview</label><i class="fa fa-chevron-right"></i></a></div>
-  </div>
-
-  </section>
-</article>
-
-<footer>
-
-<div class="footline">
-    
-
-    
-
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 24/02/2018
-    </div>
-    
-
-    <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/meta/_index.md" target="blank"><i class="fa fa-code-fork"></i>
-        Improve this page</a>
-    </div>
-  </div>
-
-
-	<div>
-
-
-  
-    
-  
-
-
-
-	</div>
-</footer>
-
-<script src="/js/clipboard.min.js"></script>
-
-<link href="/css/featherlight.min.css" rel="stylesheet">
-<script src="/js/featherlight.min.js"></script>
-
-
-
-<script src="/theme-flex/script.js"></script>
-
-    
-
-    
-    
-
-    
   </body>
 </html>

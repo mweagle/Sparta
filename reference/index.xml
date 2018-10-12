@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Reference on Sparta Documentation</title>
+    <title>Reference on Documentation for Hugo Learn Theme</title>
     <link>/reference/</link>
-    <description>Recent content in Reference on Sparta Documentation</description>
+    <description>Recent content in Reference on Documentation for Hugo Learn Theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-US</language>
     <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
     
 	<atom:link href="/reference/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Service Custom Resources</title>
+      <link>/reference/service_scoped_custom_resource/</link>
+      <pubDate>Thu, 11 Oct 2018 07:57:40 +0000</pubDate>
+      
+      <guid>/reference/service_scoped_custom_resource/</guid>
+      <description>TODO: See the CHANGES</description>
+    </item>
     
     <item>
       <title>CI/CD</title>

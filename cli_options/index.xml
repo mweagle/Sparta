@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>CLI Options on Sparta Documentation</title>
+    <title>CLI Options on Documentation for Hugo Learn Theme</title>
     <link>/cli_options/</link>
-    <description>Recent content in CLI Options on Sparta Documentation</description>
+    <description>Recent content in CLI Options on Documentation for Hugo Learn Theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-US</language>
     <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
     
 	<atom:link href="/cli_options/index.xml" rel="self" type="application/rss+xml" />

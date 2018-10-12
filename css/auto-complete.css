@@ -4,17 +4,15 @@
     border: 1px solid #ccc;
     border-top: 0;
     background: #fff;
-    box-shadow: 1px 2px 6px;
-    transition: left 0.1s ease-in-out;
-    
+    box-shadow: -1px 1px 3px rgba(0,0,0,.1);
+
     /* core styles should not be changed */
     position: absolute;
     display: none;
     z-index: 9999;
-    max-height: 70vh;
-    width: 265px;
+    max-height: 254px;
     overflow: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
     box-sizing: border-box;
     
 }

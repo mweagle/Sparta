@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Decorators on Documentation for Hugo Learn Theme</title>
+    <link>/reference/decorators/</link>
+    <description>Recent content in Decorators on Documentation for Hugo Learn Theme</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
+    
+	<atom:link href="/reference/decorators/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CloudFront Distribution</title>
+      <link>/reference/decorators/cloudfront_distribution/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/cloudfront_distribution/</guid>
+      <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
+Sample usage:
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;#34;mySiteSubdomain&amp;#34; // The domain managed by Route53. const domainName = &amp;#34;myRoute53ManagedDomain.net&amp;#34; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net  // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Alarm</title>
+      <link>/reference/decorators/cloudwatch_alarm/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/cloudwatch_alarm/</guid>
+      <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
+Sample usage:
+lambdaFn := sparta.HandleAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;#34;MY_SNS_ARN&amp;#34;)), } </description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Dashboard</title>
+      <link>/reference/decorators/dashboard/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/dashboard/</guid>
+      <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
+Sample usage:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook  workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks } A sample dashboard for the SpartaGeekwire project is:
+Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
+    </item>
+    
+    <item>
+      <title>CodeDeploy Service Update</title>
+      <link>/reference/decorators/codedeployserviceupdate/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/codedeployserviceupdate/</guid>
+      <description>TODO: Document me</description>
+    </item>
+    
+    <item>
+      <title>Lambda Versioning Decorator</title>
+      <link>/reference/decorators/lambda_versioning/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/lambda_versioning/</guid>
+      <description>TODO: LambdaVersioningDecorator</description>
+    </item>
+    
+    <item>
+      <title>Publishing Outputs</title>
+      <link>/reference/decorators/publish_outputs/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/publish_outputs/</guid>
+      <description>CloudFormation stack outputs can be used to advertise information about a service.
+Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
+ Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
+lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;#34;%s FunctionName&amp;#34;, lambdaFunctionName), fmt.</description>
+    </item>
+    
+    <item>
+      <title>S3 Artifact Publisher</title>
+      <link>/reference/decorators/s3_artifact_publisher/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/s3_artifact_publisher/</guid>
+      <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
+This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;#34;SomeValue&amp;#34;: gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;#34;MY-S3-BUCKETNAME&amp;#34;), gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;metadata/&amp;#34;), gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), gocf.String(&amp;#34;.json&amp;#34;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook} </description>
+    </item>
+    
+  </channel>
+</rss>

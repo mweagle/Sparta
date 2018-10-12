@@ -1,484 +1,1328 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="js csstransforms3d">
   <head>
-    <title>Sparta Documentation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.49.1" />
+    <meta name="description" content="Documentation for Sparta">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Request Context :: Documentation for Hugo Learn Theme</title>
+
     
-      <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.44" />
-<title>Request Context :: Sparta Documentation</title>
-<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link href="/css/font-awesome.min.css" rel="stylesheet">
-<link href="/css/nucleus.css" rel="stylesheet">
-<link href="/theme-flex/style.css" rel="stylesheet">
+    <link href="/css/nucleus.css?1539321771" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539321771" rel="stylesheet">
+    <link href="/css/hybrid.css?1539321771" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539321771" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539321771" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539321771" rel="stylesheet">
+    <link href="/css/theme.css?1539321771" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539321771" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1539321771" rel="stylesheet">
+    
 
-<link rel="stylesheet" href="/css/bootstrap.min.css">
-<script src="/js/jquery-2.x.min.js"></script>
-<script type="text/javascript">
-      var baseurl = "\/";
-</script>
+    <script src="/js/jquery-2.x.min.js?1539321771"></script>
 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-70794971-2');
-</script>
-
-<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
-<meta name="description" content="">
-
-
-
-<style>
-  article section.page code {
-      font-family:  monospace; }
-</style>
-
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
     
   </head>
-  <body data-url="/reference/apigateway/context/">
-    
-      <header>
-  <div class="logo">
-    
-	
-  
-    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
-
-  
-
-  </div>
-  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
-    <nav class="shortcuts">
-            <li class="" role="">
-                <a href="/credits"  rel="noopener">
-                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
-                </a>
-            </li>
-            <li class="" role="">
-                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
-                  <i class='fa fa-github'></i> <label>Github</label>
-                </a>
-            </li>
-    </nav>
-</header>
-<article>
-  <aside>
-    <ul class="menu">
-          <li data-nav-id="/" class="dd-item">
-          <a href="/">
-            <i class="fa fa-fw fa-home"></i>
-          </a>
-          </li>
-    <li data-nav-id="/overview/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/sample_service/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/sample_service/step1/" class="dd-item">
-        <div>
-          <a href="/sample_service/step1/">
-            Overview
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/sample_service/step2/" class="dd-item">
-        <div>
-          <a href="/sample_service/step2/">
-            Details
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/cli_options/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
-        ">
-      <div>
-      <a href="/reference/">Reference</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudformation/">
-            CloudFormation
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchevents/">
-            CloudWatch Events
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchlogs/">
-            CloudWatch Logs
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cognito/">
-            Cognito
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/dynamodb/">
-            DynamoDB
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/kinesis/">
-            Event Sources - Kinesis
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/s3/">
-            S3
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/ses/">
-            SES
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sns/">
-            SNS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sqs/">
-            SQS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/apigateway/" class="dd-item parent haschildren
-        ">
-      <div>
-      <a href="/reference/apigateway/">API Gateway</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/echo_event/">
-            Echo Event
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/user_input/">
-            User Input
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/context/" class="dd-item active">
-        <div>
-          <a href="/reference/apigateway/context/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/cors/">
-            CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/application/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_commands/">
-            Custom Application Commands
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_flags/">
-            Custom Flags
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/environments/" class="dd-item">
-        <div>
-          <a href="/reference/application/environments/">
-            Managing Environments
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
-        <div>
-          <a href="/reference/application/workflow_hooks/">
-            Workflow Hooks
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
-        <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/custom_resources/" class="dd-item">
-        <div>
-          <a href="/reference/custom_resources/">
-            Custom Resources
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
-        <div>
-          <a href="/reference/deployment_strategies/">
-            Deployment Strategies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/discovery/" class="dd-item">
-        <div>
-          <a href="/reference/discovery/">
-            Discovery Service
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/docker/" class="dd-item">
-        <div>
-          <a href="/reference/docker/">
-            Docker
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
-        <div>
-          <a href="/reference/dynamic_infrastructure/">
-            Dynamic Infrastructure
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
-        <div>
-          <a href="/reference/hybrid_topologies/">
-            Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/local_testing/" class="dd-item">
-        <div>
-          <a href="/reference/local_testing/">
-            Local Testing
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/profiling/" class="dd-item">
-        <div>
-          <a href="/reference/profiling/">
-            Profiling
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/s3site/" class="dd-item">
-        <div>
-          <a href="/reference/s3site/">
-            S3 Sites with CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/related_projects/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/related_projects/">Related Projects</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/presentations/" class="dd-item
-        ">
-      <div>
-      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/credits/" class="dd-item
-        ">
-      <div>
-      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/meta/" class="dd-item
-        ">
-      <div>
-      <a href="/meta/">_meta</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
+  <body class="" data-url="/reference/apigateway/context/">
+    <nav id="sidebar" class="">
 
 
 
-
-    </ul>
-    <section>
-    </section>
-  </aside>
-  <section class="page">
-    
-    <div class="nav-select">
-      <center>Navigation : 
-        <select onchange="javascript:location.href = this.value;">
-          
-    <option value="/overview/" >
-   Overview</option> 
-  
-    <option value="/sample_service/" >
-   Sample Service</option>
-    <option value="/cli_options/" >
-   CLI Options</option> 
-  
-    <option value="/reference/" >
-   Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option> 
-      <option value="/reference/apigateway/echo_event/" >-- Echo Event</option>
-      <option value="/reference/apigateway/user_input/" >-- User Input</option>
-      <option value="/reference/apigateway/context/"  selected>-- Request Context</option>
-      <option value="/reference/apigateway/cors/" >-- CORS</option>
-      <option value="/reference/apigateway/slack/" >-- Slack SlashCommand</option>
-  
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/custom_resources/" >- Custom Resources</option>
-      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
-      <option value="/reference/discovery/" >- Discovery Service</option>
-      <option value="/reference/docker/" >- Docker</option>
-      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/local_testing/" >- Local Testing</option>
-      <option value="/reference/profiling/" >- Profiling</option>
-      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
-      <option value="/reference/limitations/" >- Limitations</option>
-      <option value="/reference/faq/" >- FAQ</option>
-  
-    <option value="/related_projects/" >
-   Related Projects</option> 
-  
-    <option value="/presentations/" >
-   Presentations</option>
-    <option value="/credits/" >
-   Credits</option>
-    <option value="/meta/" >
-   _meta</option>
-
-
-
-        </select>
-      </center>
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
     </div>
-      <div>
+    
         <div class="searchbox">
-          <input data-search-input id="search-by" type="text" placeholder="Search...">
-        </div>
-        <script type="text/javascript" src="/js/lunr.min.js"></script>
-        <script type="text/javascript" src="/js/auto-complete.js"></script>
-        <link href="/css/auto-complete.css" rel="stylesheet">
-        <script type="text/javascript">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1539321771"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539321771"></script>
+<script type="text/javascript">
+    
+        var baseurl = '\/';
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1539321771"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
           
-              var baseurl = "\/";
           
-        </script>
-        <script type="text/javascript" src="/js/search.js"></script>
-      </div>
+
+
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="Event Sources" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          Event Sources
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
+        <a href="/reference/service_scoped_custom_resource/">
+        Service Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="Decorators" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          Decorators
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="API Gateway" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          API Gateway
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item active">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="Application Customization" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          Application Customization
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Application Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Application Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/application/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+        </ul>
+      </section>
     
 
-    <h1>Request Context</h1>
     
-    
-    
-    
+    <section id="footer">
+      
+  Build: 66e73c87<p/>
+  Date: 2018-01-29 20:36:14 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/context.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/apigateway/'>API Gateway</a> > Request Context
+          
+         
+          
+         
+          
+         
+          
+           
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#define-the-lambda-function">Define the Lambda Function</a></li>
+<li><a href="#sparta-integration">Sparta Integration</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#query">Query</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+<li><a href="#notes">Notes</a></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>Request Context</h1>
+          
+
+        
+
+
+
 
 <p>This example demonstrates how to use the <code>Context</code> struct provided as part of the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent">APIGatewayLambdaJSONEvent</a> event.  The <a href="https://github.com/mweagle/SpartaGeoIP">SpartaGeoIP</a> service will return Geo information based on the inbound request&rsquo;s IP address.</p>
 
@@ -488,29 +1332,29 @@
 
 <p>As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
-	<span style="color:#000">spartaAWSEvents</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
-<span style="color:#000;font-weight:bold">)</span>
-<span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">ipGeoLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#000">apiRequest</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">parsedIP</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">net</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseIP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Identity</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SourceIP</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">record</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">dbHandle</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">City</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">parsedIP</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
+	<span style="color:#a6e22e">spartaAWSEvents</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+)
+<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ipGeoLambda</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
+  <span style="color:#a6e22e">apiRequest</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">parsedIP</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">ParseIP</span>(<span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Context</span>.<span style="color:#a6e22e">Identity</span>.<span style="color:#a6e22e">SourceIP</span>)
+	<span style="color:#a6e22e">record</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dbHandle</span>.<span style="color:#a6e22e">City</span>(<span style="color:#a6e22e">parsedIP</span>)</code></pre></div>
 
 <p>We&rsquo;ll then parse the inbound IP address from the <a href="https://godoc.org/github.com/mweagle/Sparta#APIGatewayContext">Context</a> and perform a lookup against the database handle opened in the <a href="https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L19">init</a> block:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#000">parsedIP</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">net</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ParseIP</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaEvent</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Identity</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">SourceIP</span><span style="color:#000;font-weight:bold">)</span>
-  <span style="color:#000">record</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">dbHandle</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">City</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">parsedIP</span><span style="color:#000;font-weight:bold">)</span>
-  <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span>
-  <span style="color:#000;font-weight:bold">}</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#a6e22e">parsedIP</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">net</span>.<span style="color:#a6e22e">ParseIP</span>(<span style="color:#a6e22e">lambdaEvent</span>.<span style="color:#a6e22e">Context</span>.<span style="color:#a6e22e">Identity</span>.<span style="color:#a6e22e">SourceIP</span>)
+  <span style="color:#a6e22e">record</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">dbHandle</span>.<span style="color:#a6e22e">City</span>(<span style="color:#a6e22e">parsedIP</span>)
+  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">err</span>
+  }</code></pre></div>
 
 <p>Finally, marshal the data or error result and we&rsquo;re done:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#000">requestResponse</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
-		<span style="color:#4e9a06">&#34;ip&#34;</span><span style="color:#000;font-weight:bold">:</span>     <span style="color:#000">parsedIP</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;record&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">record</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">requestResponse</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">	<span style="color:#a6e22e">requestResponse</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+		<span style="color:#e6db74">&#34;ip&#34;</span>:     <span style="color:#a6e22e">parsedIP</span>,
+		<span style="color:#e6db74">&#34;record&#34;</span>: <span style="color:#a6e22e">record</span>,
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">requestResponse</span>, <span style="color:#66d9ef">nil</span></code></pre></div>
 
 <h1 id="sparta-integration">Sparta Integration</h1>
 
@@ -525,38 +1369,38 @@
 
 <p>These four steps are managed in the service&rsquo;s <code>main()</code> function:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Main
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">stage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;ipgeo&#34;</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaGeoIPService&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">stage</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">stackName</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;SpartaGeoIP&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Main
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#a6e22e">stage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;ipgeo&#34;</span>)
+	<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaGeoIPService&#34;</span>, <span style="color:#a6e22e">stage</span>)
+	<span style="color:#a6e22e">stackName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;SpartaGeoIP&#34;</span>
 
-	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
-  <span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span>
-    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ipGeoLambda</span><span style="color:#000;font-weight:bold">),</span>
-    <span style="color:#000">ipGeoLambda</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">IAMRoleDefinition</span><span style="color:#000;font-weight:bold">{})</span>
-	<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/info&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;GET&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusOK</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">=</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
+  <span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(
+    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">ipGeoLambda</span>),
+    <span style="color:#a6e22e">ipGeoLambda</span>,
+    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+	<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGateway</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/info&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
+	<span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>)
+	<span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
 
-	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">stackName</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;Sparta app supporting ip-&gt;geo mapping&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+	<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#a6e22e">stackName</span>,
+		<span style="color:#e6db74">&#34;Sparta app supporting ip-&gt;geo mapping&#34;</span>,
+		<span style="color:#a6e22e">lambdaFunctions</span>,
+		<span style="color:#a6e22e">apiGateway</span>,
+    <span style="color:#66d9ef">nil</span>)
+}</code></pre></div>
 
 <h1 id="provision">Provision</h1>
 
 <p>The next step is to provision the stack:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre></div></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY-S3-BUCKETNAME&gt; make provision</code></pre></div>
 
 <p>Assuming all goes well, the log output will include the API Gateway URL as in:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0113] Stack output   Description=API Gateway URL Key=APIGatewayURL Value=https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo
 INFO[0113] Stack output   Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1.0</code></pre></div>
 
@@ -564,113 +1408,113 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>With the API Gateway provisioned, let&rsquo;s check the response:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 
-*   Trying <span style="color:#0000cf;font-weight:bold">54</span>.192.70.206...
-* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">54</span>.192.70.206<span style="color:#ce5c00;font-weight:bold">)</span> port <span style="color:#0000cf;font-weight:bold">443</span> <span style="color:#ce5c00;font-weight:bold">(</span><span style="color:#8f5902;font-style:italic">#0)
-</span><span style="color:#8f5902;font-style:italic"></span>* TLS <span style="color:#0000cf;font-weight:bold">1</span>.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+*   Trying <span style="color:#ae81ff">54</span>.192.70.206...
+* Connected to qyslujefsf.execute-api.us-west-2.amazonaws.com <span style="color:#f92672">(</span><span style="color:#ae81ff">54</span>.192.70.206<span style="color:#f92672">)</span> port <span style="color:#ae81ff">443</span> <span style="color:#f92672">(</span><span style="color:#75715e">#0)
+</span><span style="color:#75715e"></span>* TLS <span style="color:#ae81ff">1</span>.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 * Server certificate: *.execute-api.us-west-2.amazonaws.com
-* Server certificate: Symantec Class <span style="color:#0000cf;font-weight:bold">3</span> Secure Server CA - G4
-* Server certificate: VeriSign Class <span style="color:#0000cf;font-weight:bold">3</span> Public Primary Certification Authority - G5
+* Server certificate: Symantec Class <span style="color:#ae81ff">3</span> Secure Server CA - G4
+* Server certificate: VeriSign Class <span style="color:#ae81ff">3</span> Public Primary Certification Authority - G5
 &gt; GET /ipgeo/info HTTP/1.1
 &gt; Host: qyslujefsf.execute-api.us-west-2.amazonaws.com
 &gt; User-Agent: curl/7.43.0
 &gt; Accept: */*
 &gt;
-&lt; HTTP/1.1 <span style="color:#0000cf;font-weight:bold">200</span> OK
+&lt; HTTP/1.1 <span style="color:#ae81ff">200</span> OK
 &lt; Content-Type: application/json
-&lt; Content-Length: <span style="color:#0000cf;font-weight:bold">1129</span>
+&lt; Content-Length: <span style="color:#ae81ff">1129</span>
 &lt; Connection: keep-alive
-&lt; Date: Sun, <span style="color:#0000cf;font-weight:bold">06</span> Dec <span style="color:#0000cf;font-weight:bold">2015</span> <span style="color:#0000cf;font-weight:bold">21</span>:50:18 GMT
+&lt; Date: Sun, <span style="color:#ae81ff">06</span> Dec <span style="color:#ae81ff">2015</span> <span style="color:#ae81ff">21</span>:50:18 GMT
 &lt; x-amzn-RequestId: 572adc18-9c63-11e5-b827-81d99c02192f
 &lt; X-Cache: Miss from cloudfront
-&lt; Via: <span style="color:#0000cf;font-weight:bold">1</span>.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net <span style="color:#ce5c00;font-weight:bold">(</span>CloudFront<span style="color:#ce5c00;font-weight:bold">)</span>
-&lt; X-Amz-Cf-Id: <span style="color:#000">5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw</span><span style="color:#ce5c00;font-weight:bold">==</span>
+&lt; Via: <span style="color:#ae81ff">1</span>.1 29bfa9b96f4ea66dc02526ee845ca6b0.cloudfront.net <span style="color:#f92672">(</span>CloudFront<span style="color:#f92672">)</span>
+&lt; X-Amz-Cf-Id: 5mXHuOlbDyk5CejDouAy7nUS3YUn4eXJdQWzU_1VqX9Yh5PE_BdlAw<span style="color:#f92672">==</span>
 &lt;
-* Connection <span style="color:#8f5902;font-style:italic">#0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;code&#34;</span>:200,<span style="color:#4e9a06">&#34;status&#34;</span>:<span style="color:#4e9a06">&#34;OK&#34;</span>,<span style="color:#4e9a06">&#34;headers&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;content-type&#34;</span>:<span style="color:#4e9a06">&#34;application/json&#34;</span>,<span style="color:#4e9a06">&#34;date&#34;</span>:<span style="color:#4e9a06">&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;</span>,<span style="color:#4e9a06">&#34;content-length&#34;</span>:<span style="color:#4e9a06">&#34;984&#34;</span><span style="color:#ce5c00;font-weight:bold">}</span>,<span style="color:#4e9a06">&#34;results&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;info&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;City&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;GeoNameID&#34;</span>:0,<span style="color:#4e9a06">&#34;Names&#34;</span>:null<span style="color:#ce5c00;font-weight:bold">}</span>,<span style="color:#4e9a06">&#34;Continent&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;Code&#34;</span>:<span style="color:#4e9a06">&#34;NA&#34;</span>,<span style="color:#4e9a06">&#34;GeoNameID&#34;</span>:6255149,<span style="color:#4e9a06">&#34;Names&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;de&#34;</span>:<span style="color:#4e9a06">&#34;Nordamerika&#34;</span>,<span style="color:#4e9a06">&#34;en&#34;</span>:<span style="color:#4e9a06">&#34;North America&#34;</span>,<span style="color:#4e9a06">&#34;es&#34;</span>:<span style="color:#4e9a06">&#34;Norteamérica&#34;</span>,<span style="color:#4e9a06">&#34;fr&#34;</span>:<span style="color:#4e9a06">&#34;Amérique du Nord&#34;</span>,<span style="color:#4e9a06">&#34;ja&#34;</span>:<span style="color:#4e9a06">&#34;北アメリカ&#34;</span>,<span style="color:#4e9a06">&#34;pt-BR&#34;</span>:<span style="color:#4e9a06">&#34;América do Norte&#34;</span>,<span style="color:#4e9a06">&#34;ru&#34;</span>:<span style="color:#4e9a06">&#34;Северная Америка&#34;</span>,<span style="color:#4e9a06">&#34;zh-CN&#34;</span>:<span style="color:#4e9a06">&#34;北美洲&#34;</span><span style="color:#ce5c00;font-weight:bold">}}</span>,<span style="color:#4e9a06">&#34;Country&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#4e9a06">&#34;IsoCode&#34;</span>:<span style="color:#4e9a06">&#34;US&#34;</span>,<span style="color:#4e9a06">&#34;Names&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;de&#34;</span>:<span style="color:#4e9a06">&#34;USA&#34;</span>,<span style="color:#4e9a06">&#34;en&#34;</span>:<span style="color:#4e9a06">&#34;United States&#34;</span>,<span style="color:#4e9a06">&#34;es&#34;</span>:<span style="color:#4e9a06">&#34;Estados Unidos&#34;</span>,<span style="color:#4e9a06">&#34;fr&#34;</span>:<span style="color:#4e9a06">&#34;États-Unis&#34;</span>,<span style="color:#4e9a06">&#34;ja&#34;</span>:<span style="color:#4e9a06">&#34;アメリカ合衆国&#34;</span>,<span style="color:#4e9a06">&#34;pt-BR&#34;</span>:<span style="color:#4e9a06">&#34;Estados Unidos&#34;</span>,<span style="color:#4e9a06">&#34;ru&#34;</span>:<span style="color:#4e9a06">&#34;США&#34;</span>,<span style="color:#4e9a06">&#34;zh-CN&#34;</span>:<span style="color:#4e9a06">&#34;美国&#34;</span><span style="color:#ce5c00;font-weight:bold">}}</span>,<span style="color:#4e9a06">&#34;Location&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;Latitude&#34;</span>:0,<span style="color:#4e9a06">&#34;Longitude&#34;</span>:0,<span style="color:#4e9a06">&#34;MetroCode&#34;</span>:0,<span style="color:#4e9a06">&#34;TimeZone&#34;</span>:<span style="color:#4e9a06">&#34;&#34;</span><span style="color:#ce5c00;font-weight:bold">}</span>,<span style="color:#4e9a06">&#34;Postal&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;Code&#34;</span>:<span style="color:#4e9a06">&#34;&#34;</span><span style="color:#ce5c00;font-weight:bold">}</span>,<span style="color:#4e9a06">&#34;RegisteredCountry&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#4e9a06">&#34;IsoCode&#34;</span>:<span style="color:#4e9a06">&#34;US&#34;</span>,<span style="color:#4e9a06">&#34;Names&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;de&#34;</span>:<span style="color:#4e9a06">&#34;USA&#34;</span>,<span style="color:#4e9a06">&#34;en&#34;</span>:<span style="color:#4e9a06">&#34;United States&#34;</span>,<span style="color:#4e9a06">&#34;es&#34;</span>:<span style="color:#4e9a06">&#34;Estados Unidos&#34;</span>,<span style="color:#4e9a06">&#34;fr&#34;</span>:<span style="color:#4e9a06">&#34;États-Unis&#34;</span>,<span style="color:#4e9a06">&#34;ja&#34;</span>:<span style="color:#4e9a06">&#34;アメリカ合衆国&#34;</span>,<span style="color:#4e9a06">&#34;pt-BR&#34;</span>:<span style="color:#4e9a06">&#34;Estados Unidos&#34;</span>,<span style="color:#4e9a06">&#34;ru&#34;</span>:<span style="color:#4e9a06">&#34;США&#34;</span>,<span style="color:#4e9a06">&#34;zh-CN&#34;</span>:<span style="color:#4e9a06">&#34;美国&#34;</span><span style="color:#ce5c00;font-weight:bold">}}</span>,<span style="color:#4e9a06">&#34;RepresentedCountry&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;GeoNameID&#34;</span>:0,<span style="color:#4e9a06">&#34;IsoCode&#34;</span>:<span style="color:#4e9a06">&#34;&#34;</span>,<span style="color:#4e9a06">&#34;Names&#34;</span>:null,<span style="color:#4e9a06">&#34;Type&#34;</span>:<span style="color:#4e9a06">&#34;&#34;</span><span style="color:#ce5c00;font-weight:bold">}</span>,<span style="color:#4e9a06">&#34;Subdivisions&#34;</span>:null,<span style="color:#4e9a06">&#34;Traits&#34;</span>:<span style="color:#ce5c00;font-weight:bold">{</span><span style="color:#4e9a06">&#34;IsAnonymousProxy&#34;</span>:false,<span style="color:#4e9a06">&#34;IsSatelliteProvider&#34;</span>:false<span style="color:#ce5c00;font-weight:bold">}}}}</span></code></pre></div>
+* Connection <span style="color:#75715e">#0 to host qyslujefsf.execute-api.us-west-2.amazonaws.com left intact
+</span><span style="color:#75715e"></span><span style="color:#f92672">{</span><span style="color:#e6db74">&#34;code&#34;</span>:200,<span style="color:#e6db74">&#34;status&#34;</span>:<span style="color:#e6db74">&#34;OK&#34;</span>,<span style="color:#e6db74">&#34;headers&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;content-type&#34;</span>:<span style="color:#e6db74">&#34;application/json&#34;</span>,<span style="color:#e6db74">&#34;date&#34;</span>:<span style="color:#e6db74">&#34;Sun, 06 Dec 2015 21:50:18 GMT&#34;</span>,<span style="color:#e6db74">&#34;content-length&#34;</span>:<span style="color:#e6db74">&#34;984&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;results&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;info&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;City&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:0,<span style="color:#e6db74">&#34;Names&#34;</span>:null<span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Continent&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span>:<span style="color:#e6db74">&#34;NA&#34;</span>,<span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6255149,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;Nordamerika&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;North America&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Norteamérica&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;Amérique du Nord&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;北アメリカ&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;América do Norte&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;Северная Америка&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;北美洲&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;Country&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;US&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;USA&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;United States&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;États-Unis&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;США&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;Location&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Latitude&#34;</span>:0,<span style="color:#e6db74">&#34;Longitude&#34;</span>:0,<span style="color:#e6db74">&#34;MetroCode&#34;</span>:0,<span style="color:#e6db74">&#34;TimeZone&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Postal&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;Code&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;RegisteredCountry&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:6252001,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;US&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;de&#34;</span>:<span style="color:#e6db74">&#34;USA&#34;</span>,<span style="color:#e6db74">&#34;en&#34;</span>:<span style="color:#e6db74">&#34;United States&#34;</span>,<span style="color:#e6db74">&#34;es&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;fr&#34;</span>:<span style="color:#e6db74">&#34;États-Unis&#34;</span>,<span style="color:#e6db74">&#34;ja&#34;</span>:<span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,<span style="color:#e6db74">&#34;pt-BR&#34;</span>:<span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,<span style="color:#e6db74">&#34;ru&#34;</span>:<span style="color:#e6db74">&#34;США&#34;</span>,<span style="color:#e6db74">&#34;zh-CN&#34;</span>:<span style="color:#e6db74">&#34;美国&#34;</span><span style="color:#f92672">}}</span>,<span style="color:#e6db74">&#34;RepresentedCountry&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;GeoNameID&#34;</span>:0,<span style="color:#e6db74">&#34;IsoCode&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span>,<span style="color:#e6db74">&#34;Names&#34;</span>:null,<span style="color:#e6db74">&#34;Type&#34;</span>:<span style="color:#e6db74">&#34;&#34;</span><span style="color:#f92672">}</span>,<span style="color:#e6db74">&#34;Subdivisions&#34;</span>:null,<span style="color:#e6db74">&#34;Traits&#34;</span>:<span style="color:#f92672">{</span><span style="color:#e6db74">&#34;IsAnonymousProxy&#34;</span>:false,<span style="color:#e6db74">&#34;IsSatelliteProvider&#34;</span>:false<span style="color:#f92672">}}}}</span></code></pre></div>
 
 <p>Pretty-printing the response body:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json"><span style="color:#000;font-weight:bold">{</span>
-  <span style="color:#204a87;font-weight:bold">&#34;code&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">&#34;status&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;OK&#34;</span><span style="color:#000;font-weight:bold">,</span>
-  <span style="color:#204a87;font-weight:bold">&#34;headers&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;content-type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;application/json&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#204a87;font-weight:bold">&#34;date&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Sun, 06 Dec 2015 17:50:15 GMT&#34;</span><span style="color:#000;font-weight:bold">,</span>
-    <span style="color:#204a87;font-weight:bold">&#34;content-length&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;984&#34;</span>
-  <span style="color:#000;font-weight:bold">},</span>
-  <span style="color:#204a87;font-weight:bold">&#34;results&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-    <span style="color:#204a87;font-weight:bold">&#34;info&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-      <span style="color:#204a87;font-weight:bold">&#34;City&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;GeoNameID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Names&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Continent&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Code&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;NA&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;GeoNameID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">6255149</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Names&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-          <span style="color:#204a87;font-weight:bold">&#34;de&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Nordamerika&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;en&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;North America&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;es&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Norteamérica&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;fr&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Amérique du Nord&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ja&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;北アメリカ&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;pt-BR&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;América do Norte&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ru&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Северная Америка&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;zh-CN&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;北美洲&#34;</span>
-        <span style="color:#000;font-weight:bold">}</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Country&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;GeoNameID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">6252001</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;IsoCode&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;US&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Names&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-          <span style="color:#204a87;font-weight:bold">&#34;de&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;USA&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;en&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;United States&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;es&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Estados Unidos&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;fr&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;États-Unis&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ja&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;アメリカ合衆国&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;pt-BR&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Estados Unidos&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ru&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;США&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;zh-CN&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;美国&#34;</span>
-        <span style="color:#000;font-weight:bold">}</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Location&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Latitude&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Longitude&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;MetroCode&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;TimeZone&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Postal&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Code&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;RegisteredCountry&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;GeoNameID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">6252001</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;IsoCode&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;US&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Names&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-          <span style="color:#204a87;font-weight:bold">&#34;de&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;USA&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;en&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;United States&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;es&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Estados Unidos&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;fr&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;États-Unis&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ja&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;アメリカ合衆国&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;pt-BR&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;Estados Unidos&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;ru&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;США&#34;</span><span style="color:#000;font-weight:bold">,</span>
-          <span style="color:#204a87;font-weight:bold">&#34;zh-CN&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;美国&#34;</span>
-        <span style="color:#000;font-weight:bold">}</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;RepresentedCountry&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;GeoNameID&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;IsoCode&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Names&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;Type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;&#34;</span>
-      <span style="color:#000;font-weight:bold">},</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Subdivisions&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">null</span><span style="color:#000;font-weight:bold">,</span>
-      <span style="color:#204a87;font-weight:bold">&#34;Traits&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000;font-weight:bold">{</span>
-        <span style="color:#204a87;font-weight:bold">&#34;IsAnonymousProxy&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">false</span><span style="color:#000;font-weight:bold">,</span>
-        <span style="color:#204a87;font-weight:bold">&#34;IsSatelliteProvider&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">false</span>
-      <span style="color:#000;font-weight:bold">}</span>
-    <span style="color:#000;font-weight:bold">}</span>
-  <span style="color:#000;font-weight:bold">}</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+  <span style="color:#f92672">&#34;code&#34;</span>: <span style="color:#ae81ff">200</span>,
+  <span style="color:#f92672">&#34;status&#34;</span>: <span style="color:#e6db74">&#34;OK&#34;</span>,
+  <span style="color:#f92672">&#34;headers&#34;</span>: {
+    <span style="color:#f92672">&#34;content-type&#34;</span>: <span style="color:#e6db74">&#34;application/json&#34;</span>,
+    <span style="color:#f92672">&#34;date&#34;</span>: <span style="color:#e6db74">&#34;Sun, 06 Dec 2015 17:50:15 GMT&#34;</span>,
+    <span style="color:#f92672">&#34;content-length&#34;</span>: <span style="color:#e6db74">&#34;984&#34;</span>
+  },
+  <span style="color:#f92672">&#34;results&#34;</span>: {
+    <span style="color:#f92672">&#34;info&#34;</span>: {
+      <span style="color:#f92672">&#34;City&#34;</span>: {
+        <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#f92672">&#34;Names&#34;</span>: <span style="color:#66d9ef">null</span>
+      },
+      <span style="color:#f92672">&#34;Continent&#34;</span>: {
+        <span style="color:#f92672">&#34;Code&#34;</span>: <span style="color:#e6db74">&#34;NA&#34;</span>,
+        <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6255149</span>,
+        <span style="color:#f92672">&#34;Names&#34;</span>: {
+          <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;Nordamerika&#34;</span>,
+          <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;North America&#34;</span>,
+          <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Norteamérica&#34;</span>,
+          <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;Amérique du Nord&#34;</span>,
+          <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;北アメリカ&#34;</span>,
+          <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;América do Norte&#34;</span>,
+          <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;Северная Америка&#34;</span>,
+          <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;北美洲&#34;</span>
+        }
+      },
+      <span style="color:#f92672">&#34;Country&#34;</span>: {
+        <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6252001</span>,
+        <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;US&#34;</span>,
+        <span style="color:#f92672">&#34;Names&#34;</span>: {
+          <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;USA&#34;</span>,
+          <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;United States&#34;</span>,
+          <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
+          <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;États-Unis&#34;</span>,
+          <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,
+          <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
+          <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;США&#34;</span>,
+          <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;美国&#34;</span>
+        }
+      },
+      <span style="color:#f92672">&#34;Location&#34;</span>: {
+        <span style="color:#f92672">&#34;Latitude&#34;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#f92672">&#34;Longitude&#34;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#f92672">&#34;MetroCode&#34;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#f92672">&#34;TimeZone&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+      },
+      <span style="color:#f92672">&#34;Postal&#34;</span>: {
+        <span style="color:#f92672">&#34;Code&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+      },
+      <span style="color:#f92672">&#34;RegisteredCountry&#34;</span>: {
+        <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">6252001</span>,
+        <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;US&#34;</span>,
+        <span style="color:#f92672">&#34;Names&#34;</span>: {
+          <span style="color:#f92672">&#34;de&#34;</span>: <span style="color:#e6db74">&#34;USA&#34;</span>,
+          <span style="color:#f92672">&#34;en&#34;</span>: <span style="color:#e6db74">&#34;United States&#34;</span>,
+          <span style="color:#f92672">&#34;es&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
+          <span style="color:#f92672">&#34;fr&#34;</span>: <span style="color:#e6db74">&#34;États-Unis&#34;</span>,
+          <span style="color:#f92672">&#34;ja&#34;</span>: <span style="color:#e6db74">&#34;アメリカ合衆国&#34;</span>,
+          <span style="color:#f92672">&#34;pt-BR&#34;</span>: <span style="color:#e6db74">&#34;Estados Unidos&#34;</span>,
+          <span style="color:#f92672">&#34;ru&#34;</span>: <span style="color:#e6db74">&#34;США&#34;</span>,
+          <span style="color:#f92672">&#34;zh-CN&#34;</span>: <span style="color:#e6db74">&#34;美国&#34;</span>
+        }
+      },
+      <span style="color:#f92672">&#34;RepresentedCountry&#34;</span>: {
+        <span style="color:#f92672">&#34;GeoNameID&#34;</span>: <span style="color:#ae81ff">0</span>,
+        <span style="color:#f92672">&#34;IsoCode&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>,
+        <span style="color:#f92672">&#34;Names&#34;</span>: <span style="color:#66d9ef">null</span>,
+        <span style="color:#f92672">&#34;Type&#34;</span>: <span style="color:#e6db74">&#34;&#34;</span>
+      },
+      <span style="color:#f92672">&#34;Subdivisions&#34;</span>: <span style="color:#66d9ef">null</span>,
+      <span style="color:#f92672">&#34;Traits&#34;</span>: {
+        <span style="color:#f92672">&#34;IsAnonymousProxy&#34;</span>: <span style="color:#66d9ef">false</span>,
+        <span style="color:#f92672">&#34;IsSatelliteProvider&#34;</span>: <span style="color:#66d9ef">false</span>
+      }
+    }
+  }
+}</code></pre></div>
 
 <p>Please see the <a href="/reference/apigateway/echo_event/">first example</a> for more information on the <code>code</code>, <code>status</code>, and <code>headers</code> keys.</p>
 
@@ -678,7 +1522,7 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<p><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run main.go delete</code></pre></div></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run main.go delete</code></pre></div>
 
 <h1 id="notes">Notes</h1>
 
@@ -688,63 +1532,963 @@ INFO[0113] Stack output   Description=Sparta Version Key=SpartaVersion Value=0.1
 </ul>
 
 
-    
-    
-        <div class="chevrons">
-    <div id="navigation">
-<a class="nav nav-prev" href="/reference/apigateway/user_input/" title="User Input"> <i class="fa fa-chevron-left"></i><label>User Input</label></a>
-    <a class="nav nav-next" href="/reference/apigateway/cors/" title="CORS" style="margin-right: 0px;"><label>CORS</label><i class="fa fa-chevron-right"></i></a></div>
-  </div>
-
-  </section>
-</article>
-
-<footer>
-
-<div class="footline">
-    
-
-    
-
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 09/03/2016
-    </div>
-    
-
-    <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/context.md" target="blank"><i class="fa fa-code-fork"></i>
-        Improve this page</a>
-    </div>
-  </div>
-
-
-	<div>
-
-
-  
-    
-  
-
-
-
-	</div>
+<footer class=" footline" >
+	
 </footer>
 
-<script src="/js/clipboard.min.js"></script>
 
-<link href="/css/featherlight.min.css" rel="stylesheet">
-<script src="/js/featherlight.min.js"></script>
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
 
 
+        
+            <a class="nav nav-prev" href="/reference/apigateway/user_input/" title="User Input"> <i class="fas fa-chevron-left"></i></a>
+        
+        
+            <a class="nav nav-next" href="/reference/apigateway/cors/" title="CORS" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
+        
+    </div>
 
-<script src="/theme-flex/script.js"></script>
-
+    </section>
     
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539321771"></script>
+    <script src="/js/jquery.sticky.js?1539321771"></script>
+    <script src="/js/featherlight.min.js?1539321771"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539321771"></script>
+    <script src="/js/highlight.pack.js?1539321771"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1539321771"></script>
+    <script src="/js/learn.js?1539321771"></script>
+    <script src="/js/hugo-learn.js?1539321771"></script>
 
+    <link href="/mermaid/mermaid.css?1539321771" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539321771"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
     
-    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    
+  gtag('config', 'UA-70794971-2');
+</script>
   </body>
 </html>
+

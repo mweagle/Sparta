@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Sample Service on Sparta Documentation</title>
+    <title>Sample Service on Documentation for Hugo Learn Theme</title>
     <link>/sample_service/</link>
-    <description>Recent content in Sample Service on Sparta Documentation</description>
+    <description>Recent content in Sample Service on Documentation for Hugo Learn Theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-US</language>
     <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
     
 	<atom:link href="/sample_service/index.xml" rel="self" type="application/rss+xml" />
@@ -18,7 +18,7 @@
       
       <guid>/sample_service/step1/</guid>
       <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Costs Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
     </item>
     
     <item>

@@ -1,484 +1,1330 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="js csstransforms3d">
   <head>
-    <title>Sparta Documentation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.49.1" />
+    <meta name="description" content="Documentation for Sparta">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Slack SlashCommand :: Documentation for Hugo Learn Theme</title>
+
     
-      <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="generator" content="Hugo 0.44" />
-<title>Slack SlashCommand :: Sparta Documentation</title>
-<link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link href="/css/font-awesome.min.css" rel="stylesheet">
-<link href="/css/nucleus.css" rel="stylesheet">
-<link href="/theme-flex/style.css" rel="stylesheet">
+    <link href="/css/nucleus.css?1539321771" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539321771" rel="stylesheet">
+    <link href="/css/hybrid.css?1539321771" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539321771" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539321771" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539321771" rel="stylesheet">
+    <link href="/css/theme.css?1539321771" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539321771" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1539321771" rel="stylesheet">
+    
 
-<link rel="stylesheet" href="/css/bootstrap.min.css">
-<script src="/js/jquery-2.x.min.js"></script>
-<script type="text/javascript">
-      var baseurl = "\/";
-</script>
+    <script src="/js/jquery-2.x.min.js?1539321771"></script>
 
-
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-70794971-2');
-</script>
-
-<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png">
-<meta name="description" content="">
-
-
-
-<style>
-  article section.page code {
-      font-family:  monospace; }
-</style>
-
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
     
   </head>
-  <body data-url="/reference/apigateway/slack/">
-    
-      <header>
-  <div class="logo">
-    
-	
-  
-    <p><img src="/images/SpartaLogoNoDomain.png" alt="Sparta" title="Sparta" /></p>
-
-  
-
-  </div>
-  <div class="burger"><a href="javascript:void(0);" style="font-size:15px;">&#9776;</a></div>
-    <nav class="shortcuts">
-            <li class="" role="">
-                <a href="/credits"  rel="noopener">
-                  <i class='fa fa-bullhorn'></i> <label>Credits</label>
-                </a>
-            </li>
-            <li class="" role="">
-                <a href="https://github.com/mweagle/Sparta"  rel="noopener">
-                  <i class='fa fa-github'></i> <label>Github</label>
-                </a>
-            </li>
-    </nav>
-</header>
-<article>
-  <aside>
-    <ul class="menu">
-          <li data-nav-id="/" class="dd-item">
-          <a href="/">
-            <i class="fa fa-fw fa-home"></i>
-          </a>
-          </li>
-    <li data-nav-id="/overview/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/overview/">Overview</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/sample_service/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/sample_service/">Sample Service</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/sample_service/step1/" class="dd-item">
-        <div>
-          <a href="/sample_service/step1/">
-            Overview
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/sample_service/step2/" class="dd-item">
-        <div>
-          <a href="/sample_service/step2/">
-            Details
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/cli_options/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/cli_options/">CLI Options</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/reference/" class="dd-item parent alwaysopen haschildren
-        ">
-      <div>
-      <a href="/reference/">Reference</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-    <li data-nav-id="/reference/eventsources/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/eventsources/">Event Sources</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/eventsources/cloudformation/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudformation/">
-            CloudFormation
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchevents/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchevents/">
-            CloudWatch Events
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cloudwatchlogs/">
-            CloudWatch Logs
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/cognito/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/cognito/">
-            Cognito
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/dynamodb/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/dynamodb/">
-            DynamoDB
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/kinesis/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/kinesis/">
-            Event Sources - Kinesis
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/s3/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/s3/">
-            S3
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/ses/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/ses/">
-            SES
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sns/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sns/">
-            SNS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/eventsources/sqs/" class="dd-item">
-        <div>
-          <a href="/reference/eventsources/sqs/">
-            SQS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/apigateway/" class="dd-item parent haschildren
-        ">
-      <div>
-      <a href="/reference/apigateway/">API Gateway</a>
-            <i class="fa fa-angle-down fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/apigateway/echo_event/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/echo_event/">
-            Echo Event
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/user_input/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/user_input/">
-            User Input
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/context/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/context/">
-            Request Context
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/cors/" class="dd-item">
-        <div>
-          <a href="/reference/apigateway/cors/">
-            CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/apigateway/slack/" class="dd-item active">
-        <div>
-          <a href="/reference/apigateway/slack/">
-            Slack SlashCommand
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/reference/application/" class="dd-item haschildren
-        ">
-      <div>
-      <a href="/reference/application/">Application Customization</a><i class="fa fa-angle-right fa-lg category-icon"></i><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-        <ul>
-      <li data-nav-id="/reference/application/custom_commands/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_commands/">
-            Custom Application Commands
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/custom_flags/" class="dd-item">
-        <div>
-          <a href="/reference/application/custom_flags/">
-            Custom Flags
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/environments/" class="dd-item">
-        <div>
-          <a href="/reference/application/environments/">
-            Managing Environments
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/application/workflow_hooks/" class="dd-item">
-        <div>
-          <a href="/reference/application/workflow_hooks/">
-            Workflow Hooks
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-      <li data-nav-id="/reference/cicd/" class="dd-item">
-        <div>
-          <a href="/reference/cicd/">
-            CI/CD
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/custom_resources/" class="dd-item">
-        <div>
-          <a href="/reference/custom_resources/">
-            Custom Resources
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/deployment_strategies/" class="dd-item">
-        <div>
-          <a href="/reference/deployment_strategies/">
-            Deployment Strategies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/discovery/" class="dd-item">
-        <div>
-          <a href="/reference/discovery/">
-            Discovery Service
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/docker/" class="dd-item">
-        <div>
-          <a href="/reference/docker/">
-            Docker
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/dynamic_infrastructure/" class="dd-item">
-        <div>
-          <a href="/reference/dynamic_infrastructure/">
-            Dynamic Infrastructure
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/hybrid_topologies/" class="dd-item">
-        <div>
-          <a href="/reference/hybrid_topologies/">
-            Hybrid Topologies
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/local_testing/" class="dd-item">
-        <div>
-          <a href="/reference/local_testing/">
-            Local Testing
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/profiling/" class="dd-item">
-        <div>
-          <a href="/reference/profiling/">
-            Profiling
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/s3site/" class="dd-item">
-        <div>
-          <a href="/reference/s3site/">
-            S3 Sites with CORS
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/step_functions/" class="dd-item">
-        <div>
-          <a href="/reference/step_functions/">
-            Step Functions
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/limitations/" class="dd-item">
-        <div>
-          <a href="/reference/limitations/">
-            Limitations
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-      <li data-nav-id="/reference/faq/" class="dd-item">
-        <div>
-          <a href="/reference/faq/">
-            FAQ
-          </a><i class="fa fa-circle-thin read-icon"></i>
-        </div>
-    </li>
-        </ul>
-    </li>
-    <li data-nav-id="/related_projects/" class="dd-item alwaysopen
-        ">
-      <div>
-      <a href="/related_projects/">Related Projects</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/presentations/" class="dd-item
-        ">
-      <div>
-      <a href="/presentations/">Presentations</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/credits/" class="dd-item
-        ">
-      <div>
-      <a href="/credits/">Credits</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
-    <li data-nav-id="/meta/" class="dd-item
-        ">
-      <div>
-      <a href="/meta/">_meta</a><i class="fa fa-circle-thin read-icon"></i>
-      </div>
-    </li>
+  <body class="" data-url="/reference/apigateway/slack/">
+    <nav id="sidebar" class="">
 
 
 
-
-    </ul>
-    <section>
-    </section>
-  </aside>
-  <section class="page">
-    
-    <div class="nav-select">
-      <center>Navigation : 
-        <select onchange="javascript:location.href = this.value;">
-          
-    <option value="/overview/" >
-   Overview</option> 
-  
-    <option value="/sample_service/" >
-   Sample Service</option>
-    <option value="/cli_options/" >
-   CLI Options</option> 
-  
-    <option value="/reference/" >
-   Reference</option> 
-    <option value="/reference/eventsources/" >
-  - 
-   Event Sources</option>
-    <option value="/reference/apigateway/" >
-  - 
-   API Gateway</option> 
-      <option value="/reference/apigateway/echo_event/" >-- Echo Event</option>
-      <option value="/reference/apigateway/user_input/" >-- User Input</option>
-      <option value="/reference/apigateway/context/" >-- Request Context</option>
-      <option value="/reference/apigateway/cors/" >-- CORS</option>
-      <option value="/reference/apigateway/slack/"  selected>-- Slack SlashCommand</option>
-  
-    <option value="/reference/application/" >
-  - 
-   Application Customization</option>
-      <option value="/reference/cicd/" >- CI/CD</option>
-      <option value="/reference/custom_resources/" >- Custom Resources</option>
-      <option value="/reference/deployment_strategies/" >- Deployment Strategies</option>
-      <option value="/reference/discovery/" >- Discovery Service</option>
-      <option value="/reference/docker/" >- Docker</option>
-      <option value="/reference/dynamic_infrastructure/" >- Dynamic Infrastructure</option>
-      <option value="/reference/hybrid_topologies/" >- Hybrid Topologies</option>
-      <option value="/reference/local_testing/" >- Local Testing</option>
-      <option value="/reference/profiling/" >- Profiling</option>
-      <option value="/reference/s3site/" >- S3 Sites with CORS</option>
-      <option value="/reference/step_functions/" >- Step Functions</option>
-      <option value="/reference/limitations/" >- Limitations</option>
-      <option value="/reference/faq/" >- FAQ</option>
-  
-    <option value="/related_projects/" >
-   Related Projects</option> 
-  
-    <option value="/presentations/" >
-   Presentations</option>
-    <option value="/credits/" >
-   Credits</option>
-    <option value="/meta/" >
-   _meta</option>
-
-
-
-        </select>
-      </center>
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
     </div>
-      <div>
+    
         <div class="searchbox">
-          <input data-search-input id="search-by" type="text" placeholder="Search...">
-        </div>
-        <script type="text/javascript" src="/js/lunr.min.js"></script>
-        <script type="text/javascript" src="/js/auto-complete.js"></script>
-        <link href="/css/auto-complete.css" rel="stylesheet">
-        <script type="text/javascript">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1539321771"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539321771"></script>
+<script type="text/javascript">
+    
+        var baseurl = '\/';
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1539321771"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
           
-              var baseurl = "\/";
           
-        </script>
-        <script type="text/javascript" src="/js/search.js"></script>
-      </div>
+
+
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="Event Sources" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          Event Sources
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
+        <a href="/reference/service_scoped_custom_resource/">
+        Service Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="Decorators" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          Decorators
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="API Gateway" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          API Gateway
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item active">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="Application Customization" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          Application Customization
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Application Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Application Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/application/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+        </ul>
+      </section>
     
 
-    <h1>Slack SlashCommand</h1>
     
-    
-    
-    
+    <section id="footer">
+      
+  Build: 66e73c87<p/>
+  Date: 2018-01-29 20:36:14 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/slack.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/apigateway/'>API Gateway</a> > Slack SlashCommand
+          
+         
+          
+         
+          
+         
+          
+           
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#define-the-lambda-function">Define the Lambda Function</a></li>
+<li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
+<li><a href="#create-lambda-binding-resource">Create Lambda Binding &amp; Resource</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#configure-slack">Configure Slack</a></li>
+<li><a href="#test">Test</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>Slack SlashCommand</h1>
+          
+
+        
+
+
+
 
 <p><img src="/images/apigateway/slack/slack_rgb.png" alt="SlashLogo" /></p>
 
@@ -491,43 +1337,43 @@ this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000;font-weight:bold">(</span>
-	<span style="color:#000">spartaAWSEvents</span> <span style="color:#4e9a06">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
-<span style="color:#000;font-weight:bold">)</span>
-<span style="color:#8f5902;font-style:italic">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#8f5902;font-style:italic">// Hello world event handler
-</span><span style="color:#8f5902;font-style:italic">//
-</span><span style="color:#8f5902;font-style:italic"></span><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">helloSlackbot</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ctx</span> <span style="color:#000">context</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Context</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000">apiRequest</span> <span style="color:#000">spartaAWSEvents</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">APIGatewayRequest</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{},</span> <span style="color:#204a87;font-weight:bold">error</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">ctx</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Value</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ContextKeyLogger</span><span style="color:#000;font-weight:bold">).(</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Logger</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
+	<span style="color:#a6e22e">spartaAWSEvents</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+)
+<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// Hello world event handler
+</span><span style="color:#75715e">//
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloSlackbot</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
+	<span style="color:#a6e22e">apiRequest</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
 
-	<span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParamsOk</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">.(</span><span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{})</span>
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000;font-weight:bold">!</span><span style="color:#000">bodyParamsOk</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Errorf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to type convert body. Type: %T&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiRequest</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Body</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#a6e22e">bodyParams</span>, <span style="color:#a6e22e">bodyParamsOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Body</span>.(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{})
+	<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">bodyParamsOk</span> {
+		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to type convert body. Type: %T&#34;</span>, <span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Body</span>)
+	}
 
-	<span style="color:#000">logger</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">WithFields</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">logrus</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Fields</span><span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#4e9a06">&#34;BodyType&#34;</span><span style="color:#000;font-weight:bold">:</span>  <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;%T&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">),</span>
-		<span style="color:#4e9a06">&#34;BodyValue&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;%+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">bodyParams</span><span style="color:#000;font-weight:bold">),</span>
-	<span style="color:#000;font-weight:bold">}).</span><span style="color:#000">Info</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Slack slashcommand values&#34;</span><span style="color:#000;font-weight:bold">)</span>
+	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
+		<span style="color:#e6db74">&#34;BodyType&#34;</span>:  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%T&#34;</span>, <span style="color:#a6e22e">bodyParams</span>),
+		<span style="color:#e6db74">&#34;BodyValue&#34;</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%+v&#34;</span>, <span style="color:#a6e22e">bodyParams</span>),
+	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Slack slashcommand values&#34;</span>)
 
-	<span style="color:#8f5902;font-style:italic">// 2. Create the response
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// Slack formatting:
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// https://api.slack.com/docs/formatting
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;Here&#39;s what I understood&#34;</span>
-	<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">bodyParams</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n*%s*: %+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000;font-weight:bold">}</span>
+	<span style="color:#75715e">// 2. Create the response
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Slack formatting:
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// https://api.slack.com/docs/formatting
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Here&#39;s what I understood&#34;</span>
+	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">bodyParams</span> {
+		<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;\n*%s*: %+v&#34;</span>, <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span>)
+	}
 
-	<span style="color:#8f5902;font-style:italic">// 4. Setup the response object:
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#8f5902;font-style:italic">// https://api.slack.com/slash-commands, &#34;Responding to a command&#34;
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">responseData</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">map</span><span style="color:#000;font-weight:bold">[</span><span style="color:#204a87;font-weight:bold">string</span><span style="color:#000;font-weight:bold">]</span><span style="color:#204a87;font-weight:bold">interface</span><span style="color:#000;font-weight:bold">{}{</span>
-		<span style="color:#4e9a06">&#34;response_type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;in_channel&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">responseText</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#4e9a06">&#34;mrkdwn&#34;</span><span style="color:#000;font-weight:bold">:</span>        <span style="color:#204a87;font-weight:bold">true</span><span style="color:#000;font-weight:bold">,</span>
-	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">responseData</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87;font-weight:bold">nil</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+	<span style="color:#75715e">// 4. Setup the response object:
+</span><span style="color:#75715e"></span>	<span style="color:#75715e">// https://api.slack.com/slash-commands, &#34;Responding to a command&#34;
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">responseData</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+		<span style="color:#e6db74">&#34;response_type&#34;</span>: <span style="color:#e6db74">&#34;in_channel&#34;</span>,
+		<span style="color:#e6db74">&#34;text&#34;</span>:          <span style="color:#a6e22e">responseText</span>,
+		<span style="color:#e6db74">&#34;mrkdwn&#34;</span>:        <span style="color:#66d9ef">true</span>,
+	}
+	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">responseData</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></div>
 
 <p>There are a couple of things to note in this code:</p>
 
@@ -543,10 +1389,10 @@ a customized <a href="https://github.com/mweagle/Sparta/blob/master/resources/pr
 <li><p><strong>Response Formatting</strong>
 The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a>:</p>
 
-<pre><code><div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">				<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#4e9a06">&#34;Here&#39;s what I understood&#34;</span>
-				<span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#204a87;font-weight:bold">range</span> <span style="color:#000">bodyParams</span> <span style="color:#000;font-weight:bold">{</span>
-					<span style="color:#000">responseText</span> <span style="color:#ce5c00;font-weight:bold">+=</span> <span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;\n*%s*: %+v&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachKey</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">eachParam</span><span style="color:#000;font-weight:bold">)</span>
-				<span style="color:#000;font-weight:bold">}</span>
+<pre><code><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">				<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Here&#39;s what I understood&#34;</span>
+				<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">bodyParams</span> {
+					<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;\n*%s*: %+v&#34;</span>, <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span>)
+				}
         </code></pre></div>
 </code></pre></li>
 
@@ -555,10 +1401,10 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 <ul>
 <li><p>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#000">responseData</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">ArbitraryJSONObject</span><span style="color:#000;font-weight:bold">{</span>
-      		<span style="color:#4e9a06">&#34;response_type&#34;</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#4e9a06">&#34;in_channel&#34;</span><span style="color:#000;font-weight:bold">,</span>
-      		<span style="color:#4e9a06">&#34;text&#34;</span><span style="color:#000;font-weight:bold">:</span>          <span style="color:#000">responseText</span><span style="color:#000;font-weight:bold">,</span>
-      	<span style="color:#000;font-weight:bold">}</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">responseData</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ArbitraryJSONObject</span>{
+      		<span style="color:#e6db74">&#34;response_type&#34;</span>: <span style="color:#e6db74">&#34;in_channel&#34;</span>,
+      		<span style="color:#e6db74">&#34;text&#34;</span>:          <span style="color:#a6e22e">responseText</span>,
+      	}
         </code></pre></div></li>
 </ul></li>
 </ol>
@@ -567,8 +1413,8 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaSlackbot&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span></code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
+<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>, <span style="color:#a6e22e">apiStage</span>)</code></pre></div>
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
 
@@ -576,21 +1422,21 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">spartaLambdaFunctions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">api</span> <span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">API</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#204a87;font-weight:bold">var</span> <span style="color:#000">lambdaFunctions</span> <span style="color:#000;font-weight:bold">[]</span><span style="color:#ce5c00;font-weight:bold">*</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaAWSInfo</span>
-	<span style="color:#000">lambdaFn</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">HandleAWSLambda</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">LambdaName</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">helloSlackbot</span><span style="color:#000;font-weight:bold">),</span>
-		<span style="color:#000">helloSlackbot</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">iamDynamicRole</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
+	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
+	<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloSlackbot</span>),
+		<span style="color:#a6e22e">helloSlackbot</span>,
+		<span style="color:#a6e22e">iamDynamicRole</span>)
 
-	<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">api</span> <span style="color:#000;font-weight:bold">{</span>
-		<span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">_</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">api</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewResource</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;/slack&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#000">_</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">err</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">apiGatewayResource</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewMethod</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;POST&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">http</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">StatusCreated</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">nil</span> <span style="color:#ce5c00;font-weight:bold">!=</span> <span style="color:#000">err</span> <span style="color:#000;font-weight:bold">{</span>
-			<span style="color:#204a87">panic</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Failed to create /hello resource&#34;</span><span style="color:#000;font-weight:bold">)</span>
-		<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#000;font-weight:bold">}</span>
-	<span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87">append</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">lambdaFunctions</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">lambdaFn</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+	<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">api</span> {
+		<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">api</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/slack&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
+		<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;POST&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusCreated</span>)
+		<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">err</span> {
+			panic(<span style="color:#e6db74">&#34;Failed to create /hello resource&#34;</span>)
+		}
+	}
+	<span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
+}</code></pre></div>
 
 <p>A few items to note here:</p>
 
@@ -604,26 +1450,26 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#204a87;font-weight:bold">func</span> <span style="color:#000">main</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#000;font-weight:bold">{</span>
-	<span style="color:#8f5902;font-style:italic">// Register the function with the API Gateway
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">apiStage</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewStage</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;v1&#34;</span><span style="color:#000;font-weight:bold">)</span>
-	<span style="color:#000">apiGateway</span> <span style="color:#ce5c00;font-weight:bold">:=</span> <span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">NewAPIGateway</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaSlackbot&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">apiStage</span><span style="color:#000;font-weight:bold">)</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+	<span style="color:#75715e">// Register the function with the API Gateway
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
+	<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>, <span style="color:#a6e22e">apiStage</span>)
 
-	<span style="color:#8f5902;font-style:italic">// Deploy it
-</span><span style="color:#8f5902;font-style:italic"></span>	<span style="color:#000">sparta</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Main</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;SpartaSlackbot&#34;</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#000">fmt</span><span style="color:#000;font-weight:bold">.</span><span style="color:#000">Sprintf</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Sparta app that responds to Slack commands&#34;</span><span style="color:#000;font-weight:bold">),</span>
-		<span style="color:#000">spartaLambdaFunctions</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">),</span>
-		<span style="color:#000">apiGateway</span><span style="color:#000;font-weight:bold">,</span>
-		<span style="color:#204a87;font-weight:bold">nil</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000;font-weight:bold">}</span></code></pre></div>
+	<span style="color:#75715e">// Deploy it
+</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>,
+		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Sparta app that responds to Slack commands&#34;</span>),
+		<span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">apiGateway</span>),
+		<span style="color:#a6e22e">apiGateway</span>,
+		<span style="color:#66d9ef">nil</span>)
+}</code></pre></div>
 
 <p>and provision the service:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre></div>
 
 <p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
 INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
 INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre></div>
 
@@ -675,70 +1521,970 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
 
 <p>Before moving on, remember to decommission the service via:</p>
 
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run slack.go delete</code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run slack.go delete</code></pre></div>
 
 <h1 id="wrapping-up">Wrapping Up</h1>
 
 <p>This example provides a good overview of Sparta &amp; Slack integration, including how to handle external requests that are not <code>application/json</code> formatted.</p>
 
 
-    
-    
-        <div class="chevrons">
-    <div id="navigation">
-<a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fa fa-chevron-left"></i><label>CORS</label></a>
-    <a class="nav nav-next" href="/reference/application/" title="Application Customization" style="margin-right: 0px;"><label>Application Customization</label><i class="fa fa-chevron-right"></i></a></div>
-  </div>
-
-  </section>
-</article>
-
-<footer>
-
-<div class="footline">
-    
-
-    
-
-  
-    <div class="date">
-        <i class='fa fa-calendar'></i> Last update on 09/03/2016
-    </div>
-    
-
-    <div class="github-link">
-      <a href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/slack.md" target="blank"><i class="fa fa-code-fork"></i>
-        Improve this page</a>
-    </div>
-  </div>
-
-
-	<div>
-
-
-  
-    
-  
-
-
-
-	</div>
+<footer class=" footline" >
+	
 </footer>
 
-<script src="/js/clipboard.min.js"></script>
 
-<link href="/css/featherlight.min.css" rel="stylesheet">
-<script src="/js/featherlight.min.js"></script>
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
 
 
+        
+            <a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fas fa-chevron-left"></i></a>
+        
+        
+            <a class="nav nav-next" href="/reference/application/" title="Application Customization" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
+        
+    </div>
 
-<script src="/theme-flex/script.js"></script>
-
+    </section>
     
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539321771"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539321771"></script>
+    <script src="/js/jquery.sticky.js?1539321771"></script>
+    <script src="/js/featherlight.min.js?1539321771"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539321771"></script>
+    <script src="/js/highlight.pack.js?1539321771"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1539321771"></script>
+    <script src="/js/learn.js?1539321771"></script>
+    <script src="/js/hugo-learn.js?1539321771"></script>
 
+    <link href="/mermaid/mermaid.css?1539321771" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539321771"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
     
-    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    
+  gtag('config', 'UA-70794971-2');
+</script>
   </body>
 </html>
+

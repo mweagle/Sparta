@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>_meta on Sparta Documentation</title>
+    <title>_Meta on Documentation for Hugo Learn Theme</title>
     <link>/meta/</link>
-    <description>Recent content in _meta on Sparta Documentation</description>
+    <description>Recent content in _Meta on Documentation for Hugo Learn Theme</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
+    <language>en-US</language>
     <lastBuildDate>Sat, 24 Feb 2018 06:29:36 +0000</lastBuildDate>
     
 	<atom:link href="/meta/index.xml" rel="self" type="application/rss+xml" />
