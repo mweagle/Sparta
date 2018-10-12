@@ -18,7 +18,7 @@ import (
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 )
 
-const localWorkDir = "./sparta"
+const localWorkDir = "./.sparta"
 
 var header = strings.Repeat("-", 80)
 
