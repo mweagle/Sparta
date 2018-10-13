@@ -7,6 +7,13 @@
 	"content": " The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions. Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.\nThere are several event sources available. They are grouped into Pull and Push types. Pull based models use sparta.EventSourceMapping values, as the trigger configuration is stored in the AWS Lambda service. Push based types use service specific sparta.*Permission types to denote the fact that the trigger logic is configured in the remote service.\nPull Based  DynamoDB Kinesis SQS  Push Based  CloudFormation NOT YET IMPLEMENTED CloudWatch Events CloudWatch Logs Cognito NOT YET IMPLEMENTED S3 SES SNS  "
 },
 {
+	"uri": "/reference/archetypes/",
+	"title": "Archetype Constructors",
+	"tags": [],
+	"description": "",
+	"content": "TODO - document the archetype constructor functions.\n"
+},
+{
 	"uri": "/reference/service_scoped_custom_resource/",
 	"title": "Service Custom Resources",
 	"tags": [],
