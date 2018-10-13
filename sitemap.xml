@@ -83,6 +83,11 @@
   </url>
   
   <url>
+    <loc>/reference/custom_lambda_resources/</loc>
+    <lastmod>2016-03-09T19:56:50+01:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/eventsources/cloudwatchevents/</loc>
     <lastmod>2018-10-11T22:22:51-07:00</lastmod>
   </url>

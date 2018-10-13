@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title>FAQ :: Sparta - AWS Lambda Microservices</title>
+    <title>CloudFormation Resources :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1539442384" rel="stylesheet">
@@ -34,7 +34,7 @@
     </style>
     
   </head>
-  <body class="" data-url="/reference/faq/">
+  <body class="" data-url="/reference/custom_lambda_resources/">
     <nav id="sidebar" class="">
 
 
@@ -882,7 +882,7 @@
  
   
     
-      <li data-nav-id="/reference/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item ">
+      <li data-nav-id="/reference/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item active">
         <a href="/reference/custom_lambda_resources/">
         CloudFormation Resources
         
@@ -1110,7 +1110,7 @@
  
   
     
-      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item active">
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
         <a href="/reference/faq/">
         FAQ
         
@@ -1242,9 +1242,6 @@
     
     <section id="footer">
       
-  Build: 4a87b961<p/>
-  Date: 2018-09-03 10:32:11 -0700 PDT
-
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
 
@@ -1267,7 +1264,7 @@
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/faq.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/custom_lambda_resources.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1296,7 +1293,7 @@
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > FAQ
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > CloudFormation Resources
           
          
           
@@ -1310,40 +1307,13 @@
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li>
+<li><a href="#introduction">Introduction</a>
 <ul>
-<li><a href="#cloudformation">CloudFormation</a>
-<ul>
-<li><a href="#how-do-i-create-dynamic-resource-arns">How do I create dynamic resource ARNs?</a></li>
-</ul></li>
-<li><a href="#development">Development</a>
-<ul>
-<li><a href="#how-do-i-configure-aws-sdk-settings">How do I configure AWS SDK settings?</a></li>
-<li><a href="#what-are-the-minimum-iam-priviliges-for-sparta-developers">What are the <em>Minimum</em> IAM Priviliges for Sparta developers?</a></li>
-<li><a href="#what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</a></li>
-<li><a href="#what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</a></li>
-<li><a href="#what-working-directory-should-i-use">What working directory should I use?</a></li>
-<li><a href="#how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</a></li>
-</ul></li>
-<li><a href="#event-sources-ses">Event Sources - SES</a>
-<ul>
-<li><a href="#where-does-the-spartaruleset-come-from">Where does the <em>SpartaRuleSet</em> come from?</a></li>
-<li><a href="#why-does-provision-not-always-enable-the-spartaruleset">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</a></li>
-</ul></li>
-<li><a href="#operations">Operations</a>
-<ul>
-<li><a href="#how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</a></li>
-<li><a href="#how-can-i-monitor-my-lambda-function">How can I monitor my Lambda function?</a></li>
-<li><a href="#where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</a></li>
-<li><a href="#where-can-i-view-sparta-s-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</a></li>
-<li><a href="#how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</a></li>
-<li><a href="#how-can-i-provide-environment-variables-to-lambda-functions">How can I provide environment variables to lambda functions?</a></li>
-<li><a href="#does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</a></li>
-<li><a href="#how-do-i-forward-additional-metrics">How do I forward additional metrics?</a></li>
-<li><a href="#how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</a></li>
-<li><a href="#how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</a></li>
-</ul></li>
-<li><a href="#future">Future</a></li>
+<li><a href="#1-resource-type">1. Resource Type</a></li>
+<li><a href="#2-request-parameters">2. Request Parameters</a></li>
+<li><a href="#3-command-handler">3. Command Handler</a></li>
+<li><a href="#4-register-type-provider">4. Register Type Provider</a></li>
+<li><a href="#5-annotate-template">5. Annotate Template</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -1358,7 +1328,7 @@
         
         <div id="body-inner">
           
-            <h1>FAQ</h1>
+            <h1>CloudFormation Resources</h1>
           
 
         
@@ -1366,333 +1336,149 @@
 
 
 
-<h2 id="cloudformation">CloudFormation</h2>
+<h1 id="introduction">Introduction</h1>
 
-<h3 id="how-do-i-create-dynamic-resource-arns">How do I create dynamic resource ARNs?</h3>
+<p>In addition to per-lambda <a href="/reference/custom_resources/">custom resources</a>, a service may benefit from the ability to
+include a service-scoped <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda backed CustomResource</a>.</p>
 
-<p>Linking AWS resources together often requires creating dynamic ARN
-references. This can be achieved by using <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Join">cloudformation.Join</a> expressions.</p>
+<p>Including a custom service scoped resource is a multi-step process.</p>
 
-<p>For instance:
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">gocf</span> <span style="color:#e6db74">&#34;github.com/mweagle/go-cloudformation&#34;</span>
-)
+<h2 id="1-resource-type">1. Resource Type</h2>
 
-<span style="color:#a6e22e">s3SiteBucketAllKeysResourceValue</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Join</span>(<span style="color:#e6db74">&#34;&#34;</span>,
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:s3:::&#34;</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">s3BucketResourceName</span>),
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;/*&#34;</span>))</code></pre></div></p>
+<p>The first step is to define a custom <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html">CloudFormation Resource Type</a></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">gocf</span> <span style="color:#e6db74">&#34;github.com/mweagle/go-cloudformation&#34;</span>
-)
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
+</span><span style="color:#75715e">// 1 - Define the custom type
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">spartaHelloWorldResourceType</span> = <span style="color:#e6db74">&#34;Custom::sparta::HelloWorldResource&#34;</span></code></pre></div>
 
- <span style="color:#a6e22e">AuthorizerURI</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Join</span>(<span style="color:#e6db74">&#34;&#34;</span>,
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:apigateway:&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::Region&#34;</span>).<span style="color:#a6e22e">String</span>(),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;:lambda:path/2015-03-31/functions/&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">myAWSLambdaInfo</span>.<span style="color:#a6e22e">LogicalResourceName</span>(), <span style="color:#e6db74">&#34;Arn&#34;</span>),
-                        <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;/invocations&#34;</span>)),</code></pre></div>
+<h2 id="2-request-parameters">2. Request Parameters</h2>
 
-<p>See the CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> docs for the set of attributes created by each
-resource. CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">pseudo-paramters</a> can be included in dynamic expresssions via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#Ref">gocf.Ref</a> expressions. For instance:</p>
+<p>The next step is to define the parameters that are supplied to the custom resource
+invocation. This is done via a <code>struct</code> that will be later embedded into the
+<a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand">CustomResourceCommand</a>.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::Region&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::AccountId&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::StackId&#34;</span>)
-<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#e6db74">&#34;AWS::StackName&#34;</span>)</code></pre></div>
-
-<h2 id="development">Development</h2>
-
-<hr />
-
-<h3 id="how-do-i-configure-aws-sdk-settings">How do I configure AWS SDK settings?</h3>
-
-<p>Sparta relies on standard AWS SDK configuration settings. See the <a href="https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html">official documentation</a> for more information.</p>
-
-<p>During development, configuration is typically done through environment variables:</p>
-
-<ul>
-<li><code>AWS_ACCESS_KEY_ID</code></li>
-<li><code>AWS_SECRET_ACCESS_KEY</code></li>
-<li><code>AWS_REGION</code></li>
-</ul>
-
-<h3 id="what-are-the-minimum-iam-priviliges-for-sparta-developers">What are the <em>Minimum</em> IAM Priviliges for Sparta developers?</h3>
-
-<p>The absolute minimum set of privileges an account needs is the following <a href="https://awspolicygen.s3.amazonaws.com/policygen.html">IAM Policy</a>:</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
-    <span style="color:#f92672">&#34;Statement&#34;</span>: [
-        {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;Stmt1505975332000&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStacks&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteStack&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:GetRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PutRolePolicy&#34;</span>
-            ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;*&#34;</span>
-            ]
-        },
-        {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;Stmt1505975332000&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;s3:PutObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetBucketVersioning&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:DeleteObject&#34;</span>
-            ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;arn:aws:s3:::PROVISION_TARGET_BUCKETNAME&#34;</span>
-            ]
-        }
-    ]
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SpartaCustomResourceRequest is what the UserProperties
+</span><span style="color:#75715e">// should be set to in the CustomResource invocation
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SpartaCustomResourceRequest</span> <span style="color:#66d9ef">struct</span> {
+  <span style="color:#a6e22e">Message</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringExpr</span>
 }</code></pre></div>
 
-<p>This set of privileges should be sufficient to deploy a Sparta application similar to <a href="https://github.com/mweagle/SpartaHelloWorld">SpartaHelloWorld</a>. Additional privileges may be required to enable different datasources.</p>
+<h2 id="3-command-handler">3. Command Handler</h2>
 
-<p>You can view the exact set of AWS API calls by enabling <code>--level debug</code> log verbosity. This log level includes all AWS API calls starting with release <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0200">0.20.0</a>.</p>
+<p>With the parameters defined, define the
+<a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand">CustomResourceCommand</a>
+that is responsible for performing the external operations based on the specified request
+parameters.</p>
 
-<h3 id="what-are-the-minimum-iam-privileges-to-provision-a-sparta-app-and-api-gateway">What are the minimum IAM privileges to provision a Sparta app and API Gateway</h3>
-
-<p>Your AWS user must have the following privileges. Ensure to update the <code>YOUR_S3_BUCKETNAME_HERE</code> value with your own S3 bucket name.</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
-    <span style="color:#f92672">&#34;Version&#34;</span>: <span style="color:#e6db74">&#34;2012-10-17&#34;</span>,
-    <span style="color:#f92672">&#34;Statement&#34;</span>: [
-        {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;VisualEditor0&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;cloudformation:CreateChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStacks&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeStackEvents&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:CreateStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DeleteStack&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:DescribeChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;cloudformation:ExecuteChangeSet&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:GetRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:CreateRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PutRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:PassRole&#34;</span>,
-                <span style="color:#e6db74">&#34;iam:DeleteRolePolicy&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:CreateFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:GetFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:GetFunctionConfiguration&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:AddPermission&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:DeleteFunction&#34;</span>,
-                <span style="color:#e6db74">&#34;lambda:RemovePermission&#34;</span>
-            ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;*&#34;</span>
-        },
-        {
-            <span style="color:#f92672">&#34;Sid&#34;</span>: <span style="color:#e6db74">&#34;VisualEditor1&#34;</span>,
-            <span style="color:#f92672">&#34;Effect&#34;</span>: <span style="color:#e6db74">&#34;Allow&#34;</span>,
-            <span style="color:#f92672">&#34;Action&#34;</span>: [
-                <span style="color:#e6db74">&#34;apigateway:DELETE&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:PUT&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:PATCH&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:POST&#34;</span>,
-                <span style="color:#e6db74">&#34;apigateway:GET&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:PutObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetObject&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:GetBucketVersioning&#34;</span>,
-                <span style="color:#e6db74">&#34;s3:DeleteObject&#34;</span>
-            ],
-            <span style="color:#f92672">&#34;Resource&#34;</span>: [
-                <span style="color:#e6db74">&#34;arn:aws:apigateway:*::*&#34;</span>,
-                <span style="color:#e6db74">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;&#34;</span>
-                <span style="color:#e6db74">&#34;arn:aws:s3:::&lt;YOUR_S3_BUCKETNAME_HERE&gt;/*&#34;</span>
-            ]
-        }
-    ]
-}</code></pre></div>
-
-<h3 id="what-flags-are-defined-during-aws-ami-compilation">What flags are defined during AWS AMI compilation?</h3>
-
-<ul>
-<li><strong>TAGS</strong>:         <code>-tags lambdabinary</code></li>
-<li><strong>ENVIRONMENT</strong>:  <code>GOOS=linux GOARCH=amd64</code></li>
-</ul>
-
-<h3 id="what-working-directory-should-i-use">What working directory should I use?</h3>
-
-<p>Your working directory should be the root of your Sparta application.  Eg, use</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">run</span> <span style="color:#a6e22e">main</span>.<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">provision</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">level</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span></code></pre></div>
-
-<p>rather than</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">go</span> <span style="color:#a6e22e">run</span> .<span style="color:#f92672">/</span><span style="color:#a6e22e">some</span><span style="color:#f92672">/</span><span style="color:#a6e22e">child</span><span style="color:#f92672">/</span><span style="color:#a6e22e">path</span><span style="color:#f92672">/</span><span style="color:#a6e22e">main</span>.<span style="color:#66d9ef">go</span> <span style="color:#a6e22e">provision</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">level</span> <span style="color:#a6e22e">info</span> <span style="color:#f92672">--</span><span style="color:#a6e22e">s3Bucket</span> <span style="color:#960050;background-color:#1e0010">$</span><span style="color:#a6e22e">S3_BUCKET</span></code></pre></div>
-
-<p>See <a href="https://github.com/mweagle/Sparta/issues/29">GitHub</a> for more details.</p>
-
-<h3 id="how-can-i-make-provision-faster">How can I make <code>provision</code> faster?</h3>
-
-<p>Starting with Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0112">v0.11.2</a>, you can supply an optional
-<em>&ndash;inplace</em> argument to the <code>provision</code> command. If this is set when provisioning updates to an existing stack,
-your Sparta application will verify that the <em>only</em> updates to the CloudFormation stack are code-level updates. If
-only code updates are detected, your Sparta application will parallelize <a href="http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode">UpdateFunctionCode</a> API calls directly to update the
-application code.</p>
-
-<p>Whether <em>&ndash;inplace</em> is valid is based on evaluating the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html">ChangeSet</a> results of the
-requested update operation.</p>
-
-<p><em>NOTE</em>: The <em>inplace</em> argument implies that your service state is not reflected in CloudFormation.</p>
-
-<h2 id="event-sources-ses">Event Sources - SES</h2>
-
-<hr />
-
-<h3 id="where-does-the-spartaruleset-come-from">Where does the <em>SpartaRuleSet</em> come from?</h3>
-
-<p>SES only permits a single <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_SetActiveReceiptRuleSet.html">active receipt rule</a>.  Additionally, it&rsquo;s possible that multiple Sparta-based services are handing different SES recipients.</p>
-
-<p>All Sparta-based services share the <em>SpartaRuleSet</em> SES ruleset, and uniquely identify their Rules by including the current servicename as part of the SES <a href="http://docs.aws.amazon.com/ses/latest/APIReference/API_CreateReceiptRule.html">ReceiptRule</a>.</p>
-
-<h3 id="why-does-provision-not-always-enable-the-spartaruleset">Why does <code>provision</code> not always enable the <em>SpartaRuleSet</em>?</h3>
-
-<p>Initial <em>SpartaRuleSet</em> will make it the active ruleset, but Sparta assumes that manual updates made outside of the context of the framework were done with good reason and doesn&rsquo;t attempt to override the user setting.</p>
-
-<h2 id="operations">Operations</h2>
-
-<hr />
-
-<h3 id="how-can-i-provision-a-service-dashboard">How can I provision a service dashboard?</h3>
-
-<p>Sparta <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">v0.13.0</a> adds support for the provisioning of a
-CloudWatch Dashboard that&rsquo;s dynamically created based on your service&rsquo;s topology. The dashboard
-is attached to the standard Sparta workflow via a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHook">WorkflowHook</a> as in:</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-golang" data-lang="golang"><span style="color:#75715e">// Setup the DashboardDecorator lambda hook
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">workflowHooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{
-	<span style="color:#a6e22e">ServiceDecorator</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">DashboardDecorator</span>(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#ae81ff">60</span>),
-}</code></pre></div>
-
-<p>See the <a href="https://github.com/mweagle/SpartaXRay">SpartaXRay</a> project for a complete example of provisioning a dashboard as below:</p>
-
-<p><img src="/images/faq/CloudWatchDashboard.jpg" alt="CloudWatchDashboard" /></p>
-
-<h3 id="how-can-i-monitor-my-lambda-function">How can I monitor my Lambda function?</h3>
-
-<p>If you plan on using your Lambdas in production, you&rsquo;ll probably want to be made aware of any excessive errors.</p>
-
-<p>You can easily do this by adding a CloudWatch alarm to your Lambda, in the decorator method.</p>
-
-<p>This example will push a notification to an SNS topic, and you can configure whatever action is appropriate from there.</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">lambdaDecorator</span>(<span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResourceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResource</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaFunction</span>,
-	<span style="color:#a6e22e">resourceMetadata</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">cfTemplate</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-	<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
-
-	<span style="color:#75715e">// setup CloudWatch alarm
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">alarmDimensions</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimensionList</span>
-	<span style="color:#a6e22e">alarmDimension</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimension</span>{<span style="color:#a6e22e">Name</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;FunctionName&#34;</span>), <span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">lambdaResourceName</span>).<span style="color:#a6e22e">String</span>()}
-	<span style="color:#a6e22e">alarmDimensions</span> = []<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchMetricDimension</span>{<span style="color:#a6e22e">alarmDimension</span>}
-
-	<span style="color:#a6e22e">lambdaErrorsAlarm</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudWatchAlarm</span>{
-		<span style="color:#a6e22e">ActionsEnabled</span>:     <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
-		<span style="color:#a6e22e">AlarmActions</span>:       <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringList</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;arn:aws:sns:us-east-1:123456789:SNSToNotifyMe&#34;</span>)),
-		<span style="color:#a6e22e">AlarmName</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;LambdaErrorAlarm&#34;</span>),
-		<span style="color:#a6e22e">ComparisonOperator</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;GreaterThanOrEqualToThreshold&#34;</span>),
-		<span style="color:#a6e22e">Dimensions</span>:         <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">alarmDimensions</span>,
-		<span style="color:#a6e22e">EvaluationPeriods</span>:  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;1&#34;</span>),
-		<span style="color:#a6e22e">Period</span>:             <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;300&#34;</span>),
-		<span style="color:#a6e22e">MetricName</span>:         <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Errors&#34;</span>),
-		<span style="color:#a6e22e">Namespace</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;AWS/Lambda&#34;</span>),
-		<span style="color:#a6e22e">Statistic</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Sum&#34;</span>),
-		<span style="color:#a6e22e">Threshold</span>:          <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;3.0&#34;</span>),
-		<span style="color:#a6e22e">Unit</span>:               <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Count&#34;</span>),
-	}
-	<span style="color:#a6e22e">cfTemplate</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#e6db74">&#34;LambdaErrorAlaram&#34;</span>, <span style="color:#a6e22e">lambdaErrorsAlarm</span>)
-
-	<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
-
-<h3 id="where-can-i-view-my-function-s-logger-output">Where can I view my function&rsquo;s <code>*logger</code> output?</h3>
-
-<p>Each lambda function includes privileges to write to <a href="https://console.aws.amazon.com/cloudwatch/home">CloudWatch Logs</a>.  The <code>*logrus.logger</code> output is written (with a brief delay) to a lambda-specific log group.</p>
-
-<p>The CloudWatch log group name includes a sanitized version of your <strong>go</strong> function name &amp; owning service name.</p>
-
-<h3 id="where-can-i-view-sparta-s-golang-spawn-metrics">Where can I view Sparta&rsquo;s golang spawn metrics?</h3>
-
-<p>Visit the <a href="https://aws.amazon.com/cloudwatch/">CloudWatch Metrics</a> AWS console page and select the <code>Sparta/{SERVICE_NAME}</code> namespace:</p>
-
-<p><img src="/images/faq/CloudWatch_Management_Console.jpg" alt="CloudWatch" /></p>
-
-<p>Sparta publishes two counters:</p>
-
-<ul>
-<li><code>ProcessSpawned</code>: A new <strong>go</strong> process was spawned to handle requests</li>
-<li><code>ProcessReused</code>: An existing <strong>go</strong> process was used to handle requests.  See also the discussion on AWS Lambda <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">container reuse</a>.</li>
-</ul>
-
-<h3 id="how-can-i-include-additional-aws-resources-as-part-of-my-sparta-application">How can I include additional AWS resources as part of my Sparta application?</h3>
-
-<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with additional AWS resources.</p>
-
-<p>For more flexibility, use a <a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHook</a>.</p>
-
-<h3 id="how-can-i-provide-environment-variables-to-lambda-functions">How can I provide environment variables to lambda functions?</h3>
-
-<p>Sparta uses conditional compilation rather than environment variables. See <a href="/reference/application/environments/">Managing Environments</a> for more information.</p>
-
-<h3 id="does-sparta-support-versioning-aliasing">Does Sparta support Versioning &amp; Aliasing?</h3>
-
-<p>Yes.</p>
-
-<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AutoIncrementingLambdaVersionInfo">AutoIncrementingLambdaVersionInfo</a> resource. During each <code>provision</code> operation, the <code>AutoIncrementingLambdaVersionInfo</code> resource will dynamically update the CloudFormation template with a new version.</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">autoIncrementingInfo</span>, <span style="color:#a6e22e">autoIncrementingInfoErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">AddAutoIncrementingLambdaVersionResource</span>(<span style="color:#a6e22e">serviceName</span>,
-  <span style="color:#a6e22e">lambdaResourceName</span>,
-  <span style="color:#a6e22e">cfTemplate</span>,
-  <span style="color:#a6e22e">logger</span>)</code></pre></div>
-
-<p>You can also move the &ldquo;alias pointer&rdquo; by referencing one or more of the versions available in the returned struct. For example, to set the alias pointer to the most recent version:</p>
-
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Add an alias to the version we&#39;re publishing as part of this `provision` operation
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">aliasResourceName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;Alias&#34;</span>, <span style="color:#a6e22e">lambdaResourceName</span>)
-<span style="color:#a6e22e">aliasResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaAlias</span>{
-    <span style="color:#a6e22e">Name</span>:            <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;MostRecentVersion&#34;</span>),
-    <span style="color:#a6e22e">FunctionName</span>:    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">lambdaResourceName</span>).<span style="color:#a6e22e">String</span>(),
-    <span style="color:#a6e22e">FunctionVersion</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">autoIncrementingInfo</span>.<span style="color:#a6e22e">CurrentVersionResourceName</span>, <span style="color:#e6db74">&#34;Version&#34;</span>).<span style="color:#a6e22e">String</span>(),
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SpartaHelloWorldResource is a simple POC showing how to create custom resources
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span> <span style="color:#66d9ef">struct</span> {
+  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudFormationCustomResource</span>
+  <span style="color:#a6e22e">SpartaCustomResourceRequest</span>
 }
-<span style="color:#a6e22e">cfTemplate</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#a6e22e">aliasResourceName</span>, <span style="color:#a6e22e">aliasResource</span>)</code></pre></div>
 
-<h3 id="how-do-i-forward-additional-metrics">How do I forward additional metrics?</h3>
+<span style="color:#75715e">// Create implements resource create
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
+  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
+  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
 
-<p>Sparta-deployed AWS Lambda functions always operate with CloudWatch Metrics <code>putMetric</code> privileges.  Your lambda code can call <code>putMetric</code> with application-specific data.</p>
+  <span style="color:#a6e22e">requestPropsErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">ResourceProperties</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">command</span>)
+  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">requestPropsErr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">requestPropsErr</span>
+  }
+  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;create: &#34;</span>, <span style="color:#a6e22e">command</span>.<span style="color:#a6e22e">Message</span>.<span style="color:#a6e22e">Literal</span>)
+  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
+  <span style="color:#e6db74">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;Created message: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">command</span>.<span style="color:#a6e22e">Message</span>.<span style="color:#a6e22e">Literal</span>,
+  }, <span style="color:#66d9ef">nil</span>
+}
 
-<h3 id="how-do-i-setup-alerts-on-additional-metrics">How do I setup alerts on additional metrics?</h3>
+<span style="color:#75715e">// Update implements resource update
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
+  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
+  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#66d9ef">nil</span>
+}
 
-<p>Define a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> function and annotate the <code>*gocf.Template</code> with the needed <a href="https://godoc.org/github.com/crewjam/go-cloudformation#CloudWatchAlarm">AWS::CloudWatch::Alarm</a> values.  Use <a href="https://godoc.org/github.com/mweagle/Sparta#CloudFormationResourceName">CloudFormationResourceName(prefix, &hellip;parts)</a> to help generate unique resource names.</p>
+<span style="color:#75715e">// Delete implements resource delete
+</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Delete</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
+  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
+  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#66d9ef">nil</span>
+}</code></pre></div>
 
-<h3 id="how-can-i-determine-the-outputs-available-in-sparta-discover-for-dynamic-aws-resources">How can I determine the outputs available in sparta.Discover() for dynamic AWS resources?</h3>
+<h2 id="4-register-type-provider">4. Register Type Provider</h2>
 
-<p>The list of registered output provider types is defined by <code>cloudformationTypeMapDiscoveryOutputs</code> in <a href="https://github.com/mweagle/Sparta/blob/master/cloudformation_resources.go">cloudformation_resources.go</a>.  See the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation Resource Types Reference</a> for information on interpreting the values.</p>
+<p>To make the new type available to Sparta&rsquo;s internal CloudFormation template
+marshalling, register the new type via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#RegisterCustomResourceProvider">go-cloudformation.RegisterCustomResourceProvider</a>:</p>
 
-<h2 id="future">Future</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
+  <span style="color:#a6e22e">customResourceFactory</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">resourceType</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ResourceProperties</span> {
+    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">resourceType</span> {
+    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">spartaHelloWorldResourceType</span>:
+      <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">SpartaHelloWorldResource</span>{}
+    }
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+  }
+  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">RegisterCustomResourceProvider</span>(<span style="color:#a6e22e">customResourceFactory</span>)
+}</code></pre></div>
+
+<h2 id="5-annotate-template">5. Annotate Template</h2>
+
+<p>The final step is to ensure the custom resource command is included in the Sparta
+binary that defines your service and then create an invocation of that command. The
+annotation is expressed as a <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a>
+that performs both operations as part of the general service build
+lifecycle&hellip;</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">customResourceHooks</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span> {
+  <span style="color:#75715e">// Add the custom resource decorator
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">customResourceDecorator</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
+    <span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">template</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
+    <span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
+    <span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
+    <span style="color:#a6e22e">noop</span> <span style="color:#66d9ef">bool</span>,
+    <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
+
+    <span style="color:#75715e">// 1. Ensure the Lambda Function is registered
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">customResourceName</span>, <span style="color:#a6e22e">customResourceNameErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">EnsureCustomResourceHandler</span>(<span style="color:#a6e22e">serviceName</span>,
+      <span style="color:#a6e22e">spartaHelloWorldResourceType</span>,
+      <span style="color:#66d9ef">nil</span>, <span style="color:#75715e">// This custom action doesn&#39;t need to access other AWS resources
+</span><span style="color:#75715e"></span>      []<span style="color:#66d9ef">string</span>{},
+      <span style="color:#a6e22e">template</span>,
+      <span style="color:#a6e22e">S3Bucket</span>,
+      <span style="color:#a6e22e">S3Key</span>,
+      <span style="color:#a6e22e">logger</span>)
+
+    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">customResourceNameErr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">customResourceNameErr</span>
+    }
+
+    <span style="color:#75715e">// 2. Create the request for the invocation of the lambda resource with
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// parameters
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">spartaCustomResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">SpartaHelloWorldResource</span>{}
+    <span style="color:#a6e22e">spartaCustomResource</span>.<span style="color:#a6e22e">ServiceToken</span> = <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">customResourceName</span>, <span style="color:#e6db74">&#34;Arn&#34;</span>)
+    <span style="color:#a6e22e">spartaCustomResource</span>.<span style="color:#a6e22e">Message</span> = <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Custom resource activated!&#34;</span>)
+
+    <span style="color:#a6e22e">resourceInvokerName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;SpartaCustomResource&#34;</span>,
+      <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%v&#34;</span>, <span style="color:#a6e22e">S3Bucket</span>),
+      <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%v&#34;</span>, <span style="color:#a6e22e">S3Key</span>))
+
+    <span style="color:#75715e">// Add it
+</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">template</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#a6e22e">resourceInvokerName</span>, <span style="color:#a6e22e">spartaCustomResource</span>)
+    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+  }
+  <span style="color:#75715e">// Add the decorator to the template
+</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">hooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{}
+  <span style="color:#a6e22e">hooks</span>.<span style="color:#a6e22e">ServiceDecorators</span> = []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
+    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookFunc</span>(<span style="color:#a6e22e">customResourceDecorator</span>),
+  }
+  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hooks</span>
+}</code></pre></div>
+
+<p>Provide the hooks structure to <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">MainEx</a> to
+include this custom resource with your service&rsquo;s provisioning lifecycle.</p>
 
 
 <footer class=" footline" >
@@ -2345,6 +2131,74 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
             
                 
                     
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                 
                 
 
@@ -2484,19 +2338,6 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
             
         
                     
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
             
         
                     
@@ -2504,61 +2345,6 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
             
             
                 
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                        
-                        
                     
                 
                 
@@ -2626,10 +2412,10 @@ is attached to the standard Sparta workflow via a <a href="https://godoc.org/git
 
 
         
-            <a class="nav nav-prev" href="/reference/limitations/" title="Limitations"> <i class="fas fa-chevron-left"></i></a>
+            <a class="nav nav-prev" href="/reference/cicd/" title="CI/CD"> <i class="fas fa-chevron-left"></i></a>
         
         
-            <a class="nav nav-next" href="/related_projects/" title="Related Projects" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
+            <a class="nav nav-next" href="/reference/custom_resources/" title="Custom Resources" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
         
     </div>
 
