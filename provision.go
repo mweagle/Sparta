@@ -134,7 +134,7 @@ func EnsureCustomResourceHandler(serviceName string,
 	// Prefix
 	commandType := reflect.TypeOf(command)
 	customResourceTypeName := fmt.Sprintf("%T", command)
-	prefixName := fmt.Sprintf("%s-Sparta-CFRes", serviceName)
+	prefixName := fmt.Sprintf("%s-CFRes", serviceName)
 	subscriberHandlerName := CloudFormationResourceName(prefixName, customResourceTypeName)
 
 	//////////////////////////////////////////////////////////////////////////////
