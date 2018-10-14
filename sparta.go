@@ -167,11 +167,6 @@ var CommonIAMStatements = struct {
 				gocf.String("*")),
 		},
 		{
-			Action:   []string{"cloudwatch:PutMetricData"},
-			Effect:   "Allow",
-			Resource: wildcardArn,
-		},
-		{
 			Effect: "Allow",
 			Action: []string{"cloudformation:DescribeStacks",
 				"cloudformation:DescribeStackResource"},
@@ -181,7 +176,8 @@ var CommonIAMStatements = struct {
 		{
 			Effect: "Allow",
 			Action: []string{"xray:PutTraceSegments",
-				"xray:PutTelemetryRecords"},
+				"xray:PutTelemetryRecords",
+				"cloudwatch:PutMetricData"},
 			Resource: gocf.String("*"),
 		},
 	},
