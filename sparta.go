@@ -739,7 +739,6 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 			if len(parts) > 1 {
 				penultimatePart = parts[len(parts)-2]
 			}
-			fmt.Printf("FUNCTION NAME: %s\nPARTS: %#v\n", lambdaFuncName, parts)
 			intermediateName := fmt.Sprintf("%s-%s", penultimatePart, lastPart)
 			reClean := regexp.MustCompile(`[\*\(\)]+`)
 			canonicalName = reClean.ReplaceAllString(intermediateName, "")
