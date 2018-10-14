@@ -123,7 +123,7 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
       
       <guid>/reference/custom_lambda_resources/</guid>
       <description>Introduction In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
-Including a custom service scoped resource is a multi-step process.
+Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
 1. Resource Type The first step is to define a custom CloudFormation Resource Type
 //////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;#34;Custom::sparta::HelloWorldResource&amp;#34; 2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
     </item>
