@@ -12,19 +12,19 @@
     <title>Custom Application Commands :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539442917" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539442917" rel="stylesheet">
-    <link href="/css/hybrid.css?1539442917" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539442917" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539442917" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539442917" rel="stylesheet">
-    <link href="/css/theme.css?1539442917" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539442917" rel="stylesheet">
+    <link href="/css/nucleus.css?1539520217" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539520217" rel="stylesheet">
+    <link href="/css/hybrid.css?1539520217" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539520217" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539520217" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539520217" rel="stylesheet">
+    <link href="/css/theme.css?1539520217" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539520217" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539442917" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1539520217" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539442917"></script>
+    <script src="/js/jquery-2.x.min.js?1539520217"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -50,14 +50,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539442917"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539442917"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1539520217"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539520217"></script>
 <script type="text/javascript">
     
         var baseurl = '\/';
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539442917"></script>
+<script type="text/javascript" src="/js/search.js?1539520217"></script>
 
     
   </div>
@@ -450,25 +450,6 @@
       
               
     </li>
-  
- 
-
-            
-          
-            
-            
-
-
- 
-  
-    
-      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
-        <a href="/reference/service_scoped_custom_resource/">
-        Service Custom Resources
-        
-        </a>
-    </li>
-     
   
  
 
@@ -1381,26 +1362,33 @@
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega --help
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go --help
 Provision AWS Lambda and EC2 instance with same code
 
 Usage:
-  SpartaOmega <span style="color:#f92672">[</span>command<span style="color:#f92672">]</span>
+  main <span style="color:#f92672">[</span>command<span style="color:#f92672">]</span>
 
 Available Commands:
-  httpServer  Sample HelloWorld HTTP server
-  version     Sparta framework version
-  provision   Provision service
   delete      Delete service
-  execute     Execute
   describe    Describe service
-  explore     Interactively explore service
+  execute     Start the application and begin handling events
+  explore     Interactively explore a provisioned service
+  help        Help about any command
+  httpServer  Sample HelloWorld HTTP server
+  profile     Interactively examine service pprof output
+  provision   Provision service
+  status      Produce a report <span style="color:#66d9ef">for</span> a provisioned service
+  version     Display version information
 
 Flags:
-  -l, --level string   Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
-  -n, --noop           Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
-
-Use <span style="color:#e6db74">&#34;SpartaOmega [command] --help&#34;</span> <span style="color:#66d9ef">for</span> more information about a command.</code></pre></div>
+  -f, --format string    Log format <span style="color:#f92672">[</span>text, json<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;text&#34;</span><span style="color:#f92672">)</span>
+  -h, --help             help <span style="color:#66d9ef">for</span> main
+      --ldflags string   Go linker string definition flags <span style="color:#f92672">(</span>https://golang.org/cmd/link/<span style="color:#f92672">)</span>
+  -l, --level string     Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
+      --nocolor          Boolean flag to suppress colorized TTY output
+  -n, --noop             Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
+  -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
+  -z, --timestamps       Include UTC timestamp log line prefix</code></pre></div>
 
 <p>And you can query for user-command specific usage as in:</p>
 
@@ -1720,22 +1708,6 @@ Global Flags:
                     
             
         
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2375,20 +2347,20 @@ Global Flags:
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539442917"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539442917"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539442917"></script>
-    <script src="/js/jquery.sticky.js?1539442917"></script>
-    <script src="/js/featherlight.min.js?1539442917"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539442917"></script>
-    <script src="/js/highlight.pack.js?1539442917"></script>
+    <script src="/js/clipboard.min.js?1539520217"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539520217"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539520217"></script>
+    <script src="/js/jquery.sticky.js?1539520217"></script>
+    <script src="/js/featherlight.min.js?1539520217"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539520217"></script>
+    <script src="/js/highlight.pack.js?1539520217"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539442917"></script>
-    <script src="/js/learn.js?1539442917"></script>
-    <script src="/js/hugo-learn.js?1539442917"></script>
+    <script src="/js/modernizr.custom.71422.js?1539520217"></script>
+    <script src="/js/learn.js?1539520217"></script>
+    <script src="/js/hugo-learn.js?1539520217"></script>
 
-    <link href="/mermaid/mermaid.css?1539442917" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539442917"></script>
+    <link href="/mermaid/mermaid.css?1539520217" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539520217"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

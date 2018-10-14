@@ -12,19 +12,19 @@
     <title>CLI Options :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539442917" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539442917" rel="stylesheet">
-    <link href="/css/hybrid.css?1539442917" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539442917" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539442917" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539442917" rel="stylesheet">
-    <link href="/css/theme.css?1539442917" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539442917" rel="stylesheet">
+    <link href="/css/nucleus.css?1539520217" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1539520217" rel="stylesheet">
+    <link href="/css/hybrid.css?1539520217" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1539520217" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1539520217" rel="stylesheet">
+    <link href="/css/auto-complete.css?1539520217" rel="stylesheet">
+    <link href="/css/theme.css?1539520217" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1539520217" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539442917" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1539520217" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539442917"></script>
+    <script src="/js/jquery-2.x.min.js?1539520217"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -50,14 +50,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539442917"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539442917"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1539520217"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1539520217"></script>
 <script type="text/javascript">
     
         var baseurl = '\/';
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539442917"></script>
+<script type="text/javascript" src="/js/search.js?1539520217"></script>
 
     
   </div>
@@ -450,25 +450,6 @@
       
               
     </li>
-  
- 
-
-            
-          
-            
-            
-
-
- 
-  
-    
-      <li data-nav-id="/reference/service_scoped_custom_resource/" title="Service Custom Resources" class="dd-item ">
-        <a href="/reference/service_scoped_custom_resource/">
-        Service Custom Resources
-        
-        </a>
-    </li>
-     
   
  
 
@@ -1336,6 +1317,7 @@
 <li><a href="#explore">Explore</a></li>
 <li><a href="#profile">Profile</a></li>
 <li><a href="#provision">Provision</a></li>
+<li><a href="#status">Status</a></li>
 <li><a href="#version">Version</a></li>
 </ul></li>
 </ul>
@@ -1370,11 +1352,12 @@ Usage:
 Available Commands:
   delete      Delete service
   describe    Describe service
-  execute     Execute
-  explore     Interactively explore service
+  execute     Start the application and begin handling events
+  explore     Interactively explore a provisioned service
   help        Help about any command
   profile     Interactively examine service pprof output
   provision   Provision service
+  status      Produce a report <span style="color:#66d9ef">for</span> a provisioned service
   version     Display version information
 
 Flags:
@@ -1382,9 +1365,12 @@ Flags:
   -h, --help             help <span style="color:#66d9ef">for</span> main
       --ldflags string   Go linker string definition flags <span style="color:#f92672">(</span>https://golang.org/cmd/link/<span style="color:#f92672">)</span>
   -l, --level string     Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
+      --nocolor          Boolean flag to suppress colorized TTY output
   -n, --noop             Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
   -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
-  -z, --timestamps       Include UTC timestamp log line prefix</code></pre></div>
+  -z, --timestamps       Include UTC timestamp log line prefix
+
+Use <span style="color:#e6db74">&#34;main [command] --help&#34;</span> <span style="color:#66d9ef">for</span> more information about a command.</code></pre></div>
 
 <p>It&rsquo;s also possible to add <a href="/reference/application/custom_flags">custom flags</a> and/or <a href="/reference/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
 
@@ -1420,17 +1406,37 @@ Flags:
 
 <p>The <code>provision</code> option is the subcommand most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
 
+<h2 id="status">Status</h2>
+
+<p>The <code>status</code> option queries AWS for the current stack status
+and produces an optionally account-id redacted report. Stack
+outputs, tags, and other metadata are included in the status report:</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go status --redact
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : <span style="color:#ae81ff">1</span>.5.0
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>status UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:28:18Z&#34;</span>
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> StackId                                       Id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99&#34;</span>
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Stack status                                  State<span style="color:#f92672">=</span>UPDATE_COMPLETE
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Created                                       Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-02 03:14:59.127 +0000 UTC&#34;</span>
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Last Update                                   Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-06 14:20:40.267 +0000 UTC&#34;</span>
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Tag                                           io:gosparta:buildId<span style="color:#f92672">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9</code></pre></div>
+
 <h2 id="version">Version</h2>
 
 <p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go version
 INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : <span style="color:#ae81ff">1</span>.2.1
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b76b71d
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : <span style="color:#ae81ff">1</span>.5.0
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
 INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>version UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-07-20T04:44:17Z&#34;</span>
+INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>version UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:27:36Z&#34;</span>
 INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════</code></pre></div>
 
 
@@ -1738,22 +1744,6 @@ INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><
                     
             
         
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2388,20 +2378,20 @@ INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539442917"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539442917"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539442917"></script>
-    <script src="/js/jquery.sticky.js?1539442917"></script>
-    <script src="/js/featherlight.min.js?1539442917"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539442917"></script>
-    <script src="/js/highlight.pack.js?1539442917"></script>
+    <script src="/js/clipboard.min.js?1539520217"></script>
+    <script src="/js/perfect-scrollbar.min.js?1539520217"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1539520217"></script>
+    <script src="/js/jquery.sticky.js?1539520217"></script>
+    <script src="/js/featherlight.min.js?1539520217"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1539520217"></script>
+    <script src="/js/highlight.pack.js?1539520217"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539442917"></script>
-    <script src="/js/learn.js?1539442917"></script>
-    <script src="/js/hugo-learn.js?1539442917"></script>
+    <script src="/js/modernizr.custom.71422.js?1539520217"></script>
+    <script src="/js/learn.js?1539520217"></script>
+    <script src="/js/hugo-learn.js?1539520217"></script>
 
-    <link href="/mermaid/mermaid.css?1539442917" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539442917"></script>
+    <link href="/mermaid/mermaid.css?1539520217" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1539520217"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
