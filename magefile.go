@@ -4,23 +4,19 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/magefile/mage/mg" // mg contains helpful utility functions, like Deps
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
+	spartaMage "github.com/mweagle/Sparta/aws/magefile"
 )
 
 const localWorkDir = "./.sparta"
-
-var header = strings.Repeat("-", 80)
 
 var ignoreSubdirectoryPaths = []string{
 	".vendor",
@@ -47,72 +43,12 @@ func mageScript(commands [][]string) error {
 	}
 	return nil
 }
-func mageLog(formatSpecifier string, args ...interface{}) {
-	if mg.Verbose() {
-		if len(args) != 0 {
-			log.Printf(formatSpecifier, args...)
-		} else {
-			log.Printf(formatSpecifier)
-		}
-	}
-}
-
-func sourceFilesOfType(extension string) ([]string, error) {
-	testExtension := strings.TrimPrefix(extension, ".")
-	testExtension = fmt.Sprintf(".%s", testExtension)
-
-	files := make([]string, 0)
-	walker := func(path string, info os.FileInfo, err error) error {
-		contains := false
-		for _, eachComponent := range ignoreSubdirectoryPaths {
-			contains = strings.Contains(path, eachComponent)
-			if contains {
-				break
-			}
-		}
-		if !contains && (filepath.Ext(path) == testExtension) {
-			files = append(files, path)
-		}
-		return nil
-	}
-	goSourceFilesErr := filepath.Walk(".", walker)
-	return files, goSourceFilesErr
-}
-
-func applyToSource(fileExtension string, commandParts ...string) error {
-	if len(commandParts) <= 0 {
-		return errors.New("applyToSource requires a command to apply to source files")
-	}
-	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension)
-	if eligibleSourceFilesErr != nil {
-		return eligibleSourceFilesErr
-	}
-
-	mageLog(header)
-	mageLog("Applying `%s` to %d `*.%s` source files", commandParts[0], len(eligibleSourceFiles), fileExtension)
-	mageLog(header)
-
-	commandArgs := []string{}
-	if len(commandParts) > 1 {
-		for _, eachPart := range commandParts[1:] {
-			commandArgs = append(commandArgs, eachPart)
-		}
-	}
-	for _, eachFile := range eligibleSourceFiles {
-		applyArgs := append(commandArgs, eachFile)
-		applyErr := sh.Run(commandParts[0], applyArgs...)
-		if applyErr != nil {
-			return applyErr
-		}
-	}
-	return nil
-}
 
 func markdownSourceApply(commandParts ...string) error {
-	return applyToSource("md", commandParts...)
+	return spartaMage.ApplyToSource("md", ignoreSubdirectoryPaths, commandParts...)
 }
 func goSourceApply(commandParts ...string) error {
-	return applyToSource("go", commandParts...)
+	return spartaMage.ApplyToSource("go", ignoreSubdirectoryPaths, commandParts...)
 }
 
 func EnsureCleanTree() error {
@@ -185,7 +121,7 @@ func GenerateConstants() error {
 // packages that aren't referenced by the source, but are needed
 // to build the Sparta source
 func InstallBuildRequirements() error {
-	mageLog("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
+	spartaMage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
 		"github.com/golang/dep/...",
