@@ -75,9 +75,10 @@ func tappedHandler(handlerSymbol interface{},
 			logrusEntry = logrus.
 				NewEntry(logger).
 				WithFields(logrus.Fields{
-					"reqID": lambdaContext.AwsRequestID,
-					"arn":   lambdaContext.InvokedFunctionArn,
-					"build": StampedBuildID,
+					LogFieldRequestID:  lambdaContext.AwsRequestID,
+					LogFieldARN:        lambdaContext.InvokedFunctionArn,
+					LogFieldBuildID:    StampedBuildID,
+					LogFieldInstanceID: InstanceID(),
 				})
 		} else {
 			logrusEntry = logrus.
