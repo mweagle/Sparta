@@ -141,8 +141,6 @@ func InstallBuildRequirements() error {
 			"get",
 			os.Getenv("GO_GET_FLAG"),
 			eachDep)
-
-		// cmdErr := exec.Command(.Run()
 		if cmdErr != nil {
 			return cmdErr
 		}
