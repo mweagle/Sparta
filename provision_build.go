@@ -1657,11 +1657,13 @@ func ensureCloudFormationStack() workflowStep {
 		}
 
 		// validations?
-		validationErr := callValidationHooks(ctx.userdata.workflowHooks.Validators,
-			ctx.context.cfTemplate,
-			ctx)
-		if validationErr != nil {
-			return nil, validationErr
+		if ctx.userdata.workflowHooks != nil {
+			validationErr := callValidationHooks(ctx.userdata.workflowHooks.Validators,
+				ctx.context.cfTemplate,
+				ctx)
+			if validationErr != nil {
+				return nil, validationErr
+			}
 		}
 
 		// Do the operation!
