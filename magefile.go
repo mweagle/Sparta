@@ -159,7 +159,7 @@ func EnsureLint() error {
 
 // EnsureFormatted ensures that the source code is formatted with goimports
 func EnsureFormatted() error {
-	return goSourceApply("goimports", "-d")
+	return goSourceApply("goimports", "-e", "-w")
 }
 
 // EnsureStaticChecks ensures that the source code passes static code checks

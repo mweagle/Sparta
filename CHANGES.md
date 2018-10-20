@@ -1,5 +1,70 @@
 # Change Notes
 
+## v1.4.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Expose `sparta.InstanceID()` that returns a random instance identifier for a single Lambda container instance
+    - The _instanceID_ field is also included in the [ContextLogger](https://godoc.org/github.com/mweagle/Sparta#pkg-constants)
+  - Add `WorkflowHooks.Validators` to support policy-based validation of the materialized template.
+    - Each validator receives a complete read-only copy of the template
+  - Add [magefile](https://magefile.org/) actions in _github.com/mweagle/Sparta/magefile_ to support cross platform scripting.
+    - A Sparta service can use a standard _magefile.go_ as in:
+    ```go
+    // +build mage
+
+    package main
+
+    import (
+      spartaMage "github.com/mweagle/Sparta/magefile"
+    )
+
+    // Provision the service
+    func Provision() error {
+      return spartaMage.Provision()
+    }
+
+    // Describe the stack by producing an HTML representation of the CloudFormation
+    // template
+    func Describe() error {
+      return spartaMage.Describe()
+    }
+
+    // Delete the service, iff it exists
+    func Delete() error {
+      return spartaMage.Delete()
+    }
+
+    // Status report if the stack has been provisioned
+    func Status() error {
+      return spartaMage.Status()
+    }
+
+    // Version information
+    func Version() error {
+      return spartaMage.Version()
+    }
+    ```
+    which exposes the most common Sparta command line options.
+    - Usage: `mage status`:
+    ```shell
+    $ mage status
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
+    INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+    INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=status UTC="2018-10-20T04:46:57Z"
+    INFO[0000] ════════════════════════════════════════════════
+    INFO[0001] StackId                                       Id="arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99"
+    INFO[0001] Stack status                                  State=UPDATE_COMPLETE
+    INFO[0001] Created                                       Time="2018-10-02 03:14:59.127 +0000 UTC"
+    INFO[0001] Last Update                                   Time="2018-10-19 03:23:00.048 +0000 UTC"
+    INFO[0001] Tag                                           io:gosparta:buildId=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+    ```
+- :bug:  **FIXED**
+  - Fix latent issue where multiple [archetype](https://godoc.org/github.com/mweagle/Sparta/archetype) handlers of the same type would collide.
+
 ## v1.4.0
 
 - :warning: **BREAKING**
@@ -118,7 +183,6 @@
       ```
   - Added [misspell](https://github.com/client9/misspell) static check as part of `mage test` to catch misspellings
 - :bug:  **FIXED**
-
 
 ## v1.3.0
 

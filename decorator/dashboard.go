@@ -2,9 +2,8 @@ package decorator
 
 import (
 	"bytes"
-	"text/template"
-
 	"regexp"
+	"text/template"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"

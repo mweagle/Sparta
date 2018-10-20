@@ -5,10 +5,9 @@ package sparta
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/sirupsen/logrus"
-
-	spartaAWS "github.com/mweagle/Sparta/aws"
 )
 
 // Delete the provided serviceName.  Failing to delete a non-existent

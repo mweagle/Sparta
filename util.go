@@ -11,7 +11,6 @@ import (
 	"sync"
 
 	"github.com/mweagle/Sparta/system"
-
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

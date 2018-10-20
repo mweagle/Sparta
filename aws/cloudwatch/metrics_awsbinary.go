@@ -6,11 +6,10 @@ import (
 	"os"
 	"time"
 
-	spartaAWS "github.com/mweagle/Sparta/aws"
-
 	"github.com/aws/aws-sdk-go/aws"
 	awsCloudWatch "github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/mweagle/Sparta"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 	gopsutilCPU "github.com/shirou/gopsutil/cpu"
 	gopsutilDisk "github.com/shirou/gopsutil/disk"
 	gopsutilHost "github.com/shirou/gopsutil/host"
