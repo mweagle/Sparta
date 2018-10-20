@@ -22,6 +22,22 @@ func Log(formatSpecifier string, args ...interface{}) {
 	}
 }
 
+// Script is a 2d array of commands to run as a script
+func Script(commands [][]string) error {
+	for _, eachCommand := range commands {
+		var commandErr error
+		if len(eachCommand) <= 1 {
+			commandErr = sh.Run(eachCommand[0])
+		} else {
+			commandErr = sh.Run(eachCommand[0], eachCommand[1:]...)
+		}
+		if commandErr != nil {
+			return commandErr
+		}
+	}
+	return nil
+}
+
 // ApplyToSource is a mage compatible function that applies a
 // command to your source tree
 func ApplyToSource(fileExtension string,
