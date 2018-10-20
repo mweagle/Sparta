@@ -364,8 +364,7 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 			ctx.userdata.buildID,
 			ctx.context.awsSession,
 			ctx.userdata.noop,
-			ctx.logger,
-		)
+			ctx.logger)
 		if nil != decoratorError {
 			return decoratorError
 		}
@@ -436,6 +435,50 @@ func callWorkflowHook(hookPhase string,
 			ctx.logger)
 		if hookErr != nil {
 			return errors.Wrapf(hookErr, "Failed call to DecorateWorkflow")
+		}
+	}
+	return nil
+}
+
+// Encapsulate calling the validation hooks
+func callValidationHooks(validationHooks []ServiceValidationHookHandler,
+	template *gocf.Template,
+	ctx *workflowContext) error {
+
+	var marshaledTemplate []byte
+	if len(validationHooks) != 0 {
+		jsonBytes, jsonBytesErr := json.Marshal(template)
+		if jsonBytesErr != nil {
+			return errors.Wrapf(jsonBytesErr, "Failed to marshal template for validation")
+		}
+		marshaledTemplate = jsonBytes
+	}
+
+	for _, eachHook := range validationHooks {
+		// Run the hook
+		ctx.logger.WithFields(logrus.Fields{
+			"Phase":                 "Validation",
+			"ValidationHookContext": ctx.context.workflowHooksContext,
+		}).Info("Calling WorkflowHook")
+
+		var loopTemplate gocf.Template
+		unmarshalErr := json.Unmarshal(marshaledTemplate, &loopTemplate)
+		if unmarshalErr != nil {
+			return errors.Wrapf(unmarshalErr,
+				"Failed to unmarshal read-only copy of template for Validation")
+		}
+
+		hookErr := eachHook.ValidateService(ctx.context.workflowHooksContext,
+			ctx.userdata.serviceName,
+			&loopTemplate,
+			ctx.userdata.s3Bucket,
+			ctx.context.s3CodeZipURL.keyName(),
+			ctx.userdata.buildID,
+			ctx.context.awsSession,
+			ctx.userdata.noop,
+			ctx.logger)
+		if hookErr != nil {
+			return errors.Wrapf(hookErr, "Service failed to pass validation")
 		}
 	}
 	return nil
@@ -1314,6 +1357,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	if len(ctx.userdata.buildTags) != 0 {
 		stackTags[SpartaTagBuildTagsKey] = ctx.userdata.buildTags
 	}
+
 	// Generate the CF template...
 	cfTemplate, err := json.Marshal(ctx.context.cfTemplate)
 	if err != nil {
@@ -1611,9 +1655,16 @@ func ensureCloudFormationStack() workflowStep {
 			return nil, errors.Wrapf(annotateErr,
 				"Failed to perform final template annotations")
 		}
-		// Finally, anything we need to do here to patch up any template references
-		// across resources?
 
+		// validations?
+		validationErr := callValidationHooks(ctx.userdata.workflowHooks.Validations,
+			ctx.context.cfTemplate,
+			ctx)
+		if validationErr != nil {
+			return nil, validationErr
+		}
+
+		// Do the operation!
 		return applyCloudFormationOperation(ctx)
 	}
 }
