@@ -116,7 +116,7 @@ func InstallBuildRequirements() error {
 		"honnef.co/go/tools/cmd/staticcheck",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
-		"github.com/golang/lint/golint",
+		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
 		"github.com/securego/gosec/cmd/gosec/...",
 		"github.com/client9/misspell/cmd/misspell",
