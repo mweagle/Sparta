@@ -1,11 +1,25 @@
 # Change Notes
 
-## v1.4.1
+## v1.5.0
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Expose `sparta.InstanceID()` that returns a random instance identifier for a single Lambda container instance
     - The _instanceID_ field is also included in the [ContextLogger](https://godoc.org/github.com/mweagle/Sparta#pkg-constants)
+  - Add a self-monitoring function that publishes container-level metrics to CloudWatch.
+    - Usage:
+    ```go
+      import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
+      func main() {
+        ...
+        spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
+          "BuildId":    sparta.StampedBuildID,
+        })
+        ...
+      }
+    ```
+    - The optional `map[string]string` parameter is the custom Name-Value pairs to use as a [CloudWatch Dimension](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension)
+    - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.5.0/CloudWatch_Management_Console.jpg" />
   - Add `WorkflowHooks.Validators` to support policy-based validation of the materialized template.
     - Each validator receives a complete read-only copy of the template
   - Add [magefile](https://magefile.org/) actions in _github.com/mweagle/Sparta/magefile_ to support cross platform scripting.
