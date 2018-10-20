@@ -1,6 +1,4 @@
-// +build mage
-
-package magefile
+package spartamage
 
 import (
 	"fmt"
