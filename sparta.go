@@ -372,6 +372,11 @@ type WorkflowHooks struct {
 	// template
 	PostMarshalls []WorkflowHookHandler
 
+	// Validators are hooks that are called when all marshalling
+	// is complete. Each hook receives a complete read-only
+	// copy of the materialized template.
+	Validators []ServiceValidationHookHandler
+
 	// Rollback is called if there is an error performing the requested operation
 	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
