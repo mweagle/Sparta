@@ -4,7 +4,6 @@ go:
 - "1.11.1"
 before_install:
 - go get -v github.com/magefile/mage
-- cat magefile.go
 install:
   # Suppress the default installation behavior, which is to
   # `go get` everything. The default installation behavior is suppressed
