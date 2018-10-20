@@ -36,6 +36,7 @@ func goSourceApply(commandParts ...string) error {
 	return spartamage.ApplyToSource("go", ignoreSubdirectoryPaths, commandParts...)
 }
 
+// EnsureCleanTree ensures that the git tree is clean
 func EnsureCleanTree() error {
 	cleanTreeScript := [][]string{
 		// No dirty trees

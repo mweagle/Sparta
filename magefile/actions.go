@@ -74,15 +74,18 @@ func ApplyToSource(fileExtension string,
 // global env vars that can be translated into Sparta command line options
 func SpartaCommand(commandParts ...string) error {
 	noopValue := ""
-	parsedBool, _ := strconv.ParseBool(os.Getenv("NOOP"))
-	if parsedBool {
+	parsedBool, parsedBoolErr := strconv.ParseBool(os.Getenv("NOOP"))
+	if parsedBoolErr == nil && parsedBool {
 		noopValue = "--noop"
 	}
 	curDir, curDirErr := os.Getwd()
 	if curDirErr != nil {
 		return errors.New("Failed to get current directory. Error: " + curDirErr.Error())
 	}
-	os.Setenv(mg.VerboseEnv, "1")
+	setenvErr := os.Setenv(mg.VerboseEnv, "1")
+	if setenvErr != nil {
+		return setenvErr
+	}
 	commandArgs := []string{
 		"run",
 		curDir,
