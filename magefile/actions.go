@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
@@ -71,6 +72,33 @@ func ApplyToSource(fileExtension string,
 	return nil
 }
 
+// SpartaCommand issues a go run command that encapsulates resolving
+// global env vars that can be translated into Sparta command line options
+func SpartaCommand(commandParts ...string) error {
+	noopValue := ""
+	parsedBool, _ := strconv.ParseBool(os.Getenv("NOOP"))
+	if parsedBool {
+		noopValue = "--noop"
+	}
+	curDir, curDirErr := os.Getwd()
+	if curDirErr != nil {
+		return errors.New("Failed to get current directory. Error: " + curDirErr.Error())
+	}
+	os.Setenv(mg.VerboseEnv, "1")
+	commandArgs := []string{
+		"run",
+		curDir,
+	}
+	for _, eachCommandPart := range commandParts {
+		commandArgs = append(commandArgs, eachCommandPart)
+	}
+	if noopValue != "" {
+		commandArgs = append(commandArgs, "--noop")
+	}
+	return sh.Run("go",
+		commandArgs...)
+}
+
 // Provision deploys the given service
 func Provision() error {
 	// Get the bucketName
@@ -78,7 +106,7 @@ func Provision() error {
 	if bucketName == "" {
 		return errors.New("Provision requires env.S3_BUCKET to be defined")
 	}
-	return spartaCommand("provision", "--s3Bucket", bucketName)
+	return SpartaCommand("provision", "--s3Bucket", bucketName)
 }
 
 // Describe deploys the given service
@@ -88,20 +116,23 @@ func Describe() error {
 	if bucketName == "" {
 		return errors.New("Describe requires env.S3_BUCKET to be defined")
 	}
-	return spartaCommand("describe", "--s3Bucket", bucketName, "--out", "graph.html")
+	return SpartaCommand("describe", "--s3Bucket", bucketName, "--out", "graph.html")
 }
 
 // Delete deletes the given service
 func Delete() error {
-	return spartaCommand("delete")
+	return SpartaCommand("delete")
 }
 
 // Status returns a report for the given status
-func Status() error {
-	return spartaCommand("status", "--redact")
+func Status(plaintext ...bool) error {
+	if len(plaintext) == 1 && plaintext[0] == true {
+		return SpartaCommand("status")
+	}
+	return SpartaCommand("status", "--redact")
 }
 
 // Version returns version information about the service and embedded Sparta version
 func Version() error {
-	return spartaCommand("version")
+	return SpartaCommand("version")
 }
