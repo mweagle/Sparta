@@ -35,7 +35,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "1.15.49"
+  version = "1.15.59"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
