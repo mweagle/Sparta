@@ -1,3 +1,5 @@
+// +build mage
+
 package spartamage
 
 import (
