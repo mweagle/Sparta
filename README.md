@@ -40,7 +40,7 @@ func helloWorld(ctx context.Context) (string, error) {
 ```
 
 where
-  * `ctx` : The request context that includes Sparta both the [AWS Context](https://github.com/aws/aws-lambda-go/blob/master/lambdacontext/context.go) as well as Sparta specific [values](https://godoc.org/github.com/mweagle/Sparta#pkg-constants.)
+  * `ctx` : The request context that includes both the [AWS Context](https://github.com/aws/aws-lambda-go/blob/master/lambdacontext/context.go) as well as Sparta specific [values](https://godoc.org/github.com/mweagle/Sparta#pkg-constants.)
 
 
 Consumers define a set of lambda functions and provide them to Sparta to create a self-documenting, self-deploying AWS Lambda binary:
