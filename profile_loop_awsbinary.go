@@ -4,21 +4,18 @@ package sparta
 
 import (
 	"fmt"
-	"math/rand"
 	"os"
 	"path"
 	"path/filepath"
 	"runtime/pprof"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	spartaAWS "github.com/mweagle/Sparta/aws"
+	"github.com/sirupsen/logrus"
 )
 
-var instanceID string
 var currentSlot int
 var stackName string
 var profileBucket string
@@ -32,8 +29,6 @@ func nextUploadSlot() int {
 }
 
 func init() {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	instanceID = fmt.Sprintf("λ-%d", r.Int63())
 	currentSlot = 0
 	// These correspond to the environment variables that were published
 	// into the Lambda environment by the profile decorator
@@ -42,7 +37,7 @@ func init() {
 }
 
 func profileOutputFile(basename string) (*os.File, error) {
-	fileName := fmt.Sprintf("%s.%s.profile", basename, instanceID)
+	fileName := fmt.Sprintf("%s.%s.profile", basename, InstanceID())
 	// http://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	if os.Getenv("_LAMBDA_SERVER_PORT") != "" {
 		fileName = filepath.Join("/tmp", fileName)

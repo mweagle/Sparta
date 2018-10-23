@@ -3,6 +3,8 @@ package archetype
 import (
 	"context"
 	"fmt"
+	"reflect"
+	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
@@ -11,6 +13,12 @@ import (
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 )
+
+// ReactorNameProvider is an interface so that a reactor function can
+// provide a custom name which prevents collisions
+type ReactorNameProvider interface {
+	ReactorName() string
+}
 
 // S3Reactor represents a lambda function that responds to typical S3 operations
 type S3Reactor interface {
@@ -27,6 +35,11 @@ type S3ReactorFunc func(ctx context.Context, event awsLambdaEvents.S3Event) (int
 // OnS3Event satisfies the S3Reactor interface
 func (reactorFunc S3ReactorFunc) OnS3Event(ctx context.Context, event awsLambdaEvents.S3Event) (interface{}, error) {
 	return reactorFunc(ctx, event)
+}
+
+// ReactorName provides the name of the reactor func
+func (reactorFunc S3ReactorFunc) ReactorName() string {
+	return runtime.FuncForPC(reflect.ValueOf(reactorFunc).Pointer()).Name()
 }
 
 // s3NotificationPrefixFilter is a DRY spec for setting up a notification configuration
@@ -72,7 +85,7 @@ func NewS3ScopedReactor(reactor S3Reactor,
 	}
 
 	// Privilege must include access to the S3 bucket for GetObjectRequest
-	lambdaFn := sparta.HandleAWSLambda(fmt.Sprintf("%T", reactor),
+	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
 

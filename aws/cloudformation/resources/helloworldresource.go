@@ -48,11 +48,6 @@ func (command HelloWorldResource) Update(awsSession *session.Session,
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}
-
-	if requestPropsErr != nil {
-		return nil, requestPropsErr
-	}
-
 	logger.Info("update: ", command.Message.Literal)
 	return nil, nil
 }
@@ -62,9 +57,6 @@ func (command HelloWorldResource) Delete(awsSession *session.Session,
 	event *CloudFormationLambdaEvent,
 	logger *logrus.Logger) (map[string]interface{}, error) {
 	requestPropsErr := json.Unmarshal(event.ResourceProperties, &command)
-	if requestPropsErr != nil {
-		return nil, requestPropsErr
-	}
 	if requestPropsErr != nil {
 		return nil, requestPropsErr
 	}

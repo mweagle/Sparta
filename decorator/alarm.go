@@ -10,7 +10,11 @@ import (
 
 // CloudWatchErrorAlarmDecorator returns a TemplateDecoratorHookFunc
 // that associates a CloudWatch Lambda Error count alarm with the given
-// lambda function. The four parameters are periodWindow
+// lambda function. The four parameters are periodWindow, minutes per period
+// the strict lower bound value, and the SNS topic to which alerts should be
+// sent. See the CloudWatch alarm resource type in the official
+// AWS documentation at https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cw-alarm.html
+// for more information
 func CloudWatchErrorAlarmDecorator(periodWindow int,
 	minutesPerPeriod int,
 	thresholdGreaterThanOrEqualToValue int,

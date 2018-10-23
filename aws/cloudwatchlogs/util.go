@@ -3,11 +3,10 @@ package cloudwatchlogs
 import (
 	"time"
 
-	"github.com/sirupsen/logrus"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
+	"github.com/sirupsen/logrus"
 )
 
 func tailParams(logGroupName string, filter string, lastEvent int64) *cloudwatchlogs.FilterLogEventsInput {

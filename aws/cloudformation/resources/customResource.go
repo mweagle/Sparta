@@ -90,7 +90,12 @@ type CustomResourceCommand interface {
 	Delete(session *session.Session,
 		event *CloudFormationLambdaEvent,
 		logger *logrus.Logger) (map[string]interface{}, error)
+}
 
+// CustomResourcePrivilegedCommand is a command that also has IAM privileges
+// which implies there must be an ARN associated with the command
+type CustomResourcePrivilegedCommand interface {
+	// The IAMPrivileges this command requires of the IAM role
 	IAMPrivileges() []string
 }
 
@@ -229,7 +234,7 @@ func SendCloudFormationResponse(lambdaCtx *awsLambdaCtx.LambdaContext,
 		"LogicalResourceId":  event.LogicalResourceID,
 		"Result":             responseData["Status"],
 		"ResponseStatusCode": resp.StatusCode,
-	}).Info("Sent CloudFormation response")
+	}).Debug("Sent CloudFormation response")
 
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		body, bodyErr := ioutil.ReadAll(resp.Body)
@@ -307,7 +312,7 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 			"ExecuteOperation": event.LogicalResourceID,
 			"Stacks":           fmt.Sprintf("%#+v", describeStacksOutput),
 			"RequestType":      event.RequestType,
-		}).Info("CustomResource Request")
+		}).Debug("CustomResource Request")
 
 		if opErr == nil && executeOperation {
 			switch event.RequestType {

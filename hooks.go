@@ -255,6 +255,69 @@ type ServiceDecoratorHookHandler interface {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// ServiceValidationHookHandler
+
+// ServiceValidationHook defines a user function that is called a single
+// after all template annotations have been performed. It is where
+// policies should be applied
+type ServiceValidationHook func(context map[string]interface{},
+	serviceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+
+// ServiceValidationHookFunc is the adapter to transform an existing
+// ArchiveHook into a WorkflowHookHandler satisfier
+type ServiceValidationHookFunc func(context map[string]interface{},
+	serviceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error
+
+// ValidateService calls sdhf(...) to satisfy ServiceValidationHookHandler
+func (sdhf ServiceDecoratorHookFunc) ValidateService(context map[string]interface{},
+	serviceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	awsSession *session.Session,
+	noop bool,
+	logger *logrus.Logger) error {
+	return sdhf(context,
+		serviceName,
+		template,
+		S3Bucket,
+		S3Key,
+		buildID,
+		awsSession,
+		noop,
+		logger)
+}
+
+// ServiceValidationHookHandler is the interface type to indicate a workflow
+// hook
+type ServiceValidationHookHandler interface {
+	ValidateService(context map[string]interface{},
+		serviceName string,
+		template *gocf.Template,
+		S3Bucket string,
+		S3Key string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // RollbackHandler
 
 // RollbackHook provides callers an opportunity to handle failures

@@ -6,11 +6,13 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"path"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -22,6 +24,9 @@ import (
 const (
 	redCode = 31
 )
+
+// The Lambda instance ID for this execution
+var instanceID string
 
 // Validation instance
 var validate *validator.Validate
@@ -63,11 +68,20 @@ var codePipelineEnvironments map[string]map[string]string
 func init() {
 	validate = validator.New()
 	codePipelineEnvironments = make(map[string]map[string]string)
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	instanceID = fmt.Sprintf("i-%d", r.Int63())
 }
 
 // Logger returns the sparta Logger instance for this process
 func Logger() *logrus.Logger {
 	return OptionsGlobal.Logger
+}
+
+// InstanceID returns the uniquely assigned instanceID for this lambda
+// container
+func InstanceID() string {
+	return instanceID
 }
 
 // CommandLineOptions defines the commands available via the Sparta command

@@ -32,7 +32,7 @@ import (
 
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.4.0"
+	SpartaVersion = "1.5.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// SpartaBinaryName is binary name that exposes the Go lambda function
@@ -167,11 +167,6 @@ var CommonIAMStatements = struct {
 				gocf.String("*")),
 		},
 		{
-			Action:   []string{"cloudwatch:PutMetricData"},
-			Effect:   "Allow",
-			Resource: wildcardArn,
-		},
-		{
 			Effect: "Allow",
 			Action: []string{"cloudformation:DescribeStacks",
 				"cloudformation:DescribeStackResource"},
@@ -181,7 +176,8 @@ var CommonIAMStatements = struct {
 		{
 			Effect: "Allow",
 			Action: []string{"xray:PutTraceSegments",
-				"xray:PutTelemetryRecords"},
+				"xray:PutTelemetryRecords",
+				"cloudwatch:PutMetricData"},
 			Resource: gocf.String("*"),
 		},
 	},
@@ -375,6 +371,11 @@ type WorkflowHooks struct {
 	// PostMarshalls are called after Sparta marshalls the application contents to a CloudFormation
 	// template
 	PostMarshalls []WorkflowHookHandler
+
+	// Validators are hooks that are called when all marshalling
+	// is complete. Each hook receives a complete read-only
+	// copy of the materialized template.
+	Validators []ServiceValidationHookHandler
 
 	// Rollback is called if there is an error performing the requested operation
 	Rollback RollbackHook
@@ -743,7 +744,6 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 			if len(parts) > 1 {
 				penultimatePart = parts[len(parts)-2]
 			}
-			fmt.Printf("FUNCTION NAME: %s\nPARTS: %#v\n", lambdaFuncName, parts)
 			intermediateName := fmt.Sprintf("%s-%s", penultimatePart, lastPart)
 			reClean := regexp.MustCompile(`[\*\(\)]+`)
 			canonicalName = reClean.ReplaceAllString(intermediateName, "")

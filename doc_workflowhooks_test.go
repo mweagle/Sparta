@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"context"
 	"io"
-
 	"strings"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"

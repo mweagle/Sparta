@@ -134,7 +134,7 @@ func EnsureCustomResourceHandler(serviceName string,
 	// Prefix
 	commandType := reflect.TypeOf(command)
 	customResourceTypeName := fmt.Sprintf("%T", command)
-	prefixName := fmt.Sprintf("%s-Sparta-CFRes", serviceName)
+	prefixName := fmt.Sprintf("%s-CFRes", serviceName)
 	subscriberHandlerName := CloudFormationResourceName(prefixName, customResourceTypeName)
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -214,9 +214,16 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 	logger *logrus.Logger) (string, error) {
 
 	// What's the stable IAMRoleName?
-	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", fmt.Sprintf("%T", command))
+	commandName := fmt.Sprintf("%T", command)
+	resourceBaseName := fmt.Sprintf("CFResIAMRole%s", commandName)
 	stableRoleName := CloudFormationResourceName(resourceBaseName, resourceBaseName)
-	principalActions := command.IAMPrivileges()
+
+	// Is it a privileged command?
+	var privileges []string
+	privilegedCommand, privilegedCommandOk := command.(cfCustomResources.CustomResourcePrivilegedCommand)
+	if privilegedCommandOk {
+		privileges = privilegedCommand.IAMPrivileges()
+	}
 
 	// Ensure it exists, then check to see if this Source ARN is already specified...
 	// Checking equality with Stringable?
@@ -225,7 +232,7 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 	var existingIAMRole *gocf.IAMRole
 	existingResource, exists := template.Resources[stableRoleName]
 	logger.WithFields(logrus.Fields{
-		"PrincipalActions": principalActions,
+		"PrincipalActions": privileges,
 		"SourceArn":        sourceArn,
 	}).Debug("Ensuring IAM Role results")
 
@@ -259,6 +266,16 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 		existingIAMRole = existingResource.Properties.(*gocf.IAMRole)
 	}
 
+	// ARNs are only required if there are non-empty privileges associated
+	// with the command
+	if sourceArn == nil {
+		if len(privileges) != 0 {
+			return "", errors.Errorf("CustomResource %s requires a SourceARN to apply it's %d principle actions",
+				commandName,
+				len(privileges))
+		}
+		return stableRoleName, nil
+	}
 	// Walk the existing statements
 	if nil != existingIAMRole.Policies {
 		for _, eachPolicy := range *existingIAMRole.Policies {
@@ -278,19 +295,19 @@ func ensureIAMRoleForCustomResource(command cfCustomResources.CustomResourceComm
 
 		logger.WithFields(logrus.Fields{
 			"RoleName": stableRoleName,
-			"Action":   principalActions,
+			"Action":   privileges,
 			"Resource": sourceArn,
 		}).Debug("Inserting Actions for configuration ARN")
 
 		// Add this statement to the first policy, iff the actions are non-empty
-		if len(principalActions) > 0 {
+		if len(privileges) > 0 {
 			rootPolicy := (*existingIAMRole.Policies)[0]
 			rootPolicyDoc := rootPolicy.PolicyDocument.(ArbitraryJSONObject)
 			rootPolicyStatements := rootPolicyDoc["Statement"].([]spartaIAM.PolicyStatement)
 			rootPolicyDoc["Statement"] = append(rootPolicyStatements,
 				spartaIAM.PolicyStatement{
 					Effect:   "Allow",
-					Action:   principalActions,
+					Action:   privileges,
 					Resource: sourceArn,
 				})
 		}

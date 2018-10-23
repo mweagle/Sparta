@@ -15,6 +15,19 @@ var (
 	reSplitFunctionName = regexp.MustCompile(`\W+`)
 )
 
+const (
+	// LogFieldRequestID is the fieldname in the context-scoped logger
+	// that includes the AWS assigned request ID
+	LogFieldRequestID = "reqID"
+	// LogFieldARN is the InvokedFunctionArn value
+	LogFieldARN = "arn"
+	// LogFieldBuildID is the Build ID stamped into the binary exposing
+	// the lambda functions
+	LogFieldBuildID = "buildID"
+	// LogFieldInstanceID is a unique identifier for a given container instance
+	LogFieldInstanceID = "instanceID"
+)
+
 const functionNameDelimiter = "_"
 
 // awsLambdaFunctionName returns the name of the function, which
