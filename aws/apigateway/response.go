@@ -41,3 +41,51 @@ func NewErrorResponse(statusCode int, messages ...string) *Error {
 	}
 	return err
 }
+
+// Response is the type returned by an API Gateway function
+type Response struct {
+	Code    int               `json:"code,omitempty"`
+	Body    interface{}       `json:"body,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
+}
+
+// canonicalResponse is the type for the canonicalized response with the
+// headers ensured to be lowercase
+type canonicalResponse struct {
+	Code    int               `json:"code,omitempty"`
+	Body    interface{}       `json:"body,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
+}
+
+// MarshalJSON is a custom marshaller to ensure that the marshalled
+// headers are always lowercase
+func (resp *Response) MarshalJSON() ([]byte, error) {
+	canonicalResponse := canonicalResponse{
+		Code: resp.Code,
+		Body: resp.Body,
+	}
+	if len(resp.Headers) != 0 {
+		canonicalResponse.Headers = make(map[string]string)
+		for eachKey, eachValue := range resp.Headers {
+			canonicalResponse.Headers[strings.ToLower(eachKey)] = eachValue
+		}
+	}
+	return json.Marshal(&canonicalResponse)
+}
+
+// NewResponse returns an API Gateway response object
+func NewResponse(code int, body interface{}, headers ...map[string]string) *Response {
+	response := &Response{
+		Code: code,
+		Body: body,
+	}
+	if len(headers) != 0 {
+		response.Headers = make(map[string]string)
+		for _, eachHeaderMap := range headers {
+			for eachKey, eachValue := range eachHeaderMap {
+				response.Headers[eachKey] = eachValue
+			}
+		}
+	}
+	return response
+}
