@@ -164,7 +164,7 @@ var CommonIAMStatements = struct {
 				gocf.Ref("AWS::Region"),
 				gocf.String(":"),
 				gocf.Ref("AWS::AccountId"),
-				gocf.String("*")),
+				gocf.String(":*")),
 		},
 		{
 			Effect: "Allow",
