@@ -501,6 +501,17 @@ func (api *API) LogicalResourceName() string {
 	return CloudFormationResourceName("APIGateway", api.name)
 }
 
+// RestAPIURL returns the dynamically assigned
+// Rest API URL including the scheme
+func (api *API) RestAPIURL() *gocf.StringExpr {
+	return gocf.Join("",
+		gocf.String("https://"),
+		gocf.Ref(api.LogicalResourceName()),
+		gocf.String(".execute-api."),
+		gocf.Ref("AWS::Region"),
+		gocf.String(".amazonaws.com"))
+}
+
 func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
