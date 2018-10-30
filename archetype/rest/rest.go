@@ -27,22 +27,22 @@ type MethodHandlerMap map[string]*MethodHandler
 
 // MethodHandler represents a handler for a given HTTP method
 type MethodHandler struct {
-	DefaultCode  int
-	allowedCodes []int
-	Handler      interface{}
-	privileges   []sparta.IAMRolePrivilege
-	headers      []string
+	DefaultCode int
+	statusCodes []int
+	Handler     interface{}
+	privileges  []sparta.IAMRolePrivilege
+	headers     []string
 }
 
-// AllowedCodes is a fluent builder to append additional HTTP status codes
+// StatusCodes is a fluent builder to append additional HTTP status codes
 // for the given MethodHandler. It's primarily used to disamgiguate
 // input from the NewMethodHandler constructor
-func (mh *MethodHandler) AllowedCodes(codes ...int) *MethodHandler {
-	if mh.allowedCodes == nil {
-		mh.allowedCodes = make([]int, 0)
+func (mh *MethodHandler) StatusCodes(codes ...int) *MethodHandler {
+	if mh.statusCodes == nil {
+		mh.statusCodes = make([]int, 0)
 	}
 	for _, eachCode := range codes {
-		mh.allowedCodes = append(mh.allowedCodes, eachCode)
+		mh.statusCodes = append(mh.statusCodes, eachCode)
 	}
 	return mh
 }
@@ -136,14 +136,14 @@ func RegisterResource(apiGateway *sparta.API,
 		if apiGWResourceErr != nil {
 			return errors.Wrapf(apiGWResourceErr, "attempting to create API Gateway Resource")
 		}
-		allowedCodes := methodHandler.allowedCodes
-		if allowedCodes == nil {
-			allowedCodes = []int{}
+		statusCodes := methodHandler.statusCodes
+		if statusCodes == nil {
+			statusCodes = []int{}
 		}
 		// We only return http.StatusOK
 		apiMethod, apiMethodErr := apiGWResource.NewMethod(methodName,
 			methodHandler.DefaultCode,
-			allowedCodes...)
+			statusCodes...)
 		if apiMethodErr != nil {
 			return apiMethodErr
 		}
