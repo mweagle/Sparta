@@ -1,5 +1,45 @@
 # Change Notes
 
+## v1.6.0
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added _Sparta/archetype/rest_ package to streamline REST-based Sparta services.
+    - This package includes a fluent builder (`MethodHandler`) and constructor function (`RegisterResource`) that transforms a _rest.Resource_ implementing struct into an API Gateway resource.
+    - Usage:
+      ```go
+      // File: resource.go
+      // TodoItemResource is the /todo/{id} resource
+      type TodoItemResource struct {
+      }
+      // ResourceDefinition returns the Sparta REST definition for the Todo item
+      func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) {
+
+        return spartaREST.ResourceDefinition{
+          URL: todoItemURL,
+          MethodHandlers: spartaREST.MethodHandlerMap{
+            ...
+          }
+        }, nil
+      }
+
+      // File: main.go
+      func() {
+        myResource := &TodoItemResource{}
+        resourceMap, resourcesErr := spartaREST.RegisterResource(apiGatewayInstance, myResource)
+      }
+      ```
+    - See https://github.com/mweagle/SpartaTodoBackend for a complete example
+  - Added _Sparta/archetype/services_ package to streamline S3-backed service creation.
+    - Embed a `services.S3Accessor` type to enable utility methods for:
+      - `Put`
+      - `Get`
+      - `GetAll`
+      - `Delete`
+      - `DeleteAll`
+- :bug:  **FIXED**
+  - Fix latent issue where CloudWatch Log ARN was malformed (https://github.com/mweagle/Sparta/commit/5800553983ed16e6c5e4a622559909c050c00219)
+
 ## v1.5.0
 
 - :warning: **BREAKING**
