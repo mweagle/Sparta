@@ -16,7 +16,7 @@ import (
 )
 
 // NewObjectConstructor returns a fresh instance
-// of the type
+// of the type that's stored in S3
 type NewObjectConstructor func() interface{}
 
 // S3Accessor to make it a bit easier to work with S3
@@ -96,8 +96,8 @@ func (svc *S3Accessor) DeleteAll(ctx context.Context) error {
 	return nil
 }
 
-// Save handles saving the item
-func (svc *S3Accessor) Save(ctx context.Context, keyPath string, object interface{}) error {
+// Put handles saving the item
+func (svc *S3Accessor) Put(ctx context.Context, keyPath string, object interface{}) error {
 	jsonBytes, jsonBytesErr := json.Marshal(object)
 	if jsonBytesErr != nil {
 		return jsonBytesErr
