@@ -173,13 +173,14 @@ func EnsureStaticChecks() error {
 		return megacheckErr
 	}
 	// Gosec
-	quietFlag := "-quiet"
 	if mg.Verbose() {
-		quietFlag = ""
+		return sh.Run("gosec",
+			"-exclude=G204,G505,G401",
+			"./...")
 	}
 	return sh.Run("gosec",
-		quietFlag,
 		"-exclude=G204,G505,G401",
+		"-quiet",
 		"./...")
 }
 
