@@ -173,7 +173,12 @@ func EnsureStaticChecks() error {
 		return megacheckErr
 	}
 	// Gosec
+	quietFlag := "-quiet"
+	if mg.Verbose() {
+		quietFlag = ""
+	}
 	return sh.Run("gosec",
+		quietFlag,
 		"-exclude=G204,G505,G401",
 		"./...")
 }
@@ -243,25 +248,25 @@ func Publish() error {
 }
 
 // Test runs the Sparta tests
-func Test() {
-	testCommand := func() error {
-		return sh.Run("go",
-			"test",
-			"-cover",
-			"-race",
-			"./...")
-	}
+func Test() error {
 	mg.SerialDeps(
 		EnsureAllPreconditions,
-		testCommand,
 	)
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	testCommand := [][]string{
+		[]string{"go", "test", verboseFlag, "-cover", "-race", "./..."},
+	}
+	return spartamage.Script(testCommand)
 }
 
 // TestCover runs the test and opens up the resulting report
 func TestCover() error {
-	// mg.SerialDeps(
-	// 	EnsureAllPreconditions,
-	// )
+	mg.SerialDeps(
+		EnsureAllPreconditions,
+	)
 	coverageReport := fmt.Sprintf("%s/cover.out", localWorkDir)
 	testCoverCommands := [][]string{
 		[]string{"go", "test", fmt.Sprintf("-coverprofile=%s", coverageReport), "."},
