@@ -3,6 +3,10 @@
 ## v1.6.0
 
 - :warning: **BREAKING**
+  - Changed API Gateway response mapping to support body and header return values.
+    - API Gateway lambda functions should use `aws/apigateway.NewResponse` to produce a new `Response` type with struct fields that are properly interpreted by the new `$input.json('$.body')` mapping expression.
+    - The change was driven by the [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) service's need to return both a body and HTTP location header.
+      - See the [response](https://github.com/mweagle/SpartaTodoBackend/blob/master/service/todos.go#L79) for an example
 - :checkered_flag: **CHANGES**
   - Added _Sparta/archetype/rest_ package to streamline REST-based Sparta services.
     - This package includes a fluent builder (`MethodHandler`) and constructor function (`RegisterResource`) that transforms a _rest.Resource_ implementing struct into an API Gateway resource.
@@ -29,7 +33,15 @@
         resourceMap, resourcesErr := spartaREST.RegisterResource(apiGatewayInstance, myResource)
       }
       ```
-    - See https://github.com/mweagle/SpartaTodoBackend for a complete example
+    - Sample fluent method builder:
+      ```go
+        // GET
+        http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
+          StatusCodes(http.StatusInternalServerError).
+          Privileges(svc.S3Accessor.KeysPrivilege("s3:GetObject"),
+                      svc.S3Accessor.BucketPrivilege("s3:ListBucket")),
+      ```
+    - See [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) for a complete example
   - Added _Sparta/aws/accessor_ package to streamline S3-backed service creation.
     - Embed a `services.S3Accessor` type to enable utility methods for:
       - `Put`
