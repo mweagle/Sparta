@@ -30,7 +30,7 @@
       }
       ```
     - See https://github.com/mweagle/SpartaTodoBackend for a complete example
-  - Added _Sparta/archetype/services_ package to streamline S3-backed service creation.
+  - Added _Sparta/aws/accessor_ package to streamline S3-backed service creation.
     - Embed a `services.S3Accessor` type to enable utility methods for:
       - `Put`
       - `Get`
