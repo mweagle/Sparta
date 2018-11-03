@@ -14,7 +14,8 @@ import (
 func echoAPIGatewayEvent(ctx context.Context,
 	props map[string]interface{}) error {
 	lambdaCtx, _ := lambdacontext.FromContext(ctx)
-	Logger().WithFields(logrus.Fields{
+	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
+	logger.WithFields(logrus.Fields{
 		"RequestID":  lambdaCtx.AwsRequestID,
 		"Properties": props,
 	}).Info("Lambda event")
