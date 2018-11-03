@@ -31,6 +31,7 @@ type MethodHandler struct {
 	statusCodes []int
 	Handler     interface{}
 	privileges  []sparta.IAMRolePrivilege
+	options     *sparta.LambdaFunctionOptions
 	headers     []string
 }
 
@@ -44,6 +45,13 @@ func (mh *MethodHandler) StatusCodes(codes ...int) *MethodHandler {
 	for _, eachCode := range codes {
 		mh.statusCodes = append(mh.statusCodes, eachCode)
 	}
+	return mh
+}
+
+// Options is a fluent builder that allows customizing the lambda execution
+// options for the given function
+func (mh *MethodHandler) Options(options *sparta.LambdaFunctionOptions) *MethodHandler {
+	mh.options = options
 	return mh
 }
 
@@ -190,6 +198,11 @@ func RegisterResource(apiGateway *sparta.API,
 			eachMethodDefinition.Handler,
 			sparta.IAMRoleDefinition{})
 		resourceMap[eachMethod] = lambdaFn
+
+		// Any options?
+		if eachMethodDefinition.options != nil {
+			lambdaFn.Options = eachMethodDefinition.options
+		}
 
 		// Any privs?
 		if len(eachMethodDefinition.privileges) != 0 {
