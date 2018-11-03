@@ -10,8 +10,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// Delete the provided serviceName.  Failing to delete a non-existent
-// service is not considered an error.  Note that the delete does
+// Delete ensures that the provided serviceName is deleted.
+// Failing to delete a non-existent service is considered a success.
 func Delete(serviceName string, logger *logrus.Logger) error {
 	session := spartaAWS.NewSession(logger)
 	awsCloudFormation := cloudformation.New(session)
