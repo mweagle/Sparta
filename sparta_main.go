@@ -341,7 +341,7 @@ func init() {
 // if the command line fails.
 type CommandLineOptionsHook func(command *cobra.Command) error
 
-// ParseOptions the command line options
+// ParseOptions parses the command line options
 func ParseOptions(handler CommandLineOptionsHook) error {
 	// First up, create a dummy Root command for the parse...
 	var parseCmdRoot = &cobra.Command{
