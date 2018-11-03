@@ -120,6 +120,7 @@ func InstallBuildRequirements() error {
 		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
 		"github.com/securego/gosec/cmd/gosec/...",
+		"github.com/alexkohler/prealloc",
 		"github.com/client9/misspell/cmd/misspell",
 	}
 	for _, eachDep := range requirements {
@@ -132,6 +133,15 @@ func InstallBuildRequirements() error {
 		}
 	}
 	return nil
+}
+
+// EnsurePrealloc ensures that slices that could be preallocated are enforced
+func EnsurePrealloc() error {
+	// Super run some commands
+	preallocCommand := [][]string{
+		[]string{"prealloc", "-set_exit_status", "./..."},
+	}
+	return spartamage.Script(preallocCommand)
 }
 
 // EnsureSpelling ensures that there are no misspellings in the source
@@ -194,6 +204,7 @@ func EnsureAllPreconditions() error {
 		EnsureFormatted,
 		EnsureStaticChecks,
 		EnsureSpelling,
+		EnsurePrealloc,
 	)
 	return nil
 }

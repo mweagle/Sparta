@@ -1313,11 +1313,13 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 			return newTaskResult("", updateResultErr)
 		}
 	}
-	var inPlaceUpdateTasks []*workTask
+	inPlaceUpdateTasks := make([]*workTask,
+		len(updateCodeRequests),
+		len(updateCodeRequests))
 	awsLambda := lambda.New(ctx.context.awsSession)
-	for _, eachUpdateCodeRequest := range updateCodeRequests {
+	for eachIndex, eachUpdateCodeRequest := range updateCodeRequests {
 		updateTask := updateTaskMaker(awsLambda, eachUpdateCodeRequest)
-		inPlaceUpdateTasks = append(inPlaceUpdateTasks, newWorkTask(updateTask))
+		inPlaceUpdateTasks[eachIndex] = newWorkTask(updateTask)
 	}
 
 	// Add the request to delete the change set...
@@ -1454,12 +1456,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 }
 
 func verifyLambdaPreconditions(lambdaAWSInfo *LambdaAWSInfo, logger *logrus.Logger) error {
-	// If this is a legacy Sparta lambda function, let the user know
-	if lambdaAWSInfo.lambdaFn != nil {
-		logger.WithFields(logrus.Fields{
-			"Name": lambdaAWSInfo.lambdaFunctionName(),
-		}).Warn("DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()")
-	}
+
 	return nil
 }
 

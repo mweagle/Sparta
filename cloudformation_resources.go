@@ -98,13 +98,12 @@ func discoveryResourceInfoForDependency(cfTemplate *gocf.Template,
 		ResourceID:   logicalResourceName,
 		ResourceType: item.Properties.CfnResourceType(),
 	}
-	var quotedAttrs []string
-	for _, eachOutput := range resourceOutputs {
-		quotedAttrs = append(quotedAttrs,
-			fmt.Sprintf(`"%s" :"{ "Fn::GetAtt" : [ "%s", "%s" ] }"`,
-				eachOutput,
-				logicalResourceName,
-				eachOutput))
+	quotedAttrs := make([]string, len(resourceOutputs), len(resourceOutputs))
+	for eachIndex, eachOutput := range resourceOutputs {
+		quotedAttrs[eachIndex] = fmt.Sprintf(`"%s" :"{ "Fn::GetAtt" : [ "%s", "%s" ] }"`,
+			eachOutput,
+			logicalResourceName,
+			eachOutput)
 	}
 	templateData.ResourceProperties = strings.Join(quotedAttrs, ",")
 

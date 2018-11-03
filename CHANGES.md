@@ -1,8 +1,10 @@
 # Change Notes
 
-## v1.6.0
+## v1.6.0 - The REST Edition 😴
 
 - :warning: **BREAKING**
+  - Eliminate pre 1.0 GM Sparta function signature: `type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)` 🎉
+    - See the [AWS Docs](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html) for officially supported signatures
   - Changed API Gateway response mapping to support body and header return values.
     - API Gateway lambda functions should use `aws/apigateway.NewResponse` to produce a new `Response` type with struct fields that are properly interpreted by the new `$input.json('$.body')` mapping expression.
     - The change was driven by the [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) service's need to return both a body and HTTP location header.
@@ -42,6 +44,7 @@
                       svc.S3Accessor.BucketPrivilege("s3:ListBucket")),
       ```
     - See [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) for a complete example
+      - The _SpartaTodoBackend_ is a self-deploying CORS-accessible service that satisfies the [TodoBackend](https://www.todobackend.com/) online tests
   - Added _Sparta/aws/accessor_ package to streamline S3-backed service creation.
     - Embed a `services.S3Accessor` type to enable utility methods for:
       - `Put`
@@ -49,10 +52,11 @@
       - `GetAll`
       - `Delete`
       - `DeleteAll`
+  - Added [prealloc](https://github.com/alexkohler/prealloc) check to ensure that slices are preallocated when possible
 - :bug:  **FIXED**
   - Fix latent issue where CloudWatch Log ARN was malformed (https://github.com/mweagle/Sparta/commit/5800553983ed16e6c5e4a622559909c050c00219)
 
-## v1.5.0
+## v1.5.0 - The Observability Edition 🔭
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
