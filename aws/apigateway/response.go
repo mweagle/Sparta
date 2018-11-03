@@ -2,6 +2,7 @@ package apigateway
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 )
@@ -27,12 +28,24 @@ func (apigError *Error) Error() string {
 
 // NewErrorResponse returns a response that satisfies
 // the regular expression used to determine integration mappings
-// via the API Gateway
-func NewErrorResponse(statusCode int, messages ...string) *Error {
+// via the API Gateway. messages is a stringable type. Error interface
+// instances will be properly typecast.
+func NewErrorResponse(statusCode int, messages ...interface{}) *Error {
+
+	additionalMessages := make([]string, len(messages), len(messages))
+	for eachIndex, eachMessage := range messages {
+		switch typedValue := eachMessage.(type) {
+		case error:
+			additionalMessages[eachIndex] = typedValue.Error()
+		default:
+			additionalMessages[eachIndex] = fmt.Sprintf("%v", typedValue)
+		}
+	}
+
 	err := &Error{
 		Code:    statusCode,
 		Err:     http.StatusText(statusCode),
-		Message: strings.Join(messages, " "),
+		Message: strings.Join(additionalMessages, " "),
 		Context: make(map[string]interface{}),
 	}
 	if len(err.Err) <= 0 {
@@ -50,7 +63,8 @@ type Response struct {
 }
 
 // canonicalResponse is the type for the canonicalized response with the
-// headers ensured to be lowercase
+// headers lowercased to match any API-Gateway case sensitive whitelist
+// matching
 type canonicalResponse struct {
 	Code    int               `json:"code,omitempty"`
 	Body    interface{}       `json:"body,omitempty"`
