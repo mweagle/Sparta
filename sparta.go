@@ -3,10 +3,8 @@ package sparta
 import (
 	"crypto/sha1"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math/rand"
-	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -24,61 +22,6 @@ import (
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-)
-
-////////////////////////////////////////////////////////////////////////////////
-// Constants
-////////////////////////////////////////////////////////////////////////////////
-
-const (
-	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.5.0"
-	// GoLambdaVersion is the Go version runtime used for the lambda function
-	GoLambdaVersion = "go1.x"
-	// SpartaBinaryName is binary name that exposes the Go lambda function
-	SpartaBinaryName = "Sparta.lambda.amd64"
-)
-const (
-	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
-	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
-	// divider length is the length of a divider in the text
-	// based CLI output
-	dividerLength = 48
-)
-const (
-	// envVarLogLevel is the provision time debug value
-	// carried into the execution environment
-	envVarLogLevel = "SPARTA_LOG_LEVEL"
-	// spartaEnvVarFunctionName is the name of this function in the
-	// map. It's the function that will be registered to run
-	// envVarFunctionName = "SPARTA_FUNC_NAME"
-	// envVarDiscoveryInformation is the name of the discovery information
-	// published into the environment
-	envVarDiscoveryInformation = "SPARTA_DISCOVERY_INFO"
-)
-
-var (
-	// internal logging header
-	headerDivider = strings.Repeat("═", dividerLength)
-)
-
-// AWS Principal ARNs from http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html
-// See also
-// http://docs.aws.amazon.com/general/latest/gr/rande.html
-// for region specific principal names
-const (
-	// @enum AWSPrincipal
-	APIGatewayPrincipal = "apigateway.amazonaws.com"
-	// @enum AWSPrincipal
-	CloudWatchEventsPrincipal = "events.amazonaws.com"
-	// @enum AWSPrincipal
-	SESPrincipal = "ses.amazonaws.com"
-	// @enum AWSPrincipal
-	SNSPrincipal = "sns.amazonaws.com"
-	// @enum AWSPrincipal
-	EC2Principal = "ec2.amazonaws.com"
-	// @enum AWSPrincipal
-	LambdaPrincipal = "lambda.amazonaws.com"
 )
 
 type cloudFormationLambdaCustomResource struct {
@@ -164,7 +107,7 @@ var CommonIAMStatements = struct {
 				gocf.Ref("AWS::Region"),
 				gocf.String(":"),
 				gocf.Ref("AWS::AccountId"),
-				gocf.String("*")),
+				gocf.String(":*")),
 		},
 		{
 			Effect: "Allow",
@@ -268,18 +211,6 @@ type LambdaContext struct {
 	LogGroupName       string `json:"logGroupName"`
 	LogStreamName      string `json:"logStreamName"`
 }
-
-// LambdaFunction is the golang function signature required to support AWS Lambda execution.
-// Standard HTTP response codes are used to signal AWS Lambda success/failure on the
-// proxied context() object.  See http://docs.aws.amazon.com/lambda/latest/dg/nodejs-prog-model-context.html
-// for more information.
-//
-// 	200 - 299       : Success
-// 	<200 || >= 300  : Failure
-//
-// Content written to the ResponseWriter will be used as the
-// response/Error value provided to AWS Lambda.
-type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)
 
 // LambdaFunctionOptions defines additional AWS Lambda execution params.  See the
 // AWS Lambda FunctionConfiguration (http://docs.aws.amazon.com/lambda/latest/dg/API_FunctionConfiguration.html)
@@ -665,7 +596,7 @@ type LambdaAWSInfo struct {
 	// AWS Go lambda compliant function
 	handlerSymbol interface{}
 	// pointer to lambda function
-	lambdaFn LambdaFunction
+	//lambdaFn LambdaFunction
 	// The user supplied internal name
 	userSuppliedFunctionName string
 	// Role name (NOT ARN) to use during AWS Lambda Execution.  See
@@ -700,6 +631,9 @@ type LambdaAWSInfo struct {
 	customResources []*customResourceInfo
 	// Cached lambda name s.t. we only compute it once
 	cachedLambdaFunctionName string
+
+	// deprecation notices
+	deprecationNotices []string
 }
 
 // lambdaFunctionName returns the internal
@@ -708,17 +642,21 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	if info.cachedLambdaFunctionName != "" {
 		return info.cachedLambdaFunctionName
 	}
-	lambdaFuncName := info.userSuppliedFunctionName
+	var lambdaFuncName string
+
 	if nil != info.Options &&
 		nil != info.Options.SpartaOptions &&
 		"" != info.Options.SpartaOptions.Name {
 		lambdaFuncName = info.Options.SpartaOptions.Name
+	} else if info.userSuppliedFunctionName != "" {
+		lambdaFuncName = info.userSuppliedFunctionName
 	} else {
 		// Using the default name, let's at least remove the
 		// first prefix, since that's the SCM provider and
 		// doesn't provide a lot of value...
-		if info.lambdaFn != nil {
-			lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.lambdaFn).Pointer())
+
+		if info.handlerSymbol != nil {
+			lambdaPtr := runtime.FuncForPC(reflect.ValueOf(info.handlerSymbol).Pointer())
 			lambdaFuncName = lambdaPtr.Name()
 		}
 
@@ -1035,7 +973,15 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		context,
 		logger)
 
-	return decoratorErr
+	if decoratorErr != nil {
+		return decoratorErr
+	}
+
+	// Log any deprecation notices
+	for _, eachDeprecation := range info.deprecationNotices {
+		logger.Warn(eachDeprecation)
+	}
+	return nil
 }
 
 //
@@ -1169,11 +1115,19 @@ Supported lambdaHandler signatures:
 • func (context.Context, TIn) (TOut, error)
 */
 
-// HandleAWSLambda registers lambdaHandler with the given functionName
-// using the default lambdaFunctionOptions
-func HandleAWSLambda(functionName string,
+// NewAWSLambda is the creation function that replaces HandleAWSLambda. It returns
+// a *LambdaAWSInfo pointer to the struct representing the AWS lambda target. It's a
+// go-friendly signature for creating a lambda function
+func NewAWSLambda(functionName string,
 	lambdaHandler interface{},
-	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
+	roleNameOrIAMRoleDefinition interface{}) (*LambdaAWSInfo, error) {
+
+	if functionName == "" {
+		return nil, errors.Errorf("AWS Lambda function name must not be empty")
+	}
+	if lambdaHandler == nil {
+		return nil, errors.Errorf("AWS Lambda function handler must not be nil")
+	}
 
 	lambda := &LambdaAWSInfo{
 		userSuppliedFunctionName: functionName,
@@ -1181,17 +1135,31 @@ func HandleAWSLambda(functionName string,
 		Options:                  defaultLambdaFunctionOptions(),
 		Permissions:              make([]LambdaPermissionExporter, 0),
 		EventSourceMappings:      make([]*EventSourceMapping, 0),
+		deprecationNotices:       make([]string, 0),
 	}
 
 	switch v := roleNameOrIAMRoleDefinition.(type) {
 	case string:
-		lambda.RoleName = roleNameOrIAMRoleDefinition.(string)
+		lambda.RoleName = v
 	case IAMRoleDefinition:
-		definition := roleNameOrIAMRoleDefinition.(IAMRoleDefinition)
+		definition := v
 		lambda.RoleDefinition = &definition
 	default:
-		panic(fmt.Sprintf("Unsupported IAM Role type: %s", v))
+		return nil, errors.Errorf("AWS Lambda function IAM role must not be empty")
 	}
+	return lambda, nil
+}
+
+// HandleAWSLambda is deprecated in favor of NewAWSLambda(...)
+func HandleAWSLambda(functionName string,
+	lambdaHandler interface{},
+	roleNameOrIAMRoleDefinition interface{}) *LambdaAWSInfo {
+
+	lambda, lambdaErr := NewAWSLambda(functionName, lambdaHandler, roleNameOrIAMRoleDefinition)
+	if lambdaErr != nil {
+		panic(lambdaErr)
+	}
+	lambda.deprecationNotices = append(lambda.deprecationNotices, "sparta.HandleAWSLambda is deprecated starting with v1.6.0. Prefer sparta.NewAWSLambda(...)")
 	return lambda
 }
 

@@ -120,6 +120,7 @@ func InstallBuildRequirements() error {
 		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
 		"github.com/securego/gosec/cmd/gosec/...",
+		"github.com/alexkohler/prealloc",
 		"github.com/client9/misspell/cmd/misspell",
 	}
 	for _, eachDep := range requirements {
@@ -132,6 +133,15 @@ func InstallBuildRequirements() error {
 		}
 	}
 	return nil
+}
+
+// EnsurePrealloc ensures that slices that could be preallocated are enforced
+func EnsurePrealloc() error {
+	// Super run some commands
+	preallocCommand := [][]string{
+		[]string{"prealloc", "-set_exit_status", "./..."},
+	}
+	return spartamage.Script(preallocCommand)
 }
 
 // EnsureSpelling ensures that there are no misspellings in the source
@@ -173,8 +183,14 @@ func EnsureStaticChecks() error {
 		return megacheckErr
 	}
 	// Gosec
+	if mg.Verbose() {
+		return sh.Run("gosec",
+			"-exclude=G204,G505,G401",
+			"./...")
+	}
 	return sh.Run("gosec",
 		"-exclude=G204,G505,G401",
+		"-quiet",
 		"./...")
 }
 
@@ -188,6 +204,7 @@ func EnsureAllPreconditions() error {
 		EnsureFormatted,
 		EnsureStaticChecks,
 		EnsureSpelling,
+		EnsurePrealloc,
 	)
 	return nil
 }
@@ -243,25 +260,25 @@ func Publish() error {
 }
 
 // Test runs the Sparta tests
-func Test() {
-	testCommand := func() error {
-		return sh.Run("go",
-			"test",
-			"-cover",
-			"-race",
-			"./...")
-	}
+func Test() error {
 	mg.SerialDeps(
 		EnsureAllPreconditions,
-		testCommand,
 	)
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	testCommand := [][]string{
+		[]string{"go", "test", verboseFlag, "-cover", "-race", "./..."},
+	}
+	return spartamage.Script(testCommand)
 }
 
 // TestCover runs the test and opens up the resulting report
 func TestCover() error {
-	// mg.SerialDeps(
-	// 	EnsureAllPreconditions,
-	// )
+	mg.SerialDeps(
+		EnsureAllPreconditions,
+	)
 	coverageReport := fmt.Sprintf("%s/cover.out", localWorkDir)
 	testCoverCommands := [][]string{
 		[]string{"go", "test", fmt.Sprintf("-coverprofile=%s", coverageReport), "."},

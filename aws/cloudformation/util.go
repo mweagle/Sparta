@@ -361,9 +361,11 @@ func stackCapabilities(template *gocf.Template) []*string {
 			}
 		}
 	}
-	var capabilities []*string
+	capabilities := make([]*string, len(capabilitiesMap), len(capabilitiesMap))
+	capabilitiesIndex := 0
 	for eachKey := range capabilitiesMap {
-		capabilities = append(capabilities, aws.String(eachKey))
+		capabilities[capabilitiesIndex] = aws.String(eachKey)
+		capabilitiesIndex++
 	}
 	return capabilities
 }
@@ -420,12 +422,14 @@ func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
 // MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
 // Tags representation.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
 func MapToResourceTags(tagMap map[string]string) []interface{} {
-	var tags []interface{}
+	tags := make([]interface{}, len(tagMap), len(tagMap))
+	tagsIndex := 0
 	for eachKey, eachValue := range tagMap {
-		tags = append(tags, map[string]interface{}{
+		tags[tagsIndex] = map[string]interface{}{
 			"Key":   eachKey,
 			"Value": eachValue,
-		})
+		}
+		tagsIndex++
 	}
 	return tags
 }
@@ -1037,10 +1041,12 @@ func ConvergeStackState(serviceName string,
 
 	// Rip through the events so that we can output exactly how long it took to
 	// update each resource
-	var resourceStats []*resourceProvisionMetrics
+	resourceStats := make([]*resourceProvisionMetrics, len(resourceMetrics), len(resourceMetrics))
+	resourceStatIndex := 0
 	for _, eachResource := range resourceMetrics {
 		eachResource.elapsed = eachResource.endTime.Sub(eachResource.startTime)
-		resourceStats = append(resourceStats, eachResource)
+		resourceStats[resourceStatIndex] = eachResource
+		resourceStatIndex++
 	}
 	// Create a slice with them all, sorted by total elapsed mutation time
 	sort.Slice(resourceStats, func(i, j int) bool {

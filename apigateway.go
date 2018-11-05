@@ -501,6 +501,17 @@ func (api *API) LogicalResourceName() string {
 	return CloudFormationResourceName("APIGateway", api.name)
 }
 
+// RestAPIURL returns the dynamically assigned
+// Rest API URL including the scheme
+func (api *API) RestAPIURL() *gocf.StringExpr {
+	return gocf.Join("",
+		gocf.String("https://"),
+		gocf.Ref(api.LogicalResourceName()),
+		gocf.String(".execute-api."),
+		gocf.Ref("AWS::Region"),
+		gocf.String(".amazonaws.com"))
+}
+
 func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
@@ -640,7 +651,8 @@ func (api *API) export(serviceName string,
 				api.corsEnabled())
 
 			// Add outbound method responses
-			apiGatewayMethod.MethodResponses = methodResponses(api, eachMethodDef.Responses,
+			apiGatewayMethod.MethodResponses = methodResponses(api,
+				eachMethodDef.Responses,
 				api.corsEnabled())
 
 			prefix := fmt.Sprintf("%s%s", eachMethodDef.httpMethod, eachResourceMethodKey)
@@ -820,19 +832,19 @@ func (resource *Resource) NewMethod(httpMethod string,
 				i,
 				httpMethod)
 		}
+
+		// The integration responses are keyed from supported error codes...
 		// First the Integration Responses...
 		regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
-		isDefaultHTTPStatusCode := (defaultHTTPStatusCode == i)
-		applicationJSONTemplate := "$input.path('$.errorMessage')"
-		if isDefaultHTTPStatusCode {
+		if defaultHTTPStatusCode == i {
 			regExp = ""
-			applicationJSONTemplate = "$input.json('$')"
 		}
+
 		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 		method.Integration.Responses[i] = &IntegrationResponse{
 			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
-				"application/json": applicationJSONTemplate,
+				"application/json": "$input.json('$.body')",
 				"text/*":           "",
 			},
 			SelectionPattern: regExp,

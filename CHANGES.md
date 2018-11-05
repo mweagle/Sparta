@@ -1,6 +1,64 @@
 # Change Notes
 
-## v1.5.0
+## v1.6.0 - The REST Edition 😴
+
+- :warning: **BREAKING**
+  - Eliminate pre 1.0 GM Sparta function signature: `type LambdaFunction func(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)` 🎉
+    - See the [AWS Docs](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html) for officially supported signatures
+  - Changed API Gateway response mapping to support body and header return values.
+    - API Gateway lambda functions should use `aws/apigateway.NewResponse` to produce a new `Response` type with struct fields that are properly interpreted by the new `$input.json('$.body')` mapping expression.
+    - The change was driven by the [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) service's need to return both a body and HTTP location header.
+      - See the [response](https://github.com/mweagle/SpartaTodoBackend/blob/master/service/todos.go#L79) for an example
+- :checkered_flag: **CHANGES**
+  - Add more _go_ idiomatic `sparta.NewAWSLambda(...) (*sparta.LambdaAWSInfo, error)` constructor
+    - The existing `sparta.HandleAWSLambda` function is deprecated and will be removed in a subsequent release
+  - Added _Sparta/archetype/rest_ package to streamline REST-based Sparta services.
+    - This package includes a fluent builder (`MethodHandler`) and constructor function (`RegisterResource`) that transforms a _rest.Resource_ implementing struct into an API Gateway resource.
+    - Usage:
+      ```go
+      // File: resource.go
+      // TodoItemResource is the /todo/{id} resource
+      type TodoItemResource struct {
+      }
+      // ResourceDefinition returns the Sparta REST definition for the Todo item
+      func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) {
+
+        return spartaREST.ResourceDefinition{
+          URL: todoItemURL,
+          MethodHandlers: spartaREST.MethodHandlerMap{
+            ...
+          }
+        }, nil
+      }
+
+      // File: main.go
+      func() {
+        myResource := &TodoItemResource{}
+        resourceMap, resourcesErr := spartaREST.RegisterResource(apiGatewayInstance, myResource)
+      }
+      ```
+    - Sample fluent method builder:
+      ```go
+        // GET
+        http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
+          StatusCodes(http.StatusInternalServerError).
+          Privileges(svc.S3Accessor.KeysPrivilege("s3:GetObject"),
+                      svc.S3Accessor.BucketPrivilege("s3:ListBucket")),
+      ```
+    - See [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) for a complete example
+      - The _SpartaTodoBackend_ is a self-deploying CORS-accessible service that satisfies the [TodoBackend](https://www.todobackend.com/) online tests
+  - Added _Sparta/aws/accessor_ package to streamline S3-backed service creation.
+    - Embed a `services.S3Accessor` type to enable utility methods for:
+      - `Put`
+      - `Get`
+      - `GetAll`
+      - `Delete`
+      - `DeleteAll`
+  - Added [prealloc](https://github.com/alexkohler/prealloc) check to ensure that slices are preallocated when possible
+- :bug:  **FIXED**
+  - Fix latent issue where CloudWatch Log ARN was malformed (https://github.com/mweagle/Sparta/commit/5800553983ed16e6c5e4a622559909c050c00219)
+
+## v1.5.0 - The Observability Edition 🔭
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**

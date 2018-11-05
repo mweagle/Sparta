@@ -661,25 +661,32 @@ func (perm SESPermission) export(serviceName string,
 	///////////////////
 	// Build up the Rules
 	// If there aren't any rules, make one that forwards everything...
-	var sesRules []*cfCustomResources.SESLambdaEventSourceResourceRule
+	sesLength := 0
+	if perm.ReceiptRules == nil {
+		sesLength = 1
+	} else {
+		sesLength = len(perm.ReceiptRules)
+	}
+	sesRules := make([]*cfCustomResources.SESLambdaEventSourceResourceRule, sesLength)
 	if nil == perm.ReceiptRules {
-		sesRules = append(sesRules,
-			&cfCustomResources.SESLambdaEventSourceResourceRule{
-				Name:        gocf.String("Default"),
-				Actions:     make([]*cfCustomResources.SESLambdaEventSourceResourceAction, 0),
-				ScanEnabled: gocf.Bool(false),
-				Enabled:     gocf.Bool(true),
-				Recipients:  []*gocf.StringExpr{},
-				TLSPolicy:   gocf.String("Optional"),
-			})
+		sesRules[0] = &cfCustomResources.SESLambdaEventSourceResourceRule{
+			Name:        gocf.String("Default"),
+			Actions:     make([]*cfCustomResources.SESLambdaEventSourceResourceAction, 0),
+			ScanEnabled: gocf.Bool(false),
+			Enabled:     gocf.Bool(true),
+			Recipients:  []*gocf.StringExpr{},
+			TLSPolicy:   gocf.String("Optional"),
+		}
+	} else {
+		// Append all the user defined ones
+		for eachIndex, eachReceiptRule := range perm.ReceiptRules {
+			sesRules[eachIndex] = eachReceiptRule.toResourceRule(
+				serviceName,
+				gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+				perm.MessageBodyStorage)
+		}
 	}
-	// Append all the user defined ones
-	for _, eachReceiptRule := range perm.ReceiptRules {
-		sesRules = append(sesRules, eachReceiptRule.toResourceRule(
-			serviceName,
-			gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
-			perm.MessageBodyStorage))
-	}
+
 	customResource.Rules = sesRules
 	// Name?
 	resourceInvokerName := CloudFormationResourceName("ConfigSNS",
@@ -1051,12 +1058,14 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 }
 
 func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error) {
-	var nodes []descriptionNode
+	nodes := make([]descriptionNode, len(perm.Filters))
+	nodeIndex := 0
 	for eachFilterName, eachFilterDef := range perm.Filters {
-		nodes = append(nodes, descriptionNode{
+		nodes[nodeIndex] = descriptionNode{
 			Name:     describeInfoValue(eachFilterDef.LogGroupName),
 			Relation: fmt.Sprintf("%s (%s)", eachFilterName, eachFilterDef.FilterPattern),
-		})
+		}
+		nodeIndex++
 	}
 	return nodes, nil
 }

@@ -179,6 +179,7 @@ func newEventInputSelector(awsSession *session.Session,
 	ch := make(chan interface{})
 	functionSelectedBroadcaster.Register(ch)
 	go func() {
+		//lint:ignore S1000 to make the check happy
 		for {
 			select {
 			case funcSelected := <-ch:
@@ -365,6 +366,7 @@ func newCloudWatchLogTailView(awsSession *session.Session,
 		lastTime := int64(0)
 		animationIndex := 0
 
+		//lint:ignore S1000 to make the check happy
 		for {
 			select {
 			case funcSelected := <-ch:
