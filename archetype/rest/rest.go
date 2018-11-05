@@ -102,8 +102,7 @@ type Resource interface {
 // RegisterResource creates a set of lambda handlers for the given resource
 // and registers them with the apiGateway. The sparta Lambda handler returned
 // slice is eligible
-func RegisterResource(apiGateway *sparta.API,
-	resource Resource) (map[string]*sparta.LambdaAWSInfo, error) {
+func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.LambdaAWSInfo, error) {
 
 	definition, definitionErr := resource.ResourceDefinition()
 	if definitionErr != nil {
@@ -192,11 +191,20 @@ func RegisterResource(apiGateway *sparta.API,
 	// Great, walk the map of handlers
 	for eachMethod, eachMethodDefinition := range definition.MethodHandlers {
 		if !strings.Contains(allHTTPMethods, eachMethod) {
-			return nil, errors.Errorf("unsupported HTTP method name: %s", eachMethod)
+			return nil, errors.Errorf("unsupported HTTP method name: `%s %s`. Supported: %s",
+				eachMethod,
+				definition.URL,
+				allHTTPMethods)
 		}
-		lambdaFn := sparta.HandleAWSLambda(lambdaName(eachMethod),
+		lambdaFn, lambdaFnErr := sparta.NewAWSLambda(lambdaName(eachMethod),
 			eachMethodDefinition.Handler,
 			sparta.IAMRoleDefinition{})
+
+		if lambdaFnErr != nil {
+			return nil, errors.Wrapf(lambdaFnErr,
+				"attempting to register url `%s %s`", eachMethod, definition.URL)
+		}
+
 		resourceMap[eachMethod] = lambdaFn
 
 		// Any options?
@@ -218,5 +226,12 @@ func RegisterResource(apiGateway *sparta.API,
 	if len(resourceMap) <= 0 {
 		return nil, errors.Errorf("No resource methodHandlers found for resource: %T", resource)
 	}
-	return resourceMap, nil
+	// Convert this into a slice and return it...
+	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo, len(resourceMap), len(resourceMap))
+	lambdaIndex := 0
+	for _, eachLambda := range resourceMap {
+		lambdaResourceHandlers[lambdaIndex] = eachLambda
+		lambdaIndex++
+	}
+	return lambdaResourceHandlers, nil
 }
