@@ -10,6 +10,8 @@
     - The change was driven by the [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) service's need to return both a body and HTTP location header.
       - See the [response](https://github.com/mweagle/SpartaTodoBackend/blob/master/service/todos.go#L79) for an example
 - :checkered_flag: **CHANGES**
+  - Add more _go_ idiomatic `sparta.NewAWSLambda(...) (*sparta.LambdaAWSInfo, error)` constructor
+    - The existing `sparta.HandleAWSLambda` function is deprecated and will be removed in a subsequent release
   - Added _Sparta/archetype/rest_ package to streamline REST-based Sparta services.
     - This package includes a fluent builder (`MethodHandler`) and constructor function (`RegisterResource`) that transforms a _rest.Resource_ implementing struct into an API Gateway resource.
     - Usage:
