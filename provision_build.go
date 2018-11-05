@@ -1314,7 +1314,6 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		}
 	}
 	inPlaceUpdateTasks := make([]*workTask,
-		len(updateCodeRequests),
 		len(updateCodeRequests))
 	awsLambda := lambda.New(ctx.context.awsSession)
 	for eachIndex, eachUpdateCodeRequest := range updateCodeRequests {

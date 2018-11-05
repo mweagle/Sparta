@@ -667,7 +667,7 @@ func (perm SESPermission) export(serviceName string,
 	} else {
 		sesLength = len(perm.ReceiptRules)
 	}
-	sesRules := make([]*cfCustomResources.SESLambdaEventSourceResourceRule, sesLength, sesLength)
+	sesRules := make([]*cfCustomResources.SESLambdaEventSourceResourceRule, sesLength)
 	if nil == perm.ReceiptRules {
 		sesRules[0] = &cfCustomResources.SESLambdaEventSourceResourceRule{
 			Name:        gocf.String("Default"),
@@ -1058,7 +1058,7 @@ func (perm CloudWatchLogsPermission) export(serviceName string,
 }
 
 func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error) {
-	nodes := make([]descriptionNode, len(perm.Filters), len(perm.Filters))
+	nodes := make([]descriptionNode, len(perm.Filters))
 	nodeIndex := 0
 	for eachFilterName, eachFilterDef := range perm.Filters {
 		nodes[nodeIndex] = descriptionNode{

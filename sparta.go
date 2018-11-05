@@ -650,10 +650,6 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 		lambdaFuncName = info.Options.SpartaOptions.Name
 	} else if info.userSuppliedFunctionName != "" {
 		lambdaFuncName = info.userSuppliedFunctionName
-	} else if nil != info.Options &&
-		nil != info.Options.SpartaOptions &&
-		"" != info.Options.SpartaOptions.Name {
-		lambdaFuncName = info.Options.SpartaOptions.Name
 	} else {
 		// Using the default name, let's at least remove the
 		// first prefix, since that's the SCM provider and
