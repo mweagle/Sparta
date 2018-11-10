@@ -58,7 +58,7 @@ func (svc *S3Accessor) s3BucketName() string {
 	if !s3BucketResExists {
 		return ""
 	}
-	return "foo" + s3BucketRes.ResourceRef
+	return s3BucketRes.ResourceRef
 }
 
 // Delete handles deleting the resource
