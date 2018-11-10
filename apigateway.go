@@ -702,7 +702,7 @@ func (api *API) export(serviceName string,
 			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
 		} else {
 			newDeployment := &gocf.APIGatewayDeployment{
-				Description: gocf.String("Sparta deploy"),
+				Description: gocf.String("Deployment"),
 				RestAPIID:   apiGatewayRestAPIID.String(),
 			}
 			if stageInfo.StageName != nil {
