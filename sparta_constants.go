@@ -1,6 +1,7 @@
 package sparta
 
 import (
+	"fmt"
 	"strings"
 
 	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
@@ -12,13 +13,21 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 const (
+	// ProperName is the DRY name definition
+	ProperName = "Sparta"
+)
+const (
 	// SpartaVersion defines the current Sparta release
 	SpartaVersion = "1.6.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
-	// SpartaBinaryName is binary name that exposes the Go lambda function
-	SpartaBinaryName = "Sparta.lambda.amd64"
 )
+
+var (
+	// SpartaBinaryName is binary name that exposes the Go lambda function
+	SpartaBinaryName = fmt.Sprintf("%s.lambda.amd64", ProperName)
+)
+
 const (
 	// Custom Resource typename used to create new cloudFormationUserDefinedFunctionCustomResource
 	cloudFormationLambda = "Custom::SpartaLambdaCustomResource"
@@ -76,6 +85,12 @@ const (
 	// pointer in the request
 	// DEPRECATED
 	ContextKeyLambdaContext
+	// ContextKeyLambdaError is the possible error that was returned
+	// from the lambda function
+	ContextKeyLambdaError
+	// ContextKeyLambdaResponse is the possible response that
+	// was returned from the lambda function
+	ContextKeyLambdaResponse
 )
 
 const (
