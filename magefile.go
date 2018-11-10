@@ -14,6 +14,7 @@ import (
 	"github.com/magefile/mage/mg" // mg contains helpful utility functions, like Deps
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 	spartamage "github.com/mweagle/Sparta/magefile"
+	"github.com/pkg/browser"
 )
 
 const localWorkDir = "./.sparta"
@@ -295,4 +296,23 @@ func TravisBuild() error {
 		Build,
 		Test)
 	return nil
+}
+
+// CompareAgainstMasterBranch is a convenience function to show the comparisons
+// of the current pushed branch against the master branch
+func CompareAgainstMasterBranch() error {
+	// Get the current branch, open a browser
+	// to the change...
+	// The first thing we need is the `git` branch
+	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	stdOutResult := strings.TrimSpace(string(stdout.Bytes()))
+	githubURL := fmt.Sprintf("https://github.com/mweagle/Sparta/compare/master...%s", stdOutResult)
+	return browser.OpenURL(githubURL)
 }
