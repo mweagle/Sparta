@@ -40,18 +40,24 @@ const (
 type XRayInterceptorMode uint32
 
 const (
-	// XRayModeCaptureEvent is the flag indicating to capture the input event if there is
-	// an error
-	XRayModeCaptureEvent XRayInterceptorMode = 1 << iota
-	// XRayModeCaptureLogs is the flag indicating to capture all logs
-	XRayModeCaptureLogs
-	// XRayModeCaptureRequestID is the flag indicating to capture the request ID
-	XRayModeCaptureRequestID
+	// XRayModeErrCaptureErrorValue = is the flag indicating to capture the error
+	// value iff it's non-empty
+	XRayModeErrCaptureErrorValue XRayInterceptorMode = 1 << iota
+	// XRayModeErrCaptureEvent is the flag indicating to capture the input event iff
+	// there was an error
+	XRayModeErrCaptureEvent
+	// XRayModeErrCaptureLogs is the flag indicating to capture all logs iff there
+	// was an error
+	XRayModeErrCaptureLogs
+	// XRayModeErrCaptureRequestID is the flag indicating to capture the request ID iff there
+	// was an error
+	XRayModeErrCaptureRequestID
 
 	// XRayAll is all options
-	XRayAll = XRayModeCaptureEvent |
-		XRayModeCaptureLogs |
-		XRayModeCaptureRequestID
+	XRayAll = XRayModeErrCaptureErrorValue |
+		XRayModeErrCaptureEvent |
+		XRayModeErrCaptureLogs |
+		XRayModeErrCaptureRequestID
 )
 
 var (
