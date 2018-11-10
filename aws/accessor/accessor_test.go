@@ -3,6 +3,7 @@ package accessor
 import (
 	"context"
 	"math/rand"
+	"os"
 	"testing"
 	"time"
 
@@ -23,11 +24,19 @@ func newTestObject() *testObject {
 	}
 }
 
+// Disable test in Travis.
+// Ref: https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+func testDisabled() bool {
+	return os.Getenv("TRAVIS_BUILD_NUMBER") != ""
+}
 func testObjectConstructor() interface{} {
 	return &testObject{}
 }
 
 func testPut(t *testing.T, kvStore KevValueAccessor) {
+	if testDisabled() {
+		return
+	}
 	logger, _ := sparta.NewLogger("info")
 
 	ctx := context.Background()
@@ -51,6 +60,9 @@ func testPut(t *testing.T, kvStore KevValueAccessor) {
 }
 
 func testPutAll(t *testing.T, kvStore KevValueAccessor) {
+	if testDisabled() {
+		return
+	}
 	logger, _ := sparta.NewLogger("debug")
 	ctx := context.Background()
 	ctx = context.WithValue(ctx, sparta.ContextKeyLogger, logger)
