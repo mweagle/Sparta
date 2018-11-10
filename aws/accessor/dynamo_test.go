@@ -4,17 +4,16 @@ import (
 	"testing"
 )
 
-func TestDynamoPutObject(t *testing.T) {
-
-	dynamoAccessor := &DynamoAccessor{
+func dynamoAccessor() KevValueAccessor {
+	return &DynamoAccessor{
 		testingTableName: "JSONDocuments",
 	}
-	testPut(t, dynamoAccessor)
+}
+
+func TestDynamoPutObject(t *testing.T) {
+	testPut(t, dynamoAccessor())
 }
 
 func TestDynamoPutAllObject(t *testing.T) {
-	dynamoAccessor := &DynamoAccessor{
-		testingTableName: "JSONDocuments",
-	}
-	testPutAll(t, dynamoAccessor)
+	testPutAll(t, dynamoAccessor())
 }
