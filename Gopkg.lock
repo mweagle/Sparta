@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:5bc99eeae9467da75e01872be87458e10cf7615d243f4f1e708a93fa68cecb01"
+  digest = "1:ee7ae23573927dfe9673d05cf872c23d87740e2a7d43dae9aff92b67a0b59996"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0be4439d90f533f1ea2e0adddd5b1a405e6f5559"
-  version = "v1.6.3"
+  revision = "3409e8256f5cf23a9e9ee2a8816c4c5da78a181d"
+  version = "v1.6.4"
 
 [[projects]]
   digest = "1:e92f5581902c345eb4ceffdcd4a854fb8f73cf436d47d837d1ec98ef1fe0a214"
@@ -31,7 +31,7 @@
   version = "v1.6.0"
 
 [[projects]]
-  digest = "1:61608df8d8632da35fbd8b8ec6256000f2dbe87a66d014aba2eb932287c8b672"
+  digest = "1:56994d0eb0979dc299a4a8da5074856bf38bab47322b02bd31e0727dcbdaaaf8"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -44,6 +44,7 @@
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
     "aws/credentials/stscreds",
+    "aws/crr",
     "aws/csm",
     "aws/defaults",
     "aws/ec2metadata",
@@ -72,6 +73,8 @@
     "service/cloudformation",
     "service/cloudwatch",
     "service/cloudwatchlogs",
+    "service/dynamodb",
+    "service/dynamodb/dynamodbattribute",
     "service/ecr",
     "service/iam",
     "service/lambda",
@@ -83,8 +86,25 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "97a47d14fbb0744966b484d5b089cdc9814b493b"
-  version = "v1.15.67"
+  revision = "cf00ea20983ce38df17ab0a0814463ab8838459f"
+  version = "v1.15.73"
+
+[[projects]]
+  digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
+  name = "github.com/aws/aws-xray-sdk-go"
+  packages = [
+    "header",
+    "internal/plugins",
+    "pattern",
+    "resources",
+    "strategy/ctxmissing",
+    "strategy/exception",
+    "strategy/sampling",
+    "xray",
+  ]
+  pruneopts = "UT"
+  revision = "32670489212454717deeafb8da5dbb1da0299749"
+  version = "v0.9.4"
 
 [[projects]]
   digest = "1:2fd83c8c2b1ff53fd7c4376a63c3a2f31e002e9296df9d7f150b07da524de88d"
@@ -93,6 +113,14 @@
   pruneopts = "UT"
   revision = "dd69c579ff204842e8962816987f838e2c2c18d8"
   version = "1.4"
+
+[[projects]]
+  digest = "1:50e893a85575fa48dc4982a279e50e2fd8b74e4f7c587860c1e25c77083b8125"
+  name = "github.com/cihub/seelog"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d2c6e5aa9fbfdd1c624e140287063c7730654115"
+  version = "v2.6"
 
 [[projects]]
   digest = "1:e47d51dab652d26c3fba6f8cba403f922d02757a82abdc77e90df7948daf296e"
@@ -209,11 +237,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:1e3627a2bf5ba3a9093159f89acc9ddb274d208c0cd643435c9f1e7e1cb80fb4"
+  digest = "1:3e658fb4b055816998a967aab8abe0966ce1cfcbb42c2f66a22c7c19568aa1d2"
   name = "github.com/ianlancetaylor/demangle"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fcd258a6f0b45dc345a407ee5568cf9a4d24a0ae"
+  revision = "5e5cf60278f657d30daa329dd0e7e893b6b8f027"
 
 [[projects]]
   digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
@@ -323,11 +351,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:679c28955b2cb0d49079f46c58f166c775c7ad9a5579140bc89b088072747059"
+  digest = "1:da25b5c66f6ae8790c5da9a8750457a3d82ce873d72e10a5f8cb5525d1a7ea8c"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "60a1c63fa9ae3540276aeb26d85b84ac37f713c7"
+  revision = "8cf347b745d04cc4dc106c22368b37b8018d33b7"
 
 [[projects]]
   digest = "1:bd008bf3838a9cb9731405d9c55d97bc61c7847a5cf37b81ca5e7a909879c624"
@@ -394,18 +422,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06"
+  revision = "e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa"
 
 [[projects]]
   branch = "master"
-  digest = "1:417d27a82efb8473554234a282be33d23b0d6adc121e636b55950f913ac071d6"
+  digest = "1:6a875550c3b582f6c2d7e2ce44aba792511f00016d7c46b0a4fb26f730ef3058"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "9b800f95dbbc54abff0acf7ee32d88ba4e328c89"
+  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -429,16 +457,16 @@
     "terminal",
   ]
   pruneopts = "UT"
-  revision = "0be4439d90f533f1ea2e0adddd5b1a405e6f5559"
-  version = "v1.6.3"
+  revision = "3409e8256f5cf23a9e9ee2a8816c4c5da78a181d"
+  version = "v1.6.4"
 
 [[projects]]
-  digest = "1:e8f2c13faf20d6bd2edce6956422f11eb251e766e0884c95645fbb5fd7b6b831"
+  digest = "1:2c6a8f26c364b006a27b8090a9583fcc4b7865583fcf93f99a20fce339e87192"
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3be31424000e9263ddc36f27b1de4c18f657f02e"
-  version = "v9.22.0"
+  revision = "1fa3c8d6336562f0a3f95c73593ee2b57ff4da11"
+  version = "v9.23.0"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -449,12 +477,15 @@
     "github.com/aws/aws-lambda-go/lambda",
     "github.com/aws/aws-lambda-go/lambdacontext",
     "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/client",
     "github.com/aws/aws-sdk-go/aws/request",
     "github.com/aws/aws-sdk-go/aws/session",
     "github.com/aws/aws-sdk-go/service/apigateway",
     "github.com/aws/aws-sdk-go/service/cloudformation",
     "github.com/aws/aws-sdk-go/service/cloudwatch",
     "github.com/aws/aws-sdk-go/service/cloudwatchlogs",
+    "github.com/aws/aws-sdk-go/service/dynamodb",
+    "github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute",
     "github.com/aws/aws-sdk-go/service/ecr",
     "github.com/aws/aws-sdk-go/service/iam",
     "github.com/aws/aws-sdk-go/service/lambda",
@@ -463,6 +494,7 @@
     "github.com/aws/aws-sdk-go/service/ses",
     "github.com/aws/aws-sdk-go/service/sns",
     "github.com/aws/aws-sdk-go/service/sts",
+    "github.com/aws/aws-xray-sdk-go/xray",
     "github.com/briandowns/spinner",
     "github.com/dustin/go-broadcast",
     "github.com/dustin/go-humanize",
