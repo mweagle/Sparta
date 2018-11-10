@@ -1,7 +1,6 @@
 package accessor
 
 // Simple dynamo accessor to get put range over items...
-// TODO - implement KeyValue accessor with https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/dynamodbattribute/
 
 import (
 	"context"
