@@ -87,8 +87,6 @@ func tappedHandler(handlerSymbol interface{},
 
 	// How to determine if this handler has tracing enabled? That would be a property
 	// of the function template associated with this function.
-	// TODO - buffered logger that attaches debug
-	// TODO - support publishing event with redaction
 
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
