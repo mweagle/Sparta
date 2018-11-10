@@ -112,8 +112,6 @@ func tappedHandler(handlerSymbol interface{},
 		ctx = context.WithValue(ctx, ContextKeyRequestLogger, logrusEntry)
 		ctx = applyInterceptors(ctx, msg, interceptors.AfterSetup)
 
-		ctx = applyInterceptors(ctx, msg, interceptors.BeforeDispatch)
-
 		// construct arguments
 		var args []reflect.Value
 		if takesContext {
@@ -129,6 +127,7 @@ func tappedHandler(handlerSymbol interface{},
 			}
 			args = append(args, event.Elem())
 		}
+		ctx = applyInterceptors(ctx, msg, interceptors.BeforeDispatch)
 		response := handler.Call(args)
 		ctx = applyInterceptors(ctx, msg, interceptors.AfterDispatch)
 
