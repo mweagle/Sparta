@@ -262,7 +262,7 @@ func init() {
 		"codePipelinePackage",
 		"p",
 		"",
-		"Name of CodePipeline package that includes cloduformation.json Template and ZIP config files")
+		"Name of CodePipeline package that includes cloudformation.json Template and ZIP config files")
 	CommandLineOptions.Provision.Flags().BoolVarP(&optionsProvision.InPlace,
 		"inplace",
 		"c",
