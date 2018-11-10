@@ -9,6 +9,7 @@ func s3Accessor() KevValueAccessor {
 		testingBucketName: "weagle-sparta-testbucket",
 	}
 }
+
 func TestS3PutObject(t *testing.T) {
 	testPut(t, s3Accessor())
 }
