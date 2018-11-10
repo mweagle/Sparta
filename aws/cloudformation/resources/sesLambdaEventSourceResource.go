@@ -87,7 +87,7 @@ func ensureSESRuleSetName(ruleSetName string, svc *ses.SES, logger *logrus.Logge
 	} else {
 		logger.WithFields(logrus.Fields{
 			"describeRuleSet": describeRuleSet,
-		}).Info("Sparta SES Rule Set already exists")
+		}).Info("SES Rule Set already exists")
 	}
 	return opError
 }
