@@ -20,7 +20,7 @@
     - This data is associated with XRay Traces in the console. Example:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
     </div>
-    - See the [SpartaXRayInterceptor](http://godoc.org/github.com/mweagle/SpartaXRayInterceptor) for a complete sample.
+    - See the [SpartaXRayInterceptor](http://github.com/mweagle/SpartaXRayInterceptor) for a complete sample.
     - Go back in time to when you wish you had enabled debug-level logging before the error ever occurred.
   - Expose `sparta.ProperName` as framework name literal
   - Add lightweight Key-Value interface and S3 and DynamoDB implementations to support [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend/)
