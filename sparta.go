@@ -22,6 +22,7 @@ import (
 	"github.com/mweagle/Sparta/system"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
+	_ "github.com/pkg/browser" // Force dep to resolve
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
