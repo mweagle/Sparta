@@ -14,8 +14,8 @@
       - _AfterDispatch_: Called after Sparta invokes your lambda function
       - _Complete_: Called immediately before Sparta returns your function return value(s) to AWS
     - The first interceptor is `interceptor.RegisterXRayInterceptor(ctx, options)` which creates a custom [XRay Segment](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-go-segment.html) spanning your lambda's execution and supports:
-      - Including the service BuildID in the _Trace Annotation_
-      - Optionally including the incoming event, all log statements (_trace_ and higher), and AWS request-id as _Trace Metadata_ **ONLY** in the case when your lambda function returns an error.
+      - Including the service BuildID in the [Trace Annotation](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html#api-segmentdocuments-annotations)
+      - Optionally including the incoming event, all log statements (_trace_ and higher), and AWS request-id as [Trace Metadata](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html#api-segmentdocuments-metadata) **ONLY** in the case when your lambda function returns an error.
         - Log messages are stored in a [ring buffer](https://golang.org/pkg/container/ring/) and limited to 1024 entries.
     - This data is associated with XRay Traces in the console. Example:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
