@@ -14,15 +14,16 @@
       - _AfterDispatch_: Called after Sparta invokes your lambda function
       - _Complete_: Called immediately before Sparta returns your function return value(s) to AWS
     - The first interceptor is `interceptor.RegisterXRayInterceptor(ctx, options)` which creates a custom [XRay Segment](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-go-segment.html) spanning your lambda's execution and supports:
-      - Including the BuildID in the _Trace Annotation_
+      - Including the service BuildID in the _Trace Annotation_
       - Optionally including the incoming event, all log statements (_trace_ and higher), and AWS request-id as _Trace Metadata_ **ONLY** in the case when your lambda function returns an error.
         - Log messages are stored in a [ring buffer](https://golang.org/pkg/container/ring/) and limited to 1024 entries.
-    - This data is associated with XRay Traces in the console:
+    - This data is associated with XRay Traces in the console. Example:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
+    </div>
     - See the [SpartaXRayInterceptor](http://godoc.org/github.com/mweagle/SpartaXRayInterceptor) for a complete sample.
     - Go back in time to when you wish you had enabled debug-level logging before the error ever occurred.
   - Expose `sparta.ProperName` as framework name literal
-  - Add lightweight Key-Value interface and S3 and DynamoDB implementations to support https://github.com/mweagle/SpartaTodoBackend/
+  - Add lightweight Key-Value interface and S3 and DynamoDB implementations to support [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend/)
     - The DynamoDB provider uses [dynamodbattribute](https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/dynamodbattribute/) to map `go` structs to attributes.
     - See the [aws.accessor](https://godoc.org/github.com/mweagle/Sparta/aws/accessor) docs
 - :bug:  **FIXED**
