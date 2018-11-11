@@ -1,8 +1,10 @@
 package sparta
 
 import (
+	"context"
 	"crypto/sha1"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"os"
@@ -20,6 +22,7 @@ import (
 	"github.com/mweagle/Sparta/system"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
+	_ "github.com/pkg/browser" // Force dep to resolve
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -312,9 +315,6 @@ type WorkflowHooks struct {
 	Rollback RollbackHook
 	// Rollbacks are called if there is an error performing the requested operation
 	Rollbacks []RollbackHookHandler
-
-	// Allow minimal customization of the runtime logger
-	RuntimeLoggerHook RuntimeLoggerHook
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -588,6 +588,84 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 // END - customResourceInfo
 ////////////////////////////////////////////////////////////////////////////////
 
+// Interceptor is the type of an event interceptor that taps the event lifecycle
+type Interceptor func(ctx context.Context, msg json.RawMessage) context.Context
+
+// NamedInterceptor represents a named interceptor that's invoked in the event path
+type NamedInterceptor struct {
+	Name        string
+	Interceptor Interceptor
+}
+
+// InterceptorList is a list of NamedInterceptors
+type InterceptorList []*NamedInterceptor
+
+////////////////////////////////////////////////////////////////////////////////
+// START - LambdaEventInterceptors
+
+// LambdaEventInterceptors is the struct that stores event handlers that tap into
+// the normal event dispatching workflow
+type LambdaEventInterceptors struct {
+	Begin          InterceptorList
+	BeforeSetup    InterceptorList
+	AfterSetup     InterceptorList
+	BeforeDispatch InterceptorList
+	AfterDispatch  InterceptorList
+	Complete       InterceptorList
+}
+
+// Register is a convenience function to register a struct that
+// implements the LambdaInterceptorProvider interface
+func (lei *LambdaEventInterceptors) Register(provider LambdaInterceptorProvider) *LambdaEventInterceptors {
+	namedInterceptor := func(interceptor Interceptor) *NamedInterceptor {
+		return &NamedInterceptor{
+			Name:        fmt.Sprintf("%T", provider),
+			Interceptor: interceptor,
+		}
+	}
+	if lei.Begin == nil {
+		lei.Begin = make(InterceptorList, 0)
+	}
+	lei.Begin = append(lei.Begin, namedInterceptor(provider.Begin))
+
+	if lei.BeforeSetup == nil {
+		lei.BeforeSetup = make(InterceptorList, 0)
+	}
+	lei.BeforeSetup = append(lei.BeforeSetup, namedInterceptor(provider.BeforeSetup))
+
+	if lei.AfterSetup == nil {
+		lei.AfterSetup = make(InterceptorList, 0)
+	}
+	lei.AfterSetup = append(lei.AfterSetup, namedInterceptor(provider.AfterSetup))
+
+	if lei.BeforeDispatch == nil {
+		lei.BeforeDispatch = make(InterceptorList, 0)
+	}
+	lei.BeforeDispatch = append(lei.BeforeDispatch, namedInterceptor(provider.BeforeDispatch))
+
+	if lei.AfterDispatch == nil {
+		lei.AfterDispatch = make(InterceptorList, 0)
+	}
+	lei.AfterDispatch = append(lei.AfterDispatch, namedInterceptor(provider.AfterDispatch))
+
+	if lei.Complete == nil {
+		lei.Complete = make(InterceptorList, 0)
+	}
+	lei.Complete = append(lei.Complete, namedInterceptor(provider.Complete))
+	return lei
+}
+
+// LambdaInterceptorProvider is the interface that defines an event interceptor
+// Interceptors are able to hook into the normal event processing pipeline
+type LambdaInterceptorProvider interface {
+	Begin(ctx context.Context, msg json.RawMessage) context.Context
+	BeforeSetup(ctx context.Context, msg json.RawMessage) context.Context
+	AfterSetup(ctx context.Context, msg json.RawMessage) context.Context
+	BeforeDispatch(ctx context.Context, msg json.RawMessage) context.Context
+	AfterDispatch(ctx context.Context, msg json.RawMessage) context.Context
+	Complete(ctx context.Context, msg json.RawMessage) context.Context
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // START - LambdaAWSInfo
 
@@ -634,6 +712,9 @@ type LambdaAWSInfo struct {
 
 	// deprecation notices
 	deprecationNotices []string
+
+	// interceptors
+	Interceptors *LambdaEventInterceptors
 }
 
 // lambdaFunctionName returns the internal

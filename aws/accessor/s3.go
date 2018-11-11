@@ -15,13 +15,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// NewObjectConstructor returns a fresh instance
-// of the type that's stored in S3
-type NewObjectConstructor func() interface{}
-
 // S3Accessor to make it a bit easier to work with S3
 // as the backing store
 type S3Accessor struct {
+	testingBucketName    string
 	S3BucketResourceName string
 }
 
@@ -44,10 +41,15 @@ func (svc *S3Accessor) KeysPrivilege(keyPrivileges ...string) sparta.IAMRolePriv
 func (svc *S3Accessor) s3Svc(ctx context.Context) *s3.S3 {
 	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 	sess := spartaAWS.NewSession(logger)
-	return s3.New(sess)
+	s3Client := s3.New(sess)
+	xrayInit(s3Client.Client)
+	return s3Client
 }
 
 func (svc *S3Accessor) s3BucketName() string {
+	if svc.testingBucketName != "" {
+		return svc.testingBucketName
+	}
 	discover, discoveryInfoErr := sparta.Discover()
 	if discoveryInfoErr != nil {
 		return ""

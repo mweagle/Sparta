@@ -1,5 +1,33 @@
 # Change Notes
 
+## v1.7.0 - The Time Machine Edition 🕰
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `LambdaAWSInfo.Interceptors` support
+    - `Interceptors` are functions (`func(context.Context, json.RawMessage) context.Context`) called in the normal event handling lifecycle to support cross cutting concerns. They are the runtime analog to `WorkflowHooks`.
+    - The following stages are supported:
+      - _Begin_: Called as soon as Sparta determines which user-function to invoke
+      - _BeforeSetup_: Called before Sparta creates your lambda's `context` value
+      - _AfterSetup_: Called after Sparta creates your lambda's `context` value
+      - _BeforeDispatch_: Called before Sparta invokes your lambda function
+      - _AfterDispatch_: Called after Sparta invokes your lambda function
+      - _Complete_: Called immediately before Sparta returns your function return value(s) to AWS
+    - The first interceptor is `interceptor.RegisterXRayInterceptor(ctx, options)` which creates a custom [XRay Segment](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-go-segment.html) spanning your lambda's execution and supports:
+      - Including the service BuildID in the [Trace Annotation](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html#api-segmentdocuments-annotations)
+      - Optionally including the incoming event, all log statements (_trace_ and higher), and AWS request-id as [Trace Metadata](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html#api-segmentdocuments-metadata) **ONLY** in the case when your lambda function returns an error.
+        - Log messages are stored in a [ring buffer](https://golang.org/pkg/container/ring/) and limited to 1024 entries.
+    - This data is associated with XRay Traces in the console. Example:
+      - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
+    </div>
+    - See the [SpartaXRayInterceptor](http://godoc.org/github.com/mweagle/SpartaXRayInterceptor) for a complete sample.
+    - Go back in time to when you wish you had enabled debug-level logging before the error ever occurred.
+  - Expose `sparta.ProperName` as framework name literal
+  - Add lightweight Key-Value interface and S3 and DynamoDB implementations to support [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend/)
+    - The DynamoDB provider uses [dynamodbattribute](https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/dynamodbattribute/) to map `go` structs to attributes.
+    - See the [aws.accessor](https://godoc.org/github.com/mweagle/Sparta/aws/accessor) docs
+- :bug:  **FIXED**
+
 ## v1.6.0 - The REST Edition 😴
 
 - :warning: **BREAKING**

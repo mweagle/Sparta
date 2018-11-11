@@ -61,17 +61,14 @@ func MainEx(serviceName string,
 		if logger == nil {
 			return errors.Errorf("Failed to initialize logger instance")
 		}
-		hookErr := applyLoggerHooks(StampedServiceName, workflowHooks, logger)
-		if hookErr != nil {
-			return hookErr
-		}
+
 		welcomeMessage := fmt.Sprintf("Service: %s", StampedServiceName)
 		logger.WithFields(logrus.Fields{
-			"SpartaVersion": SpartaVersion,
-			"SpartaSHA":     SpartaGitHash[0:7],
-			"go Version":    runtime.Version(),
-			"BuildID":       StampedBuildID,
-			"UTC":           (time.Now().UTC().Format(time.RFC3339)),
+			fmt.Sprintf("%sVersion", ProperName): SpartaVersion,
+			fmt.Sprintf("%sSHA", ProperName):     SpartaGitHash[0:7],
+			"go Version":                         runtime.Version(),
+			"BuildID":                            StampedBuildID,
+			"UTC":                                (time.Now().UTC().Format(time.RFC3339)),
 		}).Info(welcomeMessage)
 		OptionsGlobal.ServiceName = StampedServiceName
 		OptionsGlobal.Logger = logger

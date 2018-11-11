@@ -656,7 +656,7 @@ func (perm SESPermission) export(serviceName string,
 	customResource := newResource.(*cfCustomResources.SESLambdaEventSourceResource)
 	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
 	// The shared ruleset name used by all Sparta applications
-	customResource.RuleSetName = gocf.String("SpartaRuleSet")
+	customResource.RuleSetName = gocf.String("RuleSet")
 
 	///////////////////
 	// Build up the Rules

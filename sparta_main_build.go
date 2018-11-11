@@ -115,11 +115,7 @@ func MainEx(serviceName string,
 		if nil != loggerErr {
 			return loggerErr
 		}
-		// Any hooks?
-		hookErr := applyLoggerHooks(serviceName, workflowHooks, logger)
-		if hookErr != nil {
-			return hookErr
-		}
+
 		// This is a NOP, but makes megacheck happy b/c it doesn't know about
 		// build flags
 		platformLogSysInfo("", logger)

@@ -56,17 +56,43 @@ func takesContext(handler reflect.Type) bool {
 	return handlerTakesContext
 }
 
+// tappedHandler is the handler that represents this binary's mode
 func tappedHandler(handlerSymbol interface{},
+	interceptors *LambdaEventInterceptors,
 	logger *logrus.Logger) interface{} {
+
+	// If there aren't any, make it a bit easier
+	// to call the applyInterceptors function
+	if interceptors == nil {
+		interceptors = &LambdaEventInterceptors{}
+	}
 
 	// Tap the call chain to inject the context params...
 	handler := reflect.ValueOf(handlerSymbol)
 	handlerType := reflect.TypeOf(handlerSymbol)
 	takesContext := takesContext(handlerType)
 
+	// Apply interceptors is a utility function to apply the
+	// specified interceptors as part of the lifecycle handler.
+	// We can push the specific behaviors into the interceptors
+	// and keep this function simple. 🎉
+	applyInterceptors := func(ctx context.Context,
+		msg json.RawMessage,
+		interceptors InterceptorList) context.Context {
+		for _, eachInterceptor := range interceptors {
+			ctx = eachInterceptor.Interceptor(ctx, msg)
+		}
+		return ctx
+	}
+
+	// How to determine if this handler has tracing enabled? That would be a property
+	// of the function template associated with this function.
+
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
+		ctx = applyInterceptors(ctx, msg, interceptors.Begin)
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
+		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)
 
 		// Create the entry logger that has some context information
 		var logrusEntry *logrus.Entry
@@ -81,11 +107,10 @@ func tappedHandler(handlerSymbol interface{},
 					LogFieldInstanceID: InstanceID(),
 				})
 		} else {
-			logrusEntry = logrus.
-				NewEntry(logger).
-				WithFields(logrus.Fields{})
+			logrusEntry = logrus.NewEntry(logger)
 		}
 		ctx = context.WithValue(ctx, ContextKeyRequestLogger, logrusEntry)
+		ctx = applyInterceptors(ctx, msg, interceptors.AfterSetup)
 
 		// construct arguments
 		var args []reflect.Value
@@ -102,7 +127,9 @@ func tappedHandler(handlerSymbol interface{},
 			}
 			args = append(args, event.Elem())
 		}
+		ctx = applyInterceptors(ctx, msg, interceptors.BeforeDispatch)
 		response := handler.Call(args)
+		ctx = applyInterceptors(ctx, msg, interceptors.AfterDispatch)
 
 		// If the user function
 		// convert return values into (interface{}, error)
@@ -112,10 +139,13 @@ func tappedHandler(handlerSymbol interface{},
 				err = errVal
 			}
 		}
+		ctx = context.WithValue(ctx, ContextKeyLambdaError, err)
 		var val interface{}
 		if len(response) > 1 {
 			val = response[0].Interface()
 		}
+		ctx = context.WithValue(ctx, ContextKeyLambdaResponse, val)
+		ctx = applyInterceptors(ctx, msg, interceptors.Complete)
 		return val, err
 	}
 }
@@ -135,6 +165,9 @@ func Execute(serviceName string,
 
 	// Log any info when we start up...
 	platformLogSysInfo(requestedLambdaFunctionName, logger)
+
+	// So what if we have workflow hooks in here?
+	var interceptors *LambdaEventInterceptors
 
 	/*
 		There are three types of targets:
@@ -158,6 +191,8 @@ func Execute(serviceName string,
 		knownNames = append(knownNames, testAWSName)
 		if requestedLambdaFunctionName == testAWSName {
 			handlerSymbol = eachLambdaInfo.handlerSymbol
+			interceptors = eachLambdaInfo.Interceptors
+
 		}
 		// User defined custom resource handler?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
@@ -212,7 +247,7 @@ func Execute(serviceName string,
 	}
 
 	// Startup our version...
-	tappedHandler := tappedHandler(handlerSymbol, logger)
+	tappedHandler := tappedHandler(handlerSymbol, interceptors, logger)
 	awsLambdaGo.Start(tappedHandler)
 	return nil
 }
