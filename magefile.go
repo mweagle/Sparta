@@ -220,7 +220,6 @@ func EnsureTravisBuildEnvironment() error {
 		[]string{"dep", "version"},
 		[]string{"dep", "ensure", "-v"},
 		[]string{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
-		[]string{"tree", "-d", "-L", "2", "$GOPATH/src"},
 	}
 	return spartamage.Script(travisComands)
 }
