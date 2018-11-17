@@ -314,7 +314,10 @@ func MainEx(serviceName string,
 				}
 				// Only show the usage if there were input validation errors
 				if executedCmd != nil {
-					executedCmd.Usage()
+					usageErr := executedCmd.Usage()
+					if usageErr != nil {
+						OptionsGlobal.Logger.Error(usageErr)
+					}
 				}
 			} else {
 				OptionsGlobal.Logger.Error(executeErr)
