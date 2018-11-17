@@ -1,6 +1,6 @@
 # Change Notes
 
-## v1.7.1
+## v1.7.1 - The Cloud Drift Edition 🌬☁️
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
