@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:ee7ae23573927dfe9673d05cf872c23d87740e2a7d43dae9aff92b67a0b59996"
+  digest = "1:358074b5139f0a2141910eb6ec3081138d27340b1d908ece0a27d7a018826c9f"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3409e8256f5cf23a9e9ee2a8816c4c5da78a181d"
-  version = "v1.6.4"
+  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:e92f5581902c345eb4ceffdcd4a854fb8f73cf436d47d837d1ec98ef1fe0a214"
@@ -31,7 +31,7 @@
   version = "v1.6.0"
 
 [[projects]]
-  digest = "1:56994d0eb0979dc299a4a8da5074856bf38bab47322b02bd31e0727dcbdaaaf8"
+  digest = "1:ba00e830dd0b9c015192316b6c6074a790a282db1334bff7f8a53f0a0ba4d254"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -86,8 +86,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "cf00ea20983ce38df17ab0a0814463ab8838459f"
-  version = "v1.15.73"
+  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
+  version = "v1.15.78"
 
 [[projects]]
   digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
@@ -205,7 +205,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:84d5eab89b22be240d2865442b75581ce7bc8a7e55291c7e3e07405df74f2355"
+  digest = "1:440b3840e0821dcf4a6e8bcd41751ec1904bf1064760c8223b26b9deb73cbebc"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -225,7 +225,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "fde099a545debf81bf2a96a0ec13d7da2c2a6663"
+  revision = "dcb5510988eb33b1f6ce96939b7ad97ed95db32f"
 
 [[projects]]
   branch = "master"
@@ -430,18 +430,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa"
+  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
 
 [[projects]]
   branch = "master"
-  digest = "1:6a875550c3b582f6c2d7e2ce44aba792511f00016d7c46b0a4fb26f730ef3058"
+  digest = "1:a089387bbfcfa884e5aafeebb85929993195bb8959766b1d20102841d47e0b0e"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
+  revision = "93218def8b18e66adbdab3eca8ec334700329f1f"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -458,15 +458,15 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:b0e2a9ee778a41537e07b6ee0e569c32f73d68832d610b35d5aeb84eed73f4ef"
+  digest = "1:c7393cb2a5934f3af17093bad48724947db720e18232d9139ff0b1206ad87b07"
   name = "gopkg.in/AlecAivazis/survey.v1"
   packages = [
     "core",
     "terminal",
   ]
   pruneopts = "UT"
-  revision = "3409e8256f5cf23a9e9ee2a8816c4c5da78a181d"
-  version = "v1.6.4"
+  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
+  version = "v1.7.0"
 
 [[projects]]
   digest = "1:2c6a8f26c364b006a27b8090a9583fcc4b7865583fcf93f99a20fce339e87192"
