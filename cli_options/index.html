@@ -12,19 +12,19 @@
     <title>CLI Options :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/cli_options/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1301,27 +1329,14 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
                     <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li><a href="#standard-commands">Standard Commands</a>
-<ul>
-<li><a href="#delete">Delete</a></li>
-<li><a href="#describe">Describe</a></li>
-<li><a href="#execute">Execute</a></li>
-<li><a href="#explore">Explore</a></li>
-<li><a href="#profile">Profile</a></li>
-<li><a href="#provision">Provision</a></li>
-<li><a href="#status">Status</a></li>
-<li><a href="#version">Version</a></li>
-</ul></li>
-</ul>
-</nav>
+
     </div>
 </div>
 
@@ -1337,8 +1352,6 @@
           
 
         
-
-
 
 
 <p>Sparta applications delegate <code>func main()</code> responsibilities to one of Sparta&rsquo;s Main entrypoints (<a href="https://godoc.org/github.com/mweagle/Sparta#Main">Main</a>, <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">MainEx</a>). This provides each application with some standard command line options as shown below:</p>
@@ -1370,74 +1383,79 @@ Flags:
   -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
   -z, --timestamps       Include UTC timestamp log line prefix
 
-Use <span style="color:#e6db74">&#34;main [command] --help&#34;</span> <span style="color:#66d9ef">for</span> more information about a command.</code></pre></div>
+Use <span style="color:#e6db74">&#34;main [command] --help&#34;</span> <span style="color:#66d9ef">for</span> more information about a command.
 
-<p>It&rsquo;s also possible to add <a href="/reference/application/custom_flags">custom flags</a> and/or <a href="/reference/application/custom_commands">custom commands</a> to extend your application&rsquo;s behavior.</p>
+<span style="color:#e6db74">```</span>
 
-<p>These command line options are briefly described in the following sections. For the most up to date information, use the <code>--help</code> subcommand option.</p>
+It<span style="color:#e6db74">&#39;s also possible to add [custom flags](/reference/application/custom_flags) and/or [custom commands](/reference/application/custom_commands) to extend your application&#39;</span>s behavior.
 
-<h1 id="standard-commands">Standard Commands</h1>
+These command line options are briefly described in the following sections. For the most up to date information, use the <span style="color:#e6db74">`</span>--help<span style="color:#e6db74">`</span> subcommand option.
 
-<h2 id="delete">Delete</h2>
 
-<p>This simply deletes the stack (if present). Attempting to delete a non-empty stack is not treated as an error.</p>
+<span style="color:#75715e"># Standard Commands
+</span><span style="color:#75715e"></span>
+<span style="color:#75715e">## Delete
+</span><span style="color:#75715e"></span>
+This simply deletes the stack <span style="color:#f92672">(</span><span style="color:#66d9ef">if</span> present<span style="color:#f92672">)</span>. Attempting to delete a non-empty stack is not treated as an error.
 
-<h2 id="describe">Describe</h2>
+<span style="color:#75715e">## Describe
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>describe<span style="color:#e6db74">`</span> command line option produces an HTML summary <span style="color:#f92672">(</span>see <span style="color:#f92672">[</span>graph.html<span style="color:#f92672">](</span>/images/overview/graph.html<span style="color:#f92672">)</span> <span style="color:#66d9ef">for</span> an example<span style="color:#f92672">)</span> of your Sparta service.
 
-<p>The <code>describe</code> command line option produces an HTML summary (see <a href="/images/overview/graph.html">graph.html</a> for an example) of your Sparta service.</p>
+The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.
 
-<p>The report also includes the automatically generated CloudFormation template which can be helpful when diagnosing provisioning errors.</p>
+<span style="color:#75715e">## Execute
+</span><span style="color:#75715e"></span>
+This command is used when the cross compiled binary is provisioned in AWS lambda. It is not <span style="color:#f92672">(</span>typically<span style="color:#f92672">)</span> applicable to the local development workflow.
 
-<h2 id="execute">Execute</h2>
+<span style="color:#75715e">## Explore
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>explore<span style="color:#e6db74">`</span> option creates a terminal GUI that supports interactive exploration of lambda functions deployed to AWS. This ui recursively searches <span style="color:#66d9ef">for</span> all _*.json_ files in the source tree to populate the set of eligible events that can be submitted.
 
-<p>This command is used when the cross compiled binary is provisioned in AWS lambda. It is not (typically) applicable to the local development workflow.</p>
+!<span style="color:#f92672">[</span>Explore<span style="color:#f92672">](</span>/images/explore.jpg <span style="color:#e6db74">&#34;Explore&#34;</span><span style="color:#f92672">)</span>
 
-<h2 id="explore">Explore</h2>
+<span style="color:#75715e">## Profile
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>profile<span style="color:#e6db74">`</span> command line option enters an interactive session where a previously profiled application can be locally visualized using snapshots posted to S3 and provided to a local <span style="color:#f92672">[</span>pprof ui<span style="color:#f92672">](</span>https://rakyll.org/pprof-ui/<span style="color:#f92672">)</span>.
 
-<p>The <code>explore</code> option creates a terminal GUI that supports interactive exploration of lambda functions deployed to AWS. This ui recursively searches for all <em>*.json</em> files in the source tree to populate the set of eligible events that can be submitted.</p>
+<span style="color:#75715e">## Provision
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>provision<span style="color:#e6db74">`</span> option is the subcommand most likely to be used during development.  It provisions the Sparta application to AWS Lambda.
 
-<p><img src="/images/explore.jpg" alt="Explore" title="Explore" /></p>
-
-<h2 id="profile">Profile</h2>
-
-<p>The <code>profile</code> command line option enters an interactive session where a previously profiled application can be locally visualized using snapshots posted to S3 and provided to a local <a href="https://rakyll.org/pprof-ui/">pprof ui</a>.</p>
-
-<h2 id="provision">Provision</h2>
-
-<p>The <code>provision</code> option is the subcommand most likely to be used during development.  It provisions the Sparta application to AWS Lambda.</p>
-
-<h2 id="status">Status</h2>
-
-<p>The <code>status</code> option queries AWS for the current stack status
+<span style="color:#75715e">## Status
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>status<span style="color:#e6db74">`</span> option queries AWS <span style="color:#66d9ef">for</span> the current stack status
 and produces an optionally account-id redacted report. Stack
-outputs, tags, and other metadata are included in the status report:</p>
+outputs, tags, and other metadata are included in the status report:
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go status --redact
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : <span style="color:#ae81ff">1</span>.5.0
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>status UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:28:18Z&#34;</span>
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> StackId                                       Id<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99&#34;</span>
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Stack status                                  State<span style="color:#f92672">=</span>UPDATE_COMPLETE
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Created                                       Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-02 03:14:59.127 +0000 UTC&#34;</span>
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Last Update                                   Time<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-06 14:20:40.267 +0000 UTC&#34;</span>
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">]</span> Tag                                           io:gosparta:buildId<span style="color:#f92672">=</span>7ee3e1bc52f15c4a636e05061eaec7b748db22a9</code></pre></div>
+&lt;div class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;highlight&#34;</span>&gt;&lt;pre style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;</span>&gt;&lt;code class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;language-bash&#34;</span> data-lang<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;bash&#34;</span>&gt;$ go run main.go status --redact
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;1&lt;/span&gt;.5.0
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Service: MyHelloWorldStack-mweagle            LinkFlags&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt; Option&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;status UTC&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;2018-10-14T12:28:18Z&amp;#34;&lt;/span&gt;
+</span><span style="color:#75715e"></span>INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0001&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; StackId                                       Id&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99&amp;#34;&lt;/span&gt;
+</span><span style="color:#75715e"></span>INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0001&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Stack status                                  State&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;UPDATE_COMPLETE
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0001&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Created                                       Time&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;2018-10-02 03:14:59.127 +0000 UTC&amp;#34;&lt;/span&gt;
+</span><span style="color:#75715e"></span>INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0001&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Last Update                                   Time&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;2018-10-06 14:20:40.267 +0000 UTC&amp;#34;&lt;/span&gt;
+</span><span style="color:#75715e"></span>INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0001&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Tag                                           io:gosparta:buildId&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;7ee3e1bc52f15c4a636e05061eaec7b748db22a9&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-<h2 id="version">Version</h2>
 
-<p>The <code>version</code> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ go run main.go version
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : <span style="color:#ae81ff">1</span>.5.0
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> Service: MyHelloWorldStack-mweagle            LinkFlags<span style="color:#f92672">=</span> Option<span style="color:#f92672">=</span>version UTC<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;2018-10-14T12:27:36Z&#34;</span>
-INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><span style="color:#f92672">]</span> ════════════════════════════════════════════════</code></pre></div>
+<span style="color:#75715e">## Version
+</span><span style="color:#75715e"></span>
+The <span style="color:#e6db74">`</span>version<span style="color:#e6db74">`</span> option is a diagnostic command that prints the version of the Sparta framework embedded in the application.
+
+&lt;div class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;highlight&#34;</span>&gt;&lt;pre style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;</span>&gt;&lt;code class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;language-bash&#34;</span> data-lang<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;bash&#34;</span>&gt;$ go run main.go version
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;1&lt;/span&gt;.5.0
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════
+INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; Service: MyHelloWorldStack-mweagle            LinkFlags&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt; Option&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;version UTC&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">=</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;2018-10-14T12:27:36Z&amp;#34;&lt;/span&gt;
+</span><span style="color:#75715e"></span>INFO&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#ae81ff&#34;</span>&gt;0000&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; ════════════════════════════════════════════════&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2292,6 +2310,22 @@ INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2365,12 +2399,15 @@ INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><
         
 
 
-        
-            <a class="nav nav-prev" href="/sample_service/step2/" title="Details"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/" title="Reference" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/sample_service/step2/" title="Details"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/" title="Reference" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2378,20 +2415,20 @@ INFO<span style="color:#f92672">[</span><span style="color:#ae81ff">0000</span><
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

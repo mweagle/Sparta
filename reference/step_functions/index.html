@@ -12,19 +12,19 @@
     <title>Step Functions :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/step_functions/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1322,11 +1351,8 @@
 <li><a href="#lambda-functions">Lambda Functions</a></li>
 <li><a href="#state-machine">State Machine</a></li>
 <li><a href="#service-decorator">Service Decorator</a></li>
-<li><a href="#testing">Testing</a></li>
 </ul></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul></li>
-<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
     </div>
@@ -1356,16 +1382,17 @@
 
 <p>The first step is to define the core Lambda function <a href="http://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html">Task</a> that will be our Step function&rsquo;s core logic. In this example, we&rsquo;ll define a <em>rollDie</em> function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">lambdaRollResponse</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">Roll</span> <span style="color:#66d9ef">int</span> <span style="color:#e6db74">`json:&#34;roll&#34;`</span>
+<pre><code class="language-go">type lambdaRollResponse struct {
+	Roll int `json:&quot;roll&quot;`
 }
 
-<span style="color:#75715e">// Standard AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">lambdaRollDie</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#a6e22e">lambdaRollResponse</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">lambdaRollResponse</span>{
-		<span style="color:#a6e22e">Roll</span>: <span style="color:#a6e22e">rand</span>.<span style="color:#a6e22e">Intn</span>(<span style="color:#ae81ff">5</span>) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>,
-	}, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+// Standard AWS λ function
+func lambdaRollDie(ctx context.Context) (lambdaRollResponse, error) {
+	return lambdaRollResponse{
+		Roll: rand.Intn(5) + 1,
+	}, nil
+}
+</code></pre>
 
 <h3 id="state-machine">State Machine</h3>
 
@@ -1375,22 +1402,23 @@
 
 <p>To do this, we use the new <code>github.com/mweagle/Sparta/aws/step</code> functions to define the other states.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Make all the Step states
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaTaskState</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NewTaskState</span>(<span style="color:#e6db74">&#34;lambdaRollDie&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
-<span style="color:#a6e22e">successState</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NewSuccessState</span>(<span style="color:#e6db74">&#34;success&#34;</span>)
-<span style="color:#a6e22e">delayState</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NewWaitDelayState</span>(<span style="color:#e6db74">&#34;tryAgainShortly&#34;</span>, <span style="color:#ae81ff">3</span><span style="color:#f92672">*</span><span style="color:#a6e22e">time</span>.<span style="color:#a6e22e">Second</span>)
-<span style="color:#a6e22e">lambdaChoices</span> <span style="color:#f92672">:=</span> []<span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">ChoiceBranch</span>{
-  <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">Not</span>{
-    <span style="color:#a6e22e">Comparison</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NumericGreaterThan</span>{
-      <span style="color:#a6e22e">Variable</span>: <span style="color:#e6db74">&#34;$.roll&#34;</span>,
-      <span style="color:#a6e22e">Value</span>:    <span style="color:#ae81ff">3</span>,
+<pre><code class="language-go">// Make all the Step states
+lambdaTaskState := step.NewTaskState(&quot;lambdaRollDie&quot;, lambdaFn)
+successState := step.NewSuccessState(&quot;success&quot;)
+delayState := step.NewWaitDelayState(&quot;tryAgainShortly&quot;, 3*time.Second)
+lambdaChoices := []step.ChoiceBranch{
+  &amp;step.Not{
+    Comparison: &amp;step.NumericGreaterThan{
+      Variable: &quot;$.roll&quot;,
+      Value:    3,
     },
-    <span style="color:#a6e22e">Next</span>: <span style="color:#a6e22e">delayState</span>,
+    Next: delayState,
   },
 }
-<span style="color:#a6e22e">choiceState</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NewChoiceState</span>(<span style="color:#e6db74">&#34;checkRoll&#34;</span>,
-  <span style="color:#a6e22e">lambdaChoices</span><span style="color:#f92672">...</span>).
-  <span style="color:#a6e22e">WithDefault</span>(<span style="color:#a6e22e">successState</span>)</code></pre></div>
+choiceState := step.NewChoiceState(&quot;checkRoll&quot;,
+  lambdaChoices...).
+  WithDefault(successState)
+</code></pre>
 
 <p>The Sparta state types correspond to their <a href="https://states-language.net/spec.html">AWS States Spec</a> equivalents:</p>
 
@@ -1407,24 +1435,26 @@ to a delay or the success end state.</p>
 
 <p>The <code>lambdaTaskState</code> uses a normal Sparta function as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#e6db74">&#34;StepRollDie&#34;</span>,
-  <span style="color:#a6e22e">lambdaRollDie</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<pre><code class="language-go">lambdaFn := sparta.HandleAWSLambda(&quot;StepRollDie&quot;,
+  lambdaRollDie,
+  sparta.IAMRoleDefinition{})
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">MemorySize</span> = <span style="color:#ae81ff">128</span>
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Options</span>.<span style="color:#a6e22e">Tags</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>{
-  <span style="color:#e6db74">&#34;myAccounting&#34;</span>: <span style="color:#e6db74">&#34;tag&#34;</span>,
-}</code></pre></div>
+lambdaFn.Options.MemorySize = 128
+lambdaFn.Options.Tags = map[string]string{
+  &quot;myAccounting&quot;: &quot;tag&quot;,
+}
+</code></pre>
 
 <p>The final step is to hook up the state transitions for states that don&rsquo;t implicitly include them, and create the State Machine:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Hook up the transitions
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaTaskState</span>.<span style="color:#a6e22e">Next</span>(<span style="color:#a6e22e">choiceState</span>)
-<span style="color:#a6e22e">delayState</span>.<span style="color:#a6e22e">Next</span>(<span style="color:#a6e22e">lambdaTaskState</span>)
+<pre><code class="language-go">// Hook up the transitions
+lambdaTaskState.Next(choiceState)
+delayState.Next(lambdaTaskState)
 
-<span style="color:#75715e">// Startup the machine with a user-scoped name for account uniqueness
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">stateMachineName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">UserScopedStackName</span>(<span style="color:#e6db74">&#34;StateMachine&#34;</span>)
-<span style="color:#a6e22e">startMachine</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">step</span>.<span style="color:#a6e22e">NewStateMachine</span>(<span style="color:#a6e22e">stateMachineName</span>, <span style="color:#a6e22e">lambdaTaskState</span>)</code></pre></div>
+// Startup the machine with a user-scoped name for account uniqueness
+stateMachineName := spartaCF.UserScopedStackName(&quot;StateMachine&quot;)
+startMachine := step.NewStateMachine(stateMachineName, lambdaTaskState)
+</code></pre>
 
 <p>At this point we have a potentially well-formed <a href="http://docs.aws.amazon.com/step-functions/latest/dg/tutorial-creating-lambda-state-machine.html">Lambda-powered</a> State Machine.
 The final step is to attach this machine to the normal service definition.</p>
@@ -1435,18 +1465,19 @@ The final step is to attach this machine to the normal service definition.</p>
 Adding the hook to your service&rsquo;s Workflow Hooks (similar to provisioning a service-scoped <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0130">CloudWatch Dashboard</a>)
 will include it in the CloudFormation template serialization:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Setup the hook to annotate
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">workflowHooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{
-  <span style="color:#a6e22e">ServiceDecorator</span>: <span style="color:#a6e22e">startMachine</span>.<span style="color:#a6e22e">StateMachineDecorator</span>(),
+<pre><code class="language-go">// Setup the hook to annotate
+workflowHooks := &amp;sparta.WorkflowHooks{
+  ServiceDecorator: startMachine.StateMachineDecorator(),
 }
-<span style="color:#a6e22e">userStackName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">UserScopedStackName</span>(<span style="color:#e6db74">&#34;SpartaStep&#34;</span>)
-<span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">MainEx</span>(<span style="color:#a6e22e">userStackName</span>,
-  <span style="color:#e6db74">&#34;Simple Sparta application that demonstrates AWS Step functions&#34;</span>,
-  <span style="color:#a6e22e">lambdaFunctions</span>,
-  <span style="color:#66d9ef">nil</span>,
-  <span style="color:#66d9ef">nil</span>,
-  <span style="color:#a6e22e">workflowHooks</span>,
-  <span style="color:#66d9ef">false</span>)</code></pre></div>
+userStackName := spartaCF.UserScopedStackName(&quot;SpartaStep&quot;)
+err := sparta.MainEx(userStackName,
+  &quot;Simple Sparta application that demonstrates AWS Step functions&quot;,
+  lambdaFunctions,
+  nil,
+  nil,
+  workflowHooks,
+  false)
+</code></pre>
 
 <p>With the decorator attached, the next service <code>provision</code> request will include the state machine as above.</p>
 
@@ -1486,33 +1517,31 @@ INFO[0094] Verifying AWS preconditions                   Duration (s)=0
 INFO[0094] Creating code bundle                          Duration (s)=10
 INFO[0094] Uploading code                                Duration (s)=10
 INFO[0094] Ensuring CloudFormation stack                 Duration (s)=73
-INFO[0094] Total elapsed time                            Duration (s)=94</code></pre></div>
+INFO[0094] Total elapsed time                            Duration (s)=94
+```
 
-<h3 id="testing">Testing</h3>
+### Testing
 
-<p>With the stack provisioned, the final step is to test the State Machine and see how lucky our die roll is. Navigate to the <strong>Step Functions</strong>
-service dashboard in the AWS Console and find the State Machine that was provisioned. Click the <strong>New Execution</strong> button and accept the default JSON.
-This sample state machine doesn&rsquo;t interrogate the incoming data so the initial JSON is effectively ignored.</p>
+With the stack provisioned, the final step is to test the State Machine and see how lucky our die roll is. Navigate to the **Step Functions**
+service dashboard in the AWS Console and find the State Machine that was provisioned. Click the **New Execution** button and accept the default JSON.
+This sample state machine doesn&#39;t interrogate the incoming data so the initial JSON is effectively ignored.
 
-<p>For this test the first roll was a <code>4</code>, so there was only 1 path through the state machine. Depending on your
-die roll, you may see different state machine paths through the <code>WaitState</code>.</p>
+For this test the first roll was a `4`, so there was only 1 path through the state machine. Depending on your
+die roll, you may see different state machine paths through the `WaitState`.
 
-<p><img src="/images/step_functions/step_execution.jpg" alt="State Machine" /></p>
+![State Machine](/images/step_functions/step_execution.jpg)
 
-<h2 id="wrapping-up">Wrapping Up</h2>
+## Wrapping Up
 
-<p>AWS Step Functions are a powerful tool that allows you to orchestrate long running workflows using AWS Lambda. State functions
-are useful to implement the Saga pattern as in <a href="http://theburningmonk.com/2017/07/applying-the-saga-pattern-with-aws-lambda-and-step-functions/">here</a> and
-<a href="https://read.acloud.guru/how-the-saga-pattern-manages-failures-with-aws-lambda-and-step-functions-bc8f7129f900">here</a>. They can also be used
-to compose Lambda functions into more complex workflows that include <a href="https://states-language.net/spec.html#parallel-state">parallel</a> operations
-on shared data.</p>
+AWS Step Functions are a powerful tool that allows you to orchestrate long running workflows using AWS Lambda. State functions
+are useful to implement the Saga pattern as in [here](http://theburningmonk.com/2017/07/applying-the-saga-pattern-with-aws-lambda-and-step-functions/) and
+[here](https://read.acloud.guru/how-the-saga-pattern-manages-failures-with-aws-lambda-and-step-functions-bc8f7129f900). They can also be used
+to compose Lambda functions into more complex workflows that include [parallel](https://states-language.net/spec.html#parallel-state) operations
+on shared data.
 
-<h1 id="notes">Notes</h1>
-
-<ul>
-<li>Minimal State machine validation is done at this time. See <a href="https://www.tbray.org/ongoing/When/201x/2016/12/01/J2119-Validator">Tim Bray</a> for more information.</li>
-<li>Value interrogation is defined by <a href="http://goessner.net/articles/JsonPath/">JSONPath</a> expressions</li>
-</ul>
+# Notes
+  * Minimal State machine validation is done at this time. See [Tim Bray](https://www.tbray.org/ongoing/When/201x/2016/12/01/J2119-Validator) for more information.
+  * Value interrogation is defined by [JSONPath](http://goessner.net/articles/JsonPath/) expressions</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2372,6 +2401,22 @@ on shared data.</p>
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2445,12 +2490,15 @@ on shared data.</p>
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/s3site/" title="S3 Sites with CORS"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/limitations/" title="Limitations" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/s3site/" title="S3 Sites with CORS"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/limitations/" title="Limitations" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2458,20 +2506,20 @@ on shared data.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -12,19 +12,19 @@
     <title>API Gateway :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/apigateway/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1393,22 +1422,24 @@
 
 <p>To use the <code>APIGatewayEnvelope</code> type with your own custom request body, create a set of types as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedbackBody</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">Language</span> <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;lang&#34;`</span>
-	<span style="color:#a6e22e">Comment</span>  <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;comment&#34;`</span>
+<pre><code class="language-go">type FeedbackBody struct {
+	Language string `json:&quot;lang&quot;`
+	Comment  string `json:&quot;comment&quot;`
 }
 
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">FeedbackRequest</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">spartaEvents</span>.<span style="color:#a6e22e">APIGatewayEnvelope</span>
-	<span style="color:#a6e22e">Body</span> <span style="color:#a6e22e">FeedbackBody</span> <span style="color:#e6db74">`json:&#34;body&#34;`</span>
-}</code></pre></div>
+type FeedbackRequest struct {
+	spartaEvents.APIGatewayEnvelope
+	Body FeedbackBody `json:&quot;body&quot;`
+}
+</code></pre>
 
 <p>Then reference your custom type in your lambda function as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">myLambdaFunction</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">apiGatewayRequest</span> <span style="color:#a6e22e">FeedbackRequest</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#a6e22e">language</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayRequest</span>.<span style="color:#a6e22e">Body</span>.<span style="color:#a6e22e">Language</span>
-  <span style="color:#f92672">...</span>
-}</code></pre></div>
+<pre><code class="language-go">func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
+  language := apiGatewayRequest.Body.Language
+  ...
+}
+</code></pre>
 
 <h2 id="custom-http-headers">Custom HTTP Headers</h2>
 
@@ -1416,29 +1447,31 @@
 
 <p>Assume your Sparta lambda function returns a JSON struct as in:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// API response struct
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">helloWorldResponse</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">Location</span>    <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;location&#34;`</span>
-  <span style="color:#a6e22e">Message</span>     <span style="color:#66d9ef">string</span> <span style="color:#e6db74">`json:&#34;message&#34;`</span>
-}</code></pre></div>
+<pre><code class="language-go">// API response struct
+type helloWorldResponse struct {
+  Location    string `json:&quot;location&quot;`
+  Message     string `json:&quot;message&quot;`
+}
+</code></pre>
 
 <p>To extract the <code>location</code> field and promote it to the HTTP <code>Location</code> header, you must configure the <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html">response data mappings</a>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//
-</span><span style="color:#75715e">// Promote the location key value to an HTTP header
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloWorldResponseFunc</span>),
-    <span style="color:#a6e22e">helloWorldResponseFunc</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-	<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">api</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/hello&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
+<pre><code class="language-go">//
+// Promote the location key value to an HTTP header
+//
+  lambdaFn := sparta.HandleAWSLambda(
+    sparta.LambdaName(helloWorldResponseFunc),
+    helloWorldResponseFunc,
+    sparta.IAMRoleDefinition{})
+	apiGatewayResource, _ := api.NewResource(&quot;/hello&quot;, lambdaFn)
 
-<span style="color:#a6e22e">apiGWMethod</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>)
-<span style="color:#a6e22e">apiGWMethod</span>.<span style="color:#a6e22e">Responses</span>[<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>].<span style="color:#a6e22e">Parameters</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">bool</span>{
-  <span style="color:#e6db74">&#34;method.response.header.Location&#34;</span>: <span style="color:#66d9ef">true</span>,
+apiGWMethod, _ := apiGatewayResource.NewMethod(&quot;GET&quot;, http.StatusOK)
+apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
+  &quot;method.response.header.Location&quot;: true,
 }
-<span style="color:#a6e22e">apiGWMethod</span>.<span style="color:#a6e22e">Integration</span>.<span style="color:#a6e22e">Responses</span>[<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>].<span style="color:#a6e22e">Parameters</span>[<span style="color:#e6db74">&#34;method.response.header.Location&#34;</span>] =
-  <span style="color:#e6db74">&#34;integration.response.body.location&#34;</span></code></pre></div>
+apiGWMethod.Integration.Responses[http.StatusOK].Parameters[&quot;method.response.header.Location&quot;] =
+  &quot;integration.response.body.location&quot;
+</code></pre>
 
 <p>Note that as the <code>helloWorldResponse</code> structured type is serialized to the <em>body</em> property of the response, we include that path selector in the <em>integration.response.body.location</em> value.</p>
 
@@ -2307,6 +2340,22 @@
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2380,12 +2429,15 @@
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/apigateway/echo_event/" title="Echo Event" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/apigateway/echo_event/" title="Echo Event" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2393,20 +2445,20 @@
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

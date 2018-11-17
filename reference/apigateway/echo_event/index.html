@@ -12,19 +12,19 @@
     <title>Echo Event :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/apigateway/echo_event/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1324,12 +1353,6 @@
 <li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
 <li><a href="#create-a-resource">Create a Resource</a></li>
 <li><a href="#provision">Provision</a></li>
-<li><a href="#querying">Querying</a></li>
-<li><a href="#mapping-templates">Mapping Templates</a></li>
-<li><a href="#proxying-envelope">Proxying Envelope</a></li>
-<li><a href="#cleaning-up">Cleaning Up</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
-<li><a href="#other-resources">Other Resources</a></li>
 </ul>
 </nav>
     </div>
@@ -1355,41 +1378,43 @@
 
 <p>For reference, the <code>helloWorld</code> function is below.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<pre><code class="language-go">import (
+	awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
 )
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-	<span style="color:#a6e22e">gatewayEvent</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#75715e">/*
-</span><span style="color:#75715e">		 To return an error back to the client using a standard HTTP status code:
-</span><span style="color:#75715e">
-</span><span style="color:#75715e">			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
-</span><span style="color:#75715e">			&#34;Something failed inside here&#34;)
-</span><span style="color:#75715e">			return errorResponse, nil
-</span><span style="color:#75715e">
-</span><span style="color:#75715e">			You can also create custom error response types, so long as they
-</span><span style="color:#75715e">			include `&#34;code&#34;:HTTP_STATUS_CODE` somewhere in the response body.
-</span><span style="color:#75715e">			This reserved expression is what Sparta uses as a RegExp to determine
-</span><span style="color:#75715e">			the Integration Mapping value
-</span><span style="color:#75715e">	*/</span>
+func helloWorld(ctx context.Context,
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
+	/*
+		 To return an error back to the client using a standard HTTP status code:
 
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">loggerOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">loggerOk</span> {
-		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Hello world structured log message&#34;</span>)
+			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
+			&quot;Something failed inside here&quot;)
+			return errorResponse, nil
+
+			You can also create custom error response types, so long as they
+			include `&quot;code&quot;:HTTP_STATUS_CODE` somewhere in the response body.
+			This reserved expression is what Sparta uses as a RegExp to determine
+			the Integration Mapping value
+	*/
+
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	if loggerOk {
+		logger.Info(&quot;Hello world structured log message&quot;)
 	}
-	<span style="color:#75715e">// Return a message, together with the incoming input...
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">helloWorldResponse</span>{
-		<span style="color:#a6e22e">Message</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Hello world 🌏&#34;</span>),
-		<span style="color:#a6e22e">Request</span>: <span style="color:#a6e22e">gatewayEvent</span>,
-	}, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+	// Return a message, together with the incoming input...
+	return &amp;helloWorldResponse{
+		Message: fmt.Sprintf(&quot;Hello world 🌏&quot;),
+		Request: gatewayEvent,
+	}, nil
+}
+</code></pre>
 
 <h1 id="create-the-api-gateway">Create the API Gateway</h1>
 
 <p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">stage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;prod&#34;</span>)
-<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;MySpartaAPI&#34;</span>, <span style="color:#a6e22e">stage</span>)</code></pre></div>
+<pre><code class="language-go">stage := sparta.NewStage(&quot;prod&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;MySpartaAPI&quot;, stage)
+</code></pre>
 
 <p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
 
@@ -1397,28 +1422,29 @@
 
 <p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that encapsulates the <strong>go</strong> function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">spartaHTMLLambdaFunctions</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-	<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloWorld</span>),
-		<span style="color:#a6e22e">helloWorld</span>,
-		<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+<pre><code class="language-go">func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		helloWorld,
+		sparta.IAMRoleDefinition{})
 
-	<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">api</span> {
-		<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">api</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/hello&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&quot;/hello&quot;, lambdaFn)
 
-		<span style="color:#75715e">// We only return http.StatusOK
-</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">apiMethod</span>, <span style="color:#a6e22e">apiMethodErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;GET&#34;</span>,
-			<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>,
-			<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusInternalServerError</span>)
-		<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">apiMethodErr</span> {
-			panic(<span style="color:#e6db74">&#34;Failed to create /hello resource: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">apiMethodErr</span>.<span style="color:#a6e22e">Error</span>())
+		// We only return http.StatusOK
+		apiMethod, apiMethodErr := apiGatewayResource.NewMethod(&quot;GET&quot;,
+			http.StatusOK,
+			http.StatusInternalServerError)
+		if nil != apiMethodErr {
+			panic(&quot;Failed to create /hello resource: &quot; + apiMethodErr.Error())
 		}
-		<span style="color:#75715e">// The lambda resource only supports application/json Unmarshallable
-</span><span style="color:#75715e"></span>		<span style="color:#75715e">// requests.
-</span><span style="color:#75715e"></span>		<span style="color:#a6e22e">apiMethod</span>.<span style="color:#a6e22e">SupportedRequestContentTypes</span> = []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;application/json&#34;</span>}
+		// The lambda resource only supports application/json Unmarshallable
+		// requests.
+		apiMethod.SupportedRequestContentTypes = []string{&quot;application/json&quot;}
 	}
-	<span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
-}</code></pre></div>
+	return append(lambdaFunctions, lambdaFn)
+}
+</code></pre>
 
 <p>Our <code>helloWorld</code> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
 
@@ -1426,9 +1452,10 @@
 
 <p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Register the function with the API Gateway
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaHTML&#34;</span>, <span style="color:#a6e22e">apiStage</span>)</code></pre></div>
+<pre><code class="language-go">// Register the function with the API Gateway
+apiStage := sparta.NewStage(&quot;v1&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;SpartaHTML&quot;, apiStage)
+</code></pre>
 
 <p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
 
@@ -1437,16 +1464,17 @@ INFO[0096] Stack Outputs
 INFO[0096] ────────────────────────────────────────────────
 INFO[0096] S3SiteURL                                     Description=&#34;S3 Website URL&#34; Value=&#34;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-1w6rehqu6x04c.s3-website-us-west-2.amazonaws.com&#34;
 INFO[0096] APIGatewayURL                                 Description=&#34;API Gateway URL&#34; Value=&#34;https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1&#34;
-INFO[0096] ────────────────────────────────────────────────</code></pre></div>
+INFO[0096] ────────────────────────────────────────────────
+```
 
-<p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello">https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello</a></em></p>
+Combining the _API Gateway URL_ `OutputValue` with our resource path (_/hello/world/test_), we get the absolute URL to our lambda function: _https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello_
 
-<h1 id="querying">Querying</h1>
+# Querying
 
-<p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time. The
-snippet below is pretty printed by piping the response through <a href="https://stedolan.github.io/jq/">jq</a>.</p>
+Let&#39;s query the lambda function and see what the `event` data is at execution time. The
+snippet below is pretty printed by piping the response through [jq](https://stedolan.github.io/jq/).
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-nohighlight&#34; data-lang=&#34;nohighlight&#34;&gt;$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
 *   Trying 52.84.237.220...
 * TCP_NODELAY set
 * Connected to 3e7ux226ga.execute-api.us-west-2.amazonaws.com (52.84.237.220) port 443 (#0)
@@ -1455,187 +1483,184 @@ snippet below is pretty printed by piping the response through <a href="https://
 * Server certificate: Amazon
 * Server certificate: Amazon Root CA 1
 * Server certificate: Starfield Services Root Certificate Authority - G2
-&gt; GET /v1/hello HTTP/1.1
-&gt; Host: 3e7ux226ga.execute-api.us-west-2.amazonaws.com
-&gt; User-Agent: curl/7.54.0
-&gt; Accept: */*
-&gt;
-&lt; HTTP/1.1 200 OK
-&lt; Content-Type: application/json
-&lt; Content-Length: 1137
-&lt; Connection: keep-alive
-&lt; Date: Mon, 29 Jan 2018 14:15:28 GMT
-&lt; x-amzn-RequestId: db7f5734-04fe-11e8-b264-c70ecab3a032
-&lt; Access-Control-Allow-Origin: http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-419zo4dp8n2d.s3-website-us-west-2.amazonaws.com
-&lt; Access-Control-Allow-Headers: Content-Type,X-Amz-Date,Authorization,X-Api-Key
-&lt; Access-Control-Allow-Methods: *
-&lt; X-Amzn-Trace-Id: sampled=0;root=1-5a6f2c80-efb0f84554384252abca6d15
-&lt; X-Cache: Miss from cloudfront
-&lt; Via: 1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)
-&lt; X-Amz-Cf-Id: -UsCegiR1K3vJUFyAo9IMrWGdH8rKW6UBrtJLjxZqke19r0cxMl1NA==
-&lt;
+&amp;gt; GET /v1/hello HTTP/1.1
+&amp;gt; Host: 3e7ux226ga.execute-api.us-west-2.amazonaws.com
+&amp;gt; User-Agent: curl/7.54.0
+&amp;gt; Accept: */*
+&amp;gt;
+&amp;lt; HTTP/1.1 200 OK
+&amp;lt; Content-Type: application/json
+&amp;lt; Content-Length: 1137
+&amp;lt; Connection: keep-alive
+&amp;lt; Date: Mon, 29 Jan 2018 14:15:28 GMT
+&amp;lt; x-amzn-RequestId: db7f5734-04fe-11e8-b264-c70ecab3a032
+&amp;lt; Access-Control-Allow-Origin: http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-419zo4dp8n2d.s3-website-us-west-2.amazonaws.com
+&amp;lt; Access-Control-Allow-Headers: Content-Type,X-Amz-Date,Authorization,X-Api-Key
+&amp;lt; Access-Control-Allow-Methods: *
+&amp;lt; X-Amzn-Trace-Id: sampled=0;root=1-5a6f2c80-efb0f84554384252abca6d15
+&amp;lt; X-Cache: Miss from cloudfront
+&amp;lt; Via: 1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)
+&amp;lt; X-Amz-Cf-Id: -UsCegiR1K3vJUFyAo9IMrWGdH8rKW6UBrtJLjxZqke19r0cxMl1NA==
+&amp;lt;
 { [1137 bytes data]
 * Connection #0 to host 3e7ux226ga.execute-api.us-west-2.amazonaws.com left intact
 {
-  &#34;Message&#34;: &#34;Hello world 🌏&#34;,
-  &#34;Request&#34;: {
-    &#34;method&#34;: &#34;GET&#34;,
-    &#34;body&#34;: {},
-    &#34;headers&#34;: {
-      &#34;Accept&#34;: &#34;*/*&#34;,
-      &#34;CloudFront-Forwarded-Proto&#34;: &#34;https&#34;,
-      &#34;CloudFront-Is-Desktop-Viewer&#34;: &#34;true&#34;,
-      &#34;CloudFront-Is-Mobile-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-SmartTV-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Is-Tablet-Viewer&#34;: &#34;false&#34;,
-      &#34;CloudFront-Viewer-Country&#34;: &#34;US&#34;,
-      &#34;Host&#34;: &#34;3e7ux226ga.execute-api.us-west-2.amazonaws.com&#34;,
-      &#34;User-Agent&#34;: &#34;curl/7.54.0&#34;,
-      &#34;Via&#34;: &#34;1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)&#34;,
-      &#34;X-Amz-Cf-Id&#34;: &#34;vAFNTV5uAMeTG9JN6IORnA7LYJhZyB3jHV7vh-7lXn2uZQUR6eHQUw==&#34;,
-      &#34;X-Amzn-Trace-Id&#34;: &#34;Root=1-5a6f2c80-2b48a9c86a30b0162d8ab1f1&#34;,
-      &#34;X-Forwarded-For&#34;: &#34;73.118.138.121, 205.251.214.60&#34;,
-      &#34;X-Forwarded-Port&#34;: &#34;443&#34;,
-      &#34;X-Forwarded-Proto&#34;: &#34;https&#34;
+  &amp;#34;Message&amp;#34;: &amp;#34;Hello world 🌏&amp;#34;,
+  &amp;#34;Request&amp;#34;: {
+    &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+    &amp;#34;body&amp;#34;: {},
+    &amp;#34;headers&amp;#34;: {
+      &amp;#34;Accept&amp;#34;: &amp;#34;*/*&amp;#34;,
+      &amp;#34;CloudFront-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;,
+      &amp;#34;CloudFront-Is-Desktop-Viewer&amp;#34;: &amp;#34;true&amp;#34;,
+      &amp;#34;CloudFront-Is-Mobile-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Is-SmartTV-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Is-Tablet-Viewer&amp;#34;: &amp;#34;false&amp;#34;,
+      &amp;#34;CloudFront-Viewer-Country&amp;#34;: &amp;#34;US&amp;#34;,
+      &amp;#34;Host&amp;#34;: &amp;#34;3e7ux226ga.execute-api.us-west-2.amazonaws.com&amp;#34;,
+      &amp;#34;User-Agent&amp;#34;: &amp;#34;curl/7.54.0&amp;#34;,
+      &amp;#34;Via&amp;#34;: &amp;#34;1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)&amp;#34;,
+      &amp;#34;X-Amz-Cf-Id&amp;#34;: &amp;#34;vAFNTV5uAMeTG9JN6IORnA7LYJhZyB3jHV7vh-7lXn2uZQUR6eHQUw==&amp;#34;,
+      &amp;#34;X-Amzn-Trace-Id&amp;#34;: &amp;#34;Root=1-5a6f2c80-2b48a9c86a30b0162d8ab1f1&amp;#34;,
+      &amp;#34;X-Forwarded-For&amp;#34;: &amp;#34;73.118.138.121, 205.251.214.60&amp;#34;,
+      &amp;#34;X-Forwarded-Port&amp;#34;: &amp;#34;443&amp;#34;,
+      &amp;#34;X-Forwarded-Proto&amp;#34;: &amp;#34;https&amp;#34;
     },
-    &#34;queryParams&#34;: {},
-    &#34;pathParams&#34;: {},
-    &#34;context&#34;: {
-      &#34;appId&#34;: &#34;&#34;,
-      &#34;method&#34;: &#34;GET&#34;,
-      &#34;requestId&#34;: &#34;db7f5734-04fe-11e8-b264-c70ecab3a032&#34;,
-      &#34;resourceId&#34;: &#34;401s9n&#34;,
-      &#34;resourcePath&#34;: &#34;/hello&#34;,
-      &#34;stage&#34;: &#34;v1&#34;,
-      &#34;identity&#34;: {
-        &#34;accountId&#34;: &#34;&#34;,
-        &#34;apiKey&#34;: &#34;&#34;,
-        &#34;caller&#34;: &#34;&#34;,
-        &#34;cognitoAuthenticationProvider&#34;: &#34;&#34;,
-        &#34;cognitoAuthenticationType&#34;: &#34;&#34;,
-        &#34;cognitoIdentityId&#34;: &#34;&#34;,
-        &#34;cognitoIdentityPoolId&#34;: &#34;&#34;,
-        &#34;sourceIp&#34;: &#34;73.118.138.121&#34;,
-        &#34;user&#34;: &#34;&#34;,
-        &#34;userAgent&#34;: &#34;curl/7.54.0&#34;,
-        &#34;userArn&#34;: &#34;&#34;
+    &amp;#34;queryParams&amp;#34;: {},
+    &amp;#34;pathParams&amp;#34;: {},
+    &amp;#34;context&amp;#34;: {
+      &amp;#34;appId&amp;#34;: &amp;#34;&amp;#34;,
+      &amp;#34;method&amp;#34;: &amp;#34;GET&amp;#34;,
+      &amp;#34;requestId&amp;#34;: &amp;#34;db7f5734-04fe-11e8-b264-c70ecab3a032&amp;#34;,
+      &amp;#34;resourceId&amp;#34;: &amp;#34;401s9n&amp;#34;,
+      &amp;#34;resourcePath&amp;#34;: &amp;#34;/hello&amp;#34;,
+      &amp;#34;stage&amp;#34;: &amp;#34;v1&amp;#34;,
+      &amp;#34;identity&amp;#34;: {
+        &amp;#34;accountId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;apiKey&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;caller&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoAuthenticationProvider&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoAuthenticationType&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoIdentityId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;cognitoIdentityPoolId&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;sourceIp&amp;#34;: &amp;#34;73.118.138.121&amp;#34;,
+        &amp;#34;user&amp;#34;: &amp;#34;&amp;#34;,
+        &amp;#34;userAgent&amp;#34;: &amp;#34;curl/7.54.0&amp;#34;,
+        &amp;#34;userArn&amp;#34;: &amp;#34;&amp;#34;
       }
     }
   }
-}</code></pre></div>
+}
+```
 
-<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
+While this demonstrates that our lambda function is publicly accessible, it&amp;#39;s not immediately obvious where the `*event` data is being populated.
 
-<h1 id="mapping-templates">Mapping Templates</h1>
+# Mapping Templates
 
-<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields (<code>queryParams</code>, <code>pathParams</code>) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
+The event data that&amp;#39;s actually supplied to `echoS3Event` is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&amp;#39;re not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&amp;#39;s possible to transform the API Gateway request data and whitelisted arguments into a format that&amp;#39;s more amenable to the target.
 
-<p>Sparta uses a pass-through template that passes all valid data, with minor <strong>Body</strong> differences based on the inbound <em>Content-Type</em>:</p>
+Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
-<ul>
-<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">application/json</a></li>
-<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">*</a></li>
-</ul>
+  * [application/json](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl)
+  * [*](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl)
 
-<p>The <code>application/json</code> template is copied below:</p>
+The `application/json` template is copied below:
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">#*
+&amp;lt;div class=&amp;#34;highlight&amp;#34;&amp;gt;&amp;lt;pre style=&amp;#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&amp;#34;&amp;gt;&amp;lt;code class=&amp;#34;language-nohighlight&amp;#34; data-lang=&amp;#34;nohighlight&amp;#34;&amp;gt;#*
 Provide an automatic pass through template that transforms all inputs
 into the JSON payload sent to a golang function. The JSON behavior attempts to parse
 the incoming HTTP body as JSON assign it to the `body` field.
 
 See
-  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;amp;amp;tstart=0
   http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
 *#
 {
-  &#34;method&#34;: &#34;$context.httpMethod&#34;,
-  &#34;body&#34; : $input.json(&#39;$&#39;),
-  &#34;headers&#34;: {
+  &amp;amp;#34;method&amp;amp;#34;: &amp;amp;#34;$context.httpMethod&amp;amp;#34;,
+  &amp;amp;#34;body&amp;amp;#34; : $input.json(&amp;amp;#39;$&amp;amp;#39;),
+  &amp;amp;#34;headers&amp;amp;#34;: {
     #foreach($param in $input.params().header.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().header.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;amp;#34;$param&amp;amp;#34;: &amp;amp;#34;$util.escapeJavaScript($input.params().header.get($param))&amp;amp;#34; #if($foreach.hasNext),#end
     #end
   },
-  &#34;queryParams&#34;: {
+  &amp;amp;#34;queryParams&amp;amp;#34;: {
     #foreach($param in $input.params().querystring.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().querystring.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;amp;#34;$param&amp;amp;#34;: &amp;amp;#34;$util.escapeJavaScript($input.params().querystring.get($param))&amp;amp;#34; #if($foreach.hasNext),#end
 
     #end
   },
-  &#34;pathParams&#34;: {
+  &amp;amp;#34;pathParams&amp;amp;#34;: {
     #foreach($param in $input.params().path.keySet())
-    &#34;$param&#34;: &#34;$util.escapeJavaScript($input.params().path.get($param))&#34; #if($foreach.hasNext),#end
+    &amp;amp;#34;$param&amp;amp;#34;: &amp;amp;#34;$util.escapeJavaScript($input.params().path.get($param))&amp;amp;#34; #if($foreach.hasNext),#end
 
     #end
   },
-  &#34;context&#34; : {
-    &#34;apiId&#34; : &#34;$util.escapeJavaScript($context.apiId)&#34;,
-    &#34;method&#34; : &#34;$util.escapeJavaScript($context.httpMethod)&#34;,
-    &#34;requestId&#34; : &#34;$util.escapeJavaScript($context.requestId)&#34;,
-    &#34;resourceId&#34; : &#34;$util.escapeJavaScript($context.resourceId)&#34;,
-    &#34;resourcePath&#34; : &#34;$util.escapeJavaScript($context.resourcePath)&#34;,
-    &#34;stage&#34; : &#34;$util.escapeJavaScript($context.stage)&#34;,
-    &#34;identity&#34; : {
-      &#34;accountId&#34; : &#34;$util.escapeJavaScript($context.identity.accountId)&#34;,
-      &#34;apiKey&#34; : &#34;$util.escapeJavaScript($context.identity.apiKey)&#34;,
-      &#34;caller&#34; : &#34;$util.escapeJavaScript($context.identity.caller)&#34;,
-      &#34;cognitoAuthenticationProvider&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&#34;,
-      &#34;cognitoAuthenticationType&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&#34;,
-      &#34;cognitoIdentityId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&#34;,
-      &#34;cognitoIdentityPoolId&#34; : &#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&#34;,
-      &#34;sourceIp&#34; : &#34;$util.escapeJavaScript($context.identity.sourceIp)&#34;,
-      &#34;user&#34; : &#34;$util.escapeJavaScript($context.identity.user)&#34;,
-      &#34;userAgent&#34; : &#34;$util.escapeJavaScript($context.identity.userAgent)&#34;,
-      &#34;userArn&#34; : &#34;$util.escapeJavaScript($context.identity.userArn)&#34;
+  &amp;amp;#34;context&amp;amp;#34; : {
+    &amp;amp;#34;apiId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.apiId)&amp;amp;#34;,
+    &amp;amp;#34;method&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.httpMethod)&amp;amp;#34;,
+    &amp;amp;#34;requestId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.requestId)&amp;amp;#34;,
+    &amp;amp;#34;resourceId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.resourceId)&amp;amp;#34;,
+    &amp;amp;#34;resourcePath&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.resourcePath)&amp;amp;#34;,
+    &amp;amp;#34;stage&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.stage)&amp;amp;#34;,
+    &amp;amp;#34;identity&amp;amp;#34; : {
+      &amp;amp;#34;accountId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.accountId)&amp;amp;#34;,
+      &amp;amp;#34;apiKey&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.apiKey)&amp;amp;#34;,
+      &amp;amp;#34;caller&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.caller)&amp;amp;#34;,
+      &amp;amp;#34;cognitoAuthenticationProvider&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&amp;amp;#34;,
+      &amp;amp;#34;cognitoAuthenticationType&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&amp;amp;#34;,
+      &amp;amp;#34;cognitoIdentityId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityId)&amp;amp;#34;,
+      &amp;amp;#34;cognitoIdentityPoolId&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&amp;amp;#34;,
+      &amp;amp;#34;sourceIp&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.sourceIp)&amp;amp;#34;,
+      &amp;amp;#34;user&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.user)&amp;amp;#34;,
+      &amp;amp;#34;userAgent&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.userAgent)&amp;amp;#34;,
+      &amp;amp;#34;userArn&amp;amp;#34; : &amp;amp;#34;$util.escapeJavaScript($context.identity.userArn)&amp;amp;#34;
     }
   }
-}</code></pre></div>
+}
+```
 
-<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
+This template forwards all whitelisted data &amp;amp;amp; body to the lambda function.  You can see by switching on the `method` field would permit a single function to service multiple HTTP method names.
 
-<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
+The next example will show how to unmarshal this data and perform request-specific actions.
 
-<h1 id="proxying-envelope">Proxying Envelope</h1>
+# Proxying Envelope
 
-<p>Because the integration request returned a successful response, the API Gateway response body contains only our lambda&rsquo;s output (<code>$input.json('$')</code>).</p>
+Because the integration request returned a successful response, the API Gateway response body contains only our lambda&amp;amp;#39;s output (`$input.json(&amp;amp;#39;$&amp;amp;#39;)`).
 
-<p>To return an error that API Gateway can properly translate into an HTTP
-status code, use an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewErrorResponse">apigateway.NewErrorResponse</a> type. This
+To return an error that API Gateway can properly translate into an HTTP
+status code, use an [apigateway.NewErrorResponse](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewErrorResponse) type. This
 custom error type includes fields that trigger integration mappings based on the
-inline <a href="https://golang.org/src/net/http/status.go">HTTP StatusCode</a>. If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
+inline [HTTP StatusCode](https://golang.org/src/net/http/status.go). If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you&amp;amp;#39;ll see a list of Regular Expression matches:
 
-<p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
+![API Gateway](/images/apigateway/IntegrationMapping.png)
 
-<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to the underlying AWS Go API, into API Gateway Method responses.
-If you use the <code>apigateway.Error</code> type, the marshalled string version of your
-error text will trigger the proper Method Response.</p>
+The regular expressions are used to translate the integration response, which is just a blob of text provided to the underlying AWS Go API, into API Gateway Method responses.
+If you use the `apigateway.Error` type, the marshalled string version of your
+error text will trigger the proper Method Response.
 
-<p>Sparta annotates your lambda functions response with <strong>go</strong>&rsquo;s values based on the HTTP status code your lambda function produced.  By default, Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+Sparta annotates your lambda functions response with **go**&amp;amp;#39;s values based on the HTTP status code your lambda function produced.  By default, Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
 
-<p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
+![API Gateway](/images/apigateway/MethodResponse.png)
 
-<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
+These mappings are defaults, and it&amp;amp;#39;s possible to override either one by providing a non-zero length values to either:
 
-<ul>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
-<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
-</ul>
+  * [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration).  See the [DefaultIntegrationResponses](https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60) for the default values.
+  * [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method).  See the [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) for the default method response mappings.
 
-<h1 id="cleaning-up">Cleaning Up</h1>
+# Cleaning Up
 
-<p>Before moving on, remember to decommission the service via:</p>
+Before moving on, remember to decommission the service via:
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">go run application.go delete</code></pre></div>
+&amp;amp;lt;div class=&amp;amp;#34;highlight&amp;amp;#34;&amp;amp;gt;&amp;amp;lt;pre style=&amp;amp;#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&amp;amp;#34;&amp;amp;gt;&amp;amp;lt;code class=&amp;amp;#34;language-bash&amp;amp;#34; data-lang=&amp;amp;#34;bash&amp;amp;#34;&amp;amp;gt;go run application.go delete
+&amp;amp;lt;span style=&amp;amp;#34;color:#e6db74&amp;amp;#34;&amp;amp;gt;```&amp;amp;lt;/span&amp;amp;gt;
 
-<h1 id="wrapping-up">Wrapping Up</h1>
+&amp;amp;lt;span style=&amp;amp;#34;color:#75715e&amp;amp;#34;&amp;amp;gt;# Wrapping Up
+&amp;amp;lt;/span&amp;amp;gt;&amp;amp;lt;span style=&amp;amp;#34;color:#75715e&amp;amp;#34;&amp;amp;gt;&amp;amp;lt;/span&amp;amp;gt;
+Now that we know what data is actually being sent to our API Gateway-connected Lambda &amp;amp;lt;span style=&amp;amp;#34;color:#66d9ef&amp;amp;#34;&amp;amp;gt;function&amp;amp;lt;/span&amp;amp;gt;, we&amp;amp;lt;span style=&amp;amp;#34;color:#960050;background-color:#1e0010&amp;amp;#34;&amp;amp;gt;&amp;amp;amp;#39;&amp;amp;lt;/span&amp;amp;gt;ll move on to performing a more complex operation, including returning a custom HTTP response body.
 
-<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
-
-<h1 id="other-resources">Other Resources</h1>
-
-<ul>
-<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">Mapping Template Reference</a></li>
-</ul>
+&amp;amp;lt;span style=&amp;amp;#34;color:#75715e&amp;amp;#34;&amp;amp;gt;# Other Resources
+&amp;amp;lt;/span&amp;amp;gt;&amp;amp;lt;span style=&amp;amp;#34;color:#75715e&amp;amp;#34;&amp;amp;gt;&amp;amp;lt;/span&amp;amp;gt;
+  * &amp;amp;lt;span style=&amp;amp;#34;color:#f92672&amp;amp;#34;&amp;amp;gt;[&amp;amp;lt;/span&amp;amp;gt;Mapping Template Reference&amp;amp;lt;span style=&amp;amp;#34;color:#f92672&amp;amp;#34;&amp;amp;gt;](&amp;amp;lt;/span&amp;amp;gt;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&amp;amp;lt;span style=&amp;amp;#34;color:#f92672&amp;amp;#34;&amp;amp;gt;)&amp;amp;lt;/span&amp;amp;gt;&amp;amp;lt;/code&amp;amp;gt;&amp;amp;lt;/pre&amp;amp;gt;&amp;amp;lt;/div&amp;amp;gt;&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;&amp;lt;/div&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2496,6 +2521,22 @@ error text will trigger the proper Method Response.</p>
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2569,12 +2610,15 @@ error text will trigger the proper Method Response.</p>
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/apigateway/" title="API Gateway"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/apigateway/user_input/" title="User Input" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/apigateway/" title="API Gateway"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/apigateway/user_input/" title="User Input" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2582,20 +2626,20 @@ error text will trigger the proper Method Response.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

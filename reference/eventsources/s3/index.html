@@ -12,19 +12,19 @@
     <title>S3 :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/eventsources/s3/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1358,23 +1387,25 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
-	<span style="color:#a6e22e">awsLambdaContext</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/lambdacontext&#34;</span>
+<pre><code class="language-go">import (
+  awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+	awsLambdaContext &quot;github.com/aws/aws-lambda-go/lambdacontext&quot;
 )
 
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">transformedResponse</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">Bucket</span> <span style="color:#66d9ef">string</span>
-	<span style="color:#a6e22e">Key</span>    <span style="color:#66d9ef">string</span>
+type transformedResponse struct {
+	Bucket string
+	Key    string
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">transformImage</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">event</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">S3Event</span>) ([]<span style="color:#a6e22e">transformedResponse</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-	<span style="color:#a6e22e">lambdaContext</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">awsLambdaContext</span>.<span style="color:#a6e22e">FromContext</span>(<span style="color:#a6e22e">ctx</span>)
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;RequestID&#34;</span>:   <span style="color:#a6e22e">lambdaContext</span>.<span style="color:#a6e22e">AwsRequestID</span>,
-		<span style="color:#e6db74">&#34;RecordCount&#34;</span>: len(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">Records</span>),
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Request received 👍&#34;</span>)</code></pre></div>
+func transformImage(ctx context.Context, event awsLambdaEvents.S3Event) ([]transformedResponse, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	lambdaContext, _ := awsLambdaContext.FromContext(ctx)
+	logger.WithFields(logrus.Fields{
+		&quot;RequestID&quot;:   lambdaContext.AwsRequestID,
+		&quot;RecordCount&quot;: len(event.Records),
+  }).Info(&quot;Request received 👍&quot;)
+
+</code></pre>
 
 <p>Since the <code>transformImage</code> is expected to be triggered by S3 event changes, we can transparently unmarshal
 the incoming request into an <a href="https://github.com/aws/aws-lambda-go/blob/master/events/s3.go#L9">S3Event</a>
@@ -1382,29 +1413,30 @@ defined by the AWS Go Lambda SDK.</p>
 
 <p>S3 events are delivered in batches, via lists of <a href="https://godoc.org/github.com/mweagle/Sparta/aws/s3#EventRecord">EventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">eachRecord</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">Records</span> {
-  <span style="color:#75715e">// What happened?
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">eachRecord</span>.<span style="color:#a6e22e">EventName</span> {
-  <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;ObjectCreated:Put&#34;</span>:
+<pre><code class="language-go">for _, eachRecord := range event.Records {
+  // What happened?
+  switch eachRecord.EventName {
+  case &quot;ObjectCreated:Put&quot;:
     {
-      <span style="color:#a6e22e">err</span> = <span style="color:#a6e22e">stampImage</span>(<span style="color:#a6e22e">eachRecord</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">Bucket</span>.<span style="color:#a6e22e">Name</span>, <span style="color:#a6e22e">eachRecord</span>.<span style="color:#a6e22e">S3</span>.<span style="color:#a6e22e">Object</span>.<span style="color:#a6e22e">Key</span>, <span style="color:#a6e22e">logger</span>)
+      err = stampImage(eachRecord.S3.Bucket.Name, eachRecord.S3.Object.Key, logger)
     }
-  <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;s3:ObjectRemoved:Delete&#34;</span>:
+  case &quot;s3:ObjectRemoved:Delete&quot;:
     {
-      <span style="color:#75715e">// Delete stamped image
-</span><span style="color:#75715e"></span>    }
-  <span style="color:#66d9ef">default</span>:
+      // Delete stamped image
+    }
+  default:
     {
-      <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Unsupported event: &#34;</span>, <span style="color:#a6e22e">eachRecord</span>.<span style="color:#a6e22e">EventName</span>)
+      logger.Info(&quot;Unsupported event: &quot;, eachRecord.EventName)
     }
   }
 
-  <span style="color:#75715e">//
-</span><span style="color:#75715e"></span>  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-    <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#e6db74">&#34;Failed to process event: &#34;</span>, <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>())
-    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">Error</span>(<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">err</span>.<span style="color:#a6e22e">Error</span>(), <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusInternalServerError</span>)
+  //
+  if err != nil {
+    logger.Error(&quot;Failed to process event: &quot;, err.Error())
+    http.Error(w, err.Error(), http.StatusInternalServerError)
   }
-}</code></pre></div>
+}
+</code></pre>
 
 <p>The <a href="https://github.com/mweagle/SpartaImager/blob/master/application.go#L57">stampImage</a> function does most of the work, fetching the S3 image to memory,
 applying the stamp, and putting the transformed content back to S3 with a new name.  It uses a simple <strong>xformed_</strong> keyname prefix to identify
@@ -1417,33 +1449,35 @@ but in production you should use a more durable approach.</p>
 
 <p>Our lambda function needs to both <em>Get</em> and <em>Put</em> items back to an S3 bucket, so we need an IAM Role that grants those privileges under which the function will execute:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Provision an IAM::Role as part of this application
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">iamRole</span> = <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{}
+<pre><code class="language-go">// Provision an IAM::Role as part of this application
+var iamRole = sparta.IAMRoleDefinition{}
 
-<span style="color:#75715e">// Setup the ARN that includes all child keys
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">resourceArn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s/*&#34;</span>, <span style="color:#a6e22e">s3EventBroadcasterBucket</span>)
-<span style="color:#a6e22e">iamRole</span>.<span style="color:#a6e22e">Privileges</span> = append(<span style="color:#a6e22e">iamRole</span>.<span style="color:#a6e22e">Privileges</span>, <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRolePrivilege</span>{
-  <span style="color:#a6e22e">Actions</span>: []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;s3:GetObject&#34;</span>,
-    <span style="color:#e6db74">&#34;s3:PutObject&#34;</span>,
+// Setup the ARN that includes all child keys
+resourceArn := fmt.Sprintf(&quot;%s/*&quot;, s3EventBroadcasterBucket)
+iamRole.Privileges = append(iamRole.Privileges, sparta.IAMRolePrivilege{
+  Actions: []string{&quot;s3:GetObject&quot;,
+    &quot;s3:PutObject&quot;,
   },
-  <span style="color:#a6e22e">Resource</span>: <span style="color:#a6e22e">resourceArn</span>,
-})</code></pre></div>
+  Resource: resourceArn,
+})
+</code></pre>
 
 <p>The <code>s3EventBroadcasterBucket</code> param is the ARN of the S3 bucket that will trigger your lambda function (eg: <em>arn:aws:s3:::MyImagingS3Bucket</em>).</p>
 
 <p>With the IAM Role defined, we can create the Sparta lambda function for <code>transformImage</code>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
-</span><span style="color:#75715e">// transform lambda doesn&#39;t fail early.
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">transformOptions</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaFunctionOptions</span>{
-  <span style="color:#a6e22e">Description</span>: <span style="color:#e6db74">&#34;Stamp assets in S3&#34;</span>,
-  <span style="color:#a6e22e">MemorySize</span>:  <span style="color:#ae81ff">128</span>,
-  <span style="color:#a6e22e">Timeout</span>:     <span style="color:#ae81ff">30</span>,
+<pre><code class="language-go">// The default timeout is 3 seconds - increase that to 30 seconds s.t. the
+// transform lambda doesn't fail early.
+transformOptions := &amp;sparta.LambdaFunctionOptions{
+  Description: &quot;Stamp assets in S3&quot;,
+  MemorySize:  128,
+  Timeout:     30,
 }
-<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">transformImage</span>),
-  <span style="color:#a6e22e">transformImage</span>,
-  <span style="color:#a6e22e">iamRole</span>)
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Options</span> = <span style="color:#a6e22e">transformOptions</span></code></pre></div>
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(transformImage),
+  transformImage,
+  iamRole)
+lambdaFn.Options = transformOptions
+</code></pre>
 
 <p>It typically takes more than 3 seconds to apply the transform, so we increase the execution timeout and provision a new
 lambda function using the <code>iamRole</code> we defined earlier.</p>
@@ -1454,16 +1488,17 @@ lambda function using the <code>iamRole</code> we defined earlier.</p>
 to the <code>s3EventBroadcasterBucket</code>, but would not be invoked in response to events triggered by that bucket.  To register
 for state change events, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">//////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// S3 configuration
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">S3Permission</span>{
-  <span style="color:#a6e22e">BasePermission</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">BasePermission</span>{
-    <span style="color:#a6e22e">SourceArn</span>: <span style="color:#a6e22e">s3EventBroadcasterBucket</span>,
+<pre><code class="language-go">//////////////////////////////////////////////////////////////////////////////
+// S3 configuration
+//
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: s3EventBroadcasterBucket,
   },
-  <span style="color:#a6e22e">Events</span>: []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span>, <span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span>},
+  Events: []string{&quot;s3:ObjectCreated:*&quot;, &quot;s3:ObjectRemoved:*&quot;},
 })
-<span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)</code></pre></div>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+</code></pre>
 
 <p>When <code>Sparta</code> generates the CloudFormation template, it scans for <code>Permission</code> configurations.
 For <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">push based sources</a> like S3, Sparta uses that
@@ -2349,6 +2384,22 @@ service&rsquo;s APIs to register your lambda function as a publishing target for
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2422,12 +2473,15 @@ service&rsquo;s APIs to register your lambda function as a publishing target for
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/eventsources/kinesis/" title="Event Sources - Kinesis"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/eventsources/ses/" title="SES" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/eventsources/kinesis/" title="Event Sources - Kinesis"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/eventsources/ses/" title="SES" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2435,20 +2489,20 @@ service&rsquo;s APIs to register your lambda function as a publishing target for
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -12,19 +12,19 @@
     <title>CloudFront Distribution :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/decorators/cloudfront_distribution/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1341,36 +1370,39 @@
 
 <p>Sample usage:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// CloudFront settings
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">subdomain</span> = <span style="color:#e6db74">&#34;mySiteSubdomain&#34;</span>
+<pre><code class="language-go">
+////////////////////////////////////////////////////////////////////////////////
+// CloudFront settings
+const subdomain = &quot;mySiteSubdomain&quot;
 
-<span style="color:#75715e">// The domain managed by Route53.
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">domainName</span> = <span style="color:#e6db74">&#34;myRoute53ManagedDomain.net&#34;</span>
+// The domain managed by Route53.
+const domainName = &quot;myRoute53ManagedDomain.net&quot;
 
-<span style="color:#75715e">// The site will be available at
-</span><span style="color:#75715e">// https://mySiteSubdomain.myRoute53ManagedDomain.net
-</span><span style="color:#75715e"></span>
-<span style="color:#75715e">// The S3 bucketname must match the subdomain.domain
-</span><span style="color:#75715e">// name pattern to serve as a CloudFront Distribution target
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">bucketName</span> = <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%s.%s&#34;</span>, <span style="color:#a6e22e">subdomain</span>, <span style="color:#a6e22e">domainName</span>)
+// The site will be available at
+// https://mySiteSubdomain.myRoute53ManagedDomain.net
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">distroHooks</span>(<span style="color:#a6e22e">s3Site</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">S3Site</span>) <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span> {
+// The S3 bucketname must match the subdomain.domain
+// name pattern to serve as a CloudFront Distribution target
+var bucketName = fmt.Sprintf(&quot;%s.%s&quot;, subdomain, domainName)
 
-  <span style="color:#75715e">// Commented out demonstration of how to front the site
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// with a CloudFront distribution.
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// Note that provisioning a distribution will incur additional
-</span><span style="color:#75715e"></span>  <span style="color:#75715e">// costs
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">hooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{}
-  <span style="color:#a6e22e">siteHookDecorator</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaDecorators</span>.<span style="color:#a6e22e">CloudFrontSiteDistributionDecorator</span>(<span style="color:#a6e22e">s3Site</span>,
-    <span style="color:#a6e22e">subdomain</span>,
-    <span style="color:#a6e22e">domainName</span>,
-    <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;SPARTA_ACM_CLOUDFRONT_ARN&#34;</span>)))
-  <span style="color:#a6e22e">hooks</span>.<span style="color:#a6e22e">ServiceDecorators</span> = []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
-    <span style="color:#a6e22e">siteHookDecorator</span>,
+func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
+
+  // Commented out demonstration of how to front the site
+  // with a CloudFront distribution.
+  // Note that provisioning a distribution will incur additional
+  // costs
+  hooks := &amp;sparta.WorkflowHooks{}
+  siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+    subdomain,
+    domainName,
+    gocf.String(os.Getenv(&quot;SPARTA_ACM_CLOUDFRONT_ARN&quot;)))
+  hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+    siteHookDecorator,
   }
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hooks</span>
-}</code></pre></div>
+  return hooks
+}
+
+</code></pre>
 
 
 <footer class=" footline" >
@@ -2231,6 +2263,22 @@
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2304,12 +2352,15 @@
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/decorators/" title="Decorators"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/decorators/" title="Decorators"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2317,20 +2368,20 @@
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -29,7 +29,7 @@
       <guid>/reference/eventsources/cloudwatchevents/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
 Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
- Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small: func echoCloudWatchEvent(ctx context.</description>
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small:</description>
     </item>
     
     <item>

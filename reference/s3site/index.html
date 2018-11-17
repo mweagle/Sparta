@@ -12,19 +12,19 @@
     <title>S3 Sites with CORS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/s3site/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1319,8 +1348,6 @@
 <li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
 <li><a href="#define-the-s3-site">Define the S3 Site</a></li>
 <li><a href="#provision">Provision</a></li>
-<li><a href="#discover">Discover</a></li>
-<li><a href="#references">References</a></li>
 </ul>
 </nav>
     </div>
@@ -1350,30 +1377,33 @@
 
 <p>We&rsquo;ll start by creating a very simple lambda function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">spartaAPIG</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/apigateway&#34;</span>
-	<span style="color:#a6e22e">spartaAWSEvents</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+<pre><code class="language-go">
+import (
+	spartaAPIG &quot;github.com/mweagle/Sparta/aws/apigateway&quot;
+	spartaAWSEvents &quot;github.com/mweagle/Sparta/aws/events&quot;
 )
-<span style="color:#66d9ef">type</span> <span style="color:#a6e22e">helloWorldResponse</span> <span style="color:#66d9ef">struct</span> {
-	<span style="color:#a6e22e">Message</span> <span style="color:#66d9ef">string</span>
-	<span style="color:#a6e22e">Request</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>
+type helloWorldResponse struct {
+	Message string
+	Request spartaAWSEvents.APIGatewayRequest
 }
 
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Hello world event handler
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-	<span style="color:#a6e22e">gatewayEvent</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">helloWorldResponse</span>, <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAPIG</span>.<span style="color:#a6e22e">Error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">loggerOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-	<span style="color:#66d9ef">if</span> <span style="color:#a6e22e">loggerOk</span> {
-		<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Hello world structured log message&#34;</span>)
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+func helloWorld(ctx context.Context,
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (*helloWorldResponse, *spartaAPIG.Error) {
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	if loggerOk {
+		logger.Info(&quot;Hello world structured log message&quot;)
 	}
-	<span style="color:#75715e">// Return a message, together with the incoming input...
-</span><span style="color:#75715e"></span>	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">helloWorldResponse</span>{
-		<span style="color:#a6e22e">Message</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Hello world 🌏&#34;</span>),
-		<span style="color:#a6e22e">Request</span>: <span style="color:#a6e22e">gatewayEvent</span>,
-	}, <span style="color:#66d9ef">nil</span>
+	// Return a message, together with the incoming input...
+	return &amp;helloWorldResponse{
+		Message: fmt.Sprintf(&quot;Hello world 🌏&quot;),
+		Request: gatewayEvent,
+	}, nil
 
-}</code></pre></div>
+}
+
+</code></pre>
 
 <p>This lambda function returns a reply that consists of the inbound
 request plus a sample message.  See the API Gateway <a href="/reference/apigateway">examples</a>
@@ -1383,31 +1413,35 @@ for more information.</p>
 
 <p>The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaHTML&#34;</span>, <span style="color:#a6e22e">apiStage</span>)</code></pre></div>
+<pre><code class="language-go">apiStage := sparta.NewStage(&quot;v1&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;SpartaHTML&quot;, apiStage)
+</code></pre>
 
 <p>Since we want to be able to access this API from another domain (the one provisioned by the S3 bucket), we&rsquo;ll need to <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html">enable CORS</a> as well:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Enable CORS s.t. the S3 site can access the resources
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">apiGateway</span>.<span style="color:#a6e22e">CORSEnabled</span> = <span style="color:#66d9ef">true</span></code></pre></div>
+<pre><code class="language-go">// Enable CORS s.t. the S3 site can access the resources
+apiGateway.CORSEnabled = true
+</code></pre>
 
 <p>Finally, we register the <code>helloWorld</code> lambda function with an API Gateway resource:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-	<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloWorld</span>),
-		<span style="color:#a6e22e">helloWorld</span>,
-		<span style="color:#a6e22e">iamDynamicRole</span>)
+<pre><code class="language-go">
+func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		helloWorld,
+		iamDynamicRole)
 
-	<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">api</span> {
-		<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">api</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/hello&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
-		<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;GET&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusOK</span>)
-		<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">err</span> {
-			panic(<span style="color:#e6db74">&#34;Failed to create /hello resource&#34;</span>)
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&quot;/hello&quot;, lambdaFn)
+		_, err := apiGatewayResource.NewMethod(&quot;GET&quot;, http.StatusOK)
+		if nil != err {
+			panic(&quot;Failed to create /hello resource&quot;)
 		}
 	}
-	<span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
-}</code></pre></div>
+	return append(lambdaFunctions, lambdaFn)
+}
+</code></pre>
 
 <h1 id="define-the-s3-site">Define the S3 Site</h1>
 
@@ -1424,25 +1458,27 @@ typically points to a directory, which will be:</p>
 
 <p>Putting it all together, our <code>main()</code> function looks like:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Main
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	<span style="color:#75715e">// Register the function with the API Gateway
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-	<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaHTML&#34;</span>, <span style="color:#a6e22e">apiStage</span>)
-	<span style="color:#75715e">// Enable CORS s.t. the S3 site can access the resources
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">apiGateway</span>.<span style="color:#a6e22e">CORSEnabled</span> = <span style="color:#66d9ef">true</span>
+<pre><code class="language-go">
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+	// Register the function with the API Gateway
+	apiStage := sparta.NewStage(&quot;v1&quot;)
+	apiGateway := sparta.NewAPIGateway(&quot;SpartaHTML&quot;, apiStage)
+	// Enable CORS s.t. the S3 site can access the resources
+	apiGateway.CORSEnabled = true
 
-	<span style="color:#75715e">// Provision a new S3 bucket with the resources in the supplied subdirectory
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">s3Site</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewS3Site</span>(<span style="color:#e6db74">&#34;./resources&#34;</span>)
+	// Provision a new S3 bucket with the resources in the supplied subdirectory
+	s3Site, _ := sparta.NewS3Site(&quot;./resources&quot;)
 
-	<span style="color:#75715e">// Deploy it
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;SpartaHTML&#34;</span>,
-		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&#34;</span>),
-		<span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">apiGateway</span>),
-		<span style="color:#a6e22e">apiGateway</span>,
-		<span style="color:#a6e22e">s3Site</span>)
-}</code></pre></div>
+	// Deploy it
+	sparta.Main(&quot;SpartaHTML&quot;,
+		fmt.Sprintf(&quot;Sparta app that provisions a CORS-enabled API Gateway together with an S3 site&quot;),
+		spartaLambdaFunctions(apiGateway),
+		apiGateway,
+		s3Site)
+}
+</code></pre>
 
 <p>which can be provisioned using the standard <a href="/reference/commandline">command line</a> option.</p>
 
@@ -1453,31 +1489,29 @@ INFO[0092] Stack Outputs
 INFO[0092] ────────────────────────────────────────────────
 INFO[0092] S3SiteURL                                     Description=&#34;S3 Website URL&#34; Value=&#34;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com&#34;
 INFO[0092] APIGatewayURL                                 Description=&#34;API Gateway URL&#34; Value=&#34;https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1&#34;
-INFO[0092] ────────────────────────────────────────────────</code></pre></div>
+INFO[0092] ────────────────────────────────────────────────
+```
 
-<p>Open your browser to the <code>S3SiteURL</code> value (eg: <em><a href="http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com">http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com</a></em>) and view the deployed site.</p>
+Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com_) and view the deployed site.
 
-<h1 id="discover">Discover</h1>
+# Discover
 
-<p>An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.</p>
+An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.
 
-<p>As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a <em>MANIFEST.json</em> discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:</p>
+As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates a _MANIFEST.json_ discovery file with discovery information. If your application has provisioned an APIGateway this JSON file will include that dynamically assigned URL as in:
 
-<ol>
-<li><strong>MANIFEST.json</strong>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
- <span style="color:#f92672">&#34;APIGatewayURL&#34;</span>: {
-  <span style="color:#f92672">&#34;Description&#34;</span>: <span style="color:#e6db74">&#34;API Gateway URL&#34;</span>,
-  <span style="color:#f92672">&#34;Value&#34;</span>: <span style="color:#e6db74">&#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&#34;</span>
+  1. **MANIFEST.json**
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;{
+ &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;APIGatewayURL&amp;#34;&lt;/span&gt;: {
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;Description&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;API Gateway URL&amp;#34;&lt;/span&gt;,
+  &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;Value&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1&amp;#34;&lt;/span&gt;
  }
-}</code></pre></div></li>
-</ol>
+}
+&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;```&lt;/span&gt;
 
-<h1 id="references">References</h1>
+&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;#&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;References&lt;/span&gt;
 
-<ul>
-<li>See the <a href="https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef">Medium</a> post for an additional walk through this sample.</li>
-</ul>
+&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;*&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;See&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;the&lt;/span&gt; [&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;Medium&lt;/span&gt;]&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;(https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;-5e6&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;fe&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;79&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;f&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;63&lt;/span&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;ef)&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;post&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;for&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;an&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;additional&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;walk&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;through&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;this&lt;/span&gt; &lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;sample.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2337,6 +2371,22 @@ INFO[0092] ───────────────────────
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2410,12 +2460,15 @@ INFO[0092] ───────────────────────
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/profiling/" title="Profiling"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/step_functions/" title="Step Functions" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/profiling/" title="Profiling"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/step_functions/" title="Step Functions" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2423,20 +2476,20 @@ INFO[0092] ───────────────────────
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

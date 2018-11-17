@@ -12,19 +12,19 @@
     <title>Slack SlashCommand :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/apigateway/slack/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1325,10 +1354,6 @@
 <li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
 <li><a href="#create-lambda-binding-resource">Create Lambda Binding &amp; Resource</a></li>
 <li><a href="#provision">Provision</a></li>
-<li><a href="#configure-slack">Configure Slack</a></li>
-<li><a href="#test">Test</a></li>
-<li><a href="#cleaning-up">Cleaning Up</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul>
 </nav>
     </div>
@@ -1361,43 +1386,44 @@ this is the <a href="https://github.com/mweagle/SpartaSlackbot">SpartaSlackbot</
 
 <p>This lambda handler is a bit more complicated than the other examples, primarily because of the <a href="https://api.slack.com/slash-commands">Slack Integration</a> requirements.  The full source is:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">spartaAWSEvents</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/events&#34;</span>
+<pre><code class="language-go">import (
+	spartaAWSEvents &quot;github.com/mweagle/Sparta/aws/events&quot;
 )
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Hello world event handler
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloSlackbot</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-	<span style="color:#a6e22e">apiRequest</span> <span style="color:#a6e22e">spartaAWSEvents</span>.<span style="color:#a6e22e">APIGatewayRequest</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloSlackbot(ctx context.Context,
+	apiRequest spartaAWSEvents.APIGatewayRequest) (map[string]interface{}, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
 
-	<span style="color:#a6e22e">bodyParams</span>, <span style="color:#a6e22e">bodyParamsOk</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Body</span>.(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{})
-	<span style="color:#66d9ef">if</span> !<span style="color:#a6e22e">bodyParamsOk</span> {
-		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Errorf</span>(<span style="color:#e6db74">&#34;Failed to type convert body. Type: %T&#34;</span>, <span style="color:#a6e22e">apiRequest</span>.<span style="color:#a6e22e">Body</span>)
+	bodyParams, bodyParamsOk := apiRequest.Body.(map[string]interface{})
+	if !bodyParamsOk {
+		return nil, fmt.Errorf(&quot;Failed to type convert body. Type: %T&quot;, apiRequest.Body)
 	}
 
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;BodyType&#34;</span>:  <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%T&#34;</span>, <span style="color:#a6e22e">bodyParams</span>),
-		<span style="color:#e6db74">&#34;BodyValue&#34;</span>: <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%+v&#34;</span>, <span style="color:#a6e22e">bodyParams</span>),
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Slack slashcommand values&#34;</span>)
+	logger.WithFields(logrus.Fields{
+		&quot;BodyType&quot;:  fmt.Sprintf(&quot;%T&quot;, bodyParams),
+		&quot;BodyValue&quot;: fmt.Sprintf(&quot;%+v&quot;, bodyParams),
+	}).Info(&quot;Slack slashcommand values&quot;)
 
-	<span style="color:#75715e">// 2. Create the response
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// Slack formatting:
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// https://api.slack.com/docs/formatting
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Here&#39;s what I understood&#34;</span>
-	<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">bodyParams</span> {
-		<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;\n*%s*: %+v&#34;</span>, <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span>)
+	// 2. Create the response
+	// Slack formatting:
+	// https://api.slack.com/docs/formatting
+	responseText := &quot;Here's what I understood&quot;
+	for eachKey, eachParam := range bodyParams {
+		responseText += fmt.Sprintf(&quot;\n*%s*: %+v&quot;, eachKey, eachParam)
 	}
 
-	<span style="color:#75715e">// 4. Setup the response object:
-</span><span style="color:#75715e"></span>	<span style="color:#75715e">// https://api.slack.com/slash-commands, &#34;Responding to a command&#34;
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">responseData</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-		<span style="color:#e6db74">&#34;response_type&#34;</span>: <span style="color:#e6db74">&#34;in_channel&#34;</span>,
-		<span style="color:#e6db74">&#34;text&#34;</span>:          <span style="color:#a6e22e">responseText</span>,
-		<span style="color:#e6db74">&#34;mrkdwn&#34;</span>:        <span style="color:#66d9ef">true</span>,
+	// 4. Setup the response object:
+	// https://api.slack.com/slash-commands, &quot;Responding to a command&quot;
+	responseData := map[string]interface{}{
+		&quot;response_type&quot;: &quot;in_channel&quot;,
+		&quot;text&quot;:          responseText,
+		&quot;mrkdwn&quot;:        true,
 	}
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">responseData</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+	return responseData, nil
+}
+</code></pre>
 
 <p>There are a couple of things to note in this code:</p>
 
@@ -1413,11 +1439,12 @@ a customized <a href="https://github.com/mweagle/Sparta/blob/master/resources/pr
 <li><p><strong>Response Formatting</strong>
 The lambda function extracts all Slack parameters and if defined, sends the <code>text</code> back with a bit of <a href="https://api.slack.com/docs/formatting">Slack Message Formatting</a>:</p>
 
-<pre><code><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">				<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;Here&#39;s what I understood&#34;</span>
-				<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">bodyParams</span> {
-					<span style="color:#a6e22e">responseText</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;\n*%s*: %+v&#34;</span>, <span style="color:#a6e22e">eachKey</span>, <span style="color:#a6e22e">eachParam</span>)
-				}
-        </code></pre></div>
+<pre><code>```go
+        responseText := &quot;Here's what I understood&quot;
+        for eachKey, eachParam := range bodyParams {
+            responseText += fmt.Sprintf(&quot;\n*%s*: %+v&quot;, eachKey, eachParam)
+        }
+```
 </code></pre></li>
 
 <li><p><strong>Custom Response</strong></p>
@@ -1425,11 +1452,11 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 <ul>
 <li><p>The Slack API expects a <a href="https://api.slack.com/slash-commands">JSON formatted response</a>, which is created in step 4:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">        <span style="color:#a6e22e">responseData</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ArbitraryJSONObject</span>{
-      		<span style="color:#e6db74">&#34;response_type&#34;</span>: <span style="color:#e6db74">&#34;in_channel&#34;</span>,
-      		<span style="color:#e6db74">&#34;text&#34;</span>:          <span style="color:#a6e22e">responseText</span>,
-      	}
-        </code></pre></div></li>
+<pre><code class="language-go">responseData := sparta.ArbitraryJSONObject{
+    &quot;response_type&quot;: &quot;in_channel&quot;,
+    &quot;text&quot;:          responseText,
+}
+</code></pre></li>
 </ul></li>
 </ol>
 
@@ -1437,8 +1464,9 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>With our lambda function defined, we need to setup an API Gateway so that it&rsquo;s publicly available:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>, <span style="color:#a6e22e">apiStage</span>)</code></pre></div>
+<pre><code class="language-go">apiStage := sparta.NewStage(&quot;v1&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;SpartaSlackbot&quot;, apiStage)
+</code></pre>
 
 <p>The <code>apiStage</code> value implies that we want to deploy this API Gateway Rest API as part of Sparta&rsquo;s <code>provision</code> step.</p>
 
@@ -1446,21 +1474,22 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>Next we create an <code>sparta.LambdaAWSInfo</code> struct that references the <code>s3ItemInfo</code> function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-	<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloSlackbot</span>),
-		<span style="color:#a6e22e">helloSlackbot</span>,
-		<span style="color:#a6e22e">iamDynamicRole</span>)
+<pre><code class="language-go">func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloSlackbot),
+		helloSlackbot,
+		iamDynamicRole)
 
-	<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">api</span> {
-		<span style="color:#a6e22e">apiGatewayResource</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">api</span>.<span style="color:#a6e22e">NewResource</span>(<span style="color:#e6db74">&#34;/slack&#34;</span>, <span style="color:#a6e22e">lambdaFn</span>)
-		<span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">apiGatewayResource</span>.<span style="color:#a6e22e">NewMethod</span>(<span style="color:#e6db74">&#34;POST&#34;</span>, <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">StatusCreated</span>)
-		<span style="color:#66d9ef">if</span> <span style="color:#66d9ef">nil</span> <span style="color:#f92672">!=</span> <span style="color:#a6e22e">err</span> {
-			panic(<span style="color:#e6db74">&#34;Failed to create /hello resource&#34;</span>)
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&quot;/slack&quot;, lambdaFn)
+		_, err := apiGatewayResource.NewMethod(&quot;POST&quot;, http.StatusCreated)
+		if nil != err {
+			panic(&quot;Failed to create /hello resource&quot;)
 		}
 	}
-	<span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
-}</code></pre></div>
+	return append(lambdaFunctions, lambdaFn)
+}
+</code></pre>
 
 <p>A few items to note here:</p>
 
@@ -1474,82 +1503,83 @@ The lambda function extracts all Slack parameters and if defined, sends the <cod
 
 <p>With everything configured, we then configure our <code>main()</code> function to forward to Sparta:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-	<span style="color:#75715e">// Register the function with the API Gateway
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">apiStage</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewStage</span>(<span style="color:#e6db74">&#34;v1&#34;</span>)
-	<span style="color:#a6e22e">apiGateway</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">NewAPIGateway</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>, <span style="color:#a6e22e">apiStage</span>)
+<pre><code class="language-go">func main() {
+	// Register the function with the API Gateway
+	apiStage := sparta.NewStage(&quot;v1&quot;)
+	apiGateway := sparta.NewAPIGateway(&quot;SpartaSlackbot&quot;, apiStage)
 
-	<span style="color:#75715e">// Deploy it
-</span><span style="color:#75715e"></span>	<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;SpartaSlackbot&#34;</span>,
-		<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;Sparta app that responds to Slack commands&#34;</span>),
-		<span style="color:#a6e22e">spartaLambdaFunctions</span>(<span style="color:#a6e22e">apiGateway</span>),
-		<span style="color:#a6e22e">apiGateway</span>,
-		<span style="color:#66d9ef">nil</span>)
-}</code></pre></div>
+	// Deploy it
+	sparta.Main(&quot;SpartaSlackbot&quot;,
+		fmt.Sprintf(&quot;Sparta app that responds to Slack commands&quot;),
+		spartaLambdaFunctions(apiGateway),
+		apiGateway,
+		nil)
+}
+
+</code></pre>
 
 <p>and provision the service:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision</code></pre></div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">S3_BUCKET=&lt;MY_S3_BUCKETNAME&gt; go run slack.go --level info provision
+```
 
-<p>Look for the <em>Stack output</em> section of the log, you&rsquo;ll need the <strong>APIGatewayURL</strong> value to configure Slack in the next step.</p>
+Look for the _Stack output_ section of the log, you&#39;ll need the **APIGatewayURL** value to configure Slack in the next step.
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-nohighlight&#34; data-lang=&#34;nohighlight&#34;&gt;INFO[0083] Stack output Description=API Gateway URL Key=APIGatewayURL Value=https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1
 INFO[0083] Stack output Description=Sparta Home Key=SpartaHome Value=https://github.com/mweagle/Sparta
-INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3</code></pre></div>
+INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
+```
 
-<h1 id="configure-slack">Configure Slack</h1>
 
-<p>At this point our lambda function is deployed and is available through the API Gateway (<em><a href="https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack">https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack</a></em> in the current example).</p>
+# Configure Slack
 
-<p>The next step is to configure Slack with this custom integration:</p>
+At this point our lambda function is deployed and is available through the API Gateway (_https://75mtsly44i.execute-api.us-west-2.amazonaws.com/v1/slack_ in the current example).
 
-<ol>
-<li><p>Visit <a href="https://slack.com/apps/build">https://slack.com/apps/build</a> and choose the &ldquo;Custom Integration&rdquo; option:</p>
+The next step is to configure Slack with this custom integration:
 
-<p><img src="/images/apigateway/slack/customIntegration.jpg" alt="Custom integration" /></p></li>
+  1. Visit https://slack.com/apps/build and choose the &amp;#34;Custom Integration&amp;#34; option:
 
-<li><p>On the next page, choose &ldquo;Slash Commands&rdquo;:</p>
+    ![Custom integration](/images/apigateway/slack/customIntegration.jpg)
 
-<p><img src="/images/apigateway/slack/slashCommandMenu.jpg" alt="Slash Commands" /></p></li>
+  1. On the next page, choose &amp;#34;Slash Commands&amp;#34;:
 
-<li><p>The next screen is where you input the command that will trigger your lambda function.  Enter <code>/sparta</code></p>
+    ![Slash Commands](/images/apigateway/slack/slashCommandMenu.jpg)
 
-<p><img src="/images/apigateway/slack/chooseCommand.jpg" alt="Slash Chose Command" /></p>
+  1. The next screen is where you input the command that will trigger your lambda function.  Enter `/sparta`
 
-<ul>
-<li>and click the &ldquo;Add Slash Command Integration&rdquo; button.</li>
-</ul></li>
+    ![Slash Chose Command](/images/apigateway/slack/chooseCommand.jpg)
 
-<li><p>Finally, scroll down the next page to the <strong>Integration Settings</strong> section and provide the API Gateway URL of your lambda function.</p>
+    - and click the &amp;#34;Add Slash Command Integration&amp;#34; button.
 
-<p><img src="/images/apigateway/slack/integrationSettings.jpg" alt="Slash URL" /></p>
+  1. Finally, scroll down the next page to the **Integration Settings** section and provide the API Gateway URL of your lambda function.
 
-<ul>
-<li>Leave the <em>Method</em> field unchanged (it should be <code>POST</code>), to match how we configured the API Gateway entry above.</li>
-</ul></li>
+    ![Slash URL](/images/apigateway/slack/integrationSettings.jpg)
 
-<li><p>Save it</p>
+    * Leave the _Method_ field unchanged (it should be `POST`), to match how we configured the API Gateway entry above.
 
-<p><img src="/images/apigateway/slack/saveIntegration.jpg" alt="Save it" /></p></li>
-</ol>
+  1. Save it
 
-<p>There are additional Slash Command Integration options, but for this example the <strong>URL</strong> option is sufficient to trigger our command.</p>
+    ![Save it](/images/apigateway/slack/saveIntegration.jpg)
 
-<h1 id="test">Test</h1>
 
-<p>With everything configured, visit your team&rsquo;s Slack room and verify the integration via <code>/sparta</code> slash command:</p>
+There are additional Slash Command Integration options, but for this example the **URL** option is sufficient to trigger our command.
 
-<p><img src="/images/apigateway/slack/slackResponse.jpg" alt="Sparta Response" /></p>
+# Test
 
-<h1 id="cleaning-up">Cleaning Up</h1>
+With everything configured, visit your team&amp;#39;s Slack room and verify the integration via `/sparta` slash command:
 
-<p>Before moving on, remember to decommission the service via:</p>
+![Sparta Response](/images/apigateway/slack/slackResponse.jpg)
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-nohighlight" data-lang="nohighlight">go run slack.go delete</code></pre></div>
+# Cleaning Up
 
-<h1 id="wrapping-up">Wrapping Up</h1>
+Before moving on, remember to decommission the service via:
 
-<p>This example provides a good overview of Sparta &amp; Slack integration, including how to handle external requests that are not <code>application/json</code> formatted.</p>
+&amp;lt;div class=&amp;#34;highlight&amp;#34;&amp;gt;&amp;lt;pre style=&amp;#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&amp;#34;&amp;gt;&amp;lt;code class=&amp;#34;language-nohighlight&amp;#34; data-lang=&amp;#34;nohighlight&amp;#34;&amp;gt;go run slack.go delete
+```
+
+# Wrapping Up
+
+This example provides a good overview of Sparta &amp;amp;amp; Slack integration, including how to handle external requests that are not `application/json` formatted.&amp;lt;/code&amp;gt;&amp;lt;/pre&amp;gt;&amp;lt;/div&amp;gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2413,6 +2443,22 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2486,12 +2532,15 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/application/" title="Application Customization" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/apigateway/cors/" title="CORS"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/application/" title="Application Customization" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2499,20 +2548,20 @@ INFO[0083] Stack output Description=Sparta Version Key=SpartaVersion Value=0.1.3
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

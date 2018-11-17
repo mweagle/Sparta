@@ -19,7 +19,7 @@
       <guid>/reference/decorators/cloudfront_distribution/</guid>
       <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
 Sample usage:
-//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;#34;mySiteSubdomain&amp;#34; // The domain managed by Route53. const domainName = &amp;#34;myRoute53ManagedDomain.net&amp;#34; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net  // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;quot;mySiteSubdomain&amp;quot; // The domain managed by Route53. const domainName = &amp;quot;myRoute53ManagedDomain.net&amp;quot; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
     </item>
     
     <item>
@@ -30,7 +30,7 @@ Sample usage:
       <guid>/reference/decorators/cloudwatch_alarm/</guid>
       <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
 Sample usage:
-lambdaFn := sparta.HandleAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;#34;MY_SNS_ARN&amp;#34;)), } </description>
+lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
     </item>
     
     <item>
@@ -41,7 +41,7 @@ lambdaFn := sparta.HandleAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sp
       <guid>/reference/decorators/dashboard/</guid>
       <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
 Sample usage:
-func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook  workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks } A sample dashboard for the SpartaGeekwire project is:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
 Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
     </item>
     
@@ -72,7 +72,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;#34;%s FunctionName&amp;#34;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>
@@ -83,7 +83,7 @@ lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn := sparta.HandleAWS
       <guid>/reference/decorators/s3_artifact_publisher/</guid>
       <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
 This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
-hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;#34;SomeValue&amp;#34;: gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;#34;MY-S3-BUCKETNAME&amp;#34;), gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;metadata/&amp;#34;), gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), gocf.String(&amp;#34;.json&amp;#34;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook} </description>
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
     </item>
     
     <item>
@@ -125,7 +125,7 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
       <description>Introduction In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
 Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
 1. Resource Type The first step is to define a custom CloudFormation Resource Type
-//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;#34;Custom::sparta::HelloWorldResource&amp;#34; 2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;quot;Custom::sparta::HelloWorldResource&amp;quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
     </item>
     
     <item>
@@ -136,7 +136,7 @@ Including a custom service scoped resource is a multi-step process. The code exc
       <guid>/reference/eventsources/cloudwatchevents/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
 Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
- Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small: func echoCloudWatchEvent(ctx context.</description>
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small:</description>
     </item>
     
     <item>
@@ -169,7 +169,7 @@ TODO: Cognito source documentation
       <guid>/reference/application/custom_commands/</guid>
       <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
 To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
-httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;, Short: &amp;quot;Sample HelloWorld HTTP server&amp;quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
     </item>
     
     <item>
@@ -213,7 +213,7 @@ Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details 
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;#34;Something failed inside here&amp;#34;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;#34;code&amp;#34;:HTTP_STATUS_CODE` somewhere in the response body.</description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;quot;Something failed inside here&amp;quot;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;quot;code&amp;quot;:HTTP_STATUS_CODE` somewhere in the response body.</description>
     </item>
     
     <item>
@@ -323,7 +323,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       <guid>/reference/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;quot;v1&amp;quot;) apiGateway := sparta.NewAPIGateway(&amp;quot;SpartaHTML&amp;quot;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>
@@ -417,7 +417,7 @@ To create proper event types, consider:
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIG &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
+import ( spartaAPIG &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
     </item>
     
     <item>
@@ -457,8 +457,17 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       
       <guid>/reference/faq/</guid>
       <description>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
-For instance: import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:s3:::&amp;#34;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;#34;/*&amp;#34;))
-import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) AuthorizerURI: gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:apigateway:&amp;#34;), gocf.Ref(&amp;#34;AWS::Region&amp;#34;).String(), gocf.String(&amp;#34;:lambda:path/2015-03-31/functions/&amp;#34;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;#34;Arn&amp;#34;), gocf.String(&amp;#34;/invocations&amp;#34;)), See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+For instance:
+import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+    </item>
+    
+    <item>
+      <title>Limitations</title>
+      <link>/reference/interceptors/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/interceptors/</guid>
+      <description>TODO: Document Interceptors</description>
     </item>
     
     <item>

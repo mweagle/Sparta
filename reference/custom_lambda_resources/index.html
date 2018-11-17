@@ -12,19 +12,19 @@
     <title>CloudFormation Resources :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/custom_lambda_resources/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1247,8 +1273,8 @@
     
     <section id="footer">
       
-  Build: 00c638c9<p/>
-  Date: 2018-10-13 07:53:05 -0700 PDT
+  Build: 69ab4b52<p/>
+  Date: 2018-10-14 07:19:13 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1355,9 +1384,11 @@ include a service-scoped <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 
 <p>The first step is to define a custom <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html">CloudFormation Resource Type</a></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// 1 - Define the custom type
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">spartaHelloWorldResourceType</span> = <span style="color:#e6db74">&#34;Custom::sparta::HelloWorldResource&#34;</span></code></pre></div>
+<pre><code class="language-go">
+////////////////////////////////////////////////////////////////////////////////
+// 1 - Define the custom type
+const spartaHelloWorldResourceType = &quot;Custom::sparta::HelloWorldResource&quot;
+</code></pre>
 
 <h2 id="2-request-parameters">2. Request Parameters</h2>
 
@@ -1365,11 +1396,12 @@ include a service-scoped <a href="https://docs.aws.amazon.com/AWSCloudFormation/
 invocation. This is done via a <code>struct</code> that will be later embedded into the
 <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand">CustomResourceCommand</a>.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SpartaCustomResourceRequest is what the UserProperties
-</span><span style="color:#75715e">// should be set to in the CustomResource invocation
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SpartaCustomResourceRequest</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">Message</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">StringExpr</span>
-}</code></pre></div>
+<pre><code class="language-go">// SpartaCustomResourceRequest is what the UserProperties
+// should be set to in the CustomResource invocation
+type SpartaCustomResourceRequest struct {
+  Message *gocf.StringExpr
+}
+</code></pre>
 
 <h2 id="3-command-handler">3. Command Handler</h2>
 
@@ -1378,56 +1410,58 @@ invocation. This is done via a <code>struct</code> that will be later embedded i
 that is responsible for performing the external operations based on the specified request
 parameters.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// SpartaHelloWorldResource is a simple POC showing how to create custom resources
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span> <span style="color:#66d9ef">struct</span> {
-  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">CloudFormationCustomResource</span>
-  <span style="color:#a6e22e">SpartaCustomResourceRequest</span>
+<pre><code class="language-go">// SpartaHelloWorldResource is a simple POC showing how to create custom resources
+type SpartaHelloWorldResource struct {
+  gocf.CloudFormationCustomResource
+  SpartaCustomResourceRequest
 }
 
-<span style="color:#75715e">// Create implements resource create
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Create</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
-  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
-  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+// Create implements resource create
+func (command SpartaHelloWorldResource) Create(awsSession *session.Session,
+  event *spartaAWSResource.CloudFormationLambdaEvent,
+  logger *logrus.Logger) (map[string]interface{}, error) {
 
-  <span style="color:#a6e22e">requestPropsErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">json</span>.<span style="color:#a6e22e">Unmarshal</span>(<span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">ResourceProperties</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">command</span>)
-  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">requestPropsErr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>, <span style="color:#a6e22e">requestPropsErr</span>
+  requestPropsErr := json.Unmarshal(event.ResourceProperties, &amp;command)
+  if requestPropsErr != nil {
+  return nil, requestPropsErr
   }
-  <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;create: &#34;</span>, <span style="color:#a6e22e">command</span>.<span style="color:#a6e22e">Message</span>.<span style="color:#a6e22e">Literal</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-  <span style="color:#e6db74">&#34;Resource&#34;</span>: <span style="color:#e6db74">&#34;Created message: &#34;</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">command</span>.<span style="color:#a6e22e">Message</span>.<span style="color:#a6e22e">Literal</span>,
-  }, <span style="color:#66d9ef">nil</span>
+  logger.Info(&quot;create: &quot;, command.Message.Literal)
+  return map[string]interface{}{
+  &quot;Resource&quot;: &quot;Created message: &quot; + command.Message.Literal,
+  }, nil
 }
 
-<span style="color:#75715e">// Update implements resource update
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Update</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
-  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
-  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#66d9ef">nil</span>
+// Update implements resource update
+func (command SpartaHelloWorldResource) Update(awsSession *session.Session,
+  event *spartaAWSResource.CloudFormationLambdaEvent,
+  logger *logrus.Logger) (map[string]interface{}, error) {
+  return &quot;&quot;, nil
 }
 
-<span style="color:#75715e">// Delete implements resource delete
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> (<span style="color:#a6e22e">command</span> <span style="color:#a6e22e">SpartaHelloWorldResource</span>) <span style="color:#a6e22e">Delete</span>(<span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
-  <span style="color:#a6e22e">event</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">spartaAWSResource</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>,
-  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;&#34;</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+// Delete implements resource delete
+func (command SpartaHelloWorldResource) Delete(awsSession *session.Session,
+  event *spartaAWSResource.CloudFormationLambdaEvent,
+  logger *logrus.Logger) (map[string]interface{}, error) {
+  return &quot;&quot;, nil
+}
+</code></pre>
 
 <h2 id="4-register-type-provider">4. Register Type Provider</h2>
 
 <p>To make the new type available to Sparta&rsquo;s internal CloudFormation template
 marshalling, register the new type via <a href="https://godoc.org/github.com/mweagle/go-cloudformation#RegisterCustomResourceProvider">go-cloudformation.RegisterCustomResourceProvider</a>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">init</span>() {
-  <span style="color:#a6e22e">customResourceFactory</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">resourceType</span> <span style="color:#66d9ef">string</span>) <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">ResourceProperties</span> {
-    <span style="color:#66d9ef">switch</span> <span style="color:#a6e22e">resourceType</span> {
-    <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">spartaHelloWorldResourceType</span>:
-      <span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">SpartaHelloWorldResource</span>{}
+<pre><code class="language-go">func init() {
+  customResourceFactory := func(resourceType string) gocf.ResourceProperties {
+    switch resourceType {
+    case spartaHelloWorldResourceType:
+      return &amp;SpartaHelloWorldResource{}
     }
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    return nil
   }
-  <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">RegisterCustomResourceProvider</span>(<span style="color:#a6e22e">customResourceFactory</span>)
-}</code></pre></div>
+  gocf.RegisterCustomResourceProvider(customResourceFactory)
+}
+</code></pre>
 
 <h2 id="5-annotate-template">5. Annotate Template</h2>
 
@@ -1437,53 +1471,54 @@ annotation is expressed as a <a href="https://godoc.org/github.com/mweagle/Spart
 that performs both operations as part of the general service build
 lifecycle&hellip;</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">customResourceHooks</span>() <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span> {
-  <span style="color:#75715e">// Add the custom resource decorator
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">customResourceDecorator</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-    <span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">template</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-    <span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-    <span style="color:#a6e22e">awsSession</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">session</span>.<span style="color:#a6e22e">Session</span>,
-    <span style="color:#a6e22e">noop</span> <span style="color:#66d9ef">bool</span>,
-    <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
+<pre><code class="language-go">func customResourceHooks() *sparta.WorkflowHooks {
+  // Add the custom resource decorator
+  customResourceDecorator := func(context map[string]interface{},
+    serviceName string,
+    template *gocf.Template,
+    S3Bucket string,
+    S3Key string,
+    buildID string,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger) error {
 
-    <span style="color:#75715e">// 1. Ensure the Lambda Function is registered
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">customResourceName</span>, <span style="color:#a6e22e">customResourceNameErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">EnsureCustomResourceHandler</span>(<span style="color:#a6e22e">serviceName</span>,
-      <span style="color:#a6e22e">spartaHelloWorldResourceType</span>,
-      <span style="color:#66d9ef">nil</span>, <span style="color:#75715e">// This custom action doesn&#39;t need to access other AWS resources
-</span><span style="color:#75715e"></span>      []<span style="color:#66d9ef">string</span>{},
-      <span style="color:#a6e22e">template</span>,
-      <span style="color:#a6e22e">S3Bucket</span>,
-      <span style="color:#a6e22e">S3Key</span>,
-      <span style="color:#a6e22e">logger</span>)
+    // 1. Ensure the Lambda Function is registered
+    customResourceName, customResourceNameErr := sparta.EnsureCustomResourceHandler(serviceName,
+      spartaHelloWorldResourceType,
+      nil, // This custom action doesn't need to access other AWS resources
+      []string{},
+      template,
+      S3Bucket,
+      S3Key,
+      logger)
 
-    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">customResourceNameErr</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
-      <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">customResourceNameErr</span>
+    if customResourceNameErr != nil {
+      return customResourceNameErr
     }
 
-    <span style="color:#75715e">// 2. Create the request for the invocation of the lambda resource with
-</span><span style="color:#75715e"></span>    <span style="color:#75715e">// parameters
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">spartaCustomResource</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">SpartaHelloWorldResource</span>{}
-    <span style="color:#a6e22e">spartaCustomResource</span>.<span style="color:#a6e22e">ServiceToken</span> = <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">customResourceName</span>, <span style="color:#e6db74">&#34;Arn&#34;</span>)
-    <span style="color:#a6e22e">spartaCustomResource</span>.<span style="color:#a6e22e">Message</span> = <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Custom resource activated!&#34;</span>)
+    // 2. Create the request for the invocation of the lambda resource with
+    // parameters
+    spartaCustomResource := &amp;SpartaHelloWorldResource{}
+    spartaCustomResource.ServiceToken = gocf.GetAtt(customResourceName, &quot;Arn&quot;)
+    spartaCustomResource.Message = gocf.String(&quot;Custom resource activated!&quot;)
 
-    <span style="color:#a6e22e">resourceInvokerName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;SpartaCustomResource&#34;</span>,
-      <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%v&#34;</span>, <span style="color:#a6e22e">S3Bucket</span>),
-      <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%v&#34;</span>, <span style="color:#a6e22e">S3Key</span>))
+    resourceInvokerName := sparta.CloudFormationResourceName(&quot;SpartaCustomResource&quot;,
+      fmt.Sprintf(&quot;%v&quot;, S3Bucket),
+      fmt.Sprintf(&quot;%v&quot;, S3Key))
 
-    <span style="color:#75715e">// Add it
-</span><span style="color:#75715e"></span>    <span style="color:#a6e22e">template</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#a6e22e">resourceInvokerName</span>, <span style="color:#a6e22e">spartaCustomResource</span>)
-    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
+    // Add it
+    template.AddResource(resourceInvokerName, spartaCustomResource)
+    return nil
   }
-  <span style="color:#75715e">// Add the decorator to the template
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">hooks</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">WorkflowHooks</span>{}
-  <span style="color:#a6e22e">hooks</span>.<span style="color:#a6e22e">ServiceDecorators</span> = []<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookHandler</span>{
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ServiceDecoratorHookFunc</span>(<span style="color:#a6e22e">customResourceDecorator</span>),
+  // Add the decorator to the template
+  hooks := &amp;sparta.WorkflowHooks{}
+  hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+    sparta.ServiceDecoratorHookFunc(customResourceDecorator),
   }
-  <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hooks</span>
-}</code></pre></div>
+  return hooks
+}
+</code></pre>
 
 <p>Provide the hooks structure to <a href="https://godoc.org/github.com/mweagle/Sparta#MainEx">MainEx</a> to
 include this custom resource with your service&rsquo;s provisioning lifecycle.</p>
@@ -2346,6 +2381,22 @@ include this custom resource with your service&rsquo;s provisioning lifecycle.</
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2419,12 +2470,15 @@ include this custom resource with your service&rsquo;s provisioning lifecycle.</
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/cicd/" title="CI/CD"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/custom_resources/" title="Custom Resources" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/cicd/" title="CI/CD"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/custom_resources/" title="Custom Resources" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2432,20 +2486,20 @@ include this custom resource with your service&rsquo;s provisioning lifecycle.</
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

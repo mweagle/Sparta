@@ -12,19 +12,19 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1291,36 +1317,38 @@
 
 <h2 id="1-definition">1. Definition</h2>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// File: application.go
-</span><span style="color:#75715e"></span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+<pre><code class="language-go">// File: application.go
+package main
 
-<span style="color:#f92672">import</span> (
-  <span style="color:#a6e22e">sparta</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta&#34;</span>
+import (
+  sparta &quot;github.com/mweagle/Sparta&quot;
 )
 
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Hello world event handler
-</span><span style="color:#75715e">//
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>() (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World 🌏&#34;</span>, <span style="color:#66d9ef">nil</span>
+////////////////////////////////////////////////////////////////////////////////
+// Hello world event handler
+//
+func helloWorld() (string, error) {
+  return &quot;Hello World 🌏&quot;, nil
 }
 
-<span style="color:#75715e">////////////////////////////////////////////////////////////////////////////////
-</span><span style="color:#75715e">// Main
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
-  <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>
-  <span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#e6db74">&#34;Hello world test&#34;</span>,
-    <span style="color:#a6e22e">helloWorld</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-  <span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
 
-  <span style="color:#75715e">// Delegate to Sparta
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#e6db74">&#34;SpartaHelloWorld&#34;</span>,
-		<span style="color:#e6db74">&#34;Simple Sparta application that creates a single AWS Lambda function&#34;</span>,
-		<span style="color:#a6e22e">lambdaFunctions</span>,
-                <span style="color:#66d9ef">nil</span>,
-                <span style="color:#66d9ef">nil</span>)
-}</code></pre></div>
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.HandleAWSLambda(&quot;Hello world test&quot;,
+    helloWorld,
+    sparta.IAMRoleDefinition{})
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+  // Delegate to Sparta
+  sparta.Main(&quot;SpartaHelloWorld&quot;,
+    &quot;Simple Sparta application that creates a single AWS Lambda function&quot;,
+    lambdaFunctions,
+                nil,
+                nil)
+}
+</code></pre>
 
 <h2 id="2-deployment">2. Deployment</h2>
 
@@ -1358,156 +1386,130 @@
 <span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Creating code bundle                               Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">1</span>
 <span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Uploading code                                     Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">10</span>
 <span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Ensuring CloudFormation stack                      Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">28</span>
-<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Total elapsed time                                 Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">39</span></code></pre></div>
+<span style="color:#f92672">[</span><span style="color:#ae81ff">0039</span><span style="color:#f92672">]</span>  INFO Total elapsed time                                 Duration <span style="color:#f92672">(</span>s<span style="color:#f92672">)=</span><span style="color:#ae81ff">39</span>
+<span style="color:#e6db74">```</span>
 
-<h2 id="3-invoke">3. Invoke</h2>
+<span style="color:#75715e">## 3. Invoke
+</span><span style="color:#75715e"></span>
+!<span style="color:#f92672">[</span>Console GUI<span style="color:#f92672">](</span>/images/invoke.jpg <span style="color:#e6db74">&#34;Invoke&#34;</span><span style="color:#f92672">)</span>
 
-<p><img src="/images/invoke.jpg" alt="Console GUI" title="Invoke" /></p>
+&lt;hr /&gt;
 
-<hr />
+<span style="color:#75715e"># Features
+</span><span style="color:#75715e"></span>
+&lt;table style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:90%&#34;</span>&gt;
+  &lt;!-- Row <span style="color:#ae81ff">1</span> --&gt;
+  &lt;tr&gt;
+    &lt;td style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:50%&#34;</span>&gt;
+      &lt;h2&gt;Unified&lt;/h2&gt;
+      &lt;p&gt;Use a &lt;b&gt;go&lt;/b&gt; monorepo to define and your microservice<span style="color:#e6db74">&#39;s:
+</span><span style="color:#e6db74">      &lt;ul&gt;
+</span><span style="color:#e6db74">        &lt;li&gt;Application logic&lt;/li&gt;
+</span><span style="color:#e6db74">        &lt;li&gt;AWS infrastructure&lt;/li&gt;
+</span><span style="color:#e6db74">        &lt;li&gt;Operational metrics&lt;/li&gt;
+</span><span style="color:#e6db74">        &lt;li&gt;Alert conditions&lt;/li&gt;
+</span><span style="color:#e6db74">        &lt;li&gt;Security policies&lt;/li&gt;
+</span><span style="color:#e6db74">      &lt;/ul&gt;
+</span><span style="color:#e6db74">    &lt;/td&gt;
+</span><span style="color:#e6db74">    &lt;td style=&#34;width:50%&#34;&gt;
+</span><span style="color:#e6db74">      &lt;h2&gt;Complete AWS Ecosystem&lt;/h2&gt;
+</span><span style="color:#e6db74">      &lt;p&gt;Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;event sources&lt;/a&gt; such as:
+</span><span style="color:#e6db74">        &lt;ul&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;DynamoDB&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;S3&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;Kinesis&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;SNS&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;SES&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;CloudWatch Events&lt;/li&gt;
+</span><span style="color:#e6db74">          &lt;li&gt;CloudWatch Logs&lt;/li&gt;
+</span><span style="color:#e6db74">        &lt;/ul&gt;
+</span><span style="color:#e6db74">        Additionally, your service may provision any other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;CloudFormation&lt;/a&gt; supported resource and even your own &lt;a href=&#34;http://gosparta.io/docs/custom_resources&#34;&gt;CustomResources&lt;/a&gt;.
+</span><span style="color:#e6db74">        &lt;/p&gt;
+</span><span style="color:#e6db74">    &lt;/td&gt;
+</span><span style="color:#e6db74">  &lt;/tr&gt;
+</span><span style="color:#e6db74">  &lt;!-- Row 2 --&gt;
+</span><span style="color:#e6db74">  &lt;tr&gt;
+</span><span style="color:#e6db74">    &lt;td style=&#34;width:50%&#34;&gt;
+</span><span style="color:#e6db74">      &lt;h2&gt;Security&lt;/h2&gt;
+</span><span style="color:#e6db74">      &lt;p&gt;Define &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html&#34;&gt;IAM Roles&lt;/a&gt; with limited privileges to minimize your service&#39;</span>s attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP&#34;</span>&gt;POLA&lt;/a&gt; and &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://twitter.com/hashtag/secops&#34;</span>&gt;#SecOps&lt;/a&gt; as first-class goals.
+      &lt;/p&gt;
+    &lt;/td&gt;
+    &lt;td style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;width:50%&#34;</span>&gt;
+      &lt;h2&gt;Discovery&lt;/h2&gt;
+      &lt;p&gt;A service may provision dynamic AWS infrastructure, and &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://gosparta.io/docs/eventsources&#34;</span>&gt;discover&lt;/a&gt;, at lambda execution time, the dependent resources<span style="color:#e6db74">&#39; AWS-assigned outputs (&lt;code&gt;Ref&lt;/code&gt; &amp;amp; &lt;code&gt;Fn::Att&lt;/code&gt;).  Eliminate hardcoded &lt;i&gt;Magic ARNs&lt;/i&gt; from your codebase and move towards &lt;a href=&#34;http://chadfowler.com/2013/06/23/immutable-deployments.html&#34;&gt;immutable infrastructure&lt;/a&gt;&lt;/p&gt;
+</span><span style="color:#e6db74">    &lt;/td&gt;
+</span><span style="color:#e6db74">  &lt;/tr&gt;
+</span><span style="color:#e6db74">  &lt;!-- Row 3 --&gt;
+</span><span style="color:#e6db74">  &lt;tr&gt;
+</span><span style="color:#e6db74">    &lt;td style=&#34;width:50%&#34;&gt;
+</span><span style="color:#e6db74">      &lt;h2&gt;API Gateway&lt;/h2&gt;
+</span><span style="color:#e6db74">      &lt;p&gt;Make your service HTTPS accessible by binding it to an &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html&#34;&gt;API Gateway&lt;/a&gt; REST API during provisioning.  As part of API Gateway creation, Sparta includes &lt;a href=&#34;http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html&#34;&gt;API Gateway Mapping Templates&lt;/a&gt; with all request data, including user-defined whitelisted parameters, so that you can focus on your core application logic.&lt;/p&gt;
+</span><span style="color:#e6db74">    &lt;/td&gt;
+</span><span style="color:#e6db74">    &lt;td style=&#34;width:50%&#34;&gt;
+</span><span style="color:#e6db74">      &lt;h2&gt;Static Sites&lt;/h2&gt;
+</span><span style="color:#e6db74">      &lt;p&gt;Include a &lt;a href=&#34;http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html&#34;&gt;CORS-enabled&lt;/a&gt; &lt;a href=&#34;http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html&#34;&gt;S3-backed site&lt;/a&gt; with your service.  S3-backed sites include API Gateway discovery information for turnkey deployment.&lt;/p&gt;
+</span><span style="color:#e6db74">    &lt;/td&gt;
+</span><span style="color:#e6db74">  &lt;/tr&gt;
+</span><span style="color:#e6db74">&lt;/table&gt;
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">&lt;hr /&gt;
+</span><span style="color:#e6db74">&lt;a href=&#34;https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000&#34; rel=&#34;Sparta Arch&#34;&gt;![Sparta Overview](/images/sparta_overview.png)&lt;/a&gt;
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta&#39;</span>s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <span style="color:#f92672">[</span>service availability<span style="color:#f92672">](</span>http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html<span style="color:#f92672">)</span> and minimize resource churn during updates.
 
-<h1 id="features">Features</h1>
+<span style="color:#75715e"># Getting Started
+</span><span style="color:#75715e"></span>
+To get started using Sparta, begin with the <span style="color:#f92672">[</span>Overview<span style="color:#f92672">](</span>/overview<span style="color:#f92672">)</span>.
 
-<table style="width:90%">
-  <!-- Row 1 -->
-  <tr>
-    <td style="width:50%">
-      <h2>Unified</h2>
-      <p>Use a <b>go</b> monorepo to define and your microservice's:
-      <ul>
-        <li>Application logic</li>
-        <li>AWS infrastructure</li>
-        <li>Operational metrics</li>
-        <li>Alert conditions</li>
-        <li>Security policies</li>
-      </ul>
-    </td>
-    <td style="width:50%">
-      <h2>Complete AWS Ecosystem</h2>
-      <p>Sparta enables your lambda-based service to seamlessly integrate with the entire set of AWS lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">event sources</a> such as:
-        <ul>
-          <li>DynamoDB</li>
-          <li>S3</li>
-          <li>Kinesis</li>
-          <li>SNS</li>
-          <li>SES</li>
-          <li>CloudWatch Events</li>
-          <li>CloudWatch Logs</li>
-        </ul>
-        Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource and even your own <a href="http://gosparta.io/docs/custom_resources">CustomResources</a>.
-        </p>
-    </td>
-  </tr>
-  <!-- Row 2 -->
-  <tr>
-    <td style="width:50%">
-      <h2>Security</h2>
-      <p>Define <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html">IAM Roles</a> with limited privileges to minimize your service's attack surface.  Both string literal and ARN expressions are supported in order to reference dynamically created resources.  Sparta treats <a href="http://searchsecurity.techtarget.com/definition/principle-of-least-privilege-POLP">POLA</a> and <a href="https://twitter.com/hashtag/secops">#SecOps</a> as first-class goals.
-      </p>
-    </td>
-    <td style="width:50%">
-      <h2>Discovery</h2>
-      <p>A service may provision dynamic AWS infrastructure, and <a href="http://gosparta.io/docs/eventsources">discover</a>, at lambda execution time, the dependent resources' AWS-assigned outputs (<code>Ref</code> &amp; <code>Fn::Att</code>).  Eliminate hardcoded <i>Magic ARNs</i> from your codebase and move towards <a href="http://chadfowler.com/2013/06/23/immutable-deployments.html">immutable infrastructure</a></p>
-    </td>
-  </tr>
-  <!-- Row 3 -->
-  <tr>
-    <td style="width:50%">
-      <h2>API Gateway</h2>
-      <p>Make your service HTTPS accessible by binding it to an <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html">API Gateway</a> REST API during provisioning.  As part of API Gateway creation, Sparta includes <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">API Gateway Mapping Templates</a> with all request data, including user-defined whitelisted parameters, so that you can focus on your core application logic.</p>
-    </td>
-    <td style="width:50%">
-      <h2>Static Sites</h2>
-      <p>Include a <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html">CORS-enabled</a> <a href="http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html">S3-backed site</a> with your service.  S3-backed sites include API Gateway discovery information for turnkey deployment.</p>
-    </td>
-  </tr>
-</table>
+<span style="color:#75715e"># Administration
+</span><span style="color:#75715e"></span>  - Problems?  Please open an <span style="color:#f92672">[</span>issue<span style="color:#f92672">](</span>https://github.com/mweagle/Sparta/issues/new<span style="color:#f92672">)</span> in GitHub.
 
-<hr />
+&lt;br /&gt;
+&lt;img src<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/images/GopherInclusion.png&#34;</span> alt<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;Eveyone Welcome&#34;</span> height<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;256&#34;</span>&gt;
+&lt;center&gt;
+&lt;h6&gt;Courtesy of &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://github.com/ashleymcnamara/gophers&#34;</span>&gt;gophers&lt;/a&gt;
+&lt;/h6&gt;
+&lt;/center&gt;
+&lt;br /&gt;
 
-<p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="/images/sparta_overview.png" alt="Sparta Overview" /></a></p>
 
-<p>Sparta relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> and minimize resource churn during updates.</p>
+<span style="color:#75715e"># Questions?
+</span><span style="color:#75715e"></span>
+Get in touch via:
 
-<h1 id="getting-started">Getting Started</h1>
+  - &lt;i class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fas fas-twitter&#34;</span>&gt;&amp;nbsp; @mweagle&lt;/i&gt;
+  - &lt;i class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fas fas-slack&#34;</span>&gt;&amp;nbsp; Gophers: &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://gophers.slack.com/team/mweagle&#34;</span>&gt;@mweagle&lt;/a&gt;&lt;/i&gt;
+    - <span style="color:#f92672">[</span>Signup page<span style="color:#f92672">](</span>https://invite.slack.golangbridge.org/<span style="color:#f92672">)</span>
+  - &lt;i class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;fas fas-slack&#34;</span>&gt;&amp;nbsp; Serverless: &lt;a href<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;https://serverless-forum.slack.com/team/mweagle&#34;</span>&gt;@mweagle&lt;/a&gt;&lt;/i&gt;
+    - <span style="color:#f92672">[</span>Signup page<span style="color:#f92672">](</span>https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">)</span>
 
-<p>To get started using Sparta, begin with the <a href="/overview">Overview</a>.</p>
 
-<h1 id="administration">Administration</h1>
+<span style="color:#75715e">## Related Projects
+</span><span style="color:#75715e"></span>  - <span style="color:#f92672">[</span>go-cloudcondensor<span style="color:#f92672">](</span>https://github.com/mweagle/go-cloudcondenser<span style="color:#f92672">)</span>
+    - Define AWS CloudFormation templates in <span style="color:#e6db74">`</span>go<span style="color:#e6db74">`</span>
+  - <span style="color:#f92672">[</span>go-cloudformation<span style="color:#f92672">](</span>https://github.com/mweagle/go-cloudformation<span style="color:#f92672">)</span>
+    - <span style="color:#e6db74">`</span>go<span style="color:#e6db74">`</span> types <span style="color:#66d9ef">for</span> CloudFormation resources
+  - <span style="color:#f92672">[</span>ssm-cache<span style="color:#f92672">](</span>https://github.com/mweagle/ssm-cache<span style="color:#f92672">)</span>
+    - Lightweight cache <span style="color:#66d9ef">for</span> <span style="color:#f92672">[</span>Systems Manager Paramter Store<span style="color:#f92672">](</span>https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html<span style="color:#f92672">)</span> values
 
-<ul>
-<li>Problems?  Please open an <a href="https://github.com/mweagle/Sparta/issues/new">issue</a> in GitHub.</li>
-</ul>
-
-<p><br />
-<img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
-<center>
-<h6>Courtesy of <a href="https://github.com/ashleymcnamara/gophers">gophers</a>
-</h6>
-</center>
-<br /></p>
-
-<h1 id="questions">Questions?</h1>
-
-<p>Get in touch via:</p>
-
-<ul>
-<li><i class="fas fas-twitter">&nbsp; @mweagle</i></li>
-<li><i class="fas fas-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
-
-<ul>
-<li><a href="https://invite.slack.golangbridge.org/">Signup page</a></li>
-</ul></li>
-<li><i class="fas fas-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
-
-<ul>
-<li><a href="https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1">Signup page</a></li>
-</ul></li>
-</ul>
-
-<h2 id="related-projects">Related Projects</h2>
-
-<ul>
-<li><a href="https://github.com/mweagle/go-cloudcondenser">go-cloudcondensor</a>
-
-<ul>
-<li>Define AWS CloudFormation templates in <code>go</code></li>
-</ul></li>
-<li><a href="https://github.com/mweagle/go-cloudformation">go-cloudformation</a>
-
-<ul>
-<li><code>go</code> types for CloudFormation resources</li>
-</ul></li>
-<li><a href="https://github.com/mweagle/ssm-cache">ssm-cache</a>
-
-<ul>
-<li>Lightweight cache for <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html">Systems Manager Paramter Store</a> values</li>
-</ul></li>
-</ul>
-
-<h2 id="other-resources">Other resources</h2>
-
-<ul>
-<li><a href="https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef">Build an S3 website with API Gateway and AWS Lambda for Go using Sparta</a></li>
-<li><a href="https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/">AWS blog post announcing Go support</a></li>
-<li><a href="https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg">Sparta - A Go framework for AWS Lambda</a></li>
-<li>Other libraries &amp; frameworks:
-
-<ul>
-<li><a href="https://github.com/serverless/serverless">Serverless</a></li>
-<li><a href="https://github.com/braahyan/PAWS">PAWS</a></li>
-<li><a href="http://apex.run">Apex</a></li>
-<li><a href="https://github.com/jasonmoo/lambda_proc">lambda_proc</a></li>
-<li><a href="https://github.com/xlab/go-lambda">go-lambda</a></li>
-<li><a href="https://github.com/pilwon/go-lambda">go-lambda (GRPC)</a></li>
-</ul></li>
-<li>Supported AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html">programming models</a></li>
-<li><a href="https://serverlesscode.com">Serverless Code Blog</a></li>
-<li><a href="https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf">AWS Serverless Multi-Tier Architectures Whitepaper</a></li>
-<li><a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a></li>
-<li><a href="https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/">The Twelve Days of Lambda</a></li>
-<li><a href="http://cloudcraft.co">CloudCraft</a> is a great tool for AWS architecture diagrams</li>
-</ul>
+<span style="color:#75715e">## Other resources
+</span><span style="color:#75715e"></span>  * <span style="color:#f92672">[</span>Build an S3 website with API Gateway and AWS Lambda <span style="color:#66d9ef">for</span> Go using Sparta<span style="color:#f92672">](</span>https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>AWS blog post announcing Go support<span style="color:#f92672">](</span>https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>Sparta - A Go framework <span style="color:#66d9ef">for</span> AWS Lambda<span style="color:#f92672">](</span>https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg<span style="color:#f92672">)</span>
+  * Other libraries &amp; frameworks:
+    * <span style="color:#f92672">[</span>Serverless<span style="color:#f92672">](</span>https://github.com/serverless/serverless<span style="color:#f92672">)</span>
+    * <span style="color:#f92672">[</span>PAWS<span style="color:#f92672">](</span>https://github.com/braahyan/PAWS<span style="color:#f92672">)</span>
+    * <span style="color:#f92672">[</span>Apex<span style="color:#f92672">](</span>http://apex.run<span style="color:#f92672">)</span>
+    * <span style="color:#f92672">[</span>lambda_proc<span style="color:#f92672">](</span>https://github.com/jasonmoo/lambda_proc<span style="color:#f92672">)</span>
+    * <span style="color:#f92672">[</span>go-lambda<span style="color:#f92672">](</span>https://github.com/xlab/go-lambda<span style="color:#f92672">)</span>
+    * <span style="color:#f92672">[</span>go-lambda <span style="color:#f92672">(</span>GRPC<span style="color:#f92672">)](</span>https://github.com/pilwon/go-lambda<span style="color:#f92672">)</span>
+  * Supported AWS Lambda <span style="color:#f92672">[</span>programming models<span style="color:#f92672">](</span>http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>Serverless Code Blog<span style="color:#f92672">](</span>https://serverlesscode.com<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>AWS Serverless Multi-Tier Architectures Whitepaper<span style="color:#f92672">](</span>https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>Lambda limits<span style="color:#f92672">](</span>http://docs.aws.amazon.com/lambda/latest/dg/limits.html<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>The Twelve Days of Lambda<span style="color:#f92672">](</span>https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/<span style="color:#f92672">)</span>
+  * <span style="color:#f92672">[</span>CloudCraft<span style="color:#f92672">](</span>http://cloudcraft.co<span style="color:#f92672">)</span> is a great tool <span style="color:#66d9ef">for</span> AWS architecture diagrams</code></pre></div>
 	
   
         
@@ -2354,6 +2356,22 @@
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2427,10 +2445,13 @@
         
 
 
-        
-        
-            <a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+		
+			<a class="nav nav-next" href="/overview/" title="Overview" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2438,20 +2459,20 @@
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -12,19 +12,19 @@
     <title>Overview :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/overview/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1301,7 +1329,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1310,7 +1339,6 @@
 <nav id="TableOfContents">
 <ul>
 <li><a href="#terms-and-concepts">Terms and Concepts</a></li>
-<li><a href="#next-steps">Next Steps</a></li>
 </ul>
 </nav>
     </div>
@@ -1340,28 +1368,29 @@
 
 <p>The table below summarizes some of the primary Sparta terminology.</p>
 
-<table style="width:90%">
+<p><table style="width:90%">
   <!-- Row 1 -->
   <tr>
     <td>
       <h2>Service Name</h2>
-      Sparta applications are deployed as a single unit, using the <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application's <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a>
-        <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">    <span style="color:#a6e22e">stackName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;MyUniqueServiceName&#34;</span>
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>(<span style="color:#a6e22e">stackName</span>,
-      <span style="color:#e6db74">&#34;Simple Sparta application&#34;</span>,
-      <span style="color:#a6e22e">myLambdaFunctions</span>,
-      <span style="color:#66d9ef">nil</span>,
-      <span style="color:#66d9ef">nil</span>)
-        </code></pre></div>
+      Sparta applications are deployed as a single unit, using the <b>ServiceName</b> as a stable logical identifier.  The <b>ServiceName</b> is used as your application&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a>
+        <code>go
+    stackName := &quot;MyUniqueServiceName&quot;
+    sparta.Main(stackName,
+      &quot;Simple Sparta application&quot;,
+      myLambdaFunctions,
+      nil,
+      nil)
+</code>
     </td>
   </tr>
   <!-- Row 2 -->
   <tr>
       <td>
       <h2>Sparta Lambda Function</h2>
-A Sparta-compatible lambda is a standard <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html/">AWS Lambda Go</a> function. The following function signatures are supported:
+A Sparta-compatible lambda is a standard <a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html/">AWS Lambda Go</a> function. The following function signatures are supported:</p>
 
-  <ul>
+<p><ul>
     <li><code>func ()</code></li>
     <li><code>func () error</code></li>
     <li><code>func (TIn), error</code></li>
@@ -1370,92 +1399,101 @@ A Sparta-compatible lambda is a standard <a href="https://docs.aws.amazon.com/la
     <li><code>func (context.Context, TIn) error</code></li>
     <li><code>func (context.Context) (TOut, error)</code></li>
     <li><code>func (context.Context, TIn) (TOut, error)</code></li>
-  </ul>
+  </ul></p>
 
-where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types.  Supplying an invalid signature will produce a run time error as in:
+<p>where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types.  Supplying an invalid signature will produce a run time error as in:</p>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ERRO[0000] Lambda function (Hello World) has invalid returns: handler
-returns a single value, but it does not implement error exit status 1</code></pre></div>
+returns a single value, but it does not implement error exit status 1
+```
 
 
 
-    </td>
-  </tr>
-<!-- Row 3 -->
-  <tr>
-    <td>
-      <h2>Privileges</h2>
-      To support accessing other AWS resources in your <b>go</b> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with tightly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege"><code>sparta.IAMRolePrivilege</code></a> values. This allows you to define the <i>minimal</i> set of privileges under which your <b>go</b> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr">StringExpression</a> referencing a CloudFormation dynamically provisioned entity.</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">RoleDefinition</span>.<span style="color:#a6e22e">Privileges</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">RoleDefinition</span>.<span style="color:#a6e22e">Privileges</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRolePrivilege</span>{
-    <span style="color:#a6e22e">Actions</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;s3:GetObject&#34;</span>, <span style="color:#e6db74">&#34;s3:HeadObject&#34;</span>},
-    <span style="color:#a6e22e">Resource</span>: <span style="color:#e6db74">&#34;arn:aws:s3:::MyS3Bucket&#34;</span>,
-})</code></pre></div>
-    </td>
-  </tr>
-<!-- Row 4 -->
-  <tr>
-    <td>
-      <h2>Permissions</h2>
-      To configure AWS Lambda <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">Event Sources</a>, Sparta provides both <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaPermission"><code>sparta.LambdaPermission</code></a> and service-specific <i>Permission</i> types; eg: <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission"><code>sparta.CloudWatchEventsPermission</code></a>. The service-specific <i>Permission</i> types automatically register your lambda function with the remote AWS service, using each service's specific API.</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">cloudWatchEventsPermission</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchEventsPermission</span>{}
-<span style="color:#a6e22e">cloudWatchEventsPermission</span>.<span style="color:#a6e22e">Rules</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchEventsRule</span>, <span style="color:#ae81ff">0</span>)
-<span style="color:#a6e22e">cloudWatchEventsPermission</span>.<span style="color:#a6e22e">Rules</span>[<span style="color:#e6db74">&#34;Rate5Mins&#34;</span>] = <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchEventsRule</span>{
-  <span style="color:#a6e22e">ScheduleExpression</span>: <span style="color:#e6db74">&#34;rate(5 minutes)&#34;</span>,
-}
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">cloudWatchEventsPermission</span>)</code></pre></div>
-    </td>
-  </tr>
-
-<!-- Row 5 -->
-  <tr>
-    <td>
-      <h2>Dynamic Resources</h2>
-      Sparta applications can specify other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">AWS Resources</a> (eg, <i>SNS Topics</i>) as part of their application. The dynamic resource outputs can be referenced by Sparta lambda functions via <code>gocf.Ref</code> and <code>gocf.GetAtt</code> functions.</h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">snsTopicName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;SNSDynamicTopic&#34;</span>)
-<span style="color:#a6e22e">snsTopic</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">SNSTopic</span>{
-  <span style="color:#a6e22e">DisplayName</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;Sparta Application SNS topic&#34;</span>),
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;!-- Row 3 --&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;h2&gt;Privileges&lt;/h2&gt;
+      To support accessing other AWS resources in your &lt;b&gt;go&lt;/b&gt; function, Sparta allows you to define and link &lt;a href=&#34;http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html&#34;&gt;IAM Roles&lt;/a&gt; with tightly defined &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege&#34;&gt;&lt;code&gt;sparta.IAMRolePrivilege&lt;/code&gt;&lt;/a&gt; values. This allows you to define the &lt;i&gt;minimal&lt;/i&gt; set of privileges under which your &lt;b&gt;go&lt;/b&gt; function will execute.  The &lt;code&gt;Privilege.Resource&lt;/code&gt; field value may also be a &lt;a href=&#34;https://godoc.org/github.com/crewjam/go-cloudformation#StringExpr&#34;&gt;StringExpression&lt;/a&gt; referencing a CloudFormation dynamically provisioned entity.&lt;/h5&gt;
+```go
+lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{&#34;s3:GetObject&#34;, &#34;s3:HeadObject&#34;},
+    Resource: &#34;arn:aws:s3:::MyS3Bucket&#34;,
 })
-<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoDynamicSNSEvent</span>),
-  <span style="color:#a6e22e">echoDynamicSNSEvent</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+```
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;!-- Row 4 --&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;h2&gt;Permissions&lt;/h2&gt;
+      To configure AWS Lambda &lt;a href=&#34;http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html&#34;&gt;Event Sources&lt;/a&gt;, Sparta provides both &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#LambdaPermission&#34;&gt;&lt;code&gt;sparta.LambdaPermission&lt;/code&gt;&lt;/a&gt; and service-specific &lt;i&gt;Permission&lt;/i&gt; types; eg: &lt;a href=&#34;https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission&#34;&gt;&lt;code&gt;sparta.CloudWatchEventsPermission&lt;/code&gt;&lt;/a&gt;. The service-specific &lt;i&gt;Permission&lt;/i&gt; types automatically register your lambda function with the remote AWS service, using each service&#39;s specific API.&lt;/h5&gt;
+```go
+cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
+cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
+cloudWatchEventsPermission.Rules[&#34;Rate5Mins&#34;] = sparta.CloudWatchEventsRule{
+  ScheduleExpression: &#34;rate(5 minutes)&#34;,
+}
+lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchEventsPermission)
+```
+    &lt;/td&gt;
+  &lt;/tr&gt;
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">SNSPermission</span>{
-	<span style="color:#a6e22e">BasePermission</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">BasePermission</span>{
-		<span style="color:#a6e22e">SourceArn</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">snsTopicName</span>),
+&lt;!-- Row 5 --&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;h2&gt;Dynamic Resources&lt;/h2&gt;
+      Sparta applications can specify other &lt;a href=&#34;http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html&#34;&gt;AWS Resources&lt;/a&gt; (eg, &lt;i&gt;SNS Topics&lt;/i&gt;) as part of their application. The dynamic resource outputs can be referenced by Sparta lambda functions via &lt;code&gt;gocf.Ref&lt;/code&gt; and &lt;code&gt;gocf.GetAtt&lt;/code&gt; functions.&lt;/h5&gt;
+```go
+snsTopicName := sparta.CloudFormationResourceName(&#34;SNSDynamicTopic&#34;)
+snsTopic := &amp;gocf.SNSTopic{
+  DisplayName: gocf.String(&#34;Sparta Application SNS topic&#34;),
+})
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoDynamicSNSEvent),
+  echoDynamicSNSEvent,
+  sparta.IAMRoleDefinition{})
+
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
+	BasePermission: sparta.BasePermission{
+		SourceArn: gocf.Ref(snsTopicName),
 	},
-})</code></pre></div>
-    </td>
-  </tr>
+})
+```
+    &lt;/td&gt;
+  &lt;/tr&gt;
 
 
-<!-- Row 6 -->
-  <tr>
-    <td>
-      <h2>Discovery</h2>
-      To support Sparta lambda functions discovering dynamically assigned AWS values (eg, <i>S3 Bucket Names</i>), Sparta provides <code>sparta.Discover</code>. </h5>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoS3DynamicBucketEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-	<span style="color:#a6e22e">s3Event</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">S3Event</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">S3Event</span>, <span style="color:#66d9ef">error</span>) {
+&lt;!-- Row 6 --&gt;
+  &lt;tr&gt;
+    &lt;td&gt;
+      &lt;h2&gt;Discovery&lt;/h2&gt;
+      To support Sparta lambda functions discovering dynamically assigned AWS values (eg, &lt;i&gt;S3 Bucket Names&lt;/i&gt;), Sparta provides &lt;code&gt;sparta.Discover&lt;/code&gt;. &lt;/h5&gt;
+```go
+func echoS3DynamicBucketEvent(ctx context.Context,
+	s3Event awsLambdaEvents.S3Event) (*awsLambdaEvents.S3Event, error) {
 
-	<span style="color:#a6e22e">discoveryInfo</span>, <span style="color:#a6e22e">discoveryInfoErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Discover</span>()
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;Event&#34;</span>:        <span style="color:#a6e22e">s3Event</span>,
-		<span style="color:#e6db74">&#34;Discovery&#34;</span>:    <span style="color:#a6e22e">discoveryInfo</span>,
-		<span style="color:#e6db74">&#34;DiscoveryErr&#34;</span>: <span style="color:#a6e22e">discoveryInfoErr</span>,
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Event received&#34;</span>)
+	discoveryInfo, discoveryInfoErr := sparta.Discover()
+	logger.WithFields(logrus.Fields{
+		&#34;Event&#34;:        s3Event,
+		&#34;Discovery&#34;:    discoveryInfo,
+		&#34;DiscoveryErr&#34;: discoveryInfoErr,
+	}).Info(&#34;Event received&#34;)
 
-  <span style="color:#75715e">// Use discoveryInfo to determine the bucket name to which RawMessage should be stored
-</span><span style="color:#75715e"></span>  <span style="color:#f92672">...</span>
-}</code></pre></div>
-    </td>
-  </tr>
-</table>
+  // Use discoveryInfo to determine the bucket name to which RawMessage should be stored
+  ...
+}
+```
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
 
-<p>Given a set of registered Sparta lambda function, a typical <code>provision</code> build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.</p>
+Given a set of registered Sparta lambda function, a typical `provision` build to create a new service follows this workflow. Items with dashed borders are opt-in user behaviors.
 
-<link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-<script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" >
+&lt;link href=&#34;/mermaid/mermaid.css&#34; type=&#34;text/css&#34; rel=&#34;stylesheet&#34;/&gt;
+&lt;script defer src=&#34;/mermaid/mermaid.js&#34;&gt;mermaid.initialize({startOnLoad:true});&lt;/script&gt;
+&lt;div class=&#34;mermaid&#34; &gt;
 graph TD
   classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
   classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
@@ -1505,35 +1543,36 @@ graph TD
   class uploadTemplate,updateStack,inplaceUpdates,wait stdOp;
 
 
-  iam-->preBuild
-  preBuild-->|go|compile
-  compile-->postBuild
-  postBuild-->package
+  iam--&gt;preBuild
+  preBuild--&gt;|go|compile
+  compile--&gt;postBuild
+  postBuild--&gt;package
 
-  package-->packageAssets
-  package-->userArchive
-  userArchive-->upload
-  packageAssets-->uploadAssets
-  uploadAssets-->generate
-  upload-->generate
+  package--&gt;packageAssets
+  package--&gt;userArchive
+  userArchive--&gt;upload
+  packageAssets--&gt;uploadAssets
+  uploadAssets--&gt;generate
+  upload--&gt;generate
 
-  generate-->preMarshall
-  preMarshall-->decorate
-  decorate-->serviceDecorator
-  serviceDecorator-->postMarshall
-  postMarshall-->uploadTemplate
-  uploadTemplate-->|standard|updateStack
-  uploadTemplate-->|inplace|inplaceUpdates
-  updateStack-->wait
-</div>
-<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
-<hr />
+  generate--&gt;preMarshall
+  preMarshall--&gt;decorate
+  decorate--&gt;serviceDecorator
+  serviceDecorator--&gt;postMarshall
+  postMarshall--&gt;uploadTemplate
+  uploadTemplate--&gt;|standard|updateStack
+  uploadTemplate--&gt;|inplace|inplaceUpdates
+  updateStack--&gt;wait
+&lt;/div&gt;
+&lt;h6&gt;This diagram is rendered with &lt;a href=&#34;https://github.com/knsv/mermaid&#34; target=&#34;_blank&#34;&gt;Mermaid&lt;/a&gt;. Please open an &lt;a href=&#34;https://github.com/mweagle/Sparta/issues/new&#34; target=&#34;_blank&#34;&gt;issue&lt;/a&gt; if it doesn&#39;t render properly.&lt;/h6&gt;
+&lt;hr /&gt;
 
-<p>During provisioning, Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">AWS Lambda-backed Custom Resources</a> to support operations for which CloudFormation doesn&rsquo;t yet support (eg, <a href="https://aws.amazon.com/api-gateway/">API Gateway</a> creation).</p>
+During provisioning, Sparta uses [AWS Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to support operations for which CloudFormation doesn&#39;t yet support (eg, [API Gateway](https://aws.amazon.com/api-gateway/) creation).
 
-<h1 id="next-steps">Next Steps</h1>
 
-<p>Walk through a starting <a href="/sample_service/">Sparta Application</a>.</p>
+# Next Steps
+
+Walk through a starting [Sparta Application](/sample_service/).</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2385,6 +2424,22 @@ graph TD
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2458,12 +2513,15 @@ graph TD
         
 
 
-        
-            <a class="nav nav-prev" href="/" title=""> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/sample_service/" title="Sample Service" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/" title=""> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/sample_service/" title="Sample Service" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2471,20 +2529,20 @@ graph TD
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

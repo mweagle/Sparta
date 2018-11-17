@@ -19,7 +19,7 @@
       <guid>/reference/apigateway/echo_event/</guid>
       <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;#34;Something failed inside here&amp;#34;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;#34;code&amp;#34;:HTTP_STATUS_CODE` somewhere in the response body.</description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;quot;Something failed inside here&amp;quot;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;quot;code&amp;quot;:HTTP_STATUS_CODE` somewhere in the response body.</description>
     </item>
     
     <item>
@@ -52,7 +52,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       <guid>/reference/apigateway/cors/</guid>
       <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
 Sparta makes CORS support a single CORSEnabled field of the API struct:
-// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;#34;v1&amp;#34;) apiGateway := sparta.NewAPIGateway(&amp;#34;SpartaHTML&amp;#34;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;quot;v1&amp;quot;) apiGateway := sparta.NewAPIGateway(&amp;quot;SpartaHTML&amp;quot;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
     </item>
     
     <item>

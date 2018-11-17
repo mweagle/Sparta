@@ -30,7 +30,7 @@
       <description>Introduction In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
 Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
 1. Resource Type The first step is to define a custom CloudFormation Resource Type
-//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;#34;Custom::sparta::HelloWorldResource&amp;#34; 2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;quot;Custom::sparta::HelloWorldResource&amp;quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
     </item>
     
     <item>
@@ -125,7 +125,7 @@ To create proper event types, consider:
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
 Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIG &amp;#34;github.com/mweagle/Sparta/aws/apigateway&amp;#34; spartaAWSEvents &amp;#34;github.com/mweagle/Sparta/aws/events&amp;#34; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
+import ( spartaAPIG &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
     </item>
     
     <item>
@@ -154,8 +154,17 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       
       <guid>/reference/faq/</guid>
       <description>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
-For instance: import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:s3:::&amp;#34;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;#34;/*&amp;#34;))
-import ( gocf &amp;#34;github.com/mweagle/go-cloudformation&amp;#34; ) AuthorizerURI: gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;arn:aws:apigateway:&amp;#34;), gocf.Ref(&amp;#34;AWS::Region&amp;#34;).String(), gocf.String(&amp;#34;:lambda:path/2015-03-31/functions/&amp;#34;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;#34;Arn&amp;#34;), gocf.String(&amp;#34;/invocations&amp;#34;)), See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+For instance:
+import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+    </item>
+    
+    <item>
+      <title>Limitations</title>
+      <link>/reference/interceptors/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/interceptors/</guid>
+      <description>TODO: Document Interceptors</description>
     </item>
     
   </channel>

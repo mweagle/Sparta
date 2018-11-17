@@ -12,19 +12,19 @@
     <title>Custom Application Commands :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/application/custom_commands/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1349,16 +1378,17 @@
 
 <p>To register a custom command, define a new <a href="https://github.com/spf13/cobra">cobra.Command</a> and add it to the <code>sparta.CommandLineOptions.Root</code> command value.  Ensure you use the <code>xxxxE</code> Cobra functions so that errors can be properly propagated.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">httpServerCommand</span> <span style="color:#f92672">:=</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>{
-  <span style="color:#a6e22e">Use</span>:   <span style="color:#e6db74">&#34;httpServer&#34;</span>,
-  <span style="color:#a6e22e">Short</span>: <span style="color:#e6db74">&#34;Sample HelloWorld HTTP server&#34;</span>,
-  <span style="color:#a6e22e">Long</span>:  <span style="color:#e6db74">`Sample HelloWorld HTTP server that binds to port: `</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">HTTPServerPort</span>,
-  <span style="color:#a6e22e">RunE</span>: <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">cmd</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">cobra</span>.<span style="color:#a6e22e">Command</span>, <span style="color:#a6e22e">args</span> []<span style="color:#66d9ef">string</span>) <span style="color:#66d9ef">error</span> {
-    <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">HandleFunc</span>(<span style="color:#e6db74">&#34;/&#34;</span>, <span style="color:#a6e22e">helloWorldResource</span>)
-    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;:%d&#34;</span>, <span style="color:#a6e22e">HTTPServerPort</span>), <span style="color:#66d9ef">nil</span>)
+<pre><code class="language-go">httpServerCommand := &amp;cobra.Command{
+  Use:   &quot;httpServer&quot;,
+  Short: &quot;Sample HelloWorld HTTP server&quot;,
+  Long:  `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort,
+  RunE: func(cmd *cobra.Command, args []string) error {
+    http.HandleFunc(&quot;/&quot;, helloWorldResource)
+    return http.ListenAndServe(fmt.Sprintf(&quot;:%d&quot;, HTTPServerPort), nil)
   },
 }
-<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CommandLineOptions</span>.<span style="color:#a6e22e">Root</span>.<span style="color:#a6e22e">AddCommand</span>(<span style="color:#a6e22e">httpServerCommand</span>)</code></pre></div>
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)
+</code></pre>
 
 <p>Registering a user-defined command makes that command&rsquo;s usage information seamlessly integrate with the standard commands:</p>
 
@@ -1388,19 +1418,22 @@ Flags:
       --nocolor          Boolean flag to suppress colorized TTY output
   -n, --noop             Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span>
   -t, --tags string      Optional build tags <span style="color:#66d9ef">for</span> conditional compilation
-  -z, --timestamps       Include UTC timestamp log line prefix</code></pre></div>
+  -z, --timestamps       Include UTC timestamp log line prefix
+<span style="color:#e6db74">```</span>
 
-<p>And you can query for user-command specific usage as in:</p>
+And you can query <span style="color:#66d9ef">for</span> user-command specific usage as in:
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ ./SpartaOmega httpServer --help
+&lt;div class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;highlight&#34;</span>&gt;&lt;pre style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;</span>&gt;&lt;code class<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;language-bash&#34;</span> data-lang<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;bash&#34;</span>&gt;$ ./SpartaOmega httpServer --help
 Custom command
 
 Usage:
-  SpartaOmega httpServer <span style="color:#f92672">[</span>flags<span style="color:#f92672">]</span>
+  SpartaOmega httpServer &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;flags&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt;
 
 Global Flags:
-  -l, --level string   Log level <span style="color:#f92672">[</span>panic, fatal, error, warn, info, debug<span style="color:#f92672">]</span> <span style="color:#f92672">(</span>default <span style="color:#e6db74">&#34;info&#34;</span><span style="color:#f92672">)</span>
-  -n, --noop           Dry-run behavior only <span style="color:#f92672">(</span><span style="color:#66d9ef">do</span> not perform mutations<span style="color:#f92672">)</span></code></pre></div>
+  -l, --level string   Log level &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">[</span>&lt;/span&gt;panic, fatal, error, warn, info, debug&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">]</span>&lt;/span&gt; &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">(</span>&lt;/span&gt;default &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;&amp;<span style="color:#75715e">#34;info&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+</span><span style="color:#75715e"></span>  -n, --noop           Dry-run behavior only &lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">(</span>&lt;/span&gt;&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#66d9ef&#34;</span>&gt;do&lt;/span&gt; not perform mutations&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#f92672&#34;</span>&gt;<span style="color:#f92672">)</span>&lt;/span&gt;
+
+&lt;span style<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;color:#e6db74&#34;</span>&gt;<span style="color:#e6db74">```</span>&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</code></pre></div>
 
 
 <footer class=" footline" >
@@ -2261,6 +2294,22 @@ Global Flags:
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2334,12 +2383,15 @@ Global Flags:
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/application/" title="Application Customization"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/application/custom_flags/" title="Custom Flags" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/application/" title="Application Customization"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/application/custom_flags/" title="Custom Flags" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2347,20 +2399,20 @@ Global Flags:
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

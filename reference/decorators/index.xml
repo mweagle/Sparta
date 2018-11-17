@@ -19,7 +19,7 @@
       <guid>/reference/decorators/cloudfront_distribution/</guid>
       <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
 Sample usage:
-//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;#34;mySiteSubdomain&amp;#34; // The domain managed by Route53. const domainName = &amp;#34;myRoute53ManagedDomain.net&amp;#34; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net  // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;quot;mySiteSubdomain&amp;quot; // The domain managed by Route53. const domainName = &amp;quot;myRoute53ManagedDomain.net&amp;quot; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
     </item>
     
     <item>
@@ -30,7 +30,7 @@ Sample usage:
       <guid>/reference/decorators/cloudwatch_alarm/</guid>
       <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
 Sample usage:
-lambdaFn := sparta.HandleAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;#34;MY_SNS_ARN&amp;#34;)), } </description>
+lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
     </item>
     
     <item>
@@ -41,7 +41,7 @@ lambdaFn := sparta.HandleAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sp
       <guid>/reference/decorators/dashboard/</guid>
       <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
 Sample usage:
-func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook  workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks } A sample dashboard for the SpartaGeekwire project is:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
 Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
     </item>
     
@@ -72,7 +72,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;#34;%s FunctionName&amp;#34;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>
@@ -83,7 +83,7 @@ lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn := sparta.HandleAWS
       <guid>/reference/decorators/s3_artifact_publisher/</guid>
       <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
 This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
-hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;#34;SomeValue&amp;#34;: gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;#34;MY-S3-BUCKETNAME&amp;#34;), gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;metadata/&amp;#34;), gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), gocf.String(&amp;#34;.json&amp;#34;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook} </description>
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
     </item>
     
   </channel>

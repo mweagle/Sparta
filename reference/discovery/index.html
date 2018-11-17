@@ -12,19 +12,19 @@
     <title>Discovery Service :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/discovery/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1319,8 +1348,6 @@
 <li><a href="#discovery">Discovery</a></li>
 <li><a href="#template-marshaling-decoration">Template Marshaling &amp; Decoration</a></li>
 <li><a href="#sample-discoveryinfo">Sample DiscoveryInfo</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
-<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
     </div>
@@ -1356,46 +1383,48 @@
 
 <p>For reference, we provision an S3 bucket and declare an explicit dependency with the code below.  Because our <code>gocf.S3Bucket{}</code> struct uses a zero-length <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-s3-bucket.html#cfn-s3-bucket-name">BucketName</a> property, CloudFormation will dynamically assign one.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">s3BucketResourceName</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudFormationResourceName</span>(<span style="color:#e6db74">&#34;S3DynamicBucket&#34;</span>)
-<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoS3DynamicBucketEvent</span>),
-  <span style="color:#a6e22e">echoS3DynamicBucketEvent</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">S3Permission</span>{
-  <span style="color:#a6e22e">BasePermission</span>: <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">BasePermission</span>{
-    <span style="color:#a6e22e">SourceArn</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">s3BucketResourceName</span>),
+<pre><code class="language-go">
+s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;)
+lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+  echoS3DynamicBucketEvent,
+  sparta.IAMRoleDefinition{})
+lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{
+  BasePermission: sparta.BasePermission{
+    SourceArn: gocf.Ref(s3BucketResourceName),
   },
-  <span style="color:#a6e22e">Events</span>: []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;s3:ObjectCreated:*&#34;</span>, <span style="color:#e6db74">&#34;s3:ObjectRemoved:*&#34;</span>},
+  Events: []string{&quot;s3:ObjectCreated:*&quot;, &quot;s3:ObjectRemoved:*&quot;},
 })
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">DependsOn</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">DependsOn</span>, <span style="color:#a6e22e">s3BucketResourceName</span>)
+lambdaFn.DependsOn = append(lambdaFn.DependsOn, s3BucketResourceName)
 
-<span style="color:#75715e">// Add permission s.t. the lambda function could read from the S3 bucket
-</span><span style="color:#75715e"></span><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">RoleDefinition</span>.<span style="color:#a6e22e">Privileges</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">RoleDefinition</span>.<span style="color:#a6e22e">Privileges</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRolePrivilege</span>{
-    <span style="color:#a6e22e">Actions</span>:  []<span style="color:#66d9ef">string</span>{<span style="color:#e6db74">&#34;s3:GetObject&#34;</span>, <span style="color:#e6db74">&#34;s3:HeadObject&#34;</span>},
-    <span style="color:#a6e22e">Resource</span>: <span style="color:#a6e22e">spartaCF</span>.<span style="color:#a6e22e">S3AllKeysArnForBucket</span>(<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Ref</span>(<span style="color:#a6e22e">s3BucketResourceName</span>)),
+// Add permission s.t. the lambda function could read from the S3 bucket
+lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
+  sparta.IAMRolePrivilege{
+    Actions:  []string{&quot;s3:GetObject&quot;, &quot;s3:HeadObject&quot;},
+    Resource: spartaCF.S3AllKeysArnForBucket(gocf.Ref(s3BucketResourceName)),
   })
 
-<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorator</span> = <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-  <span style="color:#a6e22e">lambdaResourceName</span> <span style="color:#66d9ef">string</span>,
-  <span style="color:#a6e22e">lambdaResource</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaFunction</span>,
-  <span style="color:#a6e22e">resourceMetadata</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-  <span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-  <span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-  <span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-  <span style="color:#a6e22e">template</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-  <span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-  <span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>) <span style="color:#66d9ef">error</span> {
-  <span style="color:#a6e22e">cfResource</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">template</span>.<span style="color:#a6e22e">AddResource</span>(<span style="color:#a6e22e">s3BucketResourceName</span>, <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">S3Bucket</span>{
-    <span style="color:#a6e22e">AccessControl</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;PublicRead&#34;</span>),
-    <span style="color:#a6e22e">Tags</span>: <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">TagList</span>{<span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Tag</span>{
-      <span style="color:#a6e22e">Key</span>:   <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpecialKey&#34;</span>),
-      <span style="color:#a6e22e">Value</span>: <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;SpecialValue&#34;</span>),
+lambdaFn.Decorator = func(serviceName string,
+  lambdaResourceName string,
+  lambdaResource gocf.LambdaFunction,
+  resourceMetadata map[string]interface{},
+  S3Bucket string,
+  S3Key string,
+  buildID string,
+  template *gocf.Template,
+  context map[string]interface{},
+  logger *logrus.Logger) error {
+  cfResource := template.AddResource(s3BucketResourceName, &amp;gocf.S3Bucket{
+    AccessControl: gocf.String(&quot;PublicRead&quot;),
+    Tags: &amp;gocf.TagList{gocf.Tag{
+      Key:   gocf.String(&quot;SpecialKey&quot;),
+      Value: gocf.String(&quot;SpecialValue&quot;),
     },
     },
   })
-  <span style="color:#a6e22e">cfResource</span>.<span style="color:#a6e22e">DeletionPolicy</span> = <span style="color:#e6db74">&#34;Delete&#34;</span>
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+  cfResource.DeletionPolicy = &quot;Delete&quot;
+  return nil
+}
+</code></pre>
 
 <p>The key to <code>sparta.Discovery</code> is the <code>DependsOn</code> slice value.</p>
 
@@ -1423,34 +1452,33 @@
             }
         }
     }
-}</code></pre></div>
+}
+<span style="color:#960050;background-color:#1e0010">```</span>
 
-<p>This JSON data is Base64 encoded and published into the Lambda function&rsquo;s <em>Environment</em> using the <code>SPARTA_DISCOVERY_INFO</code> key. The <code>sparta.Discover()</code> function is responsible for
-accessing the encoded discovery information:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">configuration</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Discover</span>()
-<span style="color:#a6e22e">bucketName</span> <span style="color:#f92672">:=</span> <span style="color:#e6db74">&#34;&#34;</span>
-<span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">eachResource</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">configuration</span>.<span style="color:#a6e22e">Resources</span> {
-  <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">eachResource</span>.<span style="color:#a6e22e">ResourceType</span> <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;AWS::S3::Bucket&#34;</span> {
-    <span style="color:#a6e22e">bucketName</span> = <span style="color:#a6e22e">eachResource</span>.<span style="color:#a6e22e">ResourceRef</span>
+<span style="color:#960050;background-color:#1e0010">This</span> <span style="color:#960050;background-color:#1e0010">JSON</span> <span style="color:#960050;background-color:#1e0010">data</span> <span style="color:#960050;background-color:#1e0010">is</span> <span style="color:#960050;background-color:#1e0010">Base</span><span style="color:#ae81ff">64</span> <span style="color:#960050;background-color:#1e0010">encoded</span> <span style="color:#960050;background-color:#1e0010">and</span> <span style="color:#960050;background-color:#1e0010">published</span> <span style="color:#960050;background-color:#1e0010">into</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">Lambda</span> <span style="color:#960050;background-color:#1e0010">function&#39;s</span> <span style="color:#960050;background-color:#1e0010">_Environment_</span> <span style="color:#960050;background-color:#1e0010">using</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">`SPARTA_DISCOVERY_INFO`</span> <span style="color:#960050;background-color:#1e0010">key.</span> <span style="color:#960050;background-color:#1e0010">The</span> <span style="color:#960050;background-color:#1e0010">`sparta.Discover()`</span> <span style="color:#960050;background-color:#1e0010">function</span> <span style="color:#960050;background-color:#1e0010">is</span> <span style="color:#960050;background-color:#1e0010">responsible</span> <span style="color:#960050;background-color:#1e0010">for</span>
+<span style="color:#960050;background-color:#1e0010">accessing</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">encoded</span> <span style="color:#960050;background-color:#1e0010">discovery</span> <span style="color:#960050;background-color:#1e0010">information:</span>
+
+<span style="color:#960050;background-color:#1e0010">```go</span>
+<span style="color:#960050;background-color:#1e0010">configuration,</span> <span style="color:#960050;background-color:#1e0010">_</span> <span style="color:#960050;background-color:#1e0010">:=</span> <span style="color:#960050;background-color:#1e0010">sparta.Discover()</span>
+<span style="color:#960050;background-color:#1e0010">bucketName</span> <span style="color:#960050;background-color:#1e0010">:=</span> <span style="color:#e6db74">&#34;&#34;</span>
+<span style="color:#960050;background-color:#1e0010">for</span> <span style="color:#960050;background-color:#1e0010">_,</span> <span style="color:#960050;background-color:#1e0010">eachResource</span> <span style="color:#960050;background-color:#1e0010">:=</span> <span style="color:#960050;background-color:#1e0010">range</span> <span style="color:#960050;background-color:#1e0010">configuration.Resources</span> {
+  <span style="color:#960050;background-color:#1e0010">if</span> <span style="color:#960050;background-color:#1e0010">eachResource.ResourceType</span> <span style="color:#960050;background-color:#1e0010">==</span> <span style="color:#f92672">&#34;AWS::S3::Bucket&#34;</span> {
+    <span style="color:#960050;background-color:#1e0010">bucketName</span> <span style="color:#960050;background-color:#1e0010">=</span> <span style="color:#960050;background-color:#1e0010">eachResource.ResourceRef</span>
   }
-}</code></pre></div>
+}
+<span style="color:#960050;background-color:#1e0010">```</span>
 
-<p>The <code>Properties</code> object includes resource-specific <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a> outputs (see each resource type&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">documentation</a> for the complete set)</p>
 
-<h1 id="wrapping-up">Wrapping Up</h1>
+<span style="color:#960050;background-color:#1e0010">The</span> <span style="color:#960050;background-color:#1e0010">`Properties`</span> <span style="color:#960050;background-color:#1e0010">object</span> <span style="color:#960050;background-color:#1e0010">includes</span> <span style="color:#960050;background-color:#1e0010">resource-specific</span> [<span style="color:#960050;background-color:#1e0010">Fn::GetAtt</span>]<span style="color:#960050;background-color:#1e0010">(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html)</span> <span style="color:#960050;background-color:#1e0010">outputs</span> <span style="color:#960050;background-color:#1e0010">(see</span> <span style="color:#960050;background-color:#1e0010">each</span> <span style="color:#960050;background-color:#1e0010">resource</span> <span style="color:#960050;background-color:#1e0010">type&#39;s</span> [<span style="color:#960050;background-color:#1e0010">documentation</span>]<span style="color:#960050;background-color:#1e0010">(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)</span> <span style="color:#960050;background-color:#1e0010">for</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">complete</span> <span style="color:#960050;background-color:#1e0010">set)</span>
 
-<p>Combined with <a href="/reference/dynamic_infrastructure">dynamic infrastructure</a>, <code>sparta.Discover()</code> enables a Sparta service to define its entire AWS infrastructure requirements.  Coupling application logic with infrastructure requirements moves a service towards being completely self-contained and in the direction of <a href="https://fugue.co/oreilly/">immutable infrastructure</a>.</p>
+<span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Wrapping</span> <span style="color:#960050;background-color:#1e0010">Up</span>
 
-<h1 id="notes">Notes</h1>
+<span style="color:#960050;background-color:#1e0010">Combined</span> <span style="color:#960050;background-color:#1e0010">with</span> [<span style="color:#960050;background-color:#1e0010">dynamic</span> <span style="color:#960050;background-color:#1e0010">infrastructure</span>]<span style="color:#960050;background-color:#1e0010">(/reference/dynamic_infrastructure),</span> <span style="color:#960050;background-color:#1e0010">`sparta.Discover()`</span> <span style="color:#960050;background-color:#1e0010">enables</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">Sparta</span> <span style="color:#960050;background-color:#1e0010">service</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">define</span> <span style="color:#960050;background-color:#1e0010">its</span> <span style="color:#960050;background-color:#1e0010">entire</span> <span style="color:#960050;background-color:#1e0010">AWS</span> <span style="color:#960050;background-color:#1e0010">infrastructure</span> <span style="color:#960050;background-color:#1e0010">requirements.</span>  <span style="color:#960050;background-color:#1e0010">Coupling</span> <span style="color:#960050;background-color:#1e0010">application</span> <span style="color:#960050;background-color:#1e0010">logic</span> <span style="color:#960050;background-color:#1e0010">with</span> <span style="color:#960050;background-color:#1e0010">infrastructure</span> <span style="color:#960050;background-color:#1e0010">requirements</span> <span style="color:#960050;background-color:#1e0010">moves</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">service</span> <span style="color:#960050;background-color:#1e0010">towards</span> <span style="color:#960050;background-color:#1e0010">being</span> <span style="color:#960050;background-color:#1e0010">completely</span> <span style="color:#960050;background-color:#1e0010">self-contained</span> <span style="color:#960050;background-color:#1e0010">and</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">direction</span> <span style="color:#960050;background-color:#1e0010">of</span> [<span style="color:#960050;background-color:#1e0010">immutable</span> <span style="color:#960050;background-color:#1e0010">infrastructure</span>]<span style="color:#960050;background-color:#1e0010">(https://fugue.co/oreilly/).</span>
 
-<ul>
-<li><code>sparta.Discovery()</code> <strong>only</strong> succeeds within a Sparta-compliant lambda function call block.
-
-<ul>
-<li>Call-site restrictions are validated in the <a href="https://github.com/mweagle/Sparta/blob/master/discovery_test.go">discovery_tests.go</a> tests.</li>
-</ul></li>
-</ul>
+<span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Notes</span>
+  <span style="color:#960050;background-color:#1e0010">-</span> <span style="color:#960050;background-color:#1e0010">`sparta.Discovery()`</span> <span style="color:#960050;background-color:#1e0010">**only**</span> <span style="color:#960050;background-color:#1e0010">succeeds</span> <span style="color:#960050;background-color:#1e0010">within</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">Sparta-compliant</span> <span style="color:#960050;background-color:#1e0010">lambda</span> <span style="color:#960050;background-color:#1e0010">function</span> <span style="color:#960050;background-color:#1e0010">call</span> <span style="color:#960050;background-color:#1e0010">block.</span>
+    <span style="color:#960050;background-color:#1e0010">-</span> <span style="color:#960050;background-color:#1e0010">Call-site</span> <span style="color:#960050;background-color:#1e0010">restrictions</span> <span style="color:#960050;background-color:#1e0010">are</span> <span style="color:#960050;background-color:#1e0010">validated</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#960050;background-color:#1e0010">the</span> [<span style="color:#960050;background-color:#1e0010">discovery_tests.go</span>]<span style="color:#960050;background-color:#1e0010">(https://github.com/mweagle/Sparta/blob/master/discovery_test.go)</span> <span style="color:#960050;background-color:#1e0010">tests.</span></code></pre></div>
 
 
 <footer class=" footline" >
@@ -2310,6 +2338,22 @@ accessing the encoded discovery information:</p>
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2383,12 +2427,15 @@ accessing the encoded discovery information:</p>
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/deployment_strategies/" title="Deployment Strategies"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/docker/" title="Docker" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/deployment_strategies/" title="Deployment Strategies"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/docker/" title="Docker" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2396,20 +2443,20 @@ accessing the encoded discovery information:</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

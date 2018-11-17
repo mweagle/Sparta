@@ -12,19 +12,19 @@
     <title>Custom Resources :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/custom_resources/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1307,7 +1335,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1324,9 +1353,7 @@
 <li><a href="#optional-template-decorator">Optional - Template Decorator</a></li>
 <li><a href="#optional-discovery">Optional - Discovery</a></li>
 </ul></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
 </ul></li>
-<li><a href="#notes">Notes</a></li>
 </ul>
 </nav>
     </div>
@@ -1382,29 +1409,30 @@ for the requested <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/
 
 <p>As an example, we&rsquo;ll use the following custom resource function:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">awsLambdaCtx</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/lambdacontext&#34;</span>
-	<span style="color:#a6e22e">spartaCFResources</span> <span style="color:#e6db74">&#34;github.com/mweagle/Sparta/aws/cloudformation/resources&#34;</span>
+<pre><code class="language-go">import (
+	awsLambdaCtx &quot;github.com/aws/aws-lambda-go/lambdacontext&quot;
+	spartaCFResources &quot;github.com/mweagle/Sparta/aws/cloudformation/resources&quot;
 )
 
-<span style="color:#75715e">// User defined λ-backed CloudFormation CustomResource
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">userDefinedCustomResource</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>,
-	<span style="color:#a6e22e">event</span> <span style="color:#a6e22e">spartaCFResources</span>.<span style="color:#a6e22e">CloudFormationLambdaEvent</span>) (<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}, <span style="color:#66d9ef">error</span>) {
+// User defined λ-backed CloudFormation CustomResource
+func userDefinedCustomResource(ctx context.Context,
+	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">ContextKeyLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)
-	<span style="color:#a6e22e">lambdaCtx</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">awsLambdaCtx</span>.<span style="color:#a6e22e">FromContext</span>(<span style="color:#a6e22e">ctx</span>)
+	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
+	lambdaCtx, _ := awsLambdaCtx.FromContext(ctx)
 
-	<span style="color:#66d9ef">var</span> <span style="color:#a6e22e">opResults</span> = <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{}{
-		<span style="color:#e6db74">&#34;CustomResourceResult&#34;</span>: <span style="color:#e6db74">&#34;Victory!&#34;</span>,
+	var opResults = map[string]interface{}{
+		&quot;CustomResourceResult&quot;: &quot;Victory!&quot;,
 	}
 
-	<span style="color:#a6e22e">opErr</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">spartaCFResources</span>.<span style="color:#a6e22e">SendCloudFormationResponse</span>(<span style="color:#a6e22e">lambdaCtx</span>,
-		<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">event</span>,
-		<span style="color:#a6e22e">opResults</span>,
-		<span style="color:#66d9ef">nil</span>,
-		<span style="color:#a6e22e">logger</span>)
-	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">opResults</span>, <span style="color:#a6e22e">opErr</span>
-}</code></pre></div>
+	opErr := spartaCFResources.SendCloudFormationResponse(lambdaCtx,
+		&amp;event,
+		opResults,
+		nil,
+		logger)
+	return opResults, opErr
+}
+</code></pre>
 
 <p>This function always succeeds and publishes a non-empty map consisting of a single key (<code>CustomResourceResult</code>)
 to CloudFormation. This value can be accessed by other CloudFormation resources.</p>
@@ -1424,21 +1452,22 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
 
 <p>For example, our custom resource function above can be associated via:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#75715e">// Standard AWS λ function
-</span><span style="color:#75715e"></span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">helloWorld</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>) (<span style="color:#66d9ef">string</span>, <span style="color:#66d9ef">error</span>) {
-  <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Hello World&#34;</span>, <span style="color:#66d9ef">nil</span>
+<pre><code class="language-go">// Standard AWS λ function
+func helloWorld(ctx context.Context) (string, error) {
+  return &quot;Hello World&quot;, nil
 }
 
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ExampleLambdaAWSInfo_RequireCustomResource</span>() {
-  <span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">helloWorld</span>),
-    <span style="color:#a6e22e">helloWorld</span>,
-    <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})
+func ExampleLambdaAWSInfo_RequireCustomResource() {
+  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+    helloWorld,
+    sparta.IAMRoleDefinition{})
 
-  <span style="color:#a6e22e">cfResName</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">RequireCustomResource</span>(<span style="color:#a6e22e">IAMRoleDefinition</span>{},
-    <span style="color:#a6e22e">userDefinedCustomResource</span>,
-    <span style="color:#66d9ef">nil</span>,
-    <span style="color:#66d9ef">nil</span>)
-}</code></pre></div>
+  cfResName, _ := lambdaFn.RequireCustomResource(IAMRoleDefinition{},
+    userDefinedCustomResource,
+    nil,
+    nil)
+}
+</code></pre>
 
 <p>Since our custom resource function doesn&rsquo;t require any additional AWS resources, we provide an empty <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRoleDefinition">IAMRoleDefinition</a>.</p>
 
@@ -1450,21 +1479,22 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
 
 <p>To link these resources together, the first step is to include a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> that annotates your Sparta lambda function&rsquo;s CloudFormation resource metadata.  This function specifies which user defined output keys (<code>CustomResourceResult</code> in this example) you wish to make available during your lambda function&rsquo;s execution.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Decorator</span> = <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">serviceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResourceName</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">lambdaResource</span> <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">LambdaFunction</span>,
-	<span style="color:#a6e22e">resourceMetadata</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">S3Bucket</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">S3Key</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">buildID</span> <span style="color:#66d9ef">string</span>,
-	<span style="color:#a6e22e">cfTemplate</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">Template</span>,
-	<span style="color:#a6e22e">context</span> <span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#66d9ef">interface</span>{},
-	<span style="color:#a6e22e">logger</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Logger</span>)  <span style="color:#66d9ef">error</span> {
+<pre><code class="language-go">lambdaFn.Decorator = func(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger)  error {
 
-  <span style="color:#75715e">// Pass CustomResource outputs to the λ function
-</span><span style="color:#75715e"></span>  <span style="color:#a6e22e">resourceMetadata</span>[<span style="color:#e6db74">&#34;CustomResource&#34;</span>] = <span style="color:#a6e22e">gocf</span>.<span style="color:#a6e22e">GetAtt</span>(<span style="color:#a6e22e">cfResName</span>, <span style="color:#e6db74">&#34;CustomResourceResult&#34;</span>)
-  <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+  // Pass CustomResource outputs to the λ function
+  resourceMetadata[&quot;CustomResource&quot;] = gocf.GetAtt(cfResName, &quot;CustomResourceResult&quot;)
+  return nil
+}
+</code></pre>
 
 <p>The <code>cfResName</code> value is the CloudFormation resource name returned by <code>RequireCustomResource</code>.  The template decorator specifies which of your <a href="https://godoc.org/github.com/mweagle/Sparta#CustomResourceFunction">CustomResourceFunction</a> outputs should be discoverable during the paren&rsquo;t lambda functions execution time through a <a href="https://godoc.org/github.com/crewjam/go-cloudformation#GetAtt">go-cloudformation</a> version of <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">Fn::GetAtt</a>.</p>
 
@@ -1493,23 +1523,23 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
   <span style="color:#f92672">&#34;level&#34;</span>: <span style="color:#e6db74">&#34;info&#34;</span>,
   <span style="color:#f92672">&#34;msg&#34;</span>: <span style="color:#e6db74">&#34;Custom resource request&#34;</span>,
   <span style="color:#f92672">&#34;time&#34;</span>: <span style="color:#e6db74">&#34;2016-05-07T14:13:37Z&#34;</span>
-}</code></pre></div>
+}
+<span style="color:#960050;background-color:#1e0010">```</span>
 
-<p>To lookup the output, the calling function might do something like:</p>
+<span style="color:#960050;background-color:#1e0010">To</span> <span style="color:#960050;background-color:#1e0010">lookup</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">output,</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">calling</span> <span style="color:#960050;background-color:#1e0010">function</span> <span style="color:#960050;background-color:#1e0010">might</span> <span style="color:#960050;background-color:#1e0010">do</span> <span style="color:#960050;background-color:#1e0010">something</span> <span style="color:#960050;background-color:#1e0010">like:</span>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">configuration</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Discover</span>()
-<span style="color:#a6e22e">customResult</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">configuration</span>.<span style="color:#a6e22e">Resources</span>[<span style="color:#a6e22e">configuration</span>.<span style="color:#a6e22e">ResourceID</span>].<span style="color:#a6e22e">Properties</span>[<span style="color:#e6db74">&#34;CustomResourceResult&#34;</span>]</code></pre></div>
+<span style="color:#960050;background-color:#1e0010">```go</span>
+<span style="color:#960050;background-color:#1e0010">configuration,</span> <span style="color:#960050;background-color:#1e0010">_</span> <span style="color:#960050;background-color:#1e0010">:=</span> <span style="color:#960050;background-color:#1e0010">sparta.Discover()</span>
+<span style="color:#960050;background-color:#1e0010">customResult</span> <span style="color:#960050;background-color:#1e0010">:=</span> <span style="color:#960050;background-color:#1e0010">configuration.Resources</span>[<span style="color:#960050;background-color:#1e0010">configuration.ResourceID</span>]<span style="color:#960050;background-color:#1e0010">.Properties</span>[<span style="color:#e6db74">&#34;CustomResourceResult&#34;</span>]
+<span style="color:#960050;background-color:#1e0010">```</span>
 
-<h2 id="wrapping-up">Wrapping Up</h2>
+<span style="color:#960050;background-color:#1e0010">##</span> <span style="color:#960050;background-color:#1e0010">Wrapping</span> <span style="color:#960050;background-color:#1e0010">Up</span>
 
-<p>CloudFormation Custom Resources are a powerful tool that can help pre-existing applications migrate to a Sparta application.</p>
+<span style="color:#960050;background-color:#1e0010">CloudFormation</span> <span style="color:#960050;background-color:#1e0010">Custom</span> <span style="color:#960050;background-color:#1e0010">Resources</span> <span style="color:#960050;background-color:#1e0010">are</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">powerful</span> <span style="color:#960050;background-color:#1e0010">tool</span> <span style="color:#960050;background-color:#1e0010">that</span> <span style="color:#960050;background-color:#1e0010">can</span> <span style="color:#960050;background-color:#1e0010">help</span> <span style="color:#960050;background-color:#1e0010">pre-existing</span> <span style="color:#960050;background-color:#1e0010">applications</span> <span style="color:#960050;background-color:#1e0010">migrate</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">Sparta</span> <span style="color:#960050;background-color:#1e0010">application.</span>
 
-<h1 id="notes">Notes</h1>
-
-<ul>
-<li>Sparta uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed CustomResource</a> functions, so they are subject to the same <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a> as application-level Sparta lambda functions.</li>
-<li>Returning an error from the CustomResourceFunction will result in a <em>FAILED</em> reason being returned in the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html">response object</a>.</li>
-</ul>
+<span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#960050;background-color:#1e0010">Notes</span>
+  <span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#960050;background-color:#1e0010">Sparta</span> <span style="color:#960050;background-color:#1e0010">uses</span> [<span style="color:#960050;background-color:#1e0010">Lambda-backed</span> <span style="color:#960050;background-color:#1e0010">CustomResource</span>]<span style="color:#960050;background-color:#1e0010">(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html)</span> <span style="color:#960050;background-color:#1e0010">functions,</span> <span style="color:#960050;background-color:#1e0010">so</span> <span style="color:#960050;background-color:#1e0010">they</span> <span style="color:#960050;background-color:#1e0010">are</span> <span style="color:#960050;background-color:#1e0010">subject</span> <span style="color:#960050;background-color:#1e0010">to</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">same</span> [<span style="color:#960050;background-color:#1e0010">Lambda</span> <span style="color:#960050;background-color:#1e0010">limits</span>]<span style="color:#960050;background-color:#1e0010">(http://docs.aws.amazon.com/lambda/latest/dg/limits.html)</span> <span style="color:#960050;background-color:#1e0010">as</span> <span style="color:#960050;background-color:#1e0010">application-level</span> <span style="color:#960050;background-color:#1e0010">Sparta</span> <span style="color:#960050;background-color:#1e0010">lambda</span> <span style="color:#960050;background-color:#1e0010">functions.</span>
+  <span style="color:#960050;background-color:#1e0010">*</span> <span style="color:#960050;background-color:#1e0010">Returning</span> <span style="color:#960050;background-color:#1e0010">an</span> <span style="color:#960050;background-color:#1e0010">error</span> <span style="color:#960050;background-color:#1e0010">from</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">CustomResourceFunction</span> <span style="color:#960050;background-color:#1e0010">will</span> <span style="color:#960050;background-color:#1e0010">result</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#960050;background-color:#1e0010">a</span> <span style="color:#960050;background-color:#1e0010">_FAILED_</span> <span style="color:#960050;background-color:#1e0010">reason</span> <span style="color:#960050;background-color:#1e0010">being</span> <span style="color:#960050;background-color:#1e0010">returned</span> <span style="color:#960050;background-color:#1e0010">in</span> <span style="color:#960050;background-color:#1e0010">the</span> <span style="color:#960050;background-color:#1e0010">CloudFormation</span> [<span style="color:#960050;background-color:#1e0010">response</span> <span style="color:#960050;background-color:#1e0010">object</span>]<span style="color:#960050;background-color:#1e0010">(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html).</span></code></pre></div>
 
 
 <footer class=" footline" >
@@ -2369,6 +2399,22 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2442,12 +2488,15 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/custom_lambda_resources/" title="CloudFormation Resources"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/deployment_strategies/" title="Deployment Strategies" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/custom_lambda_resources/" title="CloudFormation Resources"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/deployment_strategies/" title="Deployment Strategies" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2455,20 +2504,20 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -19,7 +19,7 @@
       <guid>/reference/application/custom_commands/</guid>
       <description>Introduction In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
 To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
-httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;#34;httpServer&amp;#34;, Short: &amp;#34;Sample HelloWorld HTTP server&amp;#34;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;, Short: &amp;quot;Sample HelloWorld HTTP server&amp;quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
     </item>
     
     <item>

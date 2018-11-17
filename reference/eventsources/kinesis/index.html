@@ -12,19 +12,19 @@
     <title>Event Sources - Kinesis :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/eventsources/kinesis/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1358,16 +1387,17 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<pre><code class="language-go">import (
+	awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
 )
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoKinesisEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">kinesisEvent</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">KinesisEvent</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">KinesisEvent</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">kinesisEvent</span>,
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Event received&#34;</span>)
-	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">kinesisEvent</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+func echoKinesisEvent(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (*awsLambdaEvents.KinesisEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+	logger.WithFields(logrus.Fields{
+		&quot;Event&quot;: kinesisEvent,
+	}).Info(&quot;Event received&quot;)
+	return &amp;kinesisEvent, nil
+}
+</code></pre>
 
 <p>For this sample all we&rsquo;re going to do is transparently unmarshal the Kinesis event to an AWS Lambda <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event</a>, log
 it, and return the value.</p>
@@ -1378,9 +1408,10 @@ it, and return the value.</p>
 
 <p>First we wrap the <strong>go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoKinesisEvent</span>),
-	<span style="color:#a6e22e">echoKinesisEvent</span>,
-	<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})</code></pre></div>
+<pre><code class="language-go">lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent),
+	echoKinesisEvent,
+	sparta.IAMRoleDefinition{})
+</code></pre>
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
@@ -1388,13 +1419,14 @@ it, and return the value.</p>
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">EventSourceMappings</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">EventSourceMappings</span>,
-  <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambda</span>.<span style="color:#a6e22e">CreateEventSourceMappingInput</span>{
-    <span style="color:#a6e22e">EventSourceArn</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">kinesisTestStream</span>),
-    <span style="color:#a6e22e">StartingPosition</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;TRIM_HORIZON&#34;</span>),
-    <span style="color:#a6e22e">BatchSize</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#ae81ff">100</span>),
-    <span style="color:#a6e22e">Enabled</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
-  })</code></pre></div>
+<pre><code class="language-go">lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+  &amp;lambda.CreateEventSourceMappingInput{
+    EventSourceArn:   aws.String(kinesisTestStream),
+    StartingPosition: aws.String(&quot;TRIM_HORIZON&quot;),
+    BatchSize:        aws.Int64(100),
+    Enabled:          aws.Bool(true),
+  })
+</code></pre>
 
 <p>The <code>kinesisTestStream</code> parameter is the Kinesis stream ARN (eg: <em>arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream</em>) whose events will trigger lambda execution.</p>
 
@@ -2275,6 +2307,22 @@ it, and return the value.</p>
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2348,12 +2396,15 @@ it, and return the value.</p>
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/eventsources/dynamodb/" title="DynamoDB"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/eventsources/s3/" title="S3" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/eventsources/dynamodb/" title="DynamoDB"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/eventsources/s3/" title="S3" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2361,20 +2412,20 @@ it, and return the value.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

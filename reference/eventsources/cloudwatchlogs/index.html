@@ -12,19 +12,19 @@
     <title>CloudWatch Logs :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/eventsources/cloudwatchlogs/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1324,8 +1353,6 @@
 <li><a href="#goal">Goal</a></li>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#sparta-integration">Sparta Integration</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
-<li><a href="#other-resources">Other Resources</a></li>
 </ul>
 </nav>
     </div>
@@ -1357,17 +1384,18 @@
 
 <p>Our lambda function is relatively short:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<pre><code class="language-go">import (
+	awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
 )
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoCloudWatchLogsEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">cwlEvent</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">CloudwatchLogsEvent</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">CloudwatchLogsEvent</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
+func echoCloudWatchLogsEvent(ctx context.Context, cwlEvent awsLambdaEvents.CloudwatchLogsEvent) (*awsLambdaEvents.CloudwatchLogsEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">cwlEvent</span>,
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Request received&#34;</span>)
-	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">cwlEvent</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+	logger.WithFields(logrus.Fields{
+		&quot;Event&quot;: cwlEvent,
+	}).Info(&quot;Request received&quot;)
+	return &amp;cwlEvent, nil
+}
+</code></pre>
 
 <p>Our lambda function doesn&rsquo;t need to do much with the log message other than log and return it.</p>
 
@@ -1377,19 +1405,21 @@
 
 <p>Our lambda function only needs logfile write privileges, and since these are enabled by default, we can use an empty <code>sparta.IAMRoleDefinition</code> value:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">appendCloudWatchLogsHandler</span>(<span style="color:#a6e22e">api</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">API</span>,
-	<span style="color:#a6e22e">lambdaFunctions</span> []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span>) []<span style="color:#f92672">*</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaAWSInfo</span> {
-	<span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoCloudWatchLogsEvent</span>),
-		<span style="color:#a6e22e">echoCloudWatchLogsEvent</span>,
-		<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})</code></pre></div>
+<pre><code class="language-go">func appendCloudWatchLogsHandler(api *sparta.API,
+	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
+		echoCloudWatchLogsEvent,
+		sparta.IAMRoleDefinition{})
+</code></pre>
 
 <p>The next step is to add a <code>CloudWatchLogsSubscriptionFilter</code> value that represents the <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/Subscriptions.html#LambdaFunctionExample">CloudWatch Lambda</a> subscription <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CreateSubscriptionFilter.html">filter information</a>.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">cloudWatchLogsPermission</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchLogsPermission</span>{}
-<span style="color:#a6e22e">cloudWatchLogsPermission</span>.<span style="color:#a6e22e">Filters</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">string</span>]<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchLogsSubscriptionFilter</span>, <span style="color:#ae81ff">1</span>)
-<span style="color:#a6e22e">cloudWatchLogsPermission</span>.<span style="color:#a6e22e">Filters</span>[<span style="color:#e6db74">&#34;MyFilter&#34;</span>] = <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">CloudWatchLogsSubscriptionFilter</span>{
-  <span style="color:#a6e22e">LogGroupName</span>: <span style="color:#e6db74">&#34;/aws/lambda/versions&#34;</span>,
-}</code></pre></div>
+<pre><code class="language-go">cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
+cloudWatchLogsPermission.Filters = make(map[string]sparta.CloudWatchLogsSubscriptionFilter, 1)
+cloudWatchLogsPermission.Filters[&quot;MyFilter&quot;] = sparta.CloudWatchLogsSubscriptionFilter{
+  LogGroupName: &quot;/aws/lambda/versions&quot;,
+}
+</code></pre>
 
 <p>The <code>sparta.CloudWatchLogsPermission</code> struct provides fields for both the LogGroupName and optional Filter expression (not shown here) to use when calling <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#putSubscriptionFilter-property">putSubscriptionFilter</a>.</p>
 
@@ -1397,7 +1427,8 @@
 
 <p>With the subscription information configured, the final step is to add the <code>sparta.CloudWatchLogsPermission</code> to our <code>sparta.LambdaAWSInfo</code> value:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">cloudWatchLogsPermission</span>)</code></pre></div>
+<pre><code class="language-go">lambdaFn.Permissions = append(lambdaFn.Permissions, cloudWatchLogsPermission)
+</code></pre>
 
 <p>Our entire function is therefore:</p>
 
@@ -1418,23 +1449,22 @@
 	}
 	<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">Permissions</span>, <span style="color:#a6e22e">cloudWatchLogsPermission</span>)
 	<span style="color:#66d9ef">return</span> append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)
-}</code></pre></div>
+}
+<span style="color:#e6db74">```
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74"># Wrapping Up
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">With the `</span><span style="color:#a6e22e">lambdaFn</span><span style="color:#e6db74">` fully defined, we can provide it to `</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>()<span style="color:#e6db74">` and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:
+</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">  * Define the lambda function (`</span><span style="color:#a6e22e">echoCloudWatchLogsEvent</span><span style="color:#e6db74">`).
+</span><span style="color:#e6db74">  * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
+</span><span style="color:#e6db74">  * Provide the lambda function &amp; IAMRoleDefinition to `</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>()<span style="color:#e6db74">`
+</span><span style="color:#e6db74">  * Create a [CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission) value.
+</span><span style="color:#e6db74">  * Add one or more [CloudWatchLogsSubscriptionFilter](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter) to the `</span><span style="color:#a6e22e">CloudWatchLogsPermission</span>.<span style="color:#a6e22e">Filters</span><span style="color:#e6db74">` map that defines your lambda function&#39;s logfile subscription information.
+</span><span style="color:#e6db74">  * Append the `</span><span style="color:#a6e22e">CloudWatchLogsPermission</span><span style="color:#e6db74">` value to the lambda function&#39;s `</span><span style="color:#a6e22e">Permissions</span><span style="color:#e6db74">` slice.
+</span><span style="color:#e6db74">  * Include the reference in the call to `</span><span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">Main</span>()<span style="color:#960050;background-color:#1e0010">`</span>.
 
-<h1 id="wrapping-up">Wrapping Up</h1>
-
-<p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  The workflow below is shared by all CloudWatch Logs-triggered lambda functions:</p>
-
-<ul>
-<li>Define the lambda function (<code>echoCloudWatchLogsEvent</code>).</li>
-<li>If needed, create the required <a href="https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition">IAMRoleDefinition</a> with appropriate privileges.</li>
-<li>Provide the lambda function &amp; IAMRoleDefinition to <code>sparta.HandleAWSLambda()</code></li>
-<li>Create a <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission">CloudWatchLogsPermission</a> value.</li>
-<li>Add one or more <a href="https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter">CloudWatchLogsSubscriptionFilter</a> to the <code>CloudWatchLogsPermission.Filters</code> map that defines your lambda function&rsquo;s logfile subscription information.</li>
-<li>Append the <code>CloudWatchLogsPermission</code> value to the lambda function&rsquo;s <code>Permissions</code> slice.</li>
-<li>Include the reference in the call to <code>sparta.Main()</code>.</li>
-</ul>
-
-<h1 id="other-resources">Other Resources</h1>
+<span style="color:#960050;background-color:#1e0010">#</span> <span style="color:#a6e22e">Other</span> <span style="color:#a6e22e">Resources</span></code></pre></div>
 
 
 <footer class=" footline" >
@@ -2295,6 +2325,22 @@
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2368,12 +2414,15 @@
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/eventsources/cognito/" title="Cognito" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/eventsources/cognito/" title="Cognito" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2381,20 +2430,20 @@
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

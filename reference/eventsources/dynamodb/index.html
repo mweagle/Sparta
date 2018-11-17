@@ -12,19 +12,19 @@
     <title>DynamoDB :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1539526752" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1539526752" rel="stylesheet">
-    <link href="/css/hybrid.css?1539526752" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1539526752" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1539526752" rel="stylesheet">
-    <link href="/css/auto-complete.css?1539526752" rel="stylesheet">
-    <link href="/css/theme.css?1539526752" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1539526752" rel="stylesheet">
+    <link href="/css/nucleus.css?1542466778" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1542466778" rel="stylesheet">
+    <link href="/css/hybrid.css?1542466778" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1542466778" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1542466778" rel="stylesheet">
+    <link href="/css/auto-complete.css?1542466778" rel="stylesheet">
+    <link href="/css/theme.css?1542466778" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1542466778" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1539526752" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1542466778" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1539526752"></script>
+    <script src="/js/jquery-2.x.min.js?1542466778"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -33,6 +33,13 @@
       
     </style>
     
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
   </head>
   <body class="" data-url="/reference/eventsources/dynamodb/">
     <nav id="sidebar" class="">
@@ -50,14 +57,14 @@
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1539526752"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1539526752"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1542466778"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1542466778"></script>
 <script type="text/javascript">
     
-        var baseurl = '\/';
+        var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1539526752"></script>
+<script type="text/javascript" src="/js/search.js?1542466778"></script>
 
     
   </div>
@@ -1127,6 +1134,25 @@
 
             
           
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/" title="Limitations" class="dd-item ">
+        <a href="/reference/interceptors/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
         
         </ul>
               
@@ -1290,6 +1316,8 @@
                   <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
                   
                   <span class="links">
+                 
+                 
                     
           
           
@@ -1313,7 +1341,8 @@
           
          
           
-           
+        
+                 
                   </span>
                 </div>
                 
@@ -1323,7 +1352,7 @@
 <ul>
 <li><a href="#goal">Goal</a></li>
 <li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#a-href-hahahugoshortcode-0xc000b14b00-2-hbhb-sparta-integration-a"><a href="HAHAHUGOSHORTCODE-0xc000b14b00-2-HBHB">Sparta Integration</a></a></li>
+<li><a href="#a-href-hahahugoshortcode-0xc0008be680-1-hbhb-sparta-integration-a"><a href="HAHAHUGOSHORTCODE-0xc0008be680-1-HBHB">Sparta Integration</a></a></li>
 <li><a href="#event-source-mappings">Event Source Mappings</a></li>
 <li><a href="#wrapping-up">Wrapping Up</a></li>
 <li><a href="#other-resources">Other Resources</a></li>
@@ -1367,41 +1396,44 @@
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#f92672">import</span> (
-	<span style="color:#a6e22e">awsLambdaEvents</span> <span style="color:#e6db74">&#34;github.com/aws/aws-lambda-go/events&#34;</span>
+<pre><code class="language-go">import (
+	awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
 )
-<span style="color:#66d9ef">func</span> <span style="color:#a6e22e">echoDynamoDBEvent</span>(<span style="color:#a6e22e">ctx</span> <span style="color:#a6e22e">context</span>.<span style="color:#a6e22e">Context</span>, <span style="color:#a6e22e">ddbEvent</span> <span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">DynamoDBEvent</span>) (<span style="color:#f92672">*</span><span style="color:#a6e22e">awsLambdaEvents</span>.<span style="color:#a6e22e">DynamoDBEvent</span>, <span style="color:#66d9ef">error</span>) {
-	<span style="color:#a6e22e">logger</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">ctx</span>.<span style="color:#a6e22e">Value</span>(<span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">ContextKeyRequestLogger</span>).(<span style="color:#f92672">*</span><span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Entry</span>)
-	<span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">WithFields</span>(<span style="color:#a6e22e">logrus</span>.<span style="color:#a6e22e">Fields</span>{
-		<span style="color:#e6db74">&#34;Event&#34;</span>: <span style="color:#a6e22e">ddbEvent</span>,
-	}).<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;Event received&#34;</span>)
-	<span style="color:#66d9ef">return</span> <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">ddbEvent</span>, <span style="color:#66d9ef">nil</span>
-}</code></pre></div>
+func echoDynamoDBEvent(ctx context.Context, ddbEvent awsLambdaEvents.DynamoDBEvent) (*awsLambdaEvents.DynamoDBEvent, error) {
+	logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+	logger.WithFields(logrus.Fields{
+		&quot;Event&quot;: ddbEvent,
+	}).Info(&quot;Event received&quot;)
+	return &amp;ddbEvent, nil
+}
+</code></pre>
 
 <p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
 to access the record.</p>
 
-<h1 id="a-href-hahahugoshortcode-0xc000b14b00-2-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-0xc0008be680-1-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go"><span style="color:#a6e22e">lambdaFn</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">HandleAWSLambda</span>(
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">LambdaName</span>(<span style="color:#a6e22e">echoDynamoDBEvent</span>),
-  <span style="color:#a6e22e">echoDynamoDBEvent</span>,
-  <span style="color:#a6e22e">sparta</span>.<span style="color:#a6e22e">IAMRoleDefinition</span>{})</code></pre></div>
+<pre><code class="language-go">lambdaFn := sparta.HandleAWSLambda(
+  sparta.LambdaName(echoDynamoDBEvent),
+  echoDynamoDBEvent,
+  sparta.IAMRoleDefinition{})
+</code></pre>
 
 <h1 id="event-source-mappings">Event Source Mappings</h1>
 
 <p>If we were to deploy this Sparta application, the <code>echoDynamoDBEvent</code> function would have the ability to log DynamoDB stream events, but would not be invoked in response to events published by the stream.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources">EventSourceMappings</a>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-go" data-lang="go">  <span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">EventSourceMappings</span> = append(<span style="color:#a6e22e">lambdaFn</span>.<span style="color:#a6e22e">EventSourceMappings</span>,
-    <span style="color:#f92672">&amp;</span><span style="color:#a6e22e">lambda</span>.<span style="color:#a6e22e">CreateEventSourceMappingInput</span>{
-      <span style="color:#a6e22e">EventSourceArn</span>:   <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#a6e22e">dynamoTestStream</span>),
-      <span style="color:#a6e22e">StartingPosition</span>: <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">String</span>(<span style="color:#e6db74">&#34;TRIM_HORIZON&#34;</span>),
-      <span style="color:#a6e22e">BatchSize</span>:        <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Int64</span>(<span style="color:#ae81ff">10</span>),
-      <span style="color:#a6e22e">Enabled</span>:          <span style="color:#a6e22e">aws</span>.<span style="color:#a6e22e">Bool</span>(<span style="color:#66d9ef">true</span>),
+<pre><code class="language-go">  lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
+    &amp;lambda.CreateEventSourceMappingInput{
+      EventSourceArn:   aws.String(dynamoTestStream),
+      StartingPosition: aws.String(&quot;TRIM_HORIZON&quot;),
+      BatchSize:        aws.Int64(10),
+      Enabled:          aws.Bool(true),
   })
-<span style="color:#a6e22e">lambdaFunctions</span> = append(<span style="color:#a6e22e">lambdaFunctions</span>, <span style="color:#a6e22e">lambdaFn</span>)</code></pre></div>
+lambdaFunctions = append(lambdaFunctions, lambdaFn)
+</code></pre>
 
 <p>The <code>dynamoTestStream</code> param is the ARN of the Dynamo stream that that your lambda function will <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html">poll</a> (eg: <em>arn:aws:dynamodb:us-west-2:000000000000:table/myDynamoDBTable/stream/2015-12-05T16:28:11.869</em>).</p>
 
@@ -2305,6 +2337,22 @@ to access the record.</p>
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2378,12 +2426,15 @@ to access the record.</p>
         
 
 
-        
-            <a class="nav nav-prev" href="/reference/eventsources/cognito/" title="Cognito"> <i class="fas fa-chevron-left"></i></a>
-        
-        
-            <a class="nav nav-next" href="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" style="margin-right: 0px;"><i class="fas fa-chevron-right"></i></a>
-        
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/eventsources/cognito/" title="Cognito"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
     </div>
 
     </section>
@@ -2391,20 +2442,20 @@ to access the record.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.min.js?1539526752"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1539526752"></script>
-    <script src="/js/jquery.sticky.js?1539526752"></script>
-    <script src="/js/featherlight.min.js?1539526752"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1539526752"></script>
-    <script src="/js/highlight.pack.js?1539526752"></script>
+    <script src="/js/clipboard.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.min.js?1542466778"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1542466778"></script>
+    <script src="/js/jquery.sticky.js?1542466778"></script>
+    <script src="/js/featherlight.min.js?1542466778"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1542466778"></script>
+    <script src="/js/highlight.pack.js?1542466778"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1539526752"></script>
-    <script src="/js/learn.js?1539526752"></script>
-    <script src="/js/hugo-learn.js?1539526752"></script>
+    <script src="/js/modernizr.custom.71422.js?1542466778"></script>
+    <script src="/js/learn.js?1542466778"></script>
+    <script src="/js/hugo-learn.js?1542466778"></script>
 
-    <link href="/mermaid/mermaid.css?1539526752" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1539526752"></script>
+    <link href="/mermaid/mermaid.css?1542466778" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1542466778"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
