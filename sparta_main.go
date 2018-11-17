@@ -220,18 +220,20 @@ func init() {
 
 	// Version
 	CommandLineOptions.Version = &cobra.Command{
-		Use:   "version",
-		Short: "Display version information",
-		Long:  `Displays the Sparta framework version `,
+		Use:          "version",
+		Short:        "Display version information",
+		Long:         `Displays the Sparta framework version `,
+		SilenceUsage: true,
 		Run: func(cmd *cobra.Command, args []string) {
 
 		},
 	}
 	// Provision
 	CommandLineOptions.Provision = &cobra.Command{
-		Use:   "provision",
-		Short: "Provision service",
-		Long:  `Provision the service (either create or update) via CloudFormation`,
+		Use:          "provision",
+		Short:        "Provision service",
+		Long:         `Provision the service (either create or update) via CloudFormation`,
+		SilenceUsage: true,
 	}
 	CommandLineOptions.Provision.Flags().StringVarP(&optionsProvision.S3Bucket,
 		"s3Bucket",
@@ -256,23 +258,26 @@ func init() {
 
 	// Delete
 	CommandLineOptions.Delete = &cobra.Command{
-		Use:   "delete",
-		Short: "Delete service",
-		Long:  `Ensure service is successfully deleted`,
+		Use:          "delete",
+		Short:        "Delete service",
+		Long:         `Ensure service is successfully deleted`,
+		SilenceUsage: true,
 	}
 
 	// Execute
 	CommandLineOptions.Execute = &cobra.Command{
-		Use:   "execute",
-		Short: "Start the application and begin handling events",
-		Long:  `Start the application and begin handling events`,
+		Use:          "execute",
+		Short:        "Start the application and begin handling events",
+		Long:         `Start the application and begin handling events`,
+		SilenceUsage: true,
 	}
 
 	// Describe
 	CommandLineOptions.Describe = &cobra.Command{
-		Use:   "describe",
-		Short: "Describe service",
-		Long:  `Produce an HTML report of the service`,
+		Use:          "describe",
+		Short:        "Describe service",
+		Long:         `Produce an HTML report of the service`,
+		SilenceUsage: true,
 	}
 	CommandLineOptions.Describe.Flags().StringVarP(&optionsDescribe.OutputFile,
 		"out",
@@ -287,16 +292,18 @@ func init() {
 
 	// Explore
 	CommandLineOptions.Explore = &cobra.Command{
-		Use:   "explore",
-		Short: "Interactively explore a provisioned service",
-		Long:  `Startup a local CLI GUI to explore and trigger your AWS service`,
+		Use:          "explore",
+		Short:        "Interactively explore a provisioned service",
+		Long:         `Startup a local CLI GUI to explore and trigger your AWS service`,
+		SilenceUsage: true,
 	}
 
 	// Profile
 	CommandLineOptions.Profile = &cobra.Command{
-		Use:   "profile",
-		Short: "Interactively examine service pprof output",
-		Long:  `Startup a local pprof webserver to interrogate profiles snapshots on S3`,
+		Use:          "profile",
+		Short:        "Interactively examine service pprof output",
+		Long:         `Startup a local pprof webserver to interrogate profiles snapshots on S3`,
+		SilenceUsage: true,
 	}
 	CommandLineOptions.Profile.Flags().StringVarP(&optionsProfile.S3Bucket,
 		"s3Bucket",
@@ -311,9 +318,10 @@ func init() {
 
 	// Status
 	CommandLineOptions.Status = &cobra.Command{
-		Use:   "status",
-		Short: "Produce a report for a provisioned service",
-		Long:  `Produce a report for a provisioned service`,
+		Use:          "status",
+		Short:        "Produce a report for a provisioned service",
+		Long:         `Produce a report for a provisioned service`,
+		SilenceUsage: true,
 	}
 	CommandLineOptions.Status.Flags().BoolVarP(&optionsStatus.Redact, "redact",
 		"r",
