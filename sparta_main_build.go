@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 
+	"gopkg.in/go-playground/validator.v9"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -81,6 +83,7 @@ func MainEx(serviceName string,
 	site *S3Site,
 	workflowHooks *WorkflowHooks,
 	useCGO bool) error {
+
 	//////////////////////////////////////////////////////////////////////////////
 	// cmdRoot defines the root, non-executable command
 	CommandLineOptions.Root.Short = fmt.Sprintf("%s - Sparta v.%s powered AWS Lambda Microservice",
@@ -293,7 +296,7 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.AddCommand(CommandLineOptions.Status)
 
 	// Run it!
-	executeErr := CommandLineOptions.Root.Execute()
+	executedCmd, executeErr := CommandLineOptions.Root.ExecuteC()
 	if executeErr != nil {
 		if OptionsGlobal.Logger == nil {
 			newLogger, newLoggerErr := NewLogger("info")
@@ -304,7 +307,18 @@ func MainEx(serviceName string,
 			OptionsGlobal.Logger = newLogger
 		}
 		if OptionsGlobal.Logger != nil {
-			OptionsGlobal.Logger.Error(executeErr)
+			validationErr, validationErrOk := executeErr.(validator.ValidationErrors)
+			if validationErrOk {
+				for _, eachError := range validationErr {
+					OptionsGlobal.Logger.Error(eachError)
+				}
+				// Only show the usage if there were input validation errors
+				if executedCmd != nil {
+					executedCmd.Usage()
+				}
+			} else {
+				OptionsGlobal.Logger.Error(executeErr)
+			}
 		} else {
 			log.Printf("ERROR: %s", executeErr)
 		}
