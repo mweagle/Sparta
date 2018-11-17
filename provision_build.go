@@ -401,7 +401,7 @@ func callArchiveHook(lambdaArchive *zip.Writer,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return errors.Wrapf(hookErr, "Failed call to DecorateArchive")
+			return errors.Wrapf(hookErr, "DecorateArchive returned an error")
 		}
 	}
 	return nil
@@ -434,7 +434,7 @@ func callWorkflowHook(hookPhase string,
 			ctx.userdata.noop,
 			ctx.logger)
 		if hookErr != nil {
-			return errors.Wrapf(hookErr, "Failed call to DecorateWorkflow")
+			return errors.Wrapf(hookErr, "DecorateWorkflow returned an error")
 		}
 	}
 	return nil

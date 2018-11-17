@@ -1,5 +1,31 @@
 # Change Notes
 
+## v1.7.1
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `decorator.DriftDetector` to optionally prevent operations in the presence of [CloudFormation Drift](https://aws.amazon.com/blogs/aws/new-cloudformation-drift-detection/).
+    - Usage:
+    ```go
+    workflowHooks := &sparta.WorkflowHooks{
+      PreBuilds: []sparta.WorkflowHookHandler{
+        decorator.DriftDetector(false),
+      },
+    }
+    ```
+    - Sample output:
+    ```text
+    INFO[0001] Calling WorkflowHook                          Phase=PreBuild WorkflowHookContext="map[]"
+    INFO[0001] Waiting for drift detection to complete       Status=DETECTION_IN_PROGRESS
+    ERRO[0012] Stack drift detected                          Actual=debug Expected=info PropertyPath=/Environment/Variables/SPARTA_LOG_LEVEL Relation=NOT_EQUAL Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693
+    INFO[0012] Invoking rollback functions
+    ERRO[0012] Failed to provision service: DecorateWorkflow returned an error: stack MyHelloWorldStack-mweagle prevented update due to drift being detected
+    ```
+  - Usability improvements when errors produced. Previously the usage instructions were output on every failed command. Now they are only displayed if there are CLI argument validation errors.
+  - Usability improvement to log individual [validation errors](https://godoc.org/gopkg.in/go-playground/validator.v9) if the CLI arguments are invalid.
+- :bug:  **FIXED**
+  - Fixed latent issue where Sparta misreported its internal version
+
 ## v1.7.0 - The Time Machine Edition 🕰
 
 - :warning: **BREAKING**
@@ -20,11 +46,11 @@
     - This data is associated with XRay Traces in the console. Example:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
     </div>
-    
+
     - See the https://github.com/mweagle/SpartaXRayInterceptor for a complete sample
-    
+
     - Go back in time to when you wish you had enabled debug-level logging before the error ever occurred.
-    
+
   - Expose `sparta.ProperName` as framework name literal
   - Add lightweight Key-Value interface and S3 and DynamoDB implementations to support [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend/)
     - The DynamoDB provider uses [dynamodbattribute](https://docs.aws.amazon.com/sdk-for-go/api/service/dynamodb/dynamodbattribute/) to map `go` structs to attributes.
