@@ -277,7 +277,7 @@ type ServiceValidationHookFunc func(context map[string]interface{},
 	logger *logrus.Logger) error
 
 // ValidateService calls sdhf(...) to satisfy ServiceValidationHookHandler
-func (sdhf ServiceDecoratorHookFunc) ValidateService(context map[string]interface{},
+func (sdhf ServiceValidationHookFunc) ValidateService(context map[string]interface{},
 	serviceName string,
 	template *gocf.Template,
 	S3Bucket string,
