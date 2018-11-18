@@ -1,5 +1,30 @@
 # Change Notes
 
+## v1.7.2 - The Cloud Drift Edition v2 🌬☁️
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Moved `decorator.DriftDetector` to `validator.DriftDetector` and changed signature to [ServiceValidationHookHandler](https://godoc.org/github.com/mweagle/Sparta#ServiceValidationHookHandler)
+    - Clearly I was too focused on enabling drift detection than enabling it in an appropriate place.
+    - Updated usage:
+      ```go
+        import (
+          "github.com/mweagle/Sparta/validator"
+        )
+        workflowHooks := &sparta.WorkflowHooks{
+          Validators: []sparta.ServiceValidationHookHandler{
+            validator.DriftDetector(true),
+          },
+        }
+      ```
+  - Added `LambdaFuncName` to output when stack drift detected.
+    - Example:
+      ```text
+      WARN[0013] Stack drift detected                          Actual=debug Expected=info LambdaFuncName="Hello World" PropertyPath=/Environment/Variables/SPARTA_LOG_LEVEL Relation=NOT_EQUAL Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693
+      ```
+
+- :bug:  **FIXED**
+
 ## v1.7.1 - The Cloud Drift Edition 🌬☁️
 
 - :warning: **BREAKING**
