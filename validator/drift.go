@@ -1,6 +1,7 @@
-package decorator
+package validator
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	sparta "github.com/mweagle/Sparta"
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -15,11 +17,13 @@ import (
 // DriftDetector is a detector that ensures that the service hasn't
 // experienced configuration drift prior to being overwritten by a new provisioning
 // step.
-func DriftDetector(errorOnDrift bool) sparta.WorkflowHookHandler {
+func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 
 	driftDetector := func(context map[string]interface{},
 		serviceName string,
+		template *gocf.Template,
 		S3Bucket string,
+		S3Key string,
 		buildID string,
 		awsSession *session.Session,
 		noop bool,
@@ -42,6 +46,7 @@ func DriftDetector(errorOnDrift bool) sparta.WorkflowHookHandler {
 			StackDriftDetectionId: detectStackDrift.StackDriftDetectionId,
 		}
 		detectionComplete := false
+
 		// Put a limit on the detection
 		for i := 0; i <= 30 && !detectionComplete; i++ {
 			driftStatus, driftStatusErr := cfSvc.DescribeStackDriftDetectionStatus(describeDriftDetectionStatus)
@@ -63,17 +68,39 @@ func DriftDetector(errorOnDrift bool) sparta.WorkflowHookHandler {
 			return errors.Errorf("Stack drift detection did not complete in time")
 		}
 
+		golangFuncName := func(logicalResourceID string) string {
+			templateRes, templateResExists := template.Resources[logicalResourceID]
+			if !templateResExists {
+				return ""
+			}
+			metadata := templateRes.Metadata
+			if len(metadata) <= 0 {
+				metadata = make(map[string]interface{}, 0)
+			}
+			golangFunc, golangFuncExists := metadata["golangFunc"]
+			if !golangFuncExists {
+				return ""
+			}
+			switch typedFunc := golangFunc.(type) {
+			case string:
+				return typedFunc
+			default:
+				return fmt.Sprintf("%#v", typedFunc)
+			}
+		}
+
 		// Log the drifts
 		logDrifts := func(stackResourceDrifts []*cloudformation.StackResourceDrift) {
 			for _, eachDrift := range stackResourceDrifts {
 				if len(eachDrift.PropertyDifferences) != 0 {
 					for _, eachDiff := range eachDrift.PropertyDifferences {
 						entry := logger.WithFields(logrus.Fields{
-							"Resource":     *eachDrift.LogicalResourceId,
-							"Actual":       *eachDiff.ActualValue,
-							"Expected":     *eachDiff.ExpectedValue,
-							"Relation":     *eachDiff.DifferenceType,
-							"PropertyPath": *eachDiff.PropertyPath,
+							"Resource":       *eachDrift.LogicalResourceId,
+							"Actual":         *eachDiff.ActualValue,
+							"Expected":       *eachDiff.ExpectedValue,
+							"Relation":       *eachDiff.DifferenceType,
+							"PropertyPath":   *eachDiff.PropertyPath,
+							"LambdaFuncName": golangFuncName(*eachDrift.LogicalResourceId),
 						})
 						if errorOnDrift {
 							entry.Error("Stack drift detected")
@@ -124,5 +151,5 @@ func DriftDetector(errorOnDrift bool) sparta.WorkflowHookHandler {
 		}
 		return errors.Errorf("stack %s operation prevented due to stack drift", serviceName)
 	}
-	return sparta.WorkflowHookFunc(driftDetector)
+	return sparta.ServiceValidationHookFunc(driftDetector)
 }
