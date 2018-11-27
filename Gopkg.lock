@@ -18,7 +18,7 @@
   version = "1.0.0"
 
 [[projects]]
-  digest = "1:014e79cf5c422dd0547a87bde33c7f7b3cd29116a96fac8897c7e50f18531dea"
+  digest = "1:a4fae639114a906f205a4cb858c670ca28784426c0e809d664de2babb13cb28c"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
@@ -27,11 +27,11 @@
     "lambdacontext",
   ]
   pruneopts = "UT"
-  revision = "2d482ef09017ae953b1e8d5a6ddac5b696663a3c"
-  version = "v1.6.0"
+  revision = "fb8f88d824489a878aee1e0badde7d8e129f8767"
+  version = "v1.7.0"
 
 [[projects]]
-  digest = "1:ba00e830dd0b9c015192316b6c6074a790a282db1334bff7f8a53f0a0ba4d254"
+  digest = "1:704c9a91064501bff37b06236a1eda75aea654a4abba743273d7c7124b8deb0e"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -86,8 +86,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
-  version = "v1.15.78"
+  revision = "333869724b050875e82f4e593488ad2464c41331"
+  version = "v1.15.83"
 
 [[projects]]
   digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
@@ -225,7 +225,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "dcb5510988eb33b1f6ce96939b7ad97ed95db32f"
+  revision = "fe60075897a924c5b39be9120b21330369701bc0"
 
 [[projects]]
   branch = "master"
@@ -359,11 +359,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:da25b5c66f6ae8790c5da9a8750457a3d82ce873d72e10a5f8cb5525d1a7ea8c"
+  digest = "1:0a2bb80d7bb25880411aa55fa177173eaef46781cab25786d88ca9262704fed4"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "8cf347b745d04cc4dc106c22368b37b8018d33b7"
+  revision = "0a18dea458148770d212d348f656988df75ff341"
 
 [[projects]]
   digest = "1:bd008bf3838a9cb9731405d9c55d97bc61c7847a5cf37b81ca5e7a909879c624"
@@ -426,22 +426,22 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
+  digest = "1:38f553aff0273ad6f367cb0a0f8b6eecbaef8dc6cb8b50e57b6a81c1d5b1e332"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
+  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
 
 [[projects]]
   branch = "master"
-  digest = "1:a089387bbfcfa884e5aafeebb85929993195bb8959766b1d20102841d47e0b0e"
+  digest = "1:f343f077a5b0bc3a3788b3a04e24dd417e3e25b2acb529c413e212d2c42416ef"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "93218def8b18e66adbdab3eca8ec334700329f1f"
+  revision = "62eef0e2fa9b2c385f7b2778e763486da6880d37"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
