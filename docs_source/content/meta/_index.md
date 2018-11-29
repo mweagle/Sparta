@@ -29,7 +29,7 @@ The last step will launch a hot reloading documentation server and open a browse
 To make changes to the documentation:
 
 * Start the server: `mage -v docsBuild`
-* Edit the **/docs_source** subdirectory contents
+* Edit the markdown in **/docs_source/content**
 * Check the changes in the browser (http://localhost:1313)
 * Commit your changes
 * Open a PR
