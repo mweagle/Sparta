@@ -101,6 +101,10 @@
   name = "github.com/mattn/go-runewidth"
   revision = "c88d7e5f2e24de48a200a2655ac8a0910be9a0f7"
 
+[[override]]
+  name = "github.com/mholt/archiver"
+  version = "3.1.0"
+
 [prune]
   go-tests = true
   unused-packages = true

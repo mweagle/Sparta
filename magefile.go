@@ -138,11 +138,12 @@ func DocsInstallRequirements() error {
 		return copyBytesErr
 	}
 	// Great, go heads and untar it...
-	untarErr := archiver.TarGz.Open(outputArchive, localWorkDir)
+	unarchiver := archiver.NewTarGz()
+	unarchiver.OverwriteExisting = true
+	untarErr := unarchiver.Unarchive(outputArchive, localWorkDir)
 	if untarErr != nil {
 		return untarErr
 	}
-
 	versionScript := [][]string{
 		{hugoPath, "version"},
 	}
