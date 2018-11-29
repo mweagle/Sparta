@@ -1,5 +1,13 @@
 # Change Notes
 
+## v1.7.3 - The Documentation Edition 📚
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Moved all documentation into the _master_ branch to make it a bit easier to update docs together with code.
+  - See _/docs_source/content/meta/_index.md_ for how to edit, preview, and submit.
+- :bug:  **FIXED**
+
 ## v1.7.2 - The Cloud Drift Edition v2 🌬☁️
 
 - :warning: **BREAKING**
