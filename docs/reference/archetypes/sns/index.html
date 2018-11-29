@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title>Related Projects :: Sparta - AWS Lambda Microservices</title>
+    <title>SNS :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1543468759" rel="stylesheet">
@@ -41,7 +41,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/related_projects/">
+  <body class="" data-url="/reference/archetypes/sns/">
     <nav id="sidebar" class="">
 
 
@@ -195,7 +195,7 @@ pre {
   
     
     <li data-nav-id="/reference/" title="Reference" class="dd-item 
-        
+        parent
         
         parent
         ">
@@ -446,7 +446,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -546,7 +546,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/sns/" title="SNS" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/sns/" title="SNS" class="dd-item active">
         <a href="/reference/archetypes/sns/">
         SNS
         
@@ -1297,8 +1297,8 @@ pre {
   
     
     <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
-        parent
-        active
+        
+        
         
         ">
       <a href="/related_projects/">
@@ -1406,8 +1406,8 @@ pre {
     
     <section id="footer">
       
-  Build: 5f5bee34<p/>
-  Date: 2018-11-28 18:16:08 -0800 PST
+  Build: 373c864c<p/>
+  Date: 2018-11-28 21:17:23 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1431,7 +1431,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/related_projects/_index.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/sns.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1458,7 +1458,19 @@ pre {
             
           
           
-            <a href='/'></a> > Related Projects
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > SNS
+          
+         
+          
+         
           
          
           
@@ -1469,18 +1481,7 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#go-cloudcondensor-https-github-com-mweagle-go-cloudcondenser"><a href="https://github.com/mweagle/go-cloudcondenser">go-cloudcondensor</a></a></li>
-<li><a href="#go-cloudformation-https-github-com-mweagle-go-cloudformation-pulls"><a href="https://github.com/mweagle/go-cloudformation/pulls">go-cloudformation</a></a></li>
-<li><a href="#sparta-vault-https-github-com-mweagle-spartavault"><a href="https://github.com/mweagle/SpartaVault">Sparta Vault</a></a></li>
-<li><a href="#ssm-cache-https-github-com-mweagle-ssm-cache"><a href="https://github.com/mweagle/ssm-cache">ssm-cache</a></a></li>
-<li><a href="#examples">Examples</a></li>
-</ul></li>
-</ul>
-</nav>
+
     </div>
 </div>
 
@@ -1492,40 +1493,21 @@ pre {
         
         <div id="body-inner">
           
-            <h1>Related Projects</h1>
+            <h1>SNS</h1>
           
 
         
 
 
+<div class="notices info" ><p>TODO: Document <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewSNSReactor">SNSReactor</a></p>
+</div>
 
-
-<p>In addition to Sparta, there are some related projects that are often useful for serverless-based applications. These packages do not require Sparta integration.</p>
-
-<h2 id="go-cloudcondensor-https-github-com-mweagle-go-cloudcondenser"><a href="https://github.com/mweagle/go-cloudcondenser">go-cloudcondensor</a></h2>
-
-<p><code>go-cloudcondensor</code> is a standalone utility that produces CloudFormation templates via functional composition.</p>
-
-<h2 id="go-cloudformation-https-github-com-mweagle-go-cloudformation-pulls"><a href="https://github.com/mweagle/go-cloudformation/pulls">go-cloudformation</a></h2>
-
-<p><code>go-cloudformation</code> provides a Go object model for the official CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification.html">JSON Schema</a>.</p>
-
-<h2 id="sparta-vault-https-github-com-mweagle-spartavault"><a href="https://github.com/mweagle/SpartaVault">Sparta Vault</a></h2>
-
-<p>Use KMS to encrypt values into Go types that can be safely committed to source control.</p>
-
-<h2 id="ssm-cache-https-github-com-mweagle-ssm-cache"><a href="https://github.com/mweagle/ssm-cache">ssm-cache</a></h2>
-
-<p>An in memory, expiring cache for <a href="https://aws.amazon.com/systems-manager/">AWS Systems Manager</a>. SSM is a suggested option for managing Lambda secrets.</p>
-
-<h2 id="examples">Examples</h2>
-
-<p>There are also many Sparta <a href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language=">example repos</a> that demonstrate core concepts.</p>
 
 
 <footer class=" footline" >
 	
 </footer>
+
 
         
         </div> 
@@ -1641,6 +1623,7 @@ pre {
             
                 
                     
+                    
                 
                 
 
@@ -1656,34 +1639,8 @@ pre {
             
                 
                     
-                
-                
-
-                    
-                    
-                    
-
-                    
                         
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
                         
-            
-            
-                
                     
                 
                 
@@ -1692,236 +1649,6 @@ pre {
                     
                     
 
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
                     
                         
             
@@ -2083,10 +1810,30 @@ pre {
             
         
                     
+            
+        
+                    
                         
             
             
                 
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
                     
                 
                 
@@ -2152,6 +1899,7 @@ pre {
             
                 
                     
+                    
                 
                 
 
@@ -2159,11 +1907,20 @@ pre {
                     
                     
 
+                    
+            
+        
+                    
+            
+        
                     
                         
             
             
                 
+                    
+                        
+                        
                     
                 
                 
@@ -2191,102 +1948,6 @@ pre {
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
                         
             
@@ -2368,6 +2029,339 @@ pre {
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
             
         
                     
@@ -2491,7 +2485,6 @@ pre {
             
                 
                     
-                    
                 
                 
 
@@ -2507,9 +2500,6 @@ pre {
             
             
                 
-                    
-                        
-                        
                     
                 
                 
@@ -2563,10 +2553,10 @@ pre {
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/faq/" title="FAQ"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/archetypes/s3/" title="S3"> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/presentations/" title="Presentations" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/magefile/" title="Magefiles" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
@@ -2604,3 +2594,4 @@ pre {
 </script>
   </body>
 </html>
+

@@ -1,5 +1,40 @@
 [
 {
+	"uri": "/reference/archetypes/cloudwatchlogs/",
+	"title": "CloudWatch Logs",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document CloudWatchLogsReactor\n "
+},
+{
+	"uri": "/reference/archetypes/dynamo/",
+	"title": "Dynamo",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document DynamoDBReactor\n "
+},
+{
+	"uri": "/reference/archetypes/kinesis/",
+	"title": "Kinesis",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document KinesisReactor\n "
+},
+{
+	"uri": "/reference/archetypes/s3/",
+	"title": "S3",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document S3Reactor\n "
+},
+{
+	"uri": "/reference/archetypes/sns/",
+	"title": "SNS",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document SNSReactor\n "
+},
+{
 	"uri": "/reference/decorators/cloudfront_distribution/",
 	"title": "CloudFront Distribution",
 	"tags": [],

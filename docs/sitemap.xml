@@ -3,6 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/reference/archetypes/cloudwatchlogs/</loc>
+    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/dynamo/</loc>
+    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/kinesis/</loc>
+    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/s3/</loc>
+    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/sns/</loc>
+    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/decorators/cloudfront_distribution/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
   </url>
@@ -44,7 +69,7 @@
   
   <url>
     <loc>/sample_service/step1/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-28T19:54:10-08:00</lastmod>
   </url>
   
   <url>
@@ -94,7 +119,7 @@
   
   <url>
     <loc>/reference/application/environments/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-28T19:54:10-08:00</lastmod>
   </url>
   
   <url>
@@ -274,7 +299,7 @@
   
   <url>
     <loc>/reference/faq/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-28T19:54:10-08:00</lastmod>
   </url>
   
   <url>
@@ -289,7 +314,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-28T21:17:10-08:00</lastmod>
   </url>
   
   <url>

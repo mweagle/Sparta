@@ -11,5 +11,55 @@
 	<atom:link href="/reference/archetypes/index.xml" rel="self" type="application/rss+xml" />
     
     
+    <item>
+      <title>CloudWatch Logs</title>
+      <link>/reference/archetypes/cloudwatchlogs/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/cloudwatchlogs/</guid>
+      <description>TODO: Document CloudWatchLogsReactor
+ </description>
+    </item>
+    
+    <item>
+      <title>Dynamo</title>
+      <link>/reference/archetypes/dynamo/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/dynamo/</guid>
+      <description>TODO: Document DynamoDBReactor
+ </description>
+    </item>
+    
+    <item>
+      <title>Kinesis</title>
+      <link>/reference/archetypes/kinesis/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/kinesis/</guid>
+      <description>TODO: Document KinesisReactor
+ </description>
+    </item>
+    
+    <item>
+      <title>S3</title>
+      <link>/reference/archetypes/s3/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/s3/</guid>
+      <description>TODO: Document S3Reactor
+ </description>
+    </item>
+    
+    <item>
+      <title>SNS</title>
+      <link>/reference/archetypes/sns/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/sns/</guid>
+      <description>TODO: Document SNSReactor
+ </description>
+    </item>
+    
   </channel>
 </rss>
