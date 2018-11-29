@@ -6,9 +6,6 @@ import (
 
 	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
 	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
-	_ "github.com/hhatto/gocloc"                   // Force dep to resolve
-	_ "github.com/mholt/archiver"                  // Force dep to resolve
-	_ "github.com/pkg/browser"                     // Force dep to resolve
 )
 
 ////////////////////////////////////////////////////////////////////////////////
