@@ -3,9 +3,11 @@
 ## v1.7.3 - The Documentation Edition 📚
 
 - :warning: **BREAKING**
+  - Renamed `archetype.NewCloudWatchLogsReactor` to `archetype.NewCloudWatchReactor`
 - :checkered_flag: **CHANGES**
   - Moved all documentation into the _master_ branch to make it a bit easier to update docs together with code.
-  - See _/docs_source/content/meta/_index.md_ for how to edit, preview, and submit.
+    - See _/docs_source/content/meta/_index.md_ for how to edit, preview, and submit.
+  - Added `archetype.NewCloudWatchScheduledReactor` and `archetype.NewCloudWatchEventedReactor`
 - :bug:  **FIXED**
 
 ## v1.7.2 - The Cloud Drift Edition v2 🌬☁️
