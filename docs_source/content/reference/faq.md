@@ -38,7 +38,7 @@ import (
 ```
 
 See the CloudFormation [Fn::GetAtt](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) docs for the set of attributes created by each
-resource. CloudFormation [pseudo-paramters](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html) can be included in dynamic expresssions via [gocf.Ref](https://godoc.org/github.com/mweagle/go-cloudformation#Ref) expressions. For instance:
+resource. CloudFormation [pseudo-parameters](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html) can be included in dynamic expresssions via [gocf.Ref](https://godoc.org/github.com/mweagle/go-cloudformation#Ref) expressions. For instance:
 
 ```go
 gocf.Ref("AWS::Region")
@@ -60,7 +60,7 @@ During development, configuration is typically done through environment variable
   - `AWS_SECRET_ACCESS_KEY`
   - `AWS_REGION`
 
-### What are the *Minimum* IAM Priviliges for Sparta developers?
+### What are the *Minimum* IAM Privileges for Sparta developers?
 
 The absolute minimum set of privileges an account needs is the following [IAM Policy](https://awspolicygen.s3.amazonaws.com/policygen.html):
 

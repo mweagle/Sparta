@@ -194,7 +194,7 @@ Get in touch via:
   - [go-cloudformation](https://github.com/mweagle/go-cloudformation)
     - `go` types for CloudFormation resources
   - [ssm-cache](https://github.com/mweagle/ssm-cache)
-    - Lightweight cache for [Systems Manager Paramter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
+    - Lightweight cache for [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
 
 ## Other resources
   * [Build an S3 website with API Gateway and AWS Lambda for Go using Sparta](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)

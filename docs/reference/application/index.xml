@@ -42,7 +42,7 @@ For example:</description>
       <guid>/reference/application/environments/</guid>
       <description>It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
  Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
-To support this, Sparta uses Go&amp;rsquo;s conditional compliation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+To support this, Sparta uses Go&amp;rsquo;s conditional compilation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
 This example will work through the SpartaConfig sample.</description>
     </item>
     

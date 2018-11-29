@@ -12,7 +12,7 @@ It's common for a single Sparta application to target multiple *environments*. F
 
 Each environment is largely similar, but the application may need slightly different configuration in each context.
 
-To support this, Sparta uses Go's [conditional compliation](http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool) support to ensure that configuration information is validated at build time.  Conditional compilation is supported via the `--tags/-t` command line argument.
+To support this, Sparta uses Go's [conditional compilation](http://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool) support to ensure that configuration information is validated at build time.  Conditional compilation is supported via the `--tags/-t` command line argument.
 
 This example will work through the [SpartaConfig](https://github.com/mweagle/SpartaConfig) sample. The requirement is that each environment declare it's `Name` and also add that value as a Stack [Output](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
 
@@ -139,7 +139,7 @@ func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
 
 The _environments/default.go_ definition is slightly different. The "default" environment isn't one that our service should actually deploy to. It simply exists to make the initial Sparta build (the one that cross compiles the AWS Lambda binary) compile.  Build tags are applied to the *AWS Lambda* compiled binary that Sparta generates.
 
-To prevent users from accidentally deploying to the "default" environment, the `BuildTags` are valdiated in the hook definition:
+To prevent users from accidentally deploying to the "default" environment, the `BuildTags` are validated in the hook definition:
 
 ```golang
 func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {

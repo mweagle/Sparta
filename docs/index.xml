@@ -202,7 +202,7 @@ Getting Started We&amp;rsquo;ll start with an empty lambda function and build up
       <guid>/reference/application/environments/</guid>
       <description>It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
  Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
-To support this, Sparta uses Go&amp;rsquo;s conditional compliation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+To support this, Sparta uses Go&amp;rsquo;s conditional compilation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
 This example will work through the SpartaConfig sample.</description>
     </item>
     
@@ -468,7 +468,7 @@ mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke
       <guid>/reference/faq/</guid>
       <description>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
 For instance:
-import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-parameters can be included in dynamic expresssions via gocf.</description>
     </item>
     
     <item>

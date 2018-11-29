@@ -121,7 +121,7 @@ Next download the Sparta dependencies via:
  in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command (replacing `$S3_BUCKET` with an S3 bucket you own):
 
 {{% notice info %}}
-The [sysinfo](github.com/zcalusic/sysinfo) package is used at Lambda execution time only. However, it must be locally available in order to succesfully cross compile your AWS Lambda binary. See the [GitHub issue](https://github.com/mweagle/Sparta/issues/101) for more information.
+The [sysinfo](github.com/zcalusic/sysinfo) package is used at Lambda execution time only. However, it must be locally available in order to successfully cross compile your AWS Lambda binary. See the [GitHub issue](https://github.com/mweagle/Sparta/issues/101) for more information.
 {{% /notice %}}
 
 

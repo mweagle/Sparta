@@ -32,7 +32,8 @@ var (
 		".vendor",
 		".sparta",
 		".vscode",
-		"/resources/describe",
+		"resources/describe",
+		"docs_source/themes/",
 	}
 	hugoDocsSourcePath string = "./docs_source"
 	hugoDocsPaths             = []string{
@@ -303,17 +304,20 @@ func EnsurePrealloc() error {
 	return spartamage.Script(preallocCommand)
 }
 
+// EnsureMarkdownSpelling ensures that all *.MD files are checked for common
+// spelling mistakes
+func EnsureMarkdownSpelling() error {
+	return markdownSourceApply("misspell", "-error")
+}
+
 // EnsureSpelling ensures that there are no misspellings in the source
 func EnsureSpelling() error {
 	goSpelling := func() error {
 		return goSourceApply("misspell", "-error")
 	}
-	mdSpelling := func() error {
-		return markdownSourceApply("misspell", "-error")
-	}
 	mg.SerialDeps(
 		goSpelling,
-		mdSpelling)
+		EnsureMarkdownSpelling)
 	return nil
 }
 
