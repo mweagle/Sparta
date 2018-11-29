@@ -12,19 +12,19 @@
     <title>S3 :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1543468759" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1543468759" rel="stylesheet">
-    <link href="/css/hybrid.css?1543468759" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1543468759" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1543468759" rel="stylesheet">
-    <link href="/css/auto-complete.css?1543468759" rel="stylesheet">
-    <link href="/css/theme.css?1543468759" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1543468759" rel="stylesheet">
+    <link href="/css/nucleus.css?1543505029" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1543505029" rel="stylesheet">
+    <link href="/css/hybrid.css?1543505029" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1543505029" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1543505029" rel="stylesheet">
+    <link href="/css/auto-complete.css?1543505029" rel="stylesheet">
+    <link href="/css/theme.css?1543505029" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1543505029" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1543468759" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1543505029" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1543468759"></script>
+    <script src="/js/jquery-2.x.min.js?1543505029"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1543468759"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1543468759"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1543505029"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1543505029"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1543468759"></script>
+<script type="text/javascript" src="/js/search.js?1543505029"></script>
 
     
   </div>
@@ -341,9 +341,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Kinesis" class="dd-item ">
         <a href="/reference/eventsources/kinesis/">
-        Event Sources - Kinesis
+        Kinesis
         
         </a>
     </li>
@@ -470,9 +470,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
-        <a href="/reference/archetypes/cloudwatchlogs/">
-        CloudWatch Logs
+      <li data-nav-id="/reference/archetypes/cloudwatch/" title="CloudWatch" class="dd-item ">
+        <a href="/reference/archetypes/cloudwatch/">
+        CloudWatch
         
         </a>
     </li>
@@ -489,9 +489,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/dynamo/" title="Dynamo" class="dd-item ">
-        <a href="/reference/archetypes/dynamo/">
-        Dynamo
+      <li data-nav-id="/reference/archetypes/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/archetypes/dynamodb/">
+        DynamoDB
         
         </a>
     </li>
@@ -511,6 +511,25 @@ pre {
       <li data-nav-id="/reference/archetypes/kinesis/" title="Kinesis" class="dd-item ">
         <a href="/reference/archetypes/kinesis/">
         Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/rest/" title="REST Service" class="dd-item ">
+        <a href="/reference/archetypes/rest/">
+        REST Service
         
         </a>
     </li>
@@ -1406,8 +1425,8 @@ pre {
     
     <section id="footer">
       
-  Build: 373c864c<p/>
-  Date: 2018-11-28 21:17:23 -0800 PST
+  Build: dcdfe206<p/>
+  Date: 2018-11-29 06:40:59 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1481,7 +1500,15 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#object-key-name-filtering">Object Key Name Filtering</a></li>
+<li><a href="#all-events">All Events</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -1499,9 +1526,57 @@ pre {
         
 
 
-<div class="notices info" ><p>TODO: Document <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewS3Reactor">S3Reactor</a></p>
-</div>
 
+
+<p>There are two different S3-based constructors depending on whether your
+lambda function should use an <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html#notification-how-to-filtering">Object Key Name</a> filter.  The S3 subscriber is preconfigured
+to be notified of both <code>s3:ObjectCreated:*</code> and <code>s3:ObjectRemoved:*</code> events.</p>
+
+<h2 id="object-key-name-filtering">Object Key Name Filtering</h2>
+
+<p>Object key name filtering only invokes a lambda function when objects with
+the given prefix are created.</p>
+
+<p>To subscribe to object events created by objects with a given prefix, use the
+<a href="http://localhost:6060/pkg/github.com/mweagle/Sparta/archetype/#NewS3ScopedReactor">NewS3ScopedReactor</a>
+constructor as in:</p>
+
+<pre><code class="language-go">import (
+  awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+)
+// KinesisStream reactor function
+func reactorFunc(ctx context.Context,
+  s3Event awsLambdaEvents.S3Event) (interface{}, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+
+  logger.WithFields(logrus.Fields{
+    &quot;Event&quot;: s3Event,
+  }).Info(&quot;S3 Event&quot;)
+  return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil
+}
+
+func main() {
+  // ...
+  handler := spartaArchetype.S3ReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewS3ScopedReactor(handler,
+    &quot;S3_BUCKET_ARN_OR_CLOUDFORMATION_REF&quot;,
+    &quot;/my/special/prefix&quot;,
+    nil)
+}
+</code></pre>
+
+<h2 id="all-events">All Events</h2>
+
+<p>To subscribe to <em>all</em> S3 bucket events, use the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewS3Reactor">NewS3Reactor</a> version:</p>
+
+<pre><code class="language-go">func main() {
+  // ...
+  handler := spartaArchetype.S3ReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewS3Reactor(handler,
+    &quot;/my/special/prefix&quot;,
+    nil)
+}
+</code></pre>
 
 
 <footer class=" footline" >
@@ -1883,6 +1958,22 @@ pre {
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -2553,7 +2644,7 @@ pre {
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/archetypes/kinesis/" title="Kinesis"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/archetypes/rest/" title="REST Service"> <i class="fa fa-chevron-left"></i></a>
 		
 		
 			<a class="nav nav-next" href="/reference/archetypes/sns/" title="SNS" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
@@ -2566,20 +2657,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1543468759"></script>
-    <script src="/js/perfect-scrollbar.min.js?1543468759"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1543468759"></script>
-    <script src="/js/jquery.sticky.js?1543468759"></script>
-    <script src="/js/featherlight.min.js?1543468759"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1543468759"></script>
-    <script src="/js/highlight.pack.js?1543468759"></script>
+    <script src="/js/clipboard.min.js?1543505029"></script>
+    <script src="/js/perfect-scrollbar.min.js?1543505029"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1543505029"></script>
+    <script src="/js/jquery.sticky.js?1543505029"></script>
+    <script src="/js/featherlight.min.js?1543505029"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1543505029"></script>
+    <script src="/js/highlight.pack.js?1543505029"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1543468759"></script>
-    <script src="/js/learn.js?1543468759"></script>
-    <script src="/js/hugo-learn.js?1543468759"></script>
+    <script src="/js/modernizr.custom.71422.js?1543505029"></script>
+    <script src="/js/learn.js?1543505029"></script>
+    <script src="/js/hugo-learn.js?1543505029"></script>
 
-    <link href="/mermaid/mermaid.css?1543468759" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1543468759"></script>
+    <link href="/mermaid/mermaid.css?1543505029" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1543505029"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

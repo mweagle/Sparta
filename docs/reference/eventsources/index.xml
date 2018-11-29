@@ -65,7 +65,7 @@ Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details 
     </item>
     
     <item>
-      <title>Event Sources - Kinesis</title>
+      <title>Kinesis</title>
       <link>/reference/eventsources/kinesis/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       

@@ -1,31 +1,38 @@
 [
 {
-	"uri": "/reference/archetypes/cloudwatchlogs/",
-	"title": "CloudWatch Logs",
+	"uri": "/reference/archetypes/cloudwatch/",
+	"title": "CloudWatch",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document CloudWatchLogsReactor\n "
+	"content": " The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.\nScheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.\nTo create a scheduled function use a constructor as in:\nimport ( awsLambdaEvents \u0026quot;github.com/aws/aws-lambda-go/events\u0026quot; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: cwLogs, }).Info(\u0026quot;Cron triggered\u0026quot;) return \u0026quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾\u0026quot;, nil } func main() { // ... handler := spartaArchetype.CloudWatchLogsReactorFunc(reactorFunc) subscriptions := map[string]string{ \u0026quot;every5Mins\u0026quot;: \u0026quot;rate(5 minutes)\u0026quot;, } lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchScheduledReactor(handler, subscriptions, nil) }  Events Lambda functions triggered in response to CloudWatch Events use event patterns to select which events should trigger your function\u0026rsquo;s execution.\nTo create an event subscriber use a constructor as in:\n// CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: cwLogs, }).Info(\u0026quot;Cron triggered\u0026quot;) return \u0026quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾\u0026quot;, nil } func main() { // ... handler := spartaArchetype.CloudWatchLogsReactorFunc(reactorFunc) subscriptions := map[string]string{ \u0026quot;ec2StateChanges\u0026quot;: map[string]interface{}{ \u0026quot;source\u0026quot;: []string{\u0026quot;aws.ec2\u0026quot;}, \u0026quot;detail-type\u0026quot;: []string{\u0026quot;EC2 Instance state change\u0026quot;}, }, } lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchEventedReactor(handler, subscriptions, nil) }  Generic Both NewCloudWatchScheduledReactor and NewCloudWatchEventedReactor are convenience functions for the generic NewCloudWatchReactor constructor. For example, it\u0026rsquo;s possible to create a scheduled lambda execution using the generic constructor as in:\nfunc main() { // ... subscriptions := map[string]sparta.CloudWatchEventsRule{ \u0026quot;every5Mins\u0026quot;: sparta.CloudWatchEventsRule{ ScheduleExpression: \u0026quot;rate(5 minutes)\u0026quot;, }, } lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchReactor(handler, subscriptions, nil) }  "
 },
 {
-	"uri": "/reference/archetypes/dynamo/",
-	"title": "Dynamo",
+	"uri": "/reference/archetypes/dynamodb/",
+	"title": "DynamoDB",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document DynamoDBReactor\n "
+	"content": "To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:\nimport ( awsLambdaEvents \u0026quot;github.com/aws/aws-lambda-go/events\u0026quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: dynamoEvent, }).Info(\u0026quot;DynamoDB Event\u0026quot;) return \u0026quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾\u0026quot;, nil } func main() { // ... handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, \u0026quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE\u0026quot;, \u0026quot;TRIM_HORIZON\u0026quot;, 10, nil) }  "
 },
 {
 	"uri": "/reference/archetypes/kinesis/",
 	"title": "Kinesis",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document KinesisReactor\n "
+	"content": "To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:\nimport ( awsLambdaEvents \u0026quot;github.com/aws/aws-lambda-go/events\u0026quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: kinesisEvent, }).Info(\u0026quot;Kinesis Event\u0026quot;) return \u0026quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾\u0026quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, \u0026quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE\u0026quot;, \u0026quot;TRIM_HORIZON\u0026quot;, 10, nil) }  "
+},
+{
+	"uri": "/reference/archetypes/rest/",
+	"title": "REST Service",
+	"tags": [],
+	"description": "",
+	"content": "TODO: Document rest package\n "
 },
 {
 	"uri": "/reference/archetypes/s3/",
 	"title": "S3",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document S3Reactor\n "
+	"content": " There are two different S3-based constructors depending on whether your lambda function should use an Object Key Name filter. The S3 subscriber is preconfigured to be notified of both s3:ObjectCreated:* and s3:ObjectRemoved:* events.\nObject Key Name Filtering Object key name filtering only invokes a lambda function when objects with the given prefix are created.\nTo subscribe to object events created by objects with a given prefix, use the NewS3ScopedReactor constructor as in:\nimport ( awsLambdaEvents \u0026quot;github.com/aws/aws-lambda-go/events\u0026quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, s3Event awsLambdaEvents.S3Event) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: s3Event, }).Info(\u0026quot;S3 Event\u0026quot;) return \u0026quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾\u0026quot;, nil } func main() { // ... handler := spartaArchetype.S3ReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewS3ScopedReactor(handler, \u0026quot;S3_BUCKET_ARN_OR_CLOUDFORMATION_REF\u0026quot;, \u0026quot;/my/special/prefix\u0026quot;, nil) }  All Events To subscribe to all S3 bucket events, use the NewS3Reactor version:\nfunc main() { // ... handler := spartaArchetype.S3ReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewS3Reactor(handler, \u0026quot;/my/special/prefix\u0026quot;, nil) }  "
 },
 {
 	"uri": "/reference/archetypes/sns/",
@@ -155,7 +162,7 @@
 },
 {
 	"uri": "/reference/eventsources/kinesis/",
-	"title": "Event Sources - Kinesis",
+	"title": "Kinesis",
 	"tags": [],
 	"description": "",
 	"content": " In this section we\u0026rsquo;ll walkthrough how to trigger your lambda function in response to Amazon Kinesis streams. This overview is based on the SpartaApplication sample code if you\u0026rsquo;d rather jump to the end result.\nGoal The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.\nGetting Started We\u0026rsquo;ll start with an empty lambda function and build up the needed functionality.\nimport ( awsLambdaEvents \u0026quot;github.com/aws/aws-lambda-go/events\u0026quot; ) func echoKinesisEvent(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (*awsLambdaEvents.KinesisEvent, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ \u0026quot;Event\u0026quot;: kinesisEvent, }).Info(\u0026quot;Event received\u0026quot;) return \u0026amp;kinesisEvent, nil }  For this sample all we\u0026rsquo;re going to do is transparently unmarshal the Kinesis event to an AWS Lambda event, log it, and return the value.\nWith the function defined let\u0026rsquo;s register it with Sparta.\nSparta Integration First we wrap the go function in a LambdaAWSInfo struct:\nlambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent), echoKinesisEvent, sparta.IAMRoleDefinition{})  Since our lambda function doesn\u0026rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (sparta.IAMRoleDefinition{}).\nEvent Source Registration Then last step is to configure our AWS Lambda function with Kinesis as the EventSource\nlambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings, \u0026amp;lambda.CreateEventSourceMappingInput{ EventSourceArn: aws.String(kinesisTestStream), StartingPosition: aws.String(\u0026quot;TRIM_HORIZON\u0026quot;), BatchSize: aws.Int64(100), Enabled: aws.Bool(true), })  The kinesisTestStream parameter is the Kinesis stream ARN (eg: arn:aws:kinesis:us-west-2:123412341234:stream/kinesisTestStream) whose events will trigger lambda execution.\nWrapping Up With the lambdaFn fully defined, we can provide it to sparta.Main() and deploy our service. The workflow below is shared by all Kinesis-triggered lambda functions:\n Define the lambda function (echoKinesisEvent). If needed, create the required IAMRoleDefinition with appropriate privileges if the lambda function accesses other AWS services. Provide the lambda function \u0026amp; IAMRoleDefinition to sparta.HandleAWSLambda() Add the necessary EventSourceMappings to the LambdaAWSInfo struct so that the lambda function is properly configured.  Notes  The Kinesis stream and the AWS Lambda function must be provisioned in the same region. The AWS docs have an excellent Kinesis EventSource walkthrough.  "
@@ -263,7 +270,7 @@
 	"title": "",
 	"tags": [],
 	"description": "",
-	"content": "TODO - document the Archetype constructor functions.\n "
+	"content": "Sparta\u0026rsquo;s archetype package provides convenience functions to streamline creating AWS Lambda functions for specific types of event sources. See each section for more details:\n CloudWatch DynamoDB Kinesis S3 SNS  "
 },
 {
 	"uri": "/related_projects/",
@@ -389,7 +396,7 @@
 	"title": "",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document Interceptors\n "
+	"content": "TODO: Document Interceptors\n mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; execute[Execute] class execute stdOp; lookup[Lookup Function] class lookup stdOp; call[Call Function] class call stdOp; interceptorBegin[Interceptor Begin] class interceptorBegin userHook; populateLogger[Logger into context] class populateLogger stdOp; interceptorBeforeSetup[Interceptor BeforeSetup] class interceptorBeforeSetup userHook; populateContext[Populate context] class populateContext stdOp; interceptorAfterSetup[Interceptor AfterSetup] class interceptorAfterSetup userHook; unmarshalArgs[Introspect Arguments] class unmarshalArgs stdOp; interceptorBeforeDispatch[Interceptor BeforeDispatch] class interceptorBeforeDispatch userHook; callFunction[Call Function] class callFunction stdOp; interceptorAfterDispatch[Interceptor AfterDispatch] class interceptorAfterDispatch userHook; extractReturn[Extract Function Return] class extractReturn stdOp; interceptorComplete[Interceptor Complete] class interceptorComplete userHook; done[Done] class done stdOp; execute--lookup lookup--call call--interceptorBegin interceptorBegin--populateLogger populateLogger--interceptorBeforeSetup interceptorBeforeSetup--populateContext populateContext--interceptorAfterSetup interceptorAfterSetup--unmarshalArgs unmarshalArgs--interceptorBeforeDispatch interceptorBeforeDispatch--callFunction callFunction--interceptorAfterDispatch interceptorAfterDispatch--extractReturn extractReturn--interceptorComplete interceptorComplete--done  This diagram is rendered with Mermaid. Please open an issue if it doesn't render properly. "
 },
 {
 	"uri": "/reference/application/",
@@ -431,7 +438,7 @@
 	"title": "_Meta",
 	"tags": [],
 	"description": "",
-	"content": " Documentation contributions are most appreciated. The documentation is built using:\n Hugo Mage  All documentation is contained in the master branch of the Sparta repo.\n$ mage -l | grep docs docsBuild builds the public documentation site in the /docs folder docsCommit commits the current documentation with an autogenerated comment docsEdit starts a Hugo server and hot reloads the documentation at http://localhost:1313 docsInstallRequirements installs the required Hugo version  Editing  go get -u -v github.com/magefile/mage mage -v docsEdit  The last step will launch a hot reloading documentation server and open a browser viewing http://localhost:1313.\nTo make changes to the documentation:\n Start the server: mage -v docsBuild Edit the /docs_source subdirectory contents Check the changes in the browser (http://localhost:1313) Commit your changes Open a PR  Thanks!\nThe documentation site uses the Hugo Learn Theme. Please visit that site for additional documentation regarding shortcodes and included libraries.\n"
+	"content": " Documentation contributions are most appreciated. The documentation is built using:\n Hugo Mage  All documentation is contained in the master branch of the Sparta repo.\n$ mage -l | grep docs docsBuild builds the public documentation site in the /docs folder docsCommit commits the current documentation with an autogenerated comment docsEdit starts a Hugo server and hot reloads the documentation at http://localhost:1313 docsInstallRequirements installs the required Hugo version  Editing  go get -u -v github.com/magefile/mage mage -v docsEdit  The last step will launch a hot reloading documentation server and open a browser viewing http://localhost:1313.\nTo make changes to the documentation:\n Start the server: mage -v docsBuild Edit the markdown in /docs_source/content Check the changes in the browser (http://localhost:1313) Commit your changes Open a PR  Thanks!\nThe documentation site uses the Hugo Learn Theme. Please visit that site for additional documentation regarding shortcodes and included libraries.\n"
 },
 {
 	"uri": "/",
