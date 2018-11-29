@@ -8,6 +8,7 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 )
 
 // KinesisReactor represents a lambda function that responds to Kinesis messages
@@ -46,9 +47,12 @@ func NewKinesisReactor(reactor KinesisReactor,
 		return reactor.OnKinesisMessage(ctx, kinesisEvent)
 	}
 
-	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
+	lambdaFn, lambdaFnErr := sparta.NewAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
+	if lambdaFnErr != nil {
+		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
+	}
 
 	lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
 		&sparta.EventSourceMapping{

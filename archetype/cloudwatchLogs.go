@@ -46,9 +46,12 @@ func NewCloudWatchLogsReactor(reactor CloudWatchLogsReactor,
 	reactorLambda := func(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
 		return reactor.OnLogMessage(ctx, cwLogs)
 	}
-	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
+	lambdaFn, lambdaFnErr := sparta.NewAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
+	if lambdaFnErr != nil {
+		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
+	}
 	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
 	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
 	for eachRuleName, eachRule := range subscriptions {

@@ -12,6 +12,7 @@ import (
 	"github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 )
 
 // ReactorNameProvider is an interface so that a reactor function can
@@ -85,10 +86,12 @@ func NewS3ScopedReactor(reactor S3Reactor,
 	}
 
 	// Privilege must include access to the S3 bucket for GetObjectRequest
-	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
+	lambdaFn, lambdaFnErr := sparta.NewAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
-
+	if lambdaFnErr != nil {
+		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
+	}
 	bucketName := ""
 	if s3Bucket.String().Literal != "" {
 		bucketName = s3Bucket.String().Literal

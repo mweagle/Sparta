@@ -8,6 +8,7 @@ import (
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
+	"github.com/pkg/errors"
 )
 
 // SNSReactor represents a lambda function that responds to typical SNS events
@@ -43,9 +44,12 @@ func NewSNSReactor(reactor SNSReactor,
 		return reactor.OnSNSEvent(ctx, snsEvent)
 	}
 
-	lambdaFn := sparta.HandleAWSLambda(reactorName(reactor),
+	lambdaFn, lambdaFnErr := sparta.NewAWSLambda(reactorName(reactor),
 		reactorLambda,
 		sparta.IAMRoleDefinition{})
+	if lambdaFnErr != nil {
+		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
+	}
 
 	lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
 		BasePermission: sparta.BasePermission{
