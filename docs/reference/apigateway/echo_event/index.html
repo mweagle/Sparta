@@ -1,0 +1,2713 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta name="description" content="Sparta - AWS Lambda Microservices">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Echo Event :: Sparta - AWS Lambda Microservices</title>
+
+    
+    <link href="/css/nucleus.css?1543457802" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1543457802" rel="stylesheet">
+    <link href="/css/hybrid.css?1543457802" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1543457802" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1543457802" rel="stylesheet">
+    <link href="/css/auto-complete.css?1543457802" rel="stylesheet">
+    <link href="/css/theme.css?1543457802" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1543457802" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1543457802" rel="stylesheet">
+    
+
+    <script src="/js/jquery-2.x.min.js?1543457802"></script>
+
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
+  </head>
+  <body class="" data-url="/reference/apigateway/echo_event/">
+    <nav id="sidebar" class="">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1543457802"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1543457802"></script>
+<script type="text/javascript">
+    
+        var baseurl = "\/";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1543457802"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          <b>Event Sources</b>&nbsp;<i class='fas fa-fw fa-cubes'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/archetypes/">
+          <b>Archetype Constructors</b>&nbsp;<i class='fas fa-fw fa-flask'></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/magefile/" title="Magefiles" class="dd-item ">
+        <a href="/reference/magefile/">
+        Magefiles
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item ">
+        <a href="/reference/custom_lambda_resources/">
+        CloudFormation Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          <b>Decorators</b>&nbsp;<i class='fas fa-fw fa-paint-brush'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          <b>API Gateway</b>&nbsp;<i class='fas fa-fw fa-globe'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item active">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/interceptors/">
+          <b>Interceptors</b>&nbsp;<i class='fas fa-fw fa-puzzle-piece'></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          <b>Application Customization</b>&nbsp;<i class='fas fa-fw fa-cog'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md"><i class='fas fa-fw fa-signal'></i> Release History</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="footer">
+      
+  Build: 5f5bee34<p/>
+  Date: 2018-11-28 18:16:08 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apigateway/echo_event.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/apigateway/'></a> > Echo Event
+          
+         
+          
+         
+          
+         
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#create-the-api-gateway">Create the API Gateway</a></li>
+<li><a href="#create-a-resource">Create a Resource</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#querying">Querying</a></li>
+<li><a href="#mapping-templates">Mapping Templates</a></li>
+<li><a href="#proxying-envelope">Proxying Envelope</a></li>
+<li><a href="#cleaning-up">Cleaning Up</a></li>
+<li><a href="#wrapping-up">Wrapping Up</a></li>
+<li><a href="#other-resources">Other Resources</a></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>Echo Event</h1>
+          
+
+        
+
+
+
+
+<p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the <a href="https://github.com/mweagle/SpartaHTML">SpartaHTML</a>.</p>
+
+<p>For reference, the <code>helloWorld</code> function is below.</p>
+
+<pre><code class="language-go">import (
+	awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+)
+func helloWorld(ctx context.Context,
+	gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
+	/*
+		 To return an error back to the client using a standard HTTP status code:
+
+			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
+			&quot;Something failed inside here&quot;)
+			return errorResponse, nil
+
+			You can also create custom error response types, so long as they
+			include `&quot;code&quot;:HTTP_STATUS_CODE` somewhere in the response body.
+			This reserved expression is what Sparta uses as a RegExp to determine
+			the Integration Mapping value
+	*/
+
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	if loggerOk {
+		logger.Info(&quot;Hello world structured log message&quot;)
+	}
+	// Return a message, together with the incoming input...
+	return &amp;helloWorldResponse{
+		Message: fmt.Sprintf(&quot;Hello world 🌏&quot;),
+		Request: gatewayEvent,
+	}, nil
+}
+</code></pre>
+
+<h1 id="create-the-api-gateway">Create the API Gateway</h1>
+
+<p>The first requirement is to create a new <a href="https://godoc.org/github.com/mweagle/Sparta#API">API</a> instance via <code>sparta.NewAPIGateway()</code></p>
+
+<pre><code class="language-go">stage := sparta.NewStage(&quot;prod&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;MySpartaAPI&quot;, stage)
+</code></pre>
+
+<p>In the example above, we&rsquo;re also including a <a href="https://godoc.org/github.com/mweagle/Sparta#Stage">Stage</a> value.  A non-<code>nil</code> Stage value will cause the registered API to be deployed.  If the Stage value is <code>nil</code>, a REST API will be created, but it will not be <a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html">deployed</a> (and therefore not publicly accessible).</p>
+
+<h1 id="create-a-resource">Create a Resource</h1>
+
+<p>The next step is to associate a URL path with the <code>sparta.LambdaAWSInfo</code> struct that encapsulates the <strong>go</strong> function:</p>
+
+<pre><code class="language-go">func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
+	var lambdaFunctions []*sparta.LambdaAWSInfo
+	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+		helloWorld,
+		sparta.IAMRoleDefinition{})
+
+	if nil != api {
+		apiGatewayResource, _ := api.NewResource(&quot;/hello&quot;, lambdaFn)
+
+		// We only return http.StatusOK
+		apiMethod, apiMethodErr := apiGatewayResource.NewMethod(&quot;GET&quot;,
+			http.StatusOK,
+			http.StatusInternalServerError)
+		if nil != apiMethodErr {
+			panic(&quot;Failed to create /hello resource: &quot; + apiMethodErr.Error())
+		}
+		// The lambda resource only supports application/json Unmarshallable
+		// requests.
+		apiMethod.SupportedRequestContentTypes = []string{&quot;application/json&quot;}
+	}
+	return append(lambdaFunctions, lambdaFn)
+}
+</code></pre>
+
+<p>Our <code>helloWorld</code> only supports <code>GET</code>.  We&rsquo;ll see how a single lambda function can support multiple HTTP methods shortly.</p>
+
+<h1 id="provision">Provision</h1>
+
+<p>The final step is to to provide the API instance to <code>Sparta.Main()</code></p>
+
+<pre><code class="language-go">// Register the function with the API Gateway
+apiStage := sparta.NewStage(&quot;v1&quot;)
+apiGateway := sparta.NewAPIGateway(&quot;SpartaHTML&quot;, apiStage)
+</code></pre>
+
+<p>Once the service is successfully provisioned, the <code>Outputs</code> key will include the API Gateway Deployed URL (sample):</p>
+
+<pre><code class="language-text">INFO[0096] ────────────────────────────────────────────────
+INFO[0096] Stack Outputs
+INFO[0096] ────────────────────────────────────────────────
+INFO[0096] S3SiteURL                                     Description=&quot;S3 Website URL&quot; Value=&quot;http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-1w6rehqu6x04c.s3-website-us-west-2.amazonaws.com&quot;
+INFO[0096] APIGatewayURL                                 Description=&quot;API Gateway URL&quot; Value=&quot;https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1&quot;
+INFO[0096] ────────────────────────────────────────────────
+</code></pre>
+
+<p>Combining the <em>API Gateway URL</em> <code>OutputValue</code> with our resource path (<em>/hello/world/test</em>), we get the absolute URL to our lambda function: <em><a href="https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello">https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello</a></em></p>
+
+<h1 id="querying">Querying</h1>
+
+<p>Let&rsquo;s query the lambda function and see what the <code>event</code> data is at execution time. The
+snippet below is pretty printed by piping the response through <a href="https://stedolan.github.io/jq/">jq</a>.</p>
+
+<pre><code class="language-nohighlight">$ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq .
+*   Trying 52.84.237.220...
+* TCP_NODELAY set
+* Connected to 3e7ux226ga.execute-api.us-west-2.amazonaws.com (52.84.237.220) port 443 (#0)
+* TLS 1.2 connection using TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+* Server certificate: *.execute-api.us-west-2.amazonaws.com
+* Server certificate: Amazon
+* Server certificate: Amazon Root CA 1
+* Server certificate: Starfield Services Root Certificate Authority - G2
+&gt; GET /v1/hello HTTP/1.1
+&gt; Host: 3e7ux226ga.execute-api.us-west-2.amazonaws.com
+&gt; User-Agent: curl/7.54.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Content-Type: application/json
+&lt; Content-Length: 1137
+&lt; Connection: keep-alive
+&lt; Date: Mon, 29 Jan 2018 14:15:28 GMT
+&lt; x-amzn-RequestId: db7f5734-04fe-11e8-b264-c70ecab3a032
+&lt; Access-Control-Allow-Origin: http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-419zo4dp8n2d.s3-website-us-west-2.amazonaws.com
+&lt; Access-Control-Allow-Headers: Content-Type,X-Amz-Date,Authorization,X-Api-Key
+&lt; Access-Control-Allow-Methods: *
+&lt; X-Amzn-Trace-Id: sampled=0;root=1-5a6f2c80-efb0f84554384252abca6d15
+&lt; X-Cache: Miss from cloudfront
+&lt; Via: 1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)
+&lt; X-Amz-Cf-Id: -UsCegiR1K3vJUFyAo9IMrWGdH8rKW6UBrtJLjxZqke19r0cxMl1NA==
+&lt;
+{ [1137 bytes data]
+* Connection #0 to host 3e7ux226ga.execute-api.us-west-2.amazonaws.com left intact
+{
+  &quot;Message&quot;: &quot;Hello world 🌏&quot;,
+  &quot;Request&quot;: {
+    &quot;method&quot;: &quot;GET&quot;,
+    &quot;body&quot;: {},
+    &quot;headers&quot;: {
+      &quot;Accept&quot;: &quot;*/*&quot;,
+      &quot;CloudFront-Forwarded-Proto&quot;: &quot;https&quot;,
+      &quot;CloudFront-Is-Desktop-Viewer&quot;: &quot;true&quot;,
+      &quot;CloudFront-Is-Mobile-Viewer&quot;: &quot;false&quot;,
+      &quot;CloudFront-Is-SmartTV-Viewer&quot;: &quot;false&quot;,
+      &quot;CloudFront-Is-Tablet-Viewer&quot;: &quot;false&quot;,
+      &quot;CloudFront-Viewer-Country&quot;: &quot;US&quot;,
+      &quot;Host&quot;: &quot;3e7ux226ga.execute-api.us-west-2.amazonaws.com&quot;,
+      &quot;User-Agent&quot;: &quot;curl/7.54.0&quot;,
+      &quot;Via&quot;: &quot;1.1 570a1979c411cb4529fa1e711db52490.cloudfront.net (CloudFront)&quot;,
+      &quot;X-Amz-Cf-Id&quot;: &quot;vAFNTV5uAMeTG9JN6IORnA7LYJhZyB3jHV7vh-7lXn2uZQUR6eHQUw==&quot;,
+      &quot;X-Amzn-Trace-Id&quot;: &quot;Root=1-5a6f2c80-2b48a9c86a30b0162d8ab1f1&quot;,
+      &quot;X-Forwarded-For&quot;: &quot;73.118.138.121, 205.251.214.60&quot;,
+      &quot;X-Forwarded-Port&quot;: &quot;443&quot;,
+      &quot;X-Forwarded-Proto&quot;: &quot;https&quot;
+    },
+    &quot;queryParams&quot;: {},
+    &quot;pathParams&quot;: {},
+    &quot;context&quot;: {
+      &quot;appId&quot;: &quot;&quot;,
+      &quot;method&quot;: &quot;GET&quot;,
+      &quot;requestId&quot;: &quot;db7f5734-04fe-11e8-b264-c70ecab3a032&quot;,
+      &quot;resourceId&quot;: &quot;401s9n&quot;,
+      &quot;resourcePath&quot;: &quot;/hello&quot;,
+      &quot;stage&quot;: &quot;v1&quot;,
+      &quot;identity&quot;: {
+        &quot;accountId&quot;: &quot;&quot;,
+        &quot;apiKey&quot;: &quot;&quot;,
+        &quot;caller&quot;: &quot;&quot;,
+        &quot;cognitoAuthenticationProvider&quot;: &quot;&quot;,
+        &quot;cognitoAuthenticationType&quot;: &quot;&quot;,
+        &quot;cognitoIdentityId&quot;: &quot;&quot;,
+        &quot;cognitoIdentityPoolId&quot;: &quot;&quot;,
+        &quot;sourceIp&quot;: &quot;73.118.138.121&quot;,
+        &quot;user&quot;: &quot;&quot;,
+        &quot;userAgent&quot;: &quot;curl/7.54.0&quot;,
+        &quot;userArn&quot;: &quot;&quot;
+      }
+    }
+  }
+}
+</code></pre>
+
+<p>While this demonstrates that our lambda function is publicly accessible, it&rsquo;s not immediately obvious where the <code>*event</code> data is being populated.</p>
+
+<h1 id="mapping-templates">Mapping Templates</h1>
+
+<p>The event data that&rsquo;s actually supplied to <code>echoS3Event</code> is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we&rsquo;re not whitelisting any params, so those fields (<code>queryParams</code>, <code>pathParams</code>) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it&rsquo;s possible to transform the API Gateway request data and whitelisted arguments into a format that&rsquo;s more amenable to the target.</p>
+
+<p>Sparta uses a pass-through template that passes all valid data, with minor <strong>Body</strong> differences based on the inbound <em>Content-Type</em>:</p>
+
+<ul>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl">application/json</a></li>
+<li><a href="https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl">*</a></li>
+</ul>
+
+<p>The <code>application/json</code> template is copied below:</p>
+
+<pre><code class="language-nohighlight">#*
+Provide an automatic pass through template that transforms all inputs
+into the JSON payload sent to a golang function. The JSON behavior attempts to parse
+the incoming HTTP body as JSON assign it to the `body` field.
+
+See
+  https://forums.aws.amazon.com/thread.jspa?threadID=220274&amp;tstart=0
+  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+*#
+{
+  &quot;method&quot;: &quot;$context.httpMethod&quot;,
+  &quot;body&quot; : $input.json('$'),
+  &quot;headers&quot;: {
+    #foreach($param in $input.params().header.keySet())
+    &quot;$param&quot;: &quot;$util.escapeJavaScript($input.params().header.get($param))&quot; #if($foreach.hasNext),#end
+    #end
+  },
+  &quot;queryParams&quot;: {
+    #foreach($param in $input.params().querystring.keySet())
+    &quot;$param&quot;: &quot;$util.escapeJavaScript($input.params().querystring.get($param))&quot; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &quot;pathParams&quot;: {
+    #foreach($param in $input.params().path.keySet())
+    &quot;$param&quot;: &quot;$util.escapeJavaScript($input.params().path.get($param))&quot; #if($foreach.hasNext),#end
+
+    #end
+  },
+  &quot;context&quot; : {
+    &quot;apiId&quot; : &quot;$util.escapeJavaScript($context.apiId)&quot;,
+    &quot;method&quot; : &quot;$util.escapeJavaScript($context.httpMethod)&quot;,
+    &quot;requestId&quot; : &quot;$util.escapeJavaScript($context.requestId)&quot;,
+    &quot;resourceId&quot; : &quot;$util.escapeJavaScript($context.resourceId)&quot;,
+    &quot;resourcePath&quot; : &quot;$util.escapeJavaScript($context.resourcePath)&quot;,
+    &quot;stage&quot; : &quot;$util.escapeJavaScript($context.stage)&quot;,
+    &quot;identity&quot; : {
+      &quot;accountId&quot; : &quot;$util.escapeJavaScript($context.identity.accountId)&quot;,
+      &quot;apiKey&quot; : &quot;$util.escapeJavaScript($context.identity.apiKey)&quot;,
+      &quot;caller&quot; : &quot;$util.escapeJavaScript($context.identity.caller)&quot;,
+      &quot;cognitoAuthenticationProvider&quot; : &quot;$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)&quot;,
+      &quot;cognitoAuthenticationType&quot; : &quot;$util.escapeJavaScript($context.identity.cognitoAuthenticationType)&quot;,
+      &quot;cognitoIdentityId&quot; : &quot;$util.escapeJavaScript($context.identity.cognitoIdentityId)&quot;,
+      &quot;cognitoIdentityPoolId&quot; : &quot;$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)&quot;,
+      &quot;sourceIp&quot; : &quot;$util.escapeJavaScript($context.identity.sourceIp)&quot;,
+      &quot;user&quot; : &quot;$util.escapeJavaScript($context.identity.user)&quot;,
+      &quot;userAgent&quot; : &quot;$util.escapeJavaScript($context.identity.userAgent)&quot;,
+      &quot;userArn&quot; : &quot;$util.escapeJavaScript($context.identity.userArn)&quot;
+    }
+  }
+}
+</code></pre>
+
+<p>This template forwards all whitelisted data &amp; body to the lambda function.  You can see by switching on the <code>method</code> field would permit a single function to service multiple HTTP method names.</p>
+
+<p>The next example will show how to unmarshal this data and perform request-specific actions.</p>
+
+<h1 id="proxying-envelope">Proxying Envelope</h1>
+
+<p>Because the integration request returned a successful response, the API Gateway response body contains only our lambda&rsquo;s output (<code>$input.json('$')</code>).</p>
+
+<p>To return an error that API Gateway can properly translate into an HTTP
+status code, use an <a href="https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewErrorResponse">apigateway.NewErrorResponse</a> type. This
+custom error type includes fields that trigger integration mappings based on the
+inline <a href="https://golang.org/src/net/http/status.go">HTTP StatusCode</a>. If you look at the <strong>Integration Response</strong> section of the <em>/hello/world/test</em> resource in the Console, you&rsquo;ll see a list of Regular Expression matches:</p>
+
+<p><img src="/images/apigateway/IntegrationMapping.png" alt="API Gateway" /></p>
+
+<p>The regular expressions are used to translate the integration response, which is just a blob of text provided to the underlying AWS Go API, into API Gateway Method responses.
+If you use the <code>apigateway.Error</code> type, the marshalled string version of your
+error text will trigger the proper Method Response.</p>
+
+<p>Sparta annotates your lambda functions response with <strong>go</strong>&rsquo;s values based on the HTTP status code your lambda function produced.  By default, Sparta also provides a corresponding Method Response entry for all valid HTTP codes:</p>
+
+<p><img src="/images/apigateway/MethodResponse.png" alt="API Gateway" /></p>
+
+<p>These mappings are defaults, and it&rsquo;s possible to override either one by providing a non-zero length values to either:</p>
+
+<ul>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Integration">Integration.Responses</a>.  See the <a href="https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60">DefaultIntegrationResponses</a> for the default values.</li>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta#Method">Method.Responses</a>.  See the <a href="https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses">DefaultMethodResponses</a> for the default method response mappings.</li>
+</ul>
+
+<h1 id="cleaning-up">Cleaning Up</h1>
+
+<p>Before moving on, remember to decommission the service via:</p>
+
+<pre><code class="language-bash">go run application.go delete
+</code></pre>
+
+<h1 id="wrapping-up">Wrapping Up</h1>
+
+<p>Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we&rsquo;ll move on to performing a more complex operation, including returning a custom HTTP response body.</p>
+
+<h1 id="other-resources">Other Resources</h1>
+
+<ul>
+<li><a href="http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html">Mapping Template Reference</a></li>
+</ul>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/apigateway/" title=""> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/apigateway/user_input/" title="User Input" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1543457802"></script>
+    <script src="/js/perfect-scrollbar.min.js?1543457802"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1543457802"></script>
+    <script src="/js/jquery.sticky.js?1543457802"></script>
+    <script src="/js/featherlight.min.js?1543457802"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1543457802"></script>
+    <script src="/js/highlight.pack.js?1543457802"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1543457802"></script>
+    <script src="/js/learn.js?1543457802"></script>
+    <script src="/js/hugo-learn.js?1543457802"></script>
+
+    <link href="/mermaid/mermaid.css?1543457802" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1543457802"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+  </body>
+</html>
+

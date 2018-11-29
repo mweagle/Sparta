@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/reference/archetypes/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 13 Oct 2018 07:59:27 +0000</lastBuildDate>
+    
+	<atom:link href="/reference/archetypes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

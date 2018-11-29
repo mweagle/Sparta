@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Tue, 08 Mar 2016 21:07:13 +0100</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CloudFront Distribution</title>
+      <link>/reference/decorators/cloudfront_distribution/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/cloudfront_distribution/</guid>
+      <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
+Sample usage:
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;quot;mySiteSubdomain&amp;quot; // The domain managed by Route53. const domainName = &amp;quot;myRoute53ManagedDomain.net&amp;quot; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Alarm</title>
+      <link>/reference/decorators/cloudwatch_alarm/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/cloudwatch_alarm/</guid>
+      <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
+Sample usage:
+lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Dashboard</title>
+      <link>/reference/decorators/dashboard/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/dashboard/</guid>
+      <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
+Sample usage:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
+Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
+    </item>
+    
+    <item>
+      <title>CodeDeploy Service Update</title>
+      <link>/reference/decorators/codedeployserviceupdate/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/codedeployserviceupdate/</guid>
+      <description>TODO: Document me</description>
+    </item>
+    
+    <item>
+      <title>Lambda Versioning Decorator</title>
+      <link>/reference/decorators/lambda_versioning/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/lambda_versioning/</guid>
+      <description>TODO: LambdaVersioningDecorator</description>
+    </item>
+    
+    <item>
+      <title>Publishing Outputs</title>
+      <link>/reference/decorators/publish_outputs/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/publish_outputs/</guid>
+      <description>CloudFormation stack outputs can be used to advertise information about a service.
+Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
+ Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
+lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
+    </item>
+    
+    <item>
+      <title>S3 Artifact Publisher</title>
+      <link>/reference/decorators/s3_artifact_publisher/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/decorators/s3_artifact_publisher/</guid>
+      <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
+This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
+    </item>
+    
+    <item>
+      <title>Overview</title>
+      <link>/sample_service/step1/</link>
+      <pubDate>Tue, 03 Oct 2017 07:15:40 +0000</pubDate>
+      
+      <guid>/sample_service/step1/</guid>
+      <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+    </item>
+    
+    <item>
+      <title>CloudFormation</title>
+      <link>/reference/eventsources/cloudformation/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudformation/</guid>
+      <description>TODO: CloudFormation source documentation
+ </description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Events</title>
+      <link>/reference/eventsources/cloudwatchevents/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudwatchevents/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small:</description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Logs</title>
+      <link>/reference/eventsources/cloudwatchlogs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudwatchlogs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CloudWatch Logs. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.
+Getting Started Our lambda function is relatively short:</description>
+    </item>
+    
+    <item>
+      <title>Cognito</title>
+      <link>/reference/eventsources/cognito/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cognito/</guid>
+      <description>NOT YET IMPLEMENTED
+TODO: Cognito source documentation
+ </description>
+    </item>
+    
+    <item>
+      <title>Custom Commands</title>
+      <link>/reference/application/custom_commands/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_commands/</guid>
+      <description>In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
+To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;, Short: &amp;quot;Sample HelloWorld HTTP server&amp;quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>/reference/application/custom_flags/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_flags/</guid>
+      <description>Some commands (eg: provision) may require additional options. For instance, your application&amp;rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
+The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
+Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
+For example:</description>
+    </item>
+    
+    <item>
+      <title>DynamoDB</title>
+      <link>/reference/eventsources/dynamodb/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/dynamodb/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details on how to create the stream. We&amp;rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.</description>
+    </item>
+    
+    <item>
+      <title>Echo Event</title>
+      <link>/reference/apigateway/echo_event/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/echo_event/</guid>
+      <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaHTML.
+For reference, the helloWorld function is below.
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;quot;Something failed inside here&amp;quot;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;quot;code&amp;quot;:HTTP_STATUS_CODE` somewhere in the response body.</description>
+    </item>
+    
+    <item>
+      <title>Event Sources - Kinesis</title>
+      <link>/reference/eventsources/kinesis/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/kinesis/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to Amazon Kinesis streams. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>Managing Environments</title>
+      <link>/reference/application/environments/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/environments/</guid>
+      <description>It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
+ Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
+To support this, Sparta uses Go&amp;rsquo;s conditional compliation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+This example will work through the SpartaConfig sample.</description>
+    </item>
+    
+    <item>
+      <title>S3</title>
+      <link>/reference/eventsources/s3/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/s3/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events. This overview is based on the SpartaImager sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</description>
+    </item>
+    
+    <item>
+      <title>SES</title>
+      <link>/reference/eventsources/ses/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/ses/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to inbound email. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have already verified our email domain with AWS. This allows our domain&amp;rsquo;s email to be handled by SES.
+We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.</description>
+    </item>
+    
+    <item>
+      <title>SNS</title>
+      <link>/reference/eventsources/sns/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/sns/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have an SNS topic that broadcasts notifications. We&amp;rsquo;ve been asked to write a lambda function that logs the Subject and Message text to CloudWatch logs for later processing.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>SQS</title>
+      <link>/reference/eventsources/sqs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/sqs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events. This overview is based on the SpartaSQS sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>User Input</title>
+      <link>/reference/apigateway/user_input/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/user_input/</guid>
+      <description>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content. The source for this is the s3ItemInfo function defined as part of the SpartaApplication.
+Define the Lambda Function Our function will accept two params:
+ bucketName : The S3 bucket name storing the asset keyName : The S3 item key  Those params will be passed as part of the URL query string.</description>
+    </item>
+    
+    <item>
+      <title>Request Context</title>
+      <link>/reference/apigateway/context/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/context/</guid>
+      <description>This example demonstrates how to use the Context struct provided as part of the APIGatewayLambdaJSONEvent event. The SpartaGeoIP service will return Geo information based on the inbound request&amp;rsquo;s IP address.
+Define the Lambda Function Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the GeoLite2 Database and return any information to the client.
+As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:</description>
+    </item>
+    
+    <item>
+      <title>CORS</title>
+      <link>/reference/apigateway/cors/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/cors/</guid>
+      <description>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
+Sparta makes CORS support a single CORSEnabled field of the API struct:
+// Register the function with the API Gateway apiStage := sparta.NewStage(&amp;quot;v1&amp;quot;) apiGateway := sparta.NewAPIGateway(&amp;quot;SpartaHTML&amp;quot;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</description>
+    </item>
+    
+    <item>
+      <title>Details</title>
+      <link>/sample_service/step2/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/sample_service/step2/</guid>
+      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced use. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+Provisioning Flow The provisioning workflow is defined in provision.go, with a goal of marshalling all AWS operations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta falls back to using Lambda-backed Custom Resources in the template definition.</description>
+    </item>
+    
+    <item>
+      <title>Slack SlashCommand</title>
+      <link>/reference/apigateway/slack/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/slack/</guid>
+      <description>In this example, we&amp;rsquo;ll walk through creating a Slack Slash Command service. The source for this is the SpartaSlackbot repo.
+Our initial command handler won&amp;rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.
+Define the Lambda Function This lambda handler is a bit more complicated than the other examples, primarily because of the Slack Integration requirements. The full source is:</description>
+    </item>
+    
+    <item>
+      <title>Magefiles</title>
+      <link>/reference/magefile/</link>
+      <pubDate>Wed, 28 Nov 2018 16:17:43 +0000</pubDate>
+      
+      <guid>/reference/magefile/</guid>
+      <description>TODO: Document magefile and associated tasks
+ </description>
+    </item>
+    
+    <item>
+      <title>Step Functions</title>
+      <link>/reference/step_functions/</link>
+      <pubDate>Tue, 31 Oct 2017 18:20:05 +0000</pubDate>
+      
+      <guid>/reference/step_functions/</guid>
+      <description>AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+    </item>
+    
+    <item>
+      <title>CI/CD</title>
+      <link>/reference/cicd/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/cicd/</guid>
+      <description>TODO
+ CI/CD with Sparta Document the SpartaCodePipeline example. Also see the Medium Post</description>
+    </item>
+    
+    <item>
+      <title>CloudFormation Resources</title>
+      <link>/reference/custom_lambda_resources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/custom_lambda_resources/</guid>
+      <description>In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
+Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
+1. Resource Type The first step is to define a custom CloudFormation Resource Type
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;quot;Custom::sparta::HelloWorldResource&amp;quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
+    </item>
+    
+    <item>
+      <title>Custom Resources</title>
+      <link>/reference/custom_resources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/custom_resources/</guid>
+      <description>In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&amp;rsquo;s lifecycle.
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers an AWS Lambda Function as an CloudFormation custom resource lifecycle.
+In this section we&amp;rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&amp;rsquo;s outputs can be propagated to an application-level Sparta lambda function.</description>
+    </item>
+    
+    <item>
+      <title>Deployment Strategies</title>
+      <link>/reference/deployment_strategies/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/deployment_strategies/</guid>
+      <description>TODO
+ Deployment Strategies Document the SpartaSafeDeploy example.</description>
+    </item>
+    
+    <item>
+      <title>Discovery Service</title>
+      <link>/reference/discovery/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/discovery/</guid>
+      <description>The ability to provision dynamic infrastructure (see also the SES Event Source Example) as part of a Sparta application creates a need to discover those resources at lambda execution time.
+Sparta exposes this functionality via sparta.Discover. This function returns information about the current stack (eg, name, region, ID) as well as metadata about the immediate dependencies of the calling go lambda function.
+The following sections walk through provisioning a S3 bucket, declaring an explicit dependency on that resource, and then discovering the resource at lambda execution time.</description>
+    </item>
+    
+    <item>
+      <title>Docker</title>
+      <link>/reference/docker/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/docker/</guid>
+      <description>TODO
+ Docker Support Document the SpartaDocker project.</description>
+    </item>
+    
+    <item>
+      <title>Dynamic Infrastructure</title>
+      <link>/reference/dynamic_infrastructure/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/dynamic_infrastructure/</guid>
+      <description>In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
+For instance, consider the case where two developers are working in the same AWS account.
+ Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3.</description>
+    </item>
+    
+    <item>
+      <title>Hybrid Topologies</title>
+      <link>/reference/hybrid_topologies/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/hybrid_topologies/</guid>
+      <description>At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&amp;rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.
+However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks. For example, given the current Lambda limits, the following task types might better be handled by &amp;ldquo;legacy&amp;rdquo; AWS services:</description>
+    </item>
+    
+    <item>
+      <title>Local Testing</title>
+      <link>/reference/local_testing/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/local_testing/</guid>
+      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
+To create proper event types, consider:
+ AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.  </description>
+    </item>
+    
+    <item>
+      <title>Profiling</title>
+      <link>/reference/profiling/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/profiling/</guid>
+      <description>One of Lambda&amp;rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs.</description>
+    </item>
+    
+    <item>
+      <title>S3 Sites with CORS</title>
+      <link>/reference/s3site/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/s3site/</guid>
+      <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
+import ( spartaAPIG &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
+    </item>
+    
+    <item>
+      <title>Workflow Hooks</title>
+      <link>/reference/workflow_hooks/</link>
+      <pubDate>Wed, 28 Nov 2018 16:32:47 +0000</pubDate>
+      
+      <guid>/reference/workflow_hooks/</guid>
+      <description>While Sparta tries to provide workflows common across service lifecycles, it may be the case that an application requires additional functionality or runtime resources.
+To support this, Sparta allows you to customize the build pipeline via WorkflowHooks structure. These hooks are called at specific points in the provision lifecycle and support augmenting the standard pipeline:
+mermaid.initialize({startOnLoad:true}); graph TD classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px; classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5; iam[Verify Static IAM Roles] class iam stdOp; preBuild[WorkflowHook - PreBuild] class preBuild userHook; compile[Cross Compile for AWS AMI] postBuild[WorkflowHook - PostBuild] class postBuild userHook; package[ZIP archive] class package stdOp; userArchive[WorkflowHook - Archive] class userArchive userHook; upload[Upload Archive to S3] packageAssets[Conditionally ZIP S3 Site Assets] uploadAssets[Upload S3 Assets] class upload,packageAssets,uploadAssets stdOp; preMarshall[WorkflowHook - PreMarshall] class preMarshall userHook; generate[Marshal to CloudFormation] class generate stdOp; decorate[Call Lambda Decorators - Dynamic AWS Resources] class decorate stdOp; serviceDecorator[Service Decorator] class serviceDecorator userHook; postMarshall[WorkflowHook - PostMarshall] class postMarshall stdOp; uploadTemplate[Upload Template to S3] updateStack[Create/Update Stack] inplaceUpdates[In-place λ code updates] wait[Wait for Complete/Failure Result] class uploadTemplate,updateStack,inplaceUpdates,wait stdOp; iam--preBuild preBuild--|go|compile compile--postBuild postBuild--package package--packageAssets package--userArchive userArchive--upload packageAssets--uploadAssets uploadAssets--generate upload--generate generate--preMarshall preMarshall--decorate decorate--serviceDecorator serviceDecorator--postMarshall postMarshall--uploadTemplate uploadTemplate--|standard|updateStack uploadTemplate--|inplace|inplaceUpdates updateStack--wait  This diagram is rendered with Mermaid.</description>
+    </item>
+    
+    <item>
+      <title>Limitations</title>
+      <link>/reference/limitations/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/limitations/</guid>
+      <description> AWS Lambda Limitations  Lambda is not yet globally available. Please view the Global Infrastructure page for the latest deployment status. There are Lambda Limits that may affect your development It&amp;rsquo;s not possible to dynamically set HTTP response headers based on the Lambda response body:  https://forums.aws.amazon.com/thread.jspa?threadID=203889 https://forums.aws.amazon.com/thread.jspa?threadID=210826  Similarly, it&amp;rsquo;s not possible to set proper error response bodies.  </description>
+    </item>
+    
+    <item>
+      <title>FAQ</title>
+      <link>/reference/faq/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/faq/</guid>
+      <description>CloudFormation How do I create dynamic resource ARNs? Linking AWS resources together often requires creating dynamic ARN references. This can be achieved by using cloudformation.Join expressions.
+For instance:
+import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) s3SiteBucketAllKeysResourceValue := gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:s3:::&amp;quot;), gocf.Ref(s3BucketResourceName), gocf.String(&amp;quot;/*&amp;quot;))  import ( gocf &amp;quot;github.com/mweagle/go-cloudformation&amp;quot; ) AuthorizerURI: gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;arn:aws:apigateway:&amp;quot;), gocf.Ref(&amp;quot;AWS::Region&amp;quot;).String(), gocf.String(&amp;quot;:lambda:path/2015-03-31/functions/&amp;quot;), gocf.GetAtt(myAWSLambdaInfo.LogicalResourceName(), &amp;quot;Arn&amp;quot;), gocf.String(&amp;quot;/invocations&amp;quot;)),  See the CloudFormation Fn::GetAtt docs for the set of attributes created by each resource. CloudFormation pseudo-paramters can be included in dynamic expresssions via gocf.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/_footer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/_footer/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>/_header/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/_header/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

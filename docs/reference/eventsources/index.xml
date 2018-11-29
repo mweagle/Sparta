@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/reference/eventsources/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    
+	<atom:link href="/reference/eventsources/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CloudFormation</title>
+      <link>/reference/eventsources/cloudformation/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudformation/</guid>
+      <description>TODO: CloudFormation source documentation
+ </description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Events</title>
+      <link>/reference/eventsources/cloudwatchevents/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudwatchevents/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to different types of CloudWatch Events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch event function that has two requirements:
+ Run every 5 minutes to provide a heartbeat notification to our alerting system via a logfile entry Log EC2-related events for later processing  Getting Started The lambda function is relatively small:</description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Logs</title>
+      <link>/reference/eventsources/cloudwatchlogs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cloudwatchlogs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CloudWatch Logs. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re supposed to write a simple &amp;ldquo;HelloWorld&amp;rdquo; CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.
+Getting Started Our lambda function is relatively short:</description>
+    </item>
+    
+    <item>
+      <title>Cognito</title>
+      <link>/reference/eventsources/cognito/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/cognito/</guid>
+      <description>NOT YET IMPLEMENTED
+TODO: Cognito source documentation
+ </description>
+    </item>
+    
+    <item>
+      <title>DynamoDB</title>
+      <link>/reference/eventsources/dynamodb/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/dynamodb/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to DynamoDB stream events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we&amp;rsquo;re given a DynamoDB stream. See below for details on how to create the stream. We&amp;rsquo;ve been asked to write a lambda function that logs when operations are performed to the table so that we can perform offline analysis.</description>
+    </item>
+    
+    <item>
+      <title>Event Sources - Kinesis</title>
+      <link>/reference/eventsources/kinesis/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/kinesis/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to Amazon Kinesis streams. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>S3</title>
+      <link>/reference/eventsources/s3/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/s3/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events. This overview is based on the SpartaImager sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</description>
+    </item>
+    
+    <item>
+      <title>SES</title>
+      <link>/reference/eventsources/ses/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/ses/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to inbound email. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have already verified our email domain with AWS. This allows our domain&amp;rsquo;s email to be handled by SES.
+We&amp;rsquo;ve been asked to write a lambda function that logs inbound messages, including the metadata associated with the message body itself.</description>
+    </item>
+    
+    <item>
+      <title>SNS</title>
+      <link>/reference/eventsources/sns/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/sns/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to SNS events. This overview is based on the SpartaApplication sample code if you&amp;rsquo;d rather jump to the end result.
+Goal Assume that we have an SNS topic that broadcasts notifications. We&amp;rsquo;ve been asked to write a lambda function that logs the Subject and Message text to CloudWatch logs for later processing.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+    <item>
+      <title>SQS</title>
+      <link>/reference/eventsources/sqs/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/eventsources/sqs/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to AWS Simple Queue Service (SQS) events. This overview is based on the SpartaSQS sample code if you&amp;rsquo;d rather jump to the end result.
+Goal The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
+    </item>
+    
+  </channel>
+</rss>
