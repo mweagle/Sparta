@@ -3,23 +3,28 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/reference/archetypes/cloudwatchlogs/</loc>
-    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+    <loc>/reference/archetypes/cloudwatch/</loc>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/archetypes/dynamo/</loc>
-    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+    <loc>/reference/archetypes/dynamodb/</loc>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/archetypes/kinesis/</loc>
-    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/rest/</loc>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/archetypes/s3/</loc>
-    <lastmod>2018-11-28T21:17:23-08:00</lastmod>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
   </url>
   
   <url>
@@ -114,7 +119,7 @@
   
   <url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-29T06:41:14-08:00</lastmod>
   </url>
   
   <url>
@@ -169,7 +174,7 @@
   
   <url>
     <loc>/sample_service/step2/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-29T06:41:14-08:00</lastmod>
   </url>
   
   <url>
@@ -189,7 +194,7 @@
   
   <url>
     <loc>/reference/archetypes/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-29T06:40:59-08:00</lastmod>
   </url>
   
   <url>
@@ -279,7 +284,7 @@
   
   <url>
     <loc>/reference/interceptors/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-29T06:41:14-08:00</lastmod>
   </url>
   
   <url>
@@ -309,7 +314,7 @@
   
   <url>
     <loc>/meta/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-11-29T06:41:07-08:00</lastmod>
   </url>
   
   <url>

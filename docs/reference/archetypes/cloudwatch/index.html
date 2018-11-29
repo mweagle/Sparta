@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title> :: Sparta - AWS Lambda Microservices</title>
+    <title>CloudWatch :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1543505029" rel="stylesheet">
@@ -41,7 +41,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/interceptors/">
+  <body class="" data-url="/reference/archetypes/cloudwatch/">
     <nav id="sidebar" class="">
 
 
@@ -446,7 +446,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -470,7 +470,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/cloudwatch/" title="CloudWatch" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/cloudwatch/" title="CloudWatch" class="dd-item active">
         <a href="/reference/archetypes/cloudwatch/">
         CloudWatch
         
@@ -1156,8 +1156,8 @@ pre {
   
     
     <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
-        parent
-        active
+        
+        
         
         ">
       <a href="/reference/interceptors/">
@@ -1425,8 +1425,8 @@ pre {
     
     <section id="footer">
       
-  Build: 67da1255<p/>
-  Date: 2018-11-29 06:41:14 -0800 PST
+  Build: dcdfe206<p/>
+  Date: 2018-11-29 06:40:59 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1450,7 +1450,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/interceptors/_index.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/cloudwatch.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1481,7 +1481,13 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > 
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > CloudWatch
+          
+         
           
          
           
@@ -1494,7 +1500,16 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#scheduled">Scheduled</a></li>
+<li><a href="#events">Events</a></li>
+<li><a href="#generic">Generic</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -1506,91 +1521,101 @@ pre {
         
         <div id="body-inner">
           
-            <h1></h1>
+            <h1>CloudWatch</h1>
           
 
         
 
 
-<div class="notices info" ><p>TODO: Document <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaEventInterceptors">Interceptors</a></p>
-</div>
 
 
-<link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-<link href="/css/mermaid-overrides.css" type="text/css" rel="stylesheet"/>
-<script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" >
-graph TD
-  classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
-  classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+<p>The CloudWatch Logs Lambda <a href="https://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-function.html#supported-event-source-cloudwatch-logs">event source</a>
+allows you to trigger lambda functions in response to either cron schedules or account events. There
+are three different archetype functions available.</p>
 
-  execute[Execute]
-  class execute stdOp;
+<h2 id="scheduled">Scheduled</h2>
 
-  lookup[Lookup Function]
-  class lookup stdOp;
+<p>Scheduled Lambdas execute either at fixed times or periodically depending on the <a href="https://docs.aws.amazon.com/lambda/latest/dg/tutorial-scheduled-events-schedule-expressions.html">schedule expression</a>.</p>
 
-  call[Call Function]
-  class call stdOp;
+<p>To create a scheduled function use a constructor as in:</p>
 
-  interceptorBegin[Interceptor Begin]
-  class interceptorBegin userHook;
+<pre><code class="language-go">import (
+  awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+)
+// CloudWatch reactor function
+func reactorFunc(ctx context.Context,
+  cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-  populateLogger[Logger into context]
-  class populateLogger stdOp;
+  logger.WithFields(logrus.Fields{
+    &quot;Event&quot;: cwLogs,
+  }).Info(&quot;Cron triggered&quot;)
+  return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil
+}
 
-  interceptorBeforeSetup[Interceptor BeforeSetup]
-  class interceptorBeforeSetup userHook;
+func main() {
+  // ...
+  handler := spartaArchetype.CloudWatchLogsReactorFunc(reactorFunc)
+  subscriptions := map[string]string{
+    &quot;every5Mins&quot;: &quot;rate(5 minutes)&quot;,
+  }
+  lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchScheduledReactor(handler, subscriptions, nil)
+}
+</code></pre>
 
-  populateContext[Populate context]
-  class populateContext stdOp;
+<h2 id="events">Events</h2>
 
-  interceptorAfterSetup[Interceptor AfterSetup]
-  class interceptorAfterSetup userHook;
+<p>Lambda functions triggered in response to CloudWatch Events use <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html">event patterns</a> to
+select which events should trigger your function&rsquo;s execution.</p>
 
-  unmarshalArgs[Introspect Arguments]
-  class unmarshalArgs stdOp;
+<p>To create an event subscriber use a constructor as in:</p>
 
-  interceptorBeforeDispatch[Interceptor BeforeDispatch]
-  class interceptorBeforeDispatch userHook;
+<pre><code class="language-go">// CloudWatch reactor function
+func reactorFunc(ctx context.Context,
+  cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-  callFunction[Call Function]
-  class callFunction stdOp;
+  logger.WithFields(logrus.Fields{
+    &quot;Event&quot;: cwLogs,
+  }).Info(&quot;Cron triggered&quot;)
+  return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil
+}
 
-  interceptorAfterDispatch[Interceptor AfterDispatch]
-  class interceptorAfterDispatch userHook;
+func main() {
+  // ...
+  handler := spartaArchetype.CloudWatchLogsReactorFunc(reactorFunc)
+  subscriptions := map[string]string{
+    &quot;ec2StateChanges&quot;: map[string]interface{}{
+      &quot;source&quot;:      []string{&quot;aws.ec2&quot;},
+      &quot;detail-type&quot;: []string{&quot;EC2 Instance state change&quot;},
+    },
+  }
+  lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchEventedReactor(handler, subscriptions, nil)
+}
+</code></pre>
 
-  extractReturn[Extract Function Return]
-  class extractReturn stdOp;
+<h2 id="generic">Generic</h2>
 
-  interceptorComplete[Interceptor Complete]
-  class interceptorComplete userHook;
+<p>Both <code>NewCloudWatchScheduledReactor</code> and <code>NewCloudWatchEventedReactor</code> are convenience functions
+for the generic <code>NewCloudWatchReactor</code> constructor. For example, it&rsquo;s possible to create a
+scheduled lambda execution using the generic constructor as in:</p>
 
-  done[Done]
-  class done stdOp;
-
-  execute-->lookup
-  lookup-->call
-  call-->interceptorBegin
-  interceptorBegin-->populateLogger
-  populateLogger-->interceptorBeforeSetup
-  interceptorBeforeSetup-->populateContext
-  populateContext-->interceptorAfterSetup
-  interceptorAfterSetup-->unmarshalArgs
-  unmarshalArgs-->interceptorBeforeDispatch
-  interceptorBeforeDispatch-->callFunction
-  callFunction-->interceptorAfterDispatch
-  interceptorAfterDispatch-->extractReturn
-  extractReturn-->interceptorComplete
-  interceptorComplete-->done
-</div>
-<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
-<hr />
+<pre><code class="language-go">func main() {
+  // ...
+  subscriptions := map[string]sparta.CloudWatchEventsRule{
+    &quot;every5Mins&quot;: sparta.CloudWatchEventsRule{
+      ScheduleExpression: &quot;rate(5 minutes)&quot;,
+    },
+  }
+  lambdaFn, lambdaFnErr := spartaArchetype.NewCloudWatchReactor(handler, subscriptions, nil)
+}
+</code></pre>
 
 
 <footer class=" footline" >
 	
 </footer>
+
 
         
         </div> 
@@ -1901,6 +1926,7 @@ graph TD
             
                 
                     
+                    
                 
                 
 
@@ -1913,6 +1939,26 @@ graph TD
             
             
                 
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
                     
                 
                 
@@ -1988,118 +2034,6 @@ graph TD
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2245,6 +2179,102 @@ graph TD
                     
 
                     
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
                         
             
             
@@ -2461,7 +2491,6 @@ graph TD
             
                 
                     
-                    
                 
                 
 
@@ -2477,9 +2506,6 @@ graph TD
             
             
                 
-                    
-                        
-                        
                     
                 
                 
@@ -2648,10 +2674,10 @@ graph TD
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/apigateway/slack/" title="Slack SlashCommand"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/archetypes/" title=""> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/reference/application/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/archetypes/dynamodb/" title="DynamoDB" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
@@ -2689,3 +2715,4 @@ graph TD
 </script>
   </body>
 </html>
+

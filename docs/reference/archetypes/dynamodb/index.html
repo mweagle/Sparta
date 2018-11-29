@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title> :: Sparta - AWS Lambda Microservices</title>
+    <title>DynamoDB :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1543505029" rel="stylesheet">
@@ -41,7 +41,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/interceptors/">
+  <body class="" data-url="/reference/archetypes/dynamodb/">
     <nav id="sidebar" class="">
 
 
@@ -446,7 +446,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -489,7 +489,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/dynamodb/" title="DynamoDB" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/dynamodb/" title="DynamoDB" class="dd-item active">
         <a href="/reference/archetypes/dynamodb/">
         DynamoDB
         
@@ -1156,8 +1156,8 @@ pre {
   
     
     <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
-        parent
-        active
+        
+        
         
         ">
       <a href="/reference/interceptors/">
@@ -1425,8 +1425,8 @@ pre {
     
     <section id="footer">
       
-  Build: 67da1255<p/>
-  Date: 2018-11-29 06:41:14 -0800 PST
+  Build: dcdfe206<p/>
+  Date: 2018-11-29 06:40:59 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1450,7 +1450,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/interceptors/_index.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/dynamodb.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1481,7 +1481,13 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > 
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > DynamoDB
+          
+         
           
          
           
@@ -1506,91 +1512,45 @@ pre {
         
         <div id="body-inner">
           
-            <h1></h1>
+            <h1>DynamoDB</h1>
           
 
         
 
 
-<div class="notices info" ><p>TODO: Document <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaEventInterceptors">Interceptors</a></p>
-</div>
+<p>To create a DynamoDB reactor that subscribes via an <a href="https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html">EventSourceMapping</a>,
+use the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype#NewDynamoDBReactor">NewDynamoDBReactor</a> constructor as in:</p>
 
+<pre><code class="language-go">import (
+  awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+)
+// DynamoDB reactor function
+func reactorFunc(ctx context.Context,
+  dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-<link href="/mermaid/mermaid.css" type="text/css" rel="stylesheet"/>
-<link href="/css/mermaid-overrides.css" type="text/css" rel="stylesheet"/>
-<script defer src="/mermaid/mermaid.js">mermaid.initialize({startOnLoad:true});</script>
-<div class="mermaid" >
-graph TD
-  classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
-  classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+  logger.WithFields(logrus.Fields{
+    &quot;Event&quot;: dynamoEvent,
+  }).Info(&quot;DynamoDB Event&quot;)
+  return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil
+}
 
-  execute[Execute]
-  class execute stdOp;
-
-  lookup[Lookup Function]
-  class lookup stdOp;
-
-  call[Call Function]
-  class call stdOp;
-
-  interceptorBegin[Interceptor Begin]
-  class interceptorBegin userHook;
-
-  populateLogger[Logger into context]
-  class populateLogger stdOp;
-
-  interceptorBeforeSetup[Interceptor BeforeSetup]
-  class interceptorBeforeSetup userHook;
-
-  populateContext[Populate context]
-  class populateContext stdOp;
-
-  interceptorAfterSetup[Interceptor AfterSetup]
-  class interceptorAfterSetup userHook;
-
-  unmarshalArgs[Introspect Arguments]
-  class unmarshalArgs stdOp;
-
-  interceptorBeforeDispatch[Interceptor BeforeDispatch]
-  class interceptorBeforeDispatch userHook;
-
-  callFunction[Call Function]
-  class callFunction stdOp;
-
-  interceptorAfterDispatch[Interceptor AfterDispatch]
-  class interceptorAfterDispatch userHook;
-
-  extractReturn[Extract Function Return]
-  class extractReturn stdOp;
-
-  interceptorComplete[Interceptor Complete]
-  class interceptorComplete userHook;
-
-  done[Done]
-  class done stdOp;
-
-  execute-->lookup
-  lookup-->call
-  call-->interceptorBegin
-  interceptorBegin-->populateLogger
-  populateLogger-->interceptorBeforeSetup
-  interceptorBeforeSetup-->populateContext
-  populateContext-->interceptorAfterSetup
-  interceptorAfterSetup-->unmarshalArgs
-  unmarshalArgs-->interceptorBeforeDispatch
-  interceptorBeforeDispatch-->callFunction
-  callFunction-->interceptorAfterDispatch
-  interceptorAfterDispatch-->extractReturn
-  extractReturn-->interceptorComplete
-  interceptorComplete-->done
-</div>
-<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
-<hr />
+func main() {
+  // ...
+  handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler,
+    &quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&quot;,
+    &quot;TRIM_HORIZON&quot;,
+    10,
+    nil)
+}
+</code></pre>
 
 
 <footer class=" footline" >
 	
 </footer>
+
 
         
         </div> 
@@ -1901,6 +1861,7 @@ graph TD
             
                 
                     
+                    
                 
                 
 
@@ -1913,6 +1874,45 @@ graph TD
             
             
                 
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
                     
                 
                 
@@ -1972,134 +1972,6 @@ graph TD
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2245,6 +2117,102 @@ graph TD
                     
 
                     
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
                         
             
             
@@ -2461,7 +2429,6 @@ graph TD
             
                 
                     
-                    
                 
                 
 
@@ -2477,9 +2444,6 @@ graph TD
             
             
                 
-                    
-                        
-                        
                     
                 
                 
@@ -2648,10 +2612,10 @@ graph TD
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/apigateway/slack/" title="Slack SlashCommand"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/archetypes/cloudwatch/" title="CloudWatch"> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/reference/application/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/archetypes/kinesis/" title="Kinesis" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
@@ -2689,3 +2653,4 @@ graph TD
 </script>
   </body>
 </html>
+
