@@ -7,16 +7,16 @@ weight: 0
 
 <br />
 
-![Sparta](/images/SpartaLogoNoDomain.png "Sparta")
+<img src="/images/SpartaLogoNoDomain.png" width="50%">
 
 # Self-deploying *go* microservices for [AWS Lambda](https://aws.amazon.com/lambda)
 
 
 Sparta is a framework that transforms a standard *go* application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
 
-# Sample Application
+## Sample Application
 
-## 1. Definition
+### 1. Definition
 
 ```go
 // File: application.go
@@ -52,7 +52,7 @@ func main() {
 }
 ```
 
-## 2. Deployment
+### 2. Deployment
 
 ```shell
 $ go run main.go provision --s3Bucket $MY_S3_BUCKET
@@ -92,13 +92,13 @@ $ go run main.go provision --s3Bucket $MY_S3_BUCKET
 [0039]  INFO Total elapsed time                                 Duration (s)=39
 ```
 
-## 3. Invoke
+### 3. Invoke
 
 ![Console GUI](/images/invoke.jpg "Invoke")
 
 <hr />
 
-# Features
+## Features
 
 <table style="width:90%">
   <!-- Row 1 -->
@@ -161,12 +161,13 @@ $ go run main.go provision --s3Bucket $MY_S3_BUCKET
 
 Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) and minimize resource churn during updates.
 
-# Getting Started
+## Getting Started
 
 To get started using Sparta, begin with the [Overview](/overview).
 
-# Administration
-  - Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
+## Administration
+
+- Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
 
 <br />
 <img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
@@ -177,39 +178,40 @@ To get started using Sparta, begin with the [Overview](/overview).
 <br />
 
 
-# Questions?
+## Questions?
 
 Get in touch via:
 
-  - <i class="fas fas-twitter">&nbsp; @mweagle</i>
-  - <i class="fas fas-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
-    - [Signup page](https://invite.slack.golangbridge.org/)
-  - <i class="fas fas-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
-    - [Signup page](https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1)
-
+- <i class="fas fas-twitter">&nbsp; @mweagle</i>
+- <i class="fas fas-slack">&nbsp; Gophers: <a href="https://gophers.slack.com/team/mweagle">@mweagle</a></i>
+  - [Signup page](https://invite.slack.golangbridge.org/)
+- <i class="fas fas-slack">&nbsp; Serverless: <a href="https://serverless-forum.slack.com/team/mweagle">@mweagle</a></i>
+  - [Signup page](https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1)
 
 ## Related Projects
-  - [go-cloudcondensor](https://github.com/mweagle/go-cloudcondenser)
-    - Define AWS CloudFormation templates in `go`
-  - [go-cloudformation](https://github.com/mweagle/go-cloudformation)
-    - `go` types for CloudFormation resources
-  - [ssm-cache](https://github.com/mweagle/ssm-cache)
-    - Lightweight cache for [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
+
+- [go-cloudcondensor](https://github.com/mweagle/go-cloudcondenser)
+  - Define AWS CloudFormation templates in `go`
+- [go-cloudformation](https://github.com/mweagle/go-cloudformation)
+  - `go` types for CloudFormation resources
+- [ssm-cache](https://github.com/mweagle/ssm-cache)
+  - Lightweight cache for [Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html) values
 
 ## Other resources
-  * [Build an S3 website with API Gateway and AWS Lambda for Go using Sparta](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
-  * [AWS blog post announcing Go support](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/)
-  * [Sparta - A Go framework for AWS Lambda](https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg)
-  * Other libraries & frameworks:
-    * [Serverless](https://github.com/serverless/serverless)
-    * [PAWS](https://github.com/braahyan/PAWS)
-    * [Apex](http://apex.run)
-    * [lambda_proc](https://github.com/jasonmoo/lambda_proc)
-    * [go-lambda](https://github.com/xlab/go-lambda)
-    * [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
-  * Supported AWS Lambda [programming models](http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html)
-  * [Serverless Code Blog](https://serverlesscode.com)
-  * [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
-  * [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
-  * [The Twelve Days of Lambda](https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/)
-  * [CloudCraft](http://cloudcraft.co) is a great tool for AWS architecture diagrams
+
+- [Build an S3 website with API Gateway and AWS Lambda for Go using Sparta](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
+- [AWS blog post announcing Go support](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/)
+- [Sparta - A Go framework for AWS Lambda](https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg)
+- Other libraries & frameworks:
+  - [Serverless](https://github.com/serverless/serverless)
+  - [PAWS](https://github.com/braahyan/PAWS)
+  - [Apex](http://apex.run)
+  - [lambda_proc](https://github.com/jasonmoo/lambda_proc)
+  - [go-lambda](https://github.com/xlab/go-lambda)
+  - [go-lambda (GRPC)](https://github.com/pilwon/go-lambda)
+- Supported AWS Lambda [programming models](http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html)
+- [Serverless Code Blog](https://serverlesscode.com)
+- [AWS Serverless Multi-Tier Architectures Whitepaper](https://d0.awsstatic.com/whitepapers/AWS_Serverless_Multi-Tier_Architectures.pdf)
+- [Lambda limits](http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+- [The Twelve Days of Lambda](https://aws.amazon.com/blogs/compute/the-twelve-days-of-lambda/)
+- [CloudCraft](http://cloudcraft.co) is a great tool for AWS architecture diagrams
