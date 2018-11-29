@@ -6,6 +6,9 @@ import (
 
 	_ "github.com/aws/aws-lambda-go/lambda"        // Force dep to resolve
 	_ "github.com/aws/aws-lambda-go/lambdacontext" // Force dep to resolve
+	_ "github.com/hhatto/gocloc"                   // Force dep to resolve
+	_ "github.com/mholt/archiver"                  // Force dep to resolve
+	_ "github.com/pkg/browser"                     // Force dep to resolve
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +21,7 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.7.2"
+	SpartaVersion = "1.7.3"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 )

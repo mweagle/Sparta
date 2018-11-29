@@ -357,6 +357,11 @@ func EnsureStaticChecks() error {
 		"./...")
 }
 
+// LogCodeMetrics ensures that the source code is formatted with goimports
+func LogCodeMetrics() error {
+	return sh.Run("gocloc", ".")
+}
+
 // EnsureAllPreconditions ensures that the source passes *ALL* static `ensure*`
 // precondition steps
 func EnsureAllPreconditions() error {
@@ -368,6 +373,7 @@ func EnsureAllPreconditions() error {
 		EnsureStaticChecks,
 		EnsureSpelling,
 		EnsurePrealloc,
+		LogCodeMetrics,
 	)
 	return nil
 }

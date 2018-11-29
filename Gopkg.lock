@@ -252,6 +252,14 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:bfcbc5dc379a9dcab525a8188cf8eb43ee6023c6c46c62613d622f9921bc1e2c"
+  name = "github.com/hhatto/gocloc"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ae555e3897037247c818dd4f1df36c683819beb9"
+
+[[projects]]
+  branch = "master"
   digest = "1:6727359c2ab1efe714cc87acb36be6cf15a3aae078d8ae736a17fec787dab307"
   name = "github.com/hokaccha/go-prettyjson"
   packages = ["."]
@@ -354,6 +362,14 @@
   pruneopts = "UT"
   revision = "e1ccfb528128bf4ff3bd906823ae2dcb708f79f5"
   version = "v3.1.0"
+
+[[projects]]
+  digest = "1:b8a91524c7e262bcf2fde6e6bdcebfcaa6450ad073af6df6301fd5f6c32a838b"
+  name = "github.com/moovweb/rubex"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cb849acea6148000db8a55743f71476b0897ea41"
+  version = "6.3.107"
 
 [[projects]]
   branch = "master"
@@ -463,6 +479,14 @@
   version = "v1.0.3"
 
 [[projects]]
+  branch = "master"
+  digest = "1:2699f40ea73866f38eccb385738750a71a05cec654f029e78f620caccefd85e4"
+  name = "github.com/toqueteos/trie"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "56fed4a05683322f125e2d78ee269bb102280392"
+
+[[projects]]
   digest = "1:db345c377984d0907323c09a9b17f11d995a59649fd38f909727df358b5f9020"
   name = "github.com/ulikunitz/xz"
   packages = [
@@ -546,6 +570,27 @@
   revision = "1fa3c8d6336562f0a3f95c73593ee2b57ff4da11"
   version = "v9.23.0"
 
+[[projects]]
+  digest = "1:bdce03a1ad3dbb484e748b871f7069cefe3a8e111296e494a58bc7145cfa112e"
+  name = "gopkg.in/src-d/enry.v1"
+  packages = [
+    ".",
+    "data",
+    "internal/tokenizer",
+    "regex",
+  ]
+  pruneopts = "UT"
+  revision = "8953e0e19a9a08c69113f672fbd89f6082b379d5"
+  version = "v1.6.7"
+
+[[projects]]
+  digest = "1:98e121dbd49eb03c58bd8ef3b76322b2fdc3676cf11fa0084bb17ff01b2aa704"
+  name = "gopkg.in/toqueteos/substring.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c5f61671513240ddf5563635cc4a90e9f3ae4710"
+  version = "v1.0.2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
@@ -579,6 +624,7 @@
     "github.com/gdamore/tcell",
     "github.com/google/pprof/driver",
     "github.com/google/pprof/profile",
+    "github.com/hhatto/gocloc",
     "github.com/hokaccha/go-prettyjson",
     "github.com/magefile/mage/mg",
     "github.com/magefile/mage/sh",
