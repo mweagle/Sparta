@@ -373,7 +373,6 @@ func EnsureAllPreconditions() error {
 		EnsureStaticChecks,
 		EnsureSpelling,
 		EnsurePrealloc,
-		LogCodeMetrics,
 	)
 	return nil
 }
