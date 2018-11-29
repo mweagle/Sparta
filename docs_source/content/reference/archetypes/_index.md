@@ -6,7 +6,12 @@ alwaysopen: false
 weight: 105
 ---
 
-{{% notice info %}}
-TODO - document the [Archetype](https://godoc.org/github.com/mweagle/Sparta/archetype)
-constructor functions.
-{{% /notice %}}
+Sparta's [archetype](https://godoc.org/github.com/mweagle/Sparta/archetype) package provides convenience
+functions to streamline creating AWS Lambda functions for specific types of [event sources](/reference/eventsources/). See each section for
+more details:
+
+* [CloudWatch](/reference/archetypes/cloudwatch)
+* [DynamoDB](/reference/archetypes/dynamodb)
+* [Kinesis](/reference/archetypes/kinesis)
+* [S3](/reference/archetypes/s3)
+* [SNS](/reference/archetypes/sns)
