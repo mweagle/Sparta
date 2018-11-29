@@ -504,17 +504,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f6ecdeceb64e02dcbfde0a26562e7fabe97988843e57c2fe314cf3f8e038a641"
-  name = "golang.org/x/image"
-  packages = [
-    "draw",
-    "math/f64",
-  ]
-  pruneopts = "UT"
-  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
-
-[[projects]]
-  branch = "master"
   digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
   name = "golang.org/x/sys"
   packages = [
@@ -607,7 +596,6 @@
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/zcalusic/sysinfo",
-    "golang.org/x/image/draw",
     "gopkg.in/go-playground/validator.v9",
   ]
   solver-name = "gps-cdcl"
