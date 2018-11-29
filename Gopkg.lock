@@ -31,7 +31,7 @@
   version = "v1.7.0"
 
 [[projects]]
-  digest = "1:704c9a91064501bff37b06236a1eda75aea654a4abba743273d7c7124b8deb0e"
+  digest = "1:a696c0bc1debef1efedd1c24eaf3df29bb06065cd73937ad037b90c2a295ae85"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -86,8 +86,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "333869724b050875e82f4e593488ad2464c41331"
-  version = "v1.15.83"
+  revision = "89734ade0df0a4a437cbf4aa9c14e17daf37c5ac"
+  version = "v1.15.86"
 
 [[projects]]
   digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
@@ -129,6 +129,21 @@
   pruneopts = "UT"
   revision = "cbaa98ba5575e67703b32b4b19f73c91f3c4159e"
   version = "v1.7.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:988cfde37f089c50ba1ac8a1032c3f81d2ac0359e1872093b946a30139665eb6"
+  name = "github.com/dsnet/compress"
+  packages = [
+    ".",
+    "bzip2",
+    "bzip2/internal/sais",
+    "internal",
+    "internal/errors",
+    "internal/prefix",
+  ]
+  pruneopts = "UT"
+  revision = "cc9eb1d7ad760af14e8f918698f745e80377af4f"
 
 [[projects]]
   branch = "master"
@@ -205,7 +220,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:440b3840e0821dcf4a6e8bcd41751ec1904bf1064760c8223b26b9deb73cbebc"
+  digest = "1:4a0c6bb4805508a6287675fac876be2ac1182539ca8a32468d8128882e9d5009"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:966a468b3f176bf77918848fccbdf5a1461203d8c32c10e92cdbc1e858b6ed92"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -225,7 +248,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "fe60075897a924c5b39be9120b21330369701bc0"
+  revision = "b4f47329b966aba6be4255b2fc50f9dbd8260416"
 
 [[projects]]
   branch = "master"
@@ -325,6 +348,14 @@
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
+  digest = "1:8da4402cd8d8993b433aa138eaed252e2013668195a2ae6d87f61837ba489399"
+  name = "github.com/mholt/archiver"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e1ccfb528128bf4ff3bd906823ae2dcb708f79f5"
+  version = "v3.1.0"
+
+[[projects]]
   branch = "master"
   digest = "1:16629496e071dfea3cb76bfb2787768ac9ca06df46723be4bc1567972bf11717"
   name = "github.com/mweagle/go-cloudcondenser"
@@ -339,6 +370,25 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "23292627a1b38e1f248808957ac37a9df928dcba"
+
+[[projects]]
+  digest = "1:b93a939355dc613ca1c23bf39f6d4c207da431a31dd8af001cc334ad24cab9d3"
+  name = "github.com/nwaples/rardecode"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cc3e4b2381762c56dbcdf9f93be03349a1dc1c14"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:e39a5ee8fcbec487f8fc68863ef95f2b025e0739b0e4aa55558a2b4cf8f0ecf0"
+  name = "github.com/pierrec/lz4"
+  packages = [
+    ".",
+    "internal/xxh32",
+  ]
+  pruneopts = "UT"
+  revision = "635575b42742856941dbc767b44905bb9ba083f6"
+  version = "v2.0.7"
 
 [[projects]]
   branch = "master"
@@ -413,6 +463,27 @@
   version = "v1.0.3"
 
 [[projects]]
+  digest = "1:db345c377984d0907323c09a9b17f11d995a59649fd38f909727df358b5f9020"
+  name = "github.com/ulikunitz/xz"
+  packages = [
+    ".",
+    "internal/hash",
+    "internal/xlog",
+    "lzma",
+  ]
+  pruneopts = "UT"
+  revision = "590df8077fbcb06ad62d7714da06c00e5dd2316d"
+  version = "v0.5.5"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0dfba983988bcd90e6dd30b9bfdb9685ff530dbf61db3706e55372e975b1d8bc"
+  name = "github.com/xi2/xz"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "48954b6210f8d154cb5f8484d3a3e1f83489309e"
+
+[[projects]]
   branch = "master"
   digest = "1:96a733fb8678d306ba5b25c39b3b013e678f91f55551750179baf666899213b3"
   name = "github.com/zcalusic/sysinfo"
@@ -433,14 +504,25 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:f343f077a5b0bc3a3788b3a04e24dd417e3e25b2acb529c413e212d2c42416ef"
+  digest = "1:f6ecdeceb64e02dcbfde0a26562e7fabe97988843e57c2fe314cf3f8e038a641"
+  name = "golang.org/x/image"
+  packages = [
+    "draw",
+    "math/f64",
+  ]
+  pruneopts = "UT"
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "62eef0e2fa9b2c385f7b2778e763486da6880d37"
+  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -511,6 +593,7 @@
     "github.com/hokaccha/go-prettyjson",
     "github.com/magefile/mage/mg",
     "github.com/magefile/mage/sh",
+    "github.com/mholt/archiver",
     "github.com/mweagle/go-cloudcondenser",
     "github.com/mweagle/go-cloudformation",
     "github.com/pkg/browser",
@@ -524,6 +607,7 @@
     "github.com/sirupsen/logrus",
     "github.com/spf13/cobra",
     "github.com/zcalusic/sysinfo",
+    "golang.org/x/image/draw",
     "gopkg.in/go-playground/validator.v9",
   ]
   solver-name = "gps-cdcl"
