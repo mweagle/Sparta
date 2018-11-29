@@ -1,0 +1,70 @@
+<link href="{{"mermaid/mermaid.css" | relURL}}" type="text/css" rel="stylesheet"/>
+<link href="{{"css/mermaid-overrides.css" | relURL}}" type="text/css" rel="stylesheet"/>
+<script defer src="{{"mermaid/mermaid.js" | relURL}}">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" >
+graph TD
+  classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
+  classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+
+  execute[Execute]
+  class execute stdOp;
+
+  lookup[Lookup Function]
+  class lookup stdOp;
+
+  call[Call Function]
+  class call stdOp;
+
+  interceptorBegin[Interceptor Begin]
+  class interceptorBegin userHook;
+
+  populateLogger[Logger into context]
+  class populateLogger stdOp;
+
+  interceptorBeforeSetup[Interceptor BeforeSetup]
+  class interceptorBeforeSetup userHook;
+
+  populateContext[Populate context]
+  class populateContext stdOp;
+
+  interceptorAfterSetup[Interceptor AfterSetup]
+  class interceptorAfterSetup userHook;
+
+  unmarshalArgs[Introspect Arguments]
+  class unmarshalArgs stdOp;
+
+  interceptorBeforeDispatch[Interceptor BeforeDispatch]
+  class interceptorBeforeDispatch userHook;
+
+  callFunction[Call Function]
+  class callFunction stdOp;
+
+  interceptorAfterDispatch[Interceptor AfterDispatch]
+  class interceptorAfterDispatch userHook;
+
+  extractReturn[Extract Function Return]
+  class extractReturn stdOp;
+
+  interceptorComplete[Interceptor Complete]
+  class interceptorComplete userHook;
+
+  done[Done]
+  class done stdOp;
+
+  execute-->lookup
+  lookup-->call
+  call-->interceptorBegin
+  interceptorBegin-->populateLogger
+  populateLogger-->interceptorBeforeSetup
+  interceptorBeforeSetup-->populateContext
+  populateContext-->interceptorAfterSetup
+  interceptorAfterSetup-->unmarshalArgs
+  unmarshalArgs-->interceptorBeforeDispatch
+  interceptorBeforeDispatch-->callFunction
+  callFunction-->interceptorAfterDispatch
+  interceptorAfterDispatch-->extractReturn
+  extractReturn-->interceptorComplete
+  interceptorComplete-->done
+</div>
+<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
+<hr />

@@ -1,5 +1,15 @@
 # Change Notes
 
+## v1.7.3 - The Documentation Edition 📚
+
+- :warning: **BREAKING**
+  - Renamed `archetype.NewCloudWatchLogsReactor` to `archetype.NewCloudWatchReactor`
+- :checkered_flag: **CHANGES**
+  - Moved all documentation into the _master_ branch to make it a bit easier to update docs together with code.
+    - See _/docs_source/content/meta/_index.md_ for how to edit, preview, and submit.
+  - Added `archetype.NewCloudWatchScheduledReactor` and `archetype.NewCloudWatchEventedReactor`
+- :bug:  **FIXED**
+
 ## v1.7.2 - The Cloud Drift Edition v2 🌬☁️
 
 - :warning: **BREAKING**
@@ -69,7 +79,7 @@
       - Optionally including the incoming event, all log statements (_trace_ and higher), and AWS request-id as [Trace Metadata](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html#api-segmentdocuments-metadata) **ONLY** in the case when your lambda function returns an error.
         - Log messages are stored in a [ring buffer](https://golang.org/pkg/container/ring/) and limited to 1024 entries.
     - This data is associated with XRay Traces in the console. Example:
-      - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.7.0/XRaySegment.jpg" />
+      - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.7.0/XRaySegment.jpg" />
     </div>
 
     - See the https://github.com/mweagle/SpartaXRayInterceptor for a complete sample
@@ -159,7 +169,7 @@
       }
     ```
     - The optional `map[string]string` parameter is the custom Name-Value pairs to use as a [CloudWatch Dimension](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension)
-    - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.5.0/CloudWatch_Management_Console.jpg" />
+    - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.5.0/CloudWatch_Management_Console.jpg" />
   - Add `WorkflowHooks.Validators` to support policy-based validation of the materialized template.
     - Each validator receives a complete read-only copy of the template
   - Add [magefile](https://magefile.org/) actions in _github.com/mweagle/Sparta/magefile_ to support cross platform scripting.
@@ -416,7 +426,7 @@
   - Re-implemented the `explore` command.
     - The `explore` command provides a terminal-based UI to interactively submit events to provisioned Lambda functions.
     - The set of JSON files are determined by walking the working directory for all _*.json_ files
-    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.1/explore.jpg" />
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.1.1/explore.jpg" />
   - Eliminate redundant `Statement` entries in [AssumeRolePolicyDocument](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html)
   - Add `sparta.StampedBuildID` global variable to access the _BuildID_ value (either user defined or automatically generated)
   - Added `-z/--timestamps` command line flag to optionally include UTC timestamp prefix on every log line.
@@ -441,7 +451,7 @@
       })
     ```
   - Updated `describe` output format and upgraded to latest versions of static HTML assets.
-    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/1.1.0/describe.jpg" />
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.1.0/describe.jpg" />
     </div>
   - Delegate CloudFormation template aggregation to [go-cloudcondenser](https://github.com/mweagle/go-cloudcondenser)
   - Exposed [ReservedConcurrentExecutions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-reservedconcurrentexecutions) option for Lambda functions.
@@ -775,7 +785,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
     ```
     INFO[0064] Stack output                                  Description="CloudWatch Dashboard URL" Key=CloudWatchDashboardURL Value="https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:name=SpartaXRay-mweagle"
     ```
-    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/0.13.0/dashboard.jpg" />
+    - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/0.13.0/dashboard.jpg" />
     </div>
 
     - For more info, see the [AWS Blog Post](https://aws.amazon.com/blogs/aws/new-api-cloudformation-support-for-amazon-cloudwatch-dashboards/)

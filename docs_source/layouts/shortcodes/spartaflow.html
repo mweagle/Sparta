@@ -1,0 +1,76 @@
+<link href="{{"mermaid/mermaid.css" | relURL}}" type="text/css" rel="stylesheet"/>
+<link href="{{"css/mermaid-overrides.css" | relURL}}" type="text/css" rel="stylesheet"/>
+<script defer src="{{"mermaid/mermaid.js" | relURL}}">mermaid.initialize({startOnLoad:true});</script>
+<div class="mermaid" >
+graph TD
+  classDef stdOp fill:#FFF,stroke:#A00,stroke-width:2px;
+  classDef userHook fill:#B5B2A1,stroke:#A00,stroke-width:2px,stroke-dasharray: 5, 5;
+
+  iam[Verify Static IAM Roles]
+  class iam stdOp;
+
+  preBuild[WorkflowHook - PreBuild]
+  class preBuild userHook;
+
+  compile[Cross Compile for AWS AMI]
+
+  postBuild[WorkflowHook - PostBuild]
+  class postBuild userHook;
+
+  package[ZIP archive]
+  class package stdOp;
+
+  userArchive[WorkflowHook - Archive]
+  class userArchive userHook;
+
+  upload[Upload Archive to S3]
+  packageAssets[Conditionally ZIP S3 Site Assets]
+  uploadAssets[Upload S3 Assets]
+  class upload,packageAssets,uploadAssets stdOp;
+
+  preMarshall[WorkflowHook - PreMarshall]
+  class preMarshall userHook;
+
+  generate[Marshal to CloudFormation]
+  class generate stdOp;
+
+  decorate[Call Lambda Decorators - Dynamic AWS Resources]
+  class decorate stdOp;
+
+  serviceDecorator[Service Decorator]
+  class serviceDecorator userHook;
+
+  postMarshall[WorkflowHook - PostMarshall]
+  class postMarshall stdOp;
+
+  uploadTemplate[Upload Template to S3]
+  updateStack[Create/Update Stack]
+  inplaceUpdates[In-place λ code updates]
+  wait[Wait for Complete/Failure Result]
+
+  class uploadTemplate,updateStack,inplaceUpdates,wait stdOp;
+
+
+  iam-->preBuild
+  preBuild-->|go|compile
+  compile-->postBuild
+  postBuild-->package
+
+  package-->packageAssets
+  package-->userArchive
+  userArchive-->upload
+  packageAssets-->uploadAssets
+  uploadAssets-->generate
+  upload-->generate
+
+  generate-->preMarshall
+  preMarshall-->decorate
+  decorate-->serviceDecorator
+  serviceDecorator-->postMarshall
+  postMarshall-->uploadTemplate
+  uploadTemplate-->|standard|updateStack
+  uploadTemplate-->|inplace|inplaceUpdates
+  updateStack-->wait
+</div>
+<h6>This diagram is rendered with <a href="https://github.com/knsv/mermaid" target="_blank">Mermaid</a>. Please open an <a href="https://github.com/mweagle/Sparta/issues/new" target="_blank">issue</a> if it doesn't render properly.</h6>
+<hr />

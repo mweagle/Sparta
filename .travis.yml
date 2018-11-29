@@ -3,8 +3,10 @@ go:
   # https://twitter.com/dgryski/status/964626204488695808
 - "1.11.1"
 before_install:
-- go get -v github.com/pkg/browser
-- go get -v github.com/magefile/mage
+- go get -u -v github.com/magefile/mage
+- go get -u -v github.com/hhatto/gocloc
+- go get -u -v github.com/mholt/archiver
+- go get -u -v github.com/pkg/browser
 install:
   # Suppress the default installation behavior, which is to
   # `go get` everything. The default installation behavior is suppressed

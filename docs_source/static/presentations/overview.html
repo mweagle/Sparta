@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Sparta - Go for AWS Lambda</title>
+
+		<meta name="description" content="A framework for transforming Go applications to AWS Serverless applications">
+		<meta name="author" content="Matt Weagle">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/css/reveal.css">
+		<link rel="stylesheet" href="/css/reveal-theme.css" id="theme">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="/presentations/reveal.js-3.6.0/lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ?
+			'/presentations/reveal.js-3.6.0/css/print/pdf.css' :
+			'/presentations/reveal.js-3.6.0/css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!-- Mermaid .JS -->
+		<script src="/external/jquery/jquery-2.2.0.min.js"></script>
+		<script src="/mermaid/mermaid.js/mermaid.js"></script>
+		<link rel="stylesheet" href="/css/mermaid-overrides.css">
+		<script>mermaid.initialize({startOnLoad:true});</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+
+				<section data-markdown>
+					<textarea data-template>
+						![Sparta Helmet](/images/SpartaLogoNoDomain.png "Sparta")
+						#### A Go Framework for AWS Lambda
+					</textarea>
+				</section>
+				<!-- Introduction -->
+
+				<section data-markdown>
+					<textarea data-template>
+						### Overview
+						* Concepts
+						* Hello World
+						* AWS Event Sources
+						* API-Gateway
+						* Static Web Sites
+						* Performance
+						* Visualization/testing/developer experience
+						* Observability/monitoring
+						* Alternative topologies
+						* Conclusion: pros/cons
+					</textarea>
+				</section>
+
+				<section>
+					<h3>Opinions</h3>
+					<p class="fragment fade-in">Serverless is the PaaS endgame</p>
+					<i><p class="fragment fade-in">...but does not suit all workloads</p></i>
+					<p class="fragment fade-up">Repo is the unit of collaboration</p>
+					<p class="fragment fade-up">Repo commit is the unit of promotion</p>
+					<p class="fragment fade-up">AWS Lambda is a viable execution platform</p>
+					<p class="fragment fade-up">Responsibilities rather than Roles</p>
+					<p class="fragment fade-up">Go is fantastic</p>
+
+					<aside class="notes">
+						PaaS: Abstraction over infrastructure, service as first glass
+						Workloads: long running, resource intensive, stable load
+						Responsibilities over roles: Serverless leads to microservices http://philcalcado.com/2017/06/11/calcados_microservices_prerequisites.html and the hierarchy of needs is independent of compute layer: https://thenewstack.io/introducing-microservices-hierarchy-needs/
+
+						Go: 'nough said. [Ben Kehoe on what's missing](https://www.youtube.com/watch?v=AqhDFbL6Nb4)
+					</aside>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+							<img src="./overview/GOPHER_INCLUSION.png" alt="Drawing" style="width: 50%"/>
+
+							<h5>Image courtesy of <a href="https://github.com/ashleymcnamara/gophers">Ashley McNamara<a/></h5>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Concepts
+						* **ServiceName**: Stable, logical service identifier
+						* **AWS Go Function**: `func(...)`
+						* **Privileges**: Lambda IAM Role Privilege
+						* **Permissions**: Configure AWS event publishers (eg: S3, Dynamo, Kinesis)
+						* **Dynamic Resources**: Other AWS infrastructure provisioned by a Sparta Application
+					</textarea>
+				</section>
+
+				<!-- Setup -->
+				<section data-markdown>
+					<textarea data-template>
+						### Machine Setup
+
+						* AWS Credentials (`Administrator` privileges)
+						* Writable S3 bucket for code artifacts
+						* Environment variables:
+							* `AWS_REGION`
+							* `AWS_ACCESS_KEY_ID`
+							* `AWS_SECRET_ACCESS_KEY`
+					</textarea>
+				</section>
+
+				<!-- Hello World -->
+				<section data-markdown>
+					<textarea data-template>
+						## Hello World
+
+						### Sparta Style
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```bash
+						$ go get -u -v github.com/mweagle/SpartaHelloWorld
+						$ cd $GOPATH/src/github.com/mweagle/SpartaHelloWorld
+						$ go get -u -v ./...
+						$ go run main.go help
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### Options
+						```shell
+							$ go run main.go --help
+							Simple Sparta application that demonstrates
+							core functionality
+
+							Usage:
+								main [command]
+
+							Available Commands:
+								delete      Delete service
+								describe    Describe service
+								execute     Execute
+								explore     Interactively explore service
+								help        Help about any command
+								provision   Provision service
+								version     Sparta framework version
+
+							Flags:
+								-f, --format string Log format [text, json] (default "text")
+								-h, --help          help for main
+								--ldflags string    Go linker string definition flags (https://golang.org/cmd/link/)
+								-l, --level string  Log level [panic, fatal, error, warn, info, debug] (default "info")
+								-n, --noop          Dry-run behavior only (do not perform mutations)
+								-t, --tags string   Optional build tags for conditional compilation
+
+							Use "main [command] --help" for more information about a command.
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						## Trust
+						<div style="font-size: 96px">λ</div>
+						<small>
+						`go run main.go provision --level info --s3Bucket $S3BUCKET --noop`
+						</small>
+						<p />
+						<small class="fragment fade-up">
+						`go run main.go provision --level info --s3Bucket $S3BUCKET`
+						</small>
+
+						Note:
+						First run with the --noop flag
+						go run main.go provision --level info --s3Bucket weagle --noop
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Verify
+
+						![Sparta Helmet](./overview/executionSucceeded.jpg "Execution Succeeded")
+
+						* Login to AWS Console
+						* Navigate to Lambda view, test function
+						* View CloudFormation Log output
+					</textarea>
+				</section>
+
+				<!-- Behind the scenes -->
+				<section data-markdown>
+					<textarea data-template>
+						### Workflow
+						<a href="https://gosparta.io/sample_service/step2/" target="_blank">go run flow</a>
+					</textarea>
+				</section>
+
+				<!-- S3 Event Sources -->
+				<section data-markdown>
+					<textarea data-template>
+						### S3 Event Sources
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```bash
+						$ go get -u -v github.com/mweagle/SpartaImager
+						$ cd $GOPATH/src/github.com/mweagle/SpartaImager
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### IAM Role
+						```golang
+						// Provision an IAM::Role as part of this application
+						var iamRole = sparta.IAMRoleDefinition{}
+						// Setup the ARN that includes all child keys
+						resourceArn := fmt.Sprintf("%s/*", s3EventBroadcasterBucket)
+						iamRole.Privileges = append(iamRole.Privileges,
+							sparta.IAMRolePrivilege{
+								Actions: []string{"s3:GetObject", "s3:PutObject"},
+								Resource: resourceArn,
+							})
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### Lambda & Permissions
+						```golang
+						var lambdaFunctions []*sparta.LambdaAWSInfo
+						lambdaFn := sparta.HandleAWSLambda(
+							sparta.LambdaName(transformImage),
+							transformImage,
+							iamRole)
+						// The default timeout is 3 seconds - increase that to 30
+						// so the transform function doesn't timeout
+						lambdaFn.Options = &sparta.LambdaFunctionOptions{
+							Description: "Stamp assets in S3",
+							MemorySize:  128,
+							Timeout:     30,
+						}
+						// S3 notification configuration
+						lambdaFn.Permissions = append(lambdaFn.Permissions,
+							sparta.S3Permission{
+							BasePermission: sparta.BasePermission{
+								SourceArn: s3EventBroadcasterBucket,
+								},
+								Events: []string{"s3:ObjectCreated:*",
+										"s3:ObjectRemoved:*"},
+							})
+						lambdaFunctions = append(lambdaFunctions, lambdaFn)
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						## Walkthrough
+
+						<div style="font-size: 96px">λ</div>
+						Note:
+						* Provision the stack: `go run main.go provision --s3Bucket ${S3_BUCKET}`
+						* Use `aws s3 cp` to upload the ben file to the bucket: `aws s3 cp ./site/ben.jpg s3://$(SPARTA_S3_TEST_BUCKET)/ben.jpg`
+						* Fetch the item JSON info with the /info route: `/info?bucketName=$(SPARTA_S3_TEST_BUCKET)&keyName=xformed_ben.jpg" | jq .`
+						* Download the stamped item using the pre-signed URL
+						Reference: https://github.com/mweagle/SpartaImager/blob/master/README.md
+					</textarea>
+				</section>
+
+				<!-- API Gateway -->
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						### API Gateway
+
+						<img src="./overview/APIGateway.png" alt="Drawing" style="width: 75%"/>
+
+						<small>
+							Source: <a target="_blank" href="https://www.slideshare.net/devopsdaysaustin/2016-serverless-microservices-on-aws-with-api-gateway-and-lambda">Serverless Microservices on AWS</a>
+						</small>
+
+						Note:
+						API Gateway is resource->method->integration->lambda and then back out
+
+					</textarea>
+				</section>
+
+				<!-- Sparta Imager -->
+				<section data-markdown>
+					<textarea data-template>
+						```bash
+						$ go get -u -v github.com/mweagle/SpartaImager
+						$ cd $GOPATH/src/github.com/mweagle/SpartaImager
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
+						```
+					</textarea>
+				</section>
+
+				<!-- Code -->
+				<section data-markdown>
+					<textarea data-template>
+						#### API Gateway
+						```golang
+							apiStage := sparta.NewStage("v1")
+							apiGateway := sparta.NewAPIGateway("SpartaImagerAPI",
+								apiStage)
+							apiGateway.CORSEnabled = true
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### HTTPS Route
+						```golang
+							s3ItemInfoLambdaFn := sparta.HandleAWSLambda(
+								sparta.LambdaName(s3ItemInfo),
+								s3ItemInfo,
+								iamDynamicRole)
+
+							// Register the function with the API Gateway
+							apiGatewayResource, _ := api.NewResource("/info",
+								s3ItemInfoLambdaFn)
+							method, err := apiGatewayResource.NewMethod("GET",
+								http.StatusOK)
+							if err != nil {
+								return nil, err
+							}
+							// Whitelist query string params
+							method.Parameters["method.request.querystring.keyName"] = true
+							method.Parameters["method.request.querystring.bucketName"] = true
+							lambdaFunctions = append(lambdaFunctions, s3ItemInfoLambdaFn)
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						## Walkthrough
+						<div style="font-size: 96px">λ</div>
+
+						Note:
+						Follow the Repo steps [README](https://github.com/mweagle/SpartaImager/blob/master/README.md) has an overview of what's going on.
+							- Build the stack
+							- list the bucket: `s3ls $SPARTA_S3_TEST_BUCKET`
+							- Upload the file with aws cp: `aws s3 cp ./site/ben.jpg s3://$SPARTA_S3_TEST_BUCKET/ben.jpg`
+							-  `s3ls $SPARTA_S3_TEST_BUCKET`
+							- Hit the API Gateway endpoint to get the presigned URL: `/info?bucketName=$SPARTA_S3_TEST_BUCKET&keyName=xformed_ben.jpg" | jq .`
+							- Download the item with curl
+							- Open it up
+					</textarea>
+				</section>
+
+				<!-- Static Site with CORS -->
+				<!-- API Gateway -->
+				<section data-markdown>
+					<textarea data-template>
+						### Websites
+
+						* Provision a complete SPA from a repo
+						* Connect API-Gateway with Lambda
+							* Lightweight discovery
+							* [Ben Kehoe on Serverless Service Discovery](https://read.acloud.guru/service-discovery-as-a-service-the-missing-serverless-lynchpin-541d001466f4)
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						```bash
+						$ go get -u -v github.com/mweagle/SpartaHTML
+						$ cd $GOPATH/src/github.com/mweagle/SpartaHTML
+						$ go get -u -v ./...
+						$ go run main.go provision --level info --s3Bucket $S3_BUCKET
+						```
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						#### Site + API-G
+						```golang
+						// Register the function with the API Gateway
+						apiStage := sparta.NewStage("v1")
+						apiGateway := sparta.NewAPIGateway("SpartaHTML", apiStage)
+						// Enable CORS s.t. the S3 site can access the resources
+						apiGateway.CORSEnabled = true
+
+						// Provision a new S3 bucket with the resources in the supplied subdirectory
+						s3Site, _ := sparta.NewS3Site("./resources")
+
+						// Deploy it
+						sparta.Main("SpartaHTML",
+							fmt.Sprintf("Sparta app that provisions a CORS-enabled API Gateway together with an S3 site"),
+							spartaLambdaFunctions(apiGateway),
+							apiGateway,
+							s3Site)
+						```
+					</textarea>
+				</section>
+
+				<!-- "Discovery" file -->
+				<section data-markdown>
+					<textarea data-template>
+						### Making Connections
+
+```json
+{
+	"APIGatewayURL": {
+			"Description": "API Gateway URL",
+			"Value": "https://p0ns30kpnd.execute-api.us-west-2.amazonaws.com/v1"
+	}
+}
+```
+
+[Manifest.json](https://github.com/mweagle/cloudformationresources/blob/a2efb8eb75fa54dca84d6e63915d4c2cb0210618/zipToS3BucketResource.go#L102)
+					</textarea>
+				</section>
+
+				<!-- Performance -->
+				<section data-markdown>
+					<textarea data-template>
+						### Performance
+
+						* Developer experience
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Developer Experience
+
+						* **standard**: Full CloudFormation `UPDATE_STACK` cycle.
+						* **--inplace**: When safe, concurrent code updates directly via <a href="http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode">Lambda API</a>
+					</textarea>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						## Walkthrough
+						<div style="font-size: 96px">λ</div>
+
+						Note:
+						Use the SpartaHelloWorld app with and without the --inplace argument. Add a new function, try to do an inplace update.
+					</textarea>
+				</section>
+
+				<section data-markdown data-separator-notes="^Note:">
+					<textarea data-template>
+						### Testing
+
+						* Use [go test](https://golang.org/pkg/testing/) to test your lambda functions.
+							* See [sparta_test.go](https://github.com/mweagle/Sparta/blob/master/sparta_test.go)
+							* Mock arbitrary event input
+							* Mock API Gateway [requests](https://godoc.org/github.com/mweagle/Sparta/aws/events#NewAPIGatewayMockRequest)
+
+						Note:
+						Sparta shows a sample of this at the root: `go test -v -run TestExplore* .`
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Observability
+
+						* CloudWatch [Dashboard](https://github.com/mweagle/SpartaXRay), [Metrics](http://gosparta.io/docs/faq/), Logs
+						* [Honeycomb.io](https://github.com/mweagle/SpartaHoneycomb)
+						* [IOPipe](https://www.iopipe.com/)
+						* [AWS Lambda XRay](http://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html#lambda-x-ray-daemon)
+
+						<small><a href="https://speakerdeck.com/smithclay/faas-measurement-fundamentals">Lambda measurement fundamentals</a></small>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### CI/CD
+						* Produce a [CodePipeline package](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-action-reference.html) with an optional `--provision` option
+						* Build a CI/CD pipeline with:
+							* [CodePipeline](https://aws.amazon.com/codepipeline/)
+							* [CodeBuild](https://aws.amazon.com/codebuild/)
+							* CloudFormation
+						* See [Serverless, Serverfull, and Weaving Pipelines](https://medium.com/statuscode/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Security, Scalability
+
+						* IAMRoles
+						* [SpartaVault](https://github.com/mweagle/SpartaVault)
+							- Use KMS [EnvelopeEncryption](http://docs.aws.amazon.com/kms/latest/developerguide/workflow.html) to manage secrets
+						* [Serverless Artillery](https://github.com/Nordstrom/serverless-artillery)
+							- Lambda max [1000](http://docs.aws.amazon.com/lambda/latest/dg/limits.html) functions
+							- Memory & IO positively correlated
+							- Related: [hey](https://github.com/rakyll/hey), [goad.io](https://goad.io/), [vegeta](https://github.com/tsenart/vegeta)
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						### Alternative Topologies
+
+						<small>Use [TemplateDecorators](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) and [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) to customize and extend your service</small>
+
+						* [SpartaDocker](https://github.com/mweagle/SpartaDocker)
+							* `Lambda->SQS->ECS Worker Pool`
+							* [Flexibility is a Virtue](https://serverless.zone/flexibility-is-a-virtue-54059d75b1ef)
+						* [SpartaGrafana](https://github.com/mweagle/SpartaGrafana)
+							* `Lambda->Grafana on EC2`
+							* [Serverless Monitoring](https://medium.com/@mweagle/spartagrafana-serverless-monitoring-f86ca6da79ed)
+
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						<span style="font-size: 512">🏆</span>
+					</textarea>
+				</section>
+
+				<!-- CONCLUSION -->
+				<section data-markdown>
+					<textarea data-template>
+						# Pros & Cons
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Pros
+						* <span class="fragment fade-in">Serverless can be TTM, financial, and operational win</span>
+						* <span class="fragment fade-in">Go enables developer confidence, team productivity</span>
+						* <span class="fragment fade-in">Sparta supports application evolution: from Serverless, to Container, to VM
+							* Leverage other AWS primitives when needed
+							* Codebase is operationally aware by design
+						</span>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Cons
+						* <span class="fragment fade-in">Go isn't first class</span> <span class="fragment fade-in">- although [binaries are](https://aws.amazon.com/blogs/compute/running-executables-in-aws-lambda/)
+						* <span class="fragment fade-in">Serverless can be operationally opaque
+							* AWS operational tool usability is uneven
+							* CloudFormation can be verbose</span>
+						* <span class="fragment fade-in">Lacking phased rollout strategies (blue/green, canary)</span>
+						* <span class="fragment fade-in">API-Gateway configuration complexity & performance</span>
+						* <span class="fragment fade-in">Easy to create complex λ call graphs</span>
+						* <span class="fragment fade-in">Single vendor <a href="https://twitter.com/mweagle/status/913958451474075654">currently</a></span>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## Learn More
+
+						* GitHub: <a href="https://github.com/mweagle/Sparta">Sparta</a>
+							* <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md">Change Notes</a>
+						* <a href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language=">Example Repos<a/>
+					</textarea>
+				</section>
+
+				<!-- THE END -->
+				<section data-markdown>
+					<textarea data-template>
+						## Sparta
+
+						![Sparta Helmet](/images/SpartaHelmet.png "Sparta")
+						<br />
+						<smaller>[@mweagle](https://twitter.com/mweagle) on Twitter, [Serverless Slack](https://serverless-forum.slack.com) and [Gophers Slack](https://gophers.slack.com)</smaller>
+
+						<i>Sign Up for Serverless Slack Forum <a href="https://wt-serverless-seattle.run.webtask.io/serverless-forum-signup?webtask_no_cache=1">here</a></i>
+					</textarea>
+				</section>
+
+				<section data-markdown>
+					<textarea data-template>
+						## PDF
+						Export these slides to [PDF](http://gosparta.io/presentations/training.html?print-pdf)
+						<br />
+					</textarea>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="/presentations/reveal.js-3.6.0/lib/js/head.min.js"></script>
+		<script src="/presentations/reveal.js-3.6.0/js/reveal.js"></script>
+
+		<script>
+
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: '/presentations/reveal.js-3.6.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/zoom-js/zoom.js', async: true },
+					{ src: '/presentations/reveal.js-3.6.0/plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

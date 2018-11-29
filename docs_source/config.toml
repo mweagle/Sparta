@@ -1,0 +1,44 @@
+baseURL = "/"
+languageCode = "en-US"
+defaultContentLanguage = "en"
+title = "Sparta Documentation"
+theme = "hugo-theme-learn"
+metaDataFormat = "yaml"
+defaultContentLanguageInSubdir= true
+enableGitInfo=true
+publishDir = "../docs"
+
+[params]
+  editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
+  description = "Sparta - AWS Lambda Microservices"
+  author = "Matt Weagle"
+  showVisitedLinks = false
+  disableBreadcrumb = false
+  disableNextPrev = false
+  themeVariant = "sparta"
+  ordersectionsby = "weight"
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[Languages]
+[Languages.en]
+title = "Sparta - AWS Lambda Microservices"
+weight = 1
+languageName = "English"
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-fw fa-github'></i> Github repo"
+identifier = "ds"
+url = "https://github.com/mweagle/Sparta"
+weight = 10
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fas fa-fw fa-camera'></i> Showcases"
+url = "https://github.com/mweagle?utf8=%E2%9C%93&tab=repositories&q=Sparta&type=&language="
+weight = 11
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fas fa-fw fa-signal'></i> Release History"
+url = "https://github.com/mweagle/Sparta/blob/master/CHANGES.md"
+weight = 12

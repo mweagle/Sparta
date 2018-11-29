@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Credits on Sparta - AWS Lambda Microservices</title>
+    <link>/credits/</link>
+    <description>Recent content in Credits on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
+    
+	<atom:link href="/credits/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

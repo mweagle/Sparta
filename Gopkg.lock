@@ -18,7 +18,7 @@
   version = "1.0.0"
 
 [[projects]]
-  digest = "1:014e79cf5c422dd0547a87bde33c7f7b3cd29116a96fac8897c7e50f18531dea"
+  digest = "1:a4fae639114a906f205a4cb858c670ca28784426c0e809d664de2babb13cb28c"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
@@ -27,11 +27,11 @@
     "lambdacontext",
   ]
   pruneopts = "UT"
-  revision = "2d482ef09017ae953b1e8d5a6ddac5b696663a3c"
-  version = "v1.6.0"
+  revision = "fb8f88d824489a878aee1e0badde7d8e129f8767"
+  version = "v1.7.0"
 
 [[projects]]
-  digest = "1:ba00e830dd0b9c015192316b6c6074a790a282db1334bff7f8a53f0a0ba4d254"
+  digest = "1:a696c0bc1debef1efedd1c24eaf3df29bb06065cd73937ad037b90c2a295ae85"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -86,8 +86,8 @@
     "service/sts",
   ]
   pruneopts = "UT"
-  revision = "5ebc7a404e942062fd3aa7ff50975498716eb990"
-  version = "v1.15.78"
+  revision = "89734ade0df0a4a437cbf4aa9c14e17daf37c5ac"
+  version = "v1.15.86"
 
 [[projects]]
   digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
@@ -129,6 +129,21 @@
   pruneopts = "UT"
   revision = "cbaa98ba5575e67703b32b4b19f73c91f3c4159e"
   version = "v1.7.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:988cfde37f089c50ba1ac8a1032c3f81d2ac0359e1872093b946a30139665eb6"
+  name = "github.com/dsnet/compress"
+  packages = [
+    ".",
+    "bzip2",
+    "bzip2/internal/sais",
+    "internal",
+    "internal/errors",
+    "internal/prefix",
+  ]
+  pruneopts = "UT"
+  revision = "cc9eb1d7ad760af14e8f918698f745e80377af4f"
 
 [[projects]]
   branch = "master"
@@ -205,7 +220,15 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:440b3840e0821dcf4a6e8bcd41751ec1904bf1064760c8223b26b9deb73cbebc"
+  digest = "1:4a0c6bb4805508a6287675fac876be2ac1182539ca8a32468d8128882e9d5009"
+  name = "github.com/golang/snappy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
+
+[[projects]]
+  branch = "master"
+  digest = "1:966a468b3f176bf77918848fccbdf5a1461203d8c32c10e92cdbc1e858b6ed92"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -225,7 +248,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "dcb5510988eb33b1f6ce96939b7ad97ed95db32f"
+  revision = "b4f47329b966aba6be4255b2fc50f9dbd8260416"
 
 [[projects]]
   branch = "master"
@@ -310,12 +333,11 @@
   version = "v0.0.4"
 
 [[projects]]
-  digest = "1:cdb899c199f907ac9fb50495ec71212c95cb5b0e0a8ee0800da0238036091033"
+  digest = "1:c009d394bc9d4712cad99152e3923b74b9462fc4d7f17ca3f41b0a900b60e865"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ce7b0b5c7b45a81508558cd1dba6bb1e4ddb51bb"
-  version = "v0.0.3"
+  revision = "c88d7e5f2e24de48a200a2655ac8a0910be9a0f7"
 
 [[projects]]
   branch = "master"
@@ -324,6 +346,14 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
+
+[[projects]]
+  digest = "1:8da4402cd8d8993b433aa138eaed252e2013668195a2ae6d87f61837ba489399"
+  name = "github.com/mholt/archiver"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "e1ccfb528128bf4ff3bd906823ae2dcb708f79f5"
+  version = "v3.1.0"
 
 [[projects]]
   branch = "master"
@@ -335,11 +365,30 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:44c449813e1f7869cf9722aad53be4bb92683e979cc69314f3ae1a7c9100f9b7"
+  digest = "1:714d36abfef7074ce3477eb443badc6ca81e61d9db1bd35c483701e68c5898b9"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
   pruneopts = "UT"
-  revision = "94552bc966fbea116b79fb2898cbb15ffdffaafe"
+  revision = "23292627a1b38e1f248808957ac37a9df928dcba"
+
+[[projects]]
+  digest = "1:b93a939355dc613ca1c23bf39f6d4c207da431a31dd8af001cc334ad24cab9d3"
+  name = "github.com/nwaples/rardecode"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "cc3e4b2381762c56dbcdf9f93be03349a1dc1c14"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:e39a5ee8fcbec487f8fc68863ef95f2b025e0739b0e4aa55558a2b4cf8f0ecf0"
+  name = "github.com/pierrec/lz4"
+  packages = [
+    ".",
+    "internal/xxh32",
+  ]
+  pruneopts = "UT"
+  revision = "635575b42742856941dbc767b44905bb9ba083f6"
+  version = "v2.0.7"
 
 [[projects]]
   branch = "master"
@@ -359,11 +408,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:da25b5c66f6ae8790c5da9a8750457a3d82ce873d72e10a5f8cb5525d1a7ea8c"
+  digest = "1:0a2bb80d7bb25880411aa55fa177173eaef46781cab25786d88ca9262704fed4"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "8cf347b745d04cc4dc106c22368b37b8018d33b7"
+  revision = "0a18dea458148770d212d348f656988df75ff341"
 
 [[projects]]
   digest = "1:bd008bf3838a9cb9731405d9c55d97bc61c7847a5cf37b81ca5e7a909879c624"
@@ -414,6 +463,27 @@
   version = "v1.0.3"
 
 [[projects]]
+  digest = "1:db345c377984d0907323c09a9b17f11d995a59649fd38f909727df358b5f9020"
+  name = "github.com/ulikunitz/xz"
+  packages = [
+    ".",
+    "internal/hash",
+    "internal/xlog",
+    "lzma",
+  ]
+  pruneopts = "UT"
+  revision = "590df8077fbcb06ad62d7714da06c00e5dd2316d"
+  version = "v0.5.5"
+
+[[projects]]
+  branch = "master"
+  digest = "1:0dfba983988bcd90e6dd30b9bfdb9685ff530dbf61db3706e55372e975b1d8bc"
+  name = "github.com/xi2/xz"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "48954b6210f8d154cb5f8484d3a3e1f83489309e"
+
+[[projects]]
   branch = "master"
   digest = "1:96a733fb8678d306ba5b25c39b3b013e678f91f55551750179baf666899213b3"
   name = "github.com/zcalusic/sysinfo"
@@ -426,22 +496,22 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
+  digest = "1:38f553aff0273ad6f367cb0a0f8b6eecbaef8dc6cb8b50e57b6a81c1d5b1e332"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
+  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
 
 [[projects]]
   branch = "master"
-  digest = "1:a089387bbfcfa884e5aafeebb85929993195bb8959766b1d20102841d47e0b0e"
+  digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "93218def8b18e66adbdab3eca8ec334700329f1f"
+  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -512,6 +582,7 @@
     "github.com/hokaccha/go-prettyjson",
     "github.com/magefile/mage/mg",
     "github.com/magefile/mage/sh",
+    "github.com/mholt/archiver",
     "github.com/mweagle/go-cloudcondenser",
     "github.com/mweagle/go-cloudformation",
     "github.com/pkg/browser",

@@ -1,0 +1,2975 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta name="description" content="Sparta - AWS Lambda Microservices">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Hybrid Topologies :: Sparta - AWS Lambda Microservices</title>
+
+    
+    <link href="/css/nucleus.css?1543468759" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1543468759" rel="stylesheet">
+    <link href="/css/hybrid.css?1543468759" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1543468759" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1543468759" rel="stylesheet">
+    <link href="/css/auto-complete.css?1543468759" rel="stylesheet">
+    <link href="/css/theme.css?1543468759" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1543468759" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1543468759" rel="stylesheet">
+    
+
+    <script src="/js/jquery-2.x.min.js?1543468759"></script>
+
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
+  </head>
+  <body class="" data-url="/reference/hybrid_topologies/">
+    <nav id="sidebar" class="">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <img src="/images/SpartaLogoNoDomain.png" />
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1543468759"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1543468759"></script>
+<script type="text/javascript">
+    
+        var baseurl = "\/";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1543468759"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/overview/" title="Overview" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/overview/">
+          Overview
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        parent
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          <b>Event Sources</b>&nbsp;<i class='fas fa-fw fa-cubes'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Event Sources - Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Event Sources - Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/archetypes/">
+          <b>Archetype Constructors</b>&nbsp;<i class='fas fa-fw fa-flask'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/archetypes/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/dynamo/" title="Dynamo" class="dd-item ">
+        <a href="/reference/archetypes/dynamo/">
+        Dynamo
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/kinesis/" title="Kinesis" class="dd-item ">
+        <a href="/reference/archetypes/kinesis/">
+        Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/s3/" title="S3" class="dd-item ">
+        <a href="/reference/archetypes/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/archetypes/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/magefile/" title="Magefiles" class="dd-item ">
+        <a href="/reference/magefile/">
+        Magefiles
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item ">
+        <a href="/reference/custom_lambda_resources/">
+        CloudFormation Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item active">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/local_testing/" title="Local Testing" class="dd-item ">
+        <a href="/reference/local_testing/">
+        Local Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/workflow_hooks/" title="Workflow Hooks" class="dd-item ">
+        <a href="/reference/workflow_hooks/">
+        Workflow Hooks
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          <b>Decorators</b>&nbsp;<i class='fas fa-fw fa-paint-brush'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          <b>API Gateway</b>&nbsp;<i class='fas fa-fw fa-globe'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/interceptors/">
+          <b>Interceptors</b>&nbsp;<i class='fas fa-fw fa-puzzle-piece'></i>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          <b>Application Customization</b>&nbsp;<i class='fas fa-fw fa-cog'></i>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md"><i class='fas fa-fw fa-signal'></i> Release History</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="footer">
+      
+  Build: 5f5bee34<p/>
+  Date: 2018-11-28 18:16:08 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/hybrid_topologies.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > Hybrid Topologies
+          
+         
+          
+         
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#mixed-topology">Mixed Topology</a>
+<ul>
+<li><a href="#add-custom-command-line-option">Add Custom Command Line Option</a></li>
+<li><a href="#create-cloudinit-userdata">Create CloudInit Userdata</a>
+<ul>
+<li><a href="#notes">Notes</a></li>
+</ul></li>
+<li><a href="#decorate-toplogy">Decorate Toplogy</a></li>
+</ul></li>
+<li><a href="#result">Result</a>
+<ul>
+<li><a href="#http-access">HTTP Access</a></li>
+<li><a href="#lambda-access">Lambda Access</a></li>
+</ul></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#notes-1">Notes</a></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>Hybrid Topologies</h1>
+          
+
+        
+
+
+
+
+<p>At a broad level, AWS Lambda represents a new level of compute abstraction for services. Developers don&rsquo;t immediately concern themselves with HA topologies, configuration management, capacity planning, or many of the other areas traditionally handled by operations. These are handled by the vendor supplied execution environment.</p>
+
+<p>However, Lambda is a relatively new technology and is not ideally suited to certain types of tasks.  For example, given the current <a href="http://docs.aws.amazon.com/lambda/latest/dg/limits.html">Lambda limits</a>, the following task types might better be handled by &ldquo;legacy&rdquo; AWS services:</p>
+
+<ul>
+<li>Long running tasks</li>
+<li>Tasks with significant disk space requirements</li>
+<li>Large HTTP(S) I/O tasks</li>
+</ul>
+
+<p>It may also make sense to integrate EC2 when:</p>
+
+<ul>
+<li>Applications are being gradually decomposed into Lambda functions</li>
+<li>Latency-sensitive request paths can&rsquo;t afford <a href="https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/">cold container</a> startup times</li>
+<li>Price/performance justifies using EC2</li>
+<li>Using EC2 as a failover for system-wide Lambda outages</li>
+</ul>
+
+<p>For such cases, Sparta supports running the exact same binary on EC2.  This section describes how to create a single Sparta service that publishes a function via AWS Lambda <em>and</em> EC2 as part of the same application codebase. It&rsquo;s based on the <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> project.</p>
+
+<h1 id="mixed-topology">Mixed Topology</h1>
+
+<p>Deploying your application to a mixed topology is accomplished by combining existing Sparta features. There is no &ldquo;make mixed&rdquo; command line option.</p>
+
+<h2 id="add-custom-command-line-option">Add Custom Command Line Option</h2>
+
+<p>The first step is to add a <a href="/reference/application/custom_commands">custom command line option</a>. This command option will be used when your binary is running in &ldquo;mixed topology&rdquo; mode.  The SpartaOmega project starts up a localhost HTTP server, so we&rsquo;ll add a <code>httpServer</code> command line option with:</p>
+
+<pre><code class="language-go">// Custom command to startup a simple HelloWorld HTTP server
+httpServerCommand := &amp;cobra.Command{
+  Use:   &quot;httpServer&quot;,
+  Short: &quot;Sample HelloWorld HTTP server&quot;,
+  Long:  `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort,
+  RunE: func(cmd *cobra.Command, args []string) error {
+    http.HandleFunc(&quot;/&quot;, helloWorldResource)
+    return http.ListenAndServe(fmt.Sprintf(&quot;:%d&quot;, HTTPServerPort), nil)
+  },
+}
+sparta.CommandLineOptions.Root.AddCommand(httpServerCommand)
+</code></pre>
+
+<p>Our command doesn&rsquo;t accept any additional flags. If your command needs additional user flags, consider adding a <a href="https://godoc.org/github.com/mweagle/Sparta#ParseOptions">ParseOptions</a> call to validate they are properly set.</p>
+
+<h2 id="create-cloudinit-userdata">Create CloudInit Userdata</h2>
+
+<p>The next step is to write a <a href="http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html">user-data</a> script that will be used to configure your EC2 instance(s) at startup. Your script is likely to differ from the one below, but at a minimum it will include code to download and unzip the archive containing your Sparta binary.</p>
+
+<pre><code class="language-bash">#!/bin/bash -xe
+#!/bin/bash -xe
+SPARTA_OMEGA_BINARY_PATH=/home/ubuntu/{{.SpartaBinaryName}}
+
+################################################################################
+#
+# Tested on Ubuntu 16.04
+#
+# AMI: ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160516.1 (ami-06b94666)
+if [ ! -f &quot;/home/ubuntu/userdata.sh&quot; ]
+then
+  curl -vs http://169.254.169.254/latest/user-data -o /home/ubuntu/userdata.sh
+  chmod +x /home/ubuntu/userdata.sh
+fi
+
+# Install everything
+service supervisor stop || true
+apt-get update -y
+apt-get upgrade -y
+apt-get install supervisor awscli unzip git -y
+
+################################################################################
+# Our own binary
+aws s3 cp s3://{{ .S3Bucket }}/{{ .S3Key }} /home/ubuntu/application.zip
+unzip -o /home/ubuntu/application.zip -d /home/ubuntu
+chmod +x $SPARTA_OMEGA_BINARY_PATH
+
+################################################################################
+# SUPERVISOR
+# REF: http://supervisord.org/
+# Cleanout secondary directory
+mkdir -pv /etc/supervisor/conf.d
+
+SPARTA_OMEGA_SUPERVISOR_CONF=&quot;[program:spartaomega]
+command=$SPARTA_OMEGA_BINARY_PATH httpServer
+numprocs=1
+directory=/tmp
+priority=999
+autostart=true
+autorestart=unexpected
+startsecs=10
+startretries=3
+exitcodes=0,2
+stopsignal=TERM
+stopwaitsecs=10
+stopasgroup=false
+killasgroup=false
+user=ubuntu
+stdout_logfile=/var/log/spartaomega.log
+stdout_logfile_maxbytes=1MB
+stdout_logfile_backups=10
+stdout_capture_maxbytes=1MB
+stdout_events_enabled=false
+redirect_stderr=false
+stderr_logfile=spartaomega.err.log
+stderr_logfile_maxbytes=1MB
+stderr_logfile_backups=10
+stderr_capture_maxbytes=1MB
+stderr_events_enabled=false
+&quot;
+echo &quot;$SPARTA_OMEGA_SUPERVISOR_CONF&quot; &gt; /etc/supervisor/conf.d/spartaomega.conf
+
+# Patch up the directory
+chown -R ubuntu:ubuntu /home/ubuntu
+
+# Startup Supervisor
+service supervisor restart || service supervisor start
+</code></pre>
+
+<p>The script uses the command line option (<code>command=$SPARTA_OMEGA_BINARY_PATH httpServer</code>) that was defined in the first step.</p>
+
+<p>It also uses the <code>S3Bucket</code> and <code>S3Key</code> properties that Sparta creates during the build and provides to your decorator function (next section).</p>
+
+<h3 id="notes">Notes</h3>
+
+<p>The script is using <a href="https://golang.org/pkg/text/template/">text/template</a> markup to expand properties known at build time.  Because this content will be parsed by <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression">ConvertToTemplateExpression</a> (next section), it&rsquo;s also possible to use <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-join.html">Fn::Join</a> compatible JSON serializations (single line only) to reference properties that are known only during CloudFormation provision time.</p>
+
+<p>For example, if we were also provisioning a PostgreSQL instance and needed to dynamically discover the endpoint address, a shell script variable could be assigned via:</p>
+
+<pre><code class="language-bash">POSTGRES_ADDRESS={ &quot;Fn::GetAtt&quot; : [ &quot;{{ .DBInstanceResourceName }}&quot; , &quot;Endpoint.Address&quot; ] }
+</code></pre>
+
+<p>This expression combines both a build-time variable (<code>DBInstanceResourceName</code>: the CloudFormation resource name) and a provision time one (<code>Endpoint.Address</code>: dynamically assigned by the CloudFormation <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html">RDS Resource</a>).</p>
+
+<h2 id="decorate-toplogy">Decorate Toplogy</h2>
+
+<p>The final step is to use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator">TemplateDecorator</a> to tie everything together. A decorator can annotate the CloudFormation template with any supported <a href="https://github.com/crewjam/go-cloudformation">go-cloudformation</a> resource.  For this example, we&rsquo;ll create a single AutoScalingGroup and EC2 instance that&rsquo;s bootstrapped with our custom <em>userdata.sh</em> script.</p>
+
+<pre><code class="language-go">
+// The CloudFormation template decorator that inserts all the other
+// AWS components we need to support this deployment...
+func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorator {
+
+  return func(serviceName string,
+	lambdaResourceName string,
+	lambdaResource gocf.LambdaFunction,
+	resourceMetadata map[string]interface{},
+	S3Bucket string,
+	S3Key string,
+	buildID string,
+	cfTemplate *gocf.Template,
+	context map[string]interface{},
+	logger *logrus.Logger) error {
+
+    // Create the launch configuration with Metadata to download the ZIP file, unzip it &amp; launch the
+    // golang binary...
+    ec2SecurityGroupResourceName := sparta.CloudFormationResourceName(&quot;SpartaOmegaSecurityGroup&quot;,
+      &quot;SpartaOmegaSecurityGroup&quot;)
+    asgLaunchConfigurationName := sparta.CloudFormationResourceName(&quot;SpartaOmegaASGLaunchConfig&quot;,
+      &quot;SpartaOmegaASGLaunchConfig&quot;)
+    asgResourceName := sparta.CloudFormationResourceName(&quot;SpartaOmegaASG&quot;,
+      &quot;SpartaOmegaASG&quot;)
+    ec2InstanceRoleName := sparta.CloudFormationResourceName(&quot;SpartaOmegaEC2InstanceRole&quot;,
+      &quot;SpartaOmegaEC2InstanceRole&quot;)
+    ec2InstanceProfileName := sparta.CloudFormationResourceName(&quot;SpartaOmegaEC2InstanceProfile&quot;,
+      &quot;SpartaOmegaEC2InstanceProfile&quot;)
+
+    //////////////////////////////////////////////////////////////////////////////
+    // 1 - Create the security group for the SpartaOmega EC2 instance
+    ec2SecurityGroup := &amp;gocf.EC2SecurityGroup{
+      GroupDescription: gocf.String(&quot;SpartaOmega Security Group&quot;),
+      SecurityGroupIngress: &amp;gocf.EC2SecurityGroupRuleList{
+        gocf.EC2SecurityGroupRule{
+          CidrIp:     gocf.String(&quot;0.0.0.0/0&quot;),
+          IpProtocol: gocf.String(&quot;tcp&quot;),
+          FromPort:   gocf.Integer(HTTPServerPort),
+          ToPort:     gocf.Integer(HTTPServerPort),
+        },
+        gocf.EC2SecurityGroupRule{
+          CidrIp:     gocf.String(&quot;0.0.0.0/0&quot;),
+          IpProtocol: gocf.String(&quot;tcp&quot;),
+          FromPort:   gocf.Integer(22),
+          ToPort:     gocf.Integer(22),
+        },
+      },
+    }
+    template.AddResource(ec2SecurityGroupResourceName, ec2SecurityGroup)
+    //////////////////////////////////////////////////////////////////////////////
+    // 2 - Create the ASG and associate the userdata with the EC2 init
+    // EC2 Instance Role...
+    statements := sparta.CommonIAMStatements.Core
+
+    // Add the statement that allows us to fetch the S3 object with this compiled
+    // binary
+    statements = append(statements, spartaIAM.PolicyStatement{
+      Effect:   &quot;Allow&quot;,
+      Action:   []string{&quot;s3:GetObject&quot;},
+      Resource: gocf.String(fmt.Sprintf(&quot;arn:aws:s3:::%s/%s&quot;, S3Bucket, S3Key)),
+    })
+    iamPolicyList := gocf.IAMPoliciesList{}
+    iamPolicyList = append(iamPolicyList,
+      gocf.IAMPolicies{
+        PolicyDocument: sparta.ArbitraryJSONObject{
+          &quot;Version&quot;:   &quot;2012-10-17&quot;,
+          &quot;Statement&quot;: statements,
+        },
+        PolicyName: gocf.String(&quot;EC2Policy&quot;),
+      },
+    )
+    ec2InstanceRole := &amp;gocf.IAMRole{
+      AssumeRolePolicyDocument: sparta.AssumePolicyDocument,
+      Policies:                 &amp;iamPolicyList,
+    }
+    template.AddResource(ec2InstanceRoleName, ec2InstanceRole)
+
+    // Create the instance profile
+    ec2InstanceProfile := &amp;gocf.IAMInstanceProfile{
+      Path:  gocf.String(&quot;/&quot;),
+      Roles: []gocf.Stringable{gocf.Ref(ec2InstanceRoleName).String()},
+    }
+    template.AddResource(ec2InstanceProfileName, ec2InstanceProfile)
+
+    //Now setup the properties map, expand the userdata, and attach it...
+    userDataProps := map[string]interface{}{
+      &quot;S3Bucket&quot;:    S3Bucket,
+      &quot;S3Key&quot;:       S3Key,
+      &quot;ServiceName&quot;: serviceName,
+    }
+
+    userDataTemplateInput, userDataTemplateInputErr := resources.FSString(false, &quot;/resources/source/userdata.sh&quot;)
+    if nil != userDataTemplateInputErr {
+      return userDataTemplateInputErr
+    }
+    templateReader := strings.NewReader(userDataTemplateInput)
+    userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
+                                                                                      userDataProps)
+    if nil != userDataExpressionErr {
+      return userDataExpressionErr
+    }
+
+    logger.WithFields(logrus.Fields{
+      &quot;Parameters&quot;: userDataProps,
+      &quot;Expanded&quot;:   userDataExpression,
+    }).Debug(&quot;Expanded userdata&quot;)
+
+    asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+      ImageId:            gocf.GetAtt(customResourceAMILookupName, &quot;HVM&quot;),
+      InstanceType:       gocf.String(&quot;t2.micro&quot;),
+      KeyName:            gocf.String(SSHKeyName),
+      IamInstanceProfile: gocf.Ref(ec2InstanceProfileName).String(),
+      UserData:           gocf.Base64(userDataExpression),
+      SecurityGroups:     gocf.StringList(gocf.GetAtt(ec2SecurityGroupResourceName, &quot;GroupId&quot;)),
+    }
+    launchConfigResource := template.AddResource(asgLaunchConfigurationName,
+      asgLaunchConfigurationResource)
+    launchConfigResource.DependsOn = append(launchConfigResource.DependsOn,
+      customResourceAMILookupName)
+
+    // Create the ASG
+    asgResource := &amp;gocf.AutoScalingAutoScalingGroup{
+      // Empty Region is equivalent to all region AZs
+      // Ref: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getavailabilityzones.html
+      AvailabilityZones:       gocf.GetAZs(gocf.String(&quot;&quot;)),
+      LaunchConfigurationName: gocf.Ref(asgLaunchConfigurationName).String(),
+      MaxSize:                 gocf.String(&quot;1&quot;),
+      MinSize:                 gocf.String(&quot;1&quot;),
+    }
+    template.AddResource(asgResourceName, asgResource)
+    return nil
+  }
+}
+</code></pre>
+
+<p>There are a few things to point out in this function:</p>
+
+<ul>
+<li><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:
+<code>go
+gocf.EC2SecurityGroupRule{
+      CidrIp:     gocf.String(&quot;0.0.0.0/0&quot;),
+      IpProtocol: gocf.String(&quot;tcp&quot;),
+      FromPort:   gocf.Integer(HTTPServerPort),
+      ToPort:     gocf.Integer(HTTPServerPort),
+    }
+</code></li>
+<li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:
+<code>go
+  statements = append(statements, spartaIAM.PolicyStatement{
+  Effect:   &quot;Allow&quot;,
+  Action:   []string{&quot;s3:GetObject&quot;},
+  Resource: gocf.String(fmt.Sprintf(&quot;arn:aws:s3:::%s/%s&quot;, S3Bucket, S3Key)),
+})
+</code></li>
+<li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:
+<code>go
+// Now setup the properties map, expand the userdata, and attach it...
+userDataProps := map[string]interface{}{
+  &quot;S3Bucket&quot;:    S3Bucket,
+  &quot;S3Key&quot;:       S3Key,
+  &quot;ServiceName&quot;: serviceName,
+}
+// ...
+templateReader := strings.NewReader(userDataTemplateInput)
+userDataExpression, userDataExpressionErr := spartaCF.ConvertToTemplateExpression(templateReader,
+                                                                                  userDataProps)
+// ...
+asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+  // ...
+  UserData:           gocf.Base64(userDataExpression),
+  // ...
+}
+</code></li>
+<li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/reference/application/custom_flags">custom flag</a> (not shown above):
+<code>go
+// And add the SSHKeyName option to the provision step
+sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
+&quot;key&quot;,
+&quot;k&quot;,
+&quot;&quot;,
+&quot;SSH Key Name to use for EC2 instances&quot;)
+</code>
+This value is used as an input to the AutoScalingLaunchConfiguration value:
+<code>go
+asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+  // ...
+  KeyName:            gocf.String(SSHKeyName),
+  // ...
+}
+</code></li>
+</ul>
+
+<h1 id="result">Result</h1>
+
+<p>Deploying your Go application using a mixed topology enables your &ldquo;Lambda&rdquo; endpoint to be addressable via AWS Lambda and standard HTTP.</p>
+
+<h2 id="http-access">HTTP Access</h2>
+
+<pre><code class="language-bash">
+$ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
+*   Trying 52.26.146.138...
+* Connected to ec2-52-26-146-138.us-west-2.compute.amazonaws.com (52.26.146.138) port 9999 (#0)
+&gt; GET / HTTP/1.1
+&gt; Host: ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999
+&gt; User-Agent: curl/7.43.0
+&gt; Accept: */*
+&gt;
+&lt; HTTP/1.1 200 OK
+&lt; Date: Fri, 10 Jun 2016 14:58:15 GMT
+&lt; Content-Length: 29
+&lt; Content-Type: text/plain; charset=utf-8
+&lt;
+* Connection #0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
+Hello world from SpartaOmega!
+</code></pre>
+
+<h2 id="lambda-access">Lambda Access</h2>
+
+<p><img src="/images/alternative_topology/lambda.jpg" alt="Lambda" /></p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Mixed topology deployment is a powerful feature that enables your application to choose the right set of resources.  It provides a way for services to non-destructively migrate to AWS Lambda or shift existing Lambda workloads to alternative compute resources.</p>
+
+<h1 id="notes-1">Notes</h1>
+
+<ul>
+<li>The <a href="https://github.com/mweagle/SpartaOmega">SpartaOmega</a> sample application uses <a href="http://supervisord.org/">supervisord</a> for process monitoring.</li>
+<li>The current <em>userdata.sh</em> script isn&rsquo;t sufficient to reconfigure in response to CloudFormation update events.  Production systems should also include <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-hup.html">cfn-hup</a> listeners.</li>
+<li>Production deployments may consider <a href="https://aws.amazon.com/codedeploy/">CodeDeploy</a> to assist in HA binary rollover.</li>
+<li>Forwarding <a href="http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/WhatIsCloudWatchLogs.html">CloudWatch Logs</a> is not handled by this sample.</li>
+<li>Consider using HTTPS &amp; <a href="https://ivopetkov.com/b/let-s-encrypt-on-ec2/">Let&rsquo;s Encrypt</a> on your EC2 instances.</li>
+</ul>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/dynamic_infrastructure/" title="Dynamic Infrastructure"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/local_testing/" title="Local Testing" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1543468759"></script>
+    <script src="/js/perfect-scrollbar.min.js?1543468759"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1543468759"></script>
+    <script src="/js/jquery.sticky.js?1543468759"></script>
+    <script src="/js/featherlight.min.js?1543468759"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1543468759"></script>
+    <script src="/js/highlight.pack.js?1543468759"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1543468759"></script>
+    <script src="/js/learn.js?1543468759"></script>
+    <script src="/js/hugo-learn.js?1543468759"></script>
+
+    <link href="/mermaid/mermaid.css?1543468759" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1543468759"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+  </body>
+</html>
+

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/reference/application/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    
+	<atom:link href="/reference/application/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Custom Commands</title>
+      <link>/reference/application/custom_commands/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_commands/</guid>
+      <description>In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
+To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
+httpServerCommand := &amp;amp;cobra.Command{ Use: &amp;quot;httpServer&amp;quot;, Short: &amp;quot;Sample HelloWorld HTTP server&amp;quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</description>
+    </item>
+    
+    <item>
+      <title>Custom Flags</title>
+      <link>/reference/application/custom_flags/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_flags/</guid>
+      <description>Some commands (eg: provision) may require additional options. For instance, your application&amp;rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
+The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
+Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
+For example:</description>
+    </item>
+    
+    <item>
+      <title>Managing Environments</title>
+      <link>/reference/application/environments/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/environments/</guid>
+      <description>It&amp;rsquo;s common for a single Sparta application to target multiple environments. For example:
+ Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
+To support this, Sparta uses Go&amp;rsquo;s conditional compilation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+This example will work through the SpartaConfig sample.</description>
+    </item>
+    
+  </channel>
+</rss>

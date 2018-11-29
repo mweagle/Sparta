@@ -1,5 +1,5 @@
 
-<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/site/SpartaLogoLarge.png" />
+<div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/SpartaLogoLarge.png" />
 </div>
 
 # Sparta <p align="center">
