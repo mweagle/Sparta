@@ -2,7 +2,6 @@ package archetype
 
 import (
 	"context"
-	"fmt"
 	"reflect"
 	"runtime"
 
@@ -91,21 +90,6 @@ func NewS3ScopedReactor(reactor S3Reactor,
 		sparta.IAMRoleDefinition{})
 	if lambdaFnErr != nil {
 		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
-	}
-	bucketName := ""
-	if s3Bucket.String().Literal != "" {
-		bucketName = s3Bucket.String().Literal
-	} else {
-		bucketName = fmt.Sprintf("%#v", s3Bucket.String().Func)
-	}
-
-	lambdaFn.Options = &sparta.LambdaFunctionOptions{
-		Description: fmt.Sprintf("Handler %T responds to S3 events from bucket: %#v", reactor, bucketName),
-		MemorySize:  256,
-		Timeout:     10,
-		TracingConfig: &gocf.LambdaFunctionTracingConfig{
-			Mode: gocf.String("Active"),
-		},
 	}
 
 	privileges := []sparta.IAMRolePrivilege{

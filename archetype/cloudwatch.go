@@ -35,8 +35,50 @@ func (reactorFunc CloudWatchLogsReactorFunc) ReactorName() string {
 	return runtime.FuncForPC(reflect.ValueOf(reactorFunc).Pointer()).Name()
 }
 
-// NewCloudWatchLogsReactor returns a CloudWatch logs reactor lambda function
-func NewCloudWatchLogsReactor(reactor CloudWatchLogsReactor,
+// NewCloudWatchEventedReactor returns a CloudWatch logs reactor lambda function
+// that executes in response to the given events. The eventPatterns map is a map of names
+// to map[string]interface{} values that represents the events to listen to. See
+// https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html
+// for the proper syntax. Example:
+// 	map[string]interface{}{
+//		"source":      []string{"aws.ec2"},
+//		"detail-type": []string{"EC2 Instance state change"},
+//	}
+func NewCloudWatchEventedReactor(reactor CloudWatchLogsReactor,
+	eventPatterns map[string]map[string]interface{},
+	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
+
+	subscriptions := make(map[string]sparta.CloudWatchEventsRule)
+	for eachName, eachPattern := range eventPatterns {
+		subscriptions[eachName] = sparta.CloudWatchEventsRule{
+			EventPattern: eachPattern,
+		}
+	}
+	return NewCloudWatchReactor(reactor, subscriptions, additionalLambdaPermissions)
+}
+
+// NewCloudWatchScheduledReactor returns a CloudWatch logs reactor lambda function
+// that executes with the given schedule. The cronSchedules map is a map of names
+// to ScheduleExpressions. See
+// https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html#RateExpressions
+// for the proper syntax. Example:
+// 	"rate(5 minutes)"
+//
+func NewCloudWatchScheduledReactor(reactor CloudWatchLogsReactor,
+	cronSchedules map[string]string,
+	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
+
+	subscriptions := make(map[string]sparta.CloudWatchEventsRule)
+	for eachName, eachSchedule := range cronSchedules {
+		subscriptions[eachName] = sparta.CloudWatchEventsRule{
+			ScheduleExpression: eachSchedule,
+		}
+	}
+	return NewCloudWatchReactor(reactor, subscriptions, additionalLambdaPermissions)
+}
+
+// NewCloudWatchReactor returns a CloudWatch logs reactor lambda function
+func NewCloudWatchReactor(reactor CloudWatchLogsReactor,
 	subscriptions map[string]sparta.CloudWatchEventsRule,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 	if len(subscriptions) <= 0 {
