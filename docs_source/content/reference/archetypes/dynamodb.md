@@ -10,6 +10,7 @@ use the [NewDynamoDBReactor](https://godoc.org/github.com/mweagle/Sparta/archety
 ```go
 import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+  spartaArchetype "github.com/mweagle/Sparta/archetype"
 )
 // DynamoDB reactor function
 func reactorFunc(ctx context.Context,
