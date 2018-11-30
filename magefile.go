@@ -419,7 +419,9 @@ func Describe() error {
 
 // Publish the latest source
 func Publish() error {
-	mg.SerialDeps(GenerateBuildInfo)
+	mg.SerialDeps(DocsBuild,
+		DocsCommit,
+		GenerateBuildInfo)
 
 	describeCommands := [][]string{
 		[]string{"git", "push", "origin"},
