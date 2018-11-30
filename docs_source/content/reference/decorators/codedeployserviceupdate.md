@@ -5,4 +5,6 @@ weight: 10
 alwaysopen: false
 ---
 
+{{% notice info %}}
 TODO: Document me
+{{% /notice %}}

@@ -5,9 +5,5 @@ weight: 150
 ---
 
 {{% notice info %}}
-TODO
-{{% /notice %}}
-
-## Deployment Strategies
-
 Document the [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) example.
+{{% /notice %}}

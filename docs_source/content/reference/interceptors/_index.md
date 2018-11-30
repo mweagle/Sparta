@@ -10,5 +10,4 @@ alwaysopen: false
 TODO: Document [Interceptors](https://godoc.org/github.com/mweagle/Sparta#LambdaEventInterceptors)
 {{% /notice %}}
 
-
 {{< interceptorflow >}}

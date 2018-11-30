@@ -51,7 +51,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/codedeployserviceupdate/</guid>
-      <description>TODO: Document me</description>
+      <description>TODO: Document me
+ </description>
     </item>
     
     <item>
@@ -60,7 +61,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/lambda_versioning/</guid>
-      <description>TODO: LambdaVersioningDecorator</description>
+      <description>TODO: LambdaVersioningDecorator
+ </description>
     </item>
     
     <item>

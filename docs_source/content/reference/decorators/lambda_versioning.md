@@ -5,4 +5,6 @@ weight: 10
 alwaysopen: false
 ---
 
+{{% notice info %}}
 TODO: [LambdaVersioningDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#LambdaVersioningDecorator)
+{{% /notice %}}

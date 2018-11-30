@@ -20,7 +20,7 @@
       <description>The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.
 Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
 To create a scheduled function use a constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</description>
     </item>
     
     <item>
@@ -30,7 +30,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/archetypes/dynamodb/</guid>
       <description>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: dynamoEvent, }).Info(&amp;quot;DynamoDB Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: dynamoEvent, }).Info(&amp;quot;DynamoDB Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
     </item>
     
     <item>
@@ -40,7 +40,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/archetypes/kinesis/</guid>
       <description>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: kinesisEvent, }).Info(&amp;quot;Kinesis Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: kinesisEvent, }).Info(&amp;quot;Kinesis Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
     </item>
     
     <item>
@@ -49,8 +49,10 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
       
       <guid>/reference/archetypes/rest/</guid>
-      <description>TODO: Document rest package
- </description>
+      <description>The rest package provides convenience functions to define a serverless REST style service.
+The package uses three concepts:
+ Routes: URL paths that resolve to a single go struct Resources: go structs that optionally define HTTP method (GET, POST, etc.). ResourceDefinition: an interface that go structs must implement in order to support resource-based registration.  Routes Routes are similar many HTTP-routing libraries. They support path parameters.
+Resources Resources are the targets of Routes.</description>
     </item>
     
     <item>
@@ -70,8 +72,8 @@ To subscribe to object events created by objects with a given prefix, use the Ne
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
       
       <guid>/reference/archetypes/sns/</guid>
-      <description>TODO: Document SNSReactor
- </description>
+      <description>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: snsEvent, }).Info(&amp;quot;SNS Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &amp;quot;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, nil) }  </description>
     </item>
     
   </channel>

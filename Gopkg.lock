@@ -31,7 +31,7 @@
   version = "v1.7.0"
 
 [[projects]]
-  digest = "1:a696c0bc1debef1efedd1c24eaf3df29bb06065cd73937ad037b90c2a295ae85"
+  digest = "1:f40b2d059e85487862c489d7512668b9a580c6a8339d5ba9e662953b591f1df9"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -84,15 +84,17 @@
     "service/ses",
     "service/sns",
     "service/sts",
+    "service/xray",
   ]
   pruneopts = "UT"
-  revision = "89734ade0df0a4a437cbf4aa9c14e17daf37c5ac"
-  version = "v1.15.86"
+  revision = "ceab7b7ac6f535d1397f124620720b5145f1ad59"
+  version = "v1.15.88"
 
 [[projects]]
-  digest = "1:dff8fcd35d7119307681535224fe8834916426cd1b079c42e3b3a17f792348ed"
+  digest = "1:69b265779f20e34cea5b35844eafeb8d0732b088b20a98992c5ab6629a6c15c8"
   name = "github.com/aws/aws-xray-sdk-go"
   packages = [
+    "daemoncfg",
     "header",
     "internal/plugins",
     "pattern",
@@ -100,11 +102,12 @@
     "strategy/ctxmissing",
     "strategy/exception",
     "strategy/sampling",
+    "utils",
     "xray",
   ]
   pruneopts = "UT"
-  revision = "32670489212454717deeafb8da5dbb1da0299749"
-  version = "v0.9.4"
+  revision = "22b714b85cca49408fa6dcc14b6a27134dacc620"
+  version = "v1.0.0-rc.8"
 
 [[projects]]
   digest = "1:2fd83c8c2b1ff53fd7c4376a63c3a2f31e002e9296df9d7f150b07da524de88d"
