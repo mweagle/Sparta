@@ -92,7 +92,7 @@ and for each MethodHandler, the:
 ## Registration
 
 With the REST resource providing its API-Gateway binding information, the final step
-is to suppy the `ResourceDefinition` implementing instance to
+is to supply the `ResourceDefinition` implementing instance to
 [RegisterResource](https://godoc.org/github.com/mweagle/Sparta/archetype/rest#RegisterResource) and
 return the set of extracted `*LambdaAWSInfo` structs:
 
