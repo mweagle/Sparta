@@ -25,7 +25,7 @@
 	"title": "REST Service",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document rest package\n "
+	"content": " The rest package provides convenience functions to define a serverless REST style service.\nThe package uses three concepts:\n Routes: URL paths that resolve to a single go struct Resources: go structs that optionally define HTTP method (GET, POST, etc.). ResourceDefinition: an interface that go structs must implement in order to support resource-based registration.  Routes Routes are similar many HTTP-routing libraries. They support path parameters.\nResources Resources are the targets of Routes. There is a one to one mapping of URL Routes to go structs. These struct types must define one or more member functions that comply with the valid function signatures for AWS Lambda.\nFor example:\nimport ( spartaAPIGateway \u0026quot;github.com/mweagle/Sparta/aws/apigateway\u0026quot; ) // TodoItemResource is the /todo/{id} resource type TodoItemResource struct { spartaAccessor.S3Accessor } func (svc *TodoItemResource) Get(ctx context.Context, apigRequest TodoRequest) (interface{}, error) { // ... return spartaAPIGateway.NewResponse(http.StatusOK, \u0026quot;All good!\u0026quot;), nil }  As the resource will be exposed over API-Gateway, the return type must be a struct type created by spartaAPIGateway.NewResponse so that the API-Gateway integration mappings can properly transform the response.\nResource Definition The last component is to bind the Routes and Resources together by implementing the ResourceDefinition interface. This interface defines a single function that supplies the binding information.\nFor instance, the TodoItemResource type might define a REST resource like:\n// ResourceDefinition returns the Sparta REST definition for the Todo item func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) { return spartaREST.ResourceDefinition{ URL: \u0026quot;/todo/{id}\u0026quot;, MethodHandlers: spartaREST.MethodHandlerMap{ // GET http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK). Options(\u0026amp;sparta.LambdaFunctionOptions{ MemorySize: 128, Timeout: 10, }). StatusCodes(http.StatusInternalServerError). Privileges(svc.S3Accessor.KeysPrivilege(\u0026quot;s3:GetObject\u0026quot;), svc.S3Accessor.BucketPrivilege(\u0026quot;s3:ListBucket\u0026quot;)), }, }, nil }  The ResourceDefinition function returns a struct that defines the:\n Route (URL) MethodHandlers (GET, POST, etc.)  and for each MethodHandler, the:\n HTTP verb to struct function mapping Optional LambdaFunctionOptions Expected HTTP status codes (StatusCodes)  Limiting the number of allowed status codes reduces API Gateway creation time  Additional IAM Privileges needed for this method  Registration With the REST resource providing its API-Gateway binding information, the final step is to suppy the ResourceDefinition implementing instance to RegisterResource and return the set of extracted *LambdaAWSInfo structs:\ntodoItemResource := \u0026amp;todoResources.TodoItemResource{} registeredFuncs, registeredFuncsErr := spartaREST.RegisterResource(api, todoItemResource)  See the SpartaTodoBackend for a complete example that implements the TodoBackend API in a completely serverless way!\n"
 },
 {
 	"uri": "/reference/archetypes/s3/",
@@ -67,14 +67,14 @@
 	"title": "CodeDeploy Service Update",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document me\n"
+	"content": "TODO: Document me\n "
 },
 {
 	"uri": "/reference/decorators/lambda_versioning/",
 	"title": "Lambda Versioning Decorator",
 	"tags": [],
 	"description": "",
-	"content": "TODO: LambdaVersioningDecorator\n"
+	"content": "TODO: LambdaVersioningDecorator\n "
 },
 {
 	"uri": "/overview/",
@@ -207,7 +207,7 @@
 	"title": "Sample Service",
 	"tags": [],
 	"description": "",
-	"content": " Examples This is a walkthrough of a simple \u0026ldquo;Hello World\u0026rdquo; style Sparta service. The first section talks about the programming model and the second provides an overview of how that code is deployed to AWS.\nWalkthrough of a sample Sparta based service:\n Step 1 - Walkthrough Step 2 - Details  "
+	"content": "This is a walkthrough of a simple \u0026ldquo;Hello World\u0026rdquo; style Sparta service. The first section talks about the programming model and the second provides an overview of what\u0026rsquo;s happening behind the scenes.\nWalkthrough of a sample Sparta based service:\n Step 1 - Walkthrough Step 2 - Details  "
 },
 {
 	"uri": "/reference/apigateway/user_input/",
@@ -284,7 +284,7 @@
 	"title": "Magefiles",
 	"tags": [],
 	"description": "",
-	"content": "TODO: Document magefile and associated tasks\n "
+	"content": " TODO: Document magefile and associated tasks\n Default Sparta magefile This magefile.go can be used, unchanged, for most standard Sparta projects.\n// +build mage package main import ( spartaMage \u0026quot;github.com/mweagle/Sparta/magefile\u0026quot; ) // Provision the service func Provision() error { return spartaMage.Provision() } // Describe the stack by producing an HTML representation of the CloudFormation // template func Describe() error { return spartaMage.Describe() } // Delete the service, iff it exists func Delete() error { return spartaMage.Delete() } // Status report if the stack has been provisioned func Status() error { return spartaMage.Status() } // Version information func Version() error { return spartaMage.Version() }  "
 },
 {
 	"uri": "/reference/step_functions/",
@@ -319,7 +319,7 @@
 	"title": "Deployment Strategies",
 	"tags": [],
 	"description": "",
-	"content": " TODO\n Deployment Strategies Document the SpartaSafeDeploy example.\n"
+	"content": "Document the SpartaSafeDeploy example.\n "
 },
 {
 	"uri": "/reference/discovery/",

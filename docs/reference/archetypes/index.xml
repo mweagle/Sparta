@@ -49,8 +49,10 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
       
       <guid>/reference/archetypes/rest/</guid>
-      <description>TODO: Document rest package
- </description>
+      <description>The rest package provides convenience functions to define a serverless REST style service.
+The package uses three concepts:
+ Routes: URL paths that resolve to a single go struct Resources: go structs that optionally define HTTP method (GET, POST, etc.). ResourceDefinition: an interface that go structs must implement in order to support resource-based registration.  Routes Routes are similar many HTTP-routing libraries. They support path parameters.
+Resources Resources are the targets of Routes.</description>
     </item>
     
     <item>

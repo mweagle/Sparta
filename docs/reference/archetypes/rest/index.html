@@ -12,19 +12,19 @@
     <title>REST Service :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1543544073" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1543544073" rel="stylesheet">
-    <link href="/css/hybrid.css?1543544073" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1543544073" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1543544073" rel="stylesheet">
-    <link href="/css/auto-complete.css?1543544073" rel="stylesheet">
-    <link href="/css/theme.css?1543544073" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1543544073" rel="stylesheet">
+    <link href="/css/nucleus.css?1543549886" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1543549886" rel="stylesheet">
+    <link href="/css/hybrid.css?1543549886" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1543549886" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1543549886" rel="stylesheet">
+    <link href="/css/auto-complete.css?1543549886" rel="stylesheet">
+    <link href="/css/theme.css?1543549886" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1543549886" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1543544073" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1543549886" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1543544073"></script>
+    <script src="/js/jquery-2.x.min.js?1543549886"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1543544073"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1543544073"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1543549886"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1543549886"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1543544073"></script>
+<script type="text/javascript" src="/js/search.js?1543549886"></script>
 
     
   </div>
@@ -105,7 +105,7 @@ pre {
     <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
         
         
-        
+        parent
         ">
       <a href="/sample_service/">
           Sample Service
@@ -1425,8 +1425,8 @@ pre {
     
     <section id="footer">
       
-  Build: dcdfe206<p/>
-  Date: 2018-11-29 06:40:59 -0800 PST
+  Build: 50838858<p/>
+  Date: 2018-11-29 19:42:46 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1500,7 +1500,17 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#routes">Routes</a></li>
+<li><a href="#resources">Resources</a></li>
+<li><a href="#resource-definition">Resource Definition</a></li>
+<li><a href="#registration">Registration</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -1518,9 +1528,113 @@ pre {
         
 
 
-<div class="notices info" ><p>TODO: Document <a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest">rest package</a></p>
-</div>
 
+
+<p>The <a href="github.com/mweagle/Sparta/archetype/rest">rest</a> package provides convenience functions
+to define a serverless <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST style</a> service.</p>
+
+<p>The package uses three concepts:</p>
+
+<ul>
+<li>Routes: URL paths that resolve to a single <code>go</code> struct</li>
+<li>Resources: <code>go</code> structs that optionally define HTTP method (<code>GET</code>, <code>POST</code>, etc.).</li>
+<li><a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest#ResourceDefinition">ResourceDefinition</a>: an interface that <code>go</code> structs must implement in order to support resource-based registration.</li>
+</ul>
+
+<h2 id="routes">Routes</h2>
+
+<p>Routes are similar many HTTP-routing libraries. They support <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/integrating-api-with-aws-services-lambda.html#api-as-lambda-proxy-expose-get-method-with-path-parameters-to-call-lambda-function">path parameters</a>.</p>
+
+<h2 id="resources">Resources</h2>
+
+<p>Resources are the targets of Routes. There is a one to one mapping of URL Routes to <code>go</code> structs.
+These <code>struct</code> types must define one or more member functions that comply with the
+<a href="https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html">valid function signatures</a>
+for AWS Lambda.</p>
+
+<p>For example:</p>
+
+<pre><code class="language-go">import (
+  spartaAPIGateway &quot;github.com/mweagle/Sparta/aws/apigateway&quot;
+)
+// TodoItemResource is the /todo/{id} resource
+type TodoItemResource struct {
+  spartaAccessor.S3Accessor
+}
+
+func (svc *TodoItemResource) Get(ctx context.Context,
+  apigRequest TodoRequest) (interface{}, error) {
+  // ...
+  return spartaAPIGateway.NewResponse(http.StatusOK, &quot;All good!&quot;), nil
+}
+</code></pre>
+
+<p>As the resource will be exposed over API-Gateway, the return type must be a
+struct type created by <code>spartaAPIGateway.NewResponse</code> so that the API-Gateway
+integration mappings can properly transform the response.</p>
+
+<h2 id="resource-definition">Resource Definition</h2>
+
+<p>The last component is to bind the Routes and Resources together by implementing
+the <a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest#ResourceDefinition">ResourceDefinition</a>
+interface. This interface defines a single function that supplies the
+binding information.</p>
+
+<p>For instance, the <code>TodoItemResource</code> type might define a REST resource like:</p>
+
+<pre><code class="language-go">// ResourceDefinition returns the Sparta REST definition for the Todo item
+func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) {
+
+  return spartaREST.ResourceDefinition{
+    URL: &quot;/todo/{id}&quot;,
+    MethodHandlers: spartaREST.MethodHandlerMap{
+      // GET
+      http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
+        Options(&amp;sparta.LambdaFunctionOptions{
+          MemorySize: 128,
+          Timeout:    10,
+        }).
+        StatusCodes(http.StatusInternalServerError).
+        Privileges(svc.S3Accessor.KeysPrivilege(&quot;s3:GetObject&quot;),
+          svc.S3Accessor.BucketPrivilege(&quot;s3:ListBucket&quot;)),
+    },
+  }, nil
+}
+</code></pre>
+
+<p>The <code>ResourceDefinition</code> function returns a struct that defines the:</p>
+
+<ul>
+<li>Route (<code>URL</code>)</li>
+<li>MethodHandlers (<code>GET</code>, <code>POST</code>, etc.)</li>
+</ul>
+
+<p>and for each MethodHandler, the:</p>
+
+<ul>
+<li>HTTP verb to struct function mapping</li>
+<li>Optional <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions">LambdaFunctionOptions</a></li>
+<li>Expected HTTP status codes (<code>StatusCodes</code>)
+
+<ul>
+<li>Limiting the number of allowed status codes reduces API Gateway creation time</li>
+</ul></li>
+<li>Additional IAM <code>Privileges</code> needed for this method</li>
+</ul>
+
+<h2 id="registration">Registration</h2>
+
+<p>With the REST resource providing its API-Gateway binding information, the final step
+is to suppy the <code>ResourceDefinition</code> implementing instance to
+<a href="https://godoc.org/github.com/mweagle/Sparta/archetype/rest#RegisterResource">RegisterResource</a> and
+return the set of extracted <code>*LambdaAWSInfo</code> structs:</p>
+
+<pre><code class="language-go">  todoItemResource := &amp;todoResources.TodoItemResource{}
+  registeredFuncs, registeredFuncsErr := spartaREST.RegisterResource(api, todoItemResource)
+</code></pre>
+
+<p>See the <a href="https://github.com/mweagle/SpartaTodoBackend">SpartaTodoBackend</a> for a complete example that
+implements the <a href="https://todobackend.com">TodoBackend</a> API in a completely serverless way!</p>
 
 
 <footer class=" footline" >
@@ -2601,20 +2715,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1543544073"></script>
-    <script src="/js/perfect-scrollbar.min.js?1543544073"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1543544073"></script>
-    <script src="/js/jquery.sticky.js?1543544073"></script>
-    <script src="/js/featherlight.min.js?1543544073"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1543544073"></script>
-    <script src="/js/highlight.pack.js?1543544073"></script>
+    <script src="/js/clipboard.min.js?1543549886"></script>
+    <script src="/js/perfect-scrollbar.min.js?1543549886"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1543549886"></script>
+    <script src="/js/jquery.sticky.js?1543549886"></script>
+    <script src="/js/featherlight.min.js?1543549886"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1543549886"></script>
+    <script src="/js/highlight.pack.js?1543549886"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1543544073"></script>
-    <script src="/js/learn.js?1543544073"></script>
-    <script src="/js/hugo-learn.js?1543544073"></script>
+    <script src="/js/modernizr.custom.71422.js?1543549886"></script>
+    <script src="/js/learn.js?1543549886"></script>
+    <script src="/js/hugo-learn.js?1543549886"></script>
 
-    <link href="/mermaid/mermaid.css?1543544073" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1543544073"></script>
+    <link href="/mermaid/mermaid.css?1543549886" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1543549886"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

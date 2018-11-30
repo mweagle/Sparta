@@ -49,8 +49,10 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
       
       <guid>/reference/archetypes/rest/</guid>
-      <description>TODO: Document rest package
- </description>
+      <description>The rest package provides convenience functions to define a serverless REST style service.
+The package uses three concepts:
+ Routes: URL paths that resolve to a single go struct Resources: go structs that optionally define HTTP method (GET, POST, etc.). ResourceDefinition: an interface that go structs must implement in order to support resource-based registration.  Routes Routes are similar many HTTP-routing libraries. They support path parameters.
+Resources Resources are the targets of Routes.</description>
     </item>
     
     <item>
@@ -114,7 +116,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/codedeployserviceupdate/</guid>
-      <description>TODO: Document me</description>
+      <description>TODO: Document me
+ </description>
     </item>
     
     <item>
@@ -123,7 +126,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/lambda_versioning/</guid>
-      <description>TODO: LambdaVersioningDecorator</description>
+      <description>TODO: LambdaVersioningDecorator
+ </description>
     </item>
     
     <item>
@@ -373,7 +377,8 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
       
       <guid>/reference/magefile/</guid>
       <description>TODO: Document magefile and associated tasks
- </description>
+ Default Sparta magefile This magefile.go can be used, unchanged, for most standard Sparta projects.
+// +build mage package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.Provision() } // Describe the stack by producing an HTML representation of the CloudFormation // template func Describe() error { return spartaMage.Describe() } // Delete the service, iff it exists func Delete() error { return spartaMage.</description>
     </item>
     
     <item>
@@ -425,8 +430,8 @@ In this section we&amp;rsquo;ll walk through a sample user-defined custom resour
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/deployment_strategies/</guid>
-      <description>TODO
- Deployment Strategies Document the SpartaSafeDeploy example.</description>
+      <description>Document the SpartaSafeDeploy example.
+ </description>
     </item>
     
     <item>

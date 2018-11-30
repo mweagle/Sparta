@@ -18,7 +18,8 @@
       
       <guid>/reference/magefile/</guid>
       <description>TODO: Document magefile and associated tasks
- </description>
+ Default Sparta magefile This magefile.go can be used, unchanged, for most standard Sparta projects.
+// +build mage package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.Provision() } // Describe the stack by producing an HTML representation of the CloudFormation // template func Describe() error { return spartaMage.Describe() } // Delete the service, iff it exists func Delete() error { return spartaMage.</description>
     </item>
     
     <item>
@@ -70,8 +71,8 @@ In this section we&amp;rsquo;ll walk through a sample user-defined custom resour
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/deployment_strategies/</guid>
-      <description>TODO
- Deployment Strategies Document the SpartaSafeDeploy example.</description>
+      <description>Document the SpartaSafeDeploy example.
+ </description>
     </item>
     
     <item>
