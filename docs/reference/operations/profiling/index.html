@@ -1,0 +1,2894 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta name="description" content="Sparta - AWS Lambda Microservices">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
+<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <title>Profiling :: Sparta - AWS Lambda Microservices</title>
+
+    
+    <link href="/css/nucleus.css?1543675854" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1543675854" rel="stylesheet">
+    <link href="/css/hybrid.css?1543675854" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1543675854" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1543675854" rel="stylesheet">
+    <link href="/css/auto-complete.css?1543675854" rel="stylesheet">
+    <link href="/css/theme.css?1543675854" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1543675854" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1543675854" rel="stylesheet">
+    
+
+    <script src="/js/jquery-2.x.min.js?1543675854"></script>
+
+    <style type="text/css">
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
+  </head>
+  <body class="" data-url="/reference/operations/profiling/">
+    <nav id="sidebar" class="">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a href="/"><img src="/images/SpartaLogoNoDomain.png" height="50%" width="50%"/></a>
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="text" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-close"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1543675854"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1543675854"></script>
+<script type="text/javascript">
+    
+        var baseurl = "\/";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1543675854"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/sample_service/" title="Sample Service" class="dd-item 
+        
+        
+        parent
+        ">
+      <a href="/sample_service/">
+          Sample Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step1/" title="Overview" class="dd-item ">
+        <a href="/sample_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/sample_service/step2/" title="Details" class="dd-item ">
+        <a href="/sample_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          <i class='fas fa-fw fa-cubes'></i>&nbsp;<b>Event Sources</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/archetypes/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/archetypes/">
+          <i class='fas fa-fw fa-flask'></i>&nbsp;<b>Archetype Constructors</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/cloudwatch/" title="CloudWatch" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/cloudwatch/">
+        CloudWatch
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/kinesis/" title="Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/kinesis/">
+        Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/rest/" title="REST Service" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/rest/">
+        REST Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/archetypes/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/archetypes/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          <i class='fas fa-fw fa-globe'></i>&nbsp;<b>API Gateway</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo Event" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo Event
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/user_input/" title="User Input" class="dd-item ">
+        <a href="/reference/apigateway/user_input/">
+        User Input
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/apigateway/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          <i class='fas fa-fw fa-paint-brush'></i>&nbsp;<b>Build Time Decorators</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudwatch_alarm/" title="CloudWatch Alarm" class="dd-item ">
+        <a href="/reference/decorators/cloudwatch_alarm/">
+        CloudWatch Alarm
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/decorators/dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/codedeployserviceupdate/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/decorators/codedeployserviceupdate/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/decorators/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/interceptors/">
+          <i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Runtime Interceptors</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/xray_interceptor/" title="XRayInterceptor" class="dd-item ">
+        <a href="/reference/interceptors/xray_interceptor/">
+        XRayInterceptor
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          <i class='fas fa-fw fa-cog'></i>&nbsp;<b>Application Customization</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item ">
+        <a href="/reference/application/custom_lambda_resources/">
+        CloudFormation Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/application/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step_functions/" title="Step Functions" class="dd-item ">
+        <a href="/reference/step_functions/">
+        Step Functions
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/operations/" title="" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/operations/">
+          <i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Operations</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/magefile/" title="Magefiles" class="dd-item ">
+        <a href="/reference/operations/magefile/">
+        Magefiles
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/operations/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/operations/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/metrics_publisher/" title="Metrics Publisher" class="dd-item ">
+        <a href="/reference/operations/metrics_publisher/">
+        Metrics Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/profiling/" title="Profiling" class="dd-item active">
+        <a href="/reference/operations/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/testing/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/testing/">
+          <i class='fas fa-fw fa-check-double'></i>&nbsp;<b>Testing</b>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/related_projects/" title="Related Projects" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/related_projects/">
+          Related Projects
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md"><i class='fas fa-fw fa-signal'></i> Release History</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="footer">
+      
+  Build: f1c79598<p/>
+  Date: 2018-12-01 06:45:02 -0800 PST
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/operations/profiling.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/operations/'></a> > Profiling
+          
+         
+          
+         
+          
+         
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#enabling-profiling">Enabling Profiling</a>
+<ul>
+<li><a href="#profiling-implementation">Profiling Implementation</a></li>
+</ul></li>
+<li><a href="#deploying">Deploying</a></li>
+<li><a href="#generating-load">Generating Load</a></li>
+<li><a href="#visualizing-profiles">Visualizing Profiles</a></li>
+</ul></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#notes">Notes</a></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+
+        
+        <div id="body-inner">
+          
+            <h1>Profiling</h1>
+          
+
+        
+
+
+
+
+<p>One of Lambda&rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of <a href="https://jvns.ca/">tools</a> used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda <a href="https://aws.amazon.com/lambda/pricing/">pricing model</a>, where idle time often directly translates into increased costs.</p>
+
+<p>However, Go offers the excellent <a href="https://rakyll.org/pprof-ui/">pprof</a> tool to visualize and cost allocate program execution. Beginning with <a href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md#v0204">Sparta 0.20.4</a>, it&rsquo;s possible to enable per-lambda instance snapshotting which can be locally visualized. This documentation provides an overview of how to enable profiling. The full source is available at the <a href="https://github.com/mweagle/SpartaPProf">SpartaPProf</a> repo.</p>
+
+<p>To learn more about <code>pprof</code> itself, please visit:</p>
+
+<ul>
+<li><a href="https://twitter.com/rakyll" class="fas fas-twitter">@rakyll&rsquo;s</a> <a href="https://rakyll.org/">blog</a></li>
+<li><a href="https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/">Profiling Go programs with pprof</a></li>
+<li><a href="https://medium.com/@tjholowaychuk/profiling-golang-851db2d9ae24">Profiling Golang</a></li>
+<li><a href="http://artem.krylysov.com/blog/2017/03/13/profiling-and-optimizing-go-web-applications/">Profiling and optimizing Go web programs</a></li>
+</ul>
+
+<h2 id="enabling-profiling">Enabling Profiling</h2>
+
+<p>To enable profiling add a reference to <a href="https://godoc.org/github.com/mweagle/Sparta#ScheduleProfileLoop">ScheduleProfileLoop</a>
+in your <code>main()</code> function as in:</p>
+
+<pre><code class="language-go">sparta.ScheduleProfileLoop(nil,
+  5*time.Second,
+  30*time.Second,
+  &quot;goroutine&quot;,
+  &quot;heap&quot;,
+  &quot;threadcreate&quot;,
+  &quot;block&quot;,
+  &quot;mutex&quot;)
+</code></pre>
+
+<p>This function accepts the following arguments:</p>
+
+<ul>
+<li><code>s3Bucket</code>: The S3 bucket to which profile snapshots should be written. If <code>nil</code>, the bucket used to host the original ZIP code archive is used.</li>
+<li><code>snapshotInterval</code> - The interval between each snapshot.</li>
+<li><code>cpuProfileDuration</code> - The duration for the <a href="https://golang.org/pkg/runtime/pprof/#StartCPUProfile">CPUProfile</a> sample.</li>
+<li><code>profileNames...</code> - The profile types to snapshot. In addition to the <a href="https://golang.org/pkg/runtime/pprof/#Profile">standard profiles</a>, Sparta includes a &ldquo;cpu&rdquo; profile iff the <code>cpuProfileDuration</code> is non-zero.</li>
+</ul>
+
+<h3 id="profiling-implementation">Profiling Implementation</h3>
+
+<p>During the <code>provision</code> step, the <code>ScheduleProfileLoop</code> adds an <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">IAMRolePrivilege</a> <em>Allow</em> entry (if possible) to each Lambda function&rsquo;s IAM policy. This policy extension is a minimal privilege and only enables <code>s3:PutObject</code> against the Sparta managed key prefix (see below).</p>
+
+<p>The <code>provision</code> implementation also annotates the Lambda&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-environment">Environment</a> map so that the publishing loop knows where to publish snapshots.</p>
+
+<p>During the <code>execute</code> step when the Sparta binary is executing in AWS Lambda, the <code>ScheduleProfileLoop</code> installs the requested sampling and publishing steps so that profile snapshots, serialized as <a href="https://github.com/google/pprof/blob/master/proto/profile.proto">proto</a> files, are properly saved to S3. Profiles are published to a reserved location in S3 with the form:</p>
+
+<p>s3:://{BUCKET_NAME}/sparta/pprof/{STACK_NAME}/profiles/{PROFILE_TYPE}/{SNAPSHOT_INDEX}-{PROFILE_TYPE}.λ-{INSTANCE_ID}.profile</p>
+
+<p>To manage profile sprawl, each lambda instance uses a rolling <code>SNAPSHOT_INDEX</code> to maintain a fixed size window. The new <code>profile</code> command is responsible for aggregating them into a single local, consolidated profile that can be visualized using the existing tools.</p>
+
+<h2 id="deploying">Deploying</h2>
+
+<p>With profiling enabled, the next step is to deploy the <em>SpartaPProf</em> service using the <code>provision</code> command:</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go provision --s3Bucket MY-S3-BUCKET
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.4.0
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=provision UTC=&#34;2018-10-11T14:59:48Z&#34;
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Using `git` SHA for StampedBuildID            Command=&#34;git rev-parse HEAD&#34; SHA=c3fbe8c289c3184efec842dca56b9bf541f39d21
+INFO[0000] Provisioning service                          BuildID=c3fbe8c289c3184efec842dca56b9bf541f39d21 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=2
+INFO[0000] Checking S3 versioning                        Bucket=MY-S3-BUCKET VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=MY-S3-BUCKET Region=us-west-2
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0002] Creating code ZIP archive for upload          TempName=./.sparta/SpartaPProf_mweagle-code.zip
+INFO[0002] Lambda code archive size                      Size=&#34;17 MB&#34;
+INFO[0002] Uploading local file to S3                    Bucket=MY-S3-BUCKET Key=SpartaPProf-mweagle/SpartaPProf_mweagle-code.zip Path=./.sparta/SpartaPProf_mweagle-code.zip Size=&#34;17 MB&#34;
+INFO[0009] Calling WorkflowHook                          ServiceDecoratorHook= WorkflowHookContext=&#34;map[]&#34;
+INFO[0009] Uploading local file to S3                    Bucket=MY-S3-BUCKET Key=SpartaPProf-mweagle/SpartaPProf_mweagle-cftemplate.json Path=./.sparta/SpartaPProf_mweagle-cftemplate.json Size=&#34;7.1 kB&#34;
+INFO[0010] Issued CreateChangeSet request                StackName=SpartaPProf-mweagle
+INFO[0013] Issued ExecuteChangeSet request               StackName=SpartaPProf-mweagle
+INFO[0026] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0026]     Operation duration                        Duration=11.71s Resource=SpartaPProf-mweagle Type=&#34;AWS::CloudFormation::Stack&#34;
+INFO[0026]     Operation duration                        Duration=1.60s Resource=HelloWorldLambda7d01d27fe422d278bcc652b4a989528718eb88af Type=&#34;AWS::Lambda::Function&#34;
+INFO[0026]     Operation duration                        Duration=1.33s Resource=KinesisLogConsumerLambda275ace0435c45228161570811178ce06fbcb359c Type=&#34;AWS::Lambda::Function&#34;
+INFO[0026] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0026]     HelloWorldFunctionARN                     Description=&#34;Hello World Lambda ARN&#34; Value=&#34;arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf-mweagle_Hello_World&#34;
+INFO[0026]     KinesisLogConsumerFunctionARN             Description=&#34;KinesisLogConsumer Lambda ARN&#34; Value=&#34;arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf-mweagle_KinesisLogConsumer&#34;
+INFO[0026] Stack provisioned                             CreationTime=&#34;2018-10-03 23:34:21.142 +0000 UTC&#34; StackId=&#34;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaPProf-mweagle/da781540-c764-11e8-9bf1-0aceeffcea3c&#34; StackName=SpartaPProf-mweagle
+INFO[0026] ════════════════════════════════════════════════
+INFO[0026] SpartaPProf-mweagle Summary
+INFO[0026] ════════════════════════════════════════════════
+INFO[0026] Verifying IAM roles                           Duration (s)=0
+INFO[0026] Verifying AWS preconditions                   Duration (s)=1
+INFO[0026] Creating code bundle                          Duration (s)=2
+INFO[0026] Uploading code                                Duration (s)=8
+INFO[0026] Ensuring CloudFormation stack                 Duration (s)=17
+INFO[0026] Total elapsed time                            Duration (s)=27</code></pre></div>
+
+<h2 id="generating-load">Generating Load</h2>
+
+<p>While the <strong>SpartaPProf</strong> binary does include functions that are likely to generate profiling data, we still need to issue a sufficient series of events to produce a non-empty profile data set. <strong>SpartaPProf</strong> includes a simple tool (<em>cmd/load.go</em>) that directly calls the provisioned lambda function on a regular interval. It accepts a single command line argument, the <em>ARN</em> of the lambda function listed as a <em>Stack output</em> in the log output:</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">INFO[0058] FunctionARN                                   Description=&#34;Lambda function ARN&#34; Value=&#34;arn:aws:lambda:us-west-2:123412341234:function:SpartaPProf_mweagle_Hello_World&#34;</code></pre></div>
+
+<p>Run the simple load generation script with the ARN value as in:</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ cd cmd
+$ go run load.go arn:aws:lambda:us-west-2:012345678910:function:SpartaPProf-mweagle-Hello_World
+Lambda response (0 of 60): &#34;Hi there 🌍&#34;
+Lambda response (1 of 60): &#34;Hi there 🌍&#34;
+Lambda response (2 of 60): &#34;Hi there 🌍&#34;
+Lambda response (3 of 60): &#34;Hi there 🌍&#34;
+Lambda response (4 of 60): &#34;Hi there 🌍&#34;
+Lambda response (5 of 60): &#34;Hi there 🌍&#34;
+Lambda response (6 of 60): &#34;Hi there 🌍&#34;
+Lambda response (7 of 60): &#34;Hi there 🌍&#34;
+Lambda response (8 of 60): &#34;Hi there 🌍&#34;
+Lambda response (9 of 60): &#34;Hi there 🌍&#34;
+Lambda response (10 of 60): &#34;Hi there 🌍&#34;
+Lambda response (11 of 60): &#34;Hi there 🌍&#34;
+...</code></pre></div>
+
+<p>After all the requests have completed for this sample against a stack provisioned in <code>us-west-2</code>, a set of named profiles was published. Since each container&rsquo;s instance id is randomly assigned, the profile names you see will have slightly different names</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">---------------------------------------------------------------
+S3 bucket: s3://weagle/sparta/pprof/SpartaPProf-mweagle/profiles
+---------------------------------------------------------------
+2017-11-26 11:32:28   41 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/block/0-block.λ-3838737145763622974.profile
+2017-11-26 11:32:27    1.8 KiB sparta/pprof/SpartaPProf-mweagle/profiles/cpu/0-cpu.λ-3838737145763622974.profile
+2017-11-26 11:32:28    1.8 KiB sparta/pprof/SpartaPProf-mweagle/profiles/goroutine/0-goroutine.λ-3838737145763622974.profile
+2017-11-26 11:32:28    2.2 KiB sparta/pprof/SpartaPProf-mweagle/profiles/heap/0-heap.λ-3838737145763622974.profile
+2017-11-26 11:32:28   54 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/mutex/0-mutex.λ-3838737145763622974.profile
+2017-11-26 11:32:30  200 Bytes sparta/pprof/SpartaPProf-mweagle/profiles/threadcreate/0-threadcreate.λ-3838737145763622974.profile</code></pre></div>
+
+<h2 id="visualizing-profiles">Visualizing Profiles</h2>
+
+<p>Sparta delegates to the pprof <a href="https://github.com/google/pprof">webui</a> to visualize profile snapshots. Ensure you have the latest version of this by running <code>go get -u -v go get github.com/google/pprof</code> first.</p>
+
+<p>The final step is to provide the profile snapshots to <code>pprof</code>. Sparta exposes a <code>profile</code> command that accomplishes this, by fetching and consolidating all published profiles for a single type.</p>
+
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-plain" data-lang="plain">$ go run main.go profile --s3Bucket weagle
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.0.2
+INFO[0000] ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : b37b93e
+INFO[0000] ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.9.2
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaPProf-mweagle                  LinkFlags= Option=profile UTC=&#34;2018-01-29T15:23:18Z&#34;
+INFO[0000] ════════════════════════════════════════════════
+? Which stack would you like to profile: SpartaPProf-mweagle
+? What type of profile would you like to view? heap
+? What profile snapshot(s) would you like to view? Download new snapshots from S3
+? Please select a heap profile type: alloc_space
+INFO[0028] Refreshing cached profiles                    CacheRoot=.sparta/profiles/SpartaPProf-mweagle/heap ProfileRootKey=sparta/pprof/SpartaPProf-mweagle/profiles/heap S3Bucket=MY-S3-BUCKET StackName=SpartaPProf-mweagle Type=heap
+INFO[0028] Aggregating profile                           Input=&#34;.sparta/profiles/SpartaPProf-mweagle/heap/0-heap.λ-8850662459689822644.profile&#34;
+INFO[0028] Consolidating profiles                        ProfileCount=1
+INFO[0028] Creating consolidated profile                 ConsolidatedProfile=.sparta/heap.consolidated.profile
+INFO[0028] Starting pprof webserver on http://localhost:8080. Enter Ctrl+C to exit.</code></pre></div>
+
+<p>The <code>profile</code> command downloads the published profiles and consolidates them into a single cached version in the <em>./sparta</em> directory with a name of the form:</p>
+
+<p>./.sparta/{PROFILE_TYPE}.consolidated.profile</p>
+
+<p>You can choose to use the cached file if it exists.</p>
+
+<p>For this sample run, the <em>heap</em> profile output is made available to the <code>pprof</code> webserver which produces the following layout:</p>
+
+<p><img src="/images/profiling/main_alloc_space.jpg" alt="Main Alloc Space" /></p>
+
+<p>The latest <code>pprof</code> also includes flamegraph support to help identify issues:</p>
+
+<p><img src="/images/profiling/main_alloc_space_flamegraph.jpg" alt="Main Alloc Space Flamegraph" /></p>
+
+<p>To view another profile type, enter <code>Ctrl+C</code> to exit the blocking web ui loop and launch another <code>profile</code> session.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Go includes a very powerful set of tools that can help diagnose performance bottlenecks. With the Sparta <code>profile</code> command, it&rsquo;s possible to bring that same visibility to bear to AWS Lambda, despite running on ephemeral, (typically) unaddressable hosts. Get started optimizing today! And also, don&rsquo;t forget to disable the profiling loop before pushing to production.</p>
+
+<h1 id="notes">Notes</h1>
+
+<ul>
+<li><a href="http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html">CPU Flame Graphs</a> provides a great overview.</li>
+<li>It&rsquo;s not currently possible to use <a href="https://medium.com/@cep21/creating-custom-go-profiles-with-pprof-b737dfc58e11">custom profiles</a></li>
+<li>Lambda instances are limited to a window size of 3 rolling snapshots</li>
+<li>The <code>explore</code> command also exposes the <code>pprof</code> <a href="https://github.com/mweagle/Sparta/blob/ead2872585dc0da81f222577a898707c6a486ab1/execute_utils.go#L35">web handlers</a> for local exploration as well.</li>
+</ul>
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+        
+        </div> 
+        
+
+      </div>
+
+    <div id="navigation">
+        
+        
+        
+        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+        
+        
+
+
+	 
+	 
+		
+			<a class="nav nav-prev" href="/reference/operations/metrics_publisher/" title="Metrics Publisher"> <i class="fa fa-chevron-left"></i></a>
+		
+		
+			<a class="nav nav-next" href="/reference/testing/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+		
+	
+    </div>
+
+    </section>
+    
+    <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+      <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+    </div>
+    <script src="/js/clipboard.min.js?1543675854"></script>
+    <script src="/js/perfect-scrollbar.min.js?1543675854"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1543675854"></script>
+    <script src="/js/jquery.sticky.js?1543675854"></script>
+    <script src="/js/featherlight.min.js?1543675854"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1543675854"></script>
+    <script src="/js/highlight.pack.js?1543675854"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="/js/modernizr.custom.71422.js?1543675854"></script>
+    <script src="/js/learn.js?1543675854"></script>
+    <script src="/js/hugo-learn.js?1543675854"></script>
+
+    <link href="/mermaid/mermaid.css?1543675854" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1543675854"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+  </body>
+</html>
+

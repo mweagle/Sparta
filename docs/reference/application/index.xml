@@ -46,5 +46,28 @@ To support this, Sparta uses Go&amp;rsquo;s conditional compilation support to e
 This example will work through the SpartaConfig sample.</description>
     </item>
     
+    <item>
+      <title>CloudFormation Resources</title>
+      <link>/reference/application/custom_lambda_resources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_lambda_resources/</guid>
+      <description>In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
+Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
+1. Resource Type The first step is to define a custom CloudFormation Resource Type
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &amp;quot;Custom::sparta::HelloWorldResource&amp;quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</description>
+    </item>
+    
+    <item>
+      <title>Custom Resources</title>
+      <link>/reference/application/custom_resources/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/application/custom_resources/</guid>
+      <description>In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&amp;rsquo;s lifecycle.
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers an AWS Lambda Function as an CloudFormation custom resource lifecycle.
+In this section we&amp;rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&amp;rsquo;s outputs can be propagated to an application-level Sparta lambda function.</description>
+    </item>
+    
   </channel>
 </rss>

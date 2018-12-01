@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/reference/operations/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sat, 01 Dec 2018 05:17:18 +0000</lastBuildDate>
+    
+	<atom:link href="/reference/operations/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Magefiles</title>
+      <link>/reference/operations/magefile/</link>
+      <pubDate>Wed, 28 Nov 2018 16:17:43 +0000</pubDate>
+      
+      <guid>/reference/operations/magefile/</guid>
+      <description>To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
+Default Sparta magefile.go This magefile.go can be used, unchanged, for most standard Sparta projects.
+// +build mage // File: magefile.go package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.</description>
+    </item>
+    
+    <item>
+      <title>CI/CD</title>
+      <link>/reference/operations/cicd/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/operations/cicd/</guid>
+      <description>TODO: Document the SpartaCodePipeline example. Also see the Medium Post
+ </description>
+    </item>
+    
+    <item>
+      <title>Deployment Strategies</title>
+      <link>/reference/operations/deployment_strategies/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/operations/deployment_strategies/</guid>
+      <description>Document the SpartaSafeDeploy example.
+ </description>
+    </item>
+    
+    <item>
+      <title>Metrics Publisher</title>
+      <link>/reference/operations/metrics_publisher/</link>
+      <pubDate>Sat, 01 Dec 2018 06:02:32 +0000</pubDate>
+      
+      <guid>/reference/operations/metrics_publisher/</guid>
+      <description>TODO: Document the RegisterLambdaUtilizationMetricPublisher utility function.
+ </description>
+    </item>
+    
+    <item>
+      <title>Profiling</title>
+      <link>/reference/operations/profiling/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/operations/profiling/</guid>
+      <description>One of Lambda&amp;rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs.</description>
+    </item>
+    
+  </channel>
+</rss>
