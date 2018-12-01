@@ -1,7 +1,7 @@
 ---
 date: 2017-10-31 18:20:05
 title: Step Functions
-weight: 150
+weight: 400
 ---
 
 AWS [Step Functions](https://aws.amazon.com/step-functions/) are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample "Roll Die" state machine using a single Lambda function. See [SpartaStep](https://github.com/mweagle/SpartaStep) for the full source.

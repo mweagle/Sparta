@@ -6,9 +6,9 @@ weight: 10
 
 It's common for a single Sparta application to target multiple *environments*. For example:
 
-  * Development
-  * Staging
-  * Production
+* Development
+* Staging
+* Production
 
 Each environment is largely similar, but the application may need slightly different configuration in each context.
 
@@ -20,26 +20,27 @@ This example will work through the [SpartaConfig](https://github.com/mweagle/Spa
 
 To start with, create the _default_ configuration. This is the configuration that Sparta uses when provisioning your Stack and defines the environment configuration contract.
 
-```golang
+```go
 // +build !staging,!production
 // file: environments/default.go
 
 package environments
 
 import (
-	"fmt"
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/crewjam/go-cloudformation"
-	sparta "github.com/mweagle/Sparta"
+  "fmt"
+  "github.com/Sirupsen/logrus"
+  "github.com/aws/aws-sdk-go/aws/session"
+  gocf "github.com/crewjam/go-cloudformation"
+  sparta "github.com/mweagle/Sparta"
 )
 
 // Name is the default configuration
 const Name = ""
 ```
+
 The important part is the set of excluded tags at the top of the file:
 
-```golang
+```go
 // +build !staging,!production
 ```
 
@@ -49,18 +50,17 @@ This ensures that the configuration is only eligible for compilation when Sparta
 
 The next steps are to define the environment-specific configuration files:
 
-
-```golang
+```go
 // +build staging
 // file: environments/staging.go
 
 package environments
 
 import (
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/crewjam/go-cloudformation"
-	sparta "github.com/mweagle/Sparta"
+  "github.com/Sirupsen/logrus"
+  "github.com/aws/aws-sdk-go/aws/session"
+  gocf "github.com/crewjam/go-cloudformation"
+  sparta "github.com/mweagle/Sparta"
 )
 
 // Name is the production configuration
@@ -69,17 +69,17 @@ const Name = "staging"
 ```
 
 
-```golang
+```go
 // +build production
 // file: environments/production.go
 
 package environments
 
 import (
-	"github.com/Sirupsen/logrus"
-	"github.com/aws/aws-sdk-go/aws/session"
-	gocf "github.com/crewjam/go-cloudformation"
-	sparta "github.com/mweagle/Sparta"
+  "github.com/Sirupsen/logrus"
+  "github.com/aws/aws-sdk-go/aws/session"
+  gocf "github.com/crewjam/go-cloudformation"
+  sparta "github.com/mweagle/Sparta"
 )
 
 // Name is the production configuration
@@ -95,7 +95,7 @@ The `serviceName` argument supplied to [sparta.Main](https://godoc.org/github.co
 
 The `serviceName` can be specialized by using the `buildTags` in the service name definition as in:
 
-```golang
+```go
 fmt.Sprintf("SpartaHelloWorld-%s", sparta.OptionsGlobal.BuildTags),
 ```
 
@@ -109,31 +109,31 @@ The final requirement is to add the environment name as a Stack Output. To annot
 
 The _main.go_ source file registers the workflow hook via:
 
-```golang
+```go
 hooks := &sparta.WorkflowHooks{
-	Context:          map[string]interface{}{},
-	ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
+  Context:          map[string]interface{}{},
+  ServiceDecorator: environments.ServiceDecoratorHook(sparta.OptionsGlobal.BuildTags),
 }
 ```
 
 Both _environments/staging.go_ and _environments/production.go_ define the same hook function:
 
-```golang
+```go
 func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
-	return func(context map[string]interface{},
-		serviceName string,
-		template *gocf.Template,
-		S3Bucket string,
-		buildID string,
-		awsSession *session.Session,
-		noop bool,
-		logger *logrus.Logger) error {
-		template.Outputs["Environment"] = &gocf.Output{
-			Description: "Sparta Config target environment",
-			Value:       Name,
-		}
-		return nil
-	}
+  return func(context map[string]interface{},
+    serviceName string,
+    template *gocf.Template,
+    S3Bucket string,
+    buildID string,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger) error {
+    template.Outputs["Environment"] = &gocf.Output{
+      Description: "Sparta Config target environment",
+      Value:       Name,
+    }
+    return nil
+  }
 }
 ```
 
@@ -141,21 +141,21 @@ The _environments/default.go_ definition is slightly different. The "default" en
 
 To prevent users from accidentally deploying to the "default" environment, the `BuildTags` are validated in the hook definition:
 
-```golang
+```go
 func ServiceDecoratorHook(buildTags string) sparta.ServiceDecoratorHook {
-	return func(context map[string]interface{},
-		serviceName string,
-		template *gocf.Template,
-		S3Bucket string,
-		buildID string,
-		awsSession *session.Session,
-		noop bool,
-		logger *logrus.Logger) error {
-		if len(buildTags) <= 0 {
-			return fmt.Errorf("Please provide a --tags value for environment target")
-		}
-		return nil
-	}
+  return func(context map[string]interface{},
+    serviceName string,
+    template *gocf.Template,
+    S3Bucket string,
+    buildID string,
+    awsSession *session.Session,
+    noop bool,
+    logger *logrus.Logger) error {
+    if len(buildTags) <= 0 {
+      return fmt.Errorf("Please provide a --tags value for environment target")
+    }
+    return nil
+  }
 }
 ```
 
@@ -165,11 +165,11 @@ Putting everything together, the `SpartaConfig` service can deploy to either env
 
 **staging**
 
-		go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
+    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags staging
 
 **production**
 
-		go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
+    go run main.go provision --level info --s3Bucket $(S3_BUCKET) --noop --tags production
 
 Attempting to deploy to "default" generates an error:
 
@@ -210,4 +210,4 @@ exit status 1
 
   - Call [ParseOptions](https://godoc.org/github.com/mweagle/Sparta#ParseOptions) to initialize  `sparta.OptionsGlobal.BuildTags` field for use in a service name definition.
   - An alternative approach is to define a custom [ArchiveHook](https://godoc.org/github.com/mweagle/Sparta#ArchiveHook) and inject custom configuration into the ZIP archive. This data is available at `Path.Join(env.LAMBDA_TASK_ROOT, ZIP_ARCHIVE_PATH)`
-	- See [discfg](https://github.com/tmaiaroto/discfg), [etcd](https://github.com/coreos/etcd), [Consul](https://www.consul.io/) (among others) for alternative, more dynamic discovery services.
+  - See [discfg](https://github.com/tmaiaroto/discfg), [etcd](https://github.com/coreos/etcd), [Consul](https://www.consul.io/) (among others) for alternative, more dynamic discovery services.

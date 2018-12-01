@@ -1,7 +1,7 @@
 ---
-date: 2016-03-09T19:56:50+01:00
+date: 2018-12-01 06:28:42
 title: Dynamic Infrastructure
-weight: 150
+weight: 500
 ---
 
 In addition to provisioning AWS Lambda functions, Sparta supports the creation of
@@ -11,10 +11,10 @@ where the service and its infrastructure requirements are treated as a logical u
 
 For instance, consider the case where two developers are working in the same AWS account.
 
-  * Developer 1 is working on analyzing text documents.
-    - Their lambda code is triggered in response to uploading sample text documents to S3.
-  * Developer 2 is working on image recognition.
-    - Their lambda code is triggered in response to uploading sample images to S3.
+- Developer 1 is working on analyzing text documents.
+  - Their lambda code is triggered in response to uploading sample text documents to S3.
+- Developer 2 is working on image recognition.
+  - Their lambda code is triggered in response to uploading sample images to S3.
 
 {{< mermaid >}}
 graph LR

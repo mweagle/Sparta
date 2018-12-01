@@ -4,7 +4,7 @@ title: Docker
 weight: 150
 ---
 
-{{% notice info %}}
+{{% notice note %}}
 TODO
 {{% /notice %}}
 

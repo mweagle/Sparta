@@ -1,9 +1,9 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title:
-pre: "<b>API Gateway</b>&nbsp;<i class='fas fa-fw fa-globe'></i>"
+pre: "<i class='fas fa-fw fa-globe'></i>&nbsp;<b>API Gateway</b>"
 alwaysopen: false
-weight: 190
+weight: 110
 ---
 
 ## Examples

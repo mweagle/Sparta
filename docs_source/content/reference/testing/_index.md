@@ -1,8 +1,10 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title: Local Testing
-weight: 150
+title:
+pre: "<i class='fas fa-fw fa-check-double'></i>&nbsp;<b>Testing</b>"
+weight: 500
 ---
+
 While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  You can test your lambda functions
 using standard `go test` functionality.
 

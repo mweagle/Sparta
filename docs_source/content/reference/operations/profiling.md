@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Profiling
-weight: 150
+weight: 40
 ---
 
 One of Lambda's biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of [tools](https://jvns.ca/) used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda [pricing model](https://aws.amazon.com/lambda/pricing/), where idle time often directly translates into increased costs.
