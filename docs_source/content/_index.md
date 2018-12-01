@@ -5,14 +5,17 @@ type: index
 weight: 0
 ---
 
-<br />
-
-<img src="/images/SpartaLogoNoDomain.png" width="50%">
+<img src="/images/SpartaLogoNoDomain.png" width="33%" height="33%">
 
 # Self-deploying *go* microservices for [AWS Lambda](https://aws.amazon.com/lambda)
 
-
 Sparta is a framework that transforms a standard *go* application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
+
+## Support Sparta
+
+Help support continued Sparta development by becoming a Patreon patron!
+
+<a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
 
 ## Sample Application
 
