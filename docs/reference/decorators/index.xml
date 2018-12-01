@@ -6,7 +6,7 @@
     <description>Recent content on Sparta - AWS Lambda Microservices</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 22 Jan 2018 21:49:38 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 01 Dec 2018 06:18:10 +0000</lastBuildDate>
     
 	<atom:link href="/reference/decorators/index.xml" rel="self" type="application/rss+xml" />
     
@@ -51,7 +51,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/codedeployserviceupdate/</guid>
-      <description>TODO: Document me
+      <description>TODO: Document the CodeDeployServiceUpdateDecorator decorator. See also the Deployment Strategy page.
  </description>
     </item>
     
@@ -86,6 +86,17 @@ lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleA
       <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
 This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
 hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
+    </item>
+    
+    <item>
+      <title>Dynamic Infrastructure</title>
+      <link>/reference/decorators/dynamic_infrastructure/</link>
+      <pubDate>Sat, 01 Dec 2018 06:28:42 +0000</pubDate>
+      
+      <guid>/reference/decorators/dynamic_infrastructure/</guid>
+      <description>In addition to provisioning AWS Lambda functions, Sparta supports the creation of other CloudFormation Resources. This enables a service to move towards immutable infrastructure, where the service and its infrastructure requirements are treated as a logical unit.
+For instance, consider the case where two developers are working in the same AWS account.
+ Developer 1 is working on analyzing text documents.  Their lambda code is triggered in response to uploading sample text documents to S3.</description>
     </item>
     
   </channel>

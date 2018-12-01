@@ -66,5 +66,17 @@ Our initial command handler won&amp;rsquo;t be very sophisticated, but will show
 Define the Lambda Function This lambda handler is a bit more complicated than the other examples, primarily because of the Slack Integration requirements. The full source is:</description>
     </item>
     
+    <item>
+      <title>S3 Sites with CORS</title>
+      <link>/reference/apigateway/s3site/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/reference/apigateway/s3site/</guid>
+      <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
+import ( spartaAPIG &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
+    </item>
+    
   </channel>
 </rss>
