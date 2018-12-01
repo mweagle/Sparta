@@ -144,7 +144,7 @@ func publishMetrics(customDimensionMap map[string]string) {
 	}
 	putMetricInput := &awsCloudWatch.PutMetricDataInput{
 		MetricData: metricData,
-		Namespace:  aws.String(Name),
+		Namespace:  aws.String(sparta.ProperName),
 	}
 	session := spartaAWS.NewSession(logger)
 	awsCloudWatchSvc := awsCloudWatch.New(session)
