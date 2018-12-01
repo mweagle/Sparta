@@ -7,7 +7,7 @@ alwaysopen: false
 
 Sparta applications delegate `func main()` responsibilities to one of Sparta's Main entrypoints ([Main](https://godoc.org/github.com/mweagle/Sparta#Main), [MainEx](https://godoc.org/github.com/mweagle/Sparta#MainEx)). This provides each application with some standard command line options as shown below:
 
-```bash
+```shell
 $ go run main.go --help
 Simple Sparta application that demonstrates core functionality
 
@@ -36,7 +36,6 @@ Flags:
   -z, --timestamps       Include UTC timestamp log line prefix
 
 Use "main [command] --help" for more information about a command.
-
 ```
 
 It's also possible to add [custom flags](/reference/application/custom_flags) and/or [custom commands](/reference/application/custom_commands) to extend your application's behavior.

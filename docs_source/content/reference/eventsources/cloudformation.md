@@ -4,6 +4,6 @@ title: CloudFormation
 weight: 10
 ---
 
-{{% notice info %}}
+{{% notice note %}}
 TODO: CloudFormation source documentation
 {{% /notice %}}

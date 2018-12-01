@@ -1,11 +1,10 @@
 ---
 date: 2018-01-22 21:49:38
-title: Overview
-description: Sparta overview
+title: Concepts
+description: Core Sparta Concepts
 weight: 10
 alwaysopen: false
 ---
-
 
 This is a brief overview of Sparta's core concepts.  Additional information regarding specific features is available from the menu.
 

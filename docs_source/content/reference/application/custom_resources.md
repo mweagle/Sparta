@@ -21,7 +21,6 @@ Defining a custom resource is a two stage process, depending on whether your app
   1. *Optional* - The template decorator that binds your CustomResource's [data results](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/crpg-ref-responses.html) to the owning `LambdaAWSInfo` caller.
   1. *Optional* - A call from your standard Lambda's function body to discover the CustomResource outputs via `sparta.Discover()`.
 
-
 ### Custom Resource Functioon
 
 A Custom Resource Function is a standard AWS Lambda Go function type that

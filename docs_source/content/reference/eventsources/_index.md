@@ -1,8 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title:
-pre: "<b>Event Sources</b>&nbsp;<i class='fas fa-fw fa-cubes'></i>"
-alwaysopen: false
+pre: "<i class='fas fa-fw fa-cubes'></i>&nbsp;<b>Event Sources</b>"
 weight: 100
 ---
 

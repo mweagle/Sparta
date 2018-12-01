@@ -5,6 +5,8 @@ weight: 10
 alwaysopen: false
 ---
 
-{{% notice info %}}
-TODO: Document me
+{{% notice note %}}
+TODO: Document the [CodeDeployServiceUpdateDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CodeDeployServiceUpdateDecorator) decorator.
+See also the [Deployment Strategy](/reference/operations/deployment_strategies.md) page.
 {{% /notice %}}
+
