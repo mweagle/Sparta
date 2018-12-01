@@ -873,7 +873,8 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
 - :checkered_flag: **CHANGES**
   - Add `-p/--codePipelineTrigger` command line option to generate CodePipeline deployment package
   - Add `sparta.RegisterCodePipelineEnvironment` to define environment variables in support of [CloudFormation Deployments](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/). Example:
-  ```golang
+
+  ```go
   func init() {
     sparta.RegisterCodePipelineEnvironment("test", map[string]string{
       "MESSAGE": "Hello Test!",
@@ -883,6 +884,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
     })
   }
   ```
+
   - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
  - Move all build artifacts to _./sparta_ directory
   - `-n/--noop` argument orphans S3 artifacts in _./sparta_ directory
@@ -942,7 +944,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - `NewMethod` and `NewAuthorizedMethod` for APIGateway definitions have been changed to include new, final parameter that marks the _default_ integration response code.
     - Prior to this change, Sparta would automatically use `http.StatusOK` for all non-POST requests, and `http.StatusCreated` for POST requests. The change allows you to control whitelisted headers to be returned through APIGateway as in:
 
-    ```golang
+    ```go
     // API response struct
     type helloWorldResponse struct {
       Location string `json:"location"`
@@ -962,7 +964,7 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - (@sdbeard) Added [sparta.NewNamedLambda](https://godoc.org/github.com/mweagle/Sparta#NewNamedLambda) that allows you to set stable AWS Lambda [FunctionNames](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname)
   - Added [spartaCF.AddAutoIncrementingLambdaVersionResource](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#AddAutoIncrementingLambdaVersionResource) to support Lambda function versions.  Should be called from a TemplateDecorator. Usage:
 
-    ```golang
+    ```go
     autoIncrementingInfo, autoIncrementingInfoErr := spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
       lambdaResourceName,
       cfTemplate,
