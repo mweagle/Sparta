@@ -251,3 +251,24 @@ func TestResourceTransform(t *testing.T) {
 		t.Fatalf("Failed to find resource Parameters in template")
 	}
 }
+func TestProvisionID(t *testing.T) {
+	logger, _ := NewLogger("info")
+	testUserValues := []string{
+		"",
+		"DEFAULT_VALUE",
+	}
+	for _, eachTestValue := range testUserValues {
+		buildID, buildIDErr := provisionBuildID(eachTestValue, logger)
+		if buildIDErr != nil {
+			t.Fatalf("Failed to compute buildID: %s", buildIDErr)
+		}
+		if eachTestValue == "" && buildID == "" {
+			t.Fatalf("Failed to extract buildID. User: %s, Computed: %s", eachTestValue, buildID)
+		}
+		if eachTestValue != "" &&
+			buildID != eachTestValue {
+			t.Fatalf("Failed to roundTrip buildID. User: %s, Computed: %s", eachTestValue, buildID)
+		}
+	}
+
+}
