@@ -19,7 +19,7 @@ func cloudWatchEventProcessor(ctx context.Context,
 }
 
 func ExampleCloudWatchEventsPermission() {
-	cloudWatchEventsLambda := HandleAWSLambda(LambdaName(cloudWatchEventProcessor),
+	cloudWatchEventsLambda, _ := NewAWSLambda(LambdaName(cloudWatchEventProcessor),
 		cloudWatchEventProcessor,
 		IAMRoleDefinition{})
 

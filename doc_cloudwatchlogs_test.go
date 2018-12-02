@@ -20,7 +20,7 @@ func cloudWatchLogsProcessor(ctx context.Context,
 func ExampleCloudWatchLogsPermission() {
 	var lambdaFunctions []*LambdaAWSInfo
 
-	cloudWatchLogsLambda := HandleAWSLambda(LambdaName(cloudWatchLogsProcessor),
+	cloudWatchLogsLambda, _ := NewAWSLambda(LambdaName(cloudWatchLogsProcessor),
 		cloudWatchLogsProcessor,
 		IAMRoleDefinition{})
 

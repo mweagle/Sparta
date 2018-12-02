@@ -22,7 +22,7 @@ func snsProcessor(ctx context.Context,
 func ExampleSNSPermission() {
 	var lambdaFunctions []*LambdaAWSInfo
 
-	snsLambda := HandleAWSLambda(LambdaName(snsProcessor),
+	snsLambda, _ := NewAWSLambda(LambdaName(snsProcessor),
 		snsProcessor,
 		IAMRoleDefinition{})
 	snsLambda.Permissions = append(snsLambda.Permissions, SNSPermission{

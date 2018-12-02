@@ -1107,7 +1107,7 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 			logger.WithFields(logrus.Fields{
 				"CollisionCount": eachCount,
 				"Name":           eachLambdaName,
-			}).Error("HandleAWSLambda")
+			}).Error("NewAWSLambda")
 			errorText = append(errorText,
 				fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
 		}

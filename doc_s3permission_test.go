@@ -29,7 +29,7 @@ func ExampleS3Permission() {
 		Resource: s3Bucket,
 	})
 	// Create the Lambda
-	s3Lambda := HandleAWSLambda(LambdaName(s3LambdaProcessor),
+	s3Lambda, _ := NewAWSLambda(LambdaName(s3LambdaProcessor),
 		s3LambdaProcessor,
 		IAMRoleDefinition{})
 

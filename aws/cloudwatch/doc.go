@@ -1,6 +1,6 @@
-// Package cloudwatchlogs scopes CloudWatchLogs-specific utiltities for
+// Package cloudwatch scopes CloudWatch-specific utiltities for
 // Sparta
-package cloudwatchlogs
+package cloudwatch
 
 /*
 Log message format, data is

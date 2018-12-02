@@ -1,5 +1,17 @@
 # Change Notes
 
+## v1.7.4 - The Documented Edition 📚
+
+- :warning: **BREAKING**
+  - Changed `archetype.CloudWatchLogsReactor` to `archetype.CloudWatchReactor`
+    - Also changed `OnLogMessage` to `OnCloudWatchMessage`
+    - I consistently forget the fact that CloudWatch is more than logs
+    - Moved the internal `cloudwatchlogs` package to the `cloudwatch/logs` import path
+- :checkered_flag: **CHANGES**
+  - More documentation
+- :bug:  **FIXED**
+  - [RegisterLambdaUtilizationMetricPublisher Name ref obsolete](https://github.com/mweagle/Sparta/issues/130)
+
 ## v1.7.3 - The Documentation Edition 📚
 
 - :warning: **BREAKING**

@@ -1,11 +1,9 @@
 package sparta
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -34,15 +32,15 @@ func testLambdaStructData() []*LambdaAWSInfo {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	handler1 := &StructHandler1{}
-	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
+	lambdaFn1, _ := NewAWSLambda(LambdaName(handler1.handler),
 		handler1.handler,
-		LambdaExecuteARN)
+		lambdaTestExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler2{}
-	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
+	lambdaFn2, _ := NewAWSLambda(LambdaName(handler2.handler),
 		handler2.handler,
-		LambdaExecuteARN)
+		lambdaTestExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
 	return lambdaFunctions
@@ -52,15 +50,15 @@ func testLambdaDoubleStructPtrData() []*LambdaAWSInfo {
 	var lambdaFunctions []*LambdaAWSInfo
 
 	handler1 := &StructHandler1{}
-	lambdaFn1 := HandleAWSLambda(LambdaName(handler1.handler),
+	lambdaFn1, _ := NewAWSLambda(LambdaName(handler1.handler),
 		handler1.handler,
-		LambdaExecuteARN)
+		lambdaTestExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn1)
 
 	handler2 := &StructHandler1{}
-	lambdaFn2 := HandleAWSLambda(LambdaName(handler2.handler),
+	lambdaFn2, _ := NewAWSLambda(LambdaName(handler2.handler),
 		handler2.handler,
-		LambdaExecuteARN)
+		lambdaTestExecuteARN)
 	lambdaFunctions = append(lambdaFunctions, lambdaFn2)
 
 	return lambdaFunctions
@@ -77,56 +75,16 @@ func userDefinedCustomResource2(ctx context.Context,
 }
 
 func TestStruct(t *testing.T) {
-	logger, _ := NewLogger("info")
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
-		testLambdaStructData(),
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-	if nil != err {
-		t.Fatal(err.Error())
-	}
+	testProvision(t, testLambdaStructData(), nil)
 }
 
 func TestDoubleRefStruct(t *testing.T) {
-	logger, _ := NewLogger("info")
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
+	testProvision(t,
 		testLambdaDoubleStructPtrData(),
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if nil == err {
-		t.Fatal("Failed to enforce lambda function uniqueness")
-	}
+		assertError("Failed to reject struct exporting duplicate targets"))
 }
 
 func TestCustomResource(t *testing.T) {
-	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 	lambdaFuncs[0].RequireCustomResource(IAMRoleDefinition{},
 		userDefinedCustomResource1,
@@ -137,32 +95,10 @@ func TestCustomResource(t *testing.T) {
 		userDefinedCustomResource2,
 		nil,
 		nil)
-
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
-		lambdaFuncs,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if nil != err {
-		t.Fatal("Failed to accept unique user CustomResource functions")
-	}
+	testProvision(t, lambdaFuncs, nil)
 }
 
 func TestDoubleRefCustomResource(t *testing.T) {
-	logger, _ := NewLogger("info")
 	lambdaFuncs := testLambdaStructData()
 
 	for _, eachLambda := range lambdaFuncs {
@@ -171,32 +107,12 @@ func TestDoubleRefCustomResource(t *testing.T) {
 			nil,
 			nil)
 	}
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
+	testProvision(t,
 		lambdaFuncs,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if nil == err {
-		t.Fatal("Failed to reject duplicate user CustomResource functions")
-	}
+		assertError("Failed to reject multiply included custom resource"))
 }
 
 func TestSignatureVersion(t *testing.T) {
-	logger, _ := NewLogger("info")
-
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	lambdaFunctions[0].Options = &LambdaFunctionOptions{
 		SpartaOptions: &SpartaOptions{
@@ -208,34 +124,12 @@ func TestSignatureVersion(t *testing.T) {
 			Name: fmt.Sprintf("Handler1"),
 		},
 	}
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"TestOverlappingLambdas",
-		"",
+	testProvision(t,
 		lambdaFunctions,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if nil != err {
-		t.Fatal("Failed to respect duplicate lambdas with user supplied names")
-	} else {
-		t.Logf("Rejected duplicate lambdas")
-	}
+		nil)
 }
 
 func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
-	logger, _ := NewLogger("info")
-
 	lambdaFunctions := testLambdaDoubleStructPtrData()
 	for _, eachLambda := range lambdaFunctions {
 		eachLambda.Options = &LambdaFunctionOptions{
@@ -244,30 +138,9 @@ func TestUserDefinedOverlappingLambdaNames(t *testing.T) {
 			},
 		}
 	}
-
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"TestOverlappingLambdas",
-		"",
+	testProvision(t,
 		lambdaFunctions,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if nil == err {
-		t.Fatal("Failed to reject duplicate lambdas with overlapping user supplied names")
-	} else {
-		t.Logf("Rejected overlapping user supplied names")
-	}
+		assertError("Failed to reject duplicate lambdas with overlapping user supplied names"))
 }
 
 func invalidFuncSignature(ctx context.Context) string {
@@ -275,37 +148,15 @@ func invalidFuncSignature(ctx context.Context) string {
 }
 
 func TestInvalidFunctionSignature(t *testing.T) {
-	logger, _ := NewLogger("info")
-
 	var lambdaFunctions []*LambdaAWSInfo
-	invalidSigHandler := HandleAWSLambda("InvalidSignature",
+	invalidSigHandler, _ := NewAWSLambda("InvalidSignature",
 		invalidFuncSignature,
 		IAMRoleDefinition{})
 	lambdaFunctions = append(lambdaFunctions, invalidSigHandler)
 
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"TestInvalidFunctionSignatuure",
-		"",
+	testProvision(t,
 		lambdaFunctions,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-
-	if err == nil {
-		t.Fatal("Failed to reject invalid lambda function signature")
-	} else {
-		t.Log("Properly rejected invalid function signature")
-	}
+		assertError("Failed to reject invalid lambda function signature"))
 }
 
 func TestNOP(t *testing.T) {

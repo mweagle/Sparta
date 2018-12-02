@@ -31,7 +31,7 @@ func ExampleMain_apiGateway() {
 	apiGateway := NewAPIGateway("MyEchoAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayEvent),
+	echoAPIGatewayLambdaFn, _ := NewAWSLambda(LambdaName(echoAPIGatewayEvent),
 		echoAPIGatewayEvent,
 		IAMRoleDefinition{})
 

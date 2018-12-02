@@ -10,7 +10,7 @@ func lambdaHelloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func ExampleHandleAWSLambda_preexistingIAMRoleName() {
-	helloWorldLambda := HandleAWSLambda(LambdaName(lambdaHelloWorld),
+	helloWorldLambda, _ := NewAWSLambda(LambdaName(lambdaHelloWorld),
 		lambdaHelloWorld,
 		IAMRoleDefinition{})
 	if nil != helloWorldLambda {

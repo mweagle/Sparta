@@ -30,7 +30,7 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	apiGateway := NewAPIGateway("MyEchoHTTPAPI", stage)
 
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
+	echoAPIGatewayLambdaFn, _ := NewAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
 		echoAPIGatewayHTTPEvent,
 		IAMRoleDefinition{})
 

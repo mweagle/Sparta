@@ -42,7 +42,7 @@ func userDefinedCustomResource(ctx context.Context,
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
 
-	lambdaFn := HandleAWSLambda(LambdaName(helloWorld),
+	lambdaFn, _ := NewAWSLambda(LambdaName(helloWorld),
 		helloWorld,
 		IAMRoleDefinition{})
 

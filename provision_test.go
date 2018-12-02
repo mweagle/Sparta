@@ -1,8 +1,6 @@
 package sparta
 
 import (
-	"bytes"
-	"os"
 	"testing"
 
 	gocf "github.com/mweagle/go-cloudformation"
@@ -32,27 +30,7 @@ func init() {
 }
 
 func TestProvision(t *testing.T) {
-	logger, _ := NewLogger("info")
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
-		testLambdaData(),
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-	if nil != err {
-		t.Fatal(err.Error())
-	}
+	testProvision(t, testLambdaData(), nil)
 }
 
 func templateDecorator(serviceName string,
@@ -88,26 +66,5 @@ func TestDecorateProvision(t *testing.T) {
 
 	lambdas := testLambdaData()
 	lambdas[0].Decorator = templateDecorator
-
-	logger, _ := NewLogger("info")
-	var templateWriter bytes.Buffer
-	err := Provision(true,
-		"SampleProvision",
-		"",
-		lambdas,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-	if nil != err {
-		t.Fatal(err.Error())
-	}
+	testProvision(t, lambdas, nil)
 }

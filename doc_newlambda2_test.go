@@ -24,7 +24,7 @@ func ExampleHandleAWSLambda_iAMRoleDefinition() {
 			"s3:PutObject"},
 		Resource: "arn:aws:s3:::*",
 	})
-	helloWorldLambda := HandleAWSLambda(LambdaName(lambdaHelloWorld2),
+	helloWorldLambda, _ := NewAWSLambda(LambdaName(lambdaHelloWorld2),
 		lambdaHelloWorld2,
 		IAMRoleDefinition{})
 	if nil != helloWorldLambda {

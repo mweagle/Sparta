@@ -1,12 +1,11 @@
 package cloudwatch
 
 import (
-	"bytes"
 	"context"
-	"os"
 	"testing"
 
 	"github.com/mweagle/Sparta"
+	spartaTesting "github.com/mweagle/Sparta/testing"
 )
 
 func testLambdaData(t *testing.T) []*sparta.LambdaAWSInfo {
@@ -27,26 +26,5 @@ func testLambdaData(t *testing.T) []*sparta.LambdaAWSInfo {
 }
 
 func TestRegisterMetricsPublisher(t *testing.T) {
-	lambdas := testLambdaData(t)
-	logger, _ := sparta.NewLogger("info")
-	var templateWriter bytes.Buffer
-	err := sparta.Provision(true,
-		"SampleProvision",
-		"",
-		lambdas,
-		nil,
-		nil,
-		os.Getenv("S3_BUCKET"),
-		false,
-		false,
-		"testBuildID",
-		"",
-		"",
-		"",
-		&templateWriter,
-		nil,
-		logger)
-	if nil != err {
-		t.Fatal(err.Error())
-	}
+	spartaTesting.Provision(t, testLambdaData(t), nil)
 }

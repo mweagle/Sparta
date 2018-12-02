@@ -50,6 +50,20 @@ var cloudformationPollingTimeout = 3 * time.Minute
 // Private
 ////////////////////////////////////////////////////////////////////////////////
 
+// If the platform specific implementation of user.Current()
+// isn't available, go get something that's a "stable" user
+// name
+func defaultUserName() string {
+	userName := os.Getenv("USER")
+	if "" == userName {
+		userName = os.Getenv("USERNAME")
+	}
+	if "" == userName {
+		userName = fmt.Sprintf("user%d", os.Getuid())
+	}
+	return userName
+}
+
 type resourceProvisionMetrics struct {
 	resourceType      string
 	logicalResourceID string
@@ -909,6 +923,32 @@ func DeleteChangeSet(stackName string,
 	}
 }
 
+// ListStacks returns a slice of stacks that meet the given filter.
+func ListStacks(session *session.Session,
+	maxReturned int,
+	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
+
+	listStackInput := &cloudformation.ListStacksInput{
+		StackStatusFilter: []*string{},
+	}
+	for _, eachFilter := range stackFilters {
+		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
+	}
+	cloudformationSvc := cloudformation.New(session)
+	accumulator := []*cloudformation.StackSummary{}
+	for {
+		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
+		if listResultErr != nil {
+			return nil, listResultErr
+		}
+		accumulator = append(accumulator, listResult.StackSummaries...)
+		if len(accumulator) >= maxReturned || listResult.NextToken == nil {
+			return accumulator, nil
+		}
+		listStackInput.NextToken = listResult.NextToken
+	}
+}
+
 // ConvergeStackState ensures that the serviceName converges to the template
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
@@ -1081,20 +1121,6 @@ func ConvergeStackState(serviceName string,
 	return convergeResult.stackInfo, nil
 }
 
-// If the platform specific implementation of user.Current()
-// isn't available, go get something that's a "stable" user
-// name
-func defaultUserName() string {
-	userName := os.Getenv("USER")
-	if "" == userName {
-		userName = os.Getenv("USERNAME")
-	}
-	if "" == userName {
-		userName = fmt.Sprintf("user%d", os.Getuid())
-	}
-	return userName
-}
-
 // UserAccountScopedStackName returns a CloudFormation stack
 // name that takes into account the current username that is
 //associated with the supplied AWS credentials
@@ -1127,30 +1153,4 @@ func UserScopedStackName(basename string) string {
 	}
 	userName := strings.Replace(platformUserName, " ", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName)
-}
-
-// ListStacks returns a slice of stacks that meet the given filter.
-func ListStacks(session *session.Session,
-	maxReturned int,
-	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
-
-	listStackInput := &cloudformation.ListStacksInput{
-		StackStatusFilter: []*string{},
-	}
-	for _, eachFilter := range stackFilters {
-		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
-	}
-	cloudformationSvc := cloudformation.New(session)
-	accumulator := []*cloudformation.StackSummary{}
-	for {
-		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
-		if listResultErr != nil {
-			return nil, listResultErr
-		}
-		accumulator = append(accumulator, listResult.StackSummaries...)
-		if len(accumulator) >= maxReturned || listResult.NextToken == nil {
-			return accumulator, nil
-		}
-		listStackInput.NextToken = listResult.NextToken
-	}
 }
