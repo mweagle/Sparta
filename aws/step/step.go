@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/rand"
-	"regexp"
 	"strings"
 	"time"
 
@@ -516,7 +515,9 @@ type MachineState interface {
 type TransitionState interface {
 	MachineState
 	Next(state MachineState) MachineState
-	NextState() MachineState
+	// AdjacentStates returns all the MachineStates that are reachable from
+	// the current state
+	AdjacentStates() []MachineState
 	WithComment(string) TransitionState
 	WithInputPath(string) TransitionState
 	WithOutputPath(string) TransitionState
@@ -524,12 +525,13 @@ type TransitionState interface {
 
 // Embedding struct for common properties
 type baseInnerState struct {
-	name       string
-	id         int64
-	next       MachineState
-	comment    string
-	inputPath  string
-	outputPath string
+	name              string
+	id                int64
+	next              MachineState
+	comment           string
+	inputPath         string
+	outputPath        string
+	isEndStateInvalid bool
 }
 
 func (bis *baseInnerState) nodeID() string {
@@ -554,6 +556,9 @@ func (bis *baseInnerState) marshalStateJSON(stateType string,
 	}
 	if bis.outputPath != "" {
 		additionalData["OutputPath"] = bis.outputPath
+	}
+	if !bis.isEndStateInvalid && bis.next == nil {
+		additionalData["End"] = true
 	}
 	return json.Marshal(additionalData)
 }
@@ -594,9 +599,12 @@ func (ps *PassState) Next(nextState MachineState) MachineState {
 	return ps
 }
 
-// NextState sets the next state
-func (ps *PassState) NextState() MachineState {
-	return ps.next
+// AdjacentStates returns nodes reachable from this node
+func (ps *PassState) AdjacentStates() []MachineState {
+	if ps.next == nil {
+		return nil
+	}
+	return []MachineState{ps.next}
 }
 
 // Name returns the name of this Task state
@@ -699,8 +707,9 @@ func (cs *ChoiceState) MarshalJSON() ([]byte, error) {
 func NewChoiceState(choiceStateName string, choices ...ChoiceBranch) *ChoiceState {
 	return &ChoiceState{
 		baseInnerState: baseInnerState{
-			name: choiceStateName,
-			id:   rand.Int63(),
+			name:              choiceStateName,
+			id:                rand.Int63(),
+			isEndStateInvalid: true,
 		},
 		Choices: append([]ChoiceBranch{}, choices...),
 	}
@@ -759,56 +768,175 @@ type TaskCatch struct {
 	/*
 		The reserved name “States.ALL” appearing in a Retrier’s “ErrorEquals” field is a wild-card and matches any Error Name. Such a value MUST appear alone in the “ErrorEquals” array and MUST appear in the last Catcher in the “Catch” array.
 	*/
-	ErrorEquals []StateError    `json:",omitempty"`
-	NextState   TransitionState `json:"Next,omitempty"`
+	errorEquals []StateError
+	next        TransitionState
 }
 
-// WithErrors is the fluent builder
-func (tc *TaskCatch) WithErrors(errors ...StateError) *TaskCatch {
-	if tc.ErrorEquals == nil {
-		tc.ErrorEquals = make([]StateError, 0)
+// MarshalJSON to prevent inadvertent composition
+func (tc *TaskCatch) MarshalJSON() ([]byte, error) {
+	catchJSON := map[string]interface{}{
+		"ErrorEquals": tc.errorEquals,
+		"Next":        tc.next,
 	}
-	tc.ErrorEquals = append(tc.ErrorEquals, errors...)
-	return tc
-}
-
-// Next is the fluent builder
-func (tc *TaskCatch) Next(nextState TransitionState) *TaskCatch {
-	tc.NextState = nextState
-	return tc
+	return json.Marshal(catchJSON)
 }
 
 // NewTaskCatch returns a new TaskCatch instance
-func NewTaskCatch(errors ...StateError) *TaskCatch {
+func NewTaskCatch(nextState TransitionState, errors ...StateError) *TaskCatch {
 	return &TaskCatch{
-		ErrorEquals: errors,
+		errorEquals: errors,
+		next:        nextState,
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// TaskState
+// BaseTask
 ////////////////////////////////////////////////////////////////////////////////
 
-// TaskState is the core state, responsible for delegating to a Lambda function
-type TaskState struct {
+// BaseTask represents the core BaseTask control flow options.
+type BaseTask struct {
 	baseInnerState
-	lambdaFn                  *sparta.LambdaAWSInfo
-	lambdaLogicalResourceName string
-	ResultPath                string
-	TimeoutSeconds            time.Duration
-	HeartbeatSeconds          time.Duration
-	LambdaDecorator           sparta.TemplateDecorator
-	preexistingDecorator      sparta.TemplateDecorator
-	Retry                     []*TaskRetry
-	Catch                     *TaskCatch
+	ResultPath       string
+	TimeoutSeconds   time.Duration
+	HeartbeatSeconds time.Duration
+	LambdaDecorator  sparta.TemplateDecorator
+	Retriers         []*TaskRetry
+	Catchers         []*TaskCatch
 }
 
-// NewTaskState returns a TaskState instance properly initialized
-func NewTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *TaskState {
-	ts := &TaskState{
-		baseInnerState: baseInnerState{
-			name: stateName,
-			id:   rand.Int63(),
+// attributeMap returns the map of attributes necessary
+// for JSON serialization
+func (bt *BaseTask) additionalParams() map[string]interface{} {
+	additionalParams := make(map[string]interface{})
+
+	if bt.TimeoutSeconds.Seconds() != 0 {
+		additionalParams["TimeoutSeconds"] = bt.TimeoutSeconds.Seconds()
+	}
+	if bt.HeartbeatSeconds.Seconds() != 0 {
+		additionalParams["HeartbeatSeconds"] = bt.HeartbeatSeconds.Seconds()
+	}
+	if bt.ResultPath != "" {
+		additionalParams["ResultPath"] = bt.ResultPath
+	}
+	if len(bt.Retriers) != 0 {
+		additionalParams["Retry"] = make([]map[string]interface{}, 0)
+	}
+	if bt.Catchers != nil {
+		catcherMap := make([]map[string]interface{}, len(bt.Catchers))
+		for index, eachCatcher := range bt.Catchers {
+			catcherMap[index] = map[string]interface{}{
+				"ErrorEquals": eachCatcher.errorEquals,
+				"Next":        eachCatcher.next.Name(),
+			}
+		}
+		additionalParams["Catch"] = catcherMap
+	}
+	return additionalParams
+}
+
+// Next returns the next state
+func (bt *BaseTask) Next(nextState MachineState) MachineState {
+	bt.next = nextState
+	return nextState
+}
+
+// AdjacentStates returns nodes reachable from this node
+func (bt *BaseTask) AdjacentStates() []MachineState {
+	adjacent := []MachineState{}
+	if bt.next != nil {
+		adjacent = append(adjacent, bt.next)
+	}
+	for _, eachCatcher := range bt.Catchers {
+		adjacent = append(adjacent, eachCatcher.next)
+	}
+	return adjacent
+}
+
+// Name returns the name of this Task state
+func (bt *BaseTask) Name() string {
+	return bt.name
+}
+
+// WithResultPath is the fluent builder for the result path
+func (bt *BaseTask) WithResultPath(resultPath string) *BaseTask {
+	bt.ResultPath = resultPath
+	return bt
+}
+
+// WithTimeout is the fluent builder for BaseTask
+func (bt *BaseTask) WithTimeout(timeout time.Duration) *BaseTask {
+	bt.TimeoutSeconds = timeout
+	return bt
+}
+
+// WithHeartbeat is the fluent builder for BaseTask
+func (bt *BaseTask) WithHeartbeat(pulse time.Duration) *BaseTask {
+	bt.HeartbeatSeconds = pulse
+	return bt
+}
+
+// WithRetriers is the fluent builder for BaseTask
+func (bt *BaseTask) WithRetriers(retries ...*TaskRetry) *BaseTask {
+	if bt.Retriers == nil {
+		bt.Retriers = make([]*TaskRetry, 0)
+	}
+	bt.Retriers = append(bt.Retriers, retries...)
+	return bt
+}
+
+// WithCatchers is the fluent builder for BaseTask
+func (bt *BaseTask) WithCatchers(catch ...*TaskCatch) *BaseTask {
+	if bt.Catchers == nil {
+		bt.Catchers = make([]*TaskCatch, 0)
+	}
+	bt.Catchers = append(bt.Catchers, catch...)
+	return bt
+}
+
+// WithComment returns the BaseTask comment
+func (bt *BaseTask) WithComment(comment string) TransitionState {
+	bt.comment = comment
+	return bt
+}
+
+// WithInputPath returns the BaseTask input data selector
+func (bt *BaseTask) WithInputPath(inputPath string) TransitionState {
+	bt.inputPath = inputPath
+	return bt
+}
+
+// WithOutputPath returns the BaseTask output data selector
+func (bt *BaseTask) WithOutputPath(outputPath string) TransitionState {
+	bt.outputPath = outputPath
+	return bt
+}
+
+// MarshalJSON to prevent inadvertent composition
+func (bt *BaseTask) MarshalJSON() ([]byte, error) {
+
+	return nil, errors.Errorf("step.BaseTask doesn't support direct JSON serialization. Prefer using an embedding Task type (eg: TaskState, FargateTaskState)")
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// LambdaTaskState
+////////////////////////////////////////////////////////////////////////////////
+
+// LambdaTaskState is the core state, responsible for delegating to a Lambda function
+type LambdaTaskState struct {
+	BaseTask
+	lambdaFn                  *sparta.LambdaAWSInfo
+	lambdaLogicalResourceName string
+	preexistingDecorator      sparta.TemplateDecorator
+}
+
+// NewLambdaTaskState returns a LambdaTaskState instance properly initialized
+func NewLambdaTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *LambdaTaskState {
+	ts := &LambdaTaskState{
+		BaseTask: BaseTask{
+			baseInnerState: baseInnerState{
+				name: stateName,
+				id:   rand.Int63(),
+			},
 		},
 		lambdaFn: lambdaFn,
 	}
@@ -851,99 +979,11 @@ func NewTaskState(stateName string, lambdaFn *sparta.LambdaAWSInfo) *TaskState {
 	return ts
 }
 
-// WithResultPath is the fluent builder for the result path
-func (ts *TaskState) WithResultPath(resultPath string) *TaskState {
-	ts.ResultPath = resultPath
-	return ts
-}
-
-// WithTimeout is the fluent builder for TaskState
-func (ts *TaskState) WithTimeout(timeout time.Duration) *TaskState {
-	ts.TimeoutSeconds = timeout
-	return ts
-}
-
-// WithHeartbeat is the fluent builder for TaskState
-func (ts *TaskState) WithHeartbeat(pulse time.Duration) *TaskState {
-	ts.HeartbeatSeconds = pulse
-	return ts
-}
-
-// WithRetry is the fluent builder for TaskState
-func (ts *TaskState) WithRetry(retries ...*TaskRetry) *TaskState {
-	if ts.Retry == nil {
-		ts.Retry = make([]*TaskRetry, 0)
-	}
-	ts.Retry = append(ts.Retry, retries...)
-	return ts
-}
-
-// WithCatch is the fluent builder for TaskState
-func (ts *TaskState) WithCatch(catch *TaskCatch) *TaskState {
-	ts.Catch = catch
-	return ts
-}
-
-// Next returns the next state
-func (ts *TaskState) Next(nextState MachineState) MachineState {
-	ts.next = nextState
-	return nextState
-}
-
-// NextState sets the next state
-func (ts *TaskState) NextState() MachineState {
-	return ts.next
-}
-
-// Name returns the name of this Task state
-func (ts *TaskState) Name() string {
-	return ts.name
-}
-
-// WithComment returns the TaskState comment
-func (ts *TaskState) WithComment(comment string) TransitionState {
-	ts.comment = comment
-	return ts
-}
-
-// WithInputPath returns the TaskState input data selector
-func (ts *TaskState) WithInputPath(inputPath string) TransitionState {
-	ts.inputPath = inputPath
-	return ts
-}
-
-// WithOutputPath returns the TaskState output data selector
-func (ts *TaskState) WithOutputPath(outputPath string) TransitionState {
-	ts.outputPath = outputPath
-	return ts
-}
-
-// MarshalJSON for custom marshalling
-func (ts *TaskState) MarshalJSON() ([]byte, error) {
-	additionalParams := make(map[string]interface{})
-	additionalParams["Resource"] = fmt.Sprintf("{{%s}}", ts.lambdaLogicalResourceName)
-
-	if ts.TimeoutSeconds.Seconds() != 0 {
-		additionalParams["TimeoutSeconds"] = ts.TimeoutSeconds.Seconds()
-	}
-	if ts.HeartbeatSeconds.Seconds() != 0 {
-		additionalParams["HeartbeatSeconds"] = ts.HeartbeatSeconds.Seconds()
-	}
-	if ts.ResultPath != "" {
-		additionalParams["ResultPath"] = ts.ResultPath
-	}
-	if ts.TimeoutSeconds.Seconds() != 0 {
-		additionalParams["TimeoutSeconds"] = ts.TimeoutSeconds.Seconds()
-	}
-	if ts.HeartbeatSeconds.Seconds() != 0 {
-		additionalParams["HeartbeatSeconds"] = ts.HeartbeatSeconds.Seconds()
-	}
-	if len(ts.Retry) != 0 {
-		additionalParams["Retry"] = ts.Retry
-	}
-	if ts.Catch != nil {
-		additionalParams["Catch"] = ts.Catch
-	}
+// MarshalJSON for custom marshalling, since this will be stringified and we need it
+// to turn into a stringified Ref:
+func (ts *LambdaTaskState) MarshalJSON() ([]byte, error) {
+	additionalParams := ts.BaseTask.additionalParams()
+	additionalParams["Resource"] = gocf.GetAtt(ts.lambdaLogicalResourceName, "Arn")
 	return ts.marshalStateJSON("Task", additionalParams)
 }
 
@@ -968,9 +1008,12 @@ func (wd *WaitDelay) Next(nextState MachineState) MachineState {
 	return wd
 }
 
-// NextState returns the next State
-func (wd *WaitDelay) NextState() MachineState {
-	return wd.next
+// AdjacentStates returns nodes reachable from this node
+func (wd *WaitDelay) AdjacentStates() []MachineState {
+	if wd.next == nil {
+		return nil
+	}
+	return []MachineState{wd.next}
 }
 
 // WithComment returns the WaitDelay comment
@@ -1032,9 +1075,12 @@ func (wu *WaitUntil) Next(nextState MachineState) MachineState {
 	return wu
 }
 
-// NextState returns the next State
-func (wu *WaitUntil) NextState() MachineState {
-	return wu.next
+// AdjacentStates returns nodes reachable from this node
+func (wu *WaitUntil) AdjacentStates() []MachineState {
+	if wu.next == nil {
+		return nil
+	}
+	return []MachineState{wu.next}
 }
 
 // WithComment returns the WaitDelay comment
@@ -1092,9 +1138,12 @@ func (wdu *WaitDynamicUntil) Next(nextState MachineState) MachineState {
 	return wdu
 }
 
-// NextState returns the next State
-func (wdu *WaitDynamicUntil) NextState() MachineState {
-	return wdu.next
+// AdjacentStates returns nodes reachable from this node
+func (wdu *WaitDynamicUntil) AdjacentStates() []MachineState {
+	if wdu.next == nil {
+		return nil
+	}
+	return []MachineState{wdu.next}
 }
 
 // WithComment returns the WaitDelay comment
@@ -1153,9 +1202,12 @@ func (ss *SuccessState) Next(nextState MachineState) MachineState {
 	return ss
 }
 
-// NextState returns the next State
-func (ss *SuccessState) NextState() MachineState {
-	return ss.next
+// AdjacentStates returns nodes reachable from this node
+func (ss *SuccessState) AdjacentStates() []MachineState {
+	if ss.next == nil {
+		return nil
+	}
+	return []MachineState{ss.next}
 }
 
 // WithComment returns the WaitDelay comment
@@ -1186,8 +1238,9 @@ func (ss *SuccessState) MarshalJSON() ([]byte, error) {
 func NewSuccessState(name string) *SuccessState {
 	return &SuccessState{
 		baseInnerState: baseInnerState{
-			name: name,
-			id:   rand.Int63(),
+			name:              name,
+			id:                rand.Int63(),
+			isEndStateInvalid: true,
 		},
 	}
 }
@@ -1211,8 +1264,8 @@ func (fs *FailState) Next(nextState MachineState) MachineState {
 	return fs
 }
 
-// NextState returns the next State
-func (fs *FailState) NextState() MachineState {
+// AdjacentStates returns nodes reachable from this node
+func (fs *FailState) AdjacentStates() []MachineState {
 	return nil
 }
 
@@ -1247,8 +1300,9 @@ func (fs *FailState) MarshalJSON() ([]byte, error) {
 func NewFailState(failStateName string, errorName string, cause error) *FailState {
 	return &FailState{
 		baseInnerState: baseInnerState{
-			name: failStateName,
-			id:   rand.Int63(),
+			name:              failStateName,
+			id:                rand.Int63(),
+			isEndStateInvalid: true,
 		},
 		ErrorName: errorName,
 		Cause:     cause,
@@ -1265,8 +1319,8 @@ type ParallelState struct {
 	baseInnerState
 	States     StateMachine
 	ResultPath string
-	Retry      []*TaskRetry
-	Catch      *TaskCatch
+	Retriers   []*TaskRetry
+	Catchers   []*TaskCatch
 }
 
 // WithResultPath is the fluent builder for the result path
@@ -1275,18 +1329,21 @@ func (ps *ParallelState) WithResultPath(resultPath string) *ParallelState {
 	return ps
 }
 
-// WithRetry is the fluent builder for TaskState
-func (ps *ParallelState) WithRetry(retries ...*TaskRetry) *ParallelState {
-	if ps.Retry == nil {
-		ps.Retry = make([]*TaskRetry, 0)
+// WithRetriers is the fluent builder for TaskState
+func (ps *ParallelState) WithRetriers(retries ...*TaskRetry) *ParallelState {
+	if ps.Retriers == nil {
+		ps.Retriers = make([]*TaskRetry, 0)
 	}
-	ps.Retry = append(ps.Retry, retries...)
+	ps.Retriers = append(ps.Retriers, retries...)
 	return ps
 }
 
-// WithCatch is the fluent builder for TaskState
-func (ps *ParallelState) WithCatch(catch *TaskCatch) *ParallelState {
-	ps.Catch = catch
+// WithCatchers is the fluent builder for TaskState
+func (ps *ParallelState) WithCatchers(catch ...*TaskCatch) *ParallelState {
+	if ps.Catchers == nil {
+		ps.Catchers = make([]*TaskCatch, 0)
+	}
+	ps.Catchers = append(ps.Catchers, catch...)
 	return ps
 }
 
@@ -1296,9 +1353,12 @@ func (ps *ParallelState) Next(nextState MachineState) MachineState {
 	return nextState
 }
 
-// NextState sets the next state
-func (ps *ParallelState) NextState() MachineState {
-	return ps.next
+// AdjacentStates returns nodes reachable from this node
+func (ps *ParallelState) AdjacentStates() []MachineState {
+	if ps.next == nil {
+		return nil
+	}
+	return []MachineState{ps.next}
 }
 
 // Name returns the name of this Task state
@@ -1335,11 +1395,11 @@ func (ps *ParallelState) MarshalJSON() ([]byte, error) {
 	if ps.ResultPath != "" {
 		additionalParams["ResultPath"] = ps.ResultPath
 	}
-	if len(ps.Retry) != 0 {
-		additionalParams["Retry"] = ps.Retry
+	if len(ps.Retriers) != 0 {
+		additionalParams["Retry"] = ps.Retriers
 	}
-	if ps.Catch != nil {
-		additionalParams["Catch"] = ps.Catch
+	if ps.Catchers != nil {
+		additionalParams["Catch"] = ps.Catchers
 	}
 	return ps.marshalStateJSON("Parallel", additionalParams)
 }
@@ -1367,11 +1427,18 @@ type StateMachine struct {
 	stateDefinitionError error
 	startAt              TransitionState
 	uniqueStates         map[string]MachineState
+	roleArn              gocf.Stringable
 }
 
 //Comment sets the StateMachine comment
 func (sm *StateMachine) Comment(comment string) *StateMachine {
 	sm.comment = comment
+	return sm
+}
+
+//WithRoleArn sets the state machine roleArn
+func (sm *StateMachine) WithRoleArn(roleArn gocf.Stringable) *StateMachine {
+	sm.roleArn = roleArn
 	return sm
 }
 
@@ -1382,12 +1449,28 @@ func (sm *StateMachine) validate() []error {
 	if sm.stateDefinitionError != nil {
 		validationErrors = append(validationErrors, sm.stateDefinitionError)
 	}
+
+	// TODO - add Catcher validator
+	/*
+		Each Catcher MUST contain a field named “ErrorEquals”, specified exactly as with the Retrier “ErrorEquals” field, and a field named “Next” whose value MUST be a string exactly matching a State Name.
+
+		When a state reports an error and either there is no Retry field, or retries have failed to resolve the error, the interpreter scans through the Catchers in array order, and when the Error Name appears in the value of a Catcher’s “ErrorEquals” field, transitions the machine to the state named in the value of the “Next” field.
+
+		The reserved name “States.ALL” appearing in a Retrier’s “ErrorEquals” field is a wild-card and matches any Error Name. Such a value MUST appear alone in the “ErrorEquals” array and MUST appear in the last Catcher in the “Catch” array.
+	*/
 	return validationErrors
 }
 
-// StateMachineDecorator is the hook exposed by the StateMachine
-// to insert the AWS Step function into the CloudFormation template
+// StateMachineDecorator is a decorator that returns a default
+// CloudFormationResource named decorator
 func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc {
+	cfName := sparta.CloudFormationResourceName("StateMachine", "StateMachine")
+	return sm.StateMachineNamedDecorator(cfName)
+}
+
+// StateMachineNamedDecorator is the hook exposed by the StateMachine
+// to insert the AWS Step function into the CloudFormation template
+func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName string) sparta.ServiceDecoratorHookFunc {
 	return func(context map[string]interface{},
 		serviceName string,
 		template *gocf.Template,
@@ -1410,7 +1493,7 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 
 		lambdaFunctionResourceNames := []string{}
 		for _, eachState := range sm.uniqueStates {
-			taskState, taskStateOk := eachState.(*TaskState)
+			taskState, taskStateOk := eachState.(*LambdaTaskState)
 			if taskStateOk {
 				lambdaFunctionResourceNames = append(lambdaFunctionResourceNames,
 					taskState.lambdaLogicalResourceName)
@@ -1434,10 +1517,11 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 				},
 			},
 		}
-		statesIAMRole := &gocf.IAMRole{
-			AssumeRolePolicyDocument: AssumePolicyDocument,
-		}
+		var iamRoleResourceName string
 		if len(lambdaFunctionResourceNames) != 0 {
+			statesIAMRole := &gocf.IAMRole{
+				AssumeRolePolicyDocument: AssumePolicyDocument,
+			}
 			statements := make([]spartaIAM.PolicyStatement, 0)
 			for _, eachLambdaName := range lambdaFunctionResourceNames {
 				statements = append(statements,
@@ -1459,10 +1543,10 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 				PolicyName: gocf.String("StatesExecutionPolicy"),
 			})
 			statesIAMRole.Policies = &iamPolicies
+			iamRoleResourceName = sparta.CloudFormationResourceName("StatesIAMRole",
+				"StatesIAMRole")
+			template.AddResource(iamRoleResourceName, statesIAMRole)
 		}
-		iamRoleResource := sparta.CloudFormationResourceName("StatesIAMRole",
-			"StatesIAMRole")
-		template.AddResource(iamRoleResource, statesIAMRole)
 
 		// Sweet - serialize it without indentation so that the
 		// ConvertToTemplateExpression can actually parse the inline `Ref` objects
@@ -1474,23 +1558,10 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 			"StateMachine": string(jsonBytes),
 		}).Debug("State machine definition")
 
-		// Great, so we've serialized the "Resource", but we actually
-		// need to replace each lambda "Resource" definition with a
-		// properly quoted Fn::GetAtt. Not sure how to make this as part of
-		// the MarshalJSON, since it's invalid JSON :(
-		stateMachineString := string(jsonBytes)
-		for _, eachLambdaResourceName := range lambdaFunctionResourceNames {
-			// Look for the reserved pattern that was exported in MarshalJSON
-			reReplace := regexp.MustCompile(fmt.Sprintf(`"\{\{%s\}\}"`, eachLambdaResourceName))
-			// Create the replacement text that quotes the GetAtt call
-			replaceText := fmt.Sprintf(`"{"Fn::GetAtt": ["%s","Arn"]}"`, eachLambdaResourceName)
-			stateMachineString = reReplace.ReplaceAllString(stateMachineString, replaceText)
-		}
-
 		// Super, now parse this into an Fn::Join representation
 		// so that we can get inline expansion of the AWS pseudo params
-		smReader := bytes.NewReader([]byte(stateMachineString))
-		templateExpr, templateExprErr := spartaCF.ConvertToTemplateExpression(smReader, nil)
+		smReader := bytes.NewReader(jsonBytes)
+		templateExpr, templateExprErr := spartaCF.ConvertToInlineJSONTemplateExpression(smReader, nil)
 		if nil != templateExprErr {
 			return errors.Errorf("Failed to parser: %s", templateExprErr.Error())
 		}
@@ -1499,10 +1570,12 @@ func (sm *StateMachine) StateMachineDecorator() sparta.ServiceDecoratorHookFunc 
 		stepFunctionResource := &gocf.StepFunctionsStateMachine{
 			StateMachineName: gocf.String(sm.name),
 			DefinitionString: templateExpr,
-			RoleArn:          gocf.GetAtt(iamRoleResource, "Arn").String(),
 		}
-		stepFunctionResourceName := sparta.CloudFormationResourceName("StateMachine",
-			"StateMachine")
+		if iamRoleResourceName != "" {
+			stepFunctionResource.RoleArn = gocf.GetAtt(iamRoleResourceName, "Arn").String()
+		} else if sm.roleArn != nil {
+			stepFunctionResource.RoleArn = sm.roleArn.String()
+		}
 		template.AddResource(stepFunctionResourceName, stepFunctionResource)
 		return nil
 	}
@@ -1526,7 +1599,8 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 }
 
 // NewStateMachine returns a new StateMachine instance
-func NewStateMachine(stateMachineName string, startState TransitionState) *StateMachine {
+func NewStateMachine(stateMachineName string,
+	startState TransitionState) *StateMachine {
 	uniqueStates := make(map[string]MachineState, 0)
 	pendingStates := []MachineState{startState}
 	duplicateStateNames := make(map[string]bool, 0)
@@ -1553,10 +1627,14 @@ func NewStateMachine(stateMachineName string, startState TransitionState) *State
 			if !nodeVisited(stateNode.Default) {
 				tailStates = append(tailStates, stateNode.Default)
 			}
+
 		case TransitionState:
-			if !nodeVisited(stateNode.NextState()) {
-				tailStates = append(tailStates, stateNode.NextState())
+			for _, eachAdjacentState := range stateNode.AdjacentStates() {
+				if !nodeVisited(eachAdjacentState) {
+					tailStates = append(tailStates, eachAdjacentState)
+				}
 			}
+			// Are there any Catchers in here?
 		}
 		pendingStates = tailStates
 	}

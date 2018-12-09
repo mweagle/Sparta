@@ -78,6 +78,7 @@ type templateConverter struct {
 	templateReader          io.Reader
 	additionalTemplateProps map[string]interface{}
 	// internals
+	doQuote          bool
 	expandedTemplate string
 	contents         []gocf.Stringable
 	conversionError  error
@@ -142,7 +143,14 @@ func (converter *templateConverter) parseData() *templateConverter {
 								converter.conversionError = parsedContentsErr
 								return converter
 							}
-							converter.contents = append(converter.contents, parsedContents)
+							if converter.doQuote {
+								converter.contents = append(converter.contents, gocf.Join("",
+									gocf.String("\""),
+									parsedContents,
+									gocf.String("\"")))
+							} else {
+								converter.contents = append(converter.contents, parsedContents)
+							}
 							curContents = curContents[indexPos+1:]
 							if len(curContents) <= 0 && (eachLineIndex < (splitDataLineCount - 1)) {
 								converter.contents = append(converter.contents, gocf.String("\n"))
@@ -457,6 +465,20 @@ func ConvertToTemplateExpression(templateData io.Reader,
 	converter := &templateConverter{
 		templateReader:          templateData,
 		additionalTemplateProps: additionalUserTemplateProperties,
+	}
+	return converter.expandTemplate().parseData().results()
+}
+
+// ConvertToInlineJSONTemplateExpression transforms the templateData contents into
+// an Fn::Join- compatible inline JSON representation for template serialization.
+// The templateData contents may include both golang text/template properties
+// and single-line JSON Fn::Join supported serializations.
+func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
+	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	converter := &templateConverter{
+		templateReader:          templateData,
+		additionalTemplateProps: additionalUserTemplateProperties,
+		doQuote:                 true,
 	}
 	return converter.expandTemplate().parseData().results()
 }

@@ -75,7 +75,7 @@ func ProvisionEx(t *testing.T,
 		"",
 		"",
 		&templateWriter,
-		nil,
+		workflowHooks,
 		logger)
 	if evaluator != nil {
 		err = evaluator(t, err)

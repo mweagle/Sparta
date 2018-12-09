@@ -9,6 +9,7 @@ import (
 	sparta "github.com/mweagle/Sparta"
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaTesting "github.com/mweagle/Sparta/testing"
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -55,7 +56,7 @@ func TestAWSStepFunction(t *testing.T) {
 		sparta.IAMRoleDefinition{})
 
 	// // Create a Choice state
-	lambdaTaskState := NewTaskState("lambdaHelloWorld", lambdaFn)
+	lambdaTaskState := NewLambdaTaskState("lambdaHelloWorld", lambdaFn)
 	delayState := NewWaitDelayState("holdUpNow", 3*time.Second)
 	successState := NewSuccessState("success")
 
@@ -77,7 +78,7 @@ func TestRollDieChoice(t *testing.T) {
 		sparta.IAMRoleDefinition{})
 
 	// Make all the Step states
-	lambdaTaskState := NewTaskState("lambdaRollDie", lambdaFn)
+	lambdaTaskState := NewLambdaTaskState("lambdaRollDie", lambdaFn)
 	successState := NewSuccessState("success")
 	delayState := NewWaitDelayState("tryAgainShortly", 3*time.Second)
 	lambdaChoices := []ChoiceBranch{
@@ -104,4 +105,17 @@ func TestRollDieChoice(t *testing.T) {
 	testStepProvision(t,
 		[]*sparta.LambdaAWSInfo{lambdaFn},
 		startMachine)
+}
+
+func TestDynamoDB(t *testing.T) {
+	dynamoDbParams := DynamoDBGetItemParameters{
+		TableName:       gocf.String("MY_TABLE"),
+		AttributesToGet: []string{"attr1", "attr2"},
+	}
+	dynamoState := NewDynamoDBGetItemState("testState", dynamoDbParams)
+	stateJSON, stateJSONErr := dynamoState.MarshalJSON()
+	if stateJSONErr != nil {
+		t.Fatalf("Failed to create JSON: %s", stateJSONErr)
+	}
+	t.Logf("JSON DATA:\n%s", string(stateJSON))
 }

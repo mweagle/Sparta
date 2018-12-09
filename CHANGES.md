@@ -1,12 +1,17 @@
 # Change Notes
 
-## v1.7.4 - The Documented Edition 📚
+## v1.8.0 - The #postReInvent Edition ⌛️
 
 - :warning: **BREAKING**
-  - Changed `archetype.CloudWatchLogsReactor` to `archetype.CloudWatchReactor`
+  - Renamed `archetype.CloudWatchLogsReactor` to `archetype.CloudWatchReactor`
     - Also changed `OnLogMessage` to `OnCloudWatchMessage`
     - I consistently forget the fact that CloudWatch is more than logs
     - Moved the internal `cloudwatchlogs` package to the `cloudwatch/logs` import path
+  - Renamed `step.NewTaskState` to `step.NewLambdaTaskState` to enable type specific [Step function services](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-connectors.html).
+  - Changed `StateMachineDecorator()` to `StateMachineDecorator(resourceName)`
+  - Upgraded to `docker login --password-stdin`. Previous login used `docker login --password`.
+    - See the [Docker docs](https://docs.docker.com/engine/reference/commandline/login/#parent-command)
+  - Include `docker -v` output in log when calling [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
 - :checkered_flag: **CHANGES**
   - More documentation
 - :bug:  **FIXED**

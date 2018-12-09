@@ -13,6 +13,7 @@ import (
 	"math/rand"
 	"strings"
 	"text/template"
+	"time"
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	"github.com/pkg/errors"
@@ -231,7 +232,10 @@ func Describe(serviceName string,
 	if validationErr != nil {
 		return validationErr
 	}
-
+	buildID, buildIDErr := provisionBuildID("none", logger)
+	if buildIDErr != nil {
+		buildID = fmt.Sprintf("%d", time.Now().Unix())
+	}
 	var cloudFormationTemplate bytes.Buffer
 	err := Provision(true,
 		serviceName,
@@ -242,7 +246,7 @@ func Describe(serviceName string,
 		s3BucketName,
 		false,
 		false,
-		"N/A",
+		buildID,
 		"",
 		buildTags,
 		linkFlags,

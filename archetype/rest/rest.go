@@ -167,15 +167,14 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 		// Any headers?
 		for _, eachHeader := range methodHandler.headers {
 			// Make this an optional header on the method response
-			lowercaseHeader := strings.ToLower(eachHeader)
-			methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeader)
+			methodHeaderKey := fmt.Sprintf("method.response.header.%s", eachHeader)
 
 			for _, eachResponse := range apiMethod.Responses {
 				eachResponse.Parameters[methodHeaderKey] = false
 			}
 			// Add it to the integration mappings
 			// Then ensure every integration response knows how to pass it along...
-			inputSelector := fmt.Sprintf(`'$input.json("$.headers.%s")'`, lowercaseHeader)
+			inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
 			for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
 				if len(eachIntegrationResponse.Parameters) <= 0 {
 					eachIntegrationResponse.Parameters = make(map[string]interface{})
@@ -227,7 +226,8 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 		return nil, errors.Errorf("No resource methodHandlers found for resource: %T", resource)
 	}
 	// Convert this into a slice and return it...
-	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo, len(resourceMap), len(resourceMap))
+	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo,
+		len(resourceMap), len(resourceMap))
 	lambdaIndex := 0
 	for _, eachLambda := range resourceMap {
 		lambdaResourceHandlers[lambdaIndex] = eachLambda

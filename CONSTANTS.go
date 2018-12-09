@@ -7832,7 +7832,7 @@ eU7o6uPNBXrQ8xJtCI1+LaNNnP+/AQAA//+GhhUXML8AAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.babelrc": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.babelrc",
 		size:    25,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/6rmUlBQKihKLU4tKVayUohWSs0rU4rlquUCBAAA//9V5fPSGQAAAA==
 `,
@@ -7841,7 +7841,7 @@ H4sIAAAAAAAC/6rmUlBQKihKLU4tKVayUohWSs0rU4rlquUCBAAA//9V5fPSGQAAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.eslintignore": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.eslintignore",
 		size:    18,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/8rLT0mNz81PKc1JLdbX0tLX4gIEAAD//10rz9MSAAAA
 `,
@@ -7850,7 +7850,7 @@ H4sIAAAAAAAC/8rLT0mNz81PKc1JLdbX0tLX4gIEAAD//10rz9MSAAAA
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.eslintrc": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.eslintrc",
 		size:    218,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/2SOQQoCMQxF9z1FyHrWLnobNX8xMk0g6aggc3eZtqDQZd5Pft4nEREx9MmZ+tDAze0V
 cM5UfcfyC+5Wiukj5kRNMNNrkRkiLgM2dizD4l2hclYzYlu1Zsf5DyoQHku+b4g/WQ6UtZ24m3MvTEf6
@@ -7861,7 +7861,7 @@ BgAA///OKeNp2gAAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.gitignore": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.gitignore",
 		size:    56,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/wTA0Q2AIAwE0P/uAisZpJeqtD0SJHF8X1JxBHU7luSMoji3VafJnYqvXm+4zNZHMxRn
 H/VZTPkDAAD//1KMV0M4AAAA
@@ -7871,7 +7871,7 @@ H/VZTPkDAAD//1KMV0M4AAAA
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.npmignore": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.npmignore",
 		size:    45,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/8rLT0mNz81PKc1JLebKK8jVTUlNKk3Xy8lP5ypITM5OTE/VzclPztbLKs7P4wIEAAD/
 /2bgsXEtAAAA
@@ -7881,7 +7881,7 @@ H4sIAAAAAAAC/8rLT0mNz81PKc1JLebKK8jVTUlNKk3Xy8lP5ypITM5OTE/VzclPztbLKs7P4wIEAAD/
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.npmrc": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/.npmrc",
 		size:    19,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/ypITM5OTE/VzclPzrZNS8wpTuUCBAAA//8JcDOQEwAAAA==
 `,
@@ -7890,7 +7890,7 @@ H4sIAAAAAAAC/ypITM5OTE/VzclPzrZNS8wpTuUCBAAA//8JcDOQEwAAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/LICENSE": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/LICENSE",
 		size:    1084,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/1xSTY7bNhTe8xTfMgHUaZJFUXTHkegxUZk0KDqul7JEj1jIpCFSHXg3B2kuNycpnuxJ
 m64M873v94mxMl6uk38eMj50H/Hl0+dffvry6fOvBezgUF5zTF17cShjSHHKfj4/MLZ109mn5GOATxjc
@@ -7910,7 +7910,7 @@ eC3VU0Ngivi+/PBPAAAA//+EHaSQPAQAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/README.md": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/README.md",
 		size:    4440,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/6xYbW8ctxH+vr/iaQLk7ozVnqykRXGCC9iW3SiwWyFWUaBCguXtzu1S4pIsyb3TVdF/
 L4bcvRdZDoIg/nJacl6eeR+62gbjK2HppBaNo+zVH/wvy27+dHPxz8ufpm0I1i/m8/+RNrUpjGvmS1E3
@@ -7950,7 +7950,7 @@ nnkCmjajG59/wf6KsPnA6OeaNrNo0X/S/1pk/w8AAP//3LZH61gRAAA=
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/bower.json": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/bower.json",
 		size:    479,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/2yRQWv7MAzF7/kUwsfSOn/+u/U2Vhg77Nbb2Ipra6m7RDKWQhdGv/twuiZl7Gae3vs9
 CX9VAIZch2YNxg/K4l3CVXBNRrMsw4Dic0wamYpne0DYlCm0buBe4Z0zbO4fBRwF0Iwoo/RwZdmjXECd
@@ -7963,7 +7963,7 @@ uWW+fvlLWOGnIkn5lSnfRo8k4/XPT1tTnavvAAAA//+bFx1l3wEAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/cytoscape-dagre.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/cytoscape-dagre.js",
 		size:    10572,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/6w6XXPbRpLP4q9o62EJJBQky7kXMlpXHCtbrnM2riR7uSqVijUEmsBY4AxuZmAKpdV/
 v+r5AAYgaTu18YuMnv7+mm6AybYVueFSwB43Dcsf/iX4J1Sa1T/Loq3xLW654ISQKCnNArYsN1J1KTzN
@@ -8028,7 +8028,7 @@ YoYvru5He6v/DwAA//+tX98XTCkAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/demo.html": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/demo.html",
 		size:    3248,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/5xXX2/iuBd9z6e4w+intBJJSEv/kAH00870YaVZzUq7L6tVH4x9Ie44dmQ70LTqd18l
 gRJD1XrgyX/OOb73nmvkTD99+/H173/+vJsHwTS3hZgHAcA0R8LmAQDA1HIrcE5rqwwlJUaMrDTGDwYY
@@ -8052,7 +8052,7 @@ TJPu4+S/AAAA//9glMC5sAwAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/package.json": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/package.json",
 		size:    1730,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/5xUTW/bOhC8+1csdAweacdxkvcMBHhFnRY5JL0EvRRNQJMbiQlFEiTlWC3y3wtSH5QR
 o4fcpJ2d5VA7o98zgEKzGos1FLwNxnNmkQhWOiz+ieAOnZdGR3xJl3TZVQV67qQNPXJfIWwiBxRrTRPg
@@ -8072,7 +8072,7 @@ y3fAJDV9z4qeZz9YRHd8n9nA3RdZ0kWmiaOUzibdHf6ly9Q+e5v9CQAA//+gaQ3bwgYAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/assign.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/assign.js",
 		size:    275,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/1SMvU7DQBCE+3uKofNJ0aXHMlTUFJSIwrmczeHNrnW7lohQ3h0tP4pS7ezMp2+/x0s9
 rVR2qGyl8Uh4PnyUbGlUrTN3EavQeapEmKRBVqvCCvmBFMVyCuEkx41KKp+rNFMMtw7cDeCNCI+3fTpU
@@ -8084,7 +8084,7 @@ rdjW2Jk+XPrwHQAA//8+G56XEwEAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/defaults.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/defaults.js",
 		size:    1849,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/6xVTWvkRhC961e8265BXtsbchmTQBZnIeBDSBZyrlGXpI5bXU13yTOD8X8P1ZL8tT6E
 kLkI6uPVq6pXPYEVjnuagxb8hIcGuLiAoyEzKAwCSeollhZz4bKF4p7CzJCIOTrufWTXAFEc/8lp92xs
@@ -8106,7 +8106,7 @@ bh6vm2YSNwf+xEe7Wft/3P4qr5t/AgAA//9Ajv7WOQcAAA==
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/index.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/index.js",
 		size:    420,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/1SRXY7qMAyF372Kw1NaCTULqLqY0jrgqxD3Jo4Ajdj7iGFUMq+Ov/MTL5qKQa5bxITM
 /6tk7tzg4/zQaq4fibxH5rMU41xgFwbfjVMRTdCEGcvDtCzzxohyQuZAkW1HMCHUtJho6prV/osACR0O
@@ -8119,7 +8119,7 @@ AAD//3n6ip2kAQAA
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/layout.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/src/layout.js",
 		size:    3886,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/6xXzY7bOBK++ykqOcTUxlF3+iitEKC3kyBAstvAAjOHIAdZoiVmaFIjUbEJx+8+qCIp
 UY47k8OcJBa/+v8hWWk1GBDDu1FVRmgFBez8L9PJCXpuxl6BsR3XO9BQFAWsA2KdwzlfORE135WjNAMU
@@ -8150,7 +8150,7 @@ UbdZvgVCIPG3CM9FWhQFPHcvs+fwhkiZf8r80DVcPtU03tQ4zyy4ccymyg/hsBPJTuU5FWl40qINNHNb
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/test/example.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/test/example.js",
 		size:    131,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/2TJsalDMQxG4V5T/J1keHgB87bIAvfqKliNndgyBEJ2D65TnOLjaG8zoPVw/GPYc/kw
 4W1OheiyqcNPE75Vn/yH+2oa3pukNwEewle3iahH/FzAXg/TEMRYhpSj59PyRiHgkwrtvgEAAP//8gx1
@@ -8161,7 +8161,7 @@ uYMAAAA=
 	"/resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/webpack.config.js": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/cytoscape.js-dagre-2.2.2/webpack.config.js",
 		size:    888,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/1SSS2/bMAzH7/4UPAxwgqXyXYHRS3vogKbFsO3SBYEiMZ4SWfJEKY+l+e6D5DgPHwyQ
 vz8fIimdpQCdCH+gBo9/o/Y4KpNdjqfFmW6aW8iqTsiNaJCtydmrTIoWjRSEt+KL8yaddxKJ7ur1rqtm
@@ -8178,7 +8178,7 @@ PUeMjufXSNd2HomGx6ZvJ7zVtiHer3RyAcq7bpEOxqXp3MH+XadxATDP3RWnaVH0s2C475wP6eT7A5oW
 	"/resources/describe/cytoscape.js-dagre-2.2.2/pax_global_header": {
 		local:   "resources/describe/cytoscape.js-dagre-2.2.2/pax_global_header",
 		size:    52,
-		modtime: 1537976411,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/zI1UkjOz81NzSuxTTZJM08xMjCyNDZPNUkxT0lMSTE2T060NEo1Mk40TUq2SLVMMUwz
 SuECBAAA//8mCqKbNAAAAA==
@@ -8188,7 +8188,7 @@ SuECBAAA//8mCqKbNAAAAA==
 	"/resources/describe/cytoscapejs/cytoscape.js": {
 		local:   "resources/describe/cytoscapejs/cytoscape.js",
 		size:    787408,
-		modtime: 1541250393,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/+y97XYbN7Io+jt6Cth7rklKFCVScj6kKF6O4+zts/LhY3vPjI+2tqbZDZKwm41Od1Ni
 J/YD3ee4L3YXqvBRQKMpxZOZ2T9O1orFBgqFAlAoFAqFwnCxKdJGyILd8nmZpO//sxA3vKqT/EeZbXL+
@@ -11153,7 +11153,7 @@ JOtikYF/laphkEXJt+GYqYaGoo5M0E9V1ny4YZSNJxpqwTFWMhgYOyxLc5D6eA6QEJI5KJrqRcwSo+p6
 	"/resources/describe/cytoscapejs/cytoscape.min.js": {
 		local:   "resources/describe/cytoscapejs/cytoscape.min.js",
 		size:    316557,
-		modtime: 1541250404,
+		modtime: 1541483848,
 		compressed: `
 H4sIAAAAAAAC/9z9e5PbtpIwDv+/n2KkPUdLSBBH1FxsUwOrEtt5Nm/l4sf2nrO1jE4OhoQkHlOgTIIz
 o4z43d/qBsCLRM04yVY9Vb+krAFxaQCNRqMBdDd6y0KGKk6lI6gij/309l8iVH3G1G4r0uWZeNimmcoH
@@ -18390,6 +18390,20 @@ Gnmd+/cPM+jnNCiTMKOvg3yK8XXAB7elx5ocnxh5UB/4na5tRicDevkRYYUsRjG8YaA4xoJOsgfl4JM5
 KZbcvDbCtyLLdK1OPZQekQ62nt529Q9qRnKC5wCSYVmSHQdpPYcQXSjJ+qpm4SUZ+luiu5rGsv8L9X8h
 N42hHxDOY45DXXeesa07sn+MXmldfhHfIg5CdH8KM47auw5AtRvbS+94A7gqSPF4SrC9RVn1CZBVSRwo
 +35fQow1C23lC9lh1b+764clOejfrPpTdv07kFGrvt/1sI/20b8BAAD//xXbHL8CCgAA
+`,
+	},
+
+	"/resources/provision/apigateway/outputmapping_json.vtl": {
+		local:   "resources/provision/apigateway/outputmapping_json.vtl",
+		size:    620,
+		modtime: 1544398288,
+		compressed: `
+H4sIAAAAAAAC/4yRQY6cMBBF95yigpEGpAH2I80iJxgpWUZZ1OAPON24LLvoTuf0kWm3EkVZzNb1/i+9
+cuN82HX4kcS3T83wLvb21FWVMfR2eqbAMYF0BTk/yeb8QhsHkplWsEVMGWRvaZZI4Gkl8XimBD1CckGM
+zqLQ5PzxPIlX/NQhh79gfqFVNaSXcbQypYGvaeCNf4kfJtlGDm5hxZVv45kVSUeLC84SEJfdWWSgL0S/
+cQjOL71iC5nuI2ZE+AnDqtvZlM39haPj9/Nf88okaNsULXqlcpjAurZ1M5RB3XWdMZWZJWbdtjnhlrUe
+weGE21doe6eOyodtRAriE97KUUrlt1zxPS8sFfeHIw9vjTk+47O3tJevmMSCIuuKSLqyJ+cVS2R14ulh
+nihJnmpOH6mIQrgN5BJF2H2CrYyb239k84a6o0+vVNcfEEnKuv/nZveaPya/AwAA//979+w9bAIAAA==
 `,
 	},
 

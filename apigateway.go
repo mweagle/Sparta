@@ -840,11 +840,14 @@ func (resource *Resource) NewMethod(httpMethod string,
 			regExp = ""
 		}
 
+		// So we need to return everything here, but that means we'll need some other
+		// place to mutate the response body...where?
+
 		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 		method.Integration.Responses[i] = &IntegrationResponse{
 			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
-				"application/json": "$input.json('$.body')",
+				"application/json": _escFSMustString(false, "/resources/provision/apigateway/outputmapping_json.vtl"),
 				"text/*":           "",
 			},
 			SelectionPattern: regExp,
