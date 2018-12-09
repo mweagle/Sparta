@@ -18395,15 +18395,15 @@ N42hHxDOY45DXXeesa07sn+MXmldfhHfIg5CdH8KM47auw5AtRvbS+94A7gqSPF4SrC9RVn1CZBVSRwo
 
 	"/resources/provision/apigateway/outputmapping_json.vtl": {
 		local:   "resources/provision/apigateway/outputmapping_json.vtl",
-		size:    620,
-		modtime: 1544398288,
+		size:    541,
+		modtime: 1544398991,
 		compressed: `
-H4sIAAAAAAAC/4yRQY6cMBBF95yigpEGpAH2I80iJxgpWUZZ1OAPON24LLvoTuf0kWm3EkVZzNb1/i+9
-cuN82HX4kcS3T83wLvb21FWVMfR2eqbAMYF0BTk/yeb8QhsHkplWsEVMGWRvaZZI4Gkl8XimBD1CckGM
-zqLQ5PzxPIlX/NQhh79gfqFVNaSXcbQypYGvaeCNf4kfJtlGDm5hxZVv45kVSUeLC84SEJfdWWSgL0S/
-cQjOL71iC5nuI2ZE+AnDqtvZlM39haPj9/Nf88okaNsULXqlcpjAurZ1M5RB3XWdMZWZJWbdtjnhlrUe
-weGE21doe6eOyodtRAriE97KUUrlt1zxPS8sFfeHIw9vjTk+47O3tJevmMSCIuuKSLqyJ+cVS2R14ulh
-nihJnmpOH6mIQrgN5BJF2H2CrYyb239k84a6o0+vVNcfEEnKuv/nZveaPya/AwAA//979+w9bAIAAA==
+H4sIAAAAAAAC/6yRzQ6bMBCE7zyFFSMFpNjcI/UZIrXHqocNHsAN/qm9SUqfvjIxUh+g191vZsfj1vr4
+ZP0zB9+dW30PZjv3TSOluD0uIlLKELxAWD8GZ/0sHEURJrGADFIuIHkjppAEaFxE8LiIDN5F4YWUrEGl
+hfX7eAye8Zt1EX/FdBULc8zXYTBhzJreWZOjP8HrMbiBop2J8aZtWImReTB4YQ0RaX5agwKoSihHMVo/
+K4aLhVYJExL8CL2wW2W9rF6ULN3Xf/b/LcsR5Xi7Svj1RGaVkGPwGSpSIgdGynuoRmZw19ZCxRdRvyQS
+L92p1XVx6vteykZOIZWiu/aBrRR6CPUD2zdw96F2y6Pn4/KtRqqW34vFj3KwWnwGux7eSNn8DQAA///P
+GoysHQIAAA==
 `,
 	},
 

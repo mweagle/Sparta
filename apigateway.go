@@ -14,29 +14,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-/*
-"context" : {
-  "apiId" : "$util.escapeJavaScript($context.apiId)",
-  "method" : "$util.escapeJavaScript($context.httpMethod)",
-  "requestId" : "$util.escapeJavaScript($context.requestId)",
-  "resourceId" : "$util.escapeJavaScript($context.resourceId)",
-  "resourcePath" : "$util.escapeJavaScript($context.resourcePath)",
-  "stage" : "$util.escapeJavaScript($context.stage)",
-  "identity" : {
-    "accountId" : "$util.escapeJavaScript($context.identity.accountId)",
-    "apiKey" : "$util.escapeJavaScript($context.identity.apiKey)",
-    "caller" : "$util.escapeJavaScript($context.identity.caller)",
-    "cognitoAuthenticationProvider" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)",
-    "cognitoAuthenticationType" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationType)",
-    "cognitoIdentityId" : "$util.escapeJavaScript($context.identity.cognitoIdentityId)",
-    "cognitoIdentityPoolId" : "$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)",
-    "sourceIp" : "$util.escapeJavaScript($context.identity.sourceIp)",
-    "user" : "$util.escapeJavaScript($context.identity.user)",
-    "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
-    "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
-  }
-*/
-
 var defaultCORSHeaders = map[string]interface{}{
 	"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
 	"Access-Control-Allow-Methods": "*",
@@ -842,12 +819,12 @@ func (resource *Resource) NewMethod(httpMethod string,
 
 		// So we need to return everything here, but that means we'll need some other
 		// place to mutate the response body...where?
-
+		templateString, _ := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
 		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 		method.Integration.Responses[i] = &IntegrationResponse{
 			Parameters: make(map[string]interface{}),
 			Templates: map[string]string{
-				"application/json": _escFSMustString(false, "/resources/provision/apigateway/outputmapping_json.vtl"),
+				"application/json": templateString,
 				"text/*":           "",
 			},
 			SelectionPattern: regExp,

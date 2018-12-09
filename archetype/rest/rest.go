@@ -167,20 +167,24 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 		// Any headers?
 		for _, eachHeader := range methodHandler.headers {
 			// Make this an optional header on the method response
-			methodHeaderKey := fmt.Sprintf("method.response.header.%s", eachHeader)
+			lowercaseHeaderName := strings.ToLower(eachHeader)
+			methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeaderName)
 
 			for _, eachResponse := range apiMethod.Responses {
 				eachResponse.Parameters[methodHeaderKey] = false
 			}
+			// We don't need to add the explicit mappings since it's now always
+			// in the response mapping template.
+
 			// Add it to the integration mappings
 			// Then ensure every integration response knows how to pass it along...
-			inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
-			for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
-				if len(eachIntegrationResponse.Parameters) <= 0 {
-					eachIntegrationResponse.Parameters = make(map[string]interface{})
-				}
-				eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
-			}
+			// inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
+			// for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
+			// 	if len(eachIntegrationResponse.Parameters) <= 0 {
+			// 		eachIntegrationResponse.Parameters = make(map[string]interface{})
+			// 	}
+			// 	eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
+			// }
 		}
 
 		return nil
