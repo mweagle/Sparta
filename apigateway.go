@@ -801,6 +801,10 @@ func (resource *Resource) NewMethod(httpMethod string,
 			defaultHTTPStatusCode)
 	}
 
+	// So we need to return everything here, but that means we'll need some other
+	// place to mutate the response body...where?
+	templateString, _ := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
+
 	// Populate Integration.Responses and the method Parameters
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
@@ -812,22 +816,19 @@ func (resource *Resource) NewMethod(httpMethod string,
 
 		// The integration responses are keyed from supported error codes...
 		// First the Integration Responses...
-		regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
+		//regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
 		if defaultHTTPStatusCode == i {
-			regExp = ""
-		}
-
-		// So we need to return everything here, but that means we'll need some other
-		// place to mutate the response body...where?
-		templateString, _ := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
-		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
-		method.Integration.Responses[i] = &IntegrationResponse{
-			Parameters: make(map[string]interface{}),
-			Templates: map[string]string{
-				"application/json": templateString,
-				"text/*":           "",
-			},
-			SelectionPattern: regExp,
+			// Since we pushed this into the VTL mapping, we don't need to create explicit RegExp based
+			// mappings
+			// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
+			method.Integration.Responses[i] = &IntegrationResponse{
+				Parameters: make(map[string]interface{}),
+				Templates: map[string]string{
+					"application/json": templateString,
+					"text/*":           "",
+				},
+				SelectionPattern: "",
+			}
 		}
 
 		// Then the Method.Responses
