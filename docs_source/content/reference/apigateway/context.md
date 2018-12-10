@@ -4,7 +4,6 @@ title: Request Context
 weight: 12
 ---
 
-
 This example demonstrates how to use the `Context` struct provided as part of the [APIGatewayLambdaJSONEvent](https://godoc.org/github.com/mweagle/Sparta#APIGatewayLambdaJSONEvent) event.  The [SpartaGeoIP](https://github.com/mweagle/SpartaGeoIP) service will return Geo information based on the inbound request's IP address.
 
 # Define the Lambda Function
@@ -13,15 +12,14 @@ Our function will examine the inbound request, lookup the user's IP address in t
 
 As this function is only expected to be invoked from the API Gateway, we'll unmarshall the inbound event:
 
-
 ```go
 import (
-	spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
+  spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
 )
 func ipGeoLambda(ctx context.Context,
   apiRequest spartaAWSEvents.APIGatewayRequest) (map[string]interface{}, error) {
-	parsedIP := net.ParseIP(apiRequest.Context.Identity.SourceIP)
-	record, err := dbHandle.City(parsedIP)
+  parsedIP := net.ParseIP(apiRequest.Context.Identity.SourceIP)
+  record, err := dbHandle.City(parsedIP)
 
 ```
 
@@ -38,11 +36,11 @@ We'll then parse the inbound IP address from the [Context](https://godoc.org/git
 Finally, marshal the data or error result and we're done:
 
 ```go
-	requestResponse := map[string]interface{}{
-		"ip":     parsedIP,
-		"record": record,
-	}
-	return requestResponse, nil
+  requestResponse := map[string]interface{}{
+    "ip":     parsedIP,
+    "record": record,
+  }
+  return requestResponse, nil
 ```
 
 # Sparta Integration
@@ -60,23 +58,23 @@ These four steps are managed in the service's `main()` function:
 ////////////////////////////////////////////////////////////////////////////////
 // Main
 func main() {
-	stage := sparta.NewStage("ipgeo")
-	apiGateway := sparta.NewAPIGateway("SpartaGeoIPService", stage)
-	stackName := "SpartaGeoIP"
+  stage := sparta.NewStage("ipgeo")
+  apiGateway := sparta.NewAPIGateway("SpartaGeoIPService", stage)
+  stackName := "SpartaGeoIP"
 
-	var lambdaFunctions []*sparta.LambdaAWSInfo
+  var lambdaFunctions []*sparta.LambdaAWSInfo
   lambdaFn := sparta.HandleAWSLambda(
     sparta.LambdaName(ipGeoLambda),
     ipGeoLambda,
     sparta.IAMRoleDefinition{})
-	apiGatewayResource, _ := apiGateway.NewResource("/info", lambdaFn)
-	apiGatewayResource.NewMethod("GET", http.StatusOK)
-	lambdaFunctions = append(lambdaFunctions, lambdaFn)
+  apiGatewayResource, _ := apiGateway.NewResource("/info", lambdaFn)
+  apiGatewayResource.NewMethod("GET", http.StatusOK)
+  lambdaFunctions = append(lambdaFunctions, lambdaFn)
 
-	sparta.Main(stackName,
-		"Sparta app supporting ip->geo mapping",
-		lambdaFunctions,
-		apiGateway,
+  sparta.Main(stackName,
+    "Sparta app supporting ip->geo mapping",
+    lambdaFunctions,
+    apiGateway,
     nil)
 }
 ```
@@ -131,7 +129,6 @@ curl -vs https://qyslujefsf.execute-api.us-west-2.amazonaws.com/ipgeo/info
 ```
 
 Pretty-printing the response body:
-
 
 ```json
 
@@ -216,7 +213,6 @@ Pretty-printing the response body:
 }
 ```
 
-
 Please see the [first example](/reference/apigateway/echo_event/) for more information on the `code`, `status`, and `headers` keys.
 
 # Cleaning Up
@@ -229,5 +225,5 @@ go run main.go delete
 
 # Notes
 
-  * The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
-  * This is a port of Tom Maiaroto's https://github.com/tmaiaroto/go-lambda-geoip implementation.
+* The _GeoLite2-Country.mmdb_ content is embedded in the go binary via [esc](https://github.com/mjibson/esc) as part of the [go generate](https://github.com/mweagle/SpartaGeoIP/blob/master/main.go#L27) phase.
+  * This is a port of Tom Maiaroto's [go-lambda-geoip](https://github.com/tmaiaroto/go-lambda-geoip) implementation.

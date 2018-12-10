@@ -48,13 +48,13 @@ To use the `APIGatewayEnvelope` type with your own custom request body, create a
 
 ```go
 type FeedbackBody struct {
-	Language string `json:"lang"`
-	Comment  string `json:"comment"`
+  Language string `json:"lang"`
+  Comment  string `json:"comment"`
 }
 
 type FeedbackRequest struct {
-	spartaEvents.APIGatewayEnvelope
-	Body FeedbackBody `json:"body"`
+  spartaEvents.APIGatewayEnvelope
+  Body FeedbackBody `json:"body"`
 }
 ```
 
@@ -67,46 +67,57 @@ func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (m
 }
 ```
 
+## API Gateway Response Types
+
+The API Gateway [response mappings](https://docs.aws.amazon.com/apigateway/latest/developerguide/mappings.html) must make
+assumptions about the shape of the Lambda response. The default _application/json_ mapping template is:
+
+{{% import file="./static/source/resources/provision/apigateway/outputmapping_json.vtl" language="nohighlight" %}}
+
+This template assumes that your response type has the following JSON shape:
+
+```json
+{
+  "code" : int,
+  "body" : {...},
+  "headers": {...}
+}
+```
+
+The [apigateway.NewResponse](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewResponse) constructor
+is a utility function to produce a canonical version of this response shape. Note that `header` keys must be lower-cased.
+
+To return a different structure change the content-specific mapping templates defined by the
+[IntegrationResponse](https://godoc.org/github.com/mweagle/Sparta#IntegrationResponse). See the
+[mapping template reference](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) for more information.
+
 ## Custom HTTP Headers
 
-API Gateway supports returning custom HTTP headers whose values are extracted from your response payload.
-
-Assume your Sparta lambda function returns a JSON struct as in:
-
-```go
-// API response struct
-type helloWorldResponse struct {
-  Location    string `json:"location"`
-  Message     string `json:"message"`
-}
-```
-
-To extract the `location` field and promote it to the HTTP `Location` header, you must configure the [response data mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/request-response-data-mappings.html
-):
-
-
+API Gateway supports returning custom HTTP headers whose values are extracted from your response. To return custom HTTP
+headers using the default VTL mappings, provide them as the optional third `map[string]string` argument to
+[NewResponse](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewResponse) as in:
 
 ```go
-//
-// Promote the location key value to an HTTP header
-//
-  lambdaFn := sparta.HandleAWSLambda(
-    sparta.LambdaName(helloWorldResponseFunc),
-    helloWorldResponseFunc,
-    sparta.IAMRoleDefinition{})
-	apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
+func helloWorld(ctx context.Context,
+  gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
 
-apiGWMethod, _ := apiGatewayResource.NewMethod("GET", http.StatusOK)
-apiGWMethod.Responses[http.StatusOK].Parameters = map[string]bool{
-  "method.response.header.Location": true,
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  if loggerOk {
+    logger.Info("Hello world structured log message")
+  }
+
+  // Return a message, together with the incoming input...
+  return spartaAPIGateway.NewResponse(http.StatusOK, &helloWorldResponse{
+    Message: fmt.Sprintf("Hello world 🌏"),
+    Request: gatewayEvent,
+  },
+    map[string]string{
+      "X-Response": "Some-value",
+    }), nil
 }
-apiGWMethod.Integration.Responses[http.StatusOK].Parameters["method.response.header.Location"] =
-  "integration.response.body.location"
 ```
-
-Note that as the `helloWorldResponse` structured type is serialized to the _body_ property of the response, we include that path selector in the _integration.response.body.location_ value.
-
-See the related [AWS Forum thread](https://forums.aws.amazon.com/thread.jspa?threadID=199443).
 
 ## Other Resources
-  * [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)
+
+* [Walkthrough: API Gateway and Lambda Functions](http://docs.aws.amazon.com/apigateway/latest/developerguide/getting-started.html)
+* [Use a Mapping Template to Override an API's Request and Response Parameters and Status Codes](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html)

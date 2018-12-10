@@ -10,32 +10,32 @@ For reference, the `helloWorld` function is below.
 
 ```go
 import (
-	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+  awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 )
 func helloWorld(ctx context.Context,
-	gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
-	/*
-		 To return an error back to the client using a standard HTTP status code:
+  gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
+  /*
+     To return an error back to the client using a standard HTTP status code:
 
-			errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
-			"Something failed inside here")
-			return errorResponse, nil
+      errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
+      "Something failed inside here")
+      return errorResponse, nil
 
-			You can also create custom error response types, so long as they
-			include `"code":HTTP_STATUS_CODE` somewhere in the response body.
-			This reserved expression is what Sparta uses as a RegExp to determine
-			the Integration Mapping value
-	*/
+      You can also create custom error response types, so long as they
+      include `"code":HTTP_STATUS_CODE` somewhere in the response body.
+      This reserved expression is what Sparta uses as a RegExp to determine
+      the Integration Mapping value
+  */
 
-	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	if loggerOk {
-		logger.Info("Hello world structured log message")
-	}
-	// Return a message, together with the incoming input...
-	return &helloWorldResponse{
-		Message: fmt.Sprintf("Hello world 🌏"),
-		Request: gatewayEvent,
-	}, nil
+  logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  if loggerOk {
+    logger.Info("Hello world structured log message")
+  }
+  // Return a message, together with the incoming input...
+  return &helloWorldResponse{
+    Message: fmt.Sprintf("Hello world 🌏"),
+    Request: gatewayEvent,
+  }, nil
 }
 ```
 
@@ -56,26 +56,26 @@ The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct 
 
 ```go
 func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
-		helloWorld,
-		sparta.IAMRoleDefinition{})
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+    helloWorld,
+    sparta.IAMRoleDefinition{})
 
-	if nil != api {
-		apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
+  if nil != api {
+    apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
 
-		// We only return http.StatusOK
-		apiMethod, apiMethodErr := apiGatewayResource.NewMethod("GET",
-			http.StatusOK,
-			http.StatusInternalServerError)
-		if nil != apiMethodErr {
-			panic("Failed to create /hello resource: " + apiMethodErr.Error())
-		}
-		// The lambda resource only supports application/json Unmarshallable
-		// requests.
-		apiMethod.SupportedRequestContentTypes = []string{"application/json"}
-	}
-	return append(lambdaFunctions, lambdaFn)
+    // We only return http.StatusOK
+    apiMethod, apiMethodErr := apiGatewayResource.NewMethod("GET",
+      http.StatusOK,
+      http.StatusInternalServerError)
+    if nil != apiMethodErr {
+      panic("Failed to create /hello resource: " + apiMethodErr.Error())
+    }
+    // The lambda resource only supports application/json Unmarshallable
+    // requests.
+    apiMethod.SupportedRequestContentTypes = []string{"application/json"}
+  }
+  return append(lambdaFunctions, lambdaFn)
 }
 ```
 
@@ -102,7 +102,7 @@ INFO[0096] APIGatewayURL                                 Description="API Gatewa
 INFO[0096] ────────────────────────────────────────────────
 ```
 
-Combining the _API Gateway URL_ `OutputValue` with our resource path (_/hello/world/test_), we get the absolute URL to our lambda function: _https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello_
+Combining the _API Gateway URL_ `OutputValue` with our resource path (_/hello/world/test_), we get the absolute URL to our lambda function: [https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello](https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello)
 
 # Querying
 
@@ -197,92 +197,30 @@ The event data that's actually supplied to `echoS3Event` is the complete HTTP re
 
 Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
-  * [application/json](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl)
-  * [*](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_default.vtl)
+* _application/json_
 
-The `application/json` template is copied below:
+  {{% import file="./static/source/resources/provision/apigateway/inputmapping_json.vtl" language="nohighlight" %}}
 
-```nohighlight
-#*
-Provide an automatic pass through template that transforms all inputs
-into the JSON payload sent to a golang function. The JSON behavior attempts to parse
-the incoming HTTP body as JSON assign it to the `body` field.
+* _*_
 
-See
-  https://forums.aws.amazon.com/thread.jspa?threadID=220274&tstart=0
-  http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
-*#
-{
-  "method": "$context.httpMethod",
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($param in $input.params().header.keySet())
-    "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
-    #end
-  },
-  "queryParams": {
-    #foreach($param in $input.params().querystring.keySet())
-    "$param": "$util.escapeJavaScript($input.params().querystring.get($param))" #if($foreach.hasNext),#end
+  {{% import file="./static/source/resources/provision/apigateway/inputmapping_default.vtl" language="nohighlight" %}}
 
-    #end
-  },
-  "pathParams": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
+The default mapping templates forwards all whitelisted data & body to the lambda function.  You can see by switching on the `method` field would allow a single function to handle different HTTP methods.
 
-    #end
-  },
-  "context" : {
-    "apiId" : "$util.escapeJavaScript($context.apiId)",
-    "method" : "$util.escapeJavaScript($context.httpMethod)",
-    "requestId" : "$util.escapeJavaScript($context.requestId)",
-    "resourceId" : "$util.escapeJavaScript($context.resourceId)",
-    "resourcePath" : "$util.escapeJavaScript($context.resourcePath)",
-    "stage" : "$util.escapeJavaScript($context.stage)",
-    "identity" : {
-      "accountId" : "$util.escapeJavaScript($context.identity.accountId)",
-      "apiKey" : "$util.escapeJavaScript($context.identity.apiKey)",
-      "caller" : "$util.escapeJavaScript($context.identity.caller)",
-      "cognitoAuthenticationProvider" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)",
-      "cognitoAuthenticationType" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationType)",
-      "cognitoIdentityId" : "$util.escapeJavaScript($context.identity.cognitoIdentityId)",
-      "cognitoIdentityPoolId" : "$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)",
-      "sourceIp" : "$util.escapeJavaScript($context.identity.sourceIp)",
-      "user" : "$util.escapeJavaScript($context.identity.user)",
-      "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
-      "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
-    }
-  }
-}
-```
-
-This template forwards all whitelisted data & body to the lambda function.  You can see by switching on the `method` field would permit a single function to service multiple HTTP method names.
-
-The next example will show how to unmarshal this data and perform request-specific actions.
+The next example shows how to unmarshal this data and perform request-specific actions.
 
 # Proxying Envelope
 
-Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output (`$input.json('$')`).
+Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output (`$input.json('$.body')`).
 
 To return an error that API Gateway can properly translate into an HTTP
 status code, use an [apigateway.NewErrorResponse](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#NewErrorResponse) type. This
 custom error type includes fields that trigger integration mappings based on the
-inline [HTTP StatusCode](https://golang.org/src/net/http/status.go). If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
+inline [HTTP StatusCode](https://golang.org/src/net/http/status.go). The proper error
+code is extracted by lifting the `code` value from the Lambda's response body and
+using a [template override](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html)
 
-![API Gateway](/images/apigateway/IntegrationMapping.png)
-
-The regular expressions are used to translate the integration response, which is just a blob of text provided to the underlying AWS Go API, into API Gateway Method responses.
-If you use the `apigateway.Error` type, the marshalled string version of your
-error text will trigger the proper Method Response.
-
-Sparta annotates your lambda functions response with **go**'s values based on the HTTP status code your lambda function produced.  By default, Sparta also provides a corresponding Method Response entry for all valid HTTP codes:
-
-![API Gateway](/images/apigateway/MethodResponse.png)
-
-These mappings are defaults, and it's possible to override either one by providing a non-zero length values to either:
-
-  * [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration).  See the [DefaultIntegrationResponses](https://github.com/mweagle/Sparta/blob/master/apigateway.go#L60) for the default values.
-  * [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method).  See the [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) for the default method response mappings.
+If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
 # Cleaning Up
 
@@ -298,4 +236,4 @@ Now that we know what data is actually being sent to our API Gateway-connected L
 
 # Other Resources
 
-  * [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)
+* [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)

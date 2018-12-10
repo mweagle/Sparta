@@ -24,9 +24,9 @@ Setting the boolean to `true` will add the necessary `OPTIONS` and mock response
 
 Sparta provides two ways to customize the CORS headers available:
 
-  * Via the [apigateway.CORSOptions](https://godoc.org/github.com/mweagle/Sparta#CORSOptions) field.
-  * Customization may use the [S3Site.CloudformationS3ResourceName](https://godoc.org/github.com/mweagle/Sparta#S3Site) to get the _WebsiteURL_ value
-  so that the CORS origin options can be minimally scoped.
+* Via the [apigateway.CORSOptions](https://godoc.org/github.com/mweagle/Sparta#CORSOptions) field.
+* Customization may use the [S3Site.CloudformationS3ResourceName](https://godoc.org/github.com/mweagle/Sparta#S3Site) to get the _WebsiteURL_ value so that the CORS origin options can be minimally scoped.
 
 # References
-  * [API Gateway Docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)
+
+* [API Gateway Docs](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html)
