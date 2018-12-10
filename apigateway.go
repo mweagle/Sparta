@@ -100,8 +100,7 @@ func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool
 	return &responses
 }
 
-func integrationResponses(api *API, userResponses map[int]*IntegrationResponse,
-	corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
+func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
 
 	var integrationResponses gocf.APIGatewayMethodIntegrationResponseList
 
@@ -803,8 +802,11 @@ func (resource *Resource) NewMethod(httpMethod string,
 
 	// So we need to return everything here, but that means we'll need some other
 	// place to mutate the response body...where?
-	templateString, _ := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
-
+	templateString, templateStringErr := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
+	// Ignore any error
+	if templateStringErr != nil {
+		templateString = _escFSMustString(false, "/resources/awsbinary/README.md")
+	}
 	// Populate Integration.Responses and the method Parameters
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
@@ -815,8 +817,6 @@ func (resource *Resource) NewMethod(httpMethod string,
 		}
 
 		// The integration responses are keyed from supported error codes...
-		// First the Integration Responses...
-		//regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
 		if defaultHTTPStatusCode == i {
 			// Since we pushed this into the VTL mapping, we don't need to create explicit RegExp based
 			// mappings
