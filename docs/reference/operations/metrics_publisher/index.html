@@ -12,19 +12,19 @@
     <title>Metrics Publisher :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1543677158" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1543677158" rel="stylesheet">
-    <link href="/css/hybrid.css?1543677158" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1543677158" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1543677158" rel="stylesheet">
-    <link href="/css/auto-complete.css?1543677158" rel="stylesheet">
-    <link href="/css/theme.css?1543677158" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1543677158" rel="stylesheet">
+    <link href="/css/nucleus.css?1544416492" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1544416492" rel="stylesheet">
+    <link href="/css/hybrid.css?1544416492" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1544416492" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1544416492" rel="stylesheet">
+    <link href="/css/auto-complete.css?1544416492" rel="stylesheet">
+    <link href="/css/theme.css?1544416492" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1544416492" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1543677158" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1544416492" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1543677158"></script>
+    <script src="/js/jquery-2.x.min.js?1544416492"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1543677158"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1543677158"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1544416492"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1544416492"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1543677158"></script>
+<script type="text/javascript" src="/js/search.js?1544416492"></script>
 
     
   </div>
@@ -1473,8 +1473,8 @@ pre {
     
     <section id="footer">
       
-  Build: f1c79598<p/>
-  Date: 2018-12-01 06:45:02 -0800 PST
+  Build: 66510f00<p/>
+  Date: 2018-12-02 06:08:41 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1565,6 +1565,69 @@ pre {
 
         
 
+
+<p>AWS Lambda is tightly integrated with other AWS services and provides excellent
+opportunities for improving your service&rsquo;s observability posture. Sparta includes
+a <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html">CloudWatch Metrics</a>
+publisher that periodically publishes metrics to CloudWatch.</p>
+
+<p>This periodic task publishes environment-level metrics that have been
+detected by the <a href="https://github.com/shirou/gopsutil">gopsutil</a> package. Metrics include:</p>
+
+<ul>
+<li>CPU
+
+<ul>
+<li>Percent used</li>
+</ul></li>
+<li>Disk
+
+<ul>
+<li>Percent used</li>
+</ul></li>
+<li>Host
+
+<ul>
+<li>Uptime (milliseconds)</li>
+</ul></li>
+<li>Load
+
+<ul>
+<li>Load1 (no units)</li>
+<li>Load5 (no units)</li>
+<li>Load15 (no units)</li>
+</ul></li>
+<li>Network
+
+<ul>
+<li>NetBytesSent (bytes)</li>
+<li>NetBytesRecv (bytes)</li>
+<li>NetErrin (count)</li>
+<li>NetErrout (count)</li>
+</ul></li>
+</ul>
+
+<p>You can provide an optional <code>map[string]string</code> set of dimensions to which the metrics
+should be published. This enables targeted <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Create-alarm-on-metric-math-expression.html">alert conditions</a>
+that can be used to improve system resiliency.</p>
+
+<p>To register the metric publisher, call the <code>RegisterLambdaUtilizationMetricPublisher</code> at some
+point in your <code>main()</code> call graph. For example:</p>
+
+<pre><code class="language-go">import spartaCloudWatch &quot;github.com/mweagle/Sparta/aws/cloudwatch&quot;
+func main() {
+  ...
+  spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
+    &quot;BuildId&quot;:    sparta.StampedBuildID,
+  })
+  ...
+}
+</code></pre>
+
+<ul>
+<li>The optional <code>map[string]string</code> parameter is the custom Name-Value pairs to use as a <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension">CloudWatch Dimension</a>
+```</li>
+</ul>
 
 <div class="notices note" ><p>TODO: Document the <a href="https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatch#RegisterLambdaUtilizationMetricPublisher">RegisterLambdaUtilizationMetricPublisher</a> utility function.</p>
 </div>
@@ -2667,20 +2730,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1543677158"></script>
-    <script src="/js/perfect-scrollbar.min.js?1543677158"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1543677158"></script>
-    <script src="/js/jquery.sticky.js?1543677158"></script>
-    <script src="/js/featherlight.min.js?1543677158"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1543677158"></script>
-    <script src="/js/highlight.pack.js?1543677158"></script>
+    <script src="/js/clipboard.min.js?1544416492"></script>
+    <script src="/js/perfect-scrollbar.min.js?1544416492"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1544416492"></script>
+    <script src="/js/jquery.sticky.js?1544416492"></script>
+    <script src="/js/featherlight.min.js?1544416492"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1544416492"></script>
+    <script src="/js/highlight.pack.js?1544416492"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1543677158"></script>
-    <script src="/js/learn.js?1543677158"></script>
-    <script src="/js/hugo-learn.js?1543677158"></script>
+    <script src="/js/modernizr.custom.71422.js?1544416492"></script>
+    <script src="/js/learn.js?1544416492"></script>
+    <script src="/js/hugo-learn.js?1544416492"></script>
 
-    <link href="/mermaid/mermaid.css?1543677158" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1543677158"></script>
+    <link href="/mermaid/mermaid.css?1544416492" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1544416492"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

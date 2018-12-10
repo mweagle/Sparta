@@ -427,8 +427,9 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
       <pubDate>Sat, 01 Dec 2018 06:02:32 +0000</pubDate>
       
       <guid>/reference/operations/metrics_publisher/</guid>
-      <description>TODO: Document the RegisterLambdaUtilizationMetricPublisher utility function.
- </description>
+      <description>AWS Lambda is tightly integrated with other AWS services and provides excellent opportunities for improving your service&amp;rsquo;s observability posture. Sparta includes a CloudWatch Metrics publisher that periodically publishes metrics to CloudWatch.
+This periodic task publishes environment-level metrics that have been detected by the gopsutil package. Metrics include:
+ CPU  Percent used  Disk  Percent used  Host  Uptime (milliseconds)  Load  Load1 (no units) Load5 (no units) Load15 (no units)  Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)   You can provide an optional map[string]string set of dimensions to which the metrics should be published.</description>
     </item>
     
     <item>
