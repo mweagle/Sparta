@@ -19,6 +19,7 @@ import (
 	"github.com/magefile/mage/sh" // mg contains helpful utility functions, like Deps
 	"github.com/mholt/archiver"
 	spartamage "github.com/mweagle/Sparta/magefile"
+	"github.com/otiai10/copy"
 	"github.com/pkg/browser"
 )
 
@@ -93,6 +94,27 @@ func runHugoCommand(hugoCommandArgs ...string) error {
 	return cmd.Run()
 }
 
+func docsCopySourceTemplatesToDocs() error {
+	outputDir := filepath.Join(".",
+		"docs_source",
+		"static",
+		"source",
+		"resources",
+		"provision",
+		"apigateway")
+	rmErr := os.RemoveAll(outputDir)
+	if rmErr != nil {
+		return rmErr
+	}
+	// Create the directory
+	createErr := os.MkdirAll(outputDir, os.ModePerm)
+	if createErr != nil {
+		return createErr
+	}
+	inputDir := filepath.Join(".", "resources", "provision", "apigateway")
+	return copy.Copy(inputDir, outputDir)
+}
+
 // DocsInstallRequirements installs the required Hugo version
 func DocsInstallRequirements() error {
 	mg.SerialDeps(ensureWorkDir)
@@ -161,8 +183,10 @@ func DocsBuild() error {
 		spartamage.Log("Cleaning output directory: %s", docsDir)
 		return os.RemoveAll(docsDir)
 	}
+
 	mg.SerialDeps(DocsInstallRequirements,
-		cleanDocsDirectory)
+		cleanDocsDirectory,
+		docsCopySourceTemplatesToDocs)
 	return runHugoCommand()
 }
 
@@ -184,7 +208,8 @@ func DocsCommit() error {
 
 // DocsEdit starts a Hugo server and hot reloads the documentation at http://localhost:1313
 func DocsEdit() error {
-	mg.SerialDeps(DocsInstallRequirements)
+	mg.SerialDeps(DocsInstallRequirements,
+		docsCopySourceTemplatesToDocs)
 
 	editCommandArgs := []string{
 		"server",
