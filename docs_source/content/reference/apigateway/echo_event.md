@@ -197,11 +197,11 @@ The event data that's actually supplied to `echoS3Event` is the complete HTTP re
 
 Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
-* _application/json_
+## _application/json_
 
   {{% import file="./static/source/resources/provision/apigateway/inputmapping_json.vtl" language="nohighlight" %}}
 
-* _*_
+## _*_ (Default `Content-Type`)
 
   {{% import file="./static/source/resources/provision/apigateway/inputmapping_default.vtl" language="nohighlight" %}}
 
