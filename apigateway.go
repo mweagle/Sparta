@@ -803,10 +803,18 @@ func (resource *Resource) NewMethod(httpMethod string,
 	// So we need to return everything here, but that means we'll need some other
 	// place to mutate the response body...where?
 	templateString, templateStringErr := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
-	// Ignore any error
+	// Ignore any error when running in AWS, since that version of the binary won't
+	// have the embedded asset. This ideally would be done only when we're exporting
+	// the Method, but that would involve changing caller behavior since
+	// callers currently expect the method.Integration.Responses to be populated
+	// when this constructor returns.
 	if templateStringErr != nil {
 		templateString = _escFSMustString(false, "/resources/awsbinary/README.md")
 	}
+
+	// TODO - tell the caller that we don't need the list of all HTTP status
+	// codes anymore since we've moved everything to overrides in the VTL mapping.
+
 	// Populate Integration.Responses and the method Parameters
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
@@ -819,7 +827,7 @@ func (resource *Resource) NewMethod(httpMethod string,
 		// The integration responses are keyed from supported error codes...
 		if defaultHTTPStatusCode == i {
 			// Since we pushed this into the VTL mapping, we don't need to create explicit RegExp based
-			// mappings
+			// mappings for all of the user response codes. It will just work.
 			// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
 			method.Integration.Responses[i] = &IntegrationResponse{
 				Parameters: make(map[string]interface{}),
