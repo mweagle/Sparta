@@ -18,6 +18,7 @@ func TestLogin(t *testing.T) {
 	dockerVersionCmd := exec.Command("docker", "-v")
 	dockerVersionCmdErr := system.RunOSCommand(dockerVersionCmd, logger)
 	if dockerVersionCmdErr != nil {
+		t.Logf("WARNING: failed to execute `docker -v` as prerequisite for testing STDIN password")
 		return
 	}
 	// Don't supply password on command line
