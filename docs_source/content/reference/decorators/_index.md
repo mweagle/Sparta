@@ -1,7 +1,7 @@
 ---
 date: 2018-12-01 06:18:10
-title:
-pre: "<i class='fas fa-fw fa-paint-brush'></i>&nbsp;<b>Build Time Decorators</b>"
+title: Build-Time Decorators
+post: "&nbsp;<i class='fas fa-fw fa-paint-brush'></i>"
 chapter: false
 weight: 120
 ---

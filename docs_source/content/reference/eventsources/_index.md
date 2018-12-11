@@ -1,8 +1,8 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title:
-pre: "<i class='fas fa-fw fa-cubes'></i>&nbsp;<b>Event Sources</b>"
-weight: 100
+title: Event Sources
+post: "&nbsp;<i class='fas fa-fw fa-cubes'></i>"
+weight: 110
 ---
 
 The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.
@@ -17,10 +17,10 @@ There are several [event sources](http://docs.aws.amazon.com/lambda/latest/dg/in
 
 ## Push Based
 
-* [CloudFormation](/reference/eventsources/cloudformation) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+* [CloudFormation](/reference/eventsources/cloudformation) _NOT YET IMPLEMENTED_
 * [CloudWatch Events](/reference/eventsources/cloudwatchevents)
 * [CloudWatch Logs](/reference/eventsources/cloudwatchlogs)
-* [Cognito](/reference/eventsources/cognito) <span class="label label-warning">NOT YET IMPLEMENTED</span>
+* [Cognito](/reference/eventsources/cognito) _NOT YET IMPLEMENTED_
 * [S3](/reference/eventsources/s3)
 * [SES](/reference/eventsources/ses)
 * [SNS](/reference/eventsources/sns)

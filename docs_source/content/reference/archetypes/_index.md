@@ -1,9 +1,9 @@
 ---
 date: 2018-10-13 07:59:27
-title:
-pre: "<i class='fas fa-fw fa-flask'></i>&nbsp;<b>Archetype Constructors</b>"
+title: Archetype Constructors
+post: "&nbsp;<i class='fas fa-fw fa-flask'></i>"
 alwaysopen: false
-weight: 105
+weight: 111
 ---
 
 Sparta's [archetype](https://godoc.org/github.com/mweagle/Sparta/archetype) package provides convenience

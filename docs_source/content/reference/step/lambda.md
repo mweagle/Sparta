@@ -1,8 +1,10 @@
 ---
-date: 2017-10-31 18:20:05
-title: Step Functions
-weight: 400
+date: 2018-12-10 21:45:23
+title: Lambda
+weight: 10
 ---
+
+# Step Functions
 
 AWS [Step Functions](https://aws.amazon.com/step-functions/) are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample "Roll Die" state machine using a single Lambda function. See [SpartaStep](https://github.com/mweagle/SpartaStep) for the full source.
 
@@ -173,5 +175,6 @@ to compose Lambda functions into more complex workflows that include [parallel](
 on shared data.
 
 # Notes
-  * Minimal State machine validation is done at this time. See [Tim Bray](https://www.tbray.org/ongoing/When/201x/2016/12/01/J2119-Validator) for more information.
-  * Value interrogation is defined by [JSONPath](http://goessner.net/articles/JsonPath/) expressions
+
+- Minimal State machine validation is done at this time. See [Tim Bray](https://www.tbray.org/ongoing/When/201x/2016/12/01/J2119-Validator) for more information.
+- Value interrogation is defined by [JSONPath](http://goessner.net/articles/JsonPath/) expressions

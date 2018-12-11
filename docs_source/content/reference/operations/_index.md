@@ -1,7 +1,7 @@
 ---
 date: 2018-12-01 05:17:18
-title:
-pre: "<i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Operations</b>"
+title: Operations
+post: "&nbsp;<i class='fas fa-fw fa-puzzle-piece'></i>"
 weight: 499
 ---
 

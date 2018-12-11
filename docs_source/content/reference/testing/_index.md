@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title:
-pre: "<i class='fas fa-fw fa-check-double'></i>&nbsp;<b>Testing</b>"
+title: Testing
+post: "&nbsp;<i class='fas fa-fw fa-check-double'></i>"
 weight: 500
 ---
 

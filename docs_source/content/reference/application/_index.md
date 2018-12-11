@@ -1,7 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title:
-pre: "<i class='fas fa-fw fa-cog'></i>&nbsp;<b>Application Customization</b>"
+title: Application Customization
+post: "&nbsp;<i class='fas fa-fw fa-cog'></i>"
 alwaysopen: false
 weight: 140
 ---

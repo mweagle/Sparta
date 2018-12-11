@@ -4,15 +4,16 @@ title: User Input
 weight: 11
 ---
 
+# User Input
+
 This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content.  The source for this is the [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/application.go#L149) function defined as part of the  [SpartaApplication](https://github.com/mweagle/SpartaApplication).
 
-
-# Define the Lambda Function
+## Define the Lambda Function
 
 Our function will accept two params:
 
-  * `bucketName` : The S3 bucket name storing the asset
-  * `keyName` : The S3 item key
+* `bucketName` : The S3 bucket name storing the asset
+* `keyName` : The S3 item key
 
 Those params will be passed as part of the URL query string.  The function will fetch the item metadata, generate an expiring URL for public S3 access, and return a JSON response body with the item data.
 
@@ -20,37 +21,37 @@ Because [s3ItemInfo](https://github.com/mweagle/SpartaImager/blob/master/applica
 
 ```go
 import (
-	spartaEvents "github.com/mweagle/Sparta/aws/events"
+  spartaEvents "github.com/mweagle/Sparta/aws/events"
 )
 
 func s3ItemInfo(ctx context.Context, apigRequest spartaEvents.APIGatewayRequest) (*itemInfoResponse, error) {
-	logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
-	lambdaContext, _ := awsLambdaContext.FromContext(ctx)
+  logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+  lambdaContext, _ := awsLambdaContext.FromContext(ctx)
 
-	logger.WithFields(logrus.Fields{
-		"RequestID": lambdaContext.AwsRequestID,
-	}).Info("Request received")
+  logger.WithFields(logrus.Fields{
+    "RequestID": lambdaContext.AwsRequestID,
+  }).Info("Request received")
 
-	getObjectInput := &s3.GetObjectInput{
-		Bucket: aws.String(apigRequest.QueryParams["bucketName"]),
-		Key:    aws.String(apigRequest.QueryParams["keyName"]),
-	}
+  getObjectInput := &s3.GetObjectInput{
+    Bucket: aws.String(apigRequest.QueryParams["bucketName"]),
+    Key:    aws.String(apigRequest.QueryParams["keyName"]),
+  }
 
-	awsSession := spartaAWS.NewSession(logger)
-	svc := s3.New(awsSession)
-	result, err := svc.GetObject(getObjectInput)
-	if nil != err {
-		return nil, err
-	}
-	presignedReq, _ := svc.GetObjectRequest(getObjectInput)
-	url, err := presignedReq.Presign(5 * time.Minute)
-	if nil != err {
-		return nil, err
-	}
-	return &itemInfoResponse{
-		S3:  result,
-		URL: url,
-	}, nil
+  awsSession := spartaAWS.NewSession(logger)
+  svc := s3.New(awsSession)
+  result, err := svc.GetObject(getObjectInput)
+  if nil != err {
+    return nil, err
+  }
+  presignedReq, _ := svc.GetObjectRequest(getObjectInput)
+  url, err := presignedReq.Presign(5 * time.Minute)
+  if nil != err {
+    return nil, err
+  }
+  return &itemInfoResponse{
+    S3:  result,
+    URL: url,
+  }, nil
 }
 ```
 
@@ -66,7 +67,6 @@ getObjectInput := &s3.GetObjectInput{
 ```
 
 Assuming there are no errors (including the case where the item does not exist), the remainder of the function fetches the data, generates a presigned URL, and returns a JSON response:
-
 
 ```go
 awsSession := spartaAWS.NewSession(logger)
@@ -86,7 +86,7 @@ return &itemInfoResponse{
 }, nil
 ```
 
-# Create the API Gateway
+## Create the API Gateway
 
 The next step is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
 
@@ -95,7 +95,7 @@ apiStage := sparta.NewStage("v1")
 apiGateway := sparta.NewAPIGateway("SpartaImagerAPI", apiStage)
 ```
 
-# Create Lambda Binding
+## Create Lambda Binding
 
 Next we create an `sparta.LambdaAWSInfo` struct that references the `s3ItemInfo` function:
 
@@ -118,10 +118,10 @@ s3ItemInfoOptions.Options = &sparta.LambdaFunctionOptions{
 
 A few items to note here:
 
-  * We're providing a custom `LambdaFunctionOptions` in case the request to S3 to get item metadata exceeds the default 3 second timeout.
-  * We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn_).
-    * This bucket ARN is externally created and the ARN provided to this code.
-    * While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
+* We're providing a custom `LambdaFunctionOptions` in case the request to S3 to get item metadata exceeds the default 3 second timeout.
+* We also add a custom `iamDynamicRole.Privileges` entry to the `Privileges` slice that authorizes the lambda function to _only_ access objects in a single bucket (_resourceArn_).
+  * This bucket ARN is externally created and the ARN provided to this code.
+  * While the API will accept any _bucketName_ value, it is only authorized to access a single bucket.
 
 # Create Resources
 
@@ -135,7 +135,7 @@ if err != nil {
 }
 ```
 
-# Whitelist Input
+## Whitelist Input
 
 The final step is to add the whitelisted parameters to the Method definition.
 
@@ -147,13 +147,13 @@ method.Parameters["method.request.querystring.bucketName"] = true
 
 Note that the keynames in the `method.Parameters` map must be of the form: **method.request.{location}.{name}** where location is one of:
 
-  * `querystring`
-  * `path`
-  * `header`
+* `querystring`
+* `path`
+* `header`
 
 See the [REST documentation](http://docs.aws.amazon.com/apigateway/api-reference/resource/method/#requestParameters) for more information.
 
-# Provision
+## Provision
 
 With everything configured, let's provision the stack:
 
@@ -163,7 +163,7 @@ go run application.go --level debug provision --s3Bucket $S3_BUCKET
 
 and check the results.
 
-# Querying
+## Querying
 
 As this Sparta application includes an API Gateway definition, the stack `Outputs` includes the API Gateway URL:
 
@@ -312,7 +312,7 @@ curl -vs "https://0ux556ho77.execute-api.us-west-2.amazonaws.com/v1/info?keyName
 {"errorMessage":"{\"code\":500,\"status\":\"Internal Server Error\",\"headers\":{\"content-type\":\"text/plain; charset=utf-8\",\"x-content-type-options\":\"nosniff\",\"date\":\"Sun, 06 Dec 2015 02:42:52 GMT\",\"content-length\":\"60\"},\"error\":\"AccessDenied: Access Denied\\n\\tstatus code: 403, request id: \\n\"}","errorType":"Error","stackTrace":["IncomingMessage.<anonymous> (/var/task/index.js:68:53)","IncomingMessage.emit (events.js:117:20)","_stream_readable.js:944:16","process._tickCallback (node.js:442:13)"]}
 ```
 
-# Cleaning Up
+## Cleaning Up
 
 Before moving on, remember to decommission the service via:
 
@@ -320,6 +320,6 @@ Before moving on, remember to decommission the service via:
 go run application.go delete
 ```
 
-# Wrapping Up
+# Conclusion
 
 With this example we've walked through a simple example that whitelists user input, uses IAM Roles to limit what S3 buckets a lambda function may access, and returns JSON data to the caller.

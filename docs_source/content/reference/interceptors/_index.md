@@ -1,8 +1,8 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title:
+title: Runtime Interceptors
+post: "&nbsp;<i class='fas fa-fw fa-x-ray'></i>"
 weight: 130
-pre: "<i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Runtime Interceptors</b>"
 alwaysopen: false
 ---
 

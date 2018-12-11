@@ -7,7 +7,7 @@ weight: 10
 Sparta is a framework for developing and deploying **go** based AWS Lambda-backed microservices.  To help understand what that means we'll begin with a "Hello World" lambda function and eventually deploy that to AWS.  Note that we're not going to handle all error cases to keep the example code to a minimum.
 
 {{% notice warning %}}
-Please be aware that running Lambda functions may incur <a href="https://aws.amazon.com/lambda/pricing">costs</a>. Be sure to decommission Sparta stacks after you are finished using them (via the <code>delete</code> command line option) to avoid unwanted charges.  It's likely that you'll be well under the free tier, but secondary AWS resources provisioned during development (eg, Kinesis streams) are not pay-per-invocation.
+Please be aware that running Lambda functions may incur [costs](https://aws.amazon.com/lambda/pricing"). Be sure to decommission Sparta stacks after you are finished using them (via the `delete` command line option) to avoid unwanted charges.  It's likely that you'll be well under the free tier, but secondary AWS resources provisioned during development (eg, Kinesis streams) are not pay-per-invocation.
 {{% /notice %}}
 
 # Preconditions
@@ -29,9 +29,9 @@ func helloWorld(ctx context.Context) (string, error) {
 
 The `ctx` parameter includes the following entries:
 
-  * The [AWS LambdaContext](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#FromContext)
-  * A [*logrus.Logger](https://github.com/sirupsen/logrus) instance (`sparta.ContextKeyLogger`)
-  * A per-request annotated [*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) instance (`sparta.ContextKeyRequestLogger`)
+* The [AWS LambdaContext](https://godoc.org/github.com/aws/aws-lambda-go/lambdacontext#FromContext)
+* A [*logrus.Logger](https://github.com/sirupsen/logrus) instance (`sparta.ContextKeyLogger`)
+* A per-request annotated [*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) instance (`sparta.ContextKeyRequestLogger`)
 
 # Creation
 
@@ -46,11 +46,10 @@ helloWorldFn := sparta.HandleAWSLambda("Hello World",
 
 We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to register a new lambda target via `HandleAWSLambda`.  `HandleAWSLambda` accepts three parameters:
 
-  * `string`: The function name. A sanitized version of this value is used as the [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname).
-  * `func(...)`: The **go** function to execute.
-  * `string|IAMRoleDefinition` : *Either* a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
-    - In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
-
+* `string`: The function name. A sanitized version of this value is used as the [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname).
+* `func(...)`: The **go** function to execute.
+* `string|IAMRoleDefinition` : *Either* a string literal that refers to a pre-existing IAM Role under which the lambda function will be executed, *OR* a `sparta.IAMRoleDefinition` value that will be provisioned as part of this deployment and used as the execution role for the lambda function.
+  * In this example, we're defining a new `IAMRoleDefinition` as part of the stack.  This role definition will automatically include privileges for actions such as CloudWatch logging, and since our function doesn't access any additional AWS services that's all we need.
 
 # Delegation
 
@@ -66,15 +65,15 @@ sparta.Main("MyHelloWorldStack",
 
 `sparta.Main` accepts five parameters:
 
-  * `serviceName` : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
-    - The `serviceName` is used as the stable identifier to determine when updates should be applied rather than new stacks provisioned, as well as the target of a `delete` command line request.
-    - Consider using [UserScopedStackName](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#UserScopedStackName) to generate unique, stable names across a team.
-  * `serviceDescription`: An optional string used to describe the stack.
-  * `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` that define a service
-  * `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
-    - We'll walk through how to do that in [another section](/reference/apigateway/apigateway/), but for now our lambda function will only be accessible via the AWS SDK or Console.
-  * `*S3Site` : Optional pointer to data if you would like to provision an [static website on S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html), initialized with local resources.
-    - We'll walk through how to do that in [another section](/reference/s3site), but for now our lambda function will only be accessible via the AWS SDK or Console.
+* `serviceName` : The string to use as the CloudFormation stackName. Note that there can be only a single stack with this name within a given AWS account, region pair.
+  * The `serviceName` is used as the stable identifier to determine when updates should be applied rather than new stacks provisioned, as well as the target of a `delete` command line request.
+  * Consider using [UserScopedStackName](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#UserScopedStackName) to generate unique, stable names across a team.
+* `serviceDescription`: An optional string used to describe the stack.
+* `[]*LambdaAWSInfo` : Slice of `sparta.lambdaAWSInfo` that define a service
+* `*API` : Optional pointer to data if you would like to provision and associate an API Gateway with the set of lambda functions.
+  * We'll walk through how to do that in [another section](/reference/apigateway/apigateway/), but for now our lambda function will only be accessible via the AWS SDK or Console.
+* `*S3Site` : Optional pointer to data if you would like to provision an [static website on S3](http://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html), initialized with local resources.
+  * We'll walk through how to do that in [another section](/reference/s3site), but for now our lambda function will only be accessible via the AWS SDK or Console.
 
 Delegating `main()` to `Sparta.Main()` transforms the set of lambda functions into a standalone executable with several command line options.  Run `go run main.go --help` to see the available options.
 
@@ -87,27 +86,27 @@ Putting everything together, and including the necessary imports, we have:
 package main
 
 import (
-	"context"
+  "context"
 
-	sparta "github.com/mweagle/Sparta"
+  sparta "github.com/mweagle/Sparta"
 )
 
 // Standard AWS λ function
 func helloWorld(ctx context.Context) (string, error) {
-	return "Hello World!", nil
+  return "Hello World!", nil
 }
 
 func main() {
-	var lambdaFunctions []*sparta.LambdaAWSInfo
-	helloWorldFn := sparta.HandleAWSLambda("Hello World",
-		helloWorld,
-		sparta.IAMRoleDefinition{})
-	lambdaFunctions = append(lambdaFunctions, helloWorldFn)
-	sparta.Main("MyHelloWorldStack",
-		"Simple Sparta application that demonstrates core functionality",
-		lambdaFunctions,
-		nil,
-		nil)
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  helloWorldFn := sparta.HandleAWSLambda("Hello World",
+    helloWorld,
+    sparta.IAMRoleDefinition{})
+  lambdaFunctions = append(lambdaFunctions, helloWorldFn)
+  sparta.Main("MyHelloWorldStack",
+    "Simple Sparta application that demonstrates core functionality",
+    lambdaFunctions,
+    nil,
+    nil)
 }
 ```
 
@@ -115,16 +114,14 @@ func main() {
 
 Next download the Sparta dependencies via:
 
-  * `go get ./...`
-  * `go get github.com/zcalusic/sysinfo`
+* `go get ./...`
+* `go get github.com/zcalusic/sysinfo`
 
  in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command (replacing `$S3_BUCKET` with an S3 bucket you own):
 
 {{% notice info %}}
 The [sysinfo](github.com/zcalusic/sysinfo) package is used at Lambda execution time only. However, it must be locally available in order to successfully cross compile your AWS Lambda binary. See the [GitHub issue](https://github.com/mweagle/Sparta/issues/101) for more information.
 {{% /notice %}}
-
-
 
 ```nohighlight
 $ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
@@ -230,7 +227,6 @@ INFO[0000] ═══════════════════════
 INFO[0000] Stack existence check                         Exists=true Name=MyHelloWorldStack
 INFO[0000] Delete request submitted                      Response="{\n\n}"
 ```
-
 
 # Conclusion
 
