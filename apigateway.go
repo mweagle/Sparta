@@ -758,6 +758,12 @@ func (resource *Resource) NewMethod(httpMethod string,
 	defaultHTTPStatusCode int,
 	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 
+	if OptionsGlobal.Logger != nil && len(possibleHTTPStatusCodeResponses) != 0 {
+		OptionsGlobal.Logger.WithFields(logrus.Fields{
+			"possibleHTTPStatusCodeResponses": possibleHTTPStatusCodeResponses,
+		}).Debug("The set of all HTTP status codes is no longer required for NewMethod(...). Any valid HTTP status code can be returned starting with v1.8.0.")
+	}
+
 	// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-method-settings.html#how-to-method-settings-console
 	keyname := httpMethod
 	existingMethod, exists := resource.Methods[keyname]
