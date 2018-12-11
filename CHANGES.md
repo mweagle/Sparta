@@ -17,7 +17,14 @@
       - Pushes that image to ECR
       - Uses the resulting ECR Image URL as a Fargate Task in a Step function:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" />
-  - Upgraded to `docker login --password-stdin` for local authentication. Previously used `docker login --password`.
+  - Upgraded to `docker login --password-stdin` for local authentication. Previously used `docker login --password`. Example:
+      ```text
+      INFO[0005] df64d3292fd6: Preparing
+      INFO[0006] denied: Your Authorization Token has expired. Please run 'aws ecr get-login --no-include-email' to fetch a new one.
+      INFO[0006] ECR push failed - reauthorizing               Error="exit status 1"
+      INFO[0006] Login Succeeded
+      INFO[0006] The push refers to repository [123412341234.dkr.ecr.us-west-2.amazonaws.com/argh]
+      ```
     - See the [Docker docs](https://docs.docker.com/engine/reference/commandline/login/#parent-command)
   - Include `docker -v` output in log when calling [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
   - Added `StateMachineNamedDecorator(stepFunctionResourceName)` to supply the name of the Step function
