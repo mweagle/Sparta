@@ -8,11 +8,7 @@ weight: 100
 
 One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 
-* [Example 1 - Echo Event](/reference/apigateway/echo_event)
-* [Example 2 - User Input & JSON Response](/reference/apigateway/user_input)
-* [Example 3 - Request Context](/reference/apigateway/context)
-* [Example 4 - Slack SlashCommand](/reference/apigateway/slack)
-* [Example 5 - CORS](/reference/apigateway/cors)
+{{% children %}}
 
 ## Concepts
 
@@ -36,13 +32,13 @@ The API Gateway presents a powerful and complex domain model.  In brief, to inte
 
 See a the [echo example](/reference/apigateway/echo_event) for a complete version.
 
-## API Gateway Request Types
+## Request Types
 
 AWS Lambda supports multiple [function signatures](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html). Some supported signatures include structured types, which are JSON un/marshalable structs that are automatically managed.
 
 To simplify handling API Gateway requests, Sparta exposes the [APIGatewayEnvelope](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope) type. This type provides an embeddable struct type whose fields and JSON serialization match up with the [Velocity Template](https://github.com/mweagle/Sparta/blob/master/resources/provision/apigateway/inputmapping_json.vtl) that's applied to the incoming API Gateway request.
 
-To use the `APIGatewayEnvelope` type with your own custom request body, create a set of types as in:
+Embed the [APIGatewayEnvelope](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayEnvelope) type in your own lambda's request type as in:
 
 ```go
 type FeedbackBody struct {
@@ -56,7 +52,7 @@ type FeedbackRequest struct {
 }
 ```
 
-Then reference your custom type in your lambda function as in:
+Then accept your custom type in your lambda function as in:
 
 ```go
 func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (map[string]string, error) {
@@ -65,7 +61,7 @@ func myLambdaFunction(ctx context.Context, apiGatewayRequest FeedbackRequest) (m
 }
 ```
 
-## API Gateway Response Types
+## Response Types
 
 The API Gateway [response mappings](https://docs.aws.amazon.com/apigateway/latest/developerguide/mappings.html) must make
 assumptions about the shape of the Lambda response. The default _application/json_ mapping template is:

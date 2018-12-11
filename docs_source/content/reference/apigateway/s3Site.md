@@ -8,13 +8,13 @@ Sparta supports provisioning an S3-backed [static website](http://docs.aws.amazo
 
 The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML) example application.
 
-# Create the Lambda function
+## Lambda Definition
 
 We'll start by creating a very simple lambda function:
 
 ```go
 import (
-  spartaAPIG "github.com/mweagle/Sparta/aws/apigateway"
+  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
   spartaAWSEvents "github.com/mweagle/Sparta/aws/events"
 )
 type helloWorldResponse struct {
@@ -25,26 +25,24 @@ type helloWorldResponse struct {
 ////////////////////////////////////////////////////////////////////////////////
 // Hello world event handler
 func helloWorld(ctx context.Context,
-  gatewayEvent spartaAWSEvents.APIGatewayRequest) (*helloWorldResponse, *spartaAPIG.Error) {
+  gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
   logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
   if loggerOk {
     logger.Info("Hello world structured log message")
   }
   // Return a message, together with the incoming input...
-  return &helloWorldResponse{
+  return spartaAPIGateway.NewResponse(http.StatusOK, &helloWorldResponse{
     Message: fmt.Sprintf("Hello world 🌏"),
     Request: gatewayEvent,
-  }, nil
-
+  }), nil
 }
-
 ```
 
 This lambda function returns a reply that consists of the inbound
 request plus a sample message.  See the API Gateway [examples](/reference/apigateway)
 for more information.
 
-# Create the API Gateway
+## API Gateway
 
 The next step is to create an API Gateway instance and Stage, so that the API will be publicly available.
 
@@ -66,9 +64,9 @@ Finally, we register the `helloWorld` lambda function with an API Gateway resour
 
 func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
     helloWorld,
-    iamDynamicRole)
+    sparta.IAMRoleDefinition{})
 
   if nil != api {
     apiGatewayResource, _ := api.NewResource("/hello", lambdaFn)
@@ -82,7 +80,7 @@ func spartaLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 ```
 
 
-# Define the S3 Site
+## S3 Site
 
 The next part is to define the S3 site resources via `sparta.NewS3Site(localFilePath)`.  The _localFilePath_ parameter
 typically points to a directory, which will be:
@@ -91,7 +89,7 @@ typically points to a directory, which will be:
   1. Posted to S3 alongside the Lambda code archive and CloudFormation Templates
   1. Dynamically unpacked by a CloudFormation CustomResource during `provision` to a new S3 bucket.
 
-# Provision
+## Provision
 
 Putting it all together, our `main()` function looks like:
 
@@ -133,7 +131,7 @@ INFO[0092] ───────────────────────
 
 Open your browser to the `S3SiteURL` value (eg: _http://spartahtml-mweagle-s3site89c05c24a06599753eb3ae4e-9kil6qlqk0yt.s3-website-us-west-2.amazonaws.com_) and view the deployed site.
 
-# Discover
+## Discover
 
 An open issue is how to communicate the dynamically assigned API Gateway hostname to the dynamically provisioned S3 site.
 
@@ -145,11 +143,11 @@ As part of expanding the ZIP archive to a target S3 bucket, Sparta also creates 
 {
  "APIGatewayURL": {
   "Description": "API Gateway URL",
-  "Value": "https://r3zq0apo1g.execute-api.us-west-2.amazonaws.com/v1"
+  "Value": "https://ksuo0qlc3m.execute-api.us-west-2.amazonaws.com/v1"
  }
 }
 ```
 
-# References
+### Notes
 
 * See the [Medium](https://read.acloud.guru/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef) post for an additional walk through this sample.

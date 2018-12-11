@@ -4,16 +4,18 @@ title: Echo Event
 weight: 10
 ---
 
-To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.  The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML).
+To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.
+The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML).
 
 For reference, the `helloWorld` function is below.
 
 ```go
 import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
+  spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
 )
 func helloWorld(ctx context.Context,
-  gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) {
+  gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
   /*
      To return an error back to the client using a standard HTTP status code:
 
@@ -32,25 +34,28 @@ func helloWorld(ctx context.Context,
     logger.Info("Hello world structured log message")
   }
   // Return a message, together with the incoming input...
-  return &helloWorldResponse{
+  return spartaAPIGateway.NewResponse(http.StatusOK, &helloWorldResponse{
     Message: fmt.Sprintf("Hello world 🌏"),
     Request: gatewayEvent,
-  }, nil
+  }), nil
 }
 ```
 
-# Create the API Gateway
+## API Gateway
 
-The first requirement is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via `sparta.NewAPIGateway()`
+The first requirement is to create a new [API](https://godoc.org/github.com/mweagle/Sparta#API) instance via [sparta.NewAPIGateway()](https://godoc.org/github.com/mweagle/Sparta#NewAPIGateway).
 
 ```go
 stage := sparta.NewStage("prod")
 apiGateway := sparta.NewAPIGateway("MySpartaAPI", stage)
 ```
 
-In the example above, we're also including a [Stage](https://godoc.org/github.com/mweagle/Sparta#Stage) value.  A non-`nil` Stage value will cause the registered API to be deployed.  If the Stage value is `nil`, a REST API will be created, but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html) (and therefore not publicly accessible).
+In the example above, we're also including a [Stage](https://godoc.org/github.com/mweagle/Sparta#Stage) value.
+A non-`nil` Stage value will cause the registered API to be deployed.  If the Stage value is `nil`, a REST API will be created,
+but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-deploy-api.html)
+(and therefore not publicly accessible).
 
-# Create a Resource
+## Resource
 
 The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that encapsulates the **go** function:
 
@@ -81,7 +86,7 @@ func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
 
 Our `helloWorld` only supports `GET`.  We'll see how a single lambda function can support multiple HTTP methods shortly.
 
-# Provision
+## Provision
 
 The final step is to to provide the API instance to `Sparta.Main()`
 
@@ -104,7 +109,7 @@ INFO[0096] ───────────────────────
 
 Combining the _API Gateway URL_ `OutputValue` with our resource path (_/hello/world/test_), we get the absolute URL to our lambda function: [https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello](https://w2tefhnt4b.execute-api.us-west-2.amazonaws.com/v1/hello)
 
-# Querying
+## Verify
 
 Let's query the lambda function and see what the `event` data is at execution time. The
 snippet below is pretty printed by piping the response through [jq](https://stedolan.github.io/jq/).
@@ -191,17 +196,17 @@ $ curl -vs https://3e7ux226ga.execute-api.us-west-2.amazonaws.com/v1/hello | jq 
 
 While this demonstrates that our lambda function is publicly accessible, it's not immediately obvious where the `*event` data is being populated.
 
-# Mapping Templates
+## Mapping Templates
 
 The event data that's actually supplied to `echoS3Event` is the complete HTTP request body.  This content is what the API Gateway sends to our lambda function, which is defined by the integration mapping.  This event data also includes the values of any whitelisted parameters.  When the API Gateway Method is defined, it optionally includes any whitelisted query params and header values that should be forwarded to the integration target.  For this example, we're not whitelisting any params, so those fields (`queryParams`, `pathParams`) are empty.  Then for each integration target (which can be AWS Lambda, a mock, or a HTTP Proxy), it's possible to transform the API Gateway request data and whitelisted arguments into a format that's more amenable to the target.
 
 Sparta uses a pass-through template that passes all valid data, with minor **Body** differences based on the inbound _Content-Type_:
 
-## _application/json_
+### _application/json_
 
   {{% import file="./static/source/resources/provision/apigateway/inputmapping_json.vtl" language="nohighlight" %}}
 
-## _*_ (Default `Content-Type`)
+### _*_ (Default `Content-Type`)
 
   {{% import file="./static/source/resources/provision/apigateway/inputmapping_default.vtl" language="nohighlight" %}}
 
@@ -209,7 +214,7 @@ The default mapping templates forwards all whitelisted data & body to the lambda
 
 The next example shows how to unmarshal this data and perform request-specific actions.
 
-# Proxying Envelope
+## Proxying Envelope
 
 Because the integration request returned a successful response, the API Gateway response body contains only our lambda's output (`$input.json('$.body')`).
 
@@ -222,7 +227,7 @@ using a [template override](https://docs.aws.amazon.com/apigateway/latest/develo
 
 If you look at the **Integration Response** section of the _/hello/world/test_ resource in the Console, you'll see a list of Regular Expression matches:
 
-# Cleaning Up
+## Cleanup
 
 Before moving on, remember to decommission the service via:
 
@@ -230,10 +235,10 @@ Before moving on, remember to decommission the service via:
 go run application.go delete
 ```
 
-# Wrapping Up
+## Wrapping Up
 
 Now that we know what data is actually being sent to our API Gateway-connected Lambda function, we'll move on to performing a more complex operation, including returning a custom HTTP response body.
 
-# Other Resources
+### Notes
 
 * [Mapping Template Reference](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html)

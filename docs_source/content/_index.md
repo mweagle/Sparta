@@ -7,7 +7,7 @@ weight: 0
 
 <img src="/images/SpartaLogoNoDomain.png" width="33%" height="33%">
 
-# Self-deploying *go* microservices for [AWS Lambda](https://aws.amazon.com/lambda)
+# Serverless *go* microservices for AWS
 
 Sparta is a framework that transforms a standard *go* application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
 
