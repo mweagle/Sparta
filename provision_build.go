@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -585,11 +586,13 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 // Workflow steps
 ////////////////////////////////////////////////////////////////////////////////
 
-func showOptionalAWSUsageInfo(awsErr error, logger *logrus.Logger) {
-
-	if awsErr != nil {
-		logger.WithField("error", awsErr).Error("AWS Error")
-		if strings.Contains(awsErr.Error(), "could not find region configuration") {
+func showOptionalAWSUsageInfo(err error, logger *logrus.Logger) {
+	if err == nil {
+		return
+	}
+	userAWSErr, userAWSErrOk := err.(awserr.Error)
+	if userAWSErrOk {
+		if strings.Contains(userAWSErr.Error(), "could not find region configuration") {
 			logger.Error("")
 			logger.Error("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
 			logger.Error("See the documentation at https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html for more information.")
@@ -702,7 +705,9 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			"Bucket":            ctx.userdata.s3Bucket,
 			"Region":            *ctx.context.awsSession.Config.Region,
 		}).Info(noopMessage("S3 preconditions check"))
-	} else {
+	} else if len(ctx.userdata.lambdaAWSInfos) != 0 {
+		// We only need to check this if we're going to upload a ZIP, which
+		// isn't always true in the case of a Step function...
 		// Bucket versioning
 		// Get the S3 bucket and see if it has versioning enabled
 		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession,
@@ -913,9 +918,7 @@ func createUploadStep(packagePath string) workflowStep {
 			}
 			uploadTasks = append(uploadTasks, newWorkTask(uploadBinaryTask))
 		} else {
-			ctx.logger.WithFields(logrus.Fields{
-				"File": filepath.Base(packagePath),
-			}).Info("Bypassing S3 upload as no Lambda functions were provided")
+			ctx.logger.Info("Bypassing S3 upload as no Lambda functions were provided")
 		}
 
 		// We might need to upload some other things...
