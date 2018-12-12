@@ -40,6 +40,8 @@
     }
     ```
     - The default shape can be customized by providing custom mapping templates to the [IntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#IntegrationResponse)
+  - [rest.MethodHandler:Headers](https://godoc.org/github.com/mweagle/Sparta/archetype/rest#MethodHandler.Headers) has been deprecated.
+    - Moving all header management to VTL eliminated the need to explicitly declare headers.
 - :bug:  **FIXED**
   - [RegisterLambdaUtilizationMetricPublisher Name ref obsolete](https://github.com/mweagle/Sparta/issues/130)
 

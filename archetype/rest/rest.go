@@ -165,28 +165,30 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 			apiMethod.Parameters[fmt.Sprintf("method.request.querystring.%s", eachQueryParam)] = true
 		}
 		// Any headers?
-		for _, eachHeader := range methodHandler.headers {
-			// Make this an optional header on the method response
-			lowercaseHeaderName := strings.ToLower(eachHeader)
-			methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeaderName)
+		// We used to need to whitelist these, but the header management has been moved
+		// into the VTL templating overrides and can be removed from here.
 
-			for _, eachResponse := range apiMethod.Responses {
-				eachResponse.Parameters[methodHeaderKey] = false
-			}
-			// We don't need to add the explicit mappings since it's now always
-			// in the response mapping template.
+		// for _, eachHeader := range methodHandler.headers {
+		// 	// Make this an optional header on the method response
+		// 	lowercaseHeaderName := strings.ToLower(eachHeader)
+		// 	methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeaderName)
 
-			// Add it to the integration mappings
-			// Then ensure every integration response knows how to pass it along...
-			// inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
-			// for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
-			// 	if len(eachIntegrationResponse.Parameters) <= 0 {
-			// 		eachIntegrationResponse.Parameters = make(map[string]interface{})
-			// 	}
-			// 	eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
-			// }
-		}
+		// 	// for _, eachResponse := range apiMethod.Responses {
+		// 	// 	eachResponse.Parameters[methodHeaderKey] = false
+		// 	// }
+		// 	// We don't need to add the explicit mappings since it's now always
+		// 	// in the response mapping template.
 
+		// 	// Add it to the integration mappings
+		// 	// Then ensure every integration response knows how to pass it along...
+		// 	// inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
+		// 	// for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
+		// 	// 	if len(eachIntegrationResponse.Parameters) <= 0 {
+		// 	// 		eachIntegrationResponse.Parameters = make(map[string]interface{})
+		// 	// 	}
+		// 	// 	eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
+		// 	// }
+		// }
 		return nil
 	}
 	resourceMap := make(map[string]*sparta.LambdaAWSInfo, 0)
