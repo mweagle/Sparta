@@ -17,9 +17,42 @@
       <pubDate>Wed, 28 Nov 2018 16:17:43 +0000</pubDate>
       
       <guid>/reference/operations/magefile/</guid>
-      <description>To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
+      <description>Magefile To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
 Default Sparta magefile.go This magefile.go can be used, unchanged, for most standard Sparta projects.
 // +build mage // File: magefile.go package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.</description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Alarms</title>
+      <link>/reference/operations/cloudwatch_alarms/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/operations/cloudwatch_alarms/</guid>
+      <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
+Sample usage:
+lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
+    </item>
+    
+    <item>
+      <title>CloudWatch Dashboard</title>
+      <link>/reference/operations/cloudwatch_dashboard/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/operations/cloudwatch_dashboard/</guid>
+      <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
+Sample usage:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
+Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
+    </item>
+    
+    <item>
+      <title>CodeDeploy Service Update</title>
+      <link>/reference/operations/codedeploy_service_update/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/operations/codedeploy_service_update/</guid>
+      <description>TODO: Document the CodeDeployServiceUpdateDecorator decorator. See also the Deployment Strategy page.
+ </description>
     </item>
     
     <item>

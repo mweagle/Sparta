@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Example Service on Sparta - AWS Lambda Microservices</title>
+    <link>/example_service/</link>
+    <description>Recent content in Example Service on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Wed, 09 Mar 2016 19:56:50 +0100</lastBuildDate>
+    
+	<atom:link href="/example_service/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Overview</title>
+      <link>/example_service/step1/</link>
+      <pubDate>Tue, 03 Oct 2017 07:15:40 +0000</pubDate>
+      
+      <guid>/example_service/step1/</guid>
+      <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
+    </item>
+    
+    <item>
+      <title>Details</title>
+      <link>/example_service/step2/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
+      
+      <guid>/example_service/step2/</guid>
+      <description>The Overview walked through a simple &amp;ldquo;Hello World&amp;rdquo; example. In this section we&amp;rsquo;ll cover how Sparta works in preparation for moving on to more advanced use. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+Provisioning Flow The provisioning workflow is defined in provision.go, with a goal of marshalling all AWS operations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta falls back to using Lambda-backed Custom Resources in the template definition.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -12,24 +12,24 @@
     
     
     <item>
-      <title>Echo Event</title>
+      <title>Echo</title>
       <link>/reference/apigateway/echo_event/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/apigateway/echo_event/</guid>
-      <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event. The source for this is the SpartaHTML.
+      <description>To start, we&amp;rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
 For reference, the helloWorld function is below.
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (interface{}, error) { /* To return an error back to the client using a standard HTTP status code: errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError, &amp;quot;Something failed inside here&amp;quot;) return errorResponse, nil You can also create custom error response types, so long as they include `&amp;quot;code&amp;quot;:HTTP_STATUS_CODE` somewhere in the response body.</description>
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaAPIGateway &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&amp;quot;Hello world structured log message&amp;quot;) } // Return a message, together with the incoming input.</description>
     </item>
     
     <item>
-      <title>User Input</title>
-      <link>/reference/apigateway/user_input/</link>
+      <title>Request Parameters</title>
+      <link>/reference/apigateway/request_params/</link>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>/reference/apigateway/user_input/</guid>
-      <description>This example demonstrates how to accept user input (delivered as HTTP query params) and return an expiring S3 URL to fetch content. The source for this is the s3ItemInfo function defined as part of the SpartaApplication.
-Define the Lambda Function Our function will accept two params:
+      <guid>/reference/apigateway/request_params/</guid>
+      <description>Request Parameters This example demonstrates how to accept client request params supplied as HTTP query params and return an expiring S3 URL to access content. The source for this is the s3ItemInfo function defined as part of the SpartaApplication.
+Lambda Definition Our function will accept two params:
  bucketName : The S3 bucket name storing the asset keyName : The S3 item key  Those params will be passed as part of the URL query string.</description>
     </item>
     
@@ -39,8 +39,8 @@ Define the Lambda Function Our function will accept two params:
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/apigateway/context/</guid>
-      <description>This example demonstrates how to use the Context struct provided as part of the APIGatewayLambdaJSONEvent event. The SpartaGeoIP service will return Geo information based on the inbound request&amp;rsquo;s IP address.
-Define the Lambda Function Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the GeoLite2 Database and return any information to the client.
+      <description>This example demonstrates how to use the Context struct provided as part of the APIGatewayRequest. The SpartaGeoIP service will return Geo information based on the inbound request&amp;rsquo;s IP address.
+Lambda Definition Our function will examine the inbound request, lookup the user&amp;rsquo;s IP address in the GeoLite2 Database and return any information to the client.
 As this function is only expected to be invoked from the API Gateway, we&amp;rsquo;ll unmarshall the inbound event:</description>
     </item>
     
@@ -74,8 +74,8 @@ Define the Lambda Function This lambda handler is a bit more complicated than th
       <guid>/reference/apigateway/s3site/</guid>
       <description>Sparta supports provisioning an S3-backed static website as part of provisioning. We&amp;rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
 The source for this is the SpartaHTML example application.
-Create the Lambda function We&amp;rsquo;ll start by creating a very simple lambda function:
-import ( spartaAPIG &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.</description>
+Lambda Definition We&amp;rsquo;ll start by creating a very simple lambda function:
+import ( spartaAPIGateway &amp;quot;github.com/mweagle/Sparta/aws/apigateway&amp;quot; spartaAWSEvents &amp;quot;github.com/mweagle/Sparta/aws/events&amp;quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</description>
     </item>
     
   </channel>

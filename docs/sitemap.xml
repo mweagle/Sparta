@@ -4,7 +4,47 @@
   
   <url>
     <loc>/reference/operations/magefile/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/batch/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/dynamodb/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/fargate/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/glue/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/lambda/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/sns/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/sqs/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/sagemaker/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
@@ -13,33 +53,33 @@
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/cloudwatch/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/cloudwatch/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/dynamodb/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/dynamodb/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/kinesis/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/kinesis/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/rest/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/rest/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/s3/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/s3/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/eventsources/archetypes/sns/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/archetypes/sns/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
@@ -48,23 +88,23 @@
   </url>
   
   <url>
-    <loc>/reference/decorators/cloudwatch_alarm/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <loc>/reference/operations/cloudwatch_alarms/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/decorators/dashboard/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <loc>/reference/operations/cloudwatch_dashboard/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/decorators/codedeployserviceupdate/</loc>
-    <lastmod>2018-12-02T06:08:41-08:00</lastmod>
+    <loc>/reference/operations/codedeploy_service_update/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
     <loc>/concepts/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
@@ -83,8 +123,8 @@
   </url>
   
   <url>
-    <loc>/sample_service/step1/</loc>
-    <lastmod>2018-11-28T19:54:10-08:00</lastmod>
+    <loc>/example_service/step1/</loc>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
@@ -129,7 +169,12 @@
   
   <url>
     <loc>/reference/apigateway/echo_event/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/example_service/</loc>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
@@ -163,18 +208,13 @@
   </url>
   
   <url>
-    <loc>/sample_service/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/apigateway/user_input/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <loc>/reference/apigateway/request_params/</loc>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/context/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
@@ -184,7 +224,7 @@
   
   <url>
     <loc>/reference/apigateway/cors/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-10T07:26:02-08:00</lastmod>
   </url>
   
   <url>
@@ -193,18 +233,18 @@
   </url>
   
   <url>
-    <loc>/sample_service/step2/</loc>
-    <lastmod>2018-11-29T06:41:14-08:00</lastmod>
+    <loc>/example_service/step2/</loc>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-10T07:26:02-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/operations/metrics_publisher/</loc>
-    <lastmod>2018-12-02T06:08:41-08:00</lastmod>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
@@ -214,42 +254,42 @@
   
   <url>
     <loc>/reference/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/eventsources/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/eventsources/archetypes/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/related_projects/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/eventsources/</loc>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/archetypes/</loc>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/decorators/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/interceptors/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/application/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/</loc>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
@@ -279,17 +319,12 @@
   
   <url>
     <loc>/reference/apigateway/s3site/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step_functions/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/operations/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
@@ -298,13 +333,18 @@
   </url>
   
   <url>
-    <loc>/reference/testing/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/presentations/</loc>
+    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/presentations/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <loc>/reference/testing/</loc>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/supporting_packages/</loc>
+    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
   
   <url>
@@ -329,7 +369,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-12-01T07:12:39-08:00</lastmod>
+    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
   </url>
   
   <url>

@@ -23,39 +23,6 @@ Sample usage:
     </item>
     
     <item>
-      <title>CloudWatch Alarm</title>
-      <link>/reference/decorators/cloudwatch_alarm/</link>
-      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
-      
-      <guid>/reference/decorators/cloudwatch_alarm/</guid>
-      <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
-Sample usage:
-lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
-    </item>
-    
-    <item>
-      <title>CloudWatch Dashboard</title>
-      <link>/reference/decorators/dashboard/</link>
-      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
-      
-      <guid>/reference/decorators/dashboard/</guid>
-      <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
-Sample usage:
-func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
-Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
-    </item>
-    
-    <item>
-      <title>CodeDeploy Service Update</title>
-      <link>/reference/decorators/codedeployserviceupdate/</link>
-      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
-      
-      <guid>/reference/decorators/codedeployserviceupdate/</guid>
-      <description>TODO: Document the CodeDeployServiceUpdateDecorator decorator. See also the Deployment Strategy page.
- </description>
-    </item>
-    
-    <item>
       <title>Lambda Versioning Decorator</title>
       <link>/reference/decorators/lambda_versioning/</link>
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>

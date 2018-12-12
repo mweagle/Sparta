@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sparta - AWS Lambda Microservices</title>
+    <link>/reference/step/</link>
+    <description>Recent content on Sparta - AWS Lambda Microservices</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 10 Dec 2018 21:37:37 +0000</lastBuildDate>
+    
+	<atom:link href="/reference/step/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Batch</title>
+      <link>/reference/step/batch/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/batch/</guid>
+      <description>TODO: Document Batch integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Dynamo</title>
+      <link>/reference/step/dynamodb/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/dynamodb/</guid>
+      <description>TODO: Document Dynamo integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Fargate</title>
+      <link>/reference/step/fargate/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/fargate/</guid>
+      <description>TODO: Document Fargate integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Glue</title>
+      <link>/reference/step/glue/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/glue/</guid>
+      <description>TODO: Document Glue integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Lambda</title>
+      <link>/reference/step/lambda/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/lambda/</guid>
+      <description>Step Functions AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
+Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+    </item>
+    
+    <item>
+      <title>SNS</title>
+      <link>/reference/step/sns/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/sns/</guid>
+      <description>TODO: Document SNS integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>SQS</title>
+      <link>/reference/step/sqs/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/sqs/</guid>
+      <description>TODO: Document SQS integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>SageMaker</title>
+      <link>/reference/step/sagemaker/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/sagemaker/</guid>
+      <description>TODO: Document SageMaker integration.
+ </description>
+    </item>
+    
+  </channel>
+</rss>
