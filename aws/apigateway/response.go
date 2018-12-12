@@ -8,7 +8,7 @@ import (
 )
 
 // Error represents an error to return in response to an
-// API Gateway request
+// API Gateway request.
 type Error struct {
 	Code    int                    `json:"code"`
 	Err     string                 `json:"err"`
@@ -55,7 +55,10 @@ func NewErrorResponse(statusCode int, messages ...interface{}) *Error {
 	return err
 }
 
-// Response is the type returned by an API Gateway function
+// Response is the type returned by an API Gateway function. Note that a
+// non 2xx HTTP status code should be returned as a Response
+// type rather than an Error. Errors should be reserved for Lambda
+// functions that fail to execute.
 type Response struct {
 	Code    int               `json:"code,omitempty"`
 	Body    interface{}       `json:"body,omitempty"`
