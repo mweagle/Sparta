@@ -1,11 +1,11 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title: Echo Event
+title: Echo
 weight: 10
 ---
 
-To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of the Lambda event.
-The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML).
+To start, we'll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway
+Lambda event. The source for this is the [SpartaHTML](https://github.com/mweagle/SpartaHTML).
 
 For reference, the `helloWorld` function is below.
 
@@ -14,21 +14,9 @@ import (
   awsLambdaEvents "github.com/aws/aws-lambda-go/events"
   spartaAPIGateway "github.com/mweagle/Sparta/aws/apigateway"
 )
+
 func helloWorld(ctx context.Context,
   gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) {
-  /*
-     To return an error back to the client using a standard HTTP status code:
-
-      errorResponse := spartaAPIG.NewErrorResponse(http.StatusInternalError,
-      "Something failed inside here")
-      return errorResponse, nil
-
-      You can also create custom error response types, so long as they
-      include `"code":HTTP_STATUS_CODE` somewhere in the response body.
-      This reserved expression is what Sparta uses as a RegExp to determine
-      the Integration Mapping value
-  */
-
   logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
   if loggerOk {
     logger.Info("Hello world structured log message")
@@ -57,7 +45,7 @@ but it will not be [deployed](http://docs.aws.amazon.com/apigateway/latest/devel
 
 ## Resource
 
-The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that encapsulates the **go** function:
+The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct that represents the **go** function:
 
 ```go
 func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {

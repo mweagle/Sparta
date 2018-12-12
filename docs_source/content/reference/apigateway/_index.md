@@ -1,10 +1,11 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title: API Gateway
-post: "&nbsp;<i class='fas fa-fw fa-globe'></i>"
+pre: "<b>API Gateway</b>"
 alwaysopen: false
 weight: 100
 ---
+
+# API Gateway
 
 One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 

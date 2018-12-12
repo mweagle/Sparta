@@ -1,8 +1,7 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title: Testing
-post: "&nbsp;<i class='fas fa-fw fa-check-double'></i>"
-weight: 500
+weight: 800
 ---
 
 While developing Sparta lambda functions it may be useful to test them locally without needing to `provision` each new code change.  You can test your lambda functions

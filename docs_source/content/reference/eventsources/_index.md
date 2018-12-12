@@ -1,9 +1,11 @@
 ---
 date: 2016-03-09T19:56:50+01:00
-title: Event Sources
-post: "&nbsp;<i class='fas fa-fw fa-cubes'></i>"
+title:
+pre: "<b>Event Sources</b>"
 weight: 110
 ---
+
+# Event Sources
 
 The true power of the AWS Lambda architecture is the ability to integrate Lambda execution with other AWS service state transitions.  Depending on the service type, state change events are either pushed or transparently polled and used as the input to a Lambda execution.
 
