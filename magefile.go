@@ -25,7 +25,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.51"
+	hugoVersion  = "0.52"
 )
 
 var (
