@@ -1,8 +1,10 @@
 package decorator
 
 import (
+	"fmt"
 	"regexp"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
@@ -12,6 +14,41 @@ var reInvalidOutputChars = regexp.MustCompile("[^A-Za-z0-9]+")
 
 func sanitizedKeyName(userValue string) string {
 	return reInvalidOutputChars.ReplaceAllString(userValue, "")
+}
+
+// PublishAllResourceOutputs is a utility function to include all Ref and Att
+// outputs associated with the given (resourceName, cfResource) pair. 
+func PublishAllResourceOutputs(resourceName string, cfResource gocf.ResourceProperties) sparta.ServiceDecoratorHookFunc {
+	return func(context map[string]interface{},
+		serviceName string,
+		cfTemplate *gocf.Template,
+		S3Bucket string,
+		S3Key string,
+		buildID string,
+		awsSession *session.Session,
+		noop bool,
+		logger *logrus.Logger) error {
+
+		// Add the Ref
+		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", resourceName))] = &gocf.Output{
+			Description: fmt.Sprintf("%s (%s) Ref",
+				resourceName,
+				cfResource.CfnResourceType()),
+			Value: gocf.Ref(resourceName),
+		}
+		// Get the resource attributes
+		for _, eachAttr := range cfResource.CfnResourceAttributes() {
+			// Add the function ARN as a stack output
+			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", resourceName, eachAttr))] = &gocf.Output{
+				Description: fmt.Sprintf("%s (%s) Attribute: %s",
+					resourceName,
+					cfResource.CfnResourceType(),
+					eachAttr),
+				Value: gocf.GetAtt(resourceName, eachAttr),
+			}
+		}
+		return nil
+	}
 }
 
 // PublishAttOutputDecorator returns a TemplateDecoratorHookFunc
