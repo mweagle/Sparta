@@ -17,8 +17,9 @@ func sanitizedKeyName(userValue string) string {
 }
 
 // PublishAllResourceOutputs is a utility function to include all Ref and Att
-// outputs associated with the given (resourceName, cfResource) pair. 
-func PublishAllResourceOutputs(resourceName string, cfResource gocf.ResourceProperties) sparta.ServiceDecoratorHookFunc {
+// outputs associated with the given (cfResourceName, cfResource) pair.
+func PublishAllResourceOutputs(cfResourceName string,
+	cfResource gocf.ResourceProperties) sparta.ServiceDecoratorHookFunc {
 	return func(context map[string]interface{},
 		serviceName string,
 		cfTemplate *gocf.Template,
@@ -30,21 +31,21 @@ func PublishAllResourceOutputs(resourceName string, cfResource gocf.ResourceProp
 		logger *logrus.Logger) error {
 
 		// Add the Ref
-		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", resourceName))] = &gocf.Output{
+		cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Ref", cfResourceName))] = &gocf.Output{
 			Description: fmt.Sprintf("%s (%s) Ref",
-				resourceName,
+				cfResourceName,
 				cfResource.CfnResourceType()),
-			Value: gocf.Ref(resourceName),
+			Value: gocf.Ref(cfResourceName),
 		}
 		// Get the resource attributes
 		for _, eachAttr := range cfResource.CfnResourceAttributes() {
 			// Add the function ARN as a stack output
-			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", resourceName, eachAttr))] = &gocf.Output{
+			cfTemplate.Outputs[sanitizedKeyName(fmt.Sprintf("%s_Attr_%s", cfResourceName, eachAttr))] = &gocf.Output{
 				Description: fmt.Sprintf("%s (%s) Attribute: %s",
-					resourceName,
+					cfResourceName,
 					cfResource.CfnResourceType(),
 					eachAttr),
-				Value: gocf.GetAtt(resourceName, eachAttr),
+				Value: gocf.GetAtt(cfResourceName, eachAttr),
 			}
 		}
 		return nil
