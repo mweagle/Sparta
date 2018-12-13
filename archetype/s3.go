@@ -57,12 +57,10 @@ func s3NotificationPrefixBasedPermission(bucketName gocf.Stringable, keyPathPref
 	if keyPathPrefix != "" {
 		permission.Filter = s3.NotificationConfigurationFilter{
 			Key: &s3.KeyFilter{
-				FilterRules: []*s3.FilterRule{
-					&s3.FilterRule{
-						Name:  aws.String("prefix"),
-						Value: aws.String(keyPathPrefix),
-					},
-				},
+				FilterRules: []*s3.FilterRule{{
+					Name:  aws.String("prefix"),
+					Value: aws.String(keyPathPrefix),
+				}},
 			},
 		}
 	}
@@ -92,12 +90,10 @@ func NewS3ScopedReactor(reactor S3Reactor,
 		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
 	}
 
-	privileges := []sparta.IAMRolePrivilege{
-		sparta.IAMRolePrivilege{
-			Actions:  []string{"s3:GetObject"},
-			Resource: spartaCF.S3AllKeysArnForBucket(s3Bucket),
-		},
-	}
+	privileges := []sparta.IAMRolePrivilege{{
+		Actions:  []string{"s3:GetObject"},
+		Resource: spartaCF.S3AllKeysArnForBucket(s3Bucket),
+	}}
 	if len(additionalLambdaPermissions) != 0 {
 		privileges = append(privileges, additionalLambdaPermissions...)
 	}

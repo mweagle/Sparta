@@ -51,10 +51,9 @@ func (svc *DynamoAccessor) dynamoTableName() string {
 
 func dynamoKeyValueAttrMap(keyPath string) map[string]*dynamodb.AttributeValue {
 	return map[string]*dynamodb.AttributeValue{
-		attrID: &dynamodb.AttributeValue{
+		attrID: {
 			S: aws.String(keyPath),
-		},
-	}
+		}}
 }
 
 // Delete handles deleting the resource

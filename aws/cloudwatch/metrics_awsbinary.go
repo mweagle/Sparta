@@ -81,27 +81,22 @@ func publishMetrics(customDimensionMap map[string]string) {
 
 	// Return the array of metricDatum for the item
 	metricDatum := func(name string, value float64, unit MetricUnit) []*awsCloudWatch.MetricDatum {
-		defaultDatum := []*awsCloudWatch.MetricDatum{
-			&awsCloudWatch.MetricDatum{
-				MetricName: aws.String(name),
-				Dimensions: []*awsCloudWatch.Dimension{
-					&awsCloudWatch.Dimension{
-						Name:  aws.String("Name"),
-						Value: aws.String(sparta.StampedServiceName),
-					},
-				},
-				Value:     aws.Float64(value),
-				Timestamp: &currentTime,
-				Unit:      aws.String(string(unit)),
-			},
+		defaultDatum := []*awsCloudWatch.MetricDatum{{
+			MetricName: aws.String(name),
+			Dimensions: []*awsCloudWatch.Dimension{{
+				Name:  aws.String("Name"),
+				Value: aws.String(sparta.StampedServiceName),
+			}},
+			Value:     aws.Float64(value),
+			Timestamp: &currentTime,
+			Unit:      aws.String(string(unit)),
+		},
 		}
 		if len(customDimensionMap) != 0 {
-			metricDimension := []*awsCloudWatch.Dimension{
-				&awsCloudWatch.Dimension{
-					Name:  aws.String("Name"),
-					Value: aws.String(sparta.StampedServiceName),
-				},
-			}
+			metricDimension := []*awsCloudWatch.Dimension{{
+				Name:  aws.String("Name"),
+				Value: aws.String(sparta.StampedServiceName),
+			}}
 			for eachKey, eachValue := range customDimensionMap {
 				metricDimension = append(metricDimension, &awsCloudWatch.Dimension{
 					Name:  aws.String(eachKey),

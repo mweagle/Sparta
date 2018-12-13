@@ -352,7 +352,7 @@ func InstallBuildRequirements() error {
 func EnsurePrealloc() error {
 	// Super run some commands
 	preallocCommand := [][]string{
-		[]string{"prealloc", "-set_exit_status", "./..."},
+		{"prealloc", "-set_exit_status", "./..."},
 	}
 	return spartamage.Script(preallocCommand)
 }
@@ -437,9 +437,9 @@ func EnsureTravisBuildEnvironment() error {
 
 	// Super run some commands
 	travisComands := [][]string{
-		[]string{"dep", "version"},
-		[]string{"dep", "ensure", "-v"},
-		[]string{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
+		{"dep", "version"},
+		{"dep", "ensure", "-v"},
+		{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
 	}
 	return spartamage.Script(travisComands)
 }
@@ -453,9 +453,9 @@ func Build() error {
 // Clean the working directory
 func Clean() error {
 	cleanCommands := [][]string{
-		[]string{"go", "clean", "."},
-		[]string{"rm", "-rf", "./graph.html"},
-		[]string{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
+		{"go", "clean", "."},
+		{"rm", "-rf", "./graph.html"},
+		{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
 	}
 	return spartamage.Script(cleanCommands)
 }
@@ -464,8 +464,8 @@ func Clean() error {
 // file at graph.html
 func Describe() error {
 	describeCommands := [][]string{
-		[]string{"rm", "-rf", "./graph.html"},
-		[]string{"go", "test", "-v", "-run", "TestDescribe"},
+		{"rm", "-rf", "./graph.html"},
+		{"go", "test", "-v", "-run", "TestDescribe"},
 	}
 	return spartamage.Script(describeCommands)
 }
@@ -477,7 +477,7 @@ func Publish() error {
 		GenerateBuildInfo)
 
 	describeCommands := [][]string{
-		[]string{"git", "push", "origin"},
+		{"git", "push", "origin"},
 	}
 	return spartamage.Script(describeCommands)
 }
@@ -492,7 +492,7 @@ func Test() error {
 		verboseFlag = "-v"
 	}
 	testCommand := [][]string{
-		[]string{"go", "test", verboseFlag, "-cover", "-race", "./..."},
+		{"go", "test", verboseFlag, "-cover", "-race", "./..."},
 	}
 	return spartamage.Script(testCommand)
 }
@@ -504,10 +504,10 @@ func TestCover() error {
 	)
 	coverageReport := fmt.Sprintf("%s/cover.out", localWorkDir)
 	testCoverCommands := [][]string{
-		[]string{"go", "test", fmt.Sprintf("-coverprofile=%s", coverageReport), "."},
-		[]string{"go", "tool", "cover", fmt.Sprintf("-html=%s", coverageReport)},
-		[]string{"rm", coverageReport},
-		[]string{"open", fmt.Sprintf("%s/cover.html", localWorkDir)},
+		{"go", "test", fmt.Sprintf("-coverprofile=%s", coverageReport), "."},
+		{"go", "tool", "cover", fmt.Sprintf("-html=%s", coverageReport)},
+		{"rm", coverageReport},
+		{"open", fmt.Sprintf("%s/cover.html", localWorkDir)},
 	}
 	return spartamage.Script(testCoverCommands)
 }
