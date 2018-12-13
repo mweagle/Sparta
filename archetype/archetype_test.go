@@ -169,11 +169,10 @@ func TestCloudWatchEvented(t *testing.T) {
 
 	lambdaFn, lambdaFnErr := NewCloudWatchEventedReactor(testStruct,
 		map[string]map[string]interface{}{
-			"events": map[string]interface{}{
+			"events": {
 				"source":      []string{"aws.ec2"},
 				"detail-type": []string{"EC2 Instance state change"},
-			},
-		},
+			}},
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate NewCloudWatchEventedReactor: %s", lambdaFnErr.Error())
@@ -182,11 +181,10 @@ func TestCloudWatchEvented(t *testing.T) {
 
 	lambdaFn, lambdaFnErr = NewCloudWatchEventedReactor(CloudWatchReactorFunc(testStruct.OnCloudWatchMessage),
 		map[string]map[string]interface{}{
-			"events": map[string]interface{}{
+			"events": {
 				"source":      []string{"aws.ec2"},
 				"detail-type": []string{"EC2 Instance state change"},
-			},
-		},
+			}},
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate NewCloudWatchEventedReactor: %s", lambdaFnErr.Error())

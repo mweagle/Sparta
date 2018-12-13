@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -21,6 +22,7 @@ import (
 	spartamage "github.com/mweagle/Sparta/magefile"
 	"github.com/otiai10/copy"
 	"github.com/pkg/browser"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -384,6 +386,25 @@ func EnsureLint() error {
 	return goSourceApply("golint")
 }
 
+// EnsureGoFmt ensures that the source is `gofmt -s` is empty
+func EnsureGoFmt() error {
+	cmd := exec.Command("gofmt", "-s", "-d", ".")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	if stdout.String() != "" {
+		if mg.Verbose() {
+			log.Print(stdout.String())
+		}
+		return errors.New("gofmt -s -d found simplification errors")
+	}
+	return nil
+}
+
 // EnsureFormatted ensures that the source code is formatted with goimports
 func EnsureFormatted() error {
 	return goSourceApply("goimports", "-e", "-w")
@@ -422,6 +443,7 @@ func EnsureAllPreconditions() error {
 		InstallBuildRequirements,
 		EnsureVet,
 		EnsureLint,
+		EnsureGoFmt,
 		EnsureFormatted,
 		EnsureStaticChecks,
 		EnsureSpelling,
