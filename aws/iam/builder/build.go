@@ -6,14 +6,23 @@ import (
 	gocf "github.com/mweagle/go-cloudformation"
 )
 
-// IAMPrivilegeBuilder encapsulates the IAM builder
-type IAMPrivilegeBuilder struct {
-	resource      *IAMResourceBuilder
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___ ___ ___  ___  _   _ ___  ___ ___
+ | _ \ __/ __|/ _ \| | | | _ \/ __| __|
+ |   / _|\__ \ (_) | |_| |   / (__| _|
+ |_|_\___|___/\___/ \___/|_|_\\___|___|
+*/
+////////////////////////////////////////////////////////////////////////////////
+
+// IAMResourceBuilder encapsulates the IAM builder for a resource
+type IAMResourceBuilder struct {
+	builder       *IAMBuilder
 	resourceParts []gocf.Stringable
 }
 
 // Ref inserts a go-cloudformation Ref entry
-func (iamRes *IAMPrivilegeBuilder) Ref(resName string, delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) Ref(resName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref(resName))
 	for _, eachDelimiter := range delimiter {
@@ -24,7 +33,7 @@ func (iamRes *IAMPrivilegeBuilder) Ref(resName string, delimiter ...string) *IAM
 }
 
 // Attr inserts a go-cloudformation GetAtt entry
-func (iamRes *IAMPrivilegeBuilder) Attr(resName string, propName string, delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) Attr(resName string, propName string, delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.GetAtt(resName, propName))
 	for _, eachDelimiter := range delimiter {
@@ -35,7 +44,7 @@ func (iamRes *IAMPrivilegeBuilder) Attr(resName string, propName string, delimit
 }
 
 // Region inserts the AWS::Region pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) Region(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) Region(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::Region"))
 	for _, eachDelimiter := range delimiter {
@@ -46,7 +55,7 @@ func (iamRes *IAMPrivilegeBuilder) Region(delimiter ...string) *IAMPrivilegeBuil
 }
 
 // AccountID inserts the AWS::AccountId pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) AccountID(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) AccountID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::AccountId"))
 	for _, eachDelimiter := range delimiter {
@@ -57,7 +66,7 @@ func (iamRes *IAMPrivilegeBuilder) AccountID(delimiter ...string) *IAMPrivilegeB
 }
 
 // NotificationARNS inserts the AWS::NotificationARNs pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) NotificationARNS(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) NotificationARNS(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::NotificationARNs"))
 	for _, eachDelimiter := range delimiter {
@@ -68,7 +77,7 @@ func (iamRes *IAMPrivilegeBuilder) NotificationARNS(delimiter ...string) *IAMPri
 }
 
 // Partition inserts the AWS::Partition pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) Partition(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) Partition(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::Partition"))
 	for _, eachDelimiter := range delimiter {
@@ -79,7 +88,7 @@ func (iamRes *IAMPrivilegeBuilder) Partition(delimiter ...string) *IAMPrivilegeB
 }
 
 // StackID inserts the AWS::StackID pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) StackID(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) StackID(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::StackId"))
 	for _, eachDelimiter := range delimiter {
@@ -90,7 +99,7 @@ func (iamRes *IAMPrivilegeBuilder) StackID(delimiter ...string) *IAMPrivilegeBui
 }
 
 // StackName inserts the AWS::StackName pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) StackName(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) StackName(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::StackName"))
 	for _, eachDelimiter := range delimiter {
@@ -101,7 +110,7 @@ func (iamRes *IAMPrivilegeBuilder) StackName(delimiter ...string) *IAMPrivilegeB
 }
 
 // URLSuffix inserts the AWS::URLSuffix pseudo param into the privilege
-func (iamRes *IAMPrivilegeBuilder) URLSuffix(delimiter ...string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) URLSuffix(delimiter ...string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.Ref("AWS::URLSuffix"))
 	for _, eachDelimiter := range delimiter {
@@ -112,49 +121,109 @@ func (iamRes *IAMPrivilegeBuilder) URLSuffix(delimiter ...string) *IAMPrivilegeB
 }
 
 // Literal inserts a string literal into the ARN being constructed
-func (iamRes *IAMPrivilegeBuilder) Literal(arnPart string) *IAMPrivilegeBuilder {
+func (iamRes *IAMResourceBuilder) Literal(arnPart string) *IAMResourceBuilder {
 	iamRes.resourceParts = append(iamRes.resourceParts,
 		gocf.String(arnPart))
 	return iamRes
 }
 
 // ToPolicyStatement finalizes the builder and returns a spartaIAM.PolicyStatements
-func (iamRes *IAMPrivilegeBuilder) ToPolicyStatement() spartaIAM.PolicyStatement {
+func (iamRes *IAMResourceBuilder) ToPolicyStatement() spartaIAM.PolicyStatement {
 	return spartaIAM.PolicyStatement{
-		Action:   iamRes.resource.apiCalls,
-		Effect:   "Allow",
+		Action:   iamRes.builder.apiCalls,
+		Effect:   iamRes.builder.effect,
 		Resource: gocf.Join("", iamRes.resourceParts...),
 	}
 }
 
 // ToPrivilege returns a legacy sparta.IAMRolePrivilege type for this
 // entry
-func (iamRes *IAMPrivilegeBuilder) ToPrivilege() sparta.IAMRolePrivilege {
+func (iamRes *IAMResourceBuilder) ToPrivilege() sparta.IAMRolePrivilege {
 	return sparta.IAMRolePrivilege{
-		Actions:  iamRes.resource.apiCalls,
+		Actions:  iamRes.builder.apiCalls,
 		Resource: gocf.Join("", iamRes.resourceParts...),
 	}
 }
 
-// IAMResourceBuilder is the intermediate type that
+// IAMBuilder is the intermediate type that
 // creates the Resource to which the privilege applies
-type IAMResourceBuilder struct {
+type IAMBuilder struct {
 	apiCalls []string
+	effect   string
 }
 
 // ForResource returns the IAMPrivilegeBuilder instance
 // which can be finalized into an IAMRolePrivilege
-func (iamRes *IAMResourceBuilder) ForResource() *IAMPrivilegeBuilder {
-	return &IAMPrivilegeBuilder{
-		resource:      iamRes,
+func (iamRes *IAMBuilder) ForResource() *IAMResourceBuilder {
+	return &IAMResourceBuilder{
+		builder:       iamRes,
 		resourceParts: make([]gocf.Stringable, 0),
 	}
 }
 
-// Allow creates a IAMPrivilegeBuilder instance for the supplied API calls
-func Allow(apiCalls ...string) *IAMResourceBuilder {
-	resource := IAMResourceBuilder{
-		apiCalls: apiCalls,
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___ ___ ___ _  _  ___ ___ ___  _   _
+ | _ \ _ \_ _| \| |/ __|_ _| _ \/_\ | |
+ |  _/   /| || .` | (__ | ||  _/ _ \| |__
+ |_| |_|_\___|_|\_|\___|___|_|/_/ \_\____|
+
+*/
+////////////////////////////////////////////////////////////////////////////////
+
+// IAMPrincipalBuilder is the builder for a Principal allowance
+type IAMPrincipalBuilder struct {
+	builder    *IAMBuilder
+	principals gocf.StringListable
+}
+
+// ForPrincipals returns the IAMPrivilegeBuilder instance
+// which can be finalized into an IAMRolePrivilege
+func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuilder {
+	stringablePrincipals := make([]gocf.Stringable, len(principals))
+	for index, eachPrincipal := range principals {
+		stringablePrincipals[index] = gocf.String(eachPrincipal)
 	}
-	return &resource
+	return &IAMPrincipalBuilder{
+		builder:    iamRes,
+		principals: gocf.StringList(stringablePrincipals...),
+	}
+}
+
+// ToPolicyStatement finalizes the builder and returns a spartaIAM.PolicyStatements
+func (iampb *IAMPrincipalBuilder) ToPolicyStatement() spartaIAM.PolicyStatement {
+	return spartaIAM.PolicyStatement{
+		Action: iampb.builder.apiCalls,
+		Effect: iampb.builder.effect,
+		Principal: &gocf.IAMPrincipal{
+			Service: iampb.principals.StringList(),
+		},
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/*
+   ___ _____ ___  ___
+  / __|_   _/ _ \| _ \
+ | (__  | || (_) |   /
+  \___| |_| \___/|_|_\
+*/
+////////////////////////////////////////////////////////////////////////////////
+
+// Allow creates a IAMPrivilegeBuilder instance Allowing the supplied API calls
+func Allow(apiCalls ...string) *IAMBuilder {
+	builder := IAMBuilder{
+		apiCalls: apiCalls,
+		effect:   "Allow",
+	}
+	return &builder
+}
+
+// Deny creates a IAMPrivilegeBuilder instance Denying the supplied API calls
+func Deny(apiCalls ...string) *IAMBuilder {
+	builder := IAMBuilder{
+		apiCalls: apiCalls,
+		effect:   "Deny",
+	}
+	return &builder
 }

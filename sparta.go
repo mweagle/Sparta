@@ -333,7 +333,9 @@ type IAMRolePrivilege struct {
 	// S3 buckets will you allow the user to perform the ListBucket action on?
 	// Users cannot access any resources that you have not explicitly granted
 	// permissions to.
-	Resource interface{}
+	Resource interface{} `json:",omitempty"`
+	// Service that requires the action
+	Service interface{} `json:",omitempty"`
 }
 
 func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {

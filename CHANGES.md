@@ -7,6 +7,7 @@
     - Also changed `OnLogMessage` to `OnCloudWatchMessage`
       - I consistently forget the fact that CloudWatch is more than logs
     - Moved the internal `cloudwatchlogs` package to the `cloudwatch/logs` import path
+  - Renamed fluent typenames in _github.com/mweagle/Sparta/aws/iam/builder_ to support Principal-based builders
   - Renamed `step.NewTaskState` to `step.NewLambdaTaskState` to enable type specific [Step function services](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-connectors.html).
 - :checkered_flag: **CHANGES**
   - More documentation
@@ -17,6 +18,13 @@
       - Pushes that image to ECR
       - Uses the resulting ECR Image URL as a Fargate Task in a Step function:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" />
+  - Added _github.com/mweagle/Sparta/aws/iam/builder.IAMBuilder::ForPrincipals_ fluent builder. Example usage:
+      ```go
+      "Statement": []spartaIAM.PolicyStatement{
+        iamBuilder.Allow("sts:AssumeRole").
+          ForPrincipals("states.amazonaws.com").
+          ToPolicyStatement(),
+      ```
   - Upgraded to `docker login --password-stdin` for local authentication. Previously used `docker login --password`. Example:
       ```text
       INFO[0005] df64d3292fd6: Preparing
