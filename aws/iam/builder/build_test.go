@@ -10,18 +10,25 @@ import (
 	sparta "github.com/mweagle/Sparta"
 )
 
+// Set of iamBuilders whose output is required to match the corresponding
+// test{N}.json file in the same directory
 var iamBuilders = []sparta.IAMRolePrivilege{
-	Allow("ssm:GetParameter").ForResource().
+	Allow("ssm:GetParameter").
+		ForResource().
 		Literal("arn:aws:ssm:").
 		Region(":").
 		AccountID(":").
 		Literal("parameter/SpartaHelloWorld-Discovery").
 		ToPrivilege(),
-	Allow("ssm:GetParameter").ForResource().
+	Allow("ssm:GetParameter").
+		ForResource().
 		Literal("arn:aws:ssm:").
 		Region().
 		AccountID().
 		Literal("parameter/SpartaHelloWorld-Discovery").
+		ToPrivilege(),
+	Allow("sts:AssumeRole").
+		ForPrincipals("ecs-tasks.amazonaws.com").
 		ToPrivilege(),
 }
 

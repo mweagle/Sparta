@@ -335,7 +335,7 @@ type IAMRolePrivilege struct {
 	// permissions to.
 	Resource interface{} `json:",omitempty"`
 	// Service that requires the action
-	Service interface{} `json:",omitempty"`
+	Principal interface{} `json:",omitempty"`
 }
 
 func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {

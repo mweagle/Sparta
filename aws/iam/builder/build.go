@@ -201,6 +201,17 @@ func (iampb *IAMPrincipalBuilder) ToPolicyStatement() spartaIAM.PolicyStatement 
 	}
 }
 
+// ToPrivilege returns a legacy sparta.IAMRolePrivilege type for this
+// IAMPrincipalBuilder entry
+func (iampb *IAMPrincipalBuilder) ToPrivilege() sparta.IAMRolePrivilege {
+	return sparta.IAMRolePrivilege{
+		Actions: iampb.builder.apiCalls,
+		Principal: &gocf.IAMPrincipal{
+			Service: iampb.principals.StringList(),
+		},
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 /*
    ___ _____ ___  ___

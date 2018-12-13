@@ -1,0 +1,10 @@
+{
+    "Actions": [
+        "sts:AssumeRole"
+    ],
+    "Principal": {
+        "Service": [
+            "ecs-tasks.amazonaws.com"
+        ]
+    }
+}
