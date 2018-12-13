@@ -400,7 +400,7 @@ func EnsureGoFmt() error {
 		if mg.Verbose() {
 			log.Print(stdout.String())
 		}
-		return errors.New("gofmt -s -d found simplification errors")
+		return errors.New("`gofmt -s -d .` found simplification opportunities")
 	}
 	return nil
 }
