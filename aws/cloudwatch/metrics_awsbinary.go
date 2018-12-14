@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	awsCloudWatch "github.com/aws/aws-sdk-go/service/cloudwatch"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	gopsutilCPU "github.com/shirou/gopsutil/cpu"
 	gopsutilDisk "github.com/shirou/gopsutil/disk"

@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )

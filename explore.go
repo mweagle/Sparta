@@ -5,7 +5,7 @@ package sparta
 import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/dustin/go-broadcast"
+	broadcast "github.com/dustin/go-broadcast"
 	"github.com/gdamore/tcell"
 	spartaAWS "github.com/mweagle/Sparta/aws"
 	"github.com/rivo/tview"

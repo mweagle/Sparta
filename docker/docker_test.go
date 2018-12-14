@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/system"
 )
 

@@ -20,7 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/lambda"
 	broadcast "github.com/dustin/go-broadcast"
 	"github.com/gdamore/tcell"
-	"github.com/hokaccha/go-prettyjson"
+	prettyjson "github.com/hokaccha/go-prettyjson"
 	spartaCWLogs "github.com/mweagle/Sparta/aws/cloudwatch/logs"
 	"github.com/pkg/errors"
 	"github.com/rivo/tview"

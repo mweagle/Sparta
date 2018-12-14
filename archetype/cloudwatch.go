@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	"github.com/pkg/errors"
 )
 

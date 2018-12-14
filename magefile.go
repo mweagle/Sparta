@@ -407,7 +407,21 @@ func EnsureGoFmt() error {
 
 // EnsureFormatted ensures that the source code is formatted with goimports
 func EnsureFormatted() error {
-	return goSourceApply("goimports", "-e", "-w")
+	cmd := exec.Command("goimports", "-e", "-d", ".")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+	if stdout.String() != "" {
+		if mg.Verbose() {
+			log.Print(stdout.String())
+		}
+		return errors.New("`goimports -e -d .` found import errors. Run `goimports -e -w .` to fix them.")
+	}
+	return nil
 }
 
 // EnsureStaticChecks ensures that the source code passes static code checks

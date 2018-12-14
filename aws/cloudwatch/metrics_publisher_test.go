@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	spartaTesting "github.com/mweagle/Sparta/testing"
 )
 

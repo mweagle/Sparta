@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	"github.com/pkg/errors"
 )
 
