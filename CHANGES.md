@@ -9,6 +9,8 @@
     - Moved the internal `cloudwatchlogs` package to the `cloudwatch/logs` import path
   - Renamed fluent typenames in _github.com/mweagle/Sparta/aws/iam/builder_ to support Principal-based builders
   - Renamed `step.NewTaskState` to `step.NewLambdaTaskState` to enable type specific [Step function services](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-connectors.html).
+  - Simplified versioning Lambda resource so that the [Lambda::Version](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-version.html) resource is orphaned (via [DeletionPolicy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html)) rather than the prior implementation, which fetched all versions from the provisioned template and accumulated them over time.
+    - This also obsoleted the `ContextKeyLambdaVersions` constant
 - :checkered_flag: **CHANGES**
   - More documentation
   - Added Step function [service integrations](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-supported-services.html)
