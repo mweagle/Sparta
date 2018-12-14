@@ -1,8 +1,9 @@
 package decorator
 
 import (
+	"time"
+
 	sparta "github.com/mweagle/Sparta"
-	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
@@ -10,7 +11,7 @@ import (
 // LambdaVersioningDecorator returns a TemplateDecorator
 // that is responsible for including a versioning resource
 // with the given lambda function
-func LambdaVersioningDecorator() sparta.TemplateDecorator {
+func LambdaVersioningDecorator() sparta.TemplateDecoratorHookFunc {
 	return func(serviceName string,
 		lambdaResourceName string,
 		lambdaResource gocf.LambdaFunction,
@@ -21,20 +22,16 @@ func LambdaVersioningDecorator() sparta.TemplateDecorator {
 		template *gocf.Template,
 		context map[string]interface{},
 		logger *logrus.Logger) error {
-		incrementer, incrementerErr :=
-			spartaCF.AddAutoIncrementingLambdaVersionResource(serviceName,
-				lambdaResourceName,
-				template,
-				logger)
-		if incrementerErr != nil {
-			return nil
+
+		lambdaResName := sparta.CloudFormationResourceName("LambdaVersion",
+			buildID,
+			time.Now().UTC().String())
+		versionResource := &gocf.LambdaVersion{
+			FunctionName: gocf.GetAtt(lambdaResourceName, "Arn").String(),
 		}
-		versionsMap, versionsMapExists := context[sparta.ContextKeyLambdaVersions].(map[string]*spartaCF.AutoIncrementingLambdaVersionInfo)
-		if !versionsMapExists {
-			versionsMap = make(map[string]*spartaCF.AutoIncrementingLambdaVersionInfo)
-		}
-		versionsMap[lambdaResourceName] = incrementer
-		context[sparta.ContextKeyLambdaVersions] = versionsMap
+		lambdaVersionRes := template.AddResource(lambdaResName, versionResource)
+		lambdaVersionRes.DeletionPolicy = "Retain"
+		// That's it...
 		return nil
 	}
 }

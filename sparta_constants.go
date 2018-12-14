@@ -94,9 +94,3 @@ const (
 	// was returned from the lambda function
 	ContextKeyLambdaResponse
 )
-
-const (
-	// ContextKeyLambdaVersions is the key in the context that stores the map
-	// of autoincrementing versions
-	ContextKeyLambdaVersions = "spartaLambdaVersions"
-)
