@@ -1,9 +1,11 @@
 ---
 date: 2018-12-01 05:17:18
 title:
-pre: "<i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Operations</b>"
+pre: "<b>Operations</b>"
 weight: 499
 ---
+
+# Operations
 
 {{< tweet 1067199205930868736 >}}
 

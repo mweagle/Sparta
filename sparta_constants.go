@@ -18,9 +18,11 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.7.3"
+	SpartaVersion = "1.8.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
+	// LambdaBinaryTag is the build tag name used when building the binary
+	LambdaBinaryTag = "lambdabinary"
 )
 
 var (
@@ -91,10 +93,4 @@ const (
 	// ContextKeyLambdaResponse is the possible response that
 	// was returned from the lambda function
 	ContextKeyLambdaResponse
-)
-
-const (
-	// ContextKeyLambdaVersions is the key in the context that stores the map
-	// of autoincrementing versions
-	ContextKeyLambdaVersions = "spartaLambdaVersions"
 )

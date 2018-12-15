@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/go-playground/validator.v9"
+	validator "gopkg.in/go-playground/validator.v9"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

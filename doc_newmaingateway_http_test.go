@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
+	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,9 +29,16 @@ func ExampleMain_apiGatewayHTTPSEvent() {
 	// Stage reesource will cause the API to be deployed.
 	stage := NewStage("v1")
 	apiGateway := NewAPIGateway("MyEchoHTTPAPI", stage)
-
+	// Enable CORS
+	apiGateway.CORSOptions = &CORSOptions{
+		Headers: map[string]interface{}{
+			"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
+			"Access-Control-Allow-Methods": "*",
+			"Access-Control-Allow-Origin":  gocf.String("*"),
+		},
+	}
 	// Create a lambda function
-	echoAPIGatewayLambdaFn := HandleAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
+	echoAPIGatewayLambdaFn, _ := NewAWSLambda(LambdaName(echoAPIGatewayHTTPEvent),
 		echoAPIGatewayHTTPEvent,
 		IAMRoleDefinition{})
 

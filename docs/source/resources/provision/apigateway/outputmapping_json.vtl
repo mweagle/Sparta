@@ -1,0 +1,14 @@
+$input.json('$.body')
+## Ok, parse the incoming map of headers
+## and for each one, set the override header in the context.
+## Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html#context-variable-reference
+## Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-override-request-response-parameters.html
+#set($headers = $input.path("$.headers"))##
+#foreach($key in $headers.keySet())##
+#set($context.responseOverride.header[$key] = $headers[$key])##
+#end##
+## And use the code rather than integration templates so that
+## the creation time is reduced
+#if($input.path("$.code") != "")##
+#set($context.responseOverride.status = $input.path("$.code"))##
+#end##

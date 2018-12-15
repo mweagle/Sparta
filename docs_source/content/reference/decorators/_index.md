@@ -1,10 +1,12 @@
 ---
 date: 2018-12-01 06:18:10
 title:
-pre: "<i class='fas fa-fw fa-paint-brush'></i>&nbsp;<b>Build Time Decorators</b>"
+pre: "<b>Build-Time Decorators</b>"
 chapter: false
 weight: 120
 ---
+
+# Build-Time Decorators
 
 Sparta uses build-time [decorators](https://godoc.org/github.com/mweagle/Sparta/decorator) to annotate the CloudFormation template with
 additional functionality.

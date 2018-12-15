@@ -90,6 +90,9 @@ func tappedHandler(handlerSymbol interface{},
 
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
+
+		// TODO - add panic handler.
+
 		ctx = applyInterceptors(ctx, msg, interceptors.Begin)
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
 		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)

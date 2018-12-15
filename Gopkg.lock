@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:358074b5139f0a2141910eb6ec3081138d27340b1d908ece0a27d7a018826c9f"
+  digest = "1:b169538fa94b100a67413397271a0fd38ff3caa5e13ee60ba7237173413cf9fc"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
-  version = "v1.7.0"
+  revision = "e205523512c83e9236698dbe7eb9649ec56e80ca"
+  version = "v1.7.1"
 
 [[projects]]
   digest = "1:e92f5581902c345eb4ceffdcd4a854fb8f73cf436d47d837d1ec98ef1fe0a214"
@@ -18,7 +18,7 @@
   version = "1.0.0"
 
 [[projects]]
-  digest = "1:a4fae639114a906f205a4cb858c670ca28784426c0e809d664de2babb13cb28c"
+  digest = "1:8b4d009bfb2d13472dad368bf7520c482dd7f8a190436da4e6d52111c0a2e697"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
@@ -27,11 +27,11 @@
     "lambdacontext",
   ]
   pruneopts = "UT"
-  revision = "fb8f88d824489a878aee1e0badde7d8e129f8767"
-  version = "v1.7.0"
+  revision = "9e3676ee8ca83aee500682f382e10b9d03660093"
+  version = "v1.8.0"
 
 [[projects]]
-  digest = "1:f40b2d059e85487862c489d7512668b9a580c6a8339d5ba9e662953b591f1df9"
+  digest = "1:2c4fa03abb0186453593284eda3c0c8aee45cfd47d8750e179b944b7596152eb"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -43,6 +43,7 @@
     "aws/credentials",
     "aws/credentials/ec2rolecreds",
     "aws/credentials/endpointcreds",
+    "aws/credentials/processcreds",
     "aws/credentials/stscreds",
     "aws/crr",
     "aws/csm",
@@ -87,8 +88,8 @@
     "service/xray",
   ]
   pruneopts = "UT"
-  revision = "ceab7b7ac6f535d1397f124620720b5145f1ad59"
-  version = "v1.15.88"
+  revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
+  version = "v1.16.6"
 
 [[projects]]
   digest = "1:69b265779f20e34cea5b35844eafeb8d0732b088b20a98992c5ab6629a6c15c8"
@@ -231,7 +232,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:966a468b3f176bf77918848fccbdf5a1461203d8c32c10e92cdbc1e858b6ed92"
+  digest = "1:0e6b2a2f68525514791ba1c45e90689dc740d754faa47c4bccf2edea38cabdd2"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -251,7 +252,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "b4f47329b966aba6be4255b2fc50f9dbd8260416"
+  revision = "3ea8567a2e5752420fc544d2e2ad249721768934"
 
 [[projects]]
   branch = "master"
@@ -278,11 +279,11 @@
   version = "v1.0"
 
 [[projects]]
-  digest = "1:e22af8c7518e1eab6f2eab2b7d7558927f816262586cd6ed9f349c97a6c285c4"
+  digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0b12d6b5"
+  revision = "c2b33e84"
 
 [[projects]]
   branch = "master"
@@ -301,6 +302,14 @@
   version = "v1.0.1"
 
 [[projects]]
+  digest = "1:6782ffc812e8e700e6952ede1e60487ff1fd9da489eff762985be662a7cfc431"
+  name = "github.com/leodido/go-urn"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "70078a794e8ea4b497ba7c19a78cd60f90ccf0f4"
+  version = "v1.1.0"
+
+[[projects]]
   digest = "1:c65a16ac77d0b1aefc7009cabb6ac5ad05def02025f5be85f450c03f52cc6f86"
   name = "github.com/lucasb-eyer/go-colorful"
   packages = ["."]
@@ -316,8 +325,8 @@
     "sh",
   ]
   pruneopts = "UT"
-  revision = "11d15918ff3aa6f75cd6d3340a9507bb5309c679"
-  version = "v1.7.1"
+  revision = "aedfce64c122eef47009b7f80c9771044753215d"
+  version = "v1.8.0"
 
 [[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
@@ -351,12 +360,12 @@
   revision = "9520e82c474b0a04dd04f8a40959027271bab992"
 
 [[projects]]
-  digest = "1:8da4402cd8d8993b433aa138eaed252e2013668195a2ae6d87f61837ba489399"
+  digest = "1:67b3e2eb7a5bcfe8374b617315f1a8dfdff3c131a451eb2c01664790ef6dd4e6"
   name = "github.com/mholt/archiver"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e1ccfb528128bf4ff3bd906823ae2dcb708f79f5"
-  version = "v3.1.0"
+  revision = "d572b2e8b82726cee9476d1b9d63a7fe9b601ff1"
+  version = "v3.1.1"
 
 [[projects]]
   branch = "master"
@@ -368,11 +377,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:714d36abfef7074ce3477eb443badc6ca81e61d9db1bd35c483701e68c5898b9"
+  digest = "1:f06f48a64f6d94f2dfc0cb3728b4561851c038f05dd7a0414160ea9cbd7ebc98"
   name = "github.com/mweagle/go-cloudformation"
   packages = ["."]
   pruneopts = "UT"
-  revision = "23292627a1b38e1f248808957ac37a9df928dcba"
+  revision = "cde564df4228c2b166b443463fa69181159b24ea"
 
 [[projects]]
   digest = "1:b93a939355dc613ca1c23bf39f6d4c207da431a31dd8af001cc334ad24cab9d3"
@@ -381,6 +390,14 @@
   pruneopts = "UT"
   revision = "cc3e4b2381762c56dbcdf9f93be03349a1dc1c14"
   version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:6d4d9067e639d96a804ee9a30fa89c7233c5c5edbfe736072ff00d48c97bccc4"
+  name = "github.com/otiai10/copy"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "7e9a647135a142c2669943d4a4d29be015ce9392"
 
 [[projects]]
   digest = "1:e39a5ee8fcbec487f8fc68863ef95f2b025e0739b0e4aa55558a2b4cf8f0ecf0"
@@ -411,14 +428,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:0a2bb80d7bb25880411aa55fa177173eaef46781cab25786d88ca9262704fed4"
+  digest = "1:87edab22a553716139634989b0a9c1d9e660dd21abdc44d9bb14e3e320825eb4"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0a18dea458148770d212d348f656988df75ff341"
+  revision = "f93fbad8f89750bcac42201907aec21d737b394f"
 
 [[projects]]
-  digest = "1:bd008bf3838a9cb9731405d9c55d97bc61c7847a5cf37b81ca5e7a909879c624"
+  digest = "1:8c4fca372035672ef88720cb0c700f31d78e672eaa98d6a4cb282b39fe63d480"
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -431,8 +448,8 @@
     "process",
   ]
   pruneopts = "UT"
-  revision = "3ec50d2876a36047b2ca39f955ba88fb7a455e92"
-  version = "v2.18.10"
+  revision = "0f70a4a06f7a1039305ec9b3ba9c2800f8929fba"
+  version = "v2.18.11"
 
 [[projects]]
   branch = "master"
@@ -443,11 +460,12 @@
   revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
-  digest = "1:1663c5919c78b509aa07a7ca704fa0428ad519f6cf1a9983bc2e5c00a247fd3c"
+  digest = "1:69b1cc331fca23d702bd72f860c6a647afd0aa9fcbc1d0659b1365e26546dd70"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3f90cee1e41a38ba27c831844c002952512997c0"
+  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
@@ -503,18 +521,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "eb0de9b17e854e9b1ccd9963efafc79862359959"
+  revision = "505ab145d0a99da450461ae2c1a9f6cd10d1f447"
 
 [[projects]]
   branch = "master"
-  digest = "1:0c7cb58af944f9690af91474a75371eecfe54c1ce3771a8dc08924430ee785d3"
+  digest = "1:ba8cbf57cfd92d5f8592b4aca1a35d92c162363d32aeabd5b12555f8896635e7"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "4ed8d59d0b35e1e29334a206d1b3f38b1e5dfb31"
+  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -538,16 +556,16 @@
     "terminal",
   ]
   pruneopts = "UT"
-  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
-  version = "v1.7.0"
+  revision = "e205523512c83e9236698dbe7eb9649ec56e80ca"
+  version = "v1.7.1"
 
 [[projects]]
-  digest = "1:2c6a8f26c364b006a27b8090a9583fcc4b7865583fcf93f99a20fce339e87192"
+  digest = "1:8abc978192c2fca4d6a74260c3a8f4aa34d25bd3c548c938745b91b8b20cda1d"
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
   pruneopts = "UT"
-  revision = "1fa3c8d6336562f0a3f95c73593ee2b57ff4da11"
-  version = "v9.23.0"
+  revision = "0277b12d53df79c9dbf7311cb07fa9c81ed621bb"
+  version = "v9.24.0"
 
 [solve-meta]
   analyzer-name = "dep"
@@ -558,6 +576,7 @@
     "github.com/aws/aws-lambda-go/lambda",
     "github.com/aws/aws-lambda-go/lambdacontext",
     "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/awserr",
     "github.com/aws/aws-sdk-go/aws/client",
     "github.com/aws/aws-sdk-go/aws/request",
     "github.com/aws/aws-sdk-go/aws/session",
@@ -588,6 +607,7 @@
     "github.com/mholt/archiver",
     "github.com/mweagle/go-cloudcondenser",
     "github.com/mweagle/go-cloudformation",
+    "github.com/otiai10/copy",
     "github.com/pkg/browser",
     "github.com/pkg/errors",
     "github.com/rivo/tview",

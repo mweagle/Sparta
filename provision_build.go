@@ -8,14 +8,10 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
-	"flag"
 	"fmt"
-	"go/parser"
-	"go/token"
 	"io"
 	"net/url"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"reflect"
@@ -25,6 +21,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -95,6 +92,19 @@ func newS3UploadURL(s3URL string) *s3UploadURL {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+func codeZipKey(url *s3UploadURL) string {
+	if url == nil {
+		return ""
+	}
+	return url.keyName()
+}
+func codeZipVersion(url *s3UploadURL) string {
+	if url == nil {
+		return ""
+	}
+	return url.version
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Represents data associated with provisioning the S3 Site iff defined
@@ -360,7 +370,7 @@ func callServiceDecoratorHook(ctx *workflowContext) error {
 			ctx.userdata.serviceName,
 			serviceTemplate,
 			ctx.userdata.s3Bucket,
-			ctx.context.s3CodeZipURL.keyName(),
+			codeZipKey(ctx.context.s3CodeZipURL),
 			ctx.userdata.buildID,
 			ctx.context.awsSession,
 			ctx.userdata.noop,
@@ -472,7 +482,7 @@ func callValidationHooks(validationHooks []ServiceValidationHookHandler,
 			ctx.userdata.serviceName,
 			&loopTemplate,
 			ctx.userdata.s3Bucket,
-			ctx.context.s3CodeZipURL.keyName(),
+			codeZipKey(ctx.context.s3CodeZipURL),
 			ctx.userdata.buildID,
 			ctx.context.awsSession,
 			ctx.userdata.noop,
@@ -576,6 +586,21 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 // Workflow steps
 ////////////////////////////////////////////////////////////////////////////////
 
+func showOptionalAWSUsageInfo(err error, logger *logrus.Logger) {
+	if err == nil {
+		return
+	}
+	userAWSErr, userAWSErrOk := err.(awserr.Error)
+	if userAWSErrOk {
+		if strings.Contains(userAWSErr.Error(), "could not find region configuration") {
+			logger.Error("")
+			logger.Error("Consider setting env.AWS_REGION, env.AWS_DEFAULT_REGION, or env.AWS_SDK_LOAD_CONFIG to resolve this issue.")
+			logger.Error("See the documentation at https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html for more information.")
+			logger.Error("")
+		}
+	}
+}
+
 // Verify & cache the IAM rolename to ARN mapping
 func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	defer recordDuration(time.Now(), "Verifying IAM roles", ctx)
@@ -585,7 +610,7 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	// Don't verify them, just create them...
 	ctx.logger.Info("Verifying IAM Lambda execution roles")
 	ctx.context.lambdaIAMRoleNameMap = make(map[string]*gocf.StringExpr)
-	svc := iam.New(ctx.context.awsSession)
+	iamSvc := iam.New(ctx.context.awsSession)
 
 	// Assemble all the RoleNames and validate the inline IAMRoleDefinitions
 	var allRoleNames []string
@@ -653,9 +678,8 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 				RoleName: aws.String(eachRoleName),
 			}
 			ctx.logger.Debug("Checking IAM RoleName: ", eachRoleName)
-			resp, err := svc.GetRole(params)
+			resp, err := iamSvc.GetRole(params)
 			if err != nil {
-				ctx.logger.Error(err.Error())
 				return nil, err
 			}
 			// Cache it - we'll need it later when we create the
@@ -681,11 +705,16 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			"Bucket":            ctx.userdata.s3Bucket,
 			"Region":            *ctx.context.awsSession.Config.Region,
 		}).Info(noopMessage("S3 preconditions check"))
-	} else {
+	} else if len(ctx.userdata.lambdaAWSInfos) != 0 {
+		// We only need to check this if we're going to upload a ZIP, which
+		// isn't always true in the case of a Step function...
 		// Bucket versioning
 		// Get the S3 bucket and see if it has versioning enabled
-		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession, ctx.userdata.s3Bucket, ctx.logger)
+		isEnabled, versioningPolicyErr := spartaS3.BucketVersioningEnabled(ctx.context.awsSession,
+			ctx.userdata.s3Bucket,
+			ctx.logger)
 		if nil != versioningPolicyErr {
+			// If this is an error and suggests missing region, output some helpful error text
 			return nil, versioningPolicyErr
 		}
 		ctx.logger.WithFields(logrus.Fields{
@@ -770,214 +799,6 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 	return createPackageStep(), nil
 }
 
-func ensureMainEntrypoint(logger *logrus.Logger) error {
-	// Don't do this for "go test" runs
-	if flag.Lookup("test.v") != nil {
-		logger.Debug("Skipping main() check for test")
-		return nil
-	}
-
-	fset := token.NewFileSet()
-	packageMap, parseErr := parser.ParseDir(fset, ".", nil, parser.PackageClauseOnly)
-	if parseErr != nil {
-		return errors.Errorf("Failed to parse source input: %s", parseErr.Error())
-	}
-	logger.WithFields(logrus.Fields{
-		"SourcePackages": packageMap,
-	}).Debug("Checking working directory")
-
-	// If there isn't a main defined, we're in the wrong directory..
-	mainPackageCount := 0
-	for eachPackage := range packageMap {
-		if eachPackage == "main" {
-			mainPackageCount++
-		}
-	}
-	if mainPackageCount <= 0 {
-		unlikelyBinaryErr := fmt.Errorf("It appears your application's `func main() {}` is not in the current working directory. Please run this command in the same directory as `func main() {}`")
-		return unlikelyBinaryErr
-	}
-	return nil
-}
-
-func buildGoBinary(serviceName string,
-	executableOutput string,
-	useCGO bool,
-	buildID string,
-	buildTags string,
-	linkFlags string,
-	noop bool,
-	logger *logrus.Logger) error {
-
-	// Before we do anything, let's make sure there's a `main` package in this directory.
-	ensureMainPackageErr := ensureMainEntrypoint(logger)
-	if ensureMainPackageErr != nil {
-		return ensureMainPackageErr
-	}
-	// Go generate
-	cmd := exec.Command("go", "generate")
-	if logger.Level == logrus.DebugLevel {
-		cmd = exec.Command("go", "generate", "-v", "-x")
-	}
-	cmd.Env = os.Environ()
-	commandString := fmt.Sprintf("%s", cmd.Args)
-	logger.Info(fmt.Sprintf("Running `%s`", strings.Trim(commandString, "[]")))
-	goGenerateErr := system.RunOSCommand(cmd, logger)
-	if nil != goGenerateErr {
-		return goGenerateErr
-	}
-	// TODO: Smaller binaries via linker flags
-	// Ref: https://blog.filippo.io/shrink-your-go-binaries-with-this-one-weird-trick/
-	noopTag := ""
-	if noop {
-		noopTag = "noop "
-	}
-
-	userBuildFlags := []string{"-tags",
-		fmt.Sprintf("lambdabinary %s%s", noopTag, buildTags)}
-
-	// Append all the linker flags
-	// Stamp the service name into the binary
-	// We need to stamp the servicename into the aws binary so that if the user
-	// chose some type of dynamic stack name at provision time, the name
-	// we use at execution time has that value. This is necessary because
-	// the function dispatch logic uses the AWS_LAMBDA_FUNCTION_NAME environment
-	// variable to do the lookup. And in effect, this value has to be unique
-	// across an account, since functions cannot have the same name
-	// Custom flags for the binary
-	linkerFlags := map[string]string{
-		"StampedServiceName": serviceName,
-		"StampedBuildID":     buildID,
-	}
-	for eachFlag, eachValue := range linkerFlags {
-		linkFlags = fmt.Sprintf("%s -s -w -X github.com/mweagle/Sparta.%s=%s",
-			linkFlags,
-			eachFlag,
-			eachValue)
-	}
-	linkFlags = strings.TrimSpace(linkFlags)
-	if len(linkFlags) != 0 {
-		userBuildFlags = append(userBuildFlags, "-ldflags", linkFlags)
-	}
-	// If this is CGO, do the Docker build if we're doing an actual
-	// provision. Otherwise use the "normal" build to keep things
-	// a bit faster.
-	var cmdError error
-	if useCGO {
-		currentDir, currentDirErr := os.Getwd()
-		if nil != currentDirErr {
-			return currentDirErr
-		}
-		gopathVersion, gopathVersionErr := system.GoVersion(logger)
-		if nil != gopathVersionErr {
-			return gopathVersionErr
-		}
-
-		gopath := system.GoPath()
-		containerGoPath := "/usr/src/gopath"
-		// Get the package path in the current directory
-		// so that we can it to the container path
-		packagePath := strings.TrimPrefix(currentDir, gopath)
-		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
-		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
-
-		// Pass any SPARTA_* prefixed environment variables to the docker build
-		//
-		goosTarget := os.Getenv("SPARTA_GOOS")
-		if goosTarget == "" {
-			goosTarget = "linux"
-		}
-		goArch := os.Getenv("SPARTA_GOARCH")
-		if goArch == "" {
-			goArch = "amd64"
-		}
-		spartaEnvVars := []string{
-			"-e",
-			fmt.Sprintf("GOPATH=%s", containerGoPath),
-			"-e",
-			fmt.Sprintf("GOOS=%s", goosTarget),
-			"-e",
-			fmt.Sprintf("GOARCH=%s", goArch),
-		}
-		// User vars
-		for _, eachPair := range os.Environ() {
-			if strings.HasPrefix(eachPair, "SPARTA_") {
-				spartaEnvVars = append(spartaEnvVars, "-e", eachPair)
-			}
-		}
-
-		dockerBuildArgs := []string{
-			"run",
-			"--rm",
-			"-v",
-			volumeMountMapping,
-			"-w",
-			containerSourcePath}
-		dockerBuildArgs = append(dockerBuildArgs, spartaEnvVars...)
-		dockerBuildArgs = append(dockerBuildArgs,
-			fmt.Sprintf("golang:%s", gopathVersion),
-			"go",
-			"build",
-			"-o",
-			executableOutput,
-			"-tags",
-			"lambdabinary linux ",
-			"-buildmode=c-shared",
-		)
-		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
-		cmd = exec.Command("docker", dockerBuildArgs...)
-		cmd.Env = os.Environ()
-		logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
-			"Args": dockerBuildArgs,
-		}).Info("Building `cgo` library in Docker")
-		cmdError = system.RunOSCommand(cmd, logger)
-
-		// If this succeeded, let's find the .h file and move it into the scratch
-		// Try to keep things tidy...
-		if nil == cmdError {
-			soExtension := filepath.Ext(executableOutput)
-			headerFilepath := fmt.Sprintf("%s.h", strings.TrimSuffix(executableOutput, soExtension))
-			_, headerFileErr := os.Stat(headerFilepath)
-			if nil == headerFileErr {
-				targetPath, targetPathErr := temporaryFile(filepath.Base(headerFilepath))
-				if nil != targetPathErr {
-					headerFileErr = targetPathErr
-				} else {
-					headerFileErr = os.Rename(headerFilepath, targetPath.Name())
-				}
-			}
-			if nil != headerFileErr {
-				logger.WithFields(logrus.Fields{
-					"Path": headerFilepath,
-				}).Warn("Failed to move .h file to scratch directory")
-			}
-		}
-	} else {
-
-		// Build the NodeJS version
-		buildArgs := []string{
-			"build",
-			"-o",
-			executableOutput,
-		}
-		// Debug flags?
-		if logger.Level == logrus.DebugLevel {
-			buildArgs = append(buildArgs, "-v")
-		}
-		buildArgs = append(buildArgs, userBuildFlags...)
-		buildArgs = append(buildArgs, ".")
-		cmd = exec.Command("go", buildArgs...)
-		cmd.Env = os.Environ()
-		cmd.Env = append(cmd.Env, "GOOS=linux", "GOARCH=amd64")
-		logger.WithFields(logrus.Fields{
-			"Name": executableOutput,
-		}).Info("Compiling binary")
-		cmdError = system.RunOSCommand(cmd, logger)
-	}
-	return cmdError
-}
-
 // Build and package the application
 func createPackageStep() workflowStep {
 	return func(ctx *workflowContext) (workflowStep, error) {
@@ -994,7 +815,7 @@ func createPackageStep() workflowStep {
 			}
 		}
 		sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
-		buildErr := buildGoBinary(ctx.userdata.serviceName,
+		buildErr := system.BuildGoBinary(ctx.userdata.serviceName,
 			ctx.context.binaryName,
 			ctx.userdata.useCGO,
 			ctx.userdata.buildID,
@@ -1026,7 +847,8 @@ func createPackageStep() workflowStep {
 				return nil, postBuildErr
 			}
 		}
-		tmpFile, err := temporaryFile(fmt.Sprintf("%s-code.zip", sanitizedServiceName))
+		tmpFile, err := system.TemporaryFile(ScratchDirectory,
+			fmt.Sprintf("%s-code.zip", sanitizedServiceName))
 		if err != nil {
 			return nil, err
 		}
@@ -1081,25 +903,29 @@ func createUploadStep(packagePath string) workflowStep {
 		defer recordDuration(time.Now(), "Uploading code", ctx)
 
 		var uploadTasks []*workTask
-		// We always upload the primary binary...
-		uploadBinaryTask := func() workResult {
-			logFilesize("Lambda code archive size", packagePath, ctx.logger)
+		if len(ctx.userdata.lambdaAWSInfos) != 0 {
+			// We always upload the primary binary...
+			uploadBinaryTask := func() workResult {
+				logFilesize("Lambda code archive size", packagePath, ctx.logger)
 
-			// Create the S3 key...
-			zipS3URL, zipS3URLErr := uploadLocalFileToS3(packagePath, "", ctx)
-			if nil != zipS3URLErr {
-				return newTaskResult(nil, zipS3URLErr)
+				// Create the S3 key...
+				zipS3URL, zipS3URLErr := uploadLocalFileToS3(packagePath, "", ctx)
+				if nil != zipS3URLErr {
+					return newTaskResult(nil, zipS3URLErr)
+				}
+				ctx.context.s3CodeZipURL = newS3UploadURL(zipS3URL)
+				return newTaskResult(ctx.context.s3CodeZipURL, nil)
 			}
-			ctx.context.s3CodeZipURL = newS3UploadURL(zipS3URL)
-			return newTaskResult(ctx.context.s3CodeZipURL, nil)
+			uploadTasks = append(uploadTasks, newWorkTask(uploadBinaryTask))
+		} else {
+			ctx.logger.Info("Bypassing S3 upload as no Lambda functions were provided")
 		}
-		uploadTasks = append(uploadTasks, newWorkTask(uploadBinaryTask))
 
 		// We might need to upload some other things...
 		if nil != ctx.userdata.s3SiteContext.s3Site {
 			uploadSiteTask := func() workResult {
 				tempName := fmt.Sprintf("%s-S3Site.zip", ctx.userdata.serviceName)
-				tmpFile, err := temporaryFile(tempName)
+				tmpFile, err := system.TemporaryFile(ScratchDirectory, tempName)
 				if err != nil {
 					return newTaskResult(nil,
 						errors.Wrapf(err, "Failed to create temporary S3 site archive file"))
@@ -1181,7 +1007,7 @@ func maximumStackOperationTimeout(template *gocf.Template, logger *logrus.Logger
 // createCodePipelineTriggerPackage handles marshaling the template, zipping
 // the config files in the package, and the
 func createCodePipelineTriggerPackage(cfTemplateJSON []byte, ctx *workflowContext) (string, error) {
-	tmpFile, err := temporaryFile(ctx.userdata.codePipelineTrigger)
+	tmpFile, err := system.TemporaryFile(ScratchDirectory, ctx.userdata.codePipelineTrigger)
 	if err != nil {
 		return "", errors.Wrapf(err, "Failed to create temporary file for CodePipeline")
 	}
@@ -1283,7 +1109,7 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 				S3Bucket:     aws.String(ctx.userdata.s3Bucket),
 				S3Key:        aws.String(ctx.context.s3CodeZipURL.keyName()),
 			}
-			if ctx.context.s3CodeZipURL.version != "" {
+			if ctx.context.s3CodeZipURL != nil && ctx.context.s3CodeZipURL.version != "" {
 				updateCodeRequest.S3ObjectVersion = aws.String(ctx.context.s3CodeZipURL.version)
 			}
 			updateCodeRequests = append(updateCodeRequests, updateCodeRequest)
@@ -1369,7 +1195,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	// Consistent naming of template
 	sanitizedServiceName := sanitizedName(ctx.userdata.serviceName)
 	templateName := fmt.Sprintf("%s-cftemplate.json", sanitizedServiceName)
-	templateFile, templateFileErr := temporaryFile(templateName)
+	templateFile, templateFileErr := system.TemporaryFile(ScratchDirectory, templateName)
 	if nil != templateFileErr {
 		return nil, templateFileErr
 	}
@@ -1542,8 +1368,8 @@ func ensureCloudFormationStack() workflowStep {
 
 			err := eachEntry.export(ctx.userdata.serviceName,
 				ctx.userdata.s3Bucket,
-				ctx.context.s3CodeZipURL.keyName(),
-				ctx.context.s3CodeZipURL.version,
+				codeZipKey(ctx.context.s3CodeZipURL),
+				codeZipVersion(ctx.context.s3CodeZipURL),
 				ctx.userdata.buildID,
 				ctx.context.lambdaIAMRoleNameMap,
 				ctx.context.cfTemplate,
@@ -1563,8 +1389,8 @@ func ensureCloudFormationStack() workflowStep {
 				ctx.userdata.serviceName,
 				ctx.context.awsSession,
 				ctx.userdata.s3Bucket,
-				ctx.context.s3CodeZipURL.keyName(),
-				ctx.context.s3CodeZipURL.version,
+				codeZipKey(ctx.context.s3CodeZipURL),
+				codeZipVersion(ctx.context.s3CodeZipURL),
 				ctx.context.lambdaIAMRoleNameMap,
 				apiGatewayTemplate,
 				ctx.userdata.noop,
@@ -1585,7 +1411,7 @@ func ensureCloudFormationStack() workflowStep {
 			exportErr := ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
 				ctx.context.binaryName,
 				ctx.userdata.s3Bucket,
-				ctx.context.s3CodeZipURL.keyName(),
+				codeZipKey(ctx.context.s3CodeZipURL),
 				ctx.userdata.s3SiteContext.s3UploadURL.keyName(),
 				apiGatewayTemplate.Outputs,
 				ctx.context.lambdaIAMRoleNameMap,
@@ -1754,13 +1580,19 @@ func Provision(noop bool,
 	}).Info("Provisioning service")
 
 	if len(lambdaAWSInfos) <= 0 {
-		return errors.New("No lambda functions provided to Sparta.Provision()")
+		// Warning? Maybe it's just decorators?
+		if ctx.userdata.workflowHooks == nil {
+			return errors.New("No lambda functions provided to Sparta.Provision()")
+		}
+		ctx.logger.Warn("No lambda functions provided to Sparta.Provision()")
 	}
 
 	// Start the workflow
 	for step := verifyIAMRoles; step != nil; {
 		next, err := step(ctx)
 		if err != nil {
+			showOptionalAWSUsageInfo(err, ctx.logger)
+
 			ctx.rollback()
 			// Workflow step?
 			return errors.Wrapf(err, "Failed to provision service")

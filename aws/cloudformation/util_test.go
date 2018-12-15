@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+
+	spartaAWS "github.com/mweagle/Sparta/aws"
+	"github.com/sirupsen/logrus"
 )
 
 var conversionParams = map[string]interface{}{
@@ -112,7 +115,6 @@ B`,
    "Fn::GetAtt" : []string{"ResName","AttrName"},
 */
 func TestExpand(t *testing.T) {
-
 	for _, eachTest := range userdataPassingTests {
 		testReader := strings.NewReader(eachTest.input)
 		expandResult, expandResultErr := ConvertToTemplateExpression(testReader, conversionParams)
@@ -141,5 +143,23 @@ func TestExpand(t *testing.T) {
 				}
 			}
 		}
+	}
+}
+
+func TestUserScopedStackName(t *testing.T) {
+	stackName := UserScopedStackName("TestingService")
+	if stackName == "" {
+		t.Fatalf("Failed to get `user` scoped name for Stack")
+	}
+}
+func TestPlatformScopedName(t *testing.T) {
+	logger := &logrus.Logger{}
+	awsSession := spartaAWS.NewSession(logger)
+	stackName, stackNameErr := UserAccountScopedStackName("TestService", awsSession)
+	if stackNameErr != nil {
+		t.Fatalf("Failed to create AWS account based stack name: %s", stackNameErr)
+	}
+	if stackName == "" {
+		t.Fatalf("Failed to get `user` AWS account name for Stack")
 	}
 }

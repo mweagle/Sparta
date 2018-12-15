@@ -33,7 +33,7 @@ type TemplateDecorator func(serviceName string,
 	logger *logrus.Logger) error
 
 // TemplateDecoratorHookFunc is the adapter to transform an existing
-// ArchiveHook into a WorkflowHookHandler satisfier
+// TemplateHook into a TemplateDecoratorHandler satisfier
 type TemplateDecoratorHookFunc func(serviceName string,
 	lambdaResourceName string,
 	lambdaResource gocf.LambdaFunction,
@@ -213,7 +213,7 @@ type ServiceDecoratorHookFunc func(context map[string]interface{},
 	noop bool,
 	logger *logrus.Logger) error
 
-// DecorateService calls sdhf(...) to satisfy ArchiveHookHandler
+// DecorateService calls sdhf(...) to satisfy ServiceDecoratorHookHandler
 func (sdhf ServiceDecoratorHookFunc) DecorateService(context map[string]interface{},
 	serviceName string,
 	template *gocf.Template,

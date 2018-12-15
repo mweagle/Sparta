@@ -50,7 +50,7 @@ func ExampleWorkflowHooks() {
 	}
 
 	var lambdaFunctions []*LambdaAWSInfo
-	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
+	helloWorldLambda, _ := NewAWSLambda("PreexistingAWSLambdaRoleName",
 		helloZipLambda,
 		nil)
 	lambdaFunctions = append(lambdaFunctions, helloWorldLambda)

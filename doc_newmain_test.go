@@ -12,7 +12,7 @@ func mainHelloWorld(ctx context.Context) (string, error) {
 
 func ExampleMain_basic() {
 	var lambdaFunctions []*LambdaAWSInfo
-	helloWorldLambda := HandleAWSLambda("PreexistingAWSLambdaRoleName",
+	helloWorldLambda, _ := NewAWSLambda("PreexistingAWSLambdaRoleName",
 		mainHelloWorld,
 		IAMRoleDefinition{})
 

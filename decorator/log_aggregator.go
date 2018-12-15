@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
 	spartaIAMBuilder "github.com/mweagle/Sparta/aws/iam/builder"
 	gocf "github.com/mweagle/go-cloudformation"

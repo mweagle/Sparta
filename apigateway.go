@@ -14,29 +14,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-/*
-"context" : {
-  "apiId" : "$util.escapeJavaScript($context.apiId)",
-  "method" : "$util.escapeJavaScript($context.httpMethod)",
-  "requestId" : "$util.escapeJavaScript($context.requestId)",
-  "resourceId" : "$util.escapeJavaScript($context.resourceId)",
-  "resourcePath" : "$util.escapeJavaScript($context.resourcePath)",
-  "stage" : "$util.escapeJavaScript($context.stage)",
-  "identity" : {
-    "accountId" : "$util.escapeJavaScript($context.identity.accountId)",
-    "apiKey" : "$util.escapeJavaScript($context.identity.apiKey)",
-    "caller" : "$util.escapeJavaScript($context.identity.caller)",
-    "cognitoAuthenticationProvider" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationProvider)",
-    "cognitoAuthenticationType" : "$util.escapeJavaScript($context.identity.cognitoAuthenticationType)",
-    "cognitoIdentityId" : "$util.escapeJavaScript($context.identity.cognitoIdentityId)",
-    "cognitoIdentityPoolId" : "$util.escapeJavaScript($context.identity.cognitoIdentityPoolId)",
-    "sourceIp" : "$util.escapeJavaScript($context.identity.sourceIp)",
-    "user" : "$util.escapeJavaScript($context.identity.user)",
-    "userAgent" : "$util.escapeJavaScript($context.identity.userAgent)",
-    "userArn" : "$util.escapeJavaScript($context.identity.userArn)"
-  }
-*/
-
 var defaultCORSHeaders = map[string]interface{}{
 	"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
 	"Access-Control-Allow-Methods": "*",
@@ -123,8 +100,7 @@ func methodResponses(api *API, userResponses map[int]*Response, corsEnabled bool
 	return &responses
 }
 
-func integrationResponses(api *API, userResponses map[int]*IntegrationResponse,
-	corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
+func integrationResponses(api *API, userResponses map[int]*IntegrationResponse, corsEnabled bool) *gocf.APIGatewayMethodIntegrationResponseList {
 
 	var integrationResponses gocf.APIGatewayMethodIntegrationResponseList
 
@@ -782,6 +758,12 @@ func (resource *Resource) NewMethod(httpMethod string,
 	defaultHTTPStatusCode int,
 	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 
+	if OptionsGlobal.Logger != nil && len(possibleHTTPStatusCodeResponses) != 0 {
+		OptionsGlobal.Logger.WithFields(logrus.Fields{
+			"possibleHTTPStatusCodeResponses": possibleHTTPStatusCodeResponses,
+		}).Debug("The set of all HTTP status codes is no longer required for NewMethod(...). Any valid HTTP status code can be returned starting with v1.8.0.")
+	}
+
 	// http://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-method-settings.html#how-to-method-settings-console
 	keyname := httpMethod
 	existingMethod, exists := resource.Methods[keyname]
@@ -824,6 +806,21 @@ func (resource *Resource) NewMethod(httpMethod string,
 			defaultHTTPStatusCode)
 	}
 
+	// So we need to return everything here, but that means we'll need some other
+	// place to mutate the response body...where?
+	templateString, templateStringErr := _escFSString(false, "/resources/provision/apigateway/outputmapping_json.vtl")
+	// Ignore any error when running in AWS, since that version of the binary won't
+	// have the embedded asset. This ideally would be done only when we're exporting
+	// the Method, but that would involve changing caller behavior since
+	// callers currently expect the method.Integration.Responses to be populated
+	// when this constructor returns.
+	if templateStringErr != nil {
+		templateString = _escFSMustString(false, "/resources/awsbinary/README.md")
+	}
+
+	// TODO - tell the caller that we don't need the list of all HTTP status
+	// codes anymore since we've moved everything to overrides in the VTL mapping.
+
 	// Populate Integration.Responses and the method Parameters
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
@@ -834,20 +831,18 @@ func (resource *Resource) NewMethod(httpMethod string,
 		}
 
 		// The integration responses are keyed from supported error codes...
-		// First the Integration Responses...
-		regExp := fmt.Sprintf(`"code"\w*:\w*%d`, i)
 		if defaultHTTPStatusCode == i {
-			regExp = ""
-		}
-
-		// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
-		method.Integration.Responses[i] = &IntegrationResponse{
-			Parameters: make(map[string]interface{}),
-			Templates: map[string]string{
-				"application/json": "$input.json('$.body')",
-				"text/*":           "",
-			},
-			SelectionPattern: regExp,
+			// Since we pushed this into the VTL mapping, we don't need to create explicit RegExp based
+			// mappings for all of the user response codes. It will just work.
+			// Ref: https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html
+			method.Integration.Responses[i] = &IntegrationResponse{
+				Parameters: make(map[string]interface{}),
+				Templates: map[string]string{
+					"application/json": templateString,
+					"text/*":           "",
+				},
+				SelectionPattern: "",
+			}
 		}
 
 		// Then the Method.Responses

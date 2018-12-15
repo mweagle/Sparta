@@ -6,7 +6,8 @@ import (
 
 // PolicyStatement represents an entry in an IAM policy document
 type PolicyStatement struct {
-	Effect   string
-	Action   []string
-	Resource *gocf.StringExpr
+	Effect    string
+	Action    []string
+	Resource  *gocf.StringExpr   `json:",omitempty"`
+	Principal *gocf.IAMPrincipal `json:",omitempty"`
 }

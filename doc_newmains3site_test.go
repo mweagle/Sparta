@@ -30,7 +30,7 @@ func ExampleMain_s3Site() {
 	apiGateway.CORSEnabled = true
 
 	// Create a lambda function
-	echoS3SiteAPIGatewayEventLambdaFn := HandleAWSLambda(LambdaName(echoS3SiteAPIGatewayEvent),
+	echoS3SiteAPIGatewayEventLambdaFn, _ := NewAWSLambda(LambdaName(echoS3SiteAPIGatewayEvent),
 		echoS3SiteAPIGatewayEvent,
 		IAMRoleDefinition{})
 	apiGatewayResource, _ := apiGateway.NewResource("/hello", echoS3SiteAPIGatewayEventLambdaFn)

@@ -1,5 +1,5 @@
 {{ if $.GitInfo }}
-  Build: {{ .GitInfo.AbbreviatedHash}}<p/>
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ .GitInfo.AbbreviatedHash}}">{{ .GitInfo.AbbreviatedHash}}</a><p/>
   Date: {{ .GitInfo.AuthorDate}}
 {{ end }}
 

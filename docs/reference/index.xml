@@ -43,13 +43,26 @@ However, Lambda is a relatively new technology and is not ideally suited to cert
     </item>
     
     <item>
-      <title>Step Functions</title>
-      <link>/reference/step_functions/</link>
-      <pubDate>Tue, 31 Oct 2017 18:20:05 +0000</pubDate>
+      <title>Testing</title>
+      <link>/reference/testing/</link>
+      <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
-      <guid>/reference/step_functions/</guid>
-      <description>AWS Step Functions are a powerful way to express long-running, complex workflows comprised of Lambda functions. With Sparta 0.20.2, you can build a State Machine as part of your application. This section walks through the three steps necessary to provision a sample &amp;ldquo;Roll Die&amp;rdquo; state machine using a single Lambda function. See SpartaStep for the full source.
-Lambda Functions The first step is to define the core Lambda function Task that will be our Step function&amp;rsquo;s core logic.</description>
+      <guid>/reference/testing/</guid>
+      <description>While developing Sparta lambda functions it may be useful to test them locally without needing to provision each new code change. You can test your lambda functions using standard go test functionality.
+To create proper event types, consider:
+ AWS Lambda Go types Sparta types Use NewAPIGatewayMockRequest to generate API Gateway style requests.  </description>
+    </item>
+    
+    <item>
+      <title>Supporting Packages</title>
+      <link>/reference/supporting_packages/</link>
+      <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
+      
+      <guid>/reference/supporting_packages/</guid>
+      <description>The following packages are part of the Sparta ecosystem and can be used in combination or as standalone in other applications.
+go-cloudcondensor The go-cloudcondensor package provides utilities to express CloudFormation templates as a set of go functions. Templates are evaluated and the and the resulting JSON can be integrated into existing CLI-based workflows.
+go-cloudformation The go-cloudformation package provides a Go object model for the official CloudFormation JSON Schema.
+SpartaVault SpartaVault uses KMS to encrypt values into Go types that can be safely committed to source control.</description>
     </item>
     
     <item>

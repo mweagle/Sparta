@@ -4,12 +4,14 @@ title: Magefiles
 weight: 5
 ---
 
+# Magefile
+
 To support cross platform development and usage, Sparta uses [magefiles](https://magefile.org) rather
 than _Makefiles_.  Most projects can start with the _magefile.go_ sample below. The Magefiles
 provide a discoverable CLI, but are entirely optional. `go run main.go XXXX` style invocation remains
 available as well.
 
-## Default Sparta magefile.go
+## Default Sparta _magefile.go_
 
 This _magefile.go_ can be used, unchanged, for most standard Sparta projects.
 

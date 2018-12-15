@@ -1,10 +1,12 @@
 ---
 date: 2016-03-09T19:56:50+01:00
 title:
+pre: "<b>Runtime Interceptors</b>"
 weight: 130
-pre: "<i class='fas fa-fw fa-puzzle-piece'></i>&nbsp;<b>Runtime Interceptors</b>"
 alwaysopen: false
 ---
+
+# Runtime Interceptors
 
 Sparta uses runtime [interceptors](https://godoc.org/github.com/mweagle/Sparta#LambdaEventInterceptors) to hook into
 the event handling workflow. Interceptors provide an opportunity to handle concerns (logging, metrics, etc) independent

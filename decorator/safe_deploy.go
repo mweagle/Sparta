@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
 )
@@ -144,14 +144,12 @@ func CodeDeployServiceUpdateDecorator(updateType string,
 			ManagedPolicyArns: gocf.StringList(gocf.String("arn:aws:iam::aws:policy/service-role/AWSCodeDeployRoleForLambda")),
 			AssumeRolePolicyDocument: sparta.ArbitraryJSONObject{
 				"Version": "2012-10-17",
-				"Statement": []sparta.ArbitraryJSONObject{
-					sparta.ArbitraryJSONObject{
-						"Action": []string{"sts:AssumeRole"},
-						"Effect": "Allow",
-						"Principal": sparta.ArbitraryJSONObject{
-							"Service": []string{"codedeploy.amazonaws.com"},
-						},
-					},
+				"Statement": []sparta.ArbitraryJSONObject{{
+					"Action": []string{"sts:AssumeRole"},
+					"Effect": "Allow",
+					"Principal": sparta.ArbitraryJSONObject{
+						"Service": []string{"codedeploy.amazonaws.com"},
+					}},
 				},
 			},
 		}

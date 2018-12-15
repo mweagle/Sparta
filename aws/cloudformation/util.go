@@ -50,6 +50,20 @@ var cloudformationPollingTimeout = 3 * time.Minute
 // Private
 ////////////////////////////////////////////////////////////////////////////////
 
+// If the platform specific implementation of user.Current()
+// isn't available, go get something that's a "stable" user
+// name
+func defaultUserName() string {
+	userName := os.Getenv("USER")
+	if "" == userName {
+		userName = os.Getenv("USERNAME")
+	}
+	if "" == userName {
+		userName = fmt.Sprintf("user%d", os.Getuid())
+	}
+	return userName
+}
+
 type resourceProvisionMetrics struct {
 	resourceType      string
 	logicalResourceID string
@@ -64,6 +78,7 @@ type templateConverter struct {
 	templateReader          io.Reader
 	additionalTemplateProps map[string]interface{}
 	// internals
+	doQuote          bool
 	expandedTemplate string
 	contents         []gocf.Stringable
 	conversionError  error
@@ -128,7 +143,14 @@ func (converter *templateConverter) parseData() *templateConverter {
 								converter.conversionError = parsedContentsErr
 								return converter
 							}
-							converter.contents = append(converter.contents, parsedContents)
+							if converter.doQuote {
+								converter.contents = append(converter.contents, gocf.Join("",
+									gocf.String("\""),
+									parsedContents,
+									gocf.String("\"")))
+							} else {
+								converter.contents = append(converter.contents, parsedContents)
+							}
 							curContents = curContents[indexPos+1:]
 							if len(curContents) <= 0 && (eachLineIndex < (splitDataLineCount - 1)) {
 								converter.contents = append(converter.contents, gocf.String("\n"))
@@ -447,121 +469,18 @@ func ConvertToTemplateExpression(templateData io.Reader,
 	return converter.expandTemplate().parseData().results()
 }
 
-// AutoIncrementingLambdaVersionInfo is dynamically populated during
-// a call AddAutoIncrementingLambdaVersionResource. The VersionHistory
-// is a map of published versions to their CloudFormation resource names
-type AutoIncrementingLambdaVersionInfo struct {
-	// The version that will be published as part of this operation
-	CurrentVersion int
-	// The CloudFormation resource name that defines the
-	// AWS::Lambda::Version resource to be included with this operation
-	CurrentVersionResourceName string
-	// The version history that maps a published version value
-	// to its CloudFormation resource name. Used for defining lagging
-	// indicator Alias values
-	VersionHistory map[int]string
-}
-
-// AddAutoIncrementingLambdaVersionResource inserts a new
-// AWS::Lambda::Version resource into the template. It uses
-// the existing CloudFormation template representation
-// to determine the version index to append. The returned
-// map is from `versionIndex`->`CloudFormationResourceName`
-// to support second-order AWS::Lambda::Alias records on a
-// per-version level
-func AddAutoIncrementingLambdaVersionResource(serviceName string,
-	lambdaResourceName string,
-	cfTemplate *gocf.Template,
-	logger *logrus.Logger) (*AutoIncrementingLambdaVersionInfo, error) {
-
-	// Get the template
-	session, sessionErr := session.NewSession()
-	if sessionErr != nil {
-		return nil, sessionErr
+// ConvertToInlineJSONTemplateExpression transforms the templateData contents into
+// an Fn::Join- compatible inline JSON representation for template serialization.
+// The templateData contents may include both golang text/template properties
+// and single-line JSON Fn::Join supported serializations.
+func ConvertToInlineJSONTemplateExpression(templateData io.Reader,
+	additionalUserTemplateProperties map[string]interface{}) (*gocf.StringExpr, error) {
+	converter := &templateConverter{
+		templateReader:          templateData,
+		additionalTemplateProps: additionalUserTemplateProperties,
+		doQuote:                 true,
 	}
-
-	// Get the current template - for each version we find in the version listing
-	// we look up the actual CF resource and copy it into this template
-	existingStackDefinition, existingStackDefinitionErr := existingStackTemplate(serviceName,
-		session,
-		logger)
-	if nil != existingStackDefinitionErr {
-		return nil, existingStackDefinitionErr
-	}
-
-	existingVersions, existingVersionsErr := existingLambdaResourceVersions(serviceName,
-		lambdaResourceName,
-		session,
-		logger)
-	if nil != existingVersionsErr {
-		return nil, existingVersionsErr
-	}
-
-	// Initialize the auto incrementing version struct
-	autoIncrementingLambdaVersionInfo := AutoIncrementingLambdaVersionInfo{
-		CurrentVersion:             0,
-		CurrentVersionResourceName: "",
-		VersionHistory:             make(map[int]string, 0),
-	}
-
-	lambdaVersionResourceName := func(versionIndex int) string {
-		return CloudFormationResourceName(lambdaResourceName,
-			"version",
-			strconv.Itoa(versionIndex))
-	}
-
-	if nil != existingVersions {
-		// Add the CloudFormation resource
-		logger.WithFields(logrus.Fields{
-			"VersionCount": len(existingVersions.Versions) - 1, // Ignore $LATEST
-			"ResourceName": lambdaResourceName,
-		}).Info("Total number of published versions")
-
-		for _, eachEntry := range existingVersions.Versions {
-			versionIndex, versionIndexErr := strconv.Atoi(*eachEntry.Version)
-			if nil == versionIndexErr {
-				// Find the existing resource...
-				versionResourceName := lambdaVersionResourceName(versionIndex)
-				if nil == existingStackDefinition {
-					return nil, fmt.Errorf("Unable to find existing Version resource in nil Template")
-				}
-				cfResourceDefinition, cfResourceDefinitionExists := existingStackDefinition.Resources[versionResourceName]
-				if !cfResourceDefinitionExists {
-					return nil, fmt.Errorf("Unable to find existing Version resource (Resource: %s, Version: %d) in template",
-						versionResourceName,
-						versionIndex)
-				}
-				cfTemplate.Resources[versionResourceName] = cfResourceDefinition
-				// Add the CloudFormation resource
-				logger.WithFields(logrus.Fields{
-					"Version":      versionIndex,
-					"ResourceName": versionResourceName,
-				}).Debug("Preserving Lambda version")
-
-				// Store the state, tracking the latest version
-				autoIncrementingLambdaVersionInfo.VersionHistory[versionIndex] = versionResourceName
-				if versionIndex > autoIncrementingLambdaVersionInfo.CurrentVersion {
-					autoIncrementingLambdaVersionInfo.CurrentVersion = versionIndex
-				}
-			}
-		}
-	}
-
-	// Bump the version and add a new entry...
-	autoIncrementingLambdaVersionInfo.CurrentVersion++
-	versionResource := &gocf.LambdaVersion{
-		FunctionName: gocf.GetAtt(lambdaResourceName, "Arn").String(),
-	}
-	autoIncrementingLambdaVersionInfo.CurrentVersionResourceName = lambdaVersionResourceName(autoIncrementingLambdaVersionInfo.CurrentVersion)
-	cfTemplate.AddResource(autoIncrementingLambdaVersionInfo.CurrentVersionResourceName, versionResource)
-
-	// Log the version we're about to publish...
-	logger.WithFields(logrus.Fields{
-		"ResourceName": lambdaResourceName,
-		"StackVersion": autoIncrementingLambdaVersionInfo.CurrentVersion,
-	}).Info("Inserting new version resource")
-
-	return &autoIncrementingLambdaVersionInfo, nil
+	return converter.expandTemplate().parseData().results()
 }
 
 // StackEvents returns the slice of cloudformation.StackEvents for the given stackID or stackName
@@ -909,6 +828,32 @@ func DeleteChangeSet(stackName string,
 	}
 }
 
+// ListStacks returns a slice of stacks that meet the given filter.
+func ListStacks(session *session.Session,
+	maxReturned int,
+	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
+
+	listStackInput := &cloudformation.ListStacksInput{
+		StackStatusFilter: []*string{},
+	}
+	for _, eachFilter := range stackFilters {
+		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
+	}
+	cloudformationSvc := cloudformation.New(session)
+	accumulator := []*cloudformation.StackSummary{}
+	for {
+		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
+		if listResultErr != nil {
+			return nil, listResultErr
+		}
+		accumulator = append(accumulator, listResult.StackSummaries...)
+		if len(accumulator) >= maxReturned || listResult.NextToken == nil {
+			return accumulator, nil
+		}
+		listStackInput.NextToken = listResult.NextToken
+	}
+}
+
 // ConvergeStackState ensures that the serviceName converges to the template
 // state defined by cfTemplate. This function establishes a polling loop to determine
 // when the stack operation has completed.
@@ -1081,20 +1026,6 @@ func ConvergeStackState(serviceName string,
 	return convergeResult.stackInfo, nil
 }
 
-// If the platform specific implementation of user.Current()
-// isn't available, go get something that's a "stable" user
-// name
-func defaultUserName() string {
-	userName := os.Getenv("USER")
-	if "" == userName {
-		userName = os.Getenv("USERNAME")
-	}
-	if "" == userName {
-		userName = fmt.Sprintf("user%d", os.Getuid())
-	}
-	return userName
-}
-
 // UserAccountScopedStackName returns a CloudFormation stack
 // name that takes into account the current username that is
 //associated with the supplied AWS credentials
@@ -1127,30 +1058,4 @@ func UserScopedStackName(basename string) string {
 	}
 	userName := strings.Replace(platformUserName, " ", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName)
-}
-
-// ListStacks returns a slice of stacks that meet the given filter.
-func ListStacks(session *session.Session,
-	maxReturned int,
-	stackFilters ...string) ([]*cloudformation.StackSummary, error) {
-
-	listStackInput := &cloudformation.ListStacksInput{
-		StackStatusFilter: []*string{},
-	}
-	for _, eachFilter := range stackFilters {
-		listStackInput.StackStatusFilter = append(listStackInput.StackStatusFilter, aws.String(eachFilter))
-	}
-	cloudformationSvc := cloudformation.New(session)
-	accumulator := []*cloudformation.StackSummary{}
-	for {
-		listResult, listResultErr := cloudformationSvc.ListStacks(listStackInput)
-		if listResultErr != nil {
-			return nil, listResultErr
-		}
-		accumulator = append(accumulator, listResult.StackSummaries...)
-		if len(accumulator) >= maxReturned || listResult.NextToken == nil {
-			return accumulator, nil
-		}
-		listStackInput.NextToken = listResult.NextToken
-	}
 }

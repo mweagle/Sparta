@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	"github.com/pkg/errors"
 )
 
@@ -165,25 +165,30 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 			apiMethod.Parameters[fmt.Sprintf("method.request.querystring.%s", eachQueryParam)] = true
 		}
 		// Any headers?
-		for _, eachHeader := range methodHandler.headers {
-			// Make this an optional header on the method response
-			lowercaseHeader := strings.ToLower(eachHeader)
-			methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeader)
+		// We used to need to whitelist these, but the header management has been moved
+		// into the VTL templating overrides and can be removed from here.
 
-			for _, eachResponse := range apiMethod.Responses {
-				eachResponse.Parameters[methodHeaderKey] = false
-			}
-			// Add it to the integration mappings
-			// Then ensure every integration response knows how to pass it along...
-			inputSelector := fmt.Sprintf(`'$input.json("$.headers.%s")'`, lowercaseHeader)
-			for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
-				if len(eachIntegrationResponse.Parameters) <= 0 {
-					eachIntegrationResponse.Parameters = make(map[string]interface{})
-				}
-				eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
-			}
-		}
+		// for _, eachHeader := range methodHandler.headers {
+		// 	// Make this an optional header on the method response
+		// 	lowercaseHeaderName := strings.ToLower(eachHeader)
+		// 	methodHeaderKey := fmt.Sprintf("method.response.header.%s", lowercaseHeaderName)
 
+		// 	// for _, eachResponse := range apiMethod.Responses {
+		// 	// 	eachResponse.Parameters[methodHeaderKey] = false
+		// 	// }
+		// 	// We don't need to add the explicit mappings since it's now always
+		// 	// in the response mapping template.
+
+		// 	// Add it to the integration mappings
+		// 	// Then ensure every integration response knows how to pass it along...
+		// 	// inputSelector := fmt.Sprintf("integration.response.header.%s", eachHeader)
+		// 	// for _, eachIntegrationResponse := range apiMethod.Integration.Responses {
+		// 	// 	if len(eachIntegrationResponse.Parameters) <= 0 {
+		// 	// 		eachIntegrationResponse.Parameters = make(map[string]interface{})
+		// 	// 	}
+		// 	// 	eachIntegrationResponse.Parameters[methodHeaderKey] = inputSelector
+		// 	// }
+		// }
 		return nil
 	}
 	resourceMap := make(map[string]*sparta.LambdaAWSInfo, 0)
@@ -227,7 +232,8 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 		return nil, errors.Errorf("No resource methodHandlers found for resource: %T", resource)
 	}
 	// Convert this into a slice and return it...
-	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo, len(resourceMap), len(resourceMap))
+	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo,
+		len(resourceMap), len(resourceMap))
 	lambdaIndex := 0
 	for _, eachLambda := range resourceMap {
 		lambdaResourceHandlers[lambdaIndex] = eachLambda

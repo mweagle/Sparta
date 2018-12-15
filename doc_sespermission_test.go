@@ -21,7 +21,7 @@ func ExampleSESPermission_messageBody() {
 	var lambdaFunctions []*LambdaAWSInfo
 	// Define the IAM role
 	roleDefinition := IAMRoleDefinition{}
-	sesLambda := HandleAWSLambda(LambdaName(sesLambdaProcessor),
+	sesLambda, _ := NewAWSLambda(LambdaName(sesLambdaProcessor),
 		sesLambdaProcessor,
 		roleDefinition)
 
@@ -54,7 +54,7 @@ func ExampleSESPermission_headersOnly() {
 	var lambdaFunctions []*LambdaAWSInfo
 	// Define the IAM role
 	roleDefinition := IAMRoleDefinition{}
-	sesLambda := HandleAWSLambda(LambdaName(sesLambdaProcessor),
+	sesLambda, _ := NewAWSLambda(LambdaName(sesLambdaProcessor),
 		sesLambdaProcessor,
 		roleDefinition)
 

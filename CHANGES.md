@@ -1,5 +1,63 @@
 # Change Notes
 
+## v1.8.0 - The #postReInvent Edition ⌛️
+
+- :warning: **BREAKING**
+  - Renamed `archetype.CloudWatchLogsReactor` to `archetype.CloudWatchReactor`
+    - Also changed `OnLogMessage` to `OnCloudWatchMessage`
+      - I consistently forget the fact that CloudWatch is more than logs
+    - Moved the internal `cloudwatchlogs` package to the `cloudwatch/logs` import path
+  - Renamed fluent typenames in _github.com/mweagle/Sparta/aws/iam/builder_ to support Principal-based builders
+  - Renamed `step.NewTaskState` to `step.NewLambdaTaskState` to enable type specific [Step function services](https://docs.aws.amazon.com/step-functions/latest/dg/concepts-connectors.html).
+  - Simplified versioning Lambda resource so that the [Lambda::Version](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-version.html) resource is orphaned (via [DeletionPolicy](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-deletionpolicy.html)) rather than the prior implementation, which fetched all versions from the provisioned template and accumulated them over time.
+    - This also obsoleted the `ContextKeyLambdaVersions` constant
+- :checkered_flag: **CHANGES**
+  - More documentation
+  - Added Step function [service integrations](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-supported-services.html)
+    - See the [SpartaStepServicefull](https://github.com/mweagle/SpartaStepServicefull) project for an example of a service that:
+      - Provisions no Lambda functions
+      - Dockerizes itself
+      - Pushes that image to ECR
+      - Uses the resulting ECR Image URL as a Fargate Task in a Step function:
+      - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" />
+  - Added _github.com/mweagle/Sparta/aws/iam/builder.IAMBuilder::ForPrincipals_ fluent builder. Example usage:
+      ```go
+      "Statement": []spartaIAM.PolicyStatement{
+        iamBuilder.Allow("sts:AssumeRole").
+          ForPrincipals("states.amazonaws.com").
+          ToPolicyStatement(),
+      ```
+  - Upgraded to `docker login --password-stdin` for local authentication. Previously used `docker login --password`. Example:
+      ```text
+      INFO[0005] df64d3292fd6: Preparing
+      INFO[0006] denied: Your Authorization Token has expired. Please run 'aws ecr get-login --no-include-email' to fetch a new one.
+      INFO[0006] ECR push failed - reauthorizing               Error="exit status 1"
+      INFO[0006] Login Succeeded
+      INFO[0006] The push refers to repository [123412341234.dkr.ecr.us-west-2.amazonaws.com/argh]
+      ```
+    - See the [Docker docs](https://docs.docker.com/engine/reference/commandline/login/#parent-command)
+  - Include `docker -v` output in log when calling [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
+  - Added `StateMachineNamedDecorator(stepFunctionResourceName)` to supply the name of the Step function
+  - Migrated all API-Gateway integration mappings to use the [mapping override](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) support in VTL.
+    - This reduces the number of API-Gateway RegExp-based integration mappings and relies on a Lambda function returning a shape that matches the default _application/json_ expectations:
+    ```json
+    {
+      "code" : int,
+      "body" : ...,
+      "headers": {
+        "x-lowercase-header" : "foo",
+      }
+    }
+    ```
+    - The default shape can be customized by providing custom mapping templates to the [IntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#IntegrationResponse)
+  - [rest.MethodHandler:Headers](https://godoc.org/github.com/mweagle/Sparta/archetype/rest#MethodHandler.Headers) has been deprecated.
+    - Moving all header management to VTL eliminated the need to explicitly declare headers.
+  - Added `spartaDecorators.PublishAllResourceOutputs(cfResourceName, gocf.ResourceProperties)` which adds all the associated resource `Ref` and `Att` values to the Stack Outputs
+    - The set of `Att` values is extracted from the [CloudFormation Resource Specification](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-resource-specification.html) via the [go-cloudformation](https://github.com/mweagle/go-cloudformation) project.
+- :bug:  **FIXED**
+  - API Gateway custom headers were not being properly returned
+  - [RegisterLambdaUtilizationMetricPublisher Name ref obsolete](https://github.com/mweagle/Sparta/issues/130)
+
 ## v1.7.3 - The Documentation Edition 📚
 
 - :warning: **BREAKING**
@@ -553,13 +611,13 @@
     - This can be accessed as in:
     ```
       contextLogger, contextLoggerOk := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
-	    if contextLoggerOk {
-		    contextLogger.Info("Request scoped log")
+      if contextLoggerOk {
+        contextLogger.Info("Request scoped log")
       }
     ```
     - The existing `*logrus.Logger` entry is also available in the `context` via:
     ```
-    	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+      logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
     ```
   - [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) now accepts variadic parameters to limit how many API Gateway integration mappings are defined
   - Added `SupportedRequestContentTypes` to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) to limit API Gateway generated content.
@@ -572,7 +630,7 @@
         "Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(),
         "WebsiteURL"),
       }
-	  }
+    }
     ```
     - Improved CLI usability in consistency of named outputs, formatting.
 - :bug:  **FIXED**
@@ -689,8 +747,8 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
       }
 
       lambdaFn := sparta.HandleAWSLambda("Hello HTTP World",
-		    http.HandlerFunc(helloWorld),
-		    sparta.IAMRoleDefinition{})
+        http.HandlerFunc(helloWorld),
+        sparta.IAMRoleDefinition{})
       ```
     - This allows you to [chain middleware](https://github.com/justinas/alice) for a lambda function as if it were a standard HTTP handler. Say, for instance: [X-Ray](https://github.com/aws/aws-xray-sdk-go).
     - The legacy [sparta.LambdaFunction](https://godoc.org/github.com/mweagle/Sparta#LambdaFunction) is still supported, but marked for deprecation. You will see a log warning as in:
@@ -1246,10 +1304,10 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
     ```javascript
     lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.SNSPermission{
-  		BasePermission: sparta.BasePermission{
-  			SourceArn: sparta.ArbitraryJSONObject{"Ref": snsTopicName},
-  		},
-  	})
+      BasePermission: sparta.BasePermission{
+        SourceArn: sparta.ArbitraryJSONObject{"Ref": snsTopicName},
+      },
+    })
     ```
 
     - Where _snsTopicName_ is a CloudFormation resource name representing a resource added to the template via a [TemplateDecorator](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator).

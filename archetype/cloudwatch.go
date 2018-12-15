@@ -6,32 +6,32 @@ import (
 	"runtime"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
-	"github.com/mweagle/Sparta"
+	sparta "github.com/mweagle/Sparta"
 	"github.com/pkg/errors"
 )
 
-// CloudWatchLogsReactor represents a lambda function that responds to CW log messages
-type CloudWatchLogsReactor interface {
+// CloudWatchReactor represents a lambda function that responds to CW messages
+type CloudWatchReactor interface {
 	// OnLogMessage when an SNS event occurs. Check the snsEvent field
 	// for the specific event
-	OnLogMessage(ctx context.Context,
+	OnCloudWatchMessage(ctx context.Context,
 		cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error)
 }
 
-// CloudWatchLogsReactorFunc is a free function that adapts a CloudWatchLogsReactor
+// CloudWatchReactorFunc is a free function that adapts a CloudWatchReactor
 // compliant signature into a function that exposes an OnEvent
 // function
-type CloudWatchLogsReactorFunc func(ctx context.Context,
+type CloudWatchReactorFunc func(ctx context.Context,
 	cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error)
 
-// OnLogMessage satisfies the CloudWatchLogsReactor interface
-func (reactorFunc CloudWatchLogsReactorFunc) OnLogMessage(ctx context.Context,
+// OnCloudWatchMessage satisfies the CloudWatchReactor interface
+func (reactorFunc CloudWatchReactorFunc) OnCloudWatchMessage(ctx context.Context,
 	cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
 	return reactorFunc(ctx, cwLogs)
 }
 
 // ReactorName provides the name of the reactor func
-func (reactorFunc CloudWatchLogsReactorFunc) ReactorName() string {
+func (reactorFunc CloudWatchReactorFunc) ReactorName() string {
 	return runtime.FuncForPC(reflect.ValueOf(reactorFunc).Pointer()).Name()
 }
 
@@ -44,7 +44,7 @@ func (reactorFunc CloudWatchLogsReactorFunc) ReactorName() string {
 //		"source":      []string{"aws.ec2"},
 //		"detail-type": []string{"EC2 Instance state change"},
 //	}
-func NewCloudWatchEventedReactor(reactor CloudWatchLogsReactor,
+func NewCloudWatchEventedReactor(reactor CloudWatchReactor,
 	eventPatterns map[string]map[string]interface{},
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 
@@ -64,7 +64,7 @@ func NewCloudWatchEventedReactor(reactor CloudWatchLogsReactor,
 // for the proper syntax. Example:
 // 	"rate(5 minutes)"
 //
-func NewCloudWatchScheduledReactor(reactor CloudWatchLogsReactor,
+func NewCloudWatchScheduledReactor(reactor CloudWatchReactor,
 	cronSchedules map[string]string,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 
@@ -78,7 +78,7 @@ func NewCloudWatchScheduledReactor(reactor CloudWatchLogsReactor,
 }
 
 // NewCloudWatchReactor returns a CloudWatch logs reactor lambda function
-func NewCloudWatchReactor(reactor CloudWatchLogsReactor,
+func NewCloudWatchReactor(reactor CloudWatchReactor,
 	subscriptions map[string]sparta.CloudWatchEventsRule,
 	additionalLambdaPermissions []sparta.IAMRolePrivilege) (*sparta.LambdaAWSInfo, error) {
 	if len(subscriptions) <= 0 {
@@ -86,7 +86,7 @@ func NewCloudWatchReactor(reactor CloudWatchLogsReactor,
 	}
 
 	reactorLambda := func(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) {
-		return reactor.OnLogMessage(ctx, cwLogs)
+		return reactor.OnCloudWatchMessage(ctx, cwLogs)
 	}
 	lambdaFn, lambdaFnErr := sparta.NewAWSLambda(reactorName(reactor),
 		reactorLambda,

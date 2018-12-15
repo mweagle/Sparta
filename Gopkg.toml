@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.7.0"
+  version = "1.8.0"
 
 [[constraint]]
   name = "github.com/aws/aws-xray-sdk-go"
@@ -39,11 +39,11 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "1.15.86"
+  version = "v1.16.6"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
-  version = "1.3.0"
+  version = "1.4.0"
 
 [[constraint]]
   branch = "master"
@@ -83,7 +83,7 @@
 
 [[constraint]]
   name = "github.com/sirupsen/logrus"
-  revision = "3f90cee1e41a38ba27c831844c002952512997c0"
+  version = "1.2.0"
 
 [[constraint]]
   name = "github.com/spf13/cobra"
@@ -95,7 +95,7 @@
 
 [[constraint]]
   name = "gopkg.in/go-playground/validator.v9"
-  version = "9.23.0"
+  version = "9.24.0"
 
 [[override]]
   name = "github.com/mattn/go-runewidth"
