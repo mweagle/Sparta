@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:358074b5139f0a2141910eb6ec3081138d27340b1d908ece0a27d7a018826c9f"
+  digest = "1:b169538fa94b100a67413397271a0fd38ff3caa5e13ee60ba7237173413cf9fc"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
   pruneopts = "UT"
-  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
-  version = "v1.7.0"
+  revision = "e205523512c83e9236698dbe7eb9649ec56e80ca"
+  version = "v1.7.1"
 
 [[projects]]
   digest = "1:e92f5581902c345eb4ceffdcd4a854fb8f73cf436d47d837d1ec98ef1fe0a214"
@@ -31,7 +31,7 @@
   version = "v1.8.0"
 
 [[projects]]
-  digest = "1:e10057e935773fa7a9805b67712d8658b4c73199cf42dca3f29a157b45ee944d"
+  digest = "1:2c4fa03abb0186453593284eda3c0c8aee45cfd47d8750e179b944b7596152eb"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -88,8 +88,8 @@
     "service/xray",
   ]
   pruneopts = "UT"
-  revision = "c4e0e593d5f18b478f17ff0e86b56d41a70ced2d"
-  version = "v1.16.2"
+  revision = "5f1ca23f3ded773a9ba214e6fac36acd9a965a53"
+  version = "v1.16.6"
 
 [[projects]]
   digest = "1:69b265779f20e34cea5b35844eafeb8d0732b088b20a98992c5ab6629a6c15c8"
@@ -325,8 +325,8 @@
     "sh",
   ]
   pruneopts = "UT"
-  revision = "11d15918ff3aa6f75cd6d3340a9507bb5309c679"
-  version = "v1.7.1"
+  revision = "aedfce64c122eef47009b7f80c9771044753215d"
+  version = "v1.8.0"
 
 [[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
@@ -428,11 +428,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:60b947133650d0a611dc64b3b79aeee80a594f63b1a81595e5653aca17e14175"
+  digest = "1:87edab22a553716139634989b0a9c1d9e660dd21abdc44d9bb14e3e320825eb4"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "5991278513517bde997eec0559f037e2e7b81494"
+  revision = "f93fbad8f89750bcac42201907aec21d737b394f"
 
 [[projects]]
   digest = "1:8c4fca372035672ef88720cb0c700f31d78e672eaa98d6a4cb282b39fe63d480"
@@ -460,11 +460,12 @@
   revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
-  digest = "1:1663c5919c78b509aa07a7ca704fa0428ad519f6cf1a9983bc2e5c00a247fd3c"
+  digest = "1:69b1cc331fca23d702bd72f860c6a647afd0aa9fcbc1d0659b1365e26546dd70"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3f90cee1e41a38ba27c831844c002952512997c0"
+  revision = "bcd833dfe83d3cebad139e4a29ed79cb2318bf95"
+  version = "v1.2.0"
 
 [[projects]]
   digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
@@ -524,14 +525,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:268575c4d9e27391ede5e3559c7f41a15dbf108678672afade864e08d6c34574"
+  digest = "1:ba8cbf57cfd92d5f8592b4aca1a35d92c162363d32aeabd5b12555f8896635e7"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "2a47403f2ae58167c4d75973960ccc62b28cb0d8"
+  revision = "4d1cda033e0619309c606fc686de3adcf599539e"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -555,8 +556,8 @@
     "terminal",
   ]
   pruneopts = "UT"
-  revision = "fb519f89e19299d852ffdd9b734af122d2dcbd30"
-  version = "v1.7.0"
+  revision = "e205523512c83e9236698dbe7eb9649ec56e80ca"
+  version = "v1.7.1"
 
 [[projects]]
   digest = "1:8abc978192c2fca4d6a74260c3a8f4aa34d25bd3c548c938745b91b8b20cda1d"
@@ -575,6 +576,7 @@
     "github.com/aws/aws-lambda-go/lambda",
     "github.com/aws/aws-lambda-go/lambdacontext",
     "github.com/aws/aws-sdk-go/aws",
+    "github.com/aws/aws-sdk-go/aws/awserr",
     "github.com/aws/aws-sdk-go/aws/client",
     "github.com/aws/aws-sdk-go/aws/request",
     "github.com/aws/aws-sdk-go/aws/session",
