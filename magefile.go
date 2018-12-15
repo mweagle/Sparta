@@ -38,8 +38,8 @@ var (
 		"resources/describe",
 		"docs_source/themes/",
 	}
-	hugoDocsSourcePath string = "./docs_source"
-	hugoDocsPaths             = []string{
+	hugoDocsSourcePath = "./docs_source"
+	hugoDocsPaths      = []string{
 		hugoDocsSourcePath,
 		"./docs",
 	}
@@ -419,7 +419,7 @@ func EnsureFormatted() error {
 		if mg.Verbose() {
 			log.Print(stdout.String())
 		}
-		return errors.New("`goimports -e -d .` found import errors. Run `goimports -e -w .` to fix them.")
+		return errors.New("`goimports -e -d .` found import errors. Run `goimports -e -w .` to fix them")
 	}
 	return nil
 }
