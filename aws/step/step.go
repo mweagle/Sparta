@@ -560,6 +560,7 @@ func (bis *baseInnerState) marshalStateJSON(stateType string,
 	if !bis.isEndStateInvalid && bis.next == nil {
 		additionalData["End"] = true
 	}
+	// Output the pretty version
 	return json.Marshal(additionalData)
 }
 
@@ -802,6 +803,29 @@ type BaseTask struct {
 	LambdaDecorator  sparta.TemplateDecorator
 	Retriers         []*TaskRetry
 	Catchers         []*TaskCatch
+}
+
+func (bt *BaseTask) marshalMergedParams(taskResourceType string,
+	taskParams interface{}) ([]byte, error) {
+	jsonBytes, jsonBytesErr := json.Marshal(taskParams)
+	if jsonBytesErr != nil {
+		return nil, errors.Wrapf(jsonBytesErr, "attempting to JSON marshal task params")
+	}
+
+	var unmarshaled interface{}
+	unmarshalErr := json.Unmarshal(jsonBytes, &unmarshaled)
+	if unmarshalErr != nil {
+		return nil, errors.Wrapf(unmarshalErr, "attempting to unmarshall params")
+	}
+
+	mapTyped, mapTypedErr := unmarshaled.(map[string]interface{})
+	if !mapTypedErr {
+		return nil, errors.Errorf("attempting to type convert unmarshalled params to map[string]interface{}")
+	}
+	additionalParams := bt.additionalParams()
+	additionalParams["Resource"] = taskResourceType
+	additionalParams["Parameters"] = mapTyped
+	return bt.marshalStateJSON("Task", additionalParams)
 }
 
 // attributeMap returns the map of attributes necessary

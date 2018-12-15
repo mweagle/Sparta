@@ -9,13 +9,13 @@ import (
 // SNSTaskParameters represents params for the SNS notification
 // Ref: https://docs.aws.amazon.com/sns/latest/api/API_Publish.html#API_Publish_RequestParameters
 type SNSTaskParameters struct {
-	Message           string
-	Subject           string
-	MessageAttributes map[string]interface{}
-	MessageStructure  string
-	PhoneNumber       string
-	TargetArn         gocf.Stringable
-	TopicArn          gocf.Stringable
+	Message           string                 `json:",omitempty"`
+	Subject           string                 `json:",omitempty"`
+	MessageAttributes map[string]interface{} `json:",omitempty"`
+	MessageStructure  string                 `json:",omitempty"`
+	PhoneNumber       string                 `json:",omitempty"`
+	TargetArn         gocf.Stringable        `json:",omitempty"`
+	TopicArn          gocf.Stringable        `json:",omitempty"`
 }
 
 // SNSTaskState represents bindings for
@@ -29,35 +29,8 @@ type SNSTaskState struct {
 // to turn into a stringified
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html
 func (sts *SNSTaskState) MarshalJSON() ([]byte, error) {
-
-	additionalParams := sts.BaseTask.additionalParams()
-	additionalParams["Resource"] = "arn:aws:states:::sns:publish"
-	parameterMap := map[string]interface{}{}
-
-	if sts.parameters.TopicArn != nil {
-		parameterMap["TopicArn"] = sts.parameters.TopicArn
-	}
-	if sts.parameters.Message != "" {
-		parameterMap["Message"] = sts.parameters.Message
-	}
-	if sts.parameters.MessageAttributes != nil {
-		parameterMap["MessageAttributes"] = sts.parameters.MessageAttributes
-	}
-	if sts.parameters.MessageStructure != "" {
-		parameterMap["MessageStructure"] = sts.parameters.MessageStructure
-	}
-	if sts.parameters.PhoneNumber != "" {
-		parameterMap["PhoneNumber"] = sts.parameters.PhoneNumber
-	}
-	if sts.parameters.Subject != "" {
-		parameterMap["Subject"] = sts.parameters.Subject
-	}
-	if sts.parameters.TargetArn != nil {
-		parameterMap["TargetArn"] = sts.parameters.TargetArn
-	}
-	additionalParams["Parameters"] = parameterMap
-	return sts.marshalStateJSON("Task", additionalParams)
-
+	return sts.BaseTask.marshalMergedParams("arn:aws:states:::sns:publish",
+		&sts.parameters)
 }
 
 // NewSNSTaskState returns an initialized SNSTaskState

@@ -9,13 +9,13 @@ import (
 // GlueParameters represents params for Glue step
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-glue.html
 type GlueParameters struct {
-	JobName               gocf.Stringable
-	JobRunID              string `json:"JobRunId"`
-	Arguments             map[string]interface{}
-	AllocatedCapacity     *gocf.IntegerExpr
-	Timeout               *gocf.IntegerExpr
-	SecurityConfiguration gocf.Stringable
-	NotificationProperty  interface{}
+	JobName               gocf.Stringable        `json:",omitempty"`
+	JobRunID              string                 `json:"JobRunId,omitempty"`
+	Arguments             map[string]interface{} `json:",omitempty"`
+	AllocatedCapacity     *gocf.IntegerExpr      `json:",omitempty"`
+	Timeout               *gocf.IntegerExpr      `json:",omitempty"`
+	SecurityConfiguration gocf.Stringable        `json:",omitempty"`
+	NotificationProperty  interface{}            `json:",omitempty"`
 }
 
 // GlueState represents bindings for
@@ -29,33 +29,8 @@ type GlueState struct {
 // to turn into a stringified
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html
 func (gs *GlueState) MarshalJSON() ([]byte, error) {
-	additionalParams := gs.BaseTask.additionalParams()
-	additionalParams["Resource"] = "arn:aws:states:::glue:startJobRun.sync"
-
-	parameterMap := map[string]interface{}{}
-	if gs.parameters.JobName != nil {
-		parameterMap["JobName"] = gs.parameters.JobName
-	}
-	if gs.parameters.JobRunID != "" {
-		parameterMap["JobRunId"] = gs.parameters.JobRunID
-	}
-	if gs.parameters.Arguments != nil {
-		parameterMap["Arguments"] = gs.parameters.Arguments
-	}
-	if gs.parameters.AllocatedCapacity != nil {
-		parameterMap["AllocatedCapacity"] = gs.parameters.AllocatedCapacity
-	}
-	if gs.parameters.Timeout != nil {
-		parameterMap["Timeout"] = gs.parameters.Timeout
-	}
-	if gs.parameters.SecurityConfiguration != nil {
-		parameterMap["SecurityConfiguration"] = gs.parameters.SecurityConfiguration
-	}
-	if gs.parameters.NotificationProperty != nil {
-		parameterMap["NotificationProperty"] = gs.parameters.NotificationProperty
-	}
-	additionalParams["Parameters"] = parameterMap
-	return gs.marshalStateJSON("Task", additionalParams)
+	return gs.BaseTask.marshalMergedParams("arn:aws:states:::glue:startJobRun.sync",
+		&gs.parameters)
 }
 
 // NewGlueState returns an initialized GlueState

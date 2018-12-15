@@ -19,13 +19,13 @@ import (
 // DynamoDBGetItemParameters represents params for the DynamoDBGetItem
 // parameters. Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ddb.html
 type DynamoDBGetItemParameters struct {
-	Key                      map[string]*dynamodb.AttributeValue
-	TableName                gocf.Stringable
-	AttributesToGet          []string
-	ConsistentRead           bool
-	ExpressionAttributeNames map[string]string
-	ProjectionExpression     string
-	ReturnConsumedCapacity   string
+	Key                      map[string]*dynamodb.AttributeValue `json:",omitempty"`
+	TableName                gocf.Stringable                     `json:",omitempty"`
+	AttributesToGet          []string                            `json:",omitempty"`
+	ConsistentRead           bool                                `json:",omitempty"`
+	ExpressionAttributeNames map[string]string                   `json:",omitempty"`
+	ProjectionExpression     string                              `json:",omitempty"`
+	ReturnConsumedCapacity   string                              `json:",omitempty"`
 }
 
 // DynamoDBGetItemState represents bindings for
@@ -39,34 +39,8 @@ type DynamoDBGetItemState struct {
 // to turn into a stringified
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html
 func (dgis *DynamoDBGetItemState) MarshalJSON() ([]byte, error) {
-
-	additionalParams := dgis.BaseTask.additionalParams()
-	additionalParams["Resource"] = "arn:aws:states:::dynamodb:getItem"
-	parameterMap := map[string]interface{}{}
-
-	if dgis.parameters.Key != nil {
-		parameterMap["Key"] = dgis.parameters.Key
-	}
-	if dgis.parameters.TableName != nil {
-		parameterMap["TableName"] = dgis.parameters.TableName
-	}
-	if dgis.parameters.AttributesToGet != nil {
-		parameterMap["AttributesToGet"] = dgis.parameters.AttributesToGet
-	}
-	if dgis.parameters.ConsistentRead {
-		parameterMap["ConsistentRead"] = dgis.parameters.ConsistentRead
-	}
-	if dgis.parameters.ExpressionAttributeNames != nil {
-		parameterMap["ExpressionAttributeNames"] = dgis.parameters.ExpressionAttributeNames
-	}
-	if dgis.parameters.ProjectionExpression != "" {
-		parameterMap["ProjectionExpression"] = dgis.parameters.ProjectionExpression
-	}
-	if dgis.parameters.ReturnConsumedCapacity != "" {
-		parameterMap["ReturnConsumedCapacity"] = dgis.parameters.ReturnConsumedCapacity
-	}
-	additionalParams["Parameters"] = parameterMap
-	return dgis.marshalStateJSON("Task", additionalParams)
+	return dgis.BaseTask.marshalMergedParams("arn:aws:states:::dynamodb:getItem",
+		&dgis.parameters)
 }
 
 // NewDynamoDBGetItemState returns an initialized DynamoDB GetItem state
@@ -120,39 +94,8 @@ type DynamoDBPutItemState struct {
 // to turn into a stringified
 // Ref: https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html
 func (dgis *DynamoDBPutItemState) MarshalJSON() ([]byte, error) {
-	additionalParams := dgis.BaseTask.additionalParams()
-
-	additionalParams["Resource"] = "arn:aws:states:::dynamodb:putItem"
-	parameterMap := map[string]interface{}{}
-	if dgis.parameters.Item != nil {
-		parameterMap["Item"] = dgis.parameters.Item
-	}
-	if dgis.parameters.TableName != nil {
-		parameterMap["TableName"] = dgis.parameters.TableName
-	}
-	if dgis.parameters.ConditionExpression != "" {
-		parameterMap["ConditionExpression"] = dgis.parameters.ConditionExpression
-	}
-	if dgis.parameters.ConsistentRead {
-		parameterMap["ConsistentRead"] = dgis.parameters.ConsistentRead
-	}
-	if dgis.parameters.ExpressionAttributeNames != nil {
-		parameterMap["ExpressionAttributeNames"] = dgis.parameters.ExpressionAttributeNames
-	}
-	if dgis.parameters.ExpressionAttributeValues != nil {
-		parameterMap["ExpressionAttributeValues"] = dgis.parameters.ExpressionAttributeValues
-	}
-	if dgis.parameters.ReturnConsumedCapacity != "" {
-		parameterMap["ReturnConsumedCapacity"] = dgis.parameters.ReturnConsumedCapacity
-	}
-	if dgis.parameters.ReturnItemCollectionMetrics != "" {
-		parameterMap["ReturnItemCollectionMetrics"] = dgis.parameters.ReturnItemCollectionMetrics
-	}
-	if dgis.parameters.ReturnValues != "" {
-		parameterMap["ReturnValues"] = dgis.parameters.ReturnValues
-	}
-	additionalParams["Parameters"] = parameterMap
-	return dgis.marshalStateJSON("Task", additionalParams)
+	return dgis.BaseTask.marshalMergedParams("arn:aws:states:::dynamodb:putItem",
+		&dgis.parameters)
 }
 
 // NewDynamoDBPutItemState returns an initialized DynamoDB PutItem state
