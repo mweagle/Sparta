@@ -12,46 +12,6 @@
     
     
     <item>
-      <title>Batch</title>
-      <link>/reference/step/batch/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/batch/</guid>
-      <description>TODO: Document Batch integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Dynamo</title>
-      <link>/reference/step/dynamodb/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/dynamodb/</guid>
-      <description>TODO: Document Dynamo integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Fargate</title>
-      <link>/reference/step/fargate/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/fargate/</guid>
-      <description>TODO: Document Fargate integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Glue</title>
-      <link>/reference/step/glue/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/glue/</guid>
-      <description>TODO: Document Glue integration.
- </description>
-    </item>
-    
-    <item>
       <title>Lambda</title>
       <link>/reference/step/lambda/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
@@ -62,33 +22,13 @@ Lambda Functions The first step is to define the core Lambda function Task that 
     </item>
     
     <item>
-      <title>SNS</title>
-      <link>/reference/step/sns/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      <title>Fargate</title>
+      <link>/reference/step/fargate/</link>
+      <pubDate>Sun, 16 Dec 2018 07:02:28 +0000</pubDate>
       
-      <guid>/reference/step/sns/</guid>
-      <description>TODO: Document SNS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>SQS</title>
-      <link>/reference/step/sqs/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/sqs/</guid>
-      <description>TODO: Document SQS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>SageMaker</title>
-      <link>/reference/step/sagemaker/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/sagemaker/</guid>
-      <description>TODO: Document SageMaker integration.
- </description>
+      <guid>/reference/step/fargate/</guid>
+      <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
+&amp;mdash; Serverless / Green Data Advocate (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
   </channel>

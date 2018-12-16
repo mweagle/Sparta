@@ -1,6 +1,6 @@
 ---
 date: 2018-12-10 21:45:23
-title: SNS
+title: Amazon SNS
 weight: 10
 ---
 

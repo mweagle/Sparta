@@ -9,22 +9,22 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title>SNS :: Sparta - AWS Lambda Microservices</title>
+    <title>Amazon SQS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1544848510" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1544848510" rel="stylesheet">
-    <link href="/css/hybrid.css?1544848510" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1544848510" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1544848510" rel="stylesheet">
-    <link href="/css/auto-complete.css?1544848510" rel="stylesheet">
-    <link href="/css/theme.css?1544848510" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1544848510" rel="stylesheet">
+    <link href="/css/nucleus.css?1544980970" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1544980970" rel="stylesheet">
+    <link href="/css/hybrid.css?1544980970" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1544980970" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1544980970" rel="stylesheet">
+    <link href="/css/auto-complete.css?1544980970" rel="stylesheet">
+    <link href="/css/theme.css?1544980970" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1544980970" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1544848510" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1544980970" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1544848510"></script>
+    <script src="/js/jquery-2.x.min.js?1544980970"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -41,7 +41,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/step/sns/">
+  <body class="" data-url="/reference/step/services/sqs/">
     <nav id="sidebar" class="">
 
 
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1544848510"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1544848510"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1544980970"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1544980970"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1544848510"></script>
+<script type="text/javascript" src="/js/search.js?1544980970"></script>
 
     
   </div>
@@ -1066,6 +1066,8 @@ pre {
         <ul>
           
           
+            
+          
           
           
         
@@ -1077,28 +1079,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/batch/" title="Batch" class="dd-item ">
-        <a href="/reference/step/batch/">
-        Batch
-        
-        </a>
-    </li>
-     
-  
- 
-
-            
-          
-            
-            
-
-
- 
-  
-    
-      <li data-nav-id="/reference/step/dynamodb/" title="Dynamo" class="dd-item ">
-        <a href="/reference/step/dynamodb/">
-        Dynamo
+      <li data-nav-id="/reference/step/lambda/" title="Lambda" class="dd-item ">
+        <a href="/reference/step/lambda/">
+        Lambda
         
         </a>
     </li>
@@ -1134,9 +1117,34 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/glue/" title="Glue" class="dd-item ">
-        <a href="/reference/step/glue/">
-        Glue
+    <li data-nav-id="/reference/step/services/" title="" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/step/services/">
+          <b>Service Integrations</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/batch/" title="AWS Batch" class="dd-item ">
+        <a href="/reference/step/services/batch/">
+        AWS Batch
         
         </a>
     </li>
@@ -1153,9 +1161,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/lambda/" title="Lambda" class="dd-item ">
-        <a href="/reference/step/lambda/">
-        Lambda
+      <li data-nav-id="/reference/step/services/fargate/" title="AWS Fargate" class="dd-item ">
+        <a href="/reference/step/services/fargate/">
+        AWS Fargate
         
         </a>
     </li>
@@ -1172,9 +1180,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/sns/" title="SNS" class="dd-item active">
-        <a href="/reference/step/sns/">
-        SNS
+      <li data-nav-id="/reference/step/services/glue/" title="AWS Glue" class="dd-item ">
+        <a href="/reference/step/services/glue/">
+        AWS Glue
         
         </a>
     </li>
@@ -1191,9 +1199,9 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/sqs/" title="SQS" class="dd-item ">
-        <a href="/reference/step/sqs/">
-        SQS
+      <li data-nav-id="/reference/step/services/dynamodb/" title="Amazon DynamoDb" class="dd-item ">
+        <a href="/reference/step/services/dynamodb/">
+        Amazon DynamoDb
         
         </a>
     </li>
@@ -1210,13 +1218,60 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/sagemaker/" title="SageMaker" class="dd-item ">
-        <a href="/reference/step/sagemaker/">
-        SageMaker
+      <li data-nav-id="/reference/step/services/sns/" title="Amazon SNS" class="dd-item ">
+        <a href="/reference/step/services/sns/">
+        Amazon SNS
         
         </a>
     </li>
      
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/sqs/" title="Amazon SQS" class="dd-item active">
+        <a href="/reference/step/services/sqs/">
+        Amazon SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/sagemaker/" title="Amazon SageMaker" class="dd-item ">
+        <a href="/reference/step/services/sagemaker/">
+        Amazon SageMaker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
   
  
 
@@ -1652,9 +1707,6 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/6fb87087">6fb87087</a><p/>
-  Date: 2018-12-10 22:13:23 -0800 PST
-
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
 
@@ -1677,7 +1729,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/step/sns.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/step/services/sqs.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1712,7 +1764,13 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/step/'></a> > SNS
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/step/'></a> > <a href='/reference/step/services/'></a> > Amazon SQS
+          
+         
           
          
           
@@ -1739,13 +1797,13 @@ pre {
         
         <div id="body-inner">
           
-            <h1>SNS</h1>
+            <h1>Amazon SQS</h1>
           
 
         
 
 
-<div class="notices note" ><p>TODO: Document <a href="https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html">SNS</a> integration.</p>
+<div class="notices note" ><p>TODO: Document <a href="https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sqs.html">SQS</a> integration.</p>
 </div>
 
 
@@ -2518,6 +2576,57 @@ pre {
 
                     
                     
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                    
+                
+                
+
+                    
+                    
                     
 
                     
@@ -2639,19 +2748,6 @@ pre {
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2975,10 +3071,10 @@ pre {
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/step/lambda/" title="Lambda"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/step/services/sns/" title="Amazon SNS"> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/reference/step/sqs/" title="SQS" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/step/services/sagemaker/" title="Amazon SageMaker" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
@@ -2988,20 +3084,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1544848510"></script>
-    <script src="/js/perfect-scrollbar.min.js?1544848510"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1544848510"></script>
-    <script src="/js/jquery.sticky.js?1544848510"></script>
-    <script src="/js/featherlight.min.js?1544848510"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1544848510"></script>
-    <script src="/js/highlight.pack.js?1544848510"></script>
+    <script src="/js/clipboard.min.js?1544980970"></script>
+    <script src="/js/perfect-scrollbar.min.js?1544980970"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1544980970"></script>
+    <script src="/js/jquery.sticky.js?1544980970"></script>
+    <script src="/js/featherlight.min.js?1544980970"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1544980970"></script>
+    <script src="/js/highlight.pack.js?1544980970"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1544848510"></script>
-    <script src="/js/learn.js?1544848510"></script>
-    <script src="/js/hugo-learn.js?1544848510"></script>
+    <script src="/js/modernizr.custom.71422.js?1544980970"></script>
+    <script src="/js/learn.js?1544980970"></script>
+    <script src="/js/hugo-learn.js?1544980970"></script>
 
-    <link href="/mermaid/mermaid.css?1544848510" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1544848510"></script>
+    <link href="/mermaid/mermaid.css?1544980970" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1544980970"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

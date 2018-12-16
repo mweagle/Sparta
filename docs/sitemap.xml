@@ -8,42 +8,42 @@
   </url>
   
   <url>
-    <loc>/reference/step/batch/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <loc>/reference/step/services/batch/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/step/dynamodb/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <loc>/reference/step/services/fargate/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/step/fargate/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <loc>/reference/step/services/glue/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/step/glue/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <loc>/reference/step/services/dynamodb/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/sns/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/sqs/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/sagemaker/</loc>
+    <lastmod>2018-12-10T21:45:23+00:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/step/lambda/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step/sns/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step/sqs/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step/sagemaker/</loc>
     <lastmod>2018-12-10T22:13:23-08:00</lastmod>
   </url>
   
@@ -223,6 +223,11 @@
   </url>
   
   <url>
+    <loc>/reference/step/fargate/</loc>
+    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/apigateway/cors/</loc>
     <lastmod>2018-12-10T07:26:02-08:00</lastmod>
   </url>
@@ -360,6 +365,11 @@
   <url>
     <loc>/credits/</loc>
     <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/</loc>
+    <lastmod>2018-12-10T21:37:37+00:00</lastmod>
   </url>
   
   <url>

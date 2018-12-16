@@ -1,6 +1,6 @@
 ---
 date: 2018-12-10 21:45:23
-title: Batch
+title: AWS Batch
 weight: 10
 ---
 
