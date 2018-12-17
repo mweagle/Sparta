@@ -6,7 +6,7 @@ weight: 20
 
 {{< tweet 1073347546553217024 >}}
 
-While Serverless and FaaS are often used interchangably, there are types of
+While Serverless and FaaS are often used interchangeably, there are types of
 workloads that are more challenging to move to FaaS. Perhaps due to third
 party libraries, latency, or storage requirements, the FaaS model
 isn't an ideal fit. An example that is commonly provided is the need
