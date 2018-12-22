@@ -11,6 +11,7 @@ import (
 	"math/rand"
 	"os"
 	"regexp"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -540,7 +541,11 @@ func WaitForStackOperationComplete(stackID string,
 
 	// Startup a spinner...
 	charSetIndex := 6
-	cliSpinner := spinner.New(spinner.CharSets[charSetIndex], 333*time.Millisecond)
+	if runtime.GOOS == "darwin" {
+		charSetIndex = 39 // Globe
+	}
+	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
+		333*time.Millisecond)
 	cliSpinnerStarted := false
 
 	// Poll for the current stackID state, and
