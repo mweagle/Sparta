@@ -44,7 +44,7 @@
   
   <url>
     <loc>/reference/step/lambda/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -89,7 +89,7 @@
   
   <url>
     <loc>/reference/operations/cloudwatch_alarms/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -104,7 +104,7 @@
   
   <url>
     <loc>/concepts/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -114,7 +114,7 @@
   
   <url>
     <loc>/reference/decorators/publish_outputs/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -124,7 +124,7 @@
   
   <url>
     <loc>/example_service/step1/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -139,12 +139,12 @@
   
   <url>
     <loc>/reference/eventsources/cloudwatchevents/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/cloudwatchlogs/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -164,12 +164,12 @@
   
   <url>
     <loc>/reference/eventsources/dynamodb/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/echo_event/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -179,7 +179,7 @@
   
   <url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2018-11-29T06:41:14-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -189,22 +189,22 @@
   
   <url>
     <loc>/reference/eventsources/s3/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sns/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sqs/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -239,12 +239,12 @@
   
   <url>
     <loc>/example_service/step2/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/slack/</loc>
-    <lastmod>2018-12-10T07:26:02-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -304,12 +304,12 @@
   
   <url>
     <loc>/reference/application/custom_resources/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/discovery/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -334,7 +334,7 @@
   
   <url>
     <loc>/reference/decorators/dynamic_infrastructure/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
   </url>
   
   <url>
@@ -379,7 +379,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
+    <lastmod>2018-12-22T07:26:58-08:00</lastmod>
   </url>
   
   <url>

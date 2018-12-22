@@ -12,19 +12,19 @@
     <title>DynamoDB :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1545491901" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1545491901" rel="stylesheet">
-    <link href="/css/hybrid.css?1545491901" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1545491901" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1545491901" rel="stylesheet">
-    <link href="/css/auto-complete.css?1545491901" rel="stylesheet">
-    <link href="/css/theme.css?1545491901" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1545491901" rel="stylesheet">
+    <link href="/css/nucleus.css?1545492475" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1545492475" rel="stylesheet">
+    <link href="/css/hybrid.css?1545492475" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1545492475" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1545492475" rel="stylesheet">
+    <link href="/css/auto-complete.css?1545492475" rel="stylesheet">
+    <link href="/css/theme.css?1545492475" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1545492475" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1545491901" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1545492475" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1545491901"></script>
+    <script src="/js/jquery-2.x.min.js?1545492475"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1545491901"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1545491901"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1545492475"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1545492475"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1545491901"></script>
+<script type="text/javascript" src="/js/search.js?1545492475"></script>
 
     
   </div>
@@ -1707,8 +1707,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/5f5bee34">5f5bee34</a><p/>
-  Date: 2018-11-28 18:16:08 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
+  Date: 2018-12-22 07:18:22 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1786,7 +1786,7 @@ pre {
 <ul>
 <li><a href="#goal">Goal</a></li>
 <li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#a-href-hahahugoshortcode-0xc000a98a00-1-hbhb-sparta-integration-a"><a href="HAHAHUGOSHORTCODE-0xc000a98a00-1-HBHB">Sparta Integration</a></a></li>
+<li><a href="#a-href-hahahugoshortcode-0xc0009f6a00-1-hbhb-sparta-integration-a"><a href="HAHAHUGOSHORTCODE-0xc0009f6a00-1-HBHB">Sparta Integration</a></a></li>
 <li><a href="#event-source-mappings">Event Source Mappings</a></li>
 <li><a href="#wrapping-up">Wrapping Up</a></li>
 <li><a href="#other-resources">Other Resources</a></li>
@@ -1845,7 +1845,7 @@ func echoDynamoDBEvent(ctx context.Context, ddbEvent awsLambdaEvents.DynamoDBEve
 <p>Since the <code>echoDynamoDBEvent</code> is triggered by Dynamo events, we can leverage the AWS Go Lambda SDK <a href="https://godoc.org/github.com/aws/aws-lambda-go/events">event types</a>
 to access the record.</p>
 
-<h1 id="a-href-hahahugoshortcode-0xc000a98a00-1-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
+<h1 id="a-href-hahahugoshortcode-0xc0009f6a00-1-hbhb-sparta-integration-a"><a href="#spartaIntegration">Sparta Integration</a></h1>
 
 <p>With the core of the <code>echoDynamoDBEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L114">appendDynamoDBLambda</a> function.  Since the <code>echoDynamoDBEvent</code> function doesn&rsquo;t access any additional services (Sparta enables CloudWatch Logs privileges by default), the integration is pretty straightforward:</p>
 
@@ -3185,20 +3185,20 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1545491901"></script>
-    <script src="/js/perfect-scrollbar.min.js?1545491901"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1545491901"></script>
-    <script src="/js/jquery.sticky.js?1545491901"></script>
-    <script src="/js/featherlight.min.js?1545491901"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1545491901"></script>
-    <script src="/js/highlight.pack.js?1545491901"></script>
+    <script src="/js/clipboard.min.js?1545492475"></script>
+    <script src="/js/perfect-scrollbar.min.js?1545492475"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1545492475"></script>
+    <script src="/js/jquery.sticky.js?1545492475"></script>
+    <script src="/js/featherlight.min.js?1545492475"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1545492475"></script>
+    <script src="/js/highlight.pack.js?1545492475"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1545491901"></script>
-    <script src="/js/learn.js?1545491901"></script>
-    <script src="/js/hugo-learn.js?1545491901"></script>
+    <script src="/js/modernizr.custom.71422.js?1545492475"></script>
+    <script src="/js/learn.js?1545492475"></script>
+    <script src="/js/hugo-learn.js?1545492475"></script>
 
-    <link href="/mermaid/mermaid.css?1545491901" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1545491901"></script>
+    <link href="/mermaid/mermaid.css?1545492475" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1545492475"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
