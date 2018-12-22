@@ -65,9 +65,9 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
 
 The next step is to associate this custom resource function with a previously created Sparta `LambdaAWSInfo` instance via [RequireCustomResource](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource).  This function accepts:
 
-  * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
+  * `roleNameOrIAMRoleDefinition`: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in [NewAWSLambda](https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda).
   * `userFunc`: Custom resource function handler
-  * `lambdaOptions`: Lambda execution options. Equivalent to the same argument in [HandleAWSLambda](https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda).
+  * `lambdaOptions`: Lambda execution options. Equivalent to the same argument in [NewAWSLambda](https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda).
   * `resourceProps`: Arbitrary, optional properties that will be provided to the `userFunc` during execution.
 
 The multiple return values denote the logical, stable CloudFormation resource ID of the new custom resource, or an error if one occurred.
@@ -81,7 +81,7 @@ func helloWorld(ctx context.Context) (string, error) {
 }
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
-  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
     helloWorld,
     sparta.IAMRoleDefinition{})
 

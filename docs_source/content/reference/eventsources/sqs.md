@@ -43,7 +43,7 @@ The next step is to integrate the lambda function with Sparta:
 
 ```go
 // 1. Create the Sparta Lambda function
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(sqsHandler),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(sqsHandler),
   sqsHandler,
   sparta.IAMRoleDefinition{})
 ```

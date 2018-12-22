@@ -197,7 +197,7 @@ Sample usage:
       <guid>/reference/operations/cloudwatch_alarms/</guid>
       <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
 Sample usage:
-lambdaFn := sparta.HandleAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
+lambdaFn, _ := sparta.NewAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
     </item>
     
     <item>
@@ -241,7 +241,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>
@@ -456,7 +456,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Serverless / Green Data Advocate (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Serverless / Green Data Advocate (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
     <item>

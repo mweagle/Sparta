@@ -20,7 +20,7 @@ For reference, we provision an S3 bucket and declare an explicit dependency with
 ```go
 
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 lambdaFn.Permissions = append(lambdaFn.Permissions, sparta.S3Permission{

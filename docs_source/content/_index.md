@@ -41,7 +41,7 @@ func helloWorld() (string, error) {
 func main() {
 
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda("Hello world test",
+  lambdaFn, _ := sparta.NewAWSLambda("Hello world test",
     helloWorld,
     sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, lambdaFn)

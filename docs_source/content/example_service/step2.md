@@ -16,7 +16,7 @@ At a high level, provisioning uses the flow below.  We'll dive a bit deeper into
 
 ## Verify Static IAM Roles
 
-The `HandleAWSLambda` function accepts either a `string` or a `sparta.IAMRoleDefinition` value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing [IAM Role ARN](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns) is cached to minimize AWS calls during template generation.
+The `NewAWSLambda` function accepts either a `string` or a `sparta.IAMRoleDefinition` value type.  In the event that a string is passed, this function verifies that the IAM role exists and builds up a cache of IAM role information that can be shared and referenced during template generation. Specifically, a pre-existing [IAM Role ARN](http://docs.aws.amazon.com/IAM/latest/UserGuide/reference_identifiers.html#identifiers-arns) is cached to minimize AWS calls during template generation.
 
 ## Compile
 

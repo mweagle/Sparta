@@ -12,19 +12,19 @@
     <title>Overview :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1544980970" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1544980970" rel="stylesheet">
-    <link href="/css/hybrid.css?1544980970" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1544980970" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1544980970" rel="stylesheet">
-    <link href="/css/auto-complete.css?1544980970" rel="stylesheet">
-    <link href="/css/theme.css?1544980970" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1544980970" rel="stylesheet">
+    <link href="/css/nucleus.css?1545491901" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1545491901" rel="stylesheet">
+    <link href="/css/hybrid.css?1545491901" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1545491901" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1545491901" rel="stylesheet">
+    <link href="/css/auto-complete.css?1545491901" rel="stylesheet">
+    <link href="/css/theme.css?1545491901" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1545491901" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1544980970" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1545491901" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1544980970"></script>
+    <script src="/js/jquery-2.x.min.js?1545491901"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1544980970"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1544980970"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1545491901"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1545491901"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1544980970"></script>
+<script type="text/javascript" src="/js/search.js?1545491901"></script>
 
     
   </div>
@@ -1844,12 +1844,12 @@ func helloWorld(ctx context.Context) (string, error) {
 <p>The next step is to create a Sparta-wrapped version of the <code>helloWorld</code> function.</p>
 
 <pre><code class="language-go">var lambdaFunctions []*sparta.LambdaAWSInfo
-helloWorldFn := sparta.HandleAWSLambda(&quot;Hello World&quot;,
+helloWorldFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;,
   helloWorld,
   sparta.IAMRoleDefinition{})
 </code></pre>
 
-<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to register a new lambda target via <code>HandleAWSLambda</code>.  <code>HandleAWSLambda</code> accepts three parameters:</p>
+<p>We first declare an empty slice <code>lambdaFunctions</code> to which all our service&rsquo;s lambda functions will be appended.  The next step is to register a new lambda target via <a href="https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda">NewAWSLambda</a>.  <code>NewAWSLambda</code> accepts three parameters:</p>
 
 <ul>
 <li><code>string</code>: The function name. A sanitized version of this value is used as the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname">FunctionName</a>.</li>
@@ -1917,7 +1917,7 @@ func helloWorld(ctx context.Context) (string, error) {
 
 func main() {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  helloWorldFn := sparta.HandleAWSLambda(&quot;Hello World&quot;,
+  helloWorldFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;,
     helloWorld,
     sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, helloWorldFn)
@@ -3321,20 +3321,20 @@ deeper into what&rsquo;s going on under the hood as well as how to integrate you
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1544980970"></script>
-    <script src="/js/perfect-scrollbar.min.js?1544980970"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1544980970"></script>
-    <script src="/js/jquery.sticky.js?1544980970"></script>
-    <script src="/js/featherlight.min.js?1544980970"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1544980970"></script>
-    <script src="/js/highlight.pack.js?1544980970"></script>
+    <script src="/js/clipboard.min.js?1545491901"></script>
+    <script src="/js/perfect-scrollbar.min.js?1545491901"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1545491901"></script>
+    <script src="/js/jquery.sticky.js?1545491901"></script>
+    <script src="/js/featherlight.min.js?1545491901"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1545491901"></script>
+    <script src="/js/highlight.pack.js?1545491901"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1544980970"></script>
-    <script src="/js/learn.js?1544980970"></script>
-    <script src="/js/hugo-learn.js?1544980970"></script>
+    <script src="/js/modernizr.custom.71422.js?1545491901"></script>
+    <script src="/js/learn.js?1545491901"></script>
+    <script src="/js/hugo-learn.js?1545491901"></script>
 
-    <link href="/mermaid/mermaid.css?1544980970" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1544980970"></script>
+    <link href="/mermaid/mermaid.css?1545491901" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1545491901"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

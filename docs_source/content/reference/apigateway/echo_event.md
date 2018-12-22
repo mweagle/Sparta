@@ -50,7 +50,7 @@ The next step is to associate a URL path with the `sparta.LambdaAWSInfo` struct 
 ```go
 func spartaHTMLLambdaFunctions(api *sparta.API) []*sparta.LambdaAWSInfo {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
     helloWorld,
     sparta.IAMRoleDefinition{})
 

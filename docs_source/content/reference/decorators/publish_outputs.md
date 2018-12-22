@@ -21,7 +21,7 @@ such as:
 ```go
 
 lambdaFunctionName := "Hello World"
-lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName,
+lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName,
   helloWorld,
   sparta.IAMRoleDefinition{})
 
@@ -40,7 +40,7 @@ such as:
 
 ```go
 lambdaFunctionName := "Hello World"
-lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName,
+lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName,
   helloWorld,
   sparta.IAMRoleDefinition{})
 
