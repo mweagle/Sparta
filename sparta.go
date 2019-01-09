@@ -703,6 +703,11 @@ type LambdaAWSInfo struct {
 	// Optional array of infrastructure resource logical names, typically
 	// defined by a TemplateDecorator, that this lambda depends on
 	DependsOn []string
+
+	// Lambda Layers
+	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-layers
+	Layers []gocf.Stringable
+
 	// Slice of customResourceInfo pointers for any associated CloudFormation
 	// CustomResources associated with this lambda
 	customResources []*customResourceInfo
@@ -944,6 +949,11 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VPCConfig:   info.Options.VpcConfig,
 	}
+	// Layers?
+	if nil != info.Layers {
+		lambdaResource.Layers = gocf.StringList(info.Layers...)
+	}
+
 	if "" != S3Version {
 		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}
