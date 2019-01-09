@@ -27,19 +27,19 @@
 
 [[constraint]]
   name = "github.com/AlecAivazis/survey"
-  version = "1.7.0"
+  version = "1.7.1"
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.8.0"
+  version = "1.8.1"
 
 [[constraint]]
   name = "github.com/aws/aws-xray-sdk-go"
-  version = "1.0.0-rc.8"
+  version = "1.0.0-rc.9"
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "v1.16.6"
+  version = "v1.16.15"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
