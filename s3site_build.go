@@ -209,7 +209,9 @@ func (s3Site *S3Site) export(serviceName string,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
-	cfResource.DependsOn = append(cfResource.DependsOn, s3BucketResourceName, iamRoleName)
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		s3BucketResourceName,
+		iamRoleName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
@@ -236,9 +238,15 @@ func (s3Site *S3Site) export(serviceName string,
 			"Value":       eachOutput.Value,
 		}
 	}
+	if s3Site.UserManifestData != nil {
+		manifestData["userdata"] = s3Site.UserManifestData
+	}
+
 	zipResource.Manifest = manifestData
 	cfResource = template.AddResource(customResourceName, zipResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName, s3BucketResourceName)
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		lambdaResourceName,
+		s3BucketResourceName)
 
 	return nil
 }
