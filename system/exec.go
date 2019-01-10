@@ -21,7 +21,10 @@ func RunOSCommand(cmd *exec.Cmd, logger *logrus.Logger) error {
 		outputWriter,
 		outputWriter,
 		logger)
-	outputWriter.Close()
+	closeErr := outputWriter.Close()
+	if closeErr != nil {
+		logger.WithField("closeError", closeErr).Warn("Failed to close OS command writer")
+	}
 	return cmdErr
 }
 
