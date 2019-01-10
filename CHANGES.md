@@ -1,5 +1,38 @@
 # Change Notes
 
+## v1.8.1 - The LayerCake Edition 🍰
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `LambdaAWSInfo.Layers` field to support [Lambda Layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+    - Usage:
+      ```go
+      lambdaRole := sparta.IAMRoleDefinition{
+        Privileges: []sparta.IAMRolePrivilege{
+          iamBuilder.Allow("lambda:GetLayerVersion").
+            ForResource().
+            Literal("*").
+            ToPrivilege(),
+        },
+      }
+      lambdaFn, lambdaFnErr := sparta.NewAWSLambda("Hello World",
+        helloWorld,
+        lambdaRole)
+      lambdaFn.Layers = []gocf.Stringable{
+        gocf.String("arn:aws:lambda:us-west-2:123412341234:layer:ffmpeg:1"),
+      }
+      ```
+  - Added `s3Site.UserManifestData` property to allow for custom user data to be included in MANIFEST.json content.
+  - Added `github.com/mweagle/Sparta/system.RunAndCaptureOSCommand`
+    - This is convenience function to support alternative `io.Writer` sinks for _stdout_ and _stderr_.
+- :bug:  **FIXED**
+
+
+
+
+
+
+
 ## v1.8.0 - The #postReInvent Edition ⌛️
 
 - :warning: **BREAKING**
