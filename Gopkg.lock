@@ -31,7 +31,7 @@
   version = "v1.8.1"
 
 [[projects]]
-  digest = "1:44a3aeda953103aeebeeea0232f2b8ca3529fbf17f34dda0f58fbac6d278b1e6"
+  digest = "1:86abbe129e71105fcbe699800ec5a74a4abc58676e0cc42e2b6f9da8bfc82229"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -88,8 +88,8 @@
     "service/xray",
   ]
   pruneopts = "UT"
-  revision = "62936e15518acb527a1a9cb4a39d96d94d0fd9a2"
-  version = "v1.16.15"
+  revision = "1f8a24693bc965514ee0d7aadbabe0ceed184a88"
+  version = "v1.16.16"
 
 [[projects]]
   digest = "1:8b7398992153180768849e89dabe2aaab45537f83a61f0e51b0da6f68c151206"
@@ -232,7 +232,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:2de0298bed041b955266669d71c73d20a69016b7e8b3f33e862686bcbdc4aa6e"
+  digest = "1:7e5c74b1b7c27e6ba7fb0a4417477f6a95dea7cfd00b186ad5a0453e7bde8c84"
   name = "github.com/google/pprof"
   packages = [
     "driver",
@@ -252,7 +252,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "985cf9b4fdd2b479e4563ec57352005f69d5f9f6"
+  revision = "e84dfd68c163c45ea47aa24b3dc7eaa93f6675b1"
 
 [[projects]]
   branch = "master"
@@ -435,7 +435,7 @@
   revision = "36893a66979260e9758701ae306ec0d69c0f53c8"
 
 [[projects]]
-  digest = "1:2f3e1ccf496354ee2386400844d37657a7df80be3eeb010fb2e49e0723b62040"
+  digest = "1:288fa8839da2efff895170f1350ab8b2ffa15daf5227e5be7cde81d59aef3b21"
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -443,21 +443,12 @@
     "host",
     "internal/common",
     "load",
-    "mem",
     "net",
     "process",
   ]
   pruneopts = "UT"
   revision = "ccc1c1016bc5d10e803189ee43417c50cdde7f1b"
   version = "v2.18.12"
-
-[[projects]]
-  branch = "master"
-  digest = "1:99c6a6dab47067c9b898e8c8b13d130c6ab4ffbcc4b7cc6236c2cd0b1e344f5b"
-  name = "github.com/shirou/w32"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
   digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
@@ -468,12 +459,11 @@
   version = "v1.3.0"
 
 [[projects]]
-  digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
+  digest = "1:efc0b1c2f3bff9854d96b12af5eb5fe35c97fa2e79c8efe091a8e38fd521bf23"
   name = "github.com/spf13/cobra"
   packages = ["."]
   pruneopts = "UT"
-  revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
-  version = "v0.0.3"
+  revision = "7547e83b2d85fd1893c7d76916f67689d761fecb"
 
 [[projects]]
   digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
@@ -525,14 +515,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:12ef3ef293a3a3930a82e5f38a3c45a1b03a9ed72dedc192d90e89d59b1f13a5"
+  digest = "1:5ee4df7ab18e945607ac822de8d10b180baea263b5e8676a1041727543b9c1e4"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "7fbe1cd0fcc20051e1fcb87fbabec4a1bacaaeba"
+  revision = "48ac38b7c8cbedd50b1613c0fccacfc7d88dfcdf"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
