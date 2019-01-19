@@ -1,6 +1,6 @@
 # Change Notes
 
-## v1.8.1 - The LayerCake Edition 🍰
+## v1.9.0 - The LayerCake Edition 🍰
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
@@ -22,16 +22,14 @@
         gocf.String("arn:aws:lambda:us-west-2:123412341234:layer:ffmpeg:1"),
       }
       ```
-  - Added `s3Site.UserManifestData` property to allow for custom user data to be included in MANIFEST.json content.
+  - Added `WithCondition` to [IAM Builder](https://godoc.org/github.com/mweagle/Sparta/aws/iam/builder)
+  - Added `s3Site.UserManifestData` map property to allow for custom user data to be included in _MANIFEST.json_ content.
+    - Userdata is scoped to a **userdata** keyname in _MANIFEST.json_
+    - See the [SpartaAmplify](https://github.com/mweagle/SpartaAmplify) sample app
   - Added `github.com/mweagle/Sparta/system.RunAndCaptureOSCommand`
     - This is convenience function to support alternative `io.Writer` sinks for _stdout_ and _stderr_.
 - :bug:  **FIXED**
-
-
-
-
-
-
+  - [overview page is broken](https://github.com/mweagle/Sparta/issues/133)
 
 ## v1.8.0 - The #postReInvent Edition ⌛️
 
