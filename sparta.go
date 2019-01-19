@@ -322,6 +322,7 @@ type WorkflowHooks struct {
 // as part of the inline IAM::Role resource definition.  See
 // http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 // for more information
+// Deprecated: Prefer github.com/aws/iam/PolicyStatement instead.
 type IAMRolePrivilege struct {
 	// What actions you will allow.
 	// Each AWS service has its own set of actions.
@@ -336,6 +337,8 @@ type IAMRolePrivilege struct {
 	Resource interface{} `json:",omitempty"`
 	// Service that requires the action
 	Principal interface{} `json:",omitempty"`
+	// Optional condition for the privilege
+	Condition interface{} `json:",omitempty"`
 }
 
 func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {
