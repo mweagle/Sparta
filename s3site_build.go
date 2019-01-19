@@ -238,7 +238,7 @@ func (s3Site *S3Site) export(serviceName string,
 			"Value":       eachOutput.Value,
 		}
 	}
-	if s3Site.UserManifestData != nil {
+	if len(s3Site.UserManifestData) != 0 {
 		manifestData["userdata"] = s3Site.UserManifestData
 	}
 
@@ -260,7 +260,8 @@ func NewS3Site(resources string) (*S3Site, error) {
 	// there could be a go:generate command in the source that
 	// actually builds it.
 	site := &S3Site{
-		resources: resources,
+		resources:        resources,
+		UserManifestData: map[string]interface{}{},
 	}
 	return site, nil
 }
