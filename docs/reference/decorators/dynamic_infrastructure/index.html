@@ -12,19 +12,19 @@
     <title>Dynamic Infrastructure :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1547997373" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1547997373" rel="stylesheet">
-    <link href="/css/hybrid.css?1547997373" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1547997373" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1547997373" rel="stylesheet">
-    <link href="/css/auto-complete.css?1547997373" rel="stylesheet">
-    <link href="/css/theme.css?1547997373" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1547997373" rel="stylesheet">
+    <link href="/css/nucleus.css?1547999749" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1547999749" rel="stylesheet">
+    <link href="/css/hybrid.css?1547999749" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1547999749" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1547999749" rel="stylesheet">
+    <link href="/css/auto-complete.css?1547999749" rel="stylesheet">
+    <link href="/css/theme.css?1547999749" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1547999749" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1547997373" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1547999749" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1547997373"></script>
+    <script src="/js/jquery-2.x.min.js?1547999749"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1547997373"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1547997373"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1547999749"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1547999749"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1547997373"></script>
+<script type="text/javascript" src="/js/search.js?1547999749"></script>
 
     
   </div>
@@ -1707,8 +1707,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f1c79598">f1c79598</a><p/>
-  Date: 2018-12-01 06:45:02 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
+  Date: 2018-12-22 07:18:22 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1993,7 +1993,7 @@ To support that please see the <a href="/reference/discovery">sparta.Discover</a
 
 <p>With these two values we&rsquo;re ready to get started building up the lambda function:</p>
 
-<pre><code class="language-go">lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+<pre><code class="language-go">lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 </code></pre>
@@ -2078,7 +2078,7 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
 
 <pre><code class="language-go">
 s3BucketResourceName := sparta.CloudFormationResourceName(&quot;S3DynamicBucket&quot;)
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 
@@ -3408,20 +3408,20 @@ closer to being self-contained and more operationally sustainable.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1547997373"></script>
-    <script src="/js/perfect-scrollbar.min.js?1547997373"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1547997373"></script>
-    <script src="/js/jquery.sticky.js?1547997373"></script>
-    <script src="/js/featherlight.min.js?1547997373"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1547997373"></script>
-    <script src="/js/highlight.pack.js?1547997373"></script>
+    <script src="/js/clipboard.min.js?1547999749"></script>
+    <script src="/js/perfect-scrollbar.min.js?1547999749"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1547999749"></script>
+    <script src="/js/jquery.sticky.js?1547999749"></script>
+    <script src="/js/featherlight.min.js?1547999749"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1547999749"></script>
+    <script src="/js/highlight.pack.js?1547999749"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1547997373"></script>
-    <script src="/js/learn.js?1547997373"></script>
-    <script src="/js/hugo-learn.js?1547997373"></script>
+    <script src="/js/modernizr.custom.71422.js?1547999749"></script>
+    <script src="/js/learn.js?1547999749"></script>
+    <script src="/js/hugo-learn.js?1547999749"></script>
 
-    <link href="/mermaid/mermaid.css?1547997373" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1547997373"></script>
+    <link href="/mermaid/mermaid.css?1547999749" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1547999749"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

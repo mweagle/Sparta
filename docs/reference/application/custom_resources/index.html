@@ -12,19 +12,19 @@
     <title>Custom Resources :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1547997373" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1547997373" rel="stylesheet">
-    <link href="/css/hybrid.css?1547997373" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1547997373" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1547997373" rel="stylesheet">
-    <link href="/css/auto-complete.css?1547997373" rel="stylesheet">
-    <link href="/css/theme.css?1547997373" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1547997373" rel="stylesheet">
+    <link href="/css/nucleus.css?1547999749" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1547999749" rel="stylesheet">
+    <link href="/css/hybrid.css?1547999749" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1547999749" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1547999749" rel="stylesheet">
+    <link href="/css/auto-complete.css?1547999749" rel="stylesheet">
+    <link href="/css/theme.css?1547999749" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1547999749" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1547997373" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1547999749" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1547997373"></script>
+    <script src="/js/jquery-2.x.min.js?1547999749"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1547997373"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1547997373"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1547999749"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1547999749"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1547997373"></script>
+<script type="text/javascript" src="/js/search.js?1547999749"></script>
 
     
   </div>
@@ -1707,8 +1707,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f1c79598">f1c79598</a><p/>
-  Date: 2018-12-01 06:45:02 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
+  Date: 2018-12-22 07:18:22 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1882,9 +1882,9 @@ to CloudFormation. This value can be accessed by other CloudFormation resources.
 <p>The next step is to associate this custom resource function with a previously created Sparta <code>LambdaAWSInfo</code> instance via <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.RequireCustomResource">RequireCustomResource</a>.  This function accepts:</p>
 
 <ul>
-<li><code>roleNameOrIAMRoleDefinition</code>: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda">HandleAWSLambda</a>.</li>
+<li><code>roleNameOrIAMRoleDefinition</code>: The IAM role name or definition under which the custom resource function should be executed. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda">NewAWSLambda</a>.</li>
 <li><code>userFunc</code>: Custom resource function handler</li>
-<li><code>lambdaOptions</code>: Lambda execution options. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#HandleAWSLambda">HandleAWSLambda</a>.</li>
+<li><code>lambdaOptions</code>: Lambda execution options. Equivalent to the same argument in <a href="https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda">NewAWSLambda</a>.</li>
 <li><code>resourceProps</code>: Arbitrary, optional properties that will be provided to the <code>userFunc</code> during execution.</li>
 </ul>
 
@@ -1898,7 +1898,7 @@ func helloWorld(ctx context.Context) (string, error) {
 }
 
 func ExampleLambdaAWSInfo_RequireCustomResource() {
-  lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(helloWorld),
+  lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(helloWorld),
     helloWorld,
     sparta.IAMRoleDefinition{})
 
@@ -3256,20 +3256,20 @@ customResult := configuration.Resources[configuration.ResourceID].Properties[&qu
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1547997373"></script>
-    <script src="/js/perfect-scrollbar.min.js?1547997373"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1547997373"></script>
-    <script src="/js/jquery.sticky.js?1547997373"></script>
-    <script src="/js/featherlight.min.js?1547997373"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1547997373"></script>
-    <script src="/js/highlight.pack.js?1547997373"></script>
+    <script src="/js/clipboard.min.js?1547999749"></script>
+    <script src="/js/perfect-scrollbar.min.js?1547999749"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1547999749"></script>
+    <script src="/js/jquery.sticky.js?1547999749"></script>
+    <script src="/js/featherlight.min.js?1547999749"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1547999749"></script>
+    <script src="/js/highlight.pack.js?1547999749"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1547997373"></script>
-    <script src="/js/learn.js?1547997373"></script>
-    <script src="/js/hugo-learn.js?1547997373"></script>
+    <script src="/js/modernizr.custom.71422.js?1547999749"></script>
+    <script src="/js/learn.js?1547999749"></script>
+    <script src="/js/hugo-learn.js?1547999749"></script>
 
-    <link href="/mermaid/mermaid.css?1547997373" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1547997373"></script>
+    <link href="/mermaid/mermaid.css?1547999749" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1547999749"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
