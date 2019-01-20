@@ -64,7 +64,11 @@ func Status(serviceName string,
 	logSectionHeader("Stack Summary", dividerLength, logger)
 	stackInfo := describeStacksResponse.Stacks[0]
 	logger.WithField("Id", redactor(*stackInfo.StackId)).Info("StackId")
-	logger.WithField("State", *stackInfo.StackStatus).Info("Stack status")
+	logger.WithField("Description", redactor(*stackInfo.Description)).Info("Description")
+	logger.WithField("State", *stackInfo.StackStatus).Info("Status")
+	if stackInfo.StackStatusReason != nil {
+		logger.WithField("Reason", *stackInfo.StackStatusReason).Info("Reason")
+	}
 	logger.WithField("Time", stackInfo.CreationTime.UTC().String()).Info("Created")
 	if stackInfo.LastUpdatedTime != nil {
 		logger.WithField("Time", stackInfo.LastUpdatedTime.UTC().String()).Info("Last Update")
@@ -72,6 +76,7 @@ func Status(serviceName string,
 	if stackInfo.DeletionTime != nil {
 		logger.WithField("Time", stackInfo.DeletionTime.UTC().String()).Info("Deleted")
 	}
+
 	logger.Info()
 	if len(stackInfo.Parameters) != 0 {
 		logSectionHeader("Parameters", dividerLength, logger)
