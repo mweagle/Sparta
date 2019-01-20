@@ -23,9 +23,9 @@
       }
       ```
   - Added `WithCondition` to [IAM Builder](https://godoc.org/github.com/mweagle/Sparta/aws/iam/builder)
-  - Added `s3Site.UserManifestData` map property to allow for custom user data to be included in _MANIFEST.json_ content.
+  - Added `s3Site.UserManifestData` map property to allow for custom user data to be included in _MANIFEST.json_ content that is deployed to an S3 Site bucket.
     - Userdata is scoped to a **userdata** keyname in _MANIFEST.json_
-    - See the [SpartaAmplify](https://github.com/mweagle/SpartaAmplify) sample app
+    - See the [SpartaAmplify](https://github.com/mweagle/SpartaAmplify) sample app for a complete example.
   - Added `github.com/mweagle/Sparta/system.RunAndCaptureOSCommand`
     - This is convenience function to support alternative `io.Writer` sinks for _stdout_ and _stderr_.
   - Minor usability improvements to `--status` report output
