@@ -41,7 +41,7 @@ Sample usage:
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn := sparta.HandleAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>

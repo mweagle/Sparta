@@ -66,7 +66,7 @@ See [godoc](https://godoc.org/github.com/mweagle/Sparta/aws/step) for the comple
 The `lambdaTaskState` uses a normal Sparta function as in:
 
 ```go
-lambdaFn := sparta.HandleAWSLambda("StepRollDie",
+lambdaFn, _ := sparta.NewAWSLambda("StepRollDie",
   lambdaRollDie,
   sparta.IAMRoleDefinition{})
 

@@ -41,7 +41,7 @@ func helloWorld() (string, error) {
 func main() {
 
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn := sparta.HandleAWSLambda("Hello world test",
+  lambdaFn, _ := sparta.NewAWSLambda("Hello world test",
     helloWorld,
     sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, lambdaFn)
@@ -59,40 +59,40 @@ func main() {
 
 ```shell
 $ go run main.go provision --s3Bucket $MY_S3_BUCKET
-[0000]  INFO ════════════════════════════════════════════════
-[0000]  INFO ╔═╗┌─┐┌─┐┬─┐┌┬┐┌─┐   Version : 1.1.1
-[0000]  INFO ╚═╗├─┘├─┤├┬┘ │ ├─┤   SHA     : beb5700
-[0000]  INFO ╚═╝┴  ┴ ┴┴└─ ┴ ┴ ┴   Go      : go1.10
-[0000]  INFO ════════════════════════════════════════════════
-[0000]  INFO Service: SpartaHelloWorld                          LinkFlags= Option=provision UTC=2018-05-25T04:36:50Z
-[0000]  INFO ════════════════════════════════════════════════
-[0000]  INFO Using `git` SHA for StampedBuildID                 Command=git rev-parse HEAD SHA=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
-[0000]  INFO Provisioning service                               BuildID=7ee3e1bc52f15c4a636e05061eaec7b748db22a9 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
-[0000]  INFO Verifying IAM Lambda execution roles
-[0000]  INFO IAM roles verified                                 Count=1
-[0000]  INFO Checking S3 versioning                             Bucket=MY_S3_BUCKET VersioningEnabled=true
-[0000]  INFO Checking S3 region                                 Bucket=MY_S3_BUCKET Region=us-west-2
-[0000]  INFO Running `go generate`
-[0000]  INFO Compiling binary                                   Name=Sparta.lambda.amd64
-[0001]  INFO Creating code ZIP archive for upload               TempName=./.sparta/SpartaHelloWorld-code.zip
-[0001]  INFO Lambda code archive size                           Size=13 MB
-[0001]  INFO Uploading local file to S3                         Bucket=MY_S3_BUCKET Key=SpartaHelloWorld/SpartaHelloWorld-code.zip Path=./.sparta/SpartaHelloWorld-code.zip Size=13 MB
-[0011]  INFO Uploading local file to S3                         Bucket=MY_S3_BUCKET Key=SpartaHelloWorld/SpartaHelloWorld-cftemplate.json Path=./.sparta/SpartaHelloWorld-cftemplate.json Size=2.2 kB
-[0011]  INFO Creating stack                                     StackID=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82
-[0039]  INFO CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-[0039]  INFO     Operation duration                             Duration=24.49s Resource=SpartaHelloWorld Type=AWS::CloudFormation::Stack
-[0039]  INFO     Operation duration                             Duration=15.02s Resource=IAMRolebc3b888fab1664f42799785a6d9a3bb76ea63798 Type=AWS::IAM::Role
-[0039]  INFO     Operation duration                             Duration=2.90s Resource=HelloworldtestLambdaa4a9e95c84255c65c284ce95dd7d3c45776c1a68 Type=AWS::Lambda::Function
-[0039]  INFO Stack provisioned                                  CreationTime=2018-05-25 04:37:02.099 +0000 UTC StackId=arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaHelloWorld/44b426d0-5fd5-11e8-90cd-503f20f2ad82 StackName=SpartaHelloWorld
-[0039]  INFO ════════════════════════════════════════════════
-[0039]  INFO SpartaHelloWorld Summary
-[0039]  INFO ════════════════════════════════════════════════
-[0039]  INFO Verifying IAM roles                                Duration (s)=0
-[0039]  INFO Verifying AWS preconditions                        Duration (s)=0
-[0039]  INFO Creating code bundle                               Duration (s)=1
-[0039]  INFO Uploading code                                     Duration (s)=10
-[0039]  INFO Ensuring CloudFormation stack                      Duration (s)=28
-[0039]  INFO Total elapsed time                                 Duration (s)=39
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 597d3ba
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=provision UTC="2018-12-22T15:23:56Z"
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Using `git` SHA for StampedBuildID            Command="git rev-parse HEAD" SHA=b114e329ed37b532e1f7d2e727aa8211d9d5889c
+INFO[0000] Provisioning service                          BuildID=b114e329ed37b532e1f7d2e727aa8211d9d5889c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=1
+INFO[0000] Checking S3 versioning                        Bucket=MY_S3_BUCKET VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=MY_S3_BUCKET Region=us-west-2
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack_mweagle-code.zip
+INFO[0010] Lambda code archive size                      Size="18 MB"
+INFO[0010] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-code.zip Path=./.sparta/MyHelloWorldStack_mweagle-code.zip Size="18 MB"
+INFO[0016] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-cftemplate.json Path=./.sparta/MyHelloWorldStack_mweagle-cftemplate.json Size="2.2 kB"
+INFO[0018] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2"
+INFO[0056] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0056]     Operation duration                        Duration=26.47s Resource=MyHelloWorldStack-mweagle Type="AWS::CloudFormation::Stack"
+INFO[0056]     Operation duration                        Duration=17.33s Resource=IAMRolee41ad3d6e9c0dc2ca45a24ef8475a8fb6ad021e9 Type="AWS::IAM::Role"
+INFO[0056]     Operation duration                        Duration=1.96s Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693 Type="AWS::Lambda::Function"
+INFO[0056] Stack provisioned                             CreationTime="2018-12-22 15:24:13.845 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2" StackName=MyHelloWorldStack-mweagle
+INFO[0056] ════════════════════════════════════════════════
+INFO[0056] MyHelloWorldStack-mweagle Summary
+INFO[0056] ════════════════════════════════════════════════
+INFO[0056] Verifying IAM roles                           Duration (s)=0
+INFO[0056] Verifying AWS preconditions                   Duration (s)=0
+INFO[0056] Creating code bundle                          Duration (s)=10
+INFO[0056] Uploading code                                Duration (s)=6
+INFO[0056] Ensuring CloudFormation stack                 Duration (s)=40
+INFO[0056] Total elapsed time                            Duration (s)=56
 ```
 
 ### 3. Invoke

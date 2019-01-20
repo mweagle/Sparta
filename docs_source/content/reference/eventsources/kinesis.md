@@ -37,7 +37,7 @@ With the function defined let's register it with Sparta.
 First we wrap the **go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
 
 ```go
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoKinesisEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoKinesisEvent),
 	echoKinesisEvent,
 	sparta.IAMRoleDefinition{})
 ```
@@ -66,7 +66,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoKinesisEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Add the necessary [EventSourceMappings](https://godoc.org/github.com/aws/aws-sdk-go/service/lambda#CreateEventSourceMappingInput) to the `LambdaAWSInfo` struct so that the lambda function is properly configured.
 
 # Notes

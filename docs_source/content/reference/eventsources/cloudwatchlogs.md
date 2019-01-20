@@ -38,7 +38,7 @@ Our lambda function only needs logfile write privileges, and since these are ena
 ```go
 func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
 		echoCloudWatchLogsEvent,
 		sparta.IAMRoleDefinition{})
 ```
@@ -69,7 +69,7 @@ Our entire function is therefore:
 func appendCloudWatchLogsHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCloudWatchLogsEvent),
 		echoCloudWatchLogsEvent,
 		sparta.IAMRoleDefinition{})
 	cloudWatchLogsPermission := sparta.CloudWatchLogsPermission{}
@@ -92,7 +92,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoCloudWatchLogsEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Create a [CloudWatchLogsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsPermission) value.
   * Add one or more [CloudWatchLogsSubscriptionFilter](https://godoc.org/github.com/mweagle/Sparta#CloudWatchLogsSubscriptionFilter) to the `CloudWatchLogsPermission.Filters` map that defines your lambda function's logfile subscription information.
   * Append the `CloudWatchLogsPermission` value to the lambda function's `Permissions` slice.

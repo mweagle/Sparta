@@ -38,7 +38,7 @@ Our lambda function only needs logfile write privileges, and since these are ena
 func appendCloudWatchEventHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
 		echoCloudWatchEvent,
 		sparta.IAMRoleDefinition{})
 ```
@@ -97,7 +97,7 @@ Our entire function is therefore:
 func appendCloudWatchEventHandler(api *sparta.API,
 	lambdaFunctions []*sparta.LambdaAWSInfo) []*sparta.LambdaAWSInfo {
 
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoCloudWatchEvent),
 		echoCloudWatchEvent,
 		sparta.IAMRoleDefinition{})
 
@@ -124,7 +124,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoCloudWatchEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Create a [CloudWatchEventsPermission](https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsPermission) value.
   * Add one or more [CloudWatchEventsRules](https://godoc.org/github.com/mweagle/Sparta#CloudWatchEventsRule) to the `CloudWatchEventsPermission.Rules` map that define your lambda function's trigger condition:
     * [Scheduled Events](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html)

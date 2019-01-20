@@ -46,7 +46,7 @@ where
 Consumers define a set of lambda functions and provide them to Sparta to create a self-documenting, self-deploying AWS Lambda binary:
 
 ```go
-	lambdaFn := sparta.HandleAWSLambda("Hello World",
+	lambdaFn, _ := sparta.NewAWSLambda("Hello World",
 		helloWorld,
 		sparta.IAMRoleDefinition{})
 

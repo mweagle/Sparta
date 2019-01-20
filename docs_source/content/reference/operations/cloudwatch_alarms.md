@@ -10,7 +10,7 @@ The [CloudWatchErrorAlarmDecorator](https://godoc.org/github.com/mweagle/Sparta/
 Sample usage:
 
 ```go
-lambdaFn := sparta.HandleAWSLambda("Hello World",
+lambdaFn, _ := sparta.NewAWSLambda("Hello World",
   helloWorld,
   sparta.IAMRoleDefinition{})
 

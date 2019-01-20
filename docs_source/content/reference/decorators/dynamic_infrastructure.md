@@ -154,7 +154,7 @@ s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket", "my
 With these two values we're ready to get started building up the lambda function:
 
 ```go
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 ```
@@ -242,7 +242,7 @@ Putting everything together, our Sparta lambda function with dynamic infrastruct
 ```go
 
 s3BucketResourceName := sparta.CloudFormationResourceName("S3DynamicBucket")
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoS3DynamicBucketEvent),
   echoS3DynamicBucketEvent,
   sparta.IAMRoleDefinition{})
 

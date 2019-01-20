@@ -68,7 +68,7 @@ func appendSESLambda(api *sparta.API,
 
 	// Our lambda function will need to be able to read from the bucket, which
 	// will be handled by the S3MessageBodyBucketDecorator below
-	lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoSESEvent),
+	lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoSESEvent),
 		echoSESEvent,
 		sparta.IAMRoleDefinition{})
 	// Setup options s.t. the lambda function has time to consume the message body
@@ -230,7 +230,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoSESEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct so that the lambda function is triggered.
 
 Additionally, if the SES handler needs to access the raw email message body:

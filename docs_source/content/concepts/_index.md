@@ -98,7 +98,7 @@ snsTopicName := sparta.CloudFormationResourceName("SNSDynamicTopic")
 snsTopic := &gocf.SNSTopic{
   DisplayName: gocf.String("Sparta Application SNS topic"),
 })
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoDynamicSNSEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoDynamicSNSEvent),
   echoDynamicSNSEvent,
   sparta.IAMRoleDefinition{})
 

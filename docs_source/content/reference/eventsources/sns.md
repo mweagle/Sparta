@@ -51,7 +51,7 @@ function doesn't access any additional services (Sparta enables CloudWatch Logs 
 pretty straightforward:
 
 ```go
-lambdaFn := sparta.HandleAWSLambda(sparta.LambdaName(echoSNSEvent),
+lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoSNSEvent),
   echoSNSEvent,
   sparta.IAMRoleDefinition{})
 ```
@@ -79,7 +79,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
 
   * Define the lambda function (`echoSNSEvent`).
   * If needed, create the required [IAMRoleDefinition](https://godoc.org/github.com/mweagle/Sparta*IAMRoleDefinition) with appropriate privileges if the lambda function accesses other AWS services.
-  * Provide the lambda function & IAMRoleDefinition to `sparta.HandleAWSLambda()`
+  * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct so that the lambda function is triggered.
 
 # Other Resources

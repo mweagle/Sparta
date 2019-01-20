@@ -39,12 +39,12 @@ The next step is to create a Sparta-wrapped version of the `helloWorld` function
 
 ```go
 var lambdaFunctions []*sparta.LambdaAWSInfo
-helloWorldFn := sparta.HandleAWSLambda("Hello World",
+helloWorldFn, _ := sparta.NewAWSLambda("Hello World",
   helloWorld,
   sparta.IAMRoleDefinition{})
 ```
 
-We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to register a new lambda target via `HandleAWSLambda`.  `HandleAWSLambda` accepts three parameters:
+We first declare an empty slice `lambdaFunctions` to which all our service's lambda functions will be appended.  The next step is to register a new lambda target via [NewAWSLambda](https://godoc.org/github.com/mweagle/Sparta#NewAWSLambda).  `NewAWSLambda` accepts three parameters:
 
 * `string`: The function name. A sanitized version of this value is used as the [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname).
 * `func(...)`: The **go** function to execute.
@@ -98,7 +98,7 @@ func helloWorld(ctx context.Context) (string, error) {
 
 func main() {
   var lambdaFunctions []*sparta.LambdaAWSInfo
-  helloWorldFn := sparta.HandleAWSLambda("Hello World",
+  helloWorldFn, _ := sparta.NewAWSLambda("Hello World",
     helloWorld,
     sparta.IAMRoleDefinition{})
   lambdaFunctions = append(lambdaFunctions, helloWorldFn)
