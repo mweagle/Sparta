@@ -28,6 +28,7 @@
     - See the [SpartaAmplify](https://github.com/mweagle/SpartaAmplify) sample app
   - Added `github.com/mweagle/Sparta/system.RunAndCaptureOSCommand`
     - This is convenience function to support alternative `io.Writer` sinks for _stdout_ and _stderr_.
+  - Minor usability improvements to `--status` report output
 - :bug:  **FIXED**
   - [overview page is broken](https://github.com/mweagle/Sparta/issues/133)
 

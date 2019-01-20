@@ -61,6 +61,7 @@ func Status(serviceName string,
 	}
 
 	// Report on what's up with the stack...
+	logSectionHeader("Stack Summary", dividerLength, logger)
 	stackInfo := describeStacksResponse.Stacks[0]
 	logger.WithField("Id", redactor(*stackInfo.StackId)).Info("StackId")
 	logger.WithField("State", *stackInfo.StackStatus).Info("Stack status")
@@ -71,18 +72,34 @@ func Status(serviceName string,
 	if stackInfo.DeletionTime != nil {
 		logger.WithField("Time", stackInfo.DeletionTime.UTC().String()).Info("Deleted")
 	}
-	for _, eachParam := range stackInfo.Parameters {
-		logger.WithField(*eachParam.ParameterKey, redactor(*eachParam.ParameterValue)).Info("Parameter")
-	}
-	for _, eachTag := range stackInfo.Tags {
-		logger.WithField(*eachTag.Key, redactor(*eachTag.Value)).Info("Tag")
-	}
-	for _, eachOutput := range stackInfo.Outputs {
-		statement := logger.WithField(*eachOutput.OutputKey, redactor(*eachOutput.OutputValue))
-		if eachOutput.ExportName != nil {
-			statement.WithField("Output", *eachOutput.ExportName)
+	logger.Info()
+	if len(stackInfo.Parameters) != 0 {
+		logSectionHeader("Parameters", dividerLength, logger)
+		for _, eachParam := range stackInfo.Parameters {
+			logger.WithField("Value",
+				redactor(*eachParam.ParameterValue)).Info(*eachParam.ParameterKey)
 		}
-		statement.Info("Output")
+		logger.Info()
+	}
+	if len(stackInfo.Tags) != 0 {
+		logSectionHeader("Tags", dividerLength, logger)
+		for _, eachTag := range stackInfo.Tags {
+			logger.WithField("Value",
+				redactor(*eachTag.Value)).Info(*eachTag.Key)
+		}
+		logger.Info()
+	}
+	if len(stackInfo.Outputs) != 0 {
+		logSectionHeader("Outputs", dividerLength, logger)
+		for _, eachOutput := range stackInfo.Outputs {
+			statement := logger.WithField("Value",
+				redactor(*eachOutput.OutputValue))
+			if eachOutput.ExportName != nil {
+				statement.WithField("ExportName", *eachOutput.ExportName)
+			}
+			statement.Info(*eachOutput.OutputKey)
+		}
+		logger.Info()
 	}
 	return nil
 }

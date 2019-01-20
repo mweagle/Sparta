@@ -211,3 +211,12 @@ func (p *workerPool) work() {
 		task.Run(&p.wg)
 	}
 }
+
+func logSectionHeader(text string,
+	dividerWidth int,
+	logger *logrus.Logger) {
+	// Add a nice divider if there are Stack specific output
+	outputHeader := fmt.Sprintf("%s ", text)
+	suffix := strings.Repeat("▬", dividerWidth-len(outputHeader))
+	logger.Info(fmt.Sprintf("%s%s", outputHeader, suffix))
+}
