@@ -209,7 +209,9 @@ func (s3Site *S3Site) export(serviceName string,
 	}
 	lambdaResourceName := stableCloudformationResourceName("S3SiteCreator")
 	cfResource = template.AddResource(lambdaResourceName, customResourceHandlerDef)
-	cfResource.DependsOn = append(cfResource.DependsOn, s3BucketResourceName, iamRoleName)
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		s3BucketResourceName,
+		iamRoleName)
 
 	//////////////////////////////////////////////////////////////////////////////
 	// 5 - Create the custom resource that invokes the site bootstrapper lambda to
@@ -236,9 +238,15 @@ func (s3Site *S3Site) export(serviceName string,
 			"Value":       eachOutput.Value,
 		}
 	}
+	if len(s3Site.UserManifestData) != 0 {
+		manifestData["userdata"] = s3Site.UserManifestData
+	}
+
 	zipResource.Manifest = manifestData
 	cfResource = template.AddResource(customResourceName, zipResource)
-	cfResource.DependsOn = append(cfResource.DependsOn, lambdaResourceName, s3BucketResourceName)
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		lambdaResourceName,
+		s3BucketResourceName)
 
 	return nil
 }
@@ -252,7 +260,8 @@ func NewS3Site(resources string) (*S3Site, error) {
 	// there could be a go:generate command in the source that
 	// actually builds it.
 	site := &S3Site{
-		resources: resources,
+		resources:        resources,
+		UserManifestData: map[string]interface{}{},
 	}
 	return site, nil
 }

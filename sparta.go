@@ -322,6 +322,7 @@ type WorkflowHooks struct {
 // as part of the inline IAM::Role resource definition.  See
 // http://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html
 // for more information
+// Deprecated: Prefer github.com/aws/iam/PolicyStatement instead.
 type IAMRolePrivilege struct {
 	// What actions you will allow.
 	// Each AWS service has its own set of actions.
@@ -336,6 +337,8 @@ type IAMRolePrivilege struct {
 	Resource interface{} `json:",omitempty"`
 	// Service that requires the action
 	Principal interface{} `json:",omitempty"`
+	// Optional condition for the privilege
+	Condition interface{} `json:",omitempty"`
 }
 
 func (rolePrivilege *IAMRolePrivilege) resourceExpr() *gocf.StringExpr {
@@ -703,6 +706,11 @@ type LambdaAWSInfo struct {
 	// Optional array of infrastructure resource logical names, typically
 	// defined by a TemplateDecorator, that this lambda depends on
 	DependsOn []string
+
+	// Lambda Layers
+	// Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-layers
+	Layers []gocf.Stringable
+
 	// Slice of customResourceInfo pointers for any associated CloudFormation
 	// CustomResources associated with this lambda
 	customResources []*customResourceInfo
@@ -944,6 +952,11 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		Timeout:     gocf.Integer(info.Options.Timeout),
 		VPCConfig:   info.Options.VpcConfig,
 	}
+	// Layers?
+	if nil != info.Layers {
+		lambdaResource.Layers = gocf.StringList(info.Layers...)
+	}
+
 	if "" != S3Version {
 		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}

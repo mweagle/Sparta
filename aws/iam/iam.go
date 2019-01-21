@@ -10,4 +10,5 @@ type PolicyStatement struct {
 	Action    []string
 	Resource  *gocf.StringExpr   `json:",omitempty"`
 	Principal *gocf.IAMPrincipal `json:",omitempty"`
+	Condition interface{}        `json:",omitempty"`
 }

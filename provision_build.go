@@ -1406,22 +1406,10 @@ func ensureCloudFormationStack() workflowStep {
 				return nil, errors.Wrapf(err, "APIGateway template export failed")
 			}
 		}
-		// If there's a Site defined, include the resources the provision it
-		if nil != ctx.userdata.s3SiteContext.s3Site {
-			exportErr := ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
-				ctx.context.binaryName,
-				ctx.userdata.s3Bucket,
-				codeZipKey(ctx.context.s3CodeZipURL),
-				ctx.userdata.s3SiteContext.s3UploadURL.keyName(),
-				apiGatewayTemplate.Outputs,
-				ctx.context.lambdaIAMRoleNameMap,
-				ctx.context.cfTemplate,
-				ctx.logger)
-			if exportErr != nil {
-				return nil, errors.Wrapf(exportErr, "Failed to export S3 site")
-			}
-		}
+
 		// Service decorator?
+		// This is run before the S3 Site in case the decorators
+		// need to publish data to the MANIFEST for the site
 		serviceDecoratorErr := callServiceDecoratorHook(ctx)
 		if serviceDecoratorErr != nil {
 			return nil, serviceDecoratorErr
@@ -1457,6 +1445,22 @@ func ensureCloudFormationStack() workflowStep {
 				eachCustomResource.options.Environment[envVarDiscoveryInformation] = discoveryInfo
 			}
 		}
+		// If there's a Site defined, include the resources the provision it
+		if nil != ctx.userdata.s3SiteContext.s3Site {
+			exportErr := ctx.userdata.s3SiteContext.s3Site.export(ctx.userdata.serviceName,
+				ctx.context.binaryName,
+				ctx.userdata.s3Bucket,
+				codeZipKey(ctx.context.s3CodeZipURL),
+				ctx.userdata.s3SiteContext.s3UploadURL.keyName(),
+				apiGatewayTemplate.Outputs,
+				ctx.context.lambdaIAMRoleNameMap,
+				ctx.context.cfTemplate,
+				ctx.logger)
+			if exportErr != nil {
+				return nil, errors.Wrapf(exportErr, "Failed to export S3 site")
+			}
+		}
+
 		// PostMarshall Hook
 		if ctx.userdata.workflowHooks != nil {
 			postMarshallErr := callWorkflowHook("PostMarshall",

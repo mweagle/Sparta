@@ -148,8 +148,9 @@ func (iamRes *IAMResourceBuilder) ToPrivilege() sparta.IAMRolePrivilege {
 // IAMBuilder is the intermediate type that
 // creates the Resource to which the privilege applies
 type IAMBuilder struct {
-	apiCalls []string
-	effect   string
+	apiCalls  []string
+	effect    string
+	condition interface{}
 }
 
 // ForResource returns the IAMPrivilegeBuilder instance
@@ -159,6 +160,12 @@ func (iamRes *IAMBuilder) ForResource() *IAMResourceBuilder {
 		builder:       iamRes,
 		resourceParts: make([]gocf.Stringable, 0),
 	}
+}
+
+// WithCondition applies the given condition to the policy
+func (iamRes *IAMBuilder) WithCondition(conditionExpression interface{}) *IAMBuilder {
+	iamRes.condition = conditionExpression
+	return iamRes
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -173,43 +180,66 @@ func (iamRes *IAMBuilder) ForResource() *IAMResourceBuilder {
 
 // IAMPrincipalBuilder is the builder for a Principal allowance
 type IAMPrincipalBuilder struct {
-	builder    *IAMBuilder
-	principals gocf.StringListable
+	builder   *IAMBuilder
+	principal *gocf.IAMPrincipal
 }
 
-// ForPrincipals returns the IAMPrivilegeBuilder instance
+// ForPrincipals returns the IAMPrincipalBuilder instance
 // which can be finalized into an IAMRolePrivilege
 func (iamRes *IAMBuilder) ForPrincipals(principals ...string) *IAMPrincipalBuilder {
 	stringablePrincipals := make([]gocf.Stringable, len(principals))
 	for index, eachPrincipal := range principals {
 		stringablePrincipals[index] = gocf.String(eachPrincipal)
 	}
+
 	return &IAMPrincipalBuilder{
-		builder:    iamRes,
-		principals: gocf.StringList(stringablePrincipals...),
+		builder: iamRes,
+		principal: &gocf.IAMPrincipal{
+			Service: gocf.StringList(stringablePrincipals...),
+		},
+	}
+}
+
+// ForFederatedPrincipals returns the IAMPrincipalBuilder instance
+// which can be finalized into an IAMRolePrivilege
+func (iamRes *IAMBuilder) ForFederatedPrincipals(principals ...string) *IAMPrincipalBuilder {
+	stringablePrincipals := make([]gocf.Stringable, len(principals))
+	for index, eachPrincipal := range principals {
+		stringablePrincipals[index] = gocf.String(eachPrincipal)
+	}
+
+	return &IAMPrincipalBuilder{
+		builder: iamRes,
+		principal: &gocf.IAMPrincipal{
+			Federated: gocf.StringList(stringablePrincipals...),
+		},
 	}
 }
 
 // ToPolicyStatement finalizes the builder and returns a spartaIAM.PolicyStatements
 func (iampb *IAMPrincipalBuilder) ToPolicyStatement() spartaIAM.PolicyStatement {
-	return spartaIAM.PolicyStatement{
-		Action: iampb.builder.apiCalls,
-		Effect: iampb.builder.effect,
-		Principal: &gocf.IAMPrincipal{
-			Service: iampb.principals.StringList(),
-		},
+	statement := spartaIAM.PolicyStatement{
+		Action:    iampb.builder.apiCalls,
+		Effect:    iampb.builder.effect,
+		Principal: iampb.principal,
 	}
+	if iampb.builder.condition != nil {
+		statement.Condition = iampb.builder.condition
+	}
+	return statement
 }
 
 // ToPrivilege returns a legacy sparta.IAMRolePrivilege type for this
 // IAMPrincipalBuilder entry
 func (iampb *IAMPrincipalBuilder) ToPrivilege() sparta.IAMRolePrivilege {
-	return sparta.IAMRolePrivilege{
-		Actions: iampb.builder.apiCalls,
-		Principal: &gocf.IAMPrincipal{
-			Service: iampb.principals.StringList(),
-		},
+	privilege := sparta.IAMRolePrivilege{
+		Actions:   iampb.builder.apiCalls,
+		Principal: iampb.principal,
 	}
+	if iampb.builder.condition != nil {
+		privilege.Condition = iampb.builder.condition
+	}
+	return privilege
 }
 
 ////////////////////////////////////////////////////////////////////////////////

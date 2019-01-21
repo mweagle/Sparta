@@ -166,7 +166,7 @@ Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/l
 
 ## Getting Started
 
-To get started using Sparta, begin with the [Overview](/overview).
+To get started using Sparta, begin with the [Overview](/example_service/step1/).
 
 ## Administration
 

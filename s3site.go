@@ -21,6 +21,11 @@ type S3Site struct {
 	// BucketName is the name of the bucket to create. Required
 	// to specify a CloudFront Distribution
 	BucketName *gocf.StringExpr
+	// UserManifestData is a map of optional data to include
+	// in the MANIFEST.json data at the site root. These optional
+	// values will be scoped to a `userdata` key in the MANIFEST.json
+	// object
+	UserManifestData map[string]interface{}
 }
 
 // CloudFormationS3ResourceName returns the stable CloudformationResource name that
