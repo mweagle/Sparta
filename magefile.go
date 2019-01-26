@@ -332,7 +332,8 @@ func InstallBuildRequirements() error {
 	requirements := []string{
 		"github.com/golang/dep/...",
 		"github.com/dominikh/go-tools/...",
-		"golang.org/x/tools/cmd/goimports",
+		"honnef.co/go/tools/callgraph/...",
+		"honnef.co/go/tools/cmd/...",
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
