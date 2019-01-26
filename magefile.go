@@ -331,10 +331,10 @@ func InstallBuildRequirements() error {
 
 	requirements := []string{
 		"github.com/golang/dep/...",
-		"honnef.co/go/tools/cmd/megacheck",
+		"https://github.com/dominikh/go-tools",
 		"honnef.co/go/tools/cmd/gosimple",
 		"honnef.co/go/tools/cmd/unused",
-		"honnef.co/go/tools/cmd/staticcheck",
+		"honnef.co/go/tools/cmd/staticcheck/...",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
@@ -432,7 +432,7 @@ func EnsureFormatted() error {
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
 	// Megacheck
-	megacheckErr := sh.Run("megacheck",
+	megacheckErr := sh.Run("staticcheck",
 		"-ignore",
 		"github.com/mweagle/Sparta/CONSTANTS.go:*")
 	if megacheckErr != nil {
