@@ -30,18 +30,22 @@ const (
 	hugoVersion  = "0.52"
 )
 
+func xplatPath(pathParts ...string) string {
+	return filepath.Join(pathParts...)
+}
+
 var (
 	ignoreSubdirectoryPaths = []string{
-		".vendor",
-		".sparta",
-		".vscode",
-		"resources/describe",
-		"docs_source/themes/",
+		xplatPath(".vendor"),
+		xplatPath(".sparta"),
+		xplatPath(".vscode"),
+		xplatPath("resources", "describe"),
+		xplatPath("docs_source", "themes"),
 	}
-	hugoDocsSourcePath = "./docs_source"
+	hugoDocsSourcePath = xplatPath(".", "docs_source")
 	hugoDocsPaths      = []string{
 		hugoDocsSourcePath,
-		"./docs",
+		xplatPath(".", "docs"),
 	}
 	hugoPath = filepath.Join(localWorkDir, "hugo")
 	header   = strings.Repeat("-", 80)
