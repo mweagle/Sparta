@@ -311,7 +311,7 @@ func Describe(serviceName string,
 				link := strings.TrimSpace(eachNode.Relation)
 				// Style it to have the Amazon color
 				nodeColor := eachNode.Color
-				if "" == nodeColor {
+				if nodeColor == "" {
 					nodeColor = nodeColorEventSource
 				}
 

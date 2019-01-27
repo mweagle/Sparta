@@ -63,7 +63,7 @@ func TestDiscoveryUnmarshalNoTags(t *testing.T) {
 	if nil != err {
 		t.Errorf("Failed to unmarshal discovery data without tags")
 	}
-	if 1 != len(info.Resources) {
+	if len(info.Resources) != 1 {
 		t.Errorf("Failed to unmarshal single resource")
 	}
 	t.Logf("Discovery Info: %#v", info)

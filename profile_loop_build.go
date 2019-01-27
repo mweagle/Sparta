@@ -266,7 +266,7 @@ func syncStackProfileSnapshots(profileType string,
 		// Make sure they exist...
 		_, cachedInfoErr := os.Stat(cachedProfilePath)
 		if os.IsNotExist(cachedInfoErr) {
-			return nil, fmt.Errorf("No cache files found for profile type: %s. Please run again and fetch S3 artifacts", profileType)
+			return nil, fmt.Errorf("no cache files found for profile type: %s. Please run again and fetch S3 artifacts", profileType)
 		}
 		return []string{cachedProfilePath}, nil
 	}
@@ -316,9 +316,9 @@ func syncStackProfileSnapshots(profileType string,
 		downloadTasks[index] = newWorkTask(taskFunc)
 	}
 	p := newWorkerPool(downloadTasks, 8)
-	results, errors := p.Run()
-	if len(errors) > 0 {
-		return nil, fmt.Errorf("Errors reported: %#v", errors)
+	results, runErrors := p.Run()
+	if len(runErrors) > 0 {
+		return nil, fmt.Errorf("errors reported: %#v", runErrors)
 	}
 
 	// Read them all and merge them into a single profile...
@@ -350,7 +350,7 @@ func syncStackProfileSnapshots(profileType string,
 	}).Info("Consolidating profiles")
 
 	if len(accumulatedProfiles) <= 0 {
-		return nil, fmt.Errorf("Unable to find %s snapshots in s3://%s for profile type: %s",
+		return nil, fmt.Errorf("unable to find %s snapshots in s3://%s for profile type: %s",
 			stackName,
 			s3BucketName,
 			profileType)
@@ -359,7 +359,7 @@ func syncStackProfileSnapshots(profileType string,
 	// Great, merge them all
 	consolidatedProfile, consolidatedProfileErr := profile.Merge(accumulatedProfiles)
 	if consolidatedProfileErr != nil {
-		return nil, fmt.Errorf("Failed to merge profiles: %s", consolidatedProfileErr.Error())
+		return nil, fmt.Errorf("failed to merge profiles: %s", consolidatedProfileErr.Error())
 	}
 	// Write it out as the "canonical" path...
 	consolidatedPath := cachedAggregatedProfilePath(profileType)
@@ -369,11 +369,13 @@ func syncStackProfileSnapshots(profileType string,
 
 	outputFile, outputFileErr := os.Create(consolidatedPath)
 	if outputFileErr != nil {
-		return nil, fmt.Errorf("Failed to create consolidated file: %s", outputFileErr.Error())
+		return nil, errors.Wrapf(outputFileErr,
+			"failed to create consolidated file: %s", consolidatedPath)
 	}
 	writeErr := consolidatedProfile.Write(outputFile)
 	if writeErr != nil {
-		return nil, fmt.Errorf("Failed to write profile: %s", writeErr.Error())
+		return nil, errors.Wrapf(writeErr,
+			"failed to write profile: %s", consolidatedPath)
 	}
 	defer outputFile.Close()
 	// Delete all the other ones, just return the consolidated one...

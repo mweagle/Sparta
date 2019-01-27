@@ -532,7 +532,7 @@ func uploadLocalFileToS3(localPath string, s3ObjectKey string, ctx *workflowCont
 	// If versioning is enabled, use a stable name, otherwise use a name
 	// that's dynamically created. By default assume that the bucket is
 	// enabled for versioning
-	if "" == s3ObjectKey {
+	if s3ObjectKey == "" {
 		defaultS3KeyName := fmt.Sprintf("%s/%s", ctx.userdata.serviceName, filepath.Base(localPath))
 		s3KeyName, s3KeyNameErr := versionAwareS3KeyName(defaultS3KeyName,
 			ctx.context.s3BucketVersioningEnabled,
@@ -615,12 +615,12 @@ func verifyIAMRoles(ctx *workflowContext) (workflowStep, error) {
 	// Assemble all the RoleNames and validate the inline IAMRoleDefinitions
 	var allRoleNames []string
 	for _, eachLambdaInfo := range ctx.userdata.lambdaAWSInfos {
-		if "" != eachLambdaInfo.RoleName {
+		if eachLambdaInfo.RoleName != "" {
 			allRoleNames = append(allRoleNames, eachLambdaInfo.RoleName)
 		}
 		// Custom resources?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
-			if "" != eachCustomResource.roleName {
+			if eachCustomResource.roleName != "" {
 				allRoleNames = append(allRoleNames, eachCustomResource.roleName)
 			}
 		}
@@ -722,8 +722,8 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			"Bucket":            ctx.userdata.s3Bucket,
 		}).Info("Checking S3 versioning")
 		ctx.context.s3BucketVersioningEnabled = isEnabled
-		if "" != ctx.userdata.codePipelineTrigger && !isEnabled {
-			return nil, fmt.Errorf("Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.userdata.s3Bucket)
+		if ctx.userdata.codePipelineTrigger != "" && !isEnabled {
+			return nil, fmt.Errorf("s3 Bucket (%s) for CodePipeline trigger doesn't have a versioning policy enabled", ctx.userdata.s3Bucket)
 		}
 		// Bucket region should match region
 		/*
@@ -735,7 +735,7 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			ctx.logger)
 
 		if bucketRegionErr != nil {
-			return nil, fmt.Errorf("Failed to determine region for %s. Error: %s",
+			return nil, fmt.Errorf("failed to determine region for %s. Error: %s",
 				ctx.userdata.s3Bucket,
 				bucketRegionErr)
 		}
@@ -744,7 +744,7 @@ func verifyAWSPreconditions(ctx *workflowContext) (workflowStep, error) {
 			"Region": bucketRegion,
 		}).Info("Checking S3 region")
 		if bucketRegion != *ctx.context.awsSession.Config.Region {
-			return nil, fmt.Errorf("Target region (%s) does not match bucket region (%s)",
+			return nil, fmt.Errorf("region (%s) does not match bucket region (%s)",
 				*ctx.context.awsSession.Config.Region,
 				bucketRegion)
 		}
@@ -1097,7 +1097,7 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		return nil, changesErr
 	}
 	if nil == changes || len(changes.Changes) <= 0 {
-		return nil, fmt.Errorf("No changes detected")
+		return nil, fmt.Errorf("no changes detected")
 	}
 	updateCodeRequests := []*lambda.UpdateFunctionCodeInput{}
 	invalidInPlaceRequests := []string{}
@@ -1122,7 +1122,7 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		}
 	}
 	if len(invalidInPlaceRequests) != 0 {
-		return nil, fmt.Errorf("Unsupported in-place operations detected:\n\t%s", strings.Join(invalidInPlaceRequests, ",\n\t"))
+		return nil, fmt.Errorf("unsupported in-place operations detected:\n\t%s", strings.Join(invalidInPlaceRequests, ",\n\t"))
 	}
 
 	ctx.logger.WithFields(logrus.Fields{
@@ -1159,7 +1159,7 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 	p := newWorkerPool(inPlaceUpdateTasks, len(inPlaceUpdateTasks))
 	_, asyncErrors := p.Run()
 	if len(asyncErrors) != 0 {
-		return nil, fmt.Errorf("Failed to update function code: %v", asyncErrors)
+		return nil, fmt.Errorf("failed to update function code: %v", asyncErrors)
 	}
 	// Describe the stack so that we can satisfy the contract with the
 	// normal path using CloudFormation
@@ -1227,7 +1227,7 @@ func applyCloudFormationOperation(ctx *workflowContext) (workflowStep, error) {
 	}
 
 	// If this isn't a codePipelineTrigger, then do that
-	if "" == ctx.userdata.codePipelineTrigger {
+	if ctx.userdata.codePipelineTrigger == "" {
 		if ctx.userdata.noop {
 			ctx.logger.WithFields(logrus.Fields{
 				"Bucket":       ctx.userdata.s3Bucket,
