@@ -88,11 +88,11 @@ func BuildDockerImageWithFlags(serviceName string,
 	// name to the build..
 	// We need to build the static binary s.t. we can add it to the Docker container...
 	// Build the image...
-	var dockerArgs []string
-	dockerArgs = append(dockerArgs,
+	dockerArgs := []string{
 		"build",
 		"--build-arg",
-		fmt.Sprintf("%s=%s", BinaryNameArgument, executableOutput))
+		fmt.Sprintf("%s=%s", BinaryNameArgument, executableOutput),
+	}
 
 	if dockerFilepath != "" {
 		dockerArgs = append(dockerArgs, "--file", dockerFilepath)
