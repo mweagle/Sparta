@@ -101,7 +101,7 @@ func (command CloudWatchLogsLambdaEventSourceResource) updateRegistration(isTarg
 				}
 				describeResult, describeResultErr := cwLogsSvc.DescribeSubscriptionFilters(describeSubscriptionFilters)
 				if nil == describeResultErr {
-					opErr = fmt.Errorf("Conflict with differently named subscription on prexisting LogGroupName: %s",
+					opErr = fmt.Errorf("conflict with differently named subscription on prexisting LogGroupName: %s",
 						eachFilter.LogGroupName.Literal)
 
 					logger.WithFields(logrus.Fields{

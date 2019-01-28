@@ -432,7 +432,7 @@ func EnsureStaticChecks() error {
 	megacheckErr := sh.Run("staticcheck",
 		"-ignore",
 		"github.com/mweagle/Sparta/CONSTANTS.go:*",
-		".")
+		"github.com/mweagle/Sparta/...")
 	if megacheckErr != nil {
 		return megacheckErr
 	}

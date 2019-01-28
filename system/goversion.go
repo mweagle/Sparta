@@ -40,7 +40,7 @@ func ensureMainEntrypoint(logger *logrus.Logger) error {
 		}
 	}
 	if mainPackageCount <= 0 {
-		unlikelyBinaryErr := fmt.Errorf("It appears your application's `func main() {}` is not in the current working directory. Please run this command in the same directory as `func main() {}`")
+		unlikelyBinaryErr := fmt.Errorf("error: It appears your application's `func main() {}` is not in the current working directory. Please run this command in the same directory as `func main() {}`")
 		return unlikelyBinaryErr
 	}
 	return nil

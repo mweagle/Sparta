@@ -14,14 +14,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"sync"
 	"text/template"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aws/aws-sdk-go/service/lambda"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/briandowns/spinner"
 	humanize "github.com/dustin/go-humanize"
@@ -31,10 +29,11 @@ import (
 )
 
 var cloudFormationStackTemplateMap map[string]*gocf.Template
-var cacheLock sync.Mutex
+
+//var cacheLock sync.Mutex
 
 func init() {
-	cloudFormationStackTemplateMap = make(map[string]*gocf.Template, 0)
+	cloudFormationStackTemplateMap = make(map[string]*gocf.Template)
 	rand.Seed(time.Now().Unix())
 }
 
@@ -55,10 +54,10 @@ var cloudformationPollingTimeout = 3 * time.Minute
 // name
 func defaultUserName() string {
 	userName := os.Getenv("USER")
-	if "" == userName {
+	if userName == "" {
 		userName = os.Getenv("USERNAME")
 	}
-	if "" == userName {
+	if userName == "" {
 		userName = fmt.Sprintf("user%d", os.Getuid())
 	}
 	return userName
@@ -127,7 +126,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				// If there's anything at the head, push it.
 				if matchInfo[0] != 0 {
 					head := curContents[0:matchInfo[0]]
-					converter.contents = append(converter.contents, gocf.String(fmt.Sprintf("%s", head)))
+					converter.contents = append(converter.contents, gocf.String(head))
 					curContents = curContents[len(head):]
 				}
 
@@ -161,7 +160,7 @@ func (converter *templateConverter) parseData() *templateConverter {
 				}
 				if nil == parsed {
 					// We never did find the end...
-					converter.conversionError = fmt.Errorf("Invalid CloudFormation JSON expression on line: %s", eachLine)
+					converter.conversionError = fmt.Errorf("invalid CloudFormation JSON expression on line: %s", eachLine)
 					return converter
 				}
 			} else {
@@ -195,45 +194,45 @@ func cloudformationPollingDelay() time.Duration {
 	return time.Duration(3+rand.Int31n(5)) * time.Second
 }
 
-func existingStackTemplate(serviceName string,
-	session *session.Session,
-	logger *logrus.Logger) (*gocf.Template, error) {
-	cacheLock.Lock()
-	defer cacheLock.Unlock()
-	template, templateExists := cloudFormationStackTemplateMap[serviceName]
-	if !templateExists {
-		templateParams := &cloudformation.GetTemplateInput{
-			StackName: aws.String(serviceName),
-		}
-		logger.WithFields(logrus.Fields{
-			"Service": serviceName,
-		}).Info("Fetching existing CloudFormation template")
+// func existingStackTemplate(serviceName string,
+// 	session *session.Session,
+// 	logger *logrus.Logger) (*gocf.Template, error) {
+// 	cacheLock.Lock()
+// 	defer cacheLock.Unlock()
+// 	template, templateExists := cloudFormationStackTemplateMap[serviceName]
+// 	if !templateExists {
+// 		templateParams := &cloudformation.GetTemplateInput{
+// 			StackName: aws.String(serviceName),
+// 		}
+// 		logger.WithFields(logrus.Fields{
+// 			"Service": serviceName,
+// 		}).Info("Fetching existing CloudFormation template")
 
-		cloudformationSvc := cloudformation.New(session)
-		rawTemplate, rawTemplateErr := cloudformationSvc.GetTemplate(templateParams)
-		if nil != rawTemplateErr {
-			if strings.Contains(rawTemplateErr.Error(), "does not exist") {
-				template = nil
-			} else {
-				return nil, rawTemplateErr
-			}
-		} else {
-			t := gocf.Template{}
-			jsonDecodeErr := json.NewDecoder(strings.NewReader(*rawTemplate.TemplateBody)).Decode(&t)
-			if nil != jsonDecodeErr {
-				return nil, jsonDecodeErr
-			}
-			template = &t
-		}
-		cloudFormationStackTemplateMap[serviceName] = template
-	} else {
-		logger.WithFields(logrus.Fields{
-			"Service": serviceName,
-		}).Debug("Using cached CloudFormation Template resources")
-	}
+// 		cloudformationSvc := cloudformation.New(session)
+// 		rawTemplate, rawTemplateErr := cloudformationSvc.GetTemplate(templateParams)
+// 		if nil != rawTemplateErr {
+// 			if strings.Contains(rawTemplateErr.Error(), "does not exist") {
+// 				template = nil
+// 			} else {
+// 				return nil, rawTemplateErr
+// 			}
+// 		} else {
+// 			t := gocf.Template{}
+// 			jsonDecodeErr := json.NewDecoder(strings.NewReader(*rawTemplate.TemplateBody)).Decode(&t)
+// 			if nil != jsonDecodeErr {
+// 				return nil, jsonDecodeErr
+// 			}
+// 			template = &t
+// 		}
+// 		cloudFormationStackTemplateMap[serviceName] = template
+// 	} else {
+// 		logger.WithFields(logrus.Fields{
+// 			"Service": serviceName,
+// 		}).Debug("Using cached CloudFormation Template resources")
+// 	}
 
-	return template, nil
-}
+// 	return template, nil
+// }
 
 func updateStackViaChangeSet(serviceName string,
 	cfTemplate *gocf.Template,
@@ -276,58 +275,58 @@ func updateStackViaChangeSet(serviceName string,
 
 }
 
-func existingLambdaResourceVersions(serviceName string,
-	lambdaResourceName string,
-	session *session.Session,
-	logger *logrus.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
+// func existingLambdaResourceVersions(serviceName string,
+// 	lambdaResourceName string,
+// 	session *session.Session,
+// 	logger *logrus.Logger) (*lambda.ListVersionsByFunctionOutput, error) {
 
-	errorIsNotExist := func(apiError error) bool {
-		return apiError != nil && strings.Contains(apiError.Error(), "does not exist")
-	}
+// 	errorIsNotExist := func(apiError error) bool {
+// 		return apiError != nil && strings.Contains(apiError.Error(), "does not exist")
+// 	}
 
-	logger.WithFields(logrus.Fields{
-		"ResourceName": lambdaResourceName,
-	}).Info("Fetching existing function versions")
+// 	logger.WithFields(logrus.Fields{
+// 		"ResourceName": lambdaResourceName,
+// 	}).Info("Fetching existing function versions")
 
-	cloudFormationSvc := cloudformation.New(session)
-	describeParams := &cloudformation.DescribeStackResourceInput{
-		StackName:         aws.String(serviceName),
-		LogicalResourceId: aws.String(lambdaResourceName),
-	}
-	describeResponse, describeResponseErr := cloudFormationSvc.DescribeStackResource(describeParams)
-	logger.WithFields(logrus.Fields{
-		"Response":    describeResponse,
-		"ResponseErr": describeResponseErr,
-	}).Debug("Describe response")
-	if errorIsNotExist(describeResponseErr) {
-		return nil, nil
-	} else if describeResponseErr != nil {
-		return nil, describeResponseErr
-	}
+// 	cloudFormationSvc := cloudformation.New(session)
+// 	describeParams := &cloudformation.DescribeStackResourceInput{
+// 		StackName:         aws.String(serviceName),
+// 		LogicalResourceId: aws.String(lambdaResourceName),
+// 	}
+// 	describeResponse, describeResponseErr := cloudFormationSvc.DescribeStackResource(describeParams)
+// 	logger.WithFields(logrus.Fields{
+// 		"Response":    describeResponse,
+// 		"ResponseErr": describeResponseErr,
+// 	}).Debug("Describe response")
+// 	if errorIsNotExist(describeResponseErr) {
+// 		return nil, nil
+// 	} else if describeResponseErr != nil {
+// 		return nil, describeResponseErr
+// 	}
 
-	listVersionsParams := &lambda.ListVersionsByFunctionInput{
-		FunctionName: describeResponse.StackResourceDetail.PhysicalResourceId,
-		MaxItems:     aws.Int64(128),
-	}
-	lambdaSvc := lambda.New(session)
-	listVersionsResp, listVersionsRespErr := lambdaSvc.ListVersionsByFunction(listVersionsParams)
-	if errorIsNotExist(listVersionsRespErr) {
-		return nil, nil
-	} else if listVersionsRespErr != nil {
-		return nil, listVersionsRespErr
-	}
-	logger.WithFields(logrus.Fields{
-		"Response":    listVersionsResp,
-		"ResponseErr": listVersionsRespErr,
-	}).Debug("ListVersionsByFunction")
-	return listVersionsResp, nil
-}
+// 	listVersionsParams := &lambda.ListVersionsByFunctionInput{
+// 		FunctionName: describeResponse.StackResourceDetail.PhysicalResourceId,
+// 		MaxItems:     aws.Int64(128),
+// 	}
+// 	lambdaSvc := lambda.New(session)
+// 	listVersionsResp, listVersionsRespErr := lambdaSvc.ListVersionsByFunction(listVersionsParams)
+// 	if errorIsNotExist(listVersionsRespErr) {
+// 		return nil, nil
+// 	} else if listVersionsRespErr != nil {
+// 		return nil, listVersionsRespErr
+// 	}
+// 	logger.WithFields(logrus.Fields{
+// 		"Response":    listVersionsResp,
+// 		"ResponseErr": listVersionsRespErr,
+// 	}).Debug("ListVersionsByFunction")
+// 	return listVersionsResp, nil
+// }
 
 func toExpressionSlice(input interface{}) ([]string, error) {
 	var expressions []string
 	slice, sliceOK := input.([]interface{})
 	if !sliceOK {
-		return nil, fmt.Errorf("Failed to convert to slice")
+		return nil, fmt.Errorf("failed to convert to slice")
 	}
 	for _, eachValue := range slice {
 		switch str := eachValue.(type) {
@@ -339,7 +338,7 @@ func toExpressionSlice(input interface{}) ([]string, error) {
 }
 func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
 	if len(data) <= 0 {
-		return nil, fmt.Errorf("FnJoinExpr data is empty")
+		return nil, fmt.Errorf("data for FnJoinExpr is empty")
 	}
 	for eachKey, eachValue := range data {
 		switch eachKey {
@@ -351,7 +350,7 @@ func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
 				return nil, attrValuesErr
 			}
 			if len(attrValues) != 2 {
-				return nil, fmt.Errorf("Invalid params for Fn::GetAtt: %s", eachValue)
+				return nil, fmt.Errorf("invalid params for Fn::GetAtt: %s", eachValue)
 			}
 			return gocf.GetAtt(attrValues[0], attrValues[1]).String(), nil
 		case "Fn::FindInMap":
@@ -360,16 +359,16 @@ func parseFnJoinExpr(data map[string]interface{}) (*gocf.StringExpr, error) {
 				return nil, attrValuesErr
 			}
 			if len(attrValues) != 3 {
-				return nil, fmt.Errorf("Invalid params for Fn::FindInMap: %s", eachValue)
+				return nil, fmt.Errorf("invalid params for Fn::FindInMap: %s", eachValue)
 			}
 			return gocf.FindInMap(attrValues[0], gocf.String(attrValues[1]), gocf.String(attrValues[2])), nil
 		}
 	}
-	return nil, fmt.Errorf("Unsupported AWS Function detected: %#v", data)
+	return nil, fmt.Errorf("unsupported AWS Function detected: %#v", data)
 }
 
 func stackCapabilities(template *gocf.Template) []*string {
-	capabilitiesMap := make(map[string]bool, 0)
+	capabilitiesMap := make(map[string]bool)
 
 	// Only require IAM capability if the definition requires it.
 	for _, eachResource := range template.Resources {
@@ -383,7 +382,7 @@ func stackCapabilities(template *gocf.Template) []*string {
 			}
 		}
 	}
-	capabilities := make([]*string, len(capabilitiesMap), len(capabilitiesMap))
+	capabilities := make([]*string, len(capabilitiesMap))
 	capabilitiesIndex := 0
 	for eachKey := range capabilitiesMap {
 		capabilities[capabilitiesIndex] = aws.String(eachKey)
@@ -404,11 +403,9 @@ func DynamicValueToStringExpr(dynamicValue interface{}) gocf.Stringable {
 	switch typedValue := dynamicValue.(type) {
 	case string:
 		stringExpr = gocf.String(typedValue)
-	case gocf.Stringable:
-		stringExpr = typedValue.String()
 	case *gocf.StringExpr:
 		stringExpr = typedValue
-	case gocf.RefFunc:
+	case gocf.Stringable:
 		stringExpr = typedValue.String()
 	default:
 		panic(fmt.Sprintf("Unsupported dynamic value type: %+v", typedValue))
@@ -444,7 +441,7 @@ func S3ArnForBucket(bucket interface{}) *gocf.StringExpr {
 // MapToResourceTags transforms a go map[string]string to a CloudFormation-compliant
 // Tags representation.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html
 func MapToResourceTags(tagMap map[string]string) []interface{} {
-	tags := make([]interface{}, len(tagMap), len(tagMap))
+	tags := make([]interface{}, len(tagMap))
 	tagsIndex := 0
 	for eachKey, eachValue := range tagMap {
 		tags[tagsIndex] = map[string]interface{}{
@@ -577,7 +574,7 @@ func WaitForStackOperationComplete(stackID string,
 			return nil, err
 		}
 		if len(describeStacksOutput.Stacks) <= 0 {
-			return nil, fmt.Errorf("Failed to enumerate stack info: %v", *describeStacksInput.StackName)
+			return nil, fmt.Errorf("failed to enumerate stack info: %v", *describeStacksInput.StackName)
 		}
 		result.stackInfo = describeStacksOutput.Stacks[0]
 		switch *(result.stackInfo).StackStatus {
@@ -611,20 +608,20 @@ func WaitForStackOperationComplete(stackID string,
 func CloudFormationResourceName(prefix string, parts ...string) string {
 	hash := sha1.New()
 	_, writeErr := hash.Write([]byte(prefix))
+	//lint:ignore SA9003 because it's TODO
 	if writeErr != nil {
-		// TODO
 	}
 	if len(parts) <= 0 {
 		randValue := rand.Int63()
 		_, writeErr = hash.Write([]byte(strconv.FormatInt(randValue, 10)))
+		//lint:ignore SA9003 because it's TODO
 		if writeErr != nil {
-			// TODO
 		}
 	} else {
 		for _, eachPart := range parts {
 			_, writeErr = hash.Write([]byte(eachPart))
+			//lint:ignore SA9003 because it's TODO
 			if writeErr != nil {
-				// TODO
 			}
 		}
 	}
@@ -767,12 +764,12 @@ func CreateStackChangeSet(changeSetRequestName string,
 				// If this has taken more than 3 minutes, then that's an error
 				elapsedTime := time.Since(startTime)
 				if elapsedTime > cloudformationPollingTimeout {
-					return nil, fmt.Errorf("ChangeSet failed to finalize within window: %s", elapsedTime.String())
+					return nil, fmt.Errorf("failed to finalize ChangeSet within window: %s", elapsedTime.String())
 				}
 			case "CREATE_COMPLETE":
 				changeSetStabilized = true
 			case "FAILED":
-				return nil, fmt.Errorf("Failed to create ChangeSet: %#v", *describeChangeSetOutput)
+				return nil, fmt.Errorf("failed to create ChangeSet: %#v", *describeChangeSetOutput)
 			}
 		}
 	}
@@ -819,7 +816,7 @@ func DeleteChangeSet(stackName string,
 			return deleteChangeSetResults, nil
 		} else if strings.Contains(deleteChangeSetResultErr.Error(), "CREATE_IN_PROGRESS") {
 			if elapsedTime > cloudformationPollingTimeout {
-				return nil, fmt.Errorf("Failed to delete ChangeSet within timeout window: %s", elapsedTime.String())
+				return nil, fmt.Errorf("failed to delete ChangeSet within timeout window: %s", elapsedTime.String())
 			}
 			sleepDuration := cloudformationPollingDelay()
 			time.Sleep(sleepDuration)
@@ -935,7 +932,7 @@ func ConvergeStackState(serviceName string,
 	errorMessages := []string{}
 	events, err := StackEvents(stackID, startTime, awsSession)
 	if nil != err {
-		return nil, fmt.Errorf("Failed to retrieve stack events: %s", err.Error())
+		return nil, fmt.Errorf("failed to retrieve stack events: %s", err.Error())
 	}
 
 	for _, eachEvent := range events {
@@ -982,12 +979,12 @@ func ConvergeStackState(serviceName string,
 		for _, eachError := range errorMessages {
 			logger.Error(eachError)
 		}
-		return nil, fmt.Errorf("Failed to provision: %s", serviceName)
+		return nil, fmt.Errorf("failed to provision: %s", serviceName)
 	}
 
 	// Rip through the events so that we can output exactly how long it took to
 	// update each resource
-	resourceStats := make([]*resourceProvisionMetrics, len(resourceMetrics), len(resourceMetrics))
+	resourceStats := make([]*resourceProvisionMetrics, len(resourceMetrics))
 	resourceStatIndex := 0
 	for _, eachResource := range resourceMetrics {
 		eachResource.elapsed = eachResource.endTime.Sub(eachResource.startTime)

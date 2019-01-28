@@ -37,7 +37,7 @@ func TestLogin(t *testing.T) {
 			// The stdin write failed...
 			t.Fatalf("Failed to write password to STDIN")
 		} else if strings.Contains(dockerLoginCmdErr.Error(), "unauthorized: incorrect username or password") {
-			// Expected
+			t.Logf("Expected authorization rejection detected")
 		}
 	} else {
 		// This should never happen

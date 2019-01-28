@@ -20,15 +20,6 @@ type S3LambdaEventSourceResourceRequest struct {
 	Filter          *s3.NotificationConfigurationFilter `json:"Filter,omitempty"`
 }
 
-func s3EventSourceProperties(event *CloudFormationLambdaEvent) (*S3LambdaEventSourceResourceRequest, error) {
-	eventProperties := S3LambdaEventSourceResourceRequest{}
-	unmarshalErr := json.Unmarshal(event.ResourceProperties, &eventProperties)
-	if unmarshalErr != nil {
-		return nil, unmarshalErr
-	}
-	return &eventProperties, nil
-}
-
 // S3LambdaEventSourceResource manages registering a Lambda function with S3 event
 type S3LambdaEventSourceResource struct {
 	gocf.CloudFormationCustomResource

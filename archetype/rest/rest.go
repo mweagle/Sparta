@@ -42,9 +42,7 @@ func (mh *MethodHandler) StatusCodes(codes ...int) *MethodHandler {
 	if mh.statusCodes == nil {
 		mh.statusCodes = make([]int, 0)
 	}
-	for _, eachCode := range codes {
-		mh.statusCodes = append(mh.statusCodes, eachCode)
-	}
+	mh.statusCodes = append(mh.statusCodes, codes...)
 	return mh
 }
 
@@ -61,9 +59,7 @@ func (mh *MethodHandler) Privileges(privileges ...sparta.IAMRolePrivilege) *Meth
 	if mh.privileges == nil {
 		mh.privileges = make([]sparta.IAMRolePrivilege, 0)
 	}
-	for _, eachPrivilege := range privileges {
-		mh.privileges = append(mh.privileges, eachPrivilege)
-	}
+	mh.privileges = append(mh.privileges, privileges...)
 	return mh
 }
 
@@ -72,9 +68,7 @@ func (mh *MethodHandler) Headers(headerNames ...string) *MethodHandler {
 	if mh.headers == nil {
 		mh.headers = make([]string, 0)
 	}
-	for _, eachHeader := range headerNames {
-		mh.headers = append(mh.headers, eachHeader)
-	}
+	mh.headers = append(mh.headers, headerNames...)
 	return mh
 }
 
@@ -191,7 +185,7 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 		// }
 		return nil
 	}
-	resourceMap := make(map[string]*sparta.LambdaAWSInfo, 0)
+	resourceMap := make(map[string]*sparta.LambdaAWSInfo)
 
 	// Great, walk the map of handlers
 	for eachMethod, eachMethodDefinition := range definition.MethodHandlers {
@@ -233,7 +227,7 @@ func RegisterResource(apiGateway *sparta.API, resource Resource) ([]*sparta.Lamb
 	}
 	// Convert this into a slice and return it...
 	lambdaResourceHandlers := make([]*sparta.LambdaAWSInfo,
-		len(resourceMap), len(resourceMap))
+		len(resourceMap))
 	lambdaIndex := 0
 	for _, eachLambda := range resourceMap {
 		lambdaResourceHandlers[lambdaIndex] = eachLambda

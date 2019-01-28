@@ -94,7 +94,7 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 		// Mime type?
 		fileExtension := path.Ext(eachFile.Name)
 		mimeType := mime.TypeByExtension(fileExtension)
-		if "" == mimeType {
+		if mimeType == "" {
 			mimeType = "application/octet-stream"
 		}
 
@@ -122,7 +122,7 @@ func (command ZipToS3BucketResource) unzip(session *session.Session,
 			return nil, manifestErr
 		}
 		name := command.ManifestName
-		if "" == name {
+		if name == "" {
 			name = DefaultManifestName
 		}
 		s3PutObject := &s3.PutObjectInput{
@@ -212,7 +212,7 @@ func (command ZipToS3BucketResource) Delete(awsSession *session.Session,
 	var deleteErr error
 	if nil != command.Manifest {
 		name := command.ManifestName
-		if "" == name {
+		if name == "" {
 			name = DefaultManifestName
 		}
 		manifestDeleteParams := &s3.DeleteObjectInput{

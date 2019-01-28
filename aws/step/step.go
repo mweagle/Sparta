@@ -722,7 +722,8 @@ func NewChoiceState(choiceStateName string, choices ...ChoiceBranch) *ChoiceStat
 
 // TaskRetry is an action to perform in response to a Task failure
 type TaskRetry struct {
-	ErrorEquals     []StateError  `json:",omitempty"`
+	ErrorEquals []StateError `json:",omitempty"`
+	//lint:ignore ST1011 we want to give a cue to the client of the units
 	IntervalSeconds time.Duration `json:",omitempty"`
 	MaxAttempts     int           `json:",omitempty"`
 	BackoffRate     float32       `json:",omitempty"`
@@ -797,8 +798,10 @@ func NewTaskCatch(nextState TransitionState, errors ...StateError) *TaskCatch {
 // BaseTask represents the core BaseTask control flow options.
 type BaseTask struct {
 	baseInnerState
-	ResultPath       string
-	TimeoutSeconds   time.Duration
+	ResultPath string
+	//lint:ignore ST1011 we want to give a cue to the client of the units
+	TimeoutSeconds time.Duration
+	//lint:ignore ST1011 we want to give a cue to the client of the units
 	HeartbeatSeconds time.Duration
 	LambdaDecorator  sparta.TemplateDecorator
 	Retriers         []*TaskRetry
@@ -1066,13 +1069,13 @@ func (wd *WaitDelay) MarshalJSON() ([]byte, error) {
 }
 
 // NewWaitDelayState returns a new WaitDelay pointer instance
-func NewWaitDelayState(stateName string, delayInSeconds time.Duration) *WaitDelay {
+func NewWaitDelayState(stateName string, delay time.Duration) *WaitDelay {
 	return &WaitDelay{
 		baseInnerState: baseInnerState{
 			name: stateName,
 			id:   rand.Int63(),
 		},
-		delay: delayInSeconds,
+		delay: delay,
 	}
 }
 
@@ -1625,9 +1628,9 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 // NewStateMachine returns a new StateMachine instance
 func NewStateMachine(stateMachineName string,
 	startState TransitionState) *StateMachine {
-	uniqueStates := make(map[string]MachineState, 0)
+	uniqueStates := make(map[string]MachineState)
 	pendingStates := []MachineState{startState}
-	duplicateStateNames := make(map[string]bool, 0)
+	duplicateStateNames := make(map[string]bool)
 
 	nodeVisited := func(node MachineState) bool {
 		if node == nil {
@@ -1671,7 +1674,7 @@ func NewStateMachine(stateMachineName string,
 	}
 	// Store duplicate state names
 	if len(duplicateStateNames) != 0 {
-		sm.stateDefinitionError = fmt.Errorf("Duplicate state names: %#v", duplicateStateNames)
+		sm.stateDefinitionError = fmt.Errorf("duplicate state names: %#v", duplicateStateNames)
 	}
 	return sm
 }

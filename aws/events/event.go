@@ -62,9 +62,9 @@ func NewAPIGatewayMockRequest(lambdaName string,
 		Body: eventData,
 		APIGatewayEnvelope: APIGatewayEnvelope{
 			Method:      httpMethod,
-			Headers:     make(map[string]string, 0),
-			QueryParams: make(map[string]string, 0),
-			PathParams:  make(map[string]string, 0),
+			Headers:     make(map[string]string),
+			QueryParams: make(map[string]string),
+			PathParams:  make(map[string]string),
 		},
 	}
 	for eachWhitelistKey, eachWhitelistValue := range whitelistParamValues {
@@ -75,7 +75,7 @@ func NewAPIGatewayMockRequest(lambdaName string,
 
 		// The string should have 4 parts...
 		if len(parts) != 4 {
-			return nil, fmt.Errorf("Invalid whitelist param name: %s (MUST be: method.request.KEY_TYPE.KEY_NAME, ex: method.request.querystring.myQueryParam", eachWhitelistKey)
+			return nil, fmt.Errorf("invalid whitelist param name: %s (MUST be: method.request.KEY_TYPE.KEY_NAME, ex: method.request.querystring.myQueryParam", eachWhitelistKey)
 		}
 		keyType := parts[2]
 		keyName := parts[3]
@@ -87,7 +87,7 @@ func NewAPIGatewayMockRequest(lambdaName string,
 		case "path":
 			apiGatewayRequest.PathParams[keyName] = eachWhitelistValue
 		default:
-			return nil, fmt.Errorf("Unsupported whitelist param type: %s", keyType)
+			return nil, fmt.Errorf("unsupported whitelist param type: %s", keyType)
 		}
 	}
 

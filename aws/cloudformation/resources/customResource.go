@@ -262,16 +262,20 @@ func awsSession(logger *logrus.Logger) *session.Session {
 		awsConfig.LogLevel = aws.LogLevel(aws.LogDebugWithHTTPBody)
 	}
 	awsConfig.Logger = &logrusProxy{logger}
-	sess := session.New(awsConfig)
-	sess.Handlers.Send.PushFront(func(r *request.Request) {
-		logger.WithFields(logrus.Fields{
-			"Service":   r.ClientInfo.ServiceName,
-			"Operation": r.Operation.Name,
-			"Method":    r.Operation.HTTPMethod,
-			"Path":      r.Operation.HTTPPath,
-			"Payload":   r.Params,
-		}).Debug("AWS Request")
-	})
+	sess, sessionErr := session.NewSession(awsConfig)
+	if sessionErr != nil {
+		logger.WithField("Error", sessionErr).Warn("Failed to attach AWS Session logger")
+	} else {
+		sess.Handlers.Send.PushFront(func(r *request.Request) {
+			logger.WithFields(logrus.Fields{
+				"Service":   r.ClientInfo.ServiceName,
+				"Operation": r.Operation.Name,
+				"Method":    r.Operation.HTTPMethod,
+				"Path":      r.Operation.HTTPPath,
+				"Payload":   r.Params,
+			}).Debug("AWS Request")
+		})
+	}
 	return sess
 }
 
@@ -301,10 +305,10 @@ func CloudFormationLambdaCustomResourceHandler(command CustomResourceCommand, lo
 			opErr = describeStacksOutputErr
 		} else {
 			stackDesc := describeStacksOutput.Stacks[0]
-			if nil == stackDesc {
+			if stackDesc == nil {
 				opErr = errors.Errorf("DescribeStack failed: %s", event.StackID)
 			} else {
-				executeOperation = ("UPDATE_COMPLETE_CLEANUP_IN_PROGRESS" != *stackDesc.StackStatus)
+				executeOperation = (*stackDesc.StackStatus != "UPDATE_COMPLETE_CLEANUP_IN_PROGRESS")
 			}
 		}
 

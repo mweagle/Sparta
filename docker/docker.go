@@ -39,14 +39,13 @@ func BuildDockerImageWithFlags(serviceName string,
 	// BEGIN DOCKER PRECONDITIONS
 	// Ensure that serviceName and tags are lowercase to make Docker happy
 	var dockerErrors []string
-	if dockerTags != nil {
-		for eachKey, eachValue := range dockerTags {
-			if eachKey != strings.ToLower(eachKey) ||
-				eachValue != strings.ToLower(eachValue) {
-				dockerErrors = append(dockerErrors, fmt.Sprintf("--tag %s:%s MUST be lower case", eachKey, eachValue))
-			}
+	for eachKey, eachValue := range dockerTags {
+		if eachKey != strings.ToLower(eachKey) ||
+			eachValue != strings.ToLower(eachValue) {
+			dockerErrors = append(dockerErrors, fmt.Sprintf("--tag %s:%s MUST be lower case", eachKey, eachValue))
 		}
 	}
+
 	if len(dockerErrors) > 0 {
 		return errors.Errorf("Docker build errors: %s", strings.Join(dockerErrors[:], ", "))
 	}
@@ -95,7 +94,7 @@ func BuildDockerImageWithFlags(serviceName string,
 		"--build-arg",
 		fmt.Sprintf("%s=%s", BinaryNameArgument, executableOutput))
 
-	if "" != dockerFilepath {
+	if dockerFilepath != "" {
 		dockerArgs = append(dockerArgs, "--file", dockerFilepath)
 	}
 	// Add the latest tag
@@ -104,13 +103,12 @@ func BuildDockerImageWithFlags(serviceName string,
 		"Tags": dockerTags,
 	}).Info("Creating Docker image")
 
-	if dockerTags != nil {
-		for eachKey, eachValue := range dockerTags {
-			dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("%s:%s",
-				strings.ToLower(eachKey),
-				strings.ToLower(eachValue)))
-		}
+	for eachKey, eachValue := range dockerTags {
+		dockerArgs = append(dockerArgs, "--tag", fmt.Sprintf("%s:%s",
+			strings.ToLower(eachKey),
+			strings.ToLower(eachValue)))
 	}
+
 	dockerArgs = append(dockerArgs, ".")
 	dockerCmd := exec.Command("docker", dockerArgs...)
 	return system.RunOSCommand(dockerCmd, logger)
