@@ -2,12 +2,12 @@
 
 
 [[projects]]
-  digest = "1:92557958b576955364d702850c3b7ab5a565c01b1eafb1ce6ce7e2756c4888cf"
+  digest = "1:48abf83fcb38a32b927201a49ec22a71471a78ae2ee775d457b463f3e36ffa67"
   name = "github.com/AlecAivazis/survey"
   packages = ["."]
   pruneopts = "UT"
-  revision = "38cdfa1242b19e0eb8b6f33004bf8e89832b8743"
-  version = "v1.8.0"
+  revision = "3389f2f05f2f02457ea70d0cf93653543d2324e9"
+  version = "v1.8.1"
 
 [[projects]]
   digest = "1:e92f5581902c345eb4ceffdcd4a854fb8f73cf436d47d837d1ec98ef1fe0a214"
@@ -31,7 +31,7 @@
   version = "v1.8.1"
 
 [[projects]]
-  digest = "1:53bc642097f9de0e76315c3a35137f385aa44fed07739d1064f7136b42dbfe01"
+  digest = "1:e0a4296e32ff1a5fdedb0c3c140b94a3974fd90131790f39c3c087a7dd739467"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -88,8 +88,8 @@
     "service/xray",
   ]
   pruneopts = "UT"
-  revision = "a2484497433aa110263c045df2f1d49336b38cfd"
-  version = "v1.16.22"
+  revision = "81f3829f5a9d041041bdf56e55926691309d7699"
+  version = "v1.16.26"
 
 [[projects]]
   digest = "1:8b7398992153180768849e89dabe2aaab45537f83a61f0e51b0da6f68c151206"
@@ -428,14 +428,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:218da9881d36a73f7381ad19b472d13d92c16c52e79bded3f218eab6362bba5b"
+  digest = "1:3049a7b92fb8dea3e93f52d527a4d2ca43af822f263f3332332bb22f5fceb026"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e5e361b9d7908c94aa426e31c208e2c69df0d95d"
+  revision = "84fdb36408f35b8998d48d323f55f40b7f14a19b"
 
 [[projects]]
-  digest = "1:288fa8839da2efff895170f1350ab8b2ffa15daf5227e5be7cde81d59aef3b21"
+  digest = "1:2f3e1ccf496354ee2386400844d37657a7df80be3eeb010fb2e49e0723b62040"
   name = "github.com/shirou/gopsutil"
   packages = [
     "cpu",
@@ -443,12 +443,21 @@
     "host",
     "internal/common",
     "load",
+    "mem",
     "net",
     "process",
   ]
   pruneopts = "UT"
   revision = "ccc1c1016bc5d10e803189ee43417c50cdde7f1b"
   version = "v2.18.12"
+
+[[projects]]
+  branch = "master"
+  digest = "1:99c6a6dab47067c9b898e8c8b13d130c6ab4ffbcc4b7cc6236c2cd0b1e344f5b"
+  name = "github.com/shirou/w32"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "bb4de0191aa41b5507caa14b0650cdbddcd9280b"
 
 [[projects]]
   digest = "1:87c2e02fb01c27060ccc5ba7c5a407cc91147726f8f40b70cceeedbc52b1f3a8"
@@ -511,18 +520,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "ff983b9c42bc9fbf91556e191cc8efb585c16908"
+  revision = "057139ce5d2bdbe6fe73c53679e24e9cf007f637"
 
 [[projects]]
   branch = "master"
-  digest = "1:43cde116ff48f299eddb7e6515677e6d0a2c915854bb05a333877f07c3bb3033"
+  digest = "1:bb644db32f5bc1e327a0f748ec871edc4dc46f19b4fbbc15bfd95b1460646537"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "11f53e03133963fb11ae0588e08b5e0b85be8be5"
+  revision = "b90733256f2e882e81d52f9126de08df5615afd9"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -539,15 +548,15 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:c7393cb2a5934f3af17093bad48724947db720e18232d9139ff0b1206ad87b07"
+  digest = "1:677c876fe94c739ec7bc3e12e731933f5c95eb3162bd54f3015edf31f053aecd"
   name = "gopkg.in/AlecAivazis/survey.v1"
   packages = [
     "core",
     "terminal",
   ]
   pruneopts = "UT"
-  revision = "38cdfa1242b19e0eb8b6f33004bf8e89832b8743"
-  version = "v1.8.0"
+  revision = "3389f2f05f2f02457ea70d0cf93653543d2324e9"
+  version = "v1.8.1"
 
 [[projects]]
   digest = "1:85d4b76b833a0d3d1f5950a1ffbae503908f19af397ea329e6517bfc3edeabc3"
