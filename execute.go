@@ -53,13 +53,13 @@ func awsLambdaInternalName(internalFunctionName string) string {
 }
 
 func validateArguments(handler reflect.Type) error {
-	handlerTakesContext := false
+
 	if handler.NumIn() > 2 {
 		return errors.Errorf("handlers may not take more than two arguments, but handler takes %d", handler.NumIn())
 	} else if handler.NumIn() > 0 {
 		contextType := reflect.TypeOf((*context.Context)(nil)).Elem()
 		argumentType := handler.In(0)
-		handlerTakesContext = argumentType.Implements(contextType)
+		handlerTakesContext := argumentType.Implements(contextType)
 		if handler.NumIn() > 1 && !handlerTakesContext {
 			return errors.Errorf("handler takes two arguments, but the first is not Context. got %s", argumentType.Kind())
 		}

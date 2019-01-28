@@ -148,7 +148,7 @@ func tappedHandler(handlerSymbol interface{},
 			val = response[0].Interface()
 		}
 		ctx = context.WithValue(ctx, ContextKeyLambdaResponse, val)
-		ctx = applyInterceptors(ctx, msg, interceptors.Complete)
+		applyInterceptors(ctx, msg, interceptors.Complete)
 		return val, err
 	}
 }
