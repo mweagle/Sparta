@@ -121,6 +121,12 @@ func Delete() error {
 	return SpartaCommand("delete")
 }
 
+// Explore opens up the terminal GUI
+func Explore() error {
+	// Get the bucketName
+	return SpartaCommand("explore")
+}
+
 // Status returns a report for the given status
 func Status(plaintext ...bool) error {
 	if len(plaintext) == 1 && plaintext[0] {
