@@ -192,23 +192,20 @@ func iconForAWSResource(rawEmitter interface{}) string {
 		jsonBytes = make([]byte, 0)
 	}
 	canonicalRaw := strings.ToLower(string(jsonBytes))
-	if strings.Contains(canonicalRaw, "dynamodb") {
-		return "AWSIcons/Database/Database_AmazonDynamoDB.svg"
+	iconMappings := map[string]string{
+		"dynamodb":   "AWSIcons/Database/Database_AmazonDynamoDB.svg",
+		"sqs":        "AWSIcons/Messaging/Messaging_AmazonSQS.svg",
+		"sns":        "AWSIcons/Messaging/Messaging_AmazonSNS_topic.svg",
+		"cloudwatch": "AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch.svg",
+		"kinesis":    "AWSIcons/Analytics/Analytics_AmazonKinesis.svg",
+		"s3":         "AWSIcons/Storage/Storage_AmazonS3_bucket.svg",
+		"codecommit": "AWSIcons/Developer Tools/DeveloperTools_AWSCodeCommit.svg",
 	}
-	if strings.Contains(canonicalRaw, "sqs") {
-		return "AWSIcons/Messaging/Messaging_AmazonSQS.svg"
-	}
-	if strings.Contains(canonicalRaw, "sns") {
-		return "AWSIcons/Messaging/Messaging_AmazonSNS_topic.svg"
-	}
-	if strings.Contains(canonicalRaw, "cloudwatch") {
-		return "AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch.svg"
-	}
-	if strings.Contains(canonicalRaw, "kinesis") {
-		return "AWSIcons/Analytics/Analytics_AmazonKinesis.svg"
-	}
-	if strings.Contains(canonicalRaw, "s3") {
-		return "AWSIcons/Storage/Storage_AmazonS3_bucket.svg"
+	// Return it if we have it...
+	for eachKey, eachPath := range iconMappings {
+		if strings.Contains(canonicalRaw, eachKey) {
+			return eachPath
+		}
 	}
 	return "AWSIcons/General/General_AWScloud.svg"
 }
