@@ -3,7 +3,7 @@ date: 2016-03-09T19:56:50+01:00
 title: CloudWatch Logs
 weight: 10
 ---
-In this section we'll walkthrough how to trigger your lambda function in response to  [CloudWatch Logs](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/).  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
+In this section we'll walkthrough how to trigger your lambda function in response to [CloudWatch Logs](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/).  This overview is based on the [SpartaApplication](https://github.com/mweagle/SpartaApplication) sample code if you'd rather jump to the end result.
 
 # Goal
 
