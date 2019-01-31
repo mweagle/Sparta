@@ -69,6 +69,9 @@ type BasePermission struct {
 }
 
 func (perm *BasePermission) sourceArnExpr(joinParts ...gocf.Stringable) *gocf.StringExpr {
+	if perm.SourceArn == nil {
+		return nil
+	}
 	stringARN, stringARNOk := perm.SourceArn.(string)
 	if stringARNOk && strings.Contains(stringARN, "arn:aws:") {
 		return gocf.String(stringARN)
@@ -1072,4 +1075,143 @@ func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error
 
 //
 // END - CloudWatchLogsPermission
+///////////////////////////////////////////////////////////////////////////////////
+
+/*
+{
+    "configurationId": "5af0e618-67c7-4cfc-be51-9509194b9414",
+    "triggers": [
+        {
+            "name": "codeCommitTrigger",
+            "destinationArn": "arn:aws:lambda:us-west-2:027159405834:function:codeCommitTriggered",
+            "branches": [],
+            "events": [
+                "all"
+            ]
+        }
+    ]
+}
+*/
+
+////////////////////////////////////////////////////////////////////////////////
+// START - CodeCommitPermission
+//
+// arn:aws:codecommit:us-west-2:123412341234:myRepo
+var codeCommitSourceArnParts = []gocf.Stringable{
+	gocf.String("arn:aws:codecommit:"),
+	gocf.Ref("AWS::Region"),
+	gocf.String(":"),
+	gocf.Ref("AWS::AccountId"),
+	gocf.String(":"),
+}
+
+// CodeCommitPermission struct encapsulates the data necessary
+// to trigger the owning LambdaFunction in response to
+// CodeCommit events
+type CodeCommitPermission struct {
+	BasePermission
+	// RepositoryName
+	RepositoryName *gocf.StringExpr
+	// Branches to register for
+	Branches []string `json:"branches,omitempty"`
+	// Events to subscribe to. Defaults to "all" if empty.
+	Events []string `json:"events,omitempty"`
+}
+
+func (perm CodeCommitPermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
+	lambdaLogicalCFResourceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
+	principal := gocf.Join("",
+		gocf.String("codecommit."),
+		gocf.Ref("AWS::Region"),
+		gocf.String(".amazonaws.com"))
+
+	sourceArnExpression := perm.BasePermission.sourceArnExpr(codeCommitSourceArnParts...)
+
+	targetLambdaResourceName, err := perm.BasePermission.export(principal,
+		codeCommitSourceArnParts,
+		lambdaFunctionDisplayName,
+		lambdaLogicalCFResourceName,
+		template,
+		S3Bucket,
+		S3Key,
+		logger)
+
+	if nil != err {
+		return "", errors.Wrap(err, "Failed to export CodeCommit permission")
+	}
+
+	// Make sure that the handler that manages triggers is registered.
+	configuratorResName, err := EnsureCustomResourceHandler(serviceName,
+		cfCustomResources.CodeCommitLambdaEventSource,
+		sourceArnExpression,
+		[]string{},
+		template,
+		S3Bucket,
+		S3Key,
+		logger)
+
+	if nil != err {
+		return "", errors.Wrap(err, "Exporing CodeCommit permission handler")
+	}
+
+	// Add a custom resource invocation for this configuration
+	//////////////////////////////////////////////////////////////////////////////
+	newResource, newResourceError := newCloudFormationResource(cfCustomResources.CodeCommitLambdaEventSource,
+		logger)
+	if nil != newResourceError {
+		return "", newResourceError
+	}
+	repoEvents := perm.Events
+	if len(repoEvents) <= 0 {
+		repoEvents = []string{"all"}
+	}
+	customResource := newResource.(*cfCustomResources.CodeCommitLambdaEventSourceResource)
+	customResource.ServiceToken = gocf.GetAtt(configuratorResName, "Arn")
+	customResource.LambdaTargetArn = gocf.GetAtt(lambdaLogicalCFResourceName, "Arn")
+	customResource.TriggerName = gocf.Ref(lambdaLogicalCFResourceName).String()
+	customResource.RepositoryName = perm.RepositoryName
+	customResource.Events = repoEvents
+	customResource.Branches = perm.Branches
+
+	// Name?
+	resourceInvokerName := CloudFormationResourceName("ConfigCodeCommit",
+		lambdaLogicalCFResourceName,
+		perm.BasePermission.SourceAccount)
+
+	// Add it
+	cfResource := template.AddResource(resourceInvokerName, customResource)
+	cfResource.DependsOn = append(cfResource.DependsOn,
+		targetLambdaResourceName,
+		configuratorResName)
+	return "", nil
+}
+
+func (perm CodeCommitPermission) descriptionInfo() ([]descriptionNode, error) {
+	nodes := make([]descriptionNode, 0)
+	if len(perm.Branches) <= 0 {
+		nodes = append(nodes, descriptionNode{
+			Name:     describeInfoValue(perm.SourceArn),
+			Relation: "all",
+		})
+	} else {
+		for _, eachBranch := range perm.Branches {
+			filterRel := fmt.Sprintf("%s (%#v)",
+				eachBranch,
+				perm.Events)
+			nodes = append(nodes, descriptionNode{
+				Name:     describeInfoValue(perm.SourceArn),
+				Relation: filterRel,
+			})
+		}
+	}
+	return nodes, nil
+}
+
+// END - CodeCommitPermission
 ///////////////////////////////////////////////////////////////////////////////////
