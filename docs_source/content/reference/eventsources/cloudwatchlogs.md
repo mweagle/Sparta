@@ -9,7 +9,7 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 Assume that we're supposed to write a simple "HelloWorld" CloudWatch Logs function that should be triggered in response to any log message issued to a specific Log Group.
 
-# Getting Started
+## Getting Started
 
 Our lambda function is relatively short:
 
@@ -29,7 +29,7 @@ func echoCloudWatchLogsEvent(ctx context.Context, cwlEvent awsLambdaEvents.Cloud
 
 Our lambda function doesn't need to do much with the log message other than log and return it.
 
-# Sparta Integration
+## Sparta Integration
 
 With `echoCloudWatchLogsEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchLogsLambda` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
@@ -55,7 +55,7 @@ cloudWatchLogsPermission.Filters["MyFilter"] = sparta.CloudWatchLogsSubscription
 
 The `sparta.CloudWatchLogsPermission` struct provides fields for both the LogGroupName and optional Filter expression (not shown here) to use when calling [putSubscriptionFilter](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchLogs.html#putSubscriptionFilter-property).
 
-  # Add Permission
+## Add Permission
 
   With the subscription information configured, the final step is to add the `sparta.CloudWatchLogsPermission` to our `sparta.LambdaAWSInfo` value:
 
@@ -98,4 +98,4 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Append the `CloudWatchLogsPermission` value to the lambda function's `Permissions` slice.
   * Include the reference in the call to `sparta.Main()`.
 
-# Other Resources
+## Other Resources

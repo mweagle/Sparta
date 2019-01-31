@@ -11,7 +11,7 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue
 
-# Getting Started
+## Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -37,7 +37,7 @@ Since the `sqsHandler` function subscribes to SQS messages, it can use the AWS p
 
 Typically the lambda function would process each record in the event, but for this example we'll just log the entire batch and then return.
 
-# Sparta Integration
+## Sparta Integration
 
 The next step is to integrate the lambda function with Sparta:
 
@@ -50,7 +50,7 @@ lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(sqsHandler),
 
 Once the lambda function is integrated with Sparta, we can use a [TemplateDecoratorHandler](https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler) to include the SQS provisioning request as part of the overall service creation.
 
-# SQS Topic Definition
+## SQS Topic Definition
 
 Decorators enable a Sparta service to provision other types of infrastructure together with the core lambda functions. In this example, our `sqsHandler` function should also provision an SQS queue from which it will receive events. This is done as in the following:
 
@@ -77,7 +77,7 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
 
 This function-level decorator includes an AWS CloudFormation [SQS::Queue](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html) definition that will be included with the stack definition.
 
-# Connecting SQS to AWS Lambda
+## Connecting SQS to AWS Lambda
 
 The final step is to make the `sqsHandler` the Lambda's [EventSourceMapping](https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping) target for the dynamically provisioned Queue's _ARN_:
 
@@ -89,11 +89,10 @@ lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
   })
 ```
 
-
 # Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  It's also possible to use a pre-existing SQS resource by providing a string literal as the `EventSourceArn` value.
 
-# Other Resources
+## Other Resources
 
   * The AWS docs have an excellent [SQS event source](https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/) walkthrough.

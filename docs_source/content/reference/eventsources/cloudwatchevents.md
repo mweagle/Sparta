@@ -13,7 +13,7 @@ Assume that we're supposed to write a simple "HelloWorld" CloudWatch event funct
   * Run every *5 minutes* to provide a heartbeat notification to our alerting system via a logfile entry
   * Log *EC2-related* events for later processing
 
-# Getting Started
+## Getting Started
 
 The lambda function is relatively small:
 ```go
@@ -28,7 +28,7 @@ return event, nil
 ```
 Our lambda function doesn't need to do much with the event other than log and return it.
 
-# Sparta Integration {#spartaIntegration}
+## Sparta Integration {#spartaIntegration}
 
 With `echoCloudWatchEvent()` implemented, the next step is to integrate the **go** function with Sparta.  This is done by the `appendCloudWatchEventHandler` in the SpartaApplication [application.go](https://github.com/mweagle/SpartaApplication/blob/master/application.go) source.
 
@@ -51,7 +51,7 @@ cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 
 
 Our two rules will be inserted into the `Rules` map in the next steps.
 
-## Cron Expression
+### Cron Expression
 
 Our first requirement is that the lambda function write a heartbeat to the logfile every 5 mins.  This can be configured by adding a scheduled event:
 ```go
@@ -61,7 +61,7 @@ cloudWatchEventsPermission.Rules["Rate5Mins"] = sparta.CloudWatchEventsRule{
 ```
 The `ScheduleExpression` value can either be a _rate_ or a _cron_ [expression](http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/ScheduledEvents.html).  The map keyname is used when adding the [rule](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property) during stack provisioning.
 
-## Event Pattern
+### Event Pattern
 
 The other requirement is that our lambda function be notified when matching EC2 events are created.  To support this, we'll add a second `Rule`:
 
@@ -81,8 +81,7 @@ The EC2 event pattern is the **go** JSON-compatible representation of the event 
 Sparta does <b>NOT</b> attempt to validate either <code>ScheduleExpression</code> or <code>EventPattern</code> values prior to calling CloudFormation.  Syntax errors in either value will be detected during provisioning when the Sparta CloudFormation CustomResource calls <a href="http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudWatchEvents.html#putRule-property">putRule</a> to add the lambda target.  This error will cause the CloudFormation operation to fail.  Any API errors will be logged & are viewable in the <a href="https://blogs.aws.amazon.com/application-management/post/TxPYD8JT4CB5UY/View-CloudFormation-Logs-in-the-Console">CloudFormation Logs Console</a>.
 {{% /notice %}}
 
-
-# Add Permission
+## Add Permission
 
 With the two rules configured, the final step is to add the `sparta.CloudWatchPermission` to our `sparta.LambdaAWSInfo` value:
 
@@ -117,7 +116,6 @@ func appendCloudWatchEventHandler(api *sparta.API,
 }
 ```
 
-
 # Wrapping Up
 
 With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and deploy our service.  The workflow below is shared by all CloudWatch Events-triggered lambda functions:
@@ -132,7 +130,7 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Append the `CloudWatchEventsPermission` value to the lambda function's `Permissions` slice.
   * Include the reference in the call to `sparta.Main()`.
 
-# Other Resources
+## Other Resources
 
   * Introduction to [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
   * Tim Bray's [Cloud Eventing](https://www.tbray.org/ongoing/When/201x/2016/01/11/CloudWatch-Events) writeup
