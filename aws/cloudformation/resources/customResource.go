@@ -43,6 +43,8 @@ var (
 	S3LambdaEventSource = cloudFormationResourceType("S3EventSource")
 	// SNSLambdaEventSource is the typename for SNSLambdaEventSourceResource
 	SNSLambdaEventSource = cloudFormationResourceType("SNSEventSource")
+	// CodeCommitLambdaEventSource is the type name for CodeCommitEventSourceResource
+	CodeCommitLambdaEventSource = cloudFormationResourceType("CodeCommitEventSource")
 	// SESLambdaEventSource is the typename for SESLambdaEventSourceResource
 	SESLambdaEventSource = cloudFormationResourceType("SESEventSource")
 	// CloudWatchLogsLambdaEventSource is the typename for SESLambdaEventSourceResource
@@ -61,6 +63,8 @@ func customTypeProvider(resourceType string) gocf.ResourceProperties {
 		return &S3LambdaEventSourceResource{}
 	case CloudWatchLogsLambdaEventSource:
 		return &CloudWatchLogsLambdaEventSourceResource{}
+	case CodeCommitLambdaEventSource:
+		return &CodeCommitLambdaEventSourceResource{}
 	case SNSLambdaEventSource:
 		return &SNSLambdaEventSourceResource{}
 	case SESLambdaEventSource:
