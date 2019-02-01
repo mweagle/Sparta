@@ -428,15 +428,15 @@ func EnsureFormatted() error {
 
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
-	// Megacheck
-	megacheckErr := sh.Run("staticcheck",
+	// https://staticcheck.io/
+	staticCheckErr := sh.Run("staticcheck",
 		"-ignore",
 		"github.com/mweagle/Sparta/CONSTANTS.go:*",
 		"github.com/mweagle/Sparta/...")
-	if megacheckErr != nil {
-		return megacheckErr
+	if staticCheckErr != nil {
+		return staticCheckErr
 	}
-	// Gosec
+	// https://github.com/securego/gosec
 	if mg.Verbose() {
 		return sh.Run("gosec",
 			"-exclude=G204,G505,G401",
