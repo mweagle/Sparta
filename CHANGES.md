@@ -23,6 +23,7 @@
       ...
     }
     ```
+  - Updated to [staticcheck.io](https://staticcheck.io/)
 - :bug:  **FIXED**
   - [Fixed broken link to AWS documentation](https://github.com/mweagle/Sparta/pull/136)
 
