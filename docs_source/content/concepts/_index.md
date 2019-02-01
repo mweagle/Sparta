@@ -27,7 +27,7 @@ sparta.Main(stackName,
 
 ## Lambda Function
 
-A Sparta-compatible lambda is a standard [AWS Lambda Go](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html/) function. The following function signatures are supported:
+A Sparta-compatible lambda is a standard [AWS Lambda Go](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html) function. The following function signatures are supported:
 
 * `func ()`
 * `func () error`
