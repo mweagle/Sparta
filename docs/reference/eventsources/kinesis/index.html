@@ -12,19 +12,19 @@
     <title>Kinesis :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1547999749" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1547999749" rel="stylesheet">
-    <link href="/css/hybrid.css?1547999749" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1547999749" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1547999749" rel="stylesheet">
-    <link href="/css/auto-complete.css?1547999749" rel="stylesheet">
-    <link href="/css/theme.css?1547999749" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1547999749" rel="stylesheet">
+    <link href="/css/nucleus.css?1549032279" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1549032279" rel="stylesheet">
+    <link href="/css/hybrid.css?1549032279" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1549032279" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1549032279" rel="stylesheet">
+    <link href="/css/auto-complete.css?1549032279" rel="stylesheet">
+    <link href="/css/theme.css?1549032279" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1549032279" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1547999749" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1549032279" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1547999749"></script>
+    <script src="/js/jquery-2.x.min.js?1549032279"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1547999749"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1547999749"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1549032279"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1549032279"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1547999749"></script>
+<script type="text/javascript" src="/js/search.js?1549032279"></script>
 
     
   </div>
@@ -394,6 +394,25 @@ pre {
  
   
     
+      <li data-nav-id="/reference/eventsources/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/eventsources/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
       <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
         <a href="/reference/eventsources/cloudformation/">
         CloudFormation
@@ -610,6 +629,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/archetypes/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1707,8 +1745,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
-  Date: 2018-12-22 07:18:22 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/24876a56">24876a56</a><p/>
+  Date: 2019-01-31 06:32:51 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1784,10 +1822,12 @@ pre {
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li><a href="#goal">Goal</a></li>
+<li><a href="#goal">Goal</a>
+<ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#sparta-integration">Sparta Integration</a></li>
 <li><a href="#event-source-registration">Event Source Registration</a></li>
+</ul></li>
 <li><a href="#wrapping-up">Wrapping Up</a></li>
 <li><a href="#notes">Notes</a></li>
 </ul>
@@ -1817,7 +1857,7 @@ pre {
 
 <p>The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.</p>
 
-<h1 id="getting-started">Getting Started</h1>
+<h2 id="getting-started">Getting Started</h2>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -1838,7 +1878,7 @@ it, and return the value.</p>
 
 <p>With the function defined let&rsquo;s register it with Sparta.</p>
 
-<h1 id="sparta-integration">Sparta Integration</h1>
+<h2 id="sparta-integration">Sparta Integration</h2>
 
 <p>First we wrap the <strong>go</strong> function in a <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">LambdaAWSInfo</a> struct:</p>
 
@@ -1849,7 +1889,7 @@ it, and return the value.</p>
 
 <p>Since our lambda function doesn&rsquo;t access any other AWS Services, we can use an empty IAMRoleDefinition (<code>sparta.IAMRoleDefinition{}</code>).</p>
 
-<h1 id="event-source-registration">Event Source Registration</h1>
+<h2 id="event-source-registration">Event Source Registration</h2>
 
 <p>Then last step is to configure our AWS Lambda function with Kinesis as the <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html">EventSource</a></p>
 
@@ -2230,6 +2270,22 @@ it, and return the value.</p>
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -2324,6 +2380,22 @@ it, and return the value.</p>
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3155,20 +3227,20 @@ it, and return the value.</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1547999749"></script>
-    <script src="/js/jquery.sticky.js?1547999749"></script>
-    <script src="/js/featherlight.min.js?1547999749"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1547999749"></script>
-    <script src="/js/highlight.pack.js?1547999749"></script>
+    <script src="/js/clipboard.min.js?1549032279"></script>
+    <script src="/js/perfect-scrollbar.min.js?1549032279"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1549032279"></script>
+    <script src="/js/jquery.sticky.js?1549032279"></script>
+    <script src="/js/featherlight.min.js?1549032279"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1549032279"></script>
+    <script src="/js/highlight.pack.js?1549032279"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1547999749"></script>
-    <script src="/js/learn.js?1547999749"></script>
-    <script src="/js/hugo-learn.js?1547999749"></script>
+    <script src="/js/modernizr.custom.71422.js?1549032279"></script>
+    <script src="/js/learn.js?1549032279"></script>
+    <script src="/js/hugo-learn.js?1549032279"></script>
 
-    <link href="/mermaid/mermaid.css?1547999749" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1547999749"></script>
+    <link href="/mermaid/mermaid.css?1549032279" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1549032279"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

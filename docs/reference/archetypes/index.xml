@@ -12,6 +12,18 @@
     
     
     <item>
+      <title>CodeCommit</title>
+      <link>/reference/archetypes/codecommit/</link>
+      <pubDate>Thu, 31 Jan 2019 05:47:27 +0000</pubDate>
+      
+      <guid>/reference/archetypes/codecommit/</guid>
+      <description>The CodeCommit Lambda event source allows you to trigger lambda functions in response to CodeCommit repository events.
+Events Lambda functions triggered in response to CodeCommit evetms use a combination of events and branches to manage which state changes trigger your lambda function.
+To create an event subscriber use a constructor as in:
+// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).</description>
+    </item>
+    
+    <item>
       <title>CloudWatch</title>
       <link>/reference/archetypes/cloudwatch/</link>
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>

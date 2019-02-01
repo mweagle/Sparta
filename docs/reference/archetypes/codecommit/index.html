@@ -9,7 +9,7 @@
 
     <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
 <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
-    <title>Fargate :: Sparta - AWS Lambda Microservices</title>
+    <title>CodeCommit :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1549032279" rel="stylesheet">
@@ -41,7 +41,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/step/fargate/">
+  <body class="" data-url="/reference/archetypes/codecommit/">
     <nav id="sidebar" class="">
 
 
@@ -613,7 +613,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -637,7 +637,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item active">
         <a href="/reference/archetypes/codecommit/">
         CodeCommit
         
@@ -1091,7 +1091,7 @@ pre {
   
     
     <li data-nav-id="/reference/step/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -1136,7 +1136,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/fargate/" title="Fargate" class="dd-item active">
+      <li data-nav-id="/reference/step/fargate/" title="Fargate" class="dd-item ">
         <a href="/reference/step/fargate/">
         Fargate
         
@@ -1745,8 +1745,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/9d28fed5">9d28fed5</a><p/>
-  Date: 2018-12-16 19:04:57 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/8dee1805">8dee1805</a><p/>
+  Date: 2019-01-31 06:33:04 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1770,7 +1770,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/step/fargate.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/codecommit.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1805,7 +1805,7 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/step/'></a> > Fargate
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > CodeCommit
           
          
           
@@ -1824,17 +1824,7 @@ pre {
 <ul>
 <li>
 <ul>
-<li><a href="#task-awareness">Task Awareness</a></li>
-<li><a href="#package">Package</a></li>
-<li><a href="#push-to-ecr">Push to ECR</a></li>
-<li><a href="#state-machine">State Machine</a></li>
-<li><a href="#fargate-cluster">Fargate Cluster</a>
-<ul>
-<li><a href="#ecs-task-definition">ECS Task Definition</a></li>
-</ul></li>
-<li><a href="#configuration">Configuration</a></li>
-<li><a href="#provisioning">Provisioning</a></li>
-<li><a href="#result">Result</a></li>
+<li><a href="#events">Events</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -1849,7 +1839,7 @@ pre {
         
         <div id="body-inner">
           
-            <h1>Fargate</h1>
+            <h1>CodeCommit</h1>
           
 
         
@@ -1857,303 +1847,35 @@ pre {
 
 
 
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Teaching people to do serverless is hard. It&#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&#39;s not about doing technology</p>&mdash; Paul Johnston (@PaulDJohnston) <a href="https://twitter.com/PaulDJohnston/status/1073347546553217024?ref_src=twsrc%5Etfw">December 13, 2018</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>The CodeCommit Lambda <a href="https://docs.aws.amazon.com/codecommit/latest/userguide/how-to-notify-lambda.html">event source</a>
+allows you to trigger lambda functions in response to CodeCommit repository events.</p>
 
+<h2 id="events">Events</h2>
 
-<p>While Serverless and FaaS are often used interchangeably, there are types of
-workloads that are more challenging to move to FaaS. Perhaps due to third
-party libraries, latency, or storage requirements, the FaaS model
-isn&rsquo;t an ideal fit. An example that is commonly provided is the need
-to run <a href="https://www.ffmpeg.org/">ffmpeg</a>.</p>
+<p>Lambda functions triggered in response to CodeCommit evetms use a combination of <a href="https://docs.aws.amazon.com/codecommit/latest/APIReference/API_RepositoryTrigger.html">events and branches</a> to manage which state changes trigger your lambda function.</p>
 
-<p>To benefit from the serverless model in these cases, Sparta provides
-the ability to leverage the <a href="https://aws.amazon.com/fargate">Fargate</a> service
-to run Containers without needing to manage servers.</p>
+<p>To create an event subscriber use a constructor as in:</p>
 
-<p>There are several steps to <em>Fargate-ifying</em> your application and Sparta exposes
-functions and hooks to make that operation scoped to a <code>provision</code> operation.</p>
-
-<p>Those steps include:</p>
-
-<ol>
-<li>Make the application Task-aware</li>
-<li>Package your application in a Docker image</li>
-<li>Push the Docker image to <a href="https://aws.amazon.com/ecr/">Amazon ECR</a></li>
-<li>Reference the ECR URL in a Fargate Task</li>
-<li>Provision an ECS cluster that hosts the Task</li>
-</ol>
-
-<p>This overview is based on the <a href="https://github.com/mweagle/SpartaStepServicefull">SpartaStepServicefull</a>
-project. The implementation uses a combination of <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandlers</a>
-to achieve the end result.</p>
-
-<p>Please see <a href="https://github.com/mweagle/SpartaStepServicefull/blob/master/bootstrap/servicefull_build.go">servicefull_build.go</a>
-for the most up-to-date version of code samples.</p>
-
-<h2 id="task-awareness">Task Awareness</h2>
-
-<p>The first step is to provide an opportunity for our application to behave
-differently when run as a Fargate task. To do this we add a new
-application subcommand option that augments the standard <code>Main</code> behavior:</p>
-
-<pre><code class="language-go">// Add a hook to do something
-fargateTask := &amp;cobra.Command{
-  Use:   &quot;fargateTask&quot;,
-  Short: &quot;Sample Fargate task&quot;,
-  Long:  `Sample Fargate task that simply logs a message&quot;`,
-  RunE: func(cmd *cobra.Command, args []string) error {
-    fmt.Printf(&quot;Insert your Fargate code here! 🎉&quot;)
-    return nil
-  },
+<pre><code class="language-go">// CodeCommit reactor function
+func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
+  logger.WithFields(logrus.Fields{
+    &quot;Event&quot;: event,
+  }).Info(&quot;Event received&quot;)
+  return &amp;event, nil
 }
-// Register the command with the Sparta root dispatcher. This
-// command `fargateTask` matches the command line option in the
-// Dockerfile that is used to build the image.
-sparta.CommandLineOptions.Root.AddCommand(fargateTask)
-</code></pre>
 
-<p>This subcommand is defined in the <a href="https://github.com/mweagle/SpartaStepServicefull/blob/master/bootstrap/servicefull_task.go">servicefull_task</a>
-file. Note that the file uses <code>go</code> <a href="https://dave.cheney.net/2013/10/12/how-to-use-conditional-compilation-with-the-go-build-tool">build tags</a>
-so that the new <strong>fargateTask</strong> subcommand is only available when the
-build target includes the <em>lambdaBinary</em> flag:</p>
-
-<pre><code class="language-go">// +build lambdabinary
-
-package bootstrap
-</code></pre>
-
-<p>We can now package our Task-aware executable and deploy it to the cloud.</p>
-
-<h2 id="package">Package</h2>
-
-<p>The first step is to create a version of your application that
-can support a Fargate task. This is done in the <code>ecrImageBuilderDecorator</code>
-function which delegates the compiling and image creation to Sparta:</p>
-
-<pre><code class="language-go">// Always build the image
-buildErr := spartaDocker.BuildDockerImage(serviceName,
-  &quot;&quot;,
-  dockerTags,
-  logger)
-</code></pre>
-
-<p>The second empty argument above is an optional <em>Dockerfile</em> path. The sample
-project uses the default <em>Dockerfile</em> filename and defines that at the root
-of the repository. The full <em>Dockerfile</em> is:</p>
-
-<pre><code class="language-docker">FROM alpine:3.8
-RUN apk update &amp;&amp; apk add ca-certificates &amp;&amp; rm -rf /var/cache/apk/*
-
-# Sparta provides the SPARTA_DOCKER_BINARY argument to the builder
-# in order to embed the binary.
-# Ref: https://docs.docker.com/engine/reference/builder/
-ARG SPARTA_DOCKER_BINARY
-ADD $SPARTA_DOCKER_BINARY /SpartaServicefull
-CMD [&quot;/SpartaServicefull&quot;, &quot;fargateTask&quot;]
-</code></pre>
-
-<p>The <code>BuildDockerImage</code> function supplies the transient binary executable
-path to docker via the <strong>SPARTA_DOCKER_BINARY</strong> <a href="https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg">ARG</a>
-value.</p>
-
-<p>The <code>CMD</code> instruction includes our previously registered <strong>fargateTask</strong>
-subcommand name to invoke the Task-appropriate codepath at runtime.</p>
-
-<p>The log output includes the docker build info:</p>
-
-<pre><code>INFO[0002] Calling WorkflowHook
-  ServiceDecoratorHook=github.com/mweagle/SpartaStepServicefull/bootstrap.ecrImageBuilderDecorator.func1
-  WorkflowHookContext=&quot;map[]&quot;
-INFO[0002] Docker version 18.09.0, build 4d60db4
-INFO[0002] Running `go generate`
-INFO[0002] Compiling binary
-  Name=ServicefulStepFunction-1544976454011339000-docker.lambda.amd64
-INFO[0003] Creating Docker image
-  Tags=&quot;map[servicefulstepfunction:adc67a77aef22b6dab9c6156d13853e2cfe06488.1544976453]&quot;
- NFO[0004] Sending build context to Docker daemon  35.43MB
-INFO[0004] Step 1/5 : FROM alpine:3.8
-INFO[0004]  ---&gt; 196d12cf6ab1
-INFO[0004] Step 2/5 : RUN apk update &amp;&amp; apk add ca-certificates &amp;&amp; rm -rf /var/cache/apk/*
-INFO[0004]  ---&gt; Using cache
-INFO[0004]  ---&gt; 99402375b7f2
-INFO[0004] Step 3/5 : ARG SPARTA_DOCKER_BINARY
-INFO[0004]  ---&gt; Using cache
-INFO[0004]  ---&gt; a44d27522c40
-INFO[0004] Step 4/5 : ADD $SPARTA_DOCKER_BINARY /SpartaServicefull
-INFO[0005]  ---&gt; 87ffd10e9901
-INFO[0005] Step 5/5 : CMD [&quot;/SpartaServicefull&quot;, &quot;fargateTask&quot;]
-INFO[0005]  ---&gt; Running in 0a3b503201c7
-INFO[0005] Removing intermediate container 0a3b503201c7
-INFO[0005]  ---&gt; 7cb1b2261a92
-INFO[0005] Successfully built 7cb1b2261a92
-INFO[0005] Successfully tagged
-  servicefulstepfunction:adc67a77aef22b6dab9c6156d13853e2cfe06488.1544976453
-</code></pre>
-
-<h2 id="push-to-ecr">Push to ECR</h2>
-
-<p>The next step is to push the locally built image to the Elastic
-Container Registry. The push will return either the ECR URL
-which will be used as Fargate Task <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ecs-taskdefinition-containerdefinitions.html#cfn-ecs-taskdefinition-containerdefinition-image">image</a>
-property or an error:</p>
-
-<pre><code class="language-go">// Push the image to ECR &amp; store the URL s.t. we can properly annotate
-// the CloudFormation template
-ecrURLPush, pushImageErr := spartaDocker.PushDockerImageToECR(buildTag,
-  ecrRepositoryName,
-  awsSession,
-  logger)
-</code></pre>
-
-<p>The ECR push URL is stored in the <code>context</code> variable so that a downstream
-Fargate cluster builder knows the image to use:</p>
-
-<pre><code class="language-go">context[contextKeyImageURL] = ecrURLPush
-</code></pre>
-
-<h2 id="state-machine">State Machine</h2>
-
-<p>The Step Function definition indirectly references the Fargate
-Task via task specific <a href="https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ecs.html">parameters</a>:</p>
-
-<pre><code class="language-go">fargateParams := spartaStep.FargateTaskParameters{
-  LaunchType:     &quot;FARGATE&quot;,
-  Cluster:        gocf.Ref(resourceNames.ECSCluster).String(),
-  TaskDefinition: gocf.Ref(resourceNames.ECSTaskDefinition).String(),
-  NetworkConfiguration: &amp;spartaStep.FargateNetworkConfiguration{
-    AWSVPCConfiguration: &amp;gocf.ECSServiceAwsVPCConfiguration{
-      Subnets: gocf.StringList(
-        gocf.Ref(resourceNames.PublicSubnetAzs[0]).String(),
-        gocf.Ref(resourceNames.PublicSubnetAzs[1]).String(),
-      ),
-      AssignPublicIP: gocf.String(&quot;ENABLED&quot;),
-    },
-  },
-}
-fargateState := spartaStep.NewFargateTaskState(&quot;Run Fargate Task&quot;, fargateParams)
-</code></pre>
-
-<p>The <strong>ECSCluster</strong> and <strong>ECSTaskDefinition</strong> are resources that are provisioned
-by the <code>fargateClusterDecorator</code> decorator function.</p>
-
-<h2 id="fargate-cluster">Fargate Cluster</h2>
-
-<p>The final step is to provision the ECS cluster that supports the Fargate
-task. This is encapsulated in the <code>fargateClusterDecorator</code> which creates
-the required set of CloudFormation resources. The set of CloudFormation
-resource names is represented in the <code>stackResourceNames</code> struct:</p>
-
-<pre><code class="language-go">type stackResourceNames struct {
-  StepFunction              string
-  SNSTopic                  string
-  ECSCluster                string
-  ECSRunTaskRole            string
-  ECSTaskDefinition         string
-  ECSTaskDefinitionLogGroup string
-  ECSTaskDefinitionRole     string
-  VPC                       string
-  InternetGateway           string
-  AttachGateway             string
-  RouteViaIgw               string
-  PublicRouteViaIgw         string
-  ECSSecurityGroup          string
-  PublicSubnetAzs           []string
+func main() {
+  // ...
+  handler := spartaArchetype.NewCodeCommitReactor(reactorFunc)
+  reactor, reactorErr := spartaArchetype.NewCodeCommitReactor(handler,
+    gocf.String(&quot;MyRepositoryName&quot;),
+    nil, // Defaults to 'all' branches
+    nil, // Defaults to 'all' events
+    nil) // Additional IAM privileges
+  ...
 }
 </code></pre>
-
-<p>The <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definitions.html">ECS Task Definition</a>
-is of particular interest and is where the inline created <strong>ECR_URL</strong> is used to
-define a FARGATE task.</p>
-
-<h3 id="ecs-task-definition">ECS Task Definition</h3>
-
-<pre><code class="language-go">imageURL, _ := context[contextKeyImageURL].(string)
-if imageURL == &quot;&quot; {
-  return errors.Errorf(&quot;Failed to get image URL from context with key %s&quot;,
-    contextKeyImageURL)
-}
-...
-// Create the ECS task definition
-ecsTaskDefinition := &amp;gocf.ECSTaskDefinition{
-  ExecutionRoleArn:        gocf.GetAtt(resourceNames.ECSTaskDefinitionRole, &quot;Arn&quot;),
-  RequiresCompatibilities: gocf.StringList(gocf.String(&quot;FARGATE&quot;)),
-  CPU:                     gocf.String(&quot;256&quot;),
-  Memory:                  gocf.String(&quot;512&quot;),
-  NetworkMode:             gocf.String(&quot;awsvpc&quot;),
-  ContainerDefinitions: &amp;gocf.ECSTaskDefinitionContainerDefinitionList{
-    gocf.ECSTaskDefinitionContainerDefinition{
-      Image:     gocf.String(imageURL),
-      Name:      gocf.String(&quot;sparta-servicefull&quot;),
-      Essential: gocf.Bool(true),
-      LogConfiguration: &amp;gocf.ECSTaskDefinitionLogConfiguration{
-        LogDriver: gocf.String(&quot;awslogs&quot;),
-        // Options Ref: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
-        Options: map[string]interface{}{
-          &quot;awslogs-region&quot;: gocf.Ref(&quot;AWS::Region&quot;),
-          &quot;awslogs-group&quot;: strings.Join([]string{&quot;&quot;,
-            sparta.ProperName,
-            serviceName}, &quot;/&quot;),
-          &quot;awslogs-stream-prefix&quot;: serviceName,
-          &quot;awslogs-create-group&quot;:  &quot;true&quot;,
-        },
-      },
-    },
-  },
-}
-</code></pre>
-
-<h2 id="configuration">Configuration</h2>
-
-<p>The final step is to provide the three decorators to the
-<a href="https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks">WorkflowHooks</a> structure:</p>
-
-<pre><code class="language-go">workflowHooks := &amp;sparta.WorkflowHooks{
-  ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
-    ecrImageBuilderDecorator(&quot;spartadocker&quot;),
-    // Then build the state machine
-    stateMachine.StateMachineDecorator(),
-    // Then the ECS cluster that supports the Fargate task
-    fargateClusterDecorator(resourceNames),
-  },
-}
-</code></pre>
-
-<h2 id="provisioning">Provisioning</h2>
-
-<p>The provisioning workflow for this service is the same as a Lambda-based one:</p>
-
-<pre><code class="language-shell">$ go run main.provision --s3Bucket $MY_S3_BUCKET
-</code></pre>
-
-<p>Output:</p>
-
-<pre><code>INFO[0000] ════════════════════════════════════════════════
-INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
-INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 597d3ba
-INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO[0000] ════════════════════════════════════════════════
-INFO[0000] Service: ServicefulStepFunction
-  LinkFlags= Option=provision UTC=&quot;2018-12-16T16:07:31Z&quot;
-INFO[0000] ════════════════════════════════════════════════
-INFO[0000] Using `git` SHA for StampedBuildID
-  Command=&quot;git rev-parse HEAD&quot; SHA=adc67a77aef22b6dab9c6156d13853e2cfe06488
-INFO[0000] Provisioning service
-  BuildID=adc67a77aef22b6dab9c6156d13853e2cfe06488
-  CodePipelineTrigger=
-  InPlaceUpdates=false
-  NOOP=false Tags=
-WARN[0000] No lambda functions provided to Sparta.Provision()
-INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified                            Count=0
-</code></pre>
-
-<h2 id="result">Result</h2>
-
-<p>The end result is a Step function that uses our <code>go</code> binary, Step functions,
-and SNS rather than Lambda functions:</p>
-
-<p><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" alt="Step Function" title="Step Function" /></p>
 
 
 <footer class=" footline" >
@@ -2598,6 +2320,7 @@ and SNS rather than Lambda functions:</p>
             
                 
                     
+                    
                 
                 
 
@@ -2610,6 +2333,26 @@ and SNS rather than Lambda functions:</p>
             
             
                 
+                    
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                        
+                        
                     
                 
                 
@@ -2685,150 +2428,6 @@ and SNS rather than Lambda functions:</p>
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
                         
             
@@ -2950,13 +2549,10 @@ and SNS rather than Lambda functions:</p>
             
                 
                     
-                    
                 
                 
 
                     
-                    
-                        
                     
                     
 
@@ -2966,8 +2562,37 @@ and SNS rather than Lambda functions:</p>
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
                         
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
                         
+            
+            
+                
                     
                 
                 
@@ -2985,6 +2610,21 @@ and SNS rather than Lambda functions:</p>
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
                     
                 
                 
@@ -3002,8 +2642,87 @@ and SNS rather than Lambda functions:</p>
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
                         
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+            
+        
+                    
                         
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
                     
                 
                 
@@ -3447,10 +3166,10 @@ and SNS rather than Lambda functions:</p>
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/step/lambda/" title="Lambda"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/archetypes/" title=""> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/reference/step/services/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/archetypes/cloudwatch/" title="CloudWatch" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
