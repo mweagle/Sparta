@@ -1,6 +1,6 @@
 # Change Notes
 
-## v1.9.1 - The Commitment Edition 💕
+## v1.9.1 - The CodeCommitment Edition 💕
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
@@ -25,7 +25,10 @@
     ```
   - Updated to [staticcheck.io](https://staticcheck.io/)
 - :bug:  **FIXED**
+  - [Add CodeCommit support](https://github.com/mweagle/Sparta/issues/86)
   - [Fixed broken link to AWS documentation](https://github.com/mweagle/Sparta/pull/136)
+  - [RegisterLambdaUtilizationMetricPublisher Name ref obsolete](https://github.com/mweagle/Sparta/issues/130)
+  - [Document archetype constructors](https://github.com/mweagle/Sparta/issues/119)
 
 ## v1.9.0 - The LayerCake Edition 🍰
 
