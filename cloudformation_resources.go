@@ -57,7 +57,7 @@ func newCloudFormationResource(resourceType string, logger *logrus.Logger) (gocf
 		logger.WithFields(logrus.Fields{
 			"Type": resourceType,
 		}).Fatal("Failed to create CloudFormation CustomResource!")
-		return nil, fmt.Errorf("Unsupported CustomResourceType: %s", resourceType)
+		return nil, fmt.Errorf("unsupported CustomResourceType: %s", resourceType)
 	}
 	return resProps, nil
 }

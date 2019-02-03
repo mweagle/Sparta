@@ -8,6 +8,16 @@
   </url>
   
   <url>
+    <loc>/reference/archetypes/codecommit/</loc>
+    <lastmod>2019-01-31T06:33:04-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/eventsources/codecommit/</loc>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/step/services/batch/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
   </url>
@@ -104,7 +114,7 @@
   
   <url>
     <loc>/concepts/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-02-01T19:37:47+10:00</lastmod>
   </url>
   
   <url>
@@ -139,12 +149,12 @@
   
   <url>
     <loc>/reference/eventsources/cloudwatchevents/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/cloudwatchlogs/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
@@ -164,7 +174,7 @@
   
   <url>
     <loc>/reference/eventsources/dynamodb/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
@@ -179,7 +189,7 @@
   
   <url>
     <loc>/reference/eventsources/kinesis/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
@@ -189,22 +199,22 @@
   
   <url>
     <loc>/reference/eventsources/s3/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/ses/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sns/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/eventsources/sqs/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-01-31T06:32:51-08:00</lastmod>
   </url>
   
   <url>
@@ -274,7 +284,7 @@
   
   <url>
     <loc>/reference/archetypes/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-01-31T06:33:04-08:00</lastmod>
   </url>
   
   <url>

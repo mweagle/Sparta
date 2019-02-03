@@ -35,7 +35,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 
 	appendFile := func(info os.FileInfo) error {
 		zipEntryName := source
-		if "" != rootSource {
+		if rootSource != "" {
 			zipEntryName = fmt.Sprintf("%s/%s", linuxZipName(rootSource), info.Name())
 		}
 		// Create a header for this zipFile, basically let's see

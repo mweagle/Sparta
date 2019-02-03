@@ -30,18 +30,22 @@ const (
 	hugoVersion  = "0.52"
 )
 
+func xplatPath(pathParts ...string) string {
+	return filepath.Join(pathParts...)
+}
+
 var (
 	ignoreSubdirectoryPaths = []string{
-		".vendor",
-		".sparta",
-		".vscode",
-		"resources/describe",
-		"docs_source/themes/",
+		xplatPath(".vendor"),
+		xplatPath(".sparta"),
+		xplatPath(".vscode"),
+		xplatPath("resources", "describe"),
+		xplatPath("docs_source", "themes"),
 	}
-	hugoDocsSourcePath = "./docs_source"
+	hugoDocsSourcePath = xplatPath(".", "docs_source")
 	hugoDocsPaths      = []string{
 		hugoDocsSourcePath,
-		"./docs",
+		xplatPath(".", "docs"),
 	}
 	hugoPath = filepath.Join(localWorkDir, "hugo")
 	header   = strings.Repeat("-", 80)
@@ -327,10 +331,7 @@ func InstallBuildRequirements() error {
 
 	requirements := []string{
 		"github.com/golang/dep/...",
-		"honnef.co/go/tools/cmd/megacheck",
-		"honnef.co/go/tools/cmd/gosimple",
-		"honnef.co/go/tools/cmd/unused",
-		"honnef.co/go/tools/cmd/staticcheck",
+		"honnef.co/go/tools/...",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
@@ -427,14 +428,15 @@ func EnsureFormatted() error {
 
 // EnsureStaticChecks ensures that the source code passes static code checks
 func EnsureStaticChecks() error {
-	// Megacheck
-	megacheckErr := sh.Run("megacheck",
+	// https://staticcheck.io/
+	staticCheckErr := sh.Run("staticcheck",
 		"-ignore",
-		"github.com/mweagle/Sparta/CONSTANTS.go:*")
-	if megacheckErr != nil {
-		return megacheckErr
+		"github.com/mweagle/Sparta/CONSTANTS.go:*",
+		"github.com/mweagle/Sparta/...")
+	if staticCheckErr != nil {
+		return staticCheckErr
 	}
-	// Gosec
+	// https://github.com/securego/gosec
 	if mg.Verbose() {
 		return sh.Run("gosec",
 			"-exclude=G204,G505,G401",

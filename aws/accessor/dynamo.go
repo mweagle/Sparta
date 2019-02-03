@@ -15,8 +15,7 @@ import (
 )
 
 const (
-	attrID    = "id"
-	attrValue = "value"
+	attrID = "id"
 )
 
 // DynamoAccessor to make it a bit easier to work with Dynamo

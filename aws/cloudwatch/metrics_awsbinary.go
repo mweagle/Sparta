@@ -18,36 +18,64 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// MetricUnit Represents a MetricUnit type
 type MetricUnit string
 
 const (
-	UnitSeconds            MetricUnit = "Seconds"
-	UnitMicroseconds       MetricUnit = "Microseconds"
-	UnitMilliseconds       MetricUnit = "Milliseconds"
-	UnitBytes              MetricUnit = "Bytes"
-	UnitKilobytes          MetricUnit = "Kilobytes"
-	UnitMegabytes          MetricUnit = "Megabytes"
-	UnitGigabytes          MetricUnit = "Gigabytes"
-	UnitTerabytes          MetricUnit = "Terabytes"
-	UnitBits               MetricUnit = "Bits"
-	UnitKilobits           MetricUnit = "Kilobits"
-	UnitMegabits           MetricUnit = "Megabits"
-	UnitGigabits           MetricUnit = "Gigabits"
-	UnitTerabits           MetricUnit = "Terabits"
-	UnitPercent            MetricUnit = "Percent"
-	UnitCount              MetricUnit = "Count"
-	UnitBytesPerSecond     MetricUnit = "Bytes/Second"
+	// UnitSeconds Seconds
+	UnitSeconds MetricUnit = "Seconds"
+	// UnitMicroseconds Microseconds
+	UnitMicroseconds MetricUnit = "Microseconds"
+	// UnitMilliseconds Milliseconds
+	UnitMilliseconds MetricUnit = "Milliseconds"
+	// UnitBytes Bytes
+	UnitBytes MetricUnit = "Bytes"
+	//UnitKilobytes Kilobytes
+	UnitKilobytes MetricUnit = "Kilobytes"
+	//UnitMegabytes Megabytes
+	UnitMegabytes MetricUnit = "Megabytes"
+	//UnitGigabytes Gigabytes
+	UnitGigabytes MetricUnit = "Gigabytes"
+	//UnitTerabytes Terabytes
+	UnitTerabytes MetricUnit = "Terabytes"
+	//UnitBits Bits
+	UnitBits MetricUnit = "Bits"
+	//UnitKilobits Kilobits
+	UnitKilobits MetricUnit = "Kilobits"
+	//UnitMegabits Megabits
+	UnitMegabits MetricUnit = "Megabits"
+	//UnitGigabits Gigabits
+	UnitGigabits MetricUnit = "Gigabits"
+	//UnitTerabits Terabits
+	UnitTerabits MetricUnit = "Terabits"
+	//UnitPercent Percent
+	UnitPercent MetricUnit = "Percent"
+	//UnitCount Count
+	UnitCount MetricUnit = "Count"
+	//UnitBytesPerSecond BytesPerSecond
+	UnitBytesPerSecond MetricUnit = "Bytes/Second"
+	//UnitKilobytesPerSecond KilobytesPerSecond
 	UnitKilobytesPerSecond MetricUnit = "Kilobytes/Second"
+	//UnitMegabytesPerSecond MegabytesPerSecond
 	UnitMegabytesPerSecond MetricUnit = "Megabytes/Second"
+	//UnitGigabytesPerSecond GigabytesPerSecond
 	UnitGigabytesPerSecond MetricUnit = "Gigabytes/Second"
+	//UnitTerabytesPerSecond TerabytesPerSecond
 	UnitTerabytesPerSecond MetricUnit = "Terabytes/Second"
-	UnitBitsPerSecond      MetricUnit = "Bits/Second"
-	UnitKilobitsPerSecond  MetricUnit = "Kilobits/Second"
-	UnitMegabitsPerSecond  MetricUnit = "Megabits/Second"
-	UnitGigabitsPerSecond  MetricUnit = "Gigabits/Second"
-	UnitTerabitsPerSecond  MetricUnit = "Terabits/Second"
-	UnitCountPerSecond     MetricUnit = "Count/Second"
-	UnitNone               MetricUnit = "None"
+	//UnitBitsPerSecond BitsPerSecond
+	UnitBitsPerSecond MetricUnit = "Bits/Second"
+	//UnitKilobitsPerSecond KilobitsPerSecond
+	UnitKilobitsPerSecond MetricUnit = "Kilobits/Second"
+	//UnitMegabitsPerSecond MegabitsPerSecond
+	UnitMegabitsPerSecond MetricUnit = "Megabits/Second"
+	//UnitGigabitsPerSecond GigabitsPerSecond
+	UnitGigabitsPerSecond MetricUnit = "Gigabits/Second"
+	//UnitTerabitsPerSecond TerabitsPerSecond
+	UnitTerabitsPerSecond MetricUnit = "Terabits/Second"
+	//UnitCountPerSecond CountPerSecond
+	UnitCountPerSecond MetricUnit = "Count/Second"
+	// UnitNone No units
+	UnitNone MetricUnit = "None"
 )
 
 // publishMetrics is the actual metric publishing logic. T

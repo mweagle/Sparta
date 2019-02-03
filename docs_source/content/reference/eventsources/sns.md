@@ -10,7 +10,7 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 Assume that we have an SNS topic that broadcasts notifications.  We've been asked to write a lambda function that logs the _Subject_ and _Message_ text to CloudWatch logs for later processing.
 
-# Getting Started
+## Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -27,7 +27,7 @@ func echoSNSEvent(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (*awsL
 }
 ```
 
-# Unmarshalling the SNS Event
+## Unmarshalling the SNS Event
 
 SNS events are delivered in batches, via lists of [SNSEventRecords](https://godoc.org/github.com/aws/aws-lambda-go/events#SNSEventRecord
 ), so we'll need to process each record.
@@ -43,7 +43,7 @@ for _, eachRecord := range lambdaEvent.Records {
 
 That's enough to get the data into CloudWatch Logs.
 
-# Sparta Integration
+## Sparta Integration
 
 With the core of the `echoSNSEvent` complete, the next step is to integrate the **go** function with Sparta.  This is performed by
 the [appendSNSLambda](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79) function.  Since the `echoSNSEvent`
@@ -56,7 +56,7 @@ lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoSNSEvent),
   sparta.IAMRoleDefinition{})
 ```
 
-# Event Source Registration
+## Event Source Registration
 
 If we were to deploy this Sparta application, the `echoSNSEvent` function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda's [Permissions](http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html):
 
@@ -82,6 +82,6 @@ With the `lambdaFn` fully defined, we can provide it to `sparta.Main()` and depl
   * Provide the lambda function & IAMRoleDefinition to `sparta.NewAWSLambda()`
   * Add the necessary [Permissions](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) to the `LambdaAWSInfo` struct so that the lambda function is triggered.
 
-# Other Resources
+## Other Resources
 
   * TBD

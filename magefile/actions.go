@@ -16,7 +16,7 @@ func Log(formatSpecifier string, args ...interface{}) {
 		if len(args) != 0 {
 			log.Printf(formatSpecifier, args...)
 		} else {
-			log.Printf(formatSpecifier)
+			log.Print(formatSpecifier)
 		}
 	}
 }
@@ -56,9 +56,7 @@ func ApplyToSource(fileExtension string,
 
 	commandArgs := []string{}
 	if len(commandParts) > 1 {
-		for _, eachPart := range commandParts[1:] {
-			commandArgs = append(commandArgs, eachPart)
-		}
+		commandArgs = append(commandArgs, commandParts[1:]...)
 	}
 	for _, eachFile := range eligibleSourceFiles {
 		applyArgs := append(commandArgs, eachFile)
@@ -90,9 +88,7 @@ func SpartaCommand(commandParts ...string) error {
 		"run",
 		curDir,
 	}
-	for _, eachCommandPart := range commandParts {
-		commandArgs = append(commandArgs, eachCommandPart)
-	}
+	commandArgs = append(commandArgs, commandParts...)
 	if noopValue != "" {
 		commandArgs = append(commandArgs, "--noop")
 	}
@@ -125,9 +121,15 @@ func Delete() error {
 	return SpartaCommand("delete")
 }
 
+// Explore opens up the terminal GUI
+func Explore() error {
+	// Get the bucketName
+	return SpartaCommand("explore")
+}
+
 // Status returns a report for the given status
 func Status(plaintext ...bool) error {
-	if len(plaintext) == 1 && plaintext[0] == true {
+	if len(plaintext) == 1 && plaintext[0] {
 		return SpartaCommand("status")
 	}
 	return SpartaCommand("status", "--redact")

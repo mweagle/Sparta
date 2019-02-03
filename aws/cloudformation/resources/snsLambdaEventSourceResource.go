@@ -40,14 +40,15 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 		TopicArn: aws.String(command.SNSTopicArn.Literal),
 	}
 	listSubscriptions, listSubscriptionsErr := snsSvc.ListSubscriptionsByTopic(snsInput)
-	if nil != listSubscriptionsErr {
+	if listSubscriptionsErr != nil {
 		return nil, listSubscriptionsErr
 	}
 	var lambdaSubscriptionArn string
 	for _, eachSubscription := range listSubscriptions.Subscriptions {
-		if *eachSubscription.Protocol == "lambda" && *eachSubscription.Endpoint == command.LambdaTargetArn.Literal {
-			if "" != lambdaSubscriptionArn {
-				return nil, fmt.Errorf("Multiple SNS %s registrations found for lambda: %s",
+		if *eachSubscription.Protocol == "lambda" &&
+			*eachSubscription.Endpoint == command.LambdaTargetArn.Literal {
+			if lambdaSubscriptionArn != "" {
+				return nil, fmt.Errorf("multiple SNS %s registrations found for lambda: %s",
 					*snsInput.TopicArn,
 					command.LambdaTargetArn.Literal)
 			}
@@ -62,14 +63,14 @@ func (command SNSLambdaEventSourceResource) updateRegistration(isTargetActive bo
 	}).Info("Current SNS subscription status")
 
 	var opErr error
-	if isTargetActive && "" == lambdaSubscriptionArn {
+	if isTargetActive && lambdaSubscriptionArn == "" {
 		subscribeInput := &sns.SubscribeInput{
 			Protocol: aws.String("lambda"),
 			TopicArn: aws.String(command.SNSTopicArn.Literal),
 			Endpoint: aws.String(command.LambdaTargetArn.Literal),
 		}
 		_, opErr = snsSvc.Subscribe(subscribeInput)
-	} else if !isTargetActive && "" != lambdaSubscriptionArn {
+	} else if !isTargetActive && lambdaSubscriptionArn != "" {
 		unsubscribeInput := &sns.UnsubscribeInput{
 			SubscriptionArn: aws.String(lambdaSubscriptionArn),
 		}

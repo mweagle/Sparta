@@ -99,7 +99,7 @@ var optionsProvision optionsProvisionStruct
 
 func provisionBuildID(userSuppliedValue string, logger *logrus.Logger) (string, error) {
 	buildID := userSuppliedValue
-	if "" == buildID {
+	if buildID == "" {
 		// That's cool, let's see if we can find a git SHA
 		cmd := exec.Command("git",
 			"rev-parse",

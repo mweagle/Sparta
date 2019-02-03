@@ -23,7 +23,7 @@ func platformAccountUserName(awsSession *session.Session) (string, error) {
 		userName = *userInfo.User.UserId
 	}
 	if len(userName) <= 0 {
-		return "", fmt.Errorf("Failed to find valid user identifier from AWS")
+		return "", fmt.Errorf("failed to find valid user identifier from AWS")
 	}
 	return userName, nil
 }

@@ -143,7 +143,7 @@ func methodRequestTemplates(method *Method) (map[string]string, error) {
 	for _, eachContentType := range method.SupportedRequestContentTypes {
 		vtlMapping, vtlMappingExists := supportedTemplates[eachContentType]
 		if !vtlMappingExists {
-			return nil, fmt.Errorf("Unsupported method request template Content-Type provided: %s", eachContentType)
+			return nil, fmt.Errorf("unsupported method request template Content-Type provided: %s", eachContentType)
 		}
 		userDefinedTemplates[eachContentType] = vtlMapping
 	}
@@ -219,12 +219,12 @@ func apiStageInfo(apiName string,
 	for _, eachRestAPI := range restApisOutput.Items {
 		if *eachRestAPI.Name == apiName {
 			if restAPIID != "" {
-				return nil, fmt.Errorf("Multiple RestAPI matches for API Name: %s", apiName)
+				return nil, fmt.Errorf("multiple RestAPI matches for API Name: %s", apiName)
 			}
 			restAPIID = *eachRestAPI.Id
 		}
 	}
-	if "" == restAPIID {
+	if restAPIID == "" {
 		return nil, nil
 	}
 	// API exists...does the stage name exist?
@@ -241,7 +241,7 @@ func apiStageInfo(apiName string,
 	for _, eachStage := range stagesOutput.Item {
 		if *eachStage.StageName == stageName {
 			if nil != matchingStageOutput {
-				return nil, fmt.Errorf("Multiple stage matches for name: %s", stageName)
+				return nil, fmt.Errorf("multiple stage matches for name: %s", stageName)
 			}
 			matchingStageOutput = eachStage
 		}
@@ -514,10 +514,10 @@ func (api *API) export(serviceName string,
 		FailOnWarnings: gocf.Bool(false),
 		Name:           gocf.String(api.name),
 	}
-	if "" != api.CloneFrom {
+	if api.CloneFrom != "" {
 		apiGatewayRes.CloneFrom = gocf.String(api.CloneFrom)
 	}
-	if "" == api.Description {
+	if api.Description == "" {
 		apiGatewayRes.Description = gocf.String(fmt.Sprintf("%s RestApi", serviceName))
 	} else {
 		apiGatewayRes.Description = gocf.String(api.Description)
@@ -736,7 +736,7 @@ func (api *API) NewResource(pathPart string, parentLambda *LambdaAWSInfo) (*Reso
 	resourcesKey := fmt.Sprintf("%s%s", parentLambda.lambdaFunctionName(), pathPart)
 	_, exists := api.resources[resourcesKey]
 	if exists {
-		return nil, fmt.Errorf("Path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFunctionName())
+		return nil, fmt.Errorf("path %s already defined for lambda function: %s", pathPart, parentLambda.lambdaFunctionName())
 	}
 	resource := &Resource{
 		pathPart:     pathPart,
@@ -768,12 +768,12 @@ func (resource *Resource) NewMethod(httpMethod string,
 	keyname := httpMethod
 	existingMethod, exists := resource.Methods[keyname]
 	if exists {
-		return nil, fmt.Errorf("Method %s (Auth: %#v) already defined for resource",
+		return nil, fmt.Errorf("method %s (Auth: %#v) already defined for resource",
 			httpMethod,
 			existingMethod.authorizationID)
 	}
-	if 0 == defaultHTTPStatusCode {
-		return nil, fmt.Errorf("Invalid default HTTP status (%d) code for method", defaultHTTPStatusCode)
+	if defaultHTTPStatusCode == 0 {
+		return nil, fmt.Errorf("invalid default HTTP status (%d) code for method", defaultHTTPStatusCode)
 	}
 
 	integration := Integration{
@@ -824,8 +824,8 @@ func (resource *Resource) NewMethod(httpMethod string,
 	// Populate Integration.Responses and the method Parameters
 	for _, i := range possibleHTTPStatusCodeResponses {
 		statusText := http.StatusText(i)
-		if "" == statusText {
-			return nil, fmt.Errorf("Invalid HTTP status code %d provided for method: %s",
+		if statusText == "" {
+			return nil, fmt.Errorf("invalid HTTP status code %d provided for method: %s",
 				i,
 				httpMethod)
 		}
@@ -863,7 +863,7 @@ func (resource *Resource) NewAuthorizedMethod(httpMethod string,
 	defaultHTTPStatusCode int,
 	possibleHTTPStatusCodeResponses ...int) (*Method, error) {
 	if authorizerID == nil {
-		return nil, fmt.Errorf("AuthorizerID must not be `nil` for Authorized Method")
+		return nil, fmt.Errorf("authorizerID must not be `nil` for Authorized Method")
 	}
 	method, methodErr := resource.NewMethod(httpMethod,
 		defaultHTTPStatusCode,

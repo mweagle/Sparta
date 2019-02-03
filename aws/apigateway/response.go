@@ -32,7 +32,7 @@ func (apigError *Error) Error() string {
 // instances will be properly typecast.
 func NewErrorResponse(statusCode int, messages ...interface{}) *Error {
 
-	additionalMessages := make([]string, len(messages), len(messages))
+	additionalMessages := make([]string, len(messages))
 	for eachIndex, eachMessage := range messages {
 		switch typedValue := eachMessage.(type) {
 		case error:

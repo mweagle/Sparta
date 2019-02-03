@@ -12,19 +12,19 @@
     <title>SNS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1547999749" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1547999749" rel="stylesheet">
-    <link href="/css/hybrid.css?1547999749" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1547999749" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1547999749" rel="stylesheet">
-    <link href="/css/auto-complete.css?1547999749" rel="stylesheet">
-    <link href="/css/theme.css?1547999749" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1547999749" rel="stylesheet">
+    <link href="/css/nucleus.css?1549159539" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1549159539" rel="stylesheet">
+    <link href="/css/hybrid.css?1549159539" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1549159539" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1549159539" rel="stylesheet">
+    <link href="/css/auto-complete.css?1549159539" rel="stylesheet">
+    <link href="/css/theme.css?1549159539" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1549159539" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1547999749" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1549159539" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1547999749"></script>
+    <script src="/js/jquery-2.x.min.js?1549159539"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1547999749"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1547999749"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1549159539"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1549159539"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1547999749"></script>
+<script type="text/javascript" src="/js/search.js?1549159539"></script>
 
     
   </div>
@@ -394,6 +394,25 @@ pre {
  
   
     
+      <li data-nav-id="/reference/eventsources/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/eventsources/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
       <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
         <a href="/reference/eventsources/cloudformation/">
         CloudFormation
@@ -610,6 +629,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/archetypes/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1707,8 +1745,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
-  Date: 2018-12-22 07:18:22 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/24876a56">24876a56</a><p/>
+  Date: 2019-01-31 06:32:51 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1784,13 +1822,17 @@ pre {
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li><a href="#goal">Goal</a></li>
+<li><a href="#goal">Goal</a>
+<ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#unmarshalling-the-sns-event">Unmarshalling the SNS Event</a></li>
 <li><a href="#sparta-integration">Sparta Integration</a></li>
 <li><a href="#event-source-registration">Event Source Registration</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
+</ul></li>
+<li><a href="#wrapping-up">Wrapping Up</a>
+<ul>
 <li><a href="#other-resources">Other Resources</a></li>
+</ul></li>
 </ul>
 </nav>
     </div>
@@ -1818,7 +1860,7 @@ pre {
 
 <p>Assume that we have an SNS topic that broadcasts notifications.  We&rsquo;ve been asked to write a lambda function that logs the <em>Subject</em> and <em>Message</em> text to CloudWatch logs for later processing.</p>
 
-<h1 id="getting-started">Getting Started</h1>
+<h2 id="getting-started">Getting Started</h2>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -1834,7 +1876,7 @@ func echoSNSEvent(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (*awsL
 }
 </code></pre>
 
-<h1 id="unmarshalling-the-sns-event">Unmarshalling the SNS Event</h1>
+<h2 id="unmarshalling-the-sns-event">Unmarshalling the SNS Event</h2>
 
 <p>SNS events are delivered in batches, via lists of <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#SNSEventRecord">SNSEventRecords</a>, so we&rsquo;ll need to process each record.</p>
 
@@ -1848,7 +1890,7 @@ func echoSNSEvent(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (*awsL
 
 <p>That&rsquo;s enough to get the data into CloudWatch Logs.</p>
 
-<h1 id="sparta-integration">Sparta Integration</h1>
+<h2 id="sparta-integration">Sparta Integration</h2>
 
 <p>With the core of the <code>echoSNSEvent</code> complete, the next step is to integrate the <strong>go</strong> function with Sparta.  This is performed by
 the <a href="https://github.com/mweagle/SpartaApplication/blob/master/application.go#L79">appendSNSLambda</a> function.  Since the <code>echoSNSEvent</code>
@@ -1860,7 +1902,7 @@ pretty straightforward:</p>
   sparta.IAMRoleDefinition{})
 </code></pre>
 
-<h1 id="event-source-registration">Event Source Registration</h1>
+<h2 id="event-source-registration">Event Source Registration</h2>
 
 <p>If we were to deploy this Sparta application, the <code>echoSNSEvent</code> function would have the ability to log SNS events, but would not be invoked in response to messages published to that topic.  To register for notifications, we need to configure the lambda&rsquo;s <a href="http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html">Permissions</a>:</p>
 
@@ -1887,7 +1929,7 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
 <li>Add the necessary <a href="https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo">Permissions</a> to the <code>LambdaAWSInfo</code> struct so that the lambda function is triggered.</li>
 </ul>
 
-<h1 id="other-resources">Other Resources</h1>
+<h2 id="other-resources">Other Resources</h2>
 
 <ul>
 <li>TBD</li>
@@ -2289,6 +2331,22 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -2335,6 +2393,22 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3166,20 +3240,20 @@ lambdaFunctions = append(lambdaFunctions, lambdaFn)
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1547999749"></script>
-    <script src="/js/jquery.sticky.js?1547999749"></script>
-    <script src="/js/featherlight.min.js?1547999749"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1547999749"></script>
-    <script src="/js/highlight.pack.js?1547999749"></script>
+    <script src="/js/clipboard.min.js?1549159539"></script>
+    <script src="/js/perfect-scrollbar.min.js?1549159539"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1549159539"></script>
+    <script src="/js/jquery.sticky.js?1549159539"></script>
+    <script src="/js/featherlight.min.js?1549159539"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1549159539"></script>
+    <script src="/js/highlight.pack.js?1549159539"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1547999749"></script>
-    <script src="/js/learn.js?1547999749"></script>
-    <script src="/js/hugo-learn.js?1547999749"></script>
+    <script src="/js/modernizr.custom.71422.js?1549159539"></script>
+    <script src="/js/learn.js?1549159539"></script>
+    <script src="/js/hugo-learn.js?1549159539"></script>
 
-    <link href="/mermaid/mermaid.css?1547999749" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1547999749"></script>
+    <link href="/mermaid/mermaid.css?1549159539" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1549159539"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

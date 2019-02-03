@@ -159,9 +159,6 @@ func EnsureCustomResourceHandler(serviceName string,
 
 	//////////////////////////////////////////////////////////////////////////////
 	// Custom Resource Lambda Handler
-
-	// What if we skip the function name and just stuff it into the environment for a match?
-
 	// Insert it into the template resources...
 	logger.WithFields(logrus.Fields{
 		"CloudFormationResourceType": customResourceCloudFormationTypeName,

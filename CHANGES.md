@@ -1,5 +1,35 @@
 # Change Notes
 
+## v1.9.1 - The CodeCommitment Edition 💕
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `CodeCommitPermission` type to support CodeCommit [notifications](https://docs.aws.amazon.com/codecommit/latest/userguide/how-to-repository-email.html)
+  - There is an _archetype_ constructor that encapsulates this type of Lambda reactor.
+    - Usage:
+    ```go
+    func echoCodeCommit(ctx context.Context,
+      event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
+      // ...
+      return &event, nil
+    }
+    func main() {
+      // ...
+      reactor, reactorErr := spartaArchetype.NewCodeCommitReactor(spartaArchetype.CodeCommitReactorFunc(echoCodeCommit),
+          gocf.String("TestCodeCommitRepo"),
+          nil,
+          nil,
+          nil)
+      ...
+    }
+    ```
+  - Updated to [staticcheck.io](https://staticcheck.io/)
+- :bug:  **FIXED**
+  - [Add CodeCommit support](https://github.com/mweagle/Sparta/issues/86)
+  - [Fixed broken link to AWS documentation](https://github.com/mweagle/Sparta/pull/136)
+  - [RegisterLambdaUtilizationMetricPublisher Name ref obsolete](https://github.com/mweagle/Sparta/issues/130)
+  - [Document archetype constructors](https://github.com/mweagle/Sparta/issues/119)
+
 ## v1.9.0 - The LayerCake Edition 🍰
 
 - :warning: **BREAKING**

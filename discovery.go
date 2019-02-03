@@ -61,7 +61,7 @@ type DiscoveryInfo struct {
 // pass-through to DiscoverByName
 func Discover() (*DiscoveryInfo, error) {
 	if nil == discoverImpl {
-		return nil, fmt.Errorf("Discovery service has not been initialized")
+		return nil, fmt.Errorf("discovery service has not been initialized")
 	}
 	return discoverImpl()
 }

@@ -95,7 +95,7 @@ func NewCloudWatchReactor(reactor CloudWatchReactor,
 		return nil, errors.Wrapf(lambdaFnErr, "attempting to create reactor")
 	}
 	cloudWatchEventsPermission := sparta.CloudWatchEventsPermission{}
-	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule, 0)
+	cloudWatchEventsPermission.Rules = make(map[string]sparta.CloudWatchEventsRule)
 	for eachRuleName, eachRule := range subscriptions {
 		cloudWatchEventsPermission.Rules[eachRuleName] = eachRule
 	}

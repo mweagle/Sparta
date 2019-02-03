@@ -64,6 +64,7 @@ var (
 	// devNullLogEntry is the reserved byte value that's returned by the
 	// filteringFormatter to instruct the Writer to throw away
 	// the serialized version.
+	//lint:ignore U1000 because it's actually used
 	devNullLogEntry = []byte("/dev/null")
 )
 
@@ -72,6 +73,7 @@ var (
 // can be thrown away. A custom formatter can be used for that. So we can fake
 // this by returning a known string that tells the Out method to discard the data...
 // This isn't recommended, but it does tie things together
+//lint:ignore U1000 because it's used
 type filteringFormatter struct {
 	targetFormatter logrus.Formatter
 	originalLevel   logrus.Level
@@ -90,12 +92,13 @@ func (ff *filteringFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 // The filteringWriter works together with the filteringFormatter
 // to ignore formatted entries that are the /dev/null log entry values
+//lint:ignore U1000 because it's used
 type filteringWriter struct {
 	targetOutput io.Writer
 }
 
 func (fw *filteringWriter) Write(p []byte) (n int, err error) {
-	if bytes.Compare(p, devNullLogEntry) != 0 {
+	if !bytes.Equal(p, devNullLogEntry) {
 		return fw.targetOutput.Write(p)
 	}
 	return len(p), nil
@@ -105,9 +108,11 @@ func (fw *filteringWriter) Write(p []byte) (n int, err error) {
 // handles tapping the event handling workflow and publishing a span with optional
 // request information on error.
 type xrayInterceptor struct {
-	mode               XRayInterceptorMode
+	mode XRayInterceptorMode
+	//lint:ignore U1000 because it's used
 	filteringFormatter *filteringFormatter
-	filteringWriter    *filteringWriter
+	//lint:ignore U1000 because it's used
+	filteringWriter *filteringWriter
 }
 
 // RegisterXRayInterceptor handles pushing the tracing information into XRay

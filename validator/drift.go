@@ -75,7 +75,7 @@ func DriftDetector(errorOnDrift bool) sparta.ServiceValidationHookHandler {
 			}
 			metadata := templateRes.Metadata
 			if len(metadata) <= 0 {
-				metadata = make(map[string]interface{}, 0)
+				metadata = make(map[string]interface{})
 			}
 			golangFunc, golangFuncExists := metadata["golangFunc"]
 			if !golangFuncExists {

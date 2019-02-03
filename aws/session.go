@@ -56,16 +56,20 @@ func NewSessionWithConfigLevel(awsConfig *aws.Config,
 		awsConfig.LogLevel = aws.LogLevel(level)
 	}
 	awsConfig.Logger = &logrusProxy{logger}
-	sess := session.New(awsConfig)
-	sess.Handlers.Send.PushFront(func(r *request.Request) {
-		logger.WithFields(logrus.Fields{
-			"Service":   r.ClientInfo.ServiceName,
-			"Operation": r.Operation.Name,
-			"Method":    r.Operation.HTTPMethod,
-			"Path":      r.Operation.HTTPPath,
-			"Payload":   r.Params,
-		}).Debug("AWS Request")
-	})
+	sess, sessErr := session.NewSession(awsConfig)
+	if sessErr != nil {
+		logger.WithField("Error", sessErr).Warn("Failed to create AWS Session")
+	} else {
+		sess.Handlers.Send.PushFront(func(r *request.Request) {
+			logger.WithFields(logrus.Fields{
+				"Service":   r.ClientInfo.ServiceName,
+				"Operation": r.Operation.Name,
+				"Method":    r.Operation.HTTPMethod,
+				"Path":      r.Operation.HTTPPath,
+				"Payload":   r.Params,
+			}).Debug("AWS Request")
+		})
+	}
 
 	logger.WithFields(logrus.Fields{
 		"Name":    aws.SDKName,

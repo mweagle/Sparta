@@ -27,11 +27,11 @@
 
 [[constraint]]
   name = "github.com/AlecAivazis/survey"
-  version = "1.7.1"
+  version = "1.8.2"
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.8.1"
+  version = "1.8.2"
 
 [[constraint]]
   name = "github.com/aws/aws-xray-sdk-go"
@@ -39,7 +39,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "v1.16.22"
+  version = "v1.16.26"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
@@ -75,7 +75,7 @@
 
 [[constraint]]
   name = "github.com/pkg/errors"
-  version = "0.8.0"
+  version = "0.8.1"
 
 [[constraint]]
   branch = "master"
@@ -95,7 +95,7 @@
 
 [[constraint]]
   name = "gopkg.in/go-playground/validator.v9"
-  version = "9.25.0"
+  version = "9.26.0"
 
 [[override]]
   name = "github.com/mattn/go-runewidth"

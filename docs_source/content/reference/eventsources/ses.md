@@ -14,7 +14,7 @@ We've been asked to write a lambda function that logs inbound messages, includin
 
 There is also an additional requirement to support [immutable infrastructure](http://radar.oreilly.com/2015/06/an-introduction-to-immutable-infrastructure.html), so our service needs to manage the S3 bucket to which message bodies should be stored.  Our service cannot rely on a pre-existing S3 bucket.  The infrastructure (and associated security policies) together with the application logic is coupled.
 
-# Getting Started
+## Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -32,7 +32,7 @@ func echoSESEvent(ctx context.Context, sesEvent spartaSES.Event) (*spartaSES.Eve
 }
 ```
 
-# Unmarshalling the SES Event
+## Unmarshalling the SES Event
 
 At this point we would normally continue processing the SES event, using Sparta types until the
 official [events](https://godoc.org/github.com/aws/aws-lambda-go/events) are available.
@@ -43,7 +43,7 @@ because of the immutable infrastructure requirement.
 This requirement implies that our service must be self-contained: we can't assume that
 the S3 bucket already exists.  How can our locally compiled code access AWS-created resources?
 
-# Dynamic Resources
+## Dynamic Resources
 
 The immutable infrastructure requirement makes this lambda function a bit more complex.  Our service needs to:
 
@@ -56,7 +56,7 @@ The immutable infrastructure requirement makes this lambda function a bit more c
   * Include an IAMPrivilege so that our **go** function can access the dynamically created bucket
   * Discover the S3 Bucket at lambda execution time
 
-## Provision Message Body Storage Resource
+### Provision Message Body Storage Resource
 
 Let's first take a look at how the SES lambda handler provisions a new S3 bucket via the [MessageBodyStorage](https://godoc.org/github.com/mweagle/Sparta#MessageBodyStorage) type:
 
@@ -118,7 +118,7 @@ sesPermission.ReceiptRules = append(sesPermission.ReceiptRules,
   })
 ```
 
-## Dynamic IAMPrivilege Arn
+### Dynamic IAMPrivilege Arn
 
 Our lambda function is required to access the message body in the dynamically created `MessageBodyStorage` resource, but
 the S3 resource Arn is only defined _after_ the service is provisioned.  The solution to this is to reference the
@@ -134,7 +134,6 @@ lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
 })
 ```
 
-
 The last step is to register the `SESPermission` with the lambda info:
 
 ```go
@@ -145,7 +144,7 @@ lambdaFn.Permissions = append(lambdaFn.Permissions, sesPermission)
 
 At this point we've implicitly created an S3 bucket via the `MessageBodyStorage` value.  Our lambda function now needs to dynamically determine the AWS-assigned bucket name.
 
-## Dynamic Message Body Storage Discovery
+### Dynamic Message Body Storage Discovery
 
 Our `echoSESEvent` function needs to determine, at execution time, the `MessageBodyStorage` S3 bucket name.  This is done via `sparta.Discover()`:
 
@@ -168,7 +167,6 @@ if "" == bucketName {
   return nil, errors.Errorf("Failed to discover SES bucket from sparta.Discovery: %#v", configuration)
 }
 ```
-
 
 The `sparta.Discover()` function returns a [DiscoveryInfo](https://godoc.org/github.com/mweagle/Sparta#DiscoveryInfo) structure.  This
 data is published into the Lambda's environment variables to enable it to discover other
@@ -194,8 +192,7 @@ if "" == bucketName {
 }
 ```
 
-
-# Sparta Integration
+# #Sparta Integration
 
 The rest of `echoSESEvent` satisfies the other requirements, with a bit of help from the SES [event types](https://godoc.org/github.com/mweagle/Sparta/aws/ses):
 

@@ -40,7 +40,7 @@ func CreateS3RollbackFunc(awsSession *session.Session, s3ArtifactURL string) Rol
 			Key:    aws.String(artifactURLParts.Path),
 		}
 		versionID := artifactURLParts.Query().Get("versionId")
-		if "" != versionID {
+		if versionID != "" {
 			params.VersionId = aws.String(versionID)
 		}
 		_, err := s3Client.DeleteObject(params)
@@ -66,7 +66,7 @@ func UploadLocalFileToS3(localPath string,
 	/* #nosec */
 	reader, err := os.Open(localPath)
 	if nil != err {
-		return "", fmt.Errorf("Failed to open local archive for S3 upload: %s", err.Error())
+		return "", fmt.Errorf("failed to open local archive for S3 upload: %s", err.Error())
 	}
 	uploadInput := &s3manager.UploadInput{
 		Bucket:      &S3Bucket,
@@ -87,7 +87,7 @@ func UploadLocalFileToS3(localPath string,
 	// Binary size
 	stat, err := os.Stat(localPath)
 	if err != nil {
-		return "", fmt.Errorf("Failed to calculate upload size for file: %s", localPath)
+		return "", fmt.Errorf("failed to calculate upload size for file: %s", localPath)
 	}
 	logger.WithFields(logrus.Fields{
 		"Path":   logPath,

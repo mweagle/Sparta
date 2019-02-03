@@ -409,7 +409,7 @@ func (roleDefinition *IAMRoleDefinition) toResource(eventSourceMappings []*Event
 // from the same struct pointer, so:
 // TODO: Create a canonical IAMRoleDefinition serialization that can be used as the digest source
 func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetLambdaFnName string) string {
-	if "" == roleDefinition.cachedLogicalName {
+	if roleDefinition.cachedLogicalName == "" {
 		roleDefinition.cachedLogicalName = CloudFormationResourceName("IAMRole", serviceName, targetLambdaFnName)
 	}
 	return roleDefinition.cachedLogicalName
@@ -534,7 +534,7 @@ func (resourceInfo *customResourceInfo) export(serviceName string,
 			resourceInfo.userFunctionName)
 	}
 	lambdaDescription := resourceInfo.options.Description
-	if "" == lambdaDescription {
+	if lambdaDescription == "" {
 		lambdaDescription = fmt.Sprintf("%s CustomResource: %s",
 			serviceName,
 			resourceInfo.userFunctionName)
@@ -732,9 +732,9 @@ func (info *LambdaAWSInfo) lambdaFunctionName() string {
 	}
 	var lambdaFuncName string
 
-	if nil != info.Options &&
-		nil != info.Options.SpartaOptions &&
-		"" != info.Options.SpartaOptions.Name {
+	if info.Options != nil &&
+		info.Options.SpartaOptions != nil &&
+		info.Options.SpartaOptions.Name != "" {
 		lambdaFuncName = info.Options.SpartaOptions.Name
 	} else if info.userSuppliedFunctionName != "" {
 		lambdaFuncName = info.userSuppliedFunctionName
@@ -934,7 +934,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		dependsOn = append(dependsOn, info.RoleDefinition.logicalName(serviceName, info.lambdaFunctionName()))
 	}
 	lambdaDescription := info.Options.Description
-	if "" == lambdaDescription {
+	if lambdaDescription == "" {
 		lambdaDescription = fmt.Sprintf("%s: %s", serviceName, info.lambdaFunctionName())
 	}
 
@@ -957,7 +957,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 		lambdaResource.Layers = gocf.StringList(info.Layers...)
 	}
 
-	if "" != S3Version {
+	if S3Version != "" {
 		lambdaResource.Code.S3ObjectVersion = gocf.String(S3Version)
 	}
 	if info.Options.ReservedConcurrentExecutions != 0 {
@@ -971,7 +971,7 @@ func (info *LambdaAWSInfo) export(serviceName string,
 	if nil != info.Options.TracingConfig {
 		lambdaResource.TracingConfig = info.Options.TracingConfig
 	}
-	if "" != info.Options.KmsKeyArn {
+	if info.Options.KmsKeyArn != "" {
 		lambdaResource.KmsKeyArn = gocf.String(info.Options.KmsKeyArn)
 	}
 	if nil != info.Options.Tags {

@@ -10,7 +10,7 @@ In this section we'll walkthrough how to trigger your lambda function in respons
 
 The goal of this example is to provision a Sparta lambda function that logs Amazon Kinesis events to CloudWatch logs.
 
-# Getting Started
+## Getting Started
 
 We'll start with an empty lambda function and build up the needed functionality.
 
@@ -32,7 +32,7 @@ it, and return the value.
 
 With the function defined let's register it with Sparta.
 
-# Sparta Integration
+## Sparta Integration
 
 First we wrap the **go** function in a [LambdaAWSInfo](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo) struct:
 
@@ -44,7 +44,7 @@ lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(echoKinesisEvent),
 
 Since our lambda function doesn't access any other AWS Services, we can use an empty IAMRoleDefinition (`sparta.IAMRoleDefinition{}`).
 
-# Event Source Registration
+## Event Source Registration
 
 Then last step is to configure our AWS Lambda function with Kinesis as the [EventSource](http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html)
 

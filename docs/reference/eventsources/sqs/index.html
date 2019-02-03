@@ -12,19 +12,19 @@
     <title>SQS :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1547999749" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1547999749" rel="stylesheet">
-    <link href="/css/hybrid.css?1547999749" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1547999749" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1547999749" rel="stylesheet">
-    <link href="/css/auto-complete.css?1547999749" rel="stylesheet">
-    <link href="/css/theme.css?1547999749" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1547999749" rel="stylesheet">
+    <link href="/css/nucleus.css?1549159539" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1549159539" rel="stylesheet">
+    <link href="/css/hybrid.css?1549159539" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1549159539" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1549159539" rel="stylesheet">
+    <link href="/css/auto-complete.css?1549159539" rel="stylesheet">
+    <link href="/css/theme.css?1549159539" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1549159539" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1547999749" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1549159539" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1547999749"></script>
+    <script src="/js/jquery-2.x.min.js?1549159539"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -57,14 +57,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-close"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1547999749"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1547999749"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1549159539"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1549159539"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1547999749"></script>
+<script type="text/javascript" src="/js/search.js?1549159539"></script>
 
     
   </div>
@@ -394,6 +394,25 @@ pre {
  
   
     
+      <li data-nav-id="/reference/eventsources/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/eventsources/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
       <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
         <a href="/reference/eventsources/cloudformation/">
         CloudFormation
@@ -610,6 +629,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/archetypes/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1707,8 +1745,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/14f71ea0">14f71ea0</a><p/>
-  Date: 2018-12-22 07:18:22 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/24876a56">24876a56</a><p/>
+  Date: 2019-01-31 06:32:51 -0800 PST
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1784,13 +1822,17 @@ pre {
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li><a href="#goal">Goal</a></li>
+<li><a href="#goal">Goal</a>
+<ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#sparta-integration">Sparta Integration</a></li>
 <li><a href="#sqs-topic-definition">SQS Topic Definition</a></li>
 <li><a href="#connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</a></li>
-<li><a href="#wrapping-up">Wrapping Up</a></li>
+</ul></li>
+<li><a href="#wrapping-up">Wrapping Up</a>
+<ul>
 <li><a href="#other-resources">Other Resources</a></li>
+</ul></li>
 </ul>
 </nav>
     </div>
@@ -1818,7 +1860,7 @@ pre {
 
 <p>The goal here is to create a self-contained service that provisions a SQS queue, an AWS Lambda function that processes messages posted to the queue</p>
 
-<h1 id="getting-started">Getting Started</h1>
+<h2 id="getting-started">Getting Started</h2>
 
 <p>We&rsquo;ll start with an empty lambda function and build up the needed functionality.</p>
 
@@ -1843,7 +1885,7 @@ func sqsHandler(ctx context.Context, sqsRequest awsLambdaGo.SQSEvent) error {
 
 <p>Typically the lambda function would process each record in the event, but for this example we&rsquo;ll just log the entire batch and then return.</p>
 
-<h1 id="sparta-integration">Sparta Integration</h1>
+<h2 id="sparta-integration">Sparta Integration</h2>
 
 <p>The next step is to integrate the lambda function with Sparta:</p>
 
@@ -1855,7 +1897,7 @@ lambdaFn, _ := sparta.NewAWSLambda(sparta.LambdaName(sqsHandler),
 
 <p>Once the lambda function is integrated with Sparta, we can use a <a href="https://godoc.org/github.com/mweagle/Sparta#TemplateDecoratorHandler">TemplateDecoratorHandler</a> to include the SQS provisioning request as part of the overall service creation.</p>
 
-<h1 id="sqs-topic-definition">SQS Topic Definition</h1>
+<h2 id="sqs-topic-definition">SQS Topic Definition</h2>
 
 <p>Decorators enable a Sparta service to provision other types of infrastructure together with the core lambda functions. In this example, our <code>sqsHandler</code> function should also provision an SQS queue from which it will receive events. This is done as in the following:</p>
 
@@ -1881,7 +1923,7 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
 
 <p>This function-level decorator includes an AWS CloudFormation <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS::Queue</a> definition that will be included with the stack definition.</p>
 
-<h1 id="connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</h1>
+<h2 id="connecting-sqs-to-aws-lambda">Connecting SQS to AWS Lambda</h2>
 
 <p>The final step is to make the <code>sqsHandler</code> the Lambda&rsquo;s <a href="https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping">EventSourceMapping</a> target for the dynamically provisioned Queue&rsquo;s <em>ARN</em>:</p>
 
@@ -1896,7 +1938,7 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
 
 <p>With the <code>lambdaFn</code> fully defined, we can provide it to <code>sparta.Main()</code> and deploy our service.  It&rsquo;s also possible to use a pre-existing SQS resource by providing a string literal as the <code>EventSourceArn</code> value.</p>
 
-<h1 id="other-resources">Other Resources</h1>
+<h2 id="other-resources">Other Resources</h2>
 
 <ul>
 <li>The AWS docs have an excellent <a href="https://aws.amazon.com/blogs/aws/aws-lambda-adds-amazon-simple-queue-service-to-supported-event-sources/">SQS event source</a> walkthrough.</li>
@@ -2314,6 +2356,22 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
             
                 
                     
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
                     
                 
                 
@@ -2344,6 +2402,22 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3175,20 +3249,20 @@ lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{sparta.TemplateDecorator
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.min.js?1547999749"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1547999749"></script>
-    <script src="/js/jquery.sticky.js?1547999749"></script>
-    <script src="/js/featherlight.min.js?1547999749"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1547999749"></script>
-    <script src="/js/highlight.pack.js?1547999749"></script>
+    <script src="/js/clipboard.min.js?1549159539"></script>
+    <script src="/js/perfect-scrollbar.min.js?1549159539"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1549159539"></script>
+    <script src="/js/jquery.sticky.js?1549159539"></script>
+    <script src="/js/featherlight.min.js?1549159539"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1549159539"></script>
+    <script src="/js/highlight.pack.js?1549159539"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1547999749"></script>
-    <script src="/js/learn.js?1547999749"></script>
-    <script src="/js/hugo-learn.js?1547999749"></script>
+    <script src="/js/modernizr.custom.71422.js?1549159539"></script>
+    <script src="/js/learn.js?1549159539"></script>
+    <script src="/js/hugo-learn.js?1549159539"></script>
 
-    <link href="/mermaid/mermaid.css?1547999749" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1547999749"></script>
+    <link href="/mermaid/mermaid.css?1549159539" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1549159539"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

@@ -23,6 +23,30 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
     </item>
     
     <item>
+      <title>CodeCommit</title>
+      <link>/reference/archetypes/codecommit/</link>
+      <pubDate>Thu, 31 Jan 2019 05:47:27 +0000</pubDate>
+      
+      <guid>/reference/archetypes/codecommit/</guid>
+      <description>The CodeCommit Lambda event source allows you to trigger lambda functions in response to CodeCommit repository events.
+Events Lambda functions triggered in response to CodeCommit evetms use a combination of events and branches to manage which state changes trigger your lambda function.
+To create an event subscriber use a constructor as in:
+// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).</description>
+    </item>
+    
+    <item>
+      <title>CodeCommit</title>
+      <link>/reference/eventsources/codecommit/</link>
+      <pubDate>Thu, 31 Jan 2019 05:44:32 +0000</pubDate>
+      
+      <guid>/reference/eventsources/codecommit/</guid>
+      <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CodeCommit Events.
+Goal Assume that we&amp;rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.
+Getting Started Our lambda function is relatively short:
+import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).Info(&amp;quot;Event received&amp;quot;) return &amp;amp;event, nil }  Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
+    </item>
+    
+    <item>
       <title>AWS Batch</title>
       <link>/reference/step/services/batch/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
@@ -456,7 +480,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Serverless / Green Data Advocate (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS. Perhaps due to third party libraries, latency, or storage requirements, the FaaS model isn&amp;rsquo;t an ideal fit.</description>
     </item>
     
     <item>
