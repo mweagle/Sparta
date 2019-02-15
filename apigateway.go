@@ -469,6 +469,8 @@ type API struct {
 	CORSEnabled bool
 	// CORS options - if non-nil, supersedes CORSEnabled
 	CORSOptions *CORSOptions
+	// Endpoint configuration information
+	EndpointConfiguration *gocf.APIGatewayRestAPIEndpointConfiguration
 }
 
 // LogicalResourceName returns the CloudFormation logical
@@ -523,6 +525,10 @@ func (api *API) export(serviceName string,
 		apiGatewayRes.Description = gocf.String(api.Description)
 	}
 	apiGatewayResName := api.LogicalResourceName()
+	// Is there an endpoint type?
+	if api.EndpointConfiguration != nil {
+		apiGatewayRes.EndpointConfiguration = api.EndpointConfiguration
+	}
 	template.AddResource(apiGatewayResName, apiGatewayRes)
 	apiGatewayRestAPIID := gocf.Ref(apiGatewayResName)
 
