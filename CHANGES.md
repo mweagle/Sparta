@@ -21,6 +21,7 @@
     - See [apigateway_domain_test](https://github.com/mweagle/Sparta/blob/master/decorator/dashboard.go) for a complete example.
     - See the [AWS Documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html) for more information.
 - :bug:  **FIXED**
+  - [Support custom domains](https://github.com/mweagle/Sparta/issues/91)
 
 ## v1.9.1 - The CodeCommitment Edition 💕
 
