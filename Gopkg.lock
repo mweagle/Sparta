@@ -31,7 +31,7 @@
   version = "v1.8.2"
 
 [[projects]]
-  digest = "1:a90bdba56f4132b4ff5f90dffa4917704edea72676936c071877e43d39855b20"
+  digest = "1:72ce4e4d2b799cce320ac83e7b482e5ba3523b6df47c1c783f791c304a8bf7c1"
   name = "github.com/aws/aws-sdk-go"
   packages = [
     "aws",
@@ -89,8 +89,8 @@
     "service/xray",
   ]
   pruneopts = "UT"
-  revision = "81f3829f5a9d041041bdf56e55926691309d7699"
-  version = "v1.16.26"
+  revision = "10ce3494cb43d3d8dd58b4e5fa40edc2136bf96b"
+  version = "v1.16.36"
 
 [[projects]]
   digest = "1:8b7398992153180768849e89dabe2aaab45537f83a61f0e51b0da6f68c151206"
@@ -253,7 +253,7 @@
     "third_party/svgpan",
   ]
   pruneopts = "UT"
-  revision = "e84dfd68c163c45ea47aa24b3dc7eaa93f6675b1"
+  revision = "b421f19a5c07fe0eb5b553c4c3d681fdfcb80f26"
 
 [[projects]]
   branch = "master"
@@ -429,11 +429,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3049a7b92fb8dea3e93f52d527a4d2ca43af822f263f3332332bb22f5fceb026"
+  digest = "1:c4ce0ed64989de3fc6a4de21ced11397c03ba939179646b41c5db5de5cdc56dd"
   name = "github.com/rivo/tview"
   packages = ["."]
   pruneopts = "UT"
-  revision = "84fdb36408f35b8998d48d323f55f40b7f14a19b"
+  revision = "b373355e9db4bec1faba239e4b6dc069c356fe6f"
 
 [[projects]]
   digest = "1:52e4345e8592bcdf08663a7ff7168d49ec1b74e8f17b312a10d4aa5544b1bb22"
@@ -521,18 +521,18 @@
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
   pruneopts = "UT"
-  revision = "b8fe1690c61389d7d2a8074a507d1d40c5d30448"
+  revision = "74369b46fc6756741c016591724fd1cb8e26845f"
 
 [[projects]]
   branch = "master"
-  digest = "1:7941e2f16c0833b438cbef7fccfe4f8346f9f7876b42b29717a75d7e8c4800cb"
+  digest = "1:0d703f14f9bbbe1070ff0ce86d749dcbc9d68fb0ae554252c09bd4bb37a072e7"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "2970a3744de33489e46eba373c73655bc2377116"
+  revision = "d0b11bdaac8adb652bff00e49bcacf992835621a"
 
 [[projects]]
   digest = "1:37672ad5821719e2df8509c2edd4ba5ae192463237c73c3a2d24ef8b2bc9e36f"
@@ -560,12 +560,12 @@
   version = "v1.8.2"
 
 [[projects]]
-  digest = "1:718abca23a6d23b21b30197dd2c2bd2ee3ba88081b12caed1edb0d6bb5ef843a"
+  digest = "1:a5000fcb87d763e1d410111d32f3e1d07a6f7913f7efdf68070636c407da54d1"
   name = "gopkg.in/go-playground/validator.v9"
   packages = ["."]
   pruneopts = "UT"
-  revision = "774d09c3863ffb2e137ebe4c39ba27648d208f80"
-  version = "v9.26.0"
+  revision = "b199fa0642d29caca62b6a99d65cc981ba5edc3b"
+  version = "v9.27.0"
 
 [solve-meta]
   analyzer-name = "dep"
