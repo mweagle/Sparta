@@ -18,7 +18,7 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.9.1"
+	SpartaVersion = "1.9.2"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// LambdaBinaryTag is the build tag name used when building the binary

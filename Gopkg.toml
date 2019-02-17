@@ -39,7 +39,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "v1.16.26"
+  version = "v1.16.36"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
@@ -95,7 +95,7 @@
 
 [[constraint]]
   name = "gopkg.in/go-playground/validator.v9"
-  version = "9.26.0"
+  version = "9.27.0"
 
 [[override]]
   name = "github.com/mattn/go-runewidth"

@@ -1,5 +1,28 @@
 # Change Notes
 
+## v1.9.2 - The Names Edition 📛
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added `API.EndpointConfiguration` field to [API](https://godoc.org/github.com/mweagle/Sparta#API).
+    - This field exposes the [EndpointConfiguration](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apigateway-restapi-endpointconfiguration.html) property to specify either _EDGE_ or _REGIONAL_ API types.
+  - Added `decorator.APIGatewayDomainDecorator` to associate a custom domain with an API Gateway instance
+    - Usage:
+    ```
+      hooks := &sparta.WorkflowHooks{}
+      serviceDecorator := spartaDecorators.APIGatewayDomainDecorator(apiGateway,
+        gocf.String(acmCertARNLiteral),
+        "", // Optional base path value
+        "subdomain.mydomain.net")
+      hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+        serviceDecorator,
+      }
+    ```
+    - See [apigateway_domain_test](https://github.com/mweagle/Sparta/blob/master/decorator/dashboard.go) for a complete example.
+    - See the [AWS Documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html) for more information.
+- :bug:  **FIXED**
+  - [Support custom domains](https://github.com/mweagle/Sparta/issues/91)
+
 ## v1.9.1 - The CodeCommitment Edition 💕
 
 - :warning: **BREAKING**
