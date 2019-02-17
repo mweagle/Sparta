@@ -113,6 +113,12 @@ func APIGatewayDomainDecorator(apiGateway *sparta.API,
 			},
 		}
 		template.AddResource(dnsRecordResourceName, dnsRecordResource)
+
+		// Add an output...
+		template.Outputs["APIGatewayCustomDomain"] = &gocf.Output{
+			Description: "Custom API Gateway Domain",
+			Value:       gocf.String(domainName),
+		}
 		return nil
 	}
 	return sparta.ServiceDecoratorHookFunc(domainDecorator)
