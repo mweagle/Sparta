@@ -65,7 +65,7 @@ $(document).ready(function(){
 
 jQuery(document).ready(function() {
   // Add link button for every
-  var text, clip = new Clipboard('.anchor');
+  var text, clip = new ClipboardJS('.anchor');
   $("h1~h2,h1~h3,h1~h4,h1~h5,h1~h6").append(function(index, html){
     var element = $(this);
     var url = encodeURI(document.location.origin + document.location.pathname);
@@ -84,5 +84,8 @@ jQuery(document).ready(function() {
       e.clearSelection();
       $(e.trigger).attr('aria-label', 'Link copied to clipboard!').addClass('tooltipped tooltipped-s');
   });
-
+  $('code.language-mermaid').each(function(index, element) {
+    var content = $(element).html().replace(/&amp;/g, '&');
+    $(element).parent().replaceWith('<div class="mermaid" align="center">' + content + '</div>');
+  });
 });

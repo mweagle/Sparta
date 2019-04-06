@@ -1,7 +1,7 @@
 ---
 title: Contenu
 weight: 10
-chapter: false
+chapter: true
 pre: "<b>2. </b>"
 ---
 

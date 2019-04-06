@@ -15,13 +15,14 @@
     <link href="{{"css/featherlight.min.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     <link href="{{"css/perfect-scrollbar.min.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     <link href="{{"css/auto-complete.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
+    <link href="{{"css/atom-one-dark-reasonable.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     <link href="{{"css/theme.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     <link href="{{"css/hugo-theme.css" | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     {{with .Site.Params.themeVariant}}
       <link href="{{(printf "css/theme-%s.css" .) | relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}" rel="stylesheet">
     {{end}}
 
-    <script src="{{"js/jquery-2.x.min.js"| relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"></script>
+    <script src="{{"js/jquery-3.3.1.min.js"| relURL}}{{ if $assetBusting }}?{{ now.Unix }}{{ end }}"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -80,13 +81,20 @@
               </div>
             </div>
             {{ end }}
-
+        <div id="head-tags">
+        {{ partial "tags.html" . }}
+        </div>
         {{ if .Params.chapter }}
           <div id="chapter">
         {{ end }}
         <div id="body-inner">
           {{if and (not .IsHome) (not .Params.chapter) }}
-            <h1>{{.Title}}</h1>
+            <h1>
+              {{ if eq .Kind "taxonomy" }}
+                {{.Kind}} ::
+              {{ end }}
+              {{.Title}}
+            </h1>
           {{end}}
 
         {{define "breadcrumb"}}
@@ -98,3 +106,4 @@
             {{.value|safeHTML}}
           {{end}}
         {{end}}
+
