@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
-  version = "1.8.2"
+  version = "1.10.0"
 
 [[constraint]]
   name = "github.com/aws/aws-xray-sdk-go"
@@ -39,7 +39,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "v1.19.15"
+  version = "v1.19.19"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
