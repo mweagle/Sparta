@@ -380,7 +380,14 @@ func EnsureSpelling() error {
 
 // EnsureVet ensures that the source has been `go vet`ted
 func EnsureVet() error {
-	return goSourceApply("go", "tool", "vet")
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	vetCommand := [][]string{
+		{"go", "vet", verboseFlag, "./..."},
+	}
+	return spartamage.Script(vetCommand)
 }
 
 // EnsureLint ensures that the source is `golint`ed
