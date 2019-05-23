@@ -27,7 +27,7 @@
 
 [[constraint]]
   name = "github.com/AlecAivazis/survey"
-  version = "1.8.3"
+  version = "1.8.4"
 
 [[constraint]]
   name = "github.com/aws/aws-lambda-go"
@@ -39,7 +39,7 @@
 
 [[constraint]]
   name = "github.com/aws/aws-sdk-go"
-  version = "v1.19.19"
+  version = "v1.19.34"
 
 [[constraint]]
   name = "github.com/briandowns/spinner"
@@ -55,7 +55,7 @@
 
 [[constraint]]
   name = "github.com/gdamore/tcell"
-  version = "1.1.0"
+  version = "1.1.2"
 
 [[constraint]]
   branch = "master"
