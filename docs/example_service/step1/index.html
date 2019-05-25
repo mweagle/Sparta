@@ -1973,13 +1973,10 @@ func main() {
 
 <ul>
 <li><code>go get ./...</code></li>
-<li><code>go get github.com/zcalusic/sysinfo</code></li>
 </ul>
 
 <p>in the directory that you saved <em>main.go</em>.  Once the packages are downloaded, first get a view of what&rsquo;s going on by the <code>describe</code> command (replacing <code>$S3_BUCKET</code> with an S3 bucket you own):</p>
 
-<div class="notices info" ><p>The <a href="github.com/zcalusic/sysinfo">sysinfo</a> package is used at Lambda execution time only. However, it must be locally available in order to successfully cross compile your AWS Lambda binary. See the <a href="https://github.com/mweagle/Sparta/issues/101">GitHub issue</a> for more information.</p>
-</div>
 
 
 <pre><code class="language-nohighlight">$ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET

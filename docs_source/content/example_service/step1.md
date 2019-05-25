@@ -115,13 +115,8 @@ func main() {
 Next download the Sparta dependencies via:
 
 * `go get ./...`
-* `go get github.com/zcalusic/sysinfo`
 
  in the directory that you saved _main.go_.  Once the packages are downloaded, first get a view of what's going on by the `describe` command (replacing `$S3_BUCKET` with an S3 bucket you own):
-
-{{% notice info %}}
-The [sysinfo](github.com/zcalusic/sysinfo) package is used at Lambda execution time only. However, it must be locally available in order to successfully cross compile your AWS Lambda binary. See the [GitHub issue](https://github.com/mweagle/Sparta/issues/101) for more information.
-{{% /notice %}}
 
 ```nohighlight
 $ go run main.go --level info describe --out ./graph.html --s3Bucket $S3_BUCKET
