@@ -159,14 +159,19 @@ func Execute(serviceName string,
 	lambdaAWSInfos []*LambdaAWSInfo,
 	logger *logrus.Logger) error {
 
+	logger.Debug("Initializing discovery service")
+
 	// Initialize the discovery service
 	initializeDiscovery(logger)
 
 	// Find the function name based on the dispatch
 	// https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
 	requestedLambdaFunctionName := os.Getenv("AWS_LAMBDA_FUNCTION_NAME")
+	logger.WithField("lambdaName", requestedLambdaFunctionName).
+		Debug("Invoking requested lambda")
 
 	// Log any info when we start up...
+	logger.Debug("Querying for platform info")
 	platformLogSysInfo(requestedLambdaFunctionName, logger)
 
 	// So what if we have workflow hooks in here?
@@ -187,6 +192,7 @@ func Execute(serviceName string,
 	//////////////////////////////////////////////////////////////////////////////
 	// User registered commands?
 	//////////////////////////////////////////////////////////////////////////////
+	logger.Debug("Checking user-defined lambda functions")
 	for _, eachLambdaInfo := range lambdaAWSInfos {
 		lambdaFunctionName = awsLambdaFunctionName(eachLambdaInfo.lambdaFunctionName())
 		testAWSName = lambdaFunctionName.String().Literal
@@ -197,6 +203,7 @@ func Execute(serviceName string,
 			interceptors = eachLambdaInfo.Interceptors
 
 		}
+
 		// User defined custom resource handler?
 		for _, eachCustomResource := range eachLambdaInfo.customResources {
 			lambdaFunctionName = awsLambdaFunctionName(eachCustomResource.userFunctionName)
@@ -216,6 +223,8 @@ func Execute(serviceName string,
 	// the CustomResourceCommand interface?
 	//////////////////////////////////////////////////////////////////////////////
 	if handlerSymbol == nil {
+		logger.Debug("Checking CustomResourceHandler lambda functions")
+
 		requestCustomResourceType := os.Getenv(EnvVarCustomResourceTypeName)
 		if requestCustomResourceType != "" {
 			knownNames = append(knownNames, fmt.Sprintf("CloudFormation Custom Resource: %s", requestCustomResourceType))
