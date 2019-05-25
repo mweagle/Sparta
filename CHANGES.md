@@ -1,5 +1,13 @@
 # Change Notes
 
+## v1.9.3 - The Keeping up with the Joneses Edition 🏃‍♂️
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+- :bug:  **FIXED**
+  - [Update to support new Amazon Linux AMI](https://github.com/mweagle/Sparta/issues/145)
+  - Fixed latent issue where `env` specified log level wasn't respected at lambda execution time
+  
 ## v1.9.2 - The Names Edition 📛
 
 - :warning: **BREAKING**
