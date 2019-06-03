@@ -180,11 +180,11 @@ func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
 
 	// Setup the files and their respective log levels
 	mapFilesToLoggerCall := map[logrus.Level][]string{
-		logrus.InfoLevel: []string{
+		logrus.InfoLevel: {
 			"/proc/version",
 			"/etc/os-release",
 		},
-		logrus.DebugLevel: []string{
+		logrus.DebugLevel: {
 			"/proc/cpuinfo",
 			"/proc/meminfo",
 		},
