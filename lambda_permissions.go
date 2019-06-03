@@ -13,21 +13,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-/*
-Notes to future self...
-
-TODO - Simplify this as part of https://trello.com/c/aOULlJcz/14-port-nodejs-customresources-to-go
-
-Adding a new permission type?
-  1. Add the principal name value to sparta.go constants
-  2. Define the new struct and satisfy LambdaPermissionExporter
-  3. Update provision_utils.go's `PushSourceConfigurationActions` map with the new principal's permissions
-  4. Update `PROXIED_MODULES` in resources/index.js to include the first principal component name( eg, 'events')
-  5. Update `customResourceScripts` in provision.go to ensure the embedded JS file is included in the deployed archive.
-  6. Implement the custom type defined in 2
-  7. Implement the service configuration logic referred to in 4.
-*/
-
 ////////////////////////////////////////////////////////////////////////////////
 // Types to handle permissions & push source configuration
 type descriptionNode struct {
