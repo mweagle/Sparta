@@ -21,7 +21,7 @@ type discoveryInfo struct {
 var cachedInfo map[string][]*discoveryInfo
 
 func init() {
-	cachedInfo = make(map[string][]*discoveryInfo, 0)
+	cachedInfo = make(map[string][]*discoveryInfo)
 }
 
 func discoveryInfoFromIDs(namespaceID string,
@@ -158,7 +158,7 @@ func DiscoverInstancesInServiceWithContext(ctx context.Context,
 	logger *logrus.Logger) ([]*servicediscovery.HttpInstanceSummary, error) {
 
 	// Great, lookup the instances...
-	queryParams := make(map[string]*string, 0)
+	queryParams := make(map[string]*string)
 	for eachKey, eachValue := range attributes {
 		queryParams[eachKey] = aws.String(eachValue)
 	}

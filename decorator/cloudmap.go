@@ -24,7 +24,7 @@ func NewCloudMapServiceDecorator(namespaceID gocf.Stringable,
 	decorator := &CloudMapServiceDecorator{
 		namespaceID:       namespaceID,
 		serviceName:       serviceName,
-		servicePublishers: make(map[string]interface{}, 0),
+		servicePublishers: make(map[string]interface{}),
 		nonce:             fmt.Sprintf("%d", time.Now().Unix()),
 	}
 
@@ -103,7 +103,7 @@ func (cmsd *CloudMapServiceDecorator) publish(lookupName string,
 		return errors.Errorf("CloudMap discovery info for lookup name `%s` is already defined. Instance names must e unique", lookupName)
 	}
 
-	attributes := make(map[string]interface{}, 0)
+	attributes := make(map[string]interface{})
 	attributes["Ref"] = gocf.Ref(resourceName)
 	attributes["Type"] = resource.CfnResourceType()
 	for _, eachAttribute := range resource.CfnResourceAttributes() {
@@ -155,7 +155,7 @@ func (cmsd *CloudMapServiceDecorator) EnableDiscoverySupport(lambdaInfo *sparta.
 	}
 	lambdaEnvVars := lambdaOptions.Environment
 	if lambdaEnvVars == nil {
-		lambdaOptions.Environment = make(map[string]*gocf.StringExpr, 0)
+		lambdaOptions.Environment = make(map[string]*gocf.StringExpr)
 	}
 	lambdaOptions.Environment[EnvVarCloudMapNamespaceID] = cmsd.namespaceID.String()
 	lambdaOptions.Environment[EnvVarCloudMapServiceID] = gocf.Ref(cmsd.LogicalResourceName()).String()
