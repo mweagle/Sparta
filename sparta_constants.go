@@ -93,4 +93,7 @@ const (
 	// ContextKeyLambdaResponse is the possible response that
 	// was returned from the lambda function
 	ContextKeyLambdaResponse
+	// ContextKeyAWSSession is the aws Session instance for this
+	// request
+	ContextKeyAWSSession
 )
