@@ -13,4 +13,4 @@ Sparta's [archetype](https://godoc.org/github.com/mweagle/Sparta/archetype) pack
 functions to simplify creating AWS Lambda functions for specific types of [event sources](/reference/eventsources/). See each section for
 more details:
 
-{{% children  %}}
+{{% children description="true"   %}}

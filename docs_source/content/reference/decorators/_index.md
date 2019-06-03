@@ -76,7 +76,7 @@ To use the Workflow Hooks feature, initialize a [WorkflowHooks](https://godoc.or
 
 ## Available Decorators
 
-{{% children %}}
+{{% children description="true"   %}}
 
 ### Notes
 

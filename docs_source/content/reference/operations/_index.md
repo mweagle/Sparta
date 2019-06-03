@@ -9,4 +9,4 @@ weight: 499
 
 {{< tweet 1067199205930868736 >}}
 
-{{% children %}}
+{{% children description="true"   %}}

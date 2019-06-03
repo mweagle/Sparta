@@ -29,8 +29,7 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/eventsources/cloudformation/</guid>
-      <description>TODO: CloudFormation source documentation
- </description>
+      <description>TODO: CloudFormation source documentation  </description>
     </item>
     
     <item>
@@ -61,8 +60,7 @@ Getting Started Our lambda function is relatively short:</description>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/eventsources/cognito/</guid>
-      <description>TODO: Cognito source documentation
- </description>
+      <description>TODO: Cognito source documentation  </description>
     </item>
     
     <item>

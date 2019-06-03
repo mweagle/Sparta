@@ -12,6 +12,15 @@
     
     
     <item>
+      <title>CloudMap Service Discovery</title>
+      <link>/reference/decorators/cloudmap/</link>
+      <pubDate>Mon, 27 May 2019 22:31:25 +0000</pubDate>
+      
+      <guid>/reference/decorators/cloudmap/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>CloudFront Distribution</title>
       <link>/reference/decorators/cloudfront_distribution/</link>
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
@@ -28,8 +37,7 @@ Sample usage:
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/lambda_versioning/</guid>
-      <description>TODO: LambdaVersioningDecorator
- </description>
+      <description>TODO: [LambdaVersioningDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#LambdaVersioningDecorator)  </description>
     </item>
     
     <item>

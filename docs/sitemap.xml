@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>/reference/decorators/cloudmap/</loc>
+    <lastmod>2019-05-27T22:31:25+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/archetypes/codecommit/</loc>
     <lastmod>2019-01-31T06:33:04-08:00</lastmod>
   </url>
@@ -134,7 +139,7 @@
   
   <url>
     <loc>/example_service/step1/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-05-25T14:27:14-04:00</lastmod>
   </url>
   
   <url>
@@ -394,10 +399,12 @@
   
   <url>
     <loc>/_footer/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>/_header/</loc>
+    <priority>0</priority>
   </url>
   
   <url>

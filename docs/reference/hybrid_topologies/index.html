@@ -3,28 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.52" />
+    <meta name="generator" content="Hugo 0.55.6" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
     <title>Hybrid Topologies :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1550443965" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1550443965" rel="stylesheet">
-    <link href="/css/hybrid.css?1550443965" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1550443965" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1550443965" rel="stylesheet">
-    <link href="/css/auto-complete.css?1550443965" rel="stylesheet">
-    <link href="/css/theme.css?1550443965" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1550443965" rel="stylesheet">
+    <link href="/css/nucleus.css?1559281547" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559281547" rel="stylesheet">
+    <link href="/css/hybrid.css?1559281547" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559281547" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559281547" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559281547" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559281547" rel="stylesheet">
+    <link href="/css/theme.css?1559281547" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559281547" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1550443965" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559281547" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1550443965"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559281547"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -53,18 +54,18 @@ pre {
     
         <div class="searchbox">
     <label for="search-by"><i class="fas fa-search"></i></label>
-    <input data-search-input id="search-by" type="text" placeholder="Search...">
-    <span data-search-clear=""><i class="fas fa-close"></i></span>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1550443965"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1550443965"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559281547"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559281547"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1550443965"></script>
+<script type="text/javascript" src="/js/search.js?1559281547"></script>
 
     
   </div>
@@ -796,6 +797,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item ">
+        <a href="/reference/decorators/cloudmap/">
+        CloudMap Service Discovery
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1841,14 +1861,20 @@ pre {
               </div>
             </div>
             
-
+        <div id="head-tags">
+        
+        </div>
         
         <div id="body-inner">
           
-            <h1>Hybrid Topologies</h1>
+            <h1>
+              
+              Hybrid Topologies
+            </h1>
           
 
         
+
 
 
 
@@ -2127,26 +2153,30 @@ func lambdaDecorator(customResourceAMILookupName string) sparta.TemplateDecorato
 <p>There are a few things to point out in this function:</p>
 
 <ul>
-<li><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:
-<code>go
-gocf.EC2SecurityGroupRule{
+<li><p><strong>Security Groups</strong> - The decorator adds an ingress rule so that the endpoint is publicly accessible:</p>
+
+<pre><code class="language-go">gocf.EC2SecurityGroupRule{
       CidrIp:     gocf.String(&quot;0.0.0.0/0&quot;),
       IpProtocol: gocf.String(&quot;tcp&quot;),
       FromPort:   gocf.Integer(HTTPServerPort),
       ToPort:     gocf.Integer(HTTPServerPort),
     }
-</code></li>
+</code></pre>
+
+<ul>
 <li><strong>IAM Role</strong> - In order to download the S3 archive, the EC2 IAM Policy includes a custom privilege:
 <code>go
-  statements = append(statements, spartaIAM.PolicyStatement{
-  Effect:   &quot;Allow&quot;,
-  Action:   []string{&quot;s3:GetObject&quot;},
-  Resource: gocf.String(fmt.Sprintf(&quot;arn:aws:s3:::%s/%s&quot;, S3Bucket, S3Key)),
+statements = append(statements, spartaIAM.PolicyStatement{
+Effect:   &quot;Allow&quot;,
+Action:   []string{&quot;s3:GetObject&quot;},
+Resource: gocf.String(fmt.Sprintf(&quot;arn:aws:s3:::%s/%s&quot;, S3Bucket, S3Key)),
 })
 </code></li>
-<li><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:
-<code>go
-// Now setup the properties map, expand the userdata, and attach it...
+</ul></li>
+
+<li><p><strong>UserData Marshaling</strong> - Marshaling the <em>userdata.sh</em> script is handled by <code>ConvertToTemplateExpression</code>:</p>
+
+<pre><code class="language-go">// Now setup the properties map, expand the userdata, and attach it...
 userDataProps := map[string]interface{}{
   &quot;S3Bucket&quot;:    S3Bucket,
   &quot;S3Key&quot;:       S3Key,
@@ -2162,24 +2192,27 @@ asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
   UserData:           gocf.Base64(userDataExpression),
   // ...
 }
-</code></li>
-<li><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/reference/application/custom_flags">custom flag</a> (not shown above):
-<code>go
-// And add the SSHKeyName option to the provision step
+</code></pre>
+
+<ul>
+<li><p><strong>Custom Command Line Flags</strong> - To externalize the SSH Key Name, the binary expects a <a href="/reference/application/custom_flags">custom flag</a> (not shown above):</p>
+
+<pre><code class="language-go">// And add the SSHKeyName option to the provision step
 sparta.CommandLineOptions.Provision.Flags().StringVarP(&amp;SSHKeyName,
 &quot;key&quot;,
 &quot;k&quot;,
 &quot;&quot;,
 &quot;SSH Key Name to use for EC2 instances&quot;)
-</code>
-This value is used as an input to the AutoScalingLaunchConfiguration value:
-<code>go
-asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
-  // ...
-  KeyName:            gocf.String(SSHKeyName),
-  // ...
+</code></pre>
+
+<p>This value is used as an input to the AutoScalingLaunchConfiguration value:</p>
+
+<pre><code class="language-go">asgLaunchConfigurationResource := &amp;gocf.AutoScalingLaunchConfiguration{
+// ...
+KeyName:            gocf.String(SSHKeyName),
+// ...
 }
-</code></li>
+</code></pre></li>
 </ul>
 
 <h1 id="result">Result</h1>
@@ -2204,7 +2237,8 @@ $ curl -vs http://ec2-52-26-146-138.us-west-2.compute.amazonaws.com:9999/
 &lt;
 * Connection #0 to host ec2-52-26-146-138.us-west-2.compute.amazonaws.com left intact
 Hello world from SpartaOmega!
-</code></pre>
+</code></pre></li>
+</ul>
 
 <h2 id="lambda-access">Lambda Access</h2>
 
@@ -2802,6 +2836,22 @@ Hello world from SpartaOmega!
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3525,20 +3575,20 @@ Hello world from SpartaOmega!
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1550443965"></script>
-    <script src="/js/jquery.sticky.js?1550443965"></script>
-    <script src="/js/featherlight.min.js?1550443965"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1550443965"></script>
-    <script src="/js/highlight.pack.js?1550443965"></script>
+    <script src="/js/clipboard.min.js?1559281547"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559281547"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559281547"></script>
+    <script src="/js/jquery.sticky.js?1559281547"></script>
+    <script src="/js/featherlight.min.js?1559281547"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559281547"></script>
+    <script src="/js/highlight.pack.js?1559281547"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1550443965"></script>
-    <script src="/js/learn.js?1550443965"></script>
-    <script src="/js/hugo-learn.js?1550443965"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559281547"></script>
+    <script src="/js/learn.js?1559281547"></script>
+    <script src="/js/hugo-learn.js?1559281547"></script>
 
-    <link href="/mermaid/mermaid.css?1550443965" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1550443965"></script>
+    <link href="/mermaid/mermaid.css?1559281547" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559281547"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
