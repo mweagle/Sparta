@@ -12,6 +12,7 @@ import (
 
 	awsLambdaGo "github.com/aws/aws-lambda-go/lambda"
 	awsLambdaContext "github.com/aws/aws-lambda-go/lambdacontext"
+	spartaAWS "github.com/mweagle/Sparta/aws"
 	cloudformationResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
@@ -91,10 +92,10 @@ func tappedHandler(handlerSymbol interface{},
 	// TODO - add Context.Timeout handler to ensure orderly exit
 	return func(ctx context.Context, msg json.RawMessage) (interface{}, error) {
 
-		// TODO - add panic handler.
-
+		awsSession := spartaAWS.NewSession(logger)
 		ctx = applyInterceptors(ctx, msg, interceptors.Begin)
 		ctx = context.WithValue(ctx, ContextKeyLogger, logger)
+		ctx = context.WithValue(ctx, ContextKeyAWSSession, awsSession)
 		ctx = applyInterceptors(ctx, msg, interceptors.BeforeSetup)
 
 		// Create the entry logger that has some context information
