@@ -1,7 +1,7 @@
 language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
-- "1.12.4"
+- "1.12.5"
 before_install:
 - go get -u -v github.com/magefile/mage
 - go get -u -v github.com/hhatto/gocloc
