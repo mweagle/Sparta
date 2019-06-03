@@ -51,8 +51,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/operations/codedeploy_service_update/</guid>
-      <description>TODO: Document the CodeDeployServiceUpdateDecorator decorator. See also the Deployment Strategy page.
- </description>
+      <description>TODO: Document the [CodeDeployServiceUpdateDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CodeDeployServiceUpdateDecorator) decorator. See also the [Deployment Strategy](/reference/operations/deployment_strategies.md) page.  </description>
     </item>
     
     <item>
@@ -61,8 +60,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/operations/cicd/</guid>
-      <description>TODO: Document the SpartaCodePipeline example. Also see the Medium Post
- </description>
+      <description>TODO: Document the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) example. Also see the [Medium Post](https://medium.com/@mweagle/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)  </description>
     </item>
     
     <item>
@@ -71,8 +69,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/operations/deployment_strategies/</guid>
-      <description>Document the SpartaSafeDeploy example.
- </description>
+      <description>Document the [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) example.  </description>
     </item>
     
     <item>

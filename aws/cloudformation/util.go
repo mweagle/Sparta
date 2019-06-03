@@ -28,6 +28,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+//lint:ignore U1000 because it's actually used
 var cloudFormationStackTemplateMap map[string]*gocf.Template
 
 //var cacheLock sync.Mutex

@@ -9,7 +9,7 @@ weight: 100
 
 One of the most powerful ways to use AWS Lambda is to make function publicly available over HTTPS.  This is accomplished by connecting the AWS Lambda function with the [API Gateway](https://aws.amazon.com/api-gateway/).  In this section we'll start with a simple "echo" example and move on to a lambda function that accepts user parameters and returns an expiring S3 URL.
 
-{{% children %}}
+{{% children description="true"   %}}
 
 ## Concepts
 

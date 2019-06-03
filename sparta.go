@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"path/filepath"
 	"reflect"
 	"regexp"
 	"runtime"
@@ -17,7 +16,6 @@ import (
 
 	spartaCF "github.com/mweagle/Sparta/aws/cloudformation"
 	spartaIAM "github.com/mweagle/Sparta/aws/iam"
-	"github.com/mweagle/Sparta/system"
 	gocc "github.com/mweagle/go-cloudcondenser"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/pkg/errors"
@@ -1134,34 +1132,7 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 	if len(errorText) != 0 {
 		return errors.New(strings.Join(errorText[:], "\n"))
 	}
-	// Check that the sysinfo package is installed. This
-	// may not be installed on OSX, since it's excluded
-	// via a build tag
-	goPath := system.GoPath()
 
-	// Check that the file exists
-	sysinfoPath := filepath.Join(goPath, "src",
-		"github.com",
-		"zcalusic",
-		"sysinfo",
-		"sysinfo.go")
-	logger.WithFields(logrus.Fields{
-		"sysinfoPath": sysinfoPath,
-	}).Debug("Checking installation status of github.com/zcalusic/sysinfo")
-	_, sysinfoErr := os.Stat(sysinfoPath)
-	if os.IsNotExist(sysinfoErr) {
-		// Let's make sure it's really not there.
-		// In case `gvm` is managing paths
-		sysinfoErr = buildSysInfoSample(logger)
-		if sysinfoErr != nil {
-			logger.WithFields(logrus.Fields{
-				"sysinfoMarkerPath": sysinfoPath,
-				"os":                runtime.GOOS,
-				"gopath":            goPath,
-			}).Error("The `github.com/zcalusic/sysinfo` package is not installed")
-			return errors.New("Please run `go get -u -v github.com/zcalusic/sysinfo` to install this Linux-only package. This package is used when cross-compiling your AWS Lambda binary and cannot be reliably imported across platforms. When you `go get` the package, you may see errors as in `undefined: syscall.Utsname`. These are expected and can be ignored")
-		}
-	}
 	return nil
 }
 
@@ -1252,7 +1223,7 @@ func HandleAWSLambda(functionName string,
 	if lambdaErr != nil {
 		panic(lambdaErr)
 	}
-	lambda.deprecationNotices = append(lambda.deprecationNotices, "sparta.HandleAWSLambda is deprecated starting with v1.6.0. Prefer sparta.NewAWSLambda(...)")
+	lambda.deprecationNotices = append(lambda.deprecationNotices, "sparta.HandleAWSLambda is deprecated starting with v1.6.0. Prefer `sparta.NewAWSLambda(...) (*LambdaAWSInfo, error)`")
 	return lambda
 }
 

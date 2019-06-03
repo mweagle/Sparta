@@ -17,8 +17,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/batch/</guid>
-      <description>TODO: Document Batch integration.
- </description>
+      <description>TODO: Document [Batch](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-batch.html) integration.  </description>
     </item>
     
     <item>
@@ -27,8 +26,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/fargate/</guid>
-      <description>TODO: Document Fargate integration.
- </description>
+      <description>TODO: Document [Fargate](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ecs.html) integration.  </description>
     </item>
     
     <item>
@@ -37,8 +35,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/glue/</guid>
-      <description>TODO: Document Glue integration.
- </description>
+      <description>TODO: Document [Glue](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-glue.html) integration.  </description>
     </item>
     
     <item>
@@ -47,8 +44,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/dynamodb/</guid>
-      <description>TODO: Document Dynamo integration.
- </description>
+      <description>TODO: Document [Dynamo](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ddb.html) integration.  </description>
     </item>
     
     <item>
@@ -57,8 +53,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sns/</guid>
-      <description>TODO: Document SNS integration.
- </description>
+      <description>TODO: Document [SNS](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html) integration.  </description>
     </item>
     
     <item>
@@ -67,8 +62,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sqs/</guid>
-      <description>TODO: Document SQS integration.
- </description>
+      <description>TODO: Document [SQS](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sqs.html) integration.  </description>
     </item>
     
     <item>
@@ -77,8 +71,7 @@
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sagemaker/</guid>
-      <description>TODO: Document SageMaker integration.
- </description>
+      <description>TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sagemaker.html) integration.  </description>
     </item>
     
   </channel>

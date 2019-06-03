@@ -16,4 +16,4 @@ of core event handling workflow.
 
 ## Available Interceptors
 
-{{% children %}}
+{{% children description="true"   %}}

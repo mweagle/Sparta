@@ -14,4 +14,4 @@ The _Overview_ section talks about the programming model.
 
 The _Details_ section goes into more detail about how Sparta manages your serverless application.
 
-{{% children  %}}
+{{% children description="true"   %}}

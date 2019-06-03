@@ -3,28 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.52" />
+    <meta name="generator" content="Hugo 0.55.6" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1550443965" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1550443965" rel="stylesheet">
-    <link href="/css/hybrid.css?1550443965" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1550443965" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1550443965" rel="stylesheet">
-    <link href="/css/auto-complete.css?1550443965" rel="stylesheet">
-    <link href="/css/theme.css?1550443965" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1550443965" rel="stylesheet">
+    <link href="/css/nucleus.css?1559541734" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559541734" rel="stylesheet">
+    <link href="/css/hybrid.css?1559541734" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559541734" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559541734" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559541734" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559541734" rel="stylesheet">
+    <link href="/css/theme.css?1559541734" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559541734" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1550443965" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559541734" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1550443965"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559541734"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -53,18 +54,18 @@ pre {
     
         <div class="searchbox">
     <label for="search-by"><i class="fas fa-search"></i></label>
-    <input data-search-input id="search-by" type="text" placeholder="Search...">
-    <span data-search-clear=""><i class="fas fa-close"></i></span>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1550443965"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1550443965"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559541734"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559541734"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1550443965"></script>
+<script type="text/javascript" src="/js/search.js?1559541734"></script>
 
     
   </div>
@@ -796,6 +797,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item ">
+        <a href="/reference/decorators/cloudmap/">
+        CloudMap Service Discovery
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1745,8 +1765,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/8dee1805">8dee1805</a><p/>
-  Date: 2019-01-31 06:33:04 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f37e51f8">f37e51f8</a><p/>
+  Date: 2019-06-02 21:51:22 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1813,7 +1833,9 @@ pre {
               </div>
             </div>
             
-
+        <div id="head-tags">
+        
+        </div>
         
           <div id="chapter">
         
@@ -1825,28 +1847,23 @@ pre {
 
 
 
+	
+
 <h1 id="archetype-constructors">Archetype Constructors</h1>
 
 <p>Sparta&rsquo;s <a href="https://godoc.org/github.com/mweagle/Sparta/archetype">archetype</a> package provides convenience
 functions to simplify creating AWS Lambda functions for specific types of <a href="/reference/eventsources/">event sources</a>. See each section for
 more details:</p>
 
-
-
-
-
-
-
-
 <ul class="children children-li">
-	
+    
     
     
 
-	
-		
-	
-		
+    
+        
+    
+        
   
 
 
@@ -1859,15 +1876,22 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>The CodeCommit Lambda event source allows you to trigger lambda functions in response to CodeCommit repository events.
+Events Lambda functions triggered in response to CodeCommit evetms use a combination of events and branches to manage which state changes trigger your lambda function.
+To create an event subscriber use a constructor as in:
+// CodeCommit reactor function func reactorFunc(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &quot;Event&quot;: event, }).</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1880,15 +1904,22 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>The CloudWatch Logs Lambda event source allows you to trigger lambda functions in response to either cron schedules or account events. There are three different archetype functions available.
+Scheduled Scheduled Lambdas execute either at fixed times or periodically depending on the schedule expression.
+To create a scheduled function use a constructor as in:
+import ( awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot; spartaArchetype &quot;github.com/mweagle/Sparta/archetype&quot; ) // CloudWatch reactor function func reactorFunc(ctx context.Context, cwLogs awsLambdaEvents.CloudwatchLogsEvent) (interface{}, error) { logger, _ := ctx.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1901,15 +1932,20 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>To create a DynamoDB reactor that subscribes via an EventSourceMapping, use the NewDynamoDBReactor constructor as in:
+import ( awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot; spartaArchetype &quot;github.com/mweagle/Sparta/archetype&quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, dynamoEvent awsLambdaEvents.DynamoDBEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &quot;Event&quot;: dynamoEvent, }).Info(&quot;DynamoDB Event&quot;) return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil } func main() { // ... handler := spartaArchetype.DynamoDBReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &quot;DYNAMO_DB_ARN_OR_CLOUDFORMATION_REF_VALUE&quot;, &quot;TRIM_HORIZON&quot;, 10, nil) }  </p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1922,15 +1958,20 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
+import ( awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot; spartaArchetype &quot;github.com/mweagle/Sparta/archetype&quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &quot;Event&quot;: kinesisEvent, }).Info(&quot;Kinesis Event&quot;) return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&quot;, &quot;TRIM_HORIZON&quot;, 10, nil) }  </p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1943,15 +1984,22 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>The rest package provides convenience functions to define a serverless REST style service.
+The package uses three concepts:
+ Routes: URL paths that resolve to a single go struct Resources: go structs that optionally define HTTP method (GET, POST, etc.). ResourceDefinition: an interface that go structs must implement in order to support resource-based registration.  Routes Routes are similar many HTTP-routing libraries. They support path parameters.
+Resources Resources are the targets of Routes.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1964,15 +2012,21 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>There are two different S3-based constructors depending on whether your lambda function should use an Object Key Name filter. The S3 subscriber is preconfigured to be notified of both s3:ObjectCreated:* and s3:ObjectRemoved:* events.
+Object Key Name Filtering Object key name filtering only invokes a lambda function when objects with the given prefix are created.
+To subscribe to object events created by objects with a given prefix, use the NewS3ScopedReactor constructor as in:</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1985,18 +2039,22 @@ more details:</p>
 
 
 
-			
-		
+            
+                
+<p>To create a SNS reactor that subscribes via an subscription configuration, use the NewSNSReactor constructor as in:
+import ( awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot; spartaArchetype &quot;github.com/mweagle/Sparta/archetype&quot; ) // DynamoDB reactor function func reactorFunc(ctx context.Context, snsEvent awsLambdaEvents.SNSEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &quot;Event&quot;: snsEvent, }).Info(&quot;SNS Event&quot;) return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil } func main() { // ... handler := spartaArchetype.SNSReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewDynamoDBReactor(handler, &quot;SNS_ARN_OR_CLOUDFORMATION_REF_VALUE&quot;, nil) }  </p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
+        
+    
 
-	
+    
 </ul>
-
 
 
 
@@ -2584,6 +2642,22 @@ more details:</p>
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3303,20 +3377,20 @@ more details:</p>
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1550443965"></script>
-    <script src="/js/jquery.sticky.js?1550443965"></script>
-    <script src="/js/featherlight.min.js?1550443965"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1550443965"></script>
-    <script src="/js/highlight.pack.js?1550443965"></script>
+    <script src="/js/clipboard.min.js?1559541734"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559541734"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559541734"></script>
+    <script src="/js/jquery.sticky.js?1559541734"></script>
+    <script src="/js/featherlight.min.js?1559541734"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559541734"></script>
+    <script src="/js/highlight.pack.js?1559541734"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1550443965"></script>
-    <script src="/js/learn.js?1550443965"></script>
-    <script src="/js/hugo-learn.js?1550443965"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559541734"></script>
+    <script src="/js/learn.js?1559541734"></script>
+    <script src="/js/hugo-learn.js?1559541734"></script>
 
-    <link href="/mermaid/mermaid.css?1550443965" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1550443965"></script>
+    <link href="/mermaid/mermaid.css?1559541734" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559541734"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

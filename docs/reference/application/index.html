@@ -3,28 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="Hugo 0.52" />
+    <meta name="generator" content="Hugo 0.55.6" />
     <meta name="description" content="Sparta - AWS Lambda Microservices">
 <meta name="author" content="Matt Weagle">
 
-    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon" />
-<link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1550443965" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1550443965" rel="stylesheet">
-    <link href="/css/hybrid.css?1550443965" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1550443965" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1550443965" rel="stylesheet">
-    <link href="/css/auto-complete.css?1550443965" rel="stylesheet">
-    <link href="/css/theme.css?1550443965" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1550443965" rel="stylesheet">
+    <link href="/css/nucleus.css?1559541734" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559541734" rel="stylesheet">
+    <link href="/css/hybrid.css?1559541734" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559541734" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559541734" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559541734" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559541734" rel="stylesheet">
+    <link href="/css/theme.css?1559541734" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559541734" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1550443965" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559541734" rel="stylesheet">
     
 
-    <script src="/js/jquery-2.x.min.js?1550443965"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559541734"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -53,18 +54,18 @@ pre {
     
         <div class="searchbox">
     <label for="search-by"><i class="fas fa-search"></i></label>
-    <input data-search-input id="search-by" type="text" placeholder="Search...">
-    <span data-search-clear=""><i class="fas fa-close"></i></span>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1550443965"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1550443965"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559541734"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559541734"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1550443965"></script>
+<script type="text/javascript" src="/js/search.js?1559541734"></script>
 
     
   </div>
@@ -796,6 +797,25 @@ pre {
           
           
         
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item ">
+        <a href="/reference/decorators/cloudmap/">
+        CloudMap Service Discovery
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
           
             
             
@@ -1745,8 +1765,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/b6062da7">b6062da7</a><p/>
-  Date: 2018-12-11 20:52:53 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f37e51f8">f37e51f8</a><p/>
+  Date: 2019-06-02 21:51:22 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1826,38 +1846,38 @@ pre {
               </div>
             </div>
             
-
+        <div id="head-tags">
+        
+        </div>
         
         <div id="body-inner">
           
-            <h1></h1>
+            <h1>
+              
+              
+            </h1>
           
 
         
 
 
 
+
+	
 
 <h1 id="application-customization">Application Customization</h1>
 
 <p>Sparta-based applications use the <a href="https://github.com/spf13/cobra">Cobra</a> package to expose a rich set of command line options.  This section describes:</p>
 
-
-
-
-
-
-
-
 <ul class="children children-li">
-	
+    
     
     
 
-	
-		
-	
-		
+    
+        
+    
+        
   
 
 
@@ -1870,15 +1890,21 @@ pre {
 
 
 
-			
-		
+            
+                
+<p>In addition to custom flags, an application may register completely new commands. For example, to support alternative topologies or integrated automated acceptance tests as part of a CI/CD pipeline.
+To register a custom command, define a new cobra.Command and add it to the sparta.CommandLineOptions.Root command value. Ensure you use the xxxxE Cobra functions so that errors can be properly propagated.
+httpServerCommand := &amp;cobra.Command{ Use: &quot;httpServer&quot;, Short: &quot;Sample HelloWorld HTTP server&quot;, Long: `Sample HelloWorld HTTP server that binds to port: ` + HTTPServerPort, RunE: func(cmd *cobra.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1891,15 +1917,22 @@ pre {
 
 
 
-			
-		
+            
+                
+<p>Some commands (eg: provision) may require additional options. For instance, your application&rsquo;s provision logic may require VPC subnets or EC2 SSH Key Names.
+The default Sparta command line option flags may be extended and validated by building on the exposed Cobra command objects.
+Adding Flags To add a flag, use one of the pflag functions to register your custom flag with one of the standard CommandLineOption values.
+For example:</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1912,15 +1945,22 @@ pre {
 
 
 
-			
-		
+            
+                
+<p>It&rsquo;s common for a single Sparta application to target multiple environments. For example:
+ Development Staging Production  Each environment is largely similar, but the application may need slightly different configuration in each context.
+To support this, Sparta uses Go&rsquo;s conditional compilation support to ensure that configuration information is validated at build time. Conditional compilation is supported via the --tags/-t command line argument.
+This example will work through the SpartaConfig sample.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1933,15 +1973,22 @@ pre {
 
 
 
-			
-		
+            
+                
+<p>In addition to per-lambda custom resources, a service may benefit from the ability to include a service-scoped Lambda backed CustomResource.
+Including a custom service scoped resource is a multi-step process. The code excerpts below are from the SpartaCustomResource sample application.
+1. Resource Type The first step is to define a custom CloudFormation Resource Type
+//////////////////////////////////////////////////////////////////////////////// // 1 - Define the custom type const spartaHelloWorldResourceType = &quot;Custom::sparta::HelloWorldResource&quot;  2. Request Parameters The next step is to define the parameters that are supplied to the custom resource invocation.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
-		
+        
+    
+        
   
 
 
@@ -1954,16 +2001,22 @@ pre {
 
 
 
-			
-		
+            
+                
+<p>In some circumstances your service may need to provision or access resources that fall outside the standard workflow. In this case you can use CloudFormation Lambda-backed CustomResources to create or access resources during your CloudFormation stack&rsquo;s lifecycle.
+Sparta provides unchecked access to the CloudFormation resource lifecycle via the RequireCustomResource function. This function registers an AWS Lambda Function as an CloudFormation custom resource lifecycle.
+In this section we&rsquo;ll walk through a sample user-defined custom resource and discuss how a custom resource&rsquo;s outputs can be propagated to an application-level Sparta lambda function.</p>
+                
+            
+        
 
-		
-			
+        
+            
 
-		
-	
+        
+    
 
-	
+    
 </ul>
 
 <p>Adding custom flags or commands is typically a prerequisite to supporting <a href="/reference/alternative_topologies">alternative topologies</a>.</p>
@@ -2548,6 +2601,22 @@ pre {
                     
                     
 
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
                     
                         
             
@@ -3271,20 +3340,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.min.js?1550443965"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1550443965"></script>
-    <script src="/js/jquery.sticky.js?1550443965"></script>
-    <script src="/js/featherlight.min.js?1550443965"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1550443965"></script>
-    <script src="/js/highlight.pack.js?1550443965"></script>
+    <script src="/js/clipboard.min.js?1559541734"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559541734"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559541734"></script>
+    <script src="/js/jquery.sticky.js?1559541734"></script>
+    <script src="/js/featherlight.min.js?1559541734"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559541734"></script>
+    <script src="/js/highlight.pack.js?1559541734"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom.71422.js?1550443965"></script>
-    <script src="/js/learn.js?1550443965"></script>
-    <script src="/js/hugo-learn.js?1550443965"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559541734"></script>
+    <script src="/js/learn.js?1559541734"></script>
+    <script src="/js/hugo-learn.js?1559541734"></script>
 
-    <link href="/mermaid/mermaid.css?1550443965" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1550443965"></script>
+    <link href="/mermaid/mermaid.css?1559541734" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559541734"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

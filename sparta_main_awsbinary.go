@@ -8,15 +8,18 @@ package sparta
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"regexp"
 	"runtime"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/zcalusic/sysinfo"
 )
+
+var reExtractPlatInfo = regexp.MustCompile(`(\w+)=\"(.*)\"`)
 
 // Main defines the primary handler for transforming an application into a Sparta package.  The
 // serviceName is used to uniquely identify your service within a region and will
@@ -54,7 +57,12 @@ func MainEx(serviceName string,
 	CommandLineOptions.Root.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
 		// This can only run in AWS Lambda
 		formatter := &logrus.JSONFormatter{}
-		logger, loggerErr := NewLoggerWithFormatter("info", formatter)
+		mainLogLevel := "info"
+		envVarLogLevel := os.Getenv(envVarLogLevel)
+		if envVarLogLevel != "" {
+			mainLogLevel = envVarLogLevel
+		}
+		logger, loggerErr := NewLoggerWithFormatter(mainLogLevel, formatter)
 		if loggerErr != nil {
 			return loggerErr
 		}
@@ -74,11 +82,19 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 		return nil
 	}
-	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) error {
+	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) (err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				OptionsGlobal.Logger.Error("Panic recovered: %v", r)
+				err = errors.Errorf(fmt.Sprintf("%v", r))
+			}
+		}()
+
 		// By default run the Execute command
-		return Execute(StampedServiceName,
+		err = Execute(StampedServiceName,
 			lambdaAWSInfos,
 			OptionsGlobal.Logger)
+		return err
 	}
 	return CommandLineOptions.Root.Execute()
 }
@@ -161,12 +177,44 @@ func Status(serviceName string,
 }
 
 func platformLogSysInfo(lambdaFunc string, logger *logrus.Logger) {
-	var si sysinfo.SysInfo
-	si.GetSysInfo()
-	logger.WithFields(logrus.Fields{
-		"spartaLambdaFuncName": lambdaFunc,
-		"systemInfo":           si,
-	}).Info("SystemInfo")
+
+	// Setup the files and their respective log levels
+	mapFilesToLoggerCall := map[logrus.Level][]string{
+		logrus.InfoLevel: {
+			"/proc/version",
+			"/etc/os-release",
+		},
+		logrus.DebugLevel: {
+			"/proc/cpuinfo",
+			"/proc/meminfo",
+		},
+	}
+
+	for eachLevel, eachList := range mapFilesToLoggerCall {
+		for _, eachEntry := range eachList {
+			data, dataErr := ioutil.ReadFile(eachEntry)
+			if dataErr == nil && len(data) != 0 {
+				loggerFields := make(logrus.Fields, 0)
+				loggerFields["filepath"] = eachEntry
+				match := reExtractPlatInfo.FindAllStringSubmatch(string(data), -1)
+				if match != nil {
+					for _, eachMatch := range match {
+						loggerFields[eachMatch[1]] = eachMatch[2]
+					}
+				} else {
+					loggerFields["contents"] = string(data)
+				}
+				logger.WithFields(loggerFields).
+					Log(eachLevel, "Host Info")
+			} else if dataErr != nil || len(data) <= 0 {
+				logger.WithFields(logrus.Fields{
+					"filepath": eachEntry,
+					"error":    dataErr,
+					"length":   len(data),
+				}).Warn("Failed to read host info")
+			}
+		}
+	}
 }
 
 // RegisterCodePipelineEnvironment is not available during lambda execution
@@ -193,8 +241,9 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 	// We always use JSON in AWS
 	logger.Formatter = &logrus.JSONFormatter{}
 
-	// TODO - consider adding a buffered logger that only
+	// TODO - consider writing a buffered logger that only
 	// writes output following an error.
+	// This was done as part of the XRay interceptor!
 	logger.Out = os.Stdout
 	return logger, nil
 }

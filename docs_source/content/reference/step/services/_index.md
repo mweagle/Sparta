@@ -9,5 +9,5 @@ weight:
 
 The following [Step Function service integrations](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-supported-services.html):
 
-{{% children  %}}
+{{% children description="true"   %}}
 

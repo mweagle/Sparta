@@ -57,9 +57,9 @@
                   {{ if eq $translation.Lang .Lang }}
                     {{ $selected := false }}
                     {{ if eq $pageLang .Lang}}
-                      <option id="{{ $translation.Language }}" value="{{ $translation.URL }}" selected>{{ .LanguageName }}</option>
+                      <option id="{{ $translation.Language }}" value="{{ $translation.Permalink }}" selected>{{ .LanguageName }}</option>
                     {{ else }}
-                      <option id="{{ $translation.Language }}" value="{{ $translation.URL }}">{{ .LanguageName }}</option>
+                      <option id="{{ $translation.Language }}" value="{{ $translation.Permalink }}">{{ .LanguageName }}</option>
                     {{ end }}
                   {{ end }}
               {{ end }}
@@ -105,7 +105,7 @@
       <a href="{{.RelPermalink}}">
           {{safeHTML .Params.Pre}}{{or .Params.menuTitle .LinkTitle .Title}}{{safeHTML .Params.Post}}
           {{ if $showvisitedlinks}}
-            <i class="fas read-icon"></i>
+            <i class="fas fa-check read-icon"></i>
           {{ end }}
       </a>
       {{ $numberOfPages := (add (len .Pages) (len .Sections)) }}

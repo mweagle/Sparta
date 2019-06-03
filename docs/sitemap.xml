@@ -8,6 +8,11 @@
   </url>
   
   <url>
+    <loc>/reference/decorators/cloudmap/</loc>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/archetypes/codecommit/</loc>
     <lastmod>2019-01-31T06:33:04-08:00</lastmod>
   </url>
@@ -134,7 +139,7 @@
   
   <url>
     <loc>/example_service/step1/</loc>
-    <lastmod>2018-12-22T07:18:22-08:00</lastmod>
+    <lastmod>2019-05-25T14:27:14-04:00</lastmod>
   </url>
   
   <url>
@@ -184,7 +189,7 @@
   
   <url>
     <loc>/example_service/</loc>
-    <lastmod>2018-12-11T07:44:06-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
@@ -269,12 +274,12 @@
   
   <url>
     <loc>/reference/</loc>
-    <lastmod>2018-12-10T22:13:23-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/apigateway/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
@@ -284,22 +289,22 @@
   
   <url>
     <loc>/reference/archetypes/</loc>
-    <lastmod>2019-01-31T06:33:04-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/decorators/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/interceptors/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
     <loc>/reference/application/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
@@ -339,7 +344,7 @@
   
   <url>
     <loc>/reference/operations/</loc>
-    <lastmod>2018-12-11T20:52:53-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
@@ -379,7 +384,7 @@
   
   <url>
     <loc>/reference/step/services/</loc>
-    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
+    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
   </url>
   
   <url>
@@ -394,10 +399,12 @@
   
   <url>
     <loc>/_footer/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
     <loc>/_header/</loc>
+    <priority>0</priority>
   </url>
   
   <url>
