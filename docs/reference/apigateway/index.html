@@ -12,20 +12,20 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1559281546" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1559281546" rel="stylesheet">
-    <link href="/css/hybrid.css?1559281546" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1559281546" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1559281546" rel="stylesheet">
-    <link href="/css/auto-complete.css?1559281546" rel="stylesheet">
-    <link href="/css/atom-one-dark-reasonable.css?1559281546" rel="stylesheet">
-    <link href="/css/theme.css?1559281546" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1559281546" rel="stylesheet">
+    <link href="/css/nucleus.css?1559539126" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559539126" rel="stylesheet">
+    <link href="/css/hybrid.css?1559539126" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559539126" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559539126" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559539126" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559539126" rel="stylesheet">
+    <link href="/css/theme.css?1559539126" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559539126" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1559281546" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559539126" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1559281546"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559539126"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -58,14 +58,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1559281546"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1559281546"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559539126"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559539126"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1559281546"></script>
+<script type="text/javascript" src="/js/search.js?1559539126"></script>
 
     
   </div>
@@ -1765,8 +1765,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/b6062da7">b6062da7</a><p/>
-  Date: 2018-12-11 20:52:53 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f37e51f8">f37e51f8</a><p/>
+  Date: 2019-06-02 21:51:22 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1898,6 +1898,12 @@ pre {
 
 
             
+                
+<p>To start, we&rsquo;ll create a HTTPS accessible lambda function that simply echoes back the contents of incoming API Gateway Lambda event. The source for this is the SpartaHTML.
+For reference, the helloWorld function is below.
+import ( awsLambdaEvents &quot;github.com/aws/aws-lambda-go/events&quot; spartaAPIGateway &quot;github.com/mweagle/Sparta/aws/apigateway&quot; ) func helloWorld(ctx context.Context, gatewayEvent spartaAWSEvents.APIGatewayRequest) (*spartaAPIGateway.Response, error) { logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger) if loggerOk { logger.Info(&quot;Hello world structured log message&quot;) } // Return a message, together with the incoming input.</p>
+                
+            
         
 
         
@@ -1918,6 +1924,12 @@ pre {
 
 
 
+            
+                
+<p>Request Parameters This example demonstrates how to accept client request params supplied as HTTP query params and return an expiring S3 URL to access content. The source for this is the s3ItemInfo function defined as part of the SpartaApplication.
+Lambda Definition Our function will accept two params:
+ bucketName : The S3 bucket name storing the asset keyName : The S3 item key  Those params will be passed as part of the URL query string.</p>
+                
             
         
 
@@ -1940,6 +1952,12 @@ pre {
 
 
             
+                
+<p>This example demonstrates how to use the Context struct provided as part of the APIGatewayRequest. The SpartaGeoIP service will return Geo information based on the inbound request&rsquo;s IP address.
+Lambda Definition Our function will examine the inbound request, lookup the user&rsquo;s IP address in the GeoLite2 Database and return any information to the client.
+As this function is only expected to be invoked from the API Gateway, we&rsquo;ll unmarshall the inbound event:</p>
+                
+            
         
 
         
@@ -1960,6 +1978,12 @@ pre {
 
 
 
+            
+                
+<p>Cross Origin Resource Sharing defines a protocol by which resources on different domains may establish whether cross site operations are permissible.
+Sparta makes CORS support a single CORSEnabled field of the API struct:
+// Register the function with the API Gateway apiStage := sparta.NewStage(&quot;v1&quot;) apiGateway := sparta.NewAPIGateway(&quot;SpartaHTML&quot;, apiStage) // Enable CORS s.t. the S3 site can access the resources apiGateway.CORSEnabled = true  Setting the boolean to true will add the necessary OPTIONS and mock responses to all resources exposed by your API.</p>
+                
             
         
 
@@ -1982,6 +2006,12 @@ pre {
 
 
             
+                
+<p>In this example, we&rsquo;ll walk through creating a Slack Slash Command service. The source for this is the SpartaSlackbot repo.
+Our initial command handler won&rsquo;t be very sophisticated, but will show the steps necessary to provision and configure a Sparta AWS Gateway-enabled Lambda function.
+Define the Lambda Function This lambda handler is a bit more complicated than the other examples, primarily because of the Slack Integration requirements. The full source is:</p>
+                
+            
         
 
         
@@ -2002,6 +2032,13 @@ pre {
 
 
 
+            
+                
+<p>Sparta supports provisioning an S3-backed static website as part of provisioning. We&rsquo;ll walk through provisioning a minimal Bootstrap website that accesses API Gateway lambda functions provisioned by a single service in this example.
+The source for this is the SpartaHTML example application.
+Lambda Definition We&rsquo;ll start by creating a very simple lambda function:
+import ( spartaAPIGateway &quot;github.com/mweagle/Sparta/aws/apigateway&quot; spartaAWSEvents &quot;github.com/mweagle/Sparta/aws/events&quot; ) type helloWorldResponse struct { Message string Request spartaAWSEvents.APIGatewayRequest } //////////////////////////////////////////////////////////////////////////////// // Hello world event handler func helloWorld(ctx context.</p>
+                
             
         
 
@@ -3455,20 +3492,20 @@ headers using the default VTL mappings, provide them as the optional third <code
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1559281547"></script>
-    <script src="/js/perfect-scrollbar.min.js?1559281547"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1559281547"></script>
-    <script src="/js/jquery.sticky.js?1559281547"></script>
-    <script src="/js/featherlight.min.js?1559281547"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1559281547"></script>
-    <script src="/js/highlight.pack.js?1559281547"></script>
+    <script src="/js/clipboard.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559539126"></script>
+    <script src="/js/jquery.sticky.js?1559539126"></script>
+    <script src="/js/featherlight.min.js?1559539126"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559539126"></script>
+    <script src="/js/highlight.pack.js?1559539126"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1559281547"></script>
-    <script src="/js/learn.js?1559281547"></script>
-    <script src="/js/hugo-learn.js?1559281547"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559539126"></script>
+    <script src="/js/learn.js?1559539126"></script>
+    <script src="/js/hugo-learn.js?1559539126"></script>
 
-    <link href="/mermaid/mermaid.css?1559281547" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1559281547"></script>
+    <link href="/mermaid/mermaid.css?1559539126" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559539126"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

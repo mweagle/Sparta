@@ -12,20 +12,20 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1559281547" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1559281547" rel="stylesheet">
-    <link href="/css/hybrid.css?1559281547" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1559281547" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1559281547" rel="stylesheet">
-    <link href="/css/auto-complete.css?1559281547" rel="stylesheet">
-    <link href="/css/atom-one-dark-reasonable.css?1559281547" rel="stylesheet">
-    <link href="/css/theme.css?1559281547" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1559281547" rel="stylesheet">
+    <link href="/css/nucleus.css?1559539126" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559539126" rel="stylesheet">
+    <link href="/css/hybrid.css?1559539126" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559539126" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559539126" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559539126" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559539126" rel="stylesheet">
+    <link href="/css/theme.css?1559539126" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559539126" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1559281547" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559539126" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1559281547"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559539126"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -58,14 +58,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1559281547"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1559281547"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559539126"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559539126"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1559281547"></script>
+<script type="text/javascript" src="/js/search.js?1559539126"></script>
 
     
   </div>
@@ -1765,8 +1765,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/b6062da7">b6062da7</a><p/>
-  Date: 2018-12-11 20:52:53 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f37e51f8">f37e51f8</a><p/>
+  Date: 2019-06-02 21:51:22 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1893,6 +1893,12 @@ pre {
 
 
             
+                
+<p>Magefile To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
+Default Sparta magefile.go This magefile.go can be used, unchanged, for most standard Sparta projects.
+// +build mage // File: magefile.go package main import ( spartaMage &quot;github.com/mweagle/Sparta/magefile&quot; ) // Provision the service func Provision() error { return spartaMage.</p>
+                
+            
         
 
         
@@ -1913,6 +1919,12 @@ pre {
 
 
 
+            
+                
+<p>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
+Sample usage:
+lambdaFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&quot;MY_SNS_ARN&quot;)), }  </p>
+                
             
         
 
@@ -1935,6 +1947,13 @@ pre {
 
 
             
+                
+<p>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&rsquo;s behavior.
+Sample usage:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
+Related to this, see the recently announced AWS Lambda Application Dashboard.</p>
+                
+            
         
 
         
@@ -1955,6 +1974,10 @@ pre {
 
 
 
+            
+                
+<p>TODO: Document the [CodeDeployServiceUpdateDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CodeDeployServiceUpdateDecorator) decorator. See also the [Deployment Strategy](/reference/operations/deployment_strategies.md) page.  </p>
+                
             
         
 
@@ -1977,6 +2000,10 @@ pre {
 
 
             
+                
+<p>TODO: Document the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) example. Also see the [Medium Post](https://medium.com/@mweagle/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)  </p>
+                
+            
         
 
         
@@ -1997,6 +2024,10 @@ pre {
 
 
 
+            
+                
+<p>Document the [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) example.  </p>
+                
             
         
 
@@ -2019,6 +2050,12 @@ pre {
 
 
             
+                
+<p>AWS Lambda is tightly integrated with other AWS services and provides excellent opportunities for improving your service&rsquo;s observability posture. Sparta includes a CloudWatch Metrics publisher that periodically publishes metrics to CloudWatch.
+This periodic task publishes environment-level metrics that have been detected by the gopsutil package. Metrics include:
+ CPU  Percent used  Disk  Percent used  Host  Uptime (milliseconds)  Load  Load1 (no units) Load5 (no units) Load15 (no units)  Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)   You can provide an optional map[string]string set of dimensions to which the metrics should be published.</p>
+                
+            
         
 
         
@@ -2039,6 +2076,10 @@ pre {
 
 
 
+            
+                
+<p>One of Lambda&rsquo;s biggest strengths, its ability to automatically scale across ephemeral containers in response to increased load, also creates one of its biggest problems: observability. The traditional set of tools used to identify performance bottlenecks are no longer valid, as there is no host into which one can SSH and interactively interrogate. Identifying performance bottlenecks is even more significant due to the Lambda pricing model, where idle time often directly translates into increased costs.</p>
+                
             
         
 
@@ -3370,20 +3411,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1559281547"></script>
-    <script src="/js/perfect-scrollbar.min.js?1559281547"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1559281547"></script>
-    <script src="/js/jquery.sticky.js?1559281547"></script>
-    <script src="/js/featherlight.min.js?1559281547"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1559281547"></script>
-    <script src="/js/highlight.pack.js?1559281547"></script>
+    <script src="/js/clipboard.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559539126"></script>
+    <script src="/js/jquery.sticky.js?1559539126"></script>
+    <script src="/js/featherlight.min.js?1559539126"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559539126"></script>
+    <script src="/js/highlight.pack.js?1559539126"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1559281547"></script>
-    <script src="/js/learn.js?1559281547"></script>
-    <script src="/js/hugo-learn.js?1559281547"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559539126"></script>
+    <script src="/js/learn.js?1559539126"></script>
+    <script src="/js/hugo-learn.js?1559539126"></script>
 
-    <link href="/mermaid/mermaid.css?1559281547" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1559281547"></script>
+    <link href="/mermaid/mermaid.css?1559539126" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559539126"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>

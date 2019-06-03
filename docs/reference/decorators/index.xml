@@ -17,7 +17,10 @@
       <pubDate>Mon, 27 May 2019 22:31:25 +0000</pubDate>
       
       <guid>/reference/decorators/cloudmap/</guid>
-      <description></description>
+      <description>The CloudMapServiceDecorator allows your service to register a service instance for your application.
+For example, an application that provisions a SQS queue and an AWS Lambda function that consumes messages from that queue may need a way for the Lambda function to discover the dynamically provisioned queue.
+Sparta supports an environment-based discovery service but that discovery is limited to a single Service.
+The CloudMapServiceDecorator leverages the CloudMap service to support intra- and inter-service resource discovery.</description>
     </item>
     
     <item>

@@ -12,20 +12,20 @@
     <title>Example Service :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1559281546" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1559281546" rel="stylesheet">
-    <link href="/css/hybrid.css?1559281546" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1559281546" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1559281546" rel="stylesheet">
-    <link href="/css/auto-complete.css?1559281546" rel="stylesheet">
-    <link href="/css/atom-one-dark-reasonable.css?1559281546" rel="stylesheet">
-    <link href="/css/theme.css?1559281546" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1559281546" rel="stylesheet">
+    <link href="/css/nucleus.css?1559539126" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1559539126" rel="stylesheet">
+    <link href="/css/hybrid.css?1559539126" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1559539126" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1559539126" rel="stylesheet">
+    <link href="/css/auto-complete.css?1559539126" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1559539126" rel="stylesheet">
+    <link href="/css/theme.css?1559539126" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1559539126" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1559281546" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1559539126" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1559281546"></script>
+    <script src="/js/jquery-3.3.1.min.js?1559539126"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -58,14 +58,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1559281546"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1559281546"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1559539126"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1559539126"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1559281546"></script>
+<script type="text/javascript" src="/js/search.js?1559539126"></script>
 
     
   </div>
@@ -1765,8 +1765,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/e9a06016">e9a06016</a><p/>
-  Date: 2018-12-11 07:44:06 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/f37e51f8">f37e51f8</a><p/>
+  Date: 2019-06-02 21:51:22 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1873,6 +1873,11 @@ pre {
 
 
             
+                
+<p>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS. Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.
+Please be aware that running Lambda functions may incur [costs](https://aws.amazon.com/lambda/pricing"). Be sure to decommission Sparta stacks after you are finished using them (via the `delete` command line option) to avoid unwanted charges.</p>
+                
+            
         
 
         
@@ -1893,6 +1898,11 @@ pre {
 
 
 
+            
+                
+<p>The Overview walked through a simple &ldquo;Hello World&rdquo; example. In this section we&rsquo;ll cover how Sparta works in preparation for moving on to more advanced use. Most development will use the provision command line argument, so this section will outline exactly what that entails.
+Provisioning Flow The provisioning workflow is defined in provision.go, with a goal of marshalling all AWS operations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta falls back to using Lambda-backed Custom Resources in the template definition.</p>
+                
             
         
 
@@ -3222,20 +3232,20 @@ pre {
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1559281546"></script>
-    <script src="/js/perfect-scrollbar.min.js?1559281546"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1559281546"></script>
-    <script src="/js/jquery.sticky.js?1559281546"></script>
-    <script src="/js/featherlight.min.js?1559281546"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1559281546"></script>
-    <script src="/js/highlight.pack.js?1559281546"></script>
+    <script src="/js/clipboard.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.min.js?1559539126"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1559539126"></script>
+    <script src="/js/jquery.sticky.js?1559539126"></script>
+    <script src="/js/featherlight.min.js?1559539126"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1559539126"></script>
+    <script src="/js/highlight.pack.js?1559539126"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1559281546"></script>
-    <script src="/js/learn.js?1559281546"></script>
-    <script src="/js/hugo-learn.js?1559281546"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1559539126"></script>
+    <script src="/js/learn.js?1559539126"></script>
+    <script src="/js/hugo-learn.js?1559539126"></script>
 
-    <link href="/mermaid/mermaid.css?1559281546" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1559281546"></script>
+    <link href="/mermaid/mermaid.css?1559539126" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1559539126"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
