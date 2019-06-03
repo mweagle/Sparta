@@ -1,6 +1,6 @@
 # Change Notes
 
-## v1.9.3 - The Keeping up with the Joneses Edition 🏃‍♂️
+## v1.9.3 - The Discovery Edition ☁️🔍
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
