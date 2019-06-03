@@ -1132,7 +1132,6 @@ func applyInPlaceFunctionUpdates(ctx *workflowContext, templateURL string) (*clo
 		"Updates": updateCodeRequests,
 	}).Debug("Update requests")
 
-	// TODO - migrate to the worker pool
 	updateTaskMaker := func(lambdaSvc *lambda.Lambda, request *lambda.UpdateFunctionCodeInput) taskFunc {
 		return func() workResult {
 			_, updateResultErr := lambdaSvc.UpdateFunctionCode(request)
