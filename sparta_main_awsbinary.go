@@ -233,7 +233,7 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 	// We always use JSON in AWS
 	logger.Formatter = &logrus.JSONFormatter{}
 
-	// TODO - consider adding a buffered logger that only
+	// TODO - consider writing a buffered logger that only
 	// writes output following an error.
 	// This was done as part of the XRay interceptor!
 	logger.Out = os.Stdout
