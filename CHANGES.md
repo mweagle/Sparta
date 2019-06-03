@@ -4,6 +4,10 @@
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added [Cloud Map](https://aws.amazon.com/cloud-map/) discovery publisher
+    - See the [documentation](https://gosparta.io/reference/decorators/cloudmap/)
+  - Added `panic` recover handler to more gracefully handle exceptions
+  - Include AWS Session in context with key `sparta.ContextKeyAWSSession`
 - :bug:  **FIXED**
   - [Update to support new Amazon Linux AMI](https://github.com/mweagle/Sparta/issues/145)
   - Fixed latent issue where `env` specified log level wasn't respected at lambda execution time
