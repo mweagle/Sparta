@@ -82,11 +82,19 @@ func MainEx(serviceName string,
 		OptionsGlobal.Logger = logger
 		return nil
 	}
-	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) error {
+	CommandLineOptions.Root.RunE = func(cmd *cobra.Command, args []string) (err error) {
+		defer func() {
+			if r := recover(); r != nil {
+				OptionsGlobal.Logger.Error("Panic recovered: %v", r)
+				err = errors.Errorf(fmt.Sprintf("%v", r))
+			}
+		}()
+
 		// By default run the Execute command
-		return Execute(StampedServiceName,
+		err = Execute(StampedServiceName,
 			lambdaAWSInfos,
 			OptionsGlobal.Logger)
+		return err
 	}
 	return CommandLineOptions.Root.Execute()
 }
