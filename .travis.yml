@@ -2,7 +2,8 @@ language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
 - "1.12.6"
-# before_install:
+before_install:
+  - go build .
 # - go get -u -v github.com/magefile/mage
 # - go get -u -v github.com/hhatto/gocloc
 # - go get -u -v github.com/mholt/archiver
