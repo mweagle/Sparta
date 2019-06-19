@@ -330,14 +330,14 @@ func InstallBuildRequirements() error {
 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
-		"honnef.co/go/tools/...",
-		"golang.org/x/tools/cmd/goimports",
-		"github.com/fzipp/gocyclo",
-		"golang.org/x/lint/golint",
-		"github.com/mjibson/esc",
-		"github.com/securego/gosec/cmd/gosec/...",
-		"github.com/alexkohler/prealloc",
-		"github.com/client9/misspell/cmd/misspell",
+		// "honnef.co/go/tools/...",
+		// "golang.org/x/tools/cmd/goimports",
+		// "github.com/fzipp/gocyclo",
+		// "golang.org/x/lint/golint",
+		// "github.com/mjibson/esc",
+		// "github.com/securego/gosec/cmd/gosec/...",
+		// "github.com/alexkohler/prealloc",
+		// "github.com/client9/misspell/cmd/misspell",
 	}
 	for _, eachDep := range requirements {
 		cmdErr := sh.Run("go",

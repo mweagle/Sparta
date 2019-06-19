@@ -1,14 +1,14 @@
 language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
-- "1.12.5"
-before_install:
-- go get -u -v github.com/magefile/mage
-- go get -u -v github.com/hhatto/gocloc
-- go get -u -v github.com/mholt/archiver
-- go get -u -v github.com/pkg/browser
-- go get -u -v github.com/otiai10/copy
-- go get -u -v github.com/pkg/errors
+- "1.12.6"
+# before_install:
+# - go get -u -v github.com/magefile/mage
+# - go get -u -v github.com/hhatto/gocloc
+# - go get -u -v github.com/mholt/archiver
+# - go get -u -v github.com/pkg/browser
+# - go get -u -v github.com/otiai10/copy
+# - go get -u -v github.com/pkg/errors
 install:
   # Suppress the default installation behavior, which is to
   # `go get` everything. The default installation behavior is suppressed
