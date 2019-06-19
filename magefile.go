@@ -330,7 +330,6 @@ func InstallBuildRequirements() error {
 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
-		"github.com/golang/dep/...",
 		"honnef.co/go/tools/...",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
@@ -483,9 +482,7 @@ func EnsureTravisBuildEnvironment() error {
 
 	// Super run some commands
 	travisComands := [][]string{
-		{"dep", "version"},
-		{"dep", "ensure", "-v"},
-		{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
+		{"go", "version"},
 	}
 	return spartamage.Script(travisComands)
 }
