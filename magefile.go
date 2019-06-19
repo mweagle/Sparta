@@ -335,7 +335,7 @@ func InstallBuildRequirements() error {
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
-		"github.com/securego/gosec/cmd/gosec/...",
+		"github.com/securego/gosec/cmd/gosec",
 		"github.com/alexkohler/prealloc",
 		"github.com/client9/misspell/cmd/misspell",
 	}
