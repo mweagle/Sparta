@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/AlecAivazis/survey"
+	survey "github.com/AlecAivazis/survey/v2"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
