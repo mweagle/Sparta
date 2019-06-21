@@ -3,12 +3,7 @@ go:
   # https://twitter.com/dgryski/status/964626204488695808
 - "1.12.6"
 before_install:
-  - go get -u -v github.com/magefile/mage
-  - go get -u -v github.com/hhatto/gocloc
-  - go get -u -v github.com/mholt/archiver
-  - go get -u -v github.com/pkg/browser
-  - go get -u -v github.com/otiai10/copy
-  - go get -u -v github.com/pkg/errors
+  - ./travis.sh
   - go build .
 install:
   # Suppress the default installation behavior, which is to
