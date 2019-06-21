@@ -35,9 +35,10 @@ func main() {
 	// Include the #nosec directive to have gas ignore
 	// the ignored error returns
 	// https://github.com/GoASTScanner/gas
-	updatedContents := fmt.Sprintf(`//lint:file-ignore U1000 Ignore all unused code, it's generated
-
-// +build %s* #nosec */
+	updatedContents := fmt.Sprintf(`// +build lambdabinary
+	
+// lint:file-ignore U1000 Ignore all unused code, it's generated
+/* #nosec */
 	
 %s`,
 		tagString,
