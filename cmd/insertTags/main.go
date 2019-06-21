@@ -37,9 +37,9 @@ func main() {
 	// https://github.com/GoASTScanner/gas
 	updatedContents := fmt.Sprintf(`//lint:file-ignore U1000 Ignore all unused code, it's generated
 
-	// +build %s* #nosec */
+// +build %s* #nosec */
 	
-	%s`,
+%s`,
 		tagString,
 		fileContents)
 	err = ioutil.WriteFile(absPath, []byte(updatedContents), 0644)
