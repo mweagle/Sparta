@@ -328,7 +328,7 @@ func InstallBuildRequirements() error {
 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
-		"honnef.co/go/tools@2019.1.1",
+		"honnef.co/go/tools/cmd/...",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
