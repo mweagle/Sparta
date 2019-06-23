@@ -1,8 +1,8 @@
  #!/bin/bash -ex
 
 # Workaround for https://github.com/golang/go/issues/30515
-mkdir -pv ./travis
-cd ./travis   
+mkdir -pv ./.sparta
+cd ./.sparta   
 GO111MODULE=off go get -u -v github.com/magefile/mage
 GO111MODULE=off go get -u -v github.com/hhatto/gocloc
 GO111MODULE=off go get -u -v github.com/mholt/archiver

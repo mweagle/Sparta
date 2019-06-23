@@ -1,5 +1,7 @@
 // +build mage
 
+// lint:file-ignore U1000 Ignore all  code, it's only for development
+
 package main
 
 import (
@@ -335,8 +337,13 @@ func InstallBuildRequirements() error {
 		"github.com/alexkohler/prealloc",
 		"github.com/client9/misspell/cmd/misspell",
 	}
+	envMap := map[string]string{
+		"GO111MODULE": "off",
+	}
 	for _, eachDep := range requirements {
-		cmdErr := sh.Run("go",
+
+		cmdErr := sh.RunWith(envMap,
+			"go",
 			"get",
 			os.Getenv("GO_GET_FLAG"),
 			eachDep)
@@ -432,8 +439,6 @@ func EnsureFormatted() error {
 func EnsureStaticChecks() error {
 	// https://staticcheck.io/
 	staticCheckErr := sh.Run("staticcheck",
-		"-ignore",
-		"github.com/mweagle/Sparta/CONSTANTS.go:*",
 		"github.com/mweagle/Sparta/...")
 	if staticCheckErr != nil {
 		return staticCheckErr

@@ -3,7 +3,7 @@ go:
   # https://twitter.com/dgryski/status/964626204488695808
 - "1.12.6"
 before_install:
-  - ./travis.sh
+  - ./prerequisites.sh
   - go build .
 install:
   # Suppress the default installation behavior, which is to
