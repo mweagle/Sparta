@@ -36,10 +36,8 @@ func main() {
 	// the ignored error returns
 	// https://github.com/GoASTScanner/gas
 	updatedContents := fmt.Sprintf(`// +build %s
-	
 // lint:file-ignore U1000 Ignore all unused code, it's generated
 /* #nosec */
-	
 %s`,
 		tagString,
 		fileContents)
