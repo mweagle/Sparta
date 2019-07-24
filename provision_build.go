@@ -151,7 +151,7 @@ type userdata struct {
 	// Code pipeline S3 trigger keyname
 	codePipelineTrigger string
 	// Optional APIGateway definition to associate with this service
-	api *API
+	api APIGateway
 	// Optional S3 site data to provision together with this service
 	s3SiteContext *s3SiteContext
 	// The user-supplied S3 bucket where service artifacts should be posted.
@@ -1384,7 +1384,7 @@ func ensureCloudFormationStack() workflowStep {
 		apiGatewayTemplate := gocf.NewTemplate()
 
 		if nil != ctx.userdata.api {
-			err := ctx.userdata.api.export(
+			err := ctx.userdata.api.Marshal(
 				ctx.userdata.serviceName,
 				ctx.context.awsSession,
 				ctx.userdata.s3Bucket,
@@ -1514,7 +1514,7 @@ func Provision(noop bool,
 	serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
+	api APIGateway,
 	site *S3Site,
 	s3Bucket string,
 	useCGO bool,

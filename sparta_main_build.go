@@ -64,7 +64,7 @@ func NewLoggerWithFormatter(level string, formatter logrus.Formatter) (*logrus.L
 // properly configured AWS credentials for the golang SDK.
 // See http://docs.aws.amazon.com/sdk-for-go/api/aws/defaults.html#DefaultChainCredentials-constant
 // for more information.
-func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api *API, site *S3Site) error {
+func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*LambdaAWSInfo, api APIGateway, site *S3Site) error {
 	return MainEx(serviceName,
 		serviceDescription,
 		lambdaAWSInfos,
@@ -79,7 +79,7 @@ func Main(serviceName string, serviceDescription string, lambdaAWSInfos []*Lambd
 func MainEx(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
+	api APIGateway,
 	site *S3Site,
 	workflowHooks *WorkflowHooks,
 	useCGO bool) error {

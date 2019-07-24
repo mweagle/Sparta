@@ -14,6 +14,21 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// APIGateway repreents a type of API Gateway provisoining that can be exported
+type APIGateway interface {
+	LogicalResourceName() string
+	Marshal(serviceName string,
+		session *session.Session,
+		S3Bucket string,
+		S3Key string,
+		S3Version string,
+		roleNameMap map[string]*gocf.StringExpr,
+		template *gocf.Template,
+		noop bool,
+		logger *logrus.Logger) error
+	Describe(writer *descriptionWriter) error
+}
+
 var defaultCORSHeaders = map[string]interface{}{
 	"Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key",
 	"Access-Control-Allow-Methods": "*",
