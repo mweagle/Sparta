@@ -1,5 +1,6 @@
 .vscode/*
 graph.html
+.envrc
 tags
 .atom-build.json
 resources/provision/node_modules/*
