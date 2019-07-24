@@ -75,3 +75,32 @@ func TestAPIGateway(t *testing.T) {
 		false,
 		nil)
 }
+
+func TestAPIV2Gateway(t *testing.T) {
+	stage, _ := NewAPIV2Stage("v1")
+	apiGateway, _ := NewAPIV2(Websocket,
+		"sample",
+		"$request.body.message",
+		stage)
+	lambdaFn, _ := NewAWSLambda(LambdaName(mockLambda1),
+		mockLambda1,
+		IAMRoleDefinition{})
+	apiv2Route, _ := apiGateway.NewAPIV2Route("$connect",
+		lambdaFn)
+	apiv2Route.OperationName = "ConnectRoute"
+
+	lambdaFn2, _ := NewAWSLambda(LambdaName(mockLambda2),
+		mockLambda2,
+		IAMRoleDefinition{})
+	apiv2Route2, _ := apiGateway.NewAPIV2Route("$disconnect",
+		lambdaFn2)
+	apiv2Route2.OperationName = "DisconnectRoute"
+
+	testProvisionEx(t,
+		[]*LambdaAWSInfo{lambdaFn, lambdaFn2},
+		apiGateway,
+		nil,
+		nil,
+		false,
+		nil)
+}
