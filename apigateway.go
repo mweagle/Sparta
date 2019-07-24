@@ -509,8 +509,46 @@ func (api *API) corsEnabled() bool {
 	return api.CORSEnabled || (api.CORSOptions != nil)
 }
 
-// export marshals the API data to a CloudFormation compatible representation
-func (api *API) export(serviceName string,
+// Describe writes the API to a graph for visualization
+func (api *API) Describe(describer *descriptionWriter) error {
+
+	// Create the APIGateway virtual node && connect it to the application
+	writeErr := describer.writeNode(nodeNameAPIGateway,
+		nodeColorAPIGateway,
+		"AWSIcons/Application Services/ApplicationServices_AmazonAPIGateway.svg")
+	if writeErr != nil {
+		return writeErr
+	}
+	for _, eachResource := range api.resources {
+		for eachMethod := range eachResource.Methods {
+			// Create the PATH node
+			var nodeName = fmt.Sprintf("%s - %s", eachMethod, eachResource.pathPart)
+			writeErr = describer.writeNode(
+				nodeName,
+				nodeColorAPIGateway,
+				"AWSIcons/General/General_Internet.svg")
+			if writeErr != nil {
+				return writeErr
+			}
+			writeErr = describer.writeEdge(nodeNameAPIGateway,
+				nodeName,
+				"")
+			if writeErr != nil {
+				return writeErr
+			}
+			writeErr = describer.writeEdge(nodeName,
+				eachResource.parentLambda.lambdaFunctionName(),
+				"")
+			if writeErr != nil {
+				return writeErr
+			}
+		}
+	}
+	return nil
+}
+
+// Marshal marshals the API data to a CloudFormation compatible representation
+func (api *API) Marshal(serviceName string,
 	session *session.Session,
 	S3Bucket string,
 	S3Key string,
@@ -661,7 +699,6 @@ func (api *API) export(serviceName string,
 		}
 	}
 	// END
-
 	if nil != api.stage {
 		// Is the stack already deployed?
 		stageName := api.stage.name
@@ -712,6 +749,7 @@ func (api *API) export(serviceName string,
 			deployment.DependsOn = append(deployment.DependsOn, apiMethodCloudFormationResources...)
 			deployment.DependsOn = append(deployment.DependsOn, apiGatewayResName)
 		}
+		// Outputs...
 		template.Outputs[OutputAPIGatewayURL] = &gocf.Output{
 			Description: "API Gateway URL",
 			Value: gocf.Join("",
