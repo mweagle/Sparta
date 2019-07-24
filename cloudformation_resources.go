@@ -10,6 +10,57 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Utility function to marshal an interface
+func marshalInterface(item interface{}) interface{} {
+	if item != nil {
+		return item
+	}
+	return item
+}
+
+// Utility function to marshal an int
+func marshalInt(intVal int64) *gocf.IntegerExpr {
+	if intVal != 0 {
+		return gocf.Integer(intVal)
+	}
+	return nil
+}
+
+// Utility function to marshal a string
+func marshalString(stringVal string) *gocf.StringExpr {
+	if stringVal != "" {
+		return gocf.String(stringVal)
+	}
+	return nil
+}
+
+func marshalStringExpr(stringExpr gocf.Stringable) *gocf.StringExpr {
+	if stringExpr != nil {
+		return stringExpr.String()
+	}
+	return nil
+}
+
+// Utility function to marshal a string lsit
+func marshalStringList(stringVals []string) *gocf.StringListExpr {
+	if len(stringVals) != 0 {
+		stringableList := make([]gocf.Stringable, len(stringVals))
+		for eachIndex, eachStringVal := range stringVals {
+			stringableList[eachIndex] = gocf.String(eachStringVal)
+		}
+		return gocf.StringList(stringableList...)
+	}
+	return nil
+}
+
+// Utility function to marshal a boolean
+func marshalBool(boolValue bool) *gocf.BoolExpr {
+	if !boolValue {
+		return gocf.Bool(boolValue)
+	}
+	return nil
+}
+
 // resourceOutputs is responsible for returning the conditional
 // set of CloudFormation outputs for a given resource type.
 func resourceOutputs(resourceName string,
