@@ -9,7 +9,7 @@
 
     <link rel="icon" href="/images/favicon.png" type="image/png">
 
-    <title>Amazon SageMaker :: Sparta - AWS Lambda Microservices</title>
+    <title> :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1564033388" rel="stylesheet">
@@ -42,7 +42,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/step/services/sagemaker/">
+  <body class="" data-url="/reference/apiv2gateway/">
     <nav id="sidebar" class="">
 
 
@@ -371,8 +371,8 @@ pre {
   
     
     <li data-nav-id="/reference/apiv2gateway/" title="" class="dd-item 
-        
-        
+        parent
+        active
         
         ">
       <a href="/reference/apiv2gateway/">
@@ -1135,7 +1135,7 @@ pre {
   
     
     <li data-nav-id="/reference/step/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -1200,7 +1200,7 @@ pre {
   
     
     <li data-nav-id="/reference/step/services/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -1338,7 +1338,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/step/services/sagemaker/" title="Amazon SageMaker" class="dd-item active">
+      <li data-nav-id="/reference/step/services/sagemaker/" title="Amazon SageMaker" class="dd-item ">
         <a href="/reference/step/services/sagemaker/">
         Amazon SageMaker
         
@@ -1789,8 +1789,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/8db6779e">8db6779e</a><p/>
-  Date: 2018-12-16 09:22:50 -0800 PST
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/80e3555e">80e3555e</a><p/>
+  Date: 2019-07-24 22:42:46 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1814,7 +1814,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/step/services/sagemaker.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apiv2gateway/_index.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1845,19 +1845,7 @@ pre {
             
           
           
-            
-            
-          
-          
-            
-            
-          
-          
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/step/'></a> > <a href='/reference/step/services/'></a> > Amazon SageMaker
-          
-         
-          
-         
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > 
           
          
           
@@ -1870,7 +1858,28 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-
+<nav id="TableOfContents">
+<ul>
+<li><a href="#api-v2-gateway">API V2 Gateway</a>
+<ul>
+<li><a href="#payload">Payload</a></li>
+<li><a href="#routes">Routes</a>
+<ul>
+<li><a href="#connectworld">connectWorld</a></li>
+<li><a href="#disconnectworld">disconnectWorld</a></li>
+<li><a href="#sendmessage">sendMessage</a></li>
+</ul></li>
+<li><a href="#api-v2-gateway-decorator">API V2 Gateway Decorator</a>
+<ul>
+<li><a href="#additional-privileges">Additional Privileges</a></li>
+</ul></li>
+<li><a href="#annotating-lambda-functions">Annotating Lambda Functions</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#test">Test</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul></li>
+</ul>
+</nav>
     </div>
 </div>
 
@@ -1886,7 +1895,7 @@ pre {
           
             <h1>
               
-              Amazon SageMaker
+              
             </h1>
           
 
@@ -1894,15 +1903,333 @@ pre {
 
 
 
-<div class="notices note" >
-TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sagemaker.html) integration.
-</div>
+
+	
+
+<h1 id="api-v2-gateway">API V2 Gateway</h1>
+
+<p>The API V2 Gateway service provides a way to expose a WebSocket API that is
+supported by a set of Lambda functions. The AWS <a href="https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/">blog post</a> supplies an excellent overview of
+the pros and cons of this approach that enables a near real time, pushed-based
+application. This section will provide an overview of how to configure a WebSocket
+API using Sparta. It is based on the <a href="https://github.com/mweagle/SpartaWebSocket">SpartaWebSocket</a> sample project.</p>
+
+<h2 id="payload">Payload</h2>
+
+<p>Similar to the AWS blog post, our WebSocket API will transmit messages of the form</p>
+
+<pre><code class="language-json">{
+    &quot;message&quot;:&quot;sendmessage&quot;,
+    &quot;data&quot;:&quot;hello world !&quot;
+}
+</code></pre>
+
+<p>We&rsquo;ll use <a href="https://github.com/hashrocket/ws">ws</a> to test the API from the command line.</p>
+
+<h2 id="routes">Routes</h2>
+
+<p>The Sparta service consists of three lambda functions:</p>
+
+<ul>
+<li><code>connectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+<li><code>disconnectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+<li><code>sendMessage(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+</ul>
+
+<p>Our functions will use the <strong>PROXY</strong> style integration and therefore accept an instance of the <a href="https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest">APIGatewayWebsocketProxyRequest</a></p>
+
+<p>Each function returns a <code>*wsResponse</code> instance that satisfies the <strong>PROXY</strong> mapping:</p>
+
+<pre><code class="language-go">type wsResponse struct {
+  StatusCode int    `json:&quot;statusCode&quot;`
+  Body       string `json:&quot;body&quot;`
+}
+</code></pre>
+
+<h3 id="connectworld">connectWorld</h3>
+
+<p>The <code>connectWorld</code> AWS Lambda function is responsible for saving the incoming <em>connectionID</em> into a dynamically provisioned DynamoDB database so that subsequent <em>sendMessage</em> requests can broadcast to all subscribed parties.</p>
+
+<p>The table name is advertised in the Lambda function via a user-defined environment variable. The specifics of how that table is provisioned will be addressed in a section below.</p>
+
+<pre><code class="language-go">...
+// Operation
+putItemInput := &amp;dynamodb.PutItemInput{
+  TableName: aws.String(os.Getenv(envKeyTableName)),
+  Item: map[string]*dynamodb.AttributeValue{
+    ddbAttributeConnectionID: &amp;dynamodb.AttributeValue{
+      S: aws.String(request.RequestContext.ConnectionID),
+     },
+  },
+}
+_, putItemErr := dynamoClient.PutItem(putItemInput)
+...
+</code></pre>
+
+<h3 id="disconnectworld">disconnectWorld</h3>
+
+<p>The complement to <code>connectWorld</code> is <code>disconnectWorld</code> which is responsible for removing the <em>connectionID</em> from the list of registered connections:</p>
+
+<pre><code class="language-go">  delItemInput := &amp;dynamodb.DeleteItemInput{
+    TableName: aws.String(os.Getenv(envKeyTableName)),
+    Key: map[string]*dynamodb.AttributeValue{
+      ddbAttributeConnectionID: &amp;dynamodb.AttributeValue{
+        S: aws.String(connectionID),
+      },
+    },
+  }
+  _, delItemErr := ddbService.DeleteItem(delItemInput)
+</code></pre>
+
+<h3 id="sendmessage">sendMessage</h3>
+
+<p>With the <code>connectWorld</code> and <code>disconnectWorld</code> connection management functions created, the core of the WebSocket API is <code>sendMessage</code>. This function is responsible for scanning over the set of registered <em>connectionIDs</em> and forwarding a request to <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/apigatewaymanagementapi#ApiGatewayManagementApi.PostToConnectionWithContext">PostConnectionWithContext</a>. This function sends the message to the registered connections.</p>
+
+<p>The <code>sendMessage</code> function has a few distinct sections that can be understood as follows.</p>
+
+<p>The first requirement is to setup the API Gateway Management service instance using the proper endpoint:</p>
+
+<pre><code class="language-go">  endpointURL := fmt.Sprintf(&quot;%s/%s&quot;,
+    request.RequestContext.DomainName,
+    request.RequestContext.Stage)
+  logger.WithField(&quot;Endpoint&quot;, endpointURL).Info(&quot;API Gateway Endpoint&quot;)
+  dynamoClient := dynamodb.New(sess)
+    apigwMgmtClient := apigwManagement.New(sess, aws.NewConfig().WithEndpoint(endpointURL))
+</code></pre>
+
+<p>The new step is to unmarshal and validate the incoming JSON request body:</p>
+
+<pre><code class="language-go">  // Get the input request...
+  var objMap map[string]*json.RawMessage
+  unmarshalErr := json.Unmarshal([]byte(request.Body), &amp;objMap)
+  if unmarshalErr != nil || objMap[&quot;data&quot;] == nil {
+    return &amp;wsResponse{
+      StatusCode: 500,
+      Body:       &quot;Failed to unmarshal request: &quot; + unmarshalErr.Error(),
+    }, nil
+  }
+</code></pre>
+
+<p>Once the incoming <code>data</code> property is validated, the next step is to scan the DynamoDB table for the registered connections and post a message to each one. Note that the scan callback also attempts to cleanup connections that are no longer valid, but which haven&rsquo;t been cleanly removed.</p>
+
+<pre><code class="language-go">  scanCallback := func(output *dynamodb.ScanOutput, lastPage bool) bool {
+    // Send the message to all the clients
+    for _, eachItem := range output.Items {
+      receiverConnection := &quot;&quot;
+      if eachItem[ddbAttributeConnectionID].S != nil {
+        receiverConnection = *eachItem[ddbAttributeConnectionID].S
+      }
+      postConnectionInput := &amp;apigwManagement.PostToConnectionInput{
+        ConnectionId: aws.String(receiverConnection),
+        Data:         *objMap[&quot;data&quot;],
+      }
+      _, respErr := apigwMgmtClient.PostToConnectionWithContext(ctx, postConnectionInput)
+      if respErr != nil {
+        if receiverConnection != &quot;&quot; &amp;&amp;
+          strings.Contains(respErr.Error(), apigwManagement.ErrCodeGoneException) {
+          // Async clean it up...
+          go deleteConnection(receiverConnection, dynamoClient)
+        } else {
+          logger.WithField(&quot;Error&quot;, respErr).Warn(&quot;Failed to post to connection&quot;)
+        }
+      }
+      return true
+    }
+    return true
+  }
+
+  // Scan the connections table
+  scanInput := &amp;dynamodb.ScanInput{
+    TableName: aws.String(os.Getenv(envKeyTableName)),
+  }
+  scanItemErr := dynamoClient.ScanPagesWithContext(ctx,
+    scanInput,
+    scanCallback)
+    ...
+</code></pre>
+
+<p>These three functions are the core of the WebSocket service.</p>
+
+<h2 id="api-v2-gateway-decorator">API V2 Gateway Decorator</h2>
+
+<p>The next step is to create the API V2 API which is comprised of:</p>
+
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html">Stage</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html">API</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html">Routes</a></li>
+</ul>
+
+<p>There is one Stage and one API per service, but a given service (including this one) may include multiple Routes:</p>
+
+<pre><code class="language-go">// APIv2 Websockets
+stage, _ := sparta.NewAPIV2Stage(&quot;v1&quot;)
+stage.Description = &quot;New deploy!&quot;
+
+apiGateway, _ := sparta.NewAPIV2(sparta.Websocket,
+  &quot;sample&quot;,
+  &quot;$request.body.message&quot;,
+   stage)
+</code></pre>
+
+<p>The <code>NewAPIV2</code> creation function requires:</p>
+
+<ul>
+<li>The protocol to use (<code>sparta.Websocket</code>)</li>
+<li>The name of the API (<code>sample</code>)</li>
+<li>The <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-selection-expressions.html#apigateway-websocket-api-route-selection-expressions">route selection expression</a> that represents a JSONPath selection expression to map input data to the corresponding lambda function.</li>
+<li>The stage</li>
+</ul>
+
+<p>Once the API is defined, each route is associated with the API as in:</p>
+
+<pre><code class="language-go">apiv2ConnectRoute, _ := apiGateway.NewAPIV2Route(&quot;$connect&quot;,
+    lambdaConnect)
+apiv2ConnectRoute.OperationName = &quot;ConnectRoute&quot;
+...
+apiv2SendRoute, _ := apiGateway.NewAPIV2Route(&quot;sendmessage&quot;,
+    lambdaSend)
+apiv2SendRoute.OperationName = &quot;SendRoute&quot;
+...
+</code></pre>
+
+<p>The <code>$connect</code> routeKey is a special <a href="https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/">route key value</a> that is sent when a client first connects to the WebSocket API.</p>
+
+<p>The <code>sendmessage</code> routeKey value means that a payload of the form:</p>
+
+<pre><code class="language-json">{
+    &quot;message&quot;:&quot;sendmessage&quot;,
+    &quot;data&quot;:&quot;hello world !&quot;
+}
+</code></pre>
+
+<p>will trigger the <code>lambdaSend</code> function given the parent API&rsquo;s route selection expression of <code>$request.body.message</code>.</p>
+
+<h3 id="additional-privileges">Additional Privileges</h3>
+
+<p>Because the <code>lambdaSend</code> function also needs to invoke the API Gateway Management APIs an additional IAM Privilege must be enabled:</p>
+
+<pre><code class="language-go">  var apigwPermissions = []sparta.IAMRolePrivilege{
+    {
+      Actions: []string{&quot;execute-api:ManageConnections&quot;},
+      Resource: gocf.Join(&quot;&quot;,
+        gocf.String(&quot;arn:aws:execute-api:&quot;),
+        gocf.Ref(&quot;AWS::Region&quot;),
+        gocf.String(&quot;:&quot;),
+        gocf.Ref(&quot;AWS::AccountId&quot;),
+        gocf.String(&quot;:&quot;),
+        gocf.Ref(apiGateway.LogicalResourceName()),
+        gocf.String(&quot;/*&quot;)),
+    },
+  }
+  lambdaSend.RoleDefinition.Privileges = append(lambdaSend.RoleDefinition.Privileges, apigwPermissions...)
+</code></pre>
+
+<h2 id="annotating-lambda-functions">Annotating Lambda Functions</h2>
+
+<p>The final step is to use the API gateway to create an instance of the <code>APIV2GatewayDecorator</code>. This decorator is responsible for:</p>
+
+<ul>
+<li>Provisioning the DynamoDB table.</li>
+<li>Ensuring DynamoDB &ldquo;CRUD&rdquo; permissions for all the AWS Lambda functions.</li>
+<li>Publishing the table name into the Lambda function&rsquo;s Environment block.</li>
+<li>Add the WebSocket <code>wss://...</code> URL to the Stack&rsquo;s Outputs.</li>
+</ul>
+
+<pre><code class="language-go">  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
+    ddbAttributeConnectionID /* DDB attr name for connectionID */,
+    5 /* readCapacity */,
+    5 /* writeCapacity */)
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFunctions = append(lambdaFunctions,
+    lambdaConnect,
+    lambdaDisconnect,
+    lambdaSend)
+  decorator.AnnotateLambdas(lambdaFunctions)
+</code></pre>
+
+<h2 id="provision">Provision</h2>
+
+<p>The final step is to provide the decorator as a Workflow hook as in:</p>
+
+<pre><code class="language-go">// Set everything up and run it...
+  workflowHooks := &amp;sparta.WorkflowHooks{
+    ServiceDecorators: []sparta.ServiceDecoratorHookHandler{decorator},
+  }
+  err := sparta.MainEx(awsName,
+    &quot;Sparta application that demonstrates API v2 Websocket support&quot;,
+    lambdaFunctions,
+    apiGateway,
+    nil,
+    workflowHooks,
+    false)
+</code></pre>
+
+<p>and then provision the application:</p>
+
+<pre><code class="language-bash">go run main.go provision --s3Bucket $S3_BUCKET --noop
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.9.4
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : cfd44e2
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.12.6
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaWebSocket-123412341234         LinkFlags= Option=provision UTC=&quot;2019-07-25T05:26:57Z&quot;
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Using `git` SHA for StampedBuildID            Command=&quot;git rev-parse HEAD&quot; SHA=6b26f8e645e9d58c1b678e46576e19bbc29886c0
+INFO[0000] Provisioning service                          BuildID=6b26f8e645e9d58c1b678e46576e19bbc29886c0 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=3
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0002] Creating code ZIP archive for upload          TempName=./.sparta/SpartaWebSocket_123412341234-code.zip
+INFO[0002] Lambda code archive size                      Size=&quot;23 MB&quot;
+INFO[0002] Uploading local file to S3                    Bucket=weagle Key=SpartaWebSocket-123412341234/SpartaWebSocket_123412341234-code.zip Path=./.sparta/SpartaWebSocket_123412341234-code.zip Size=&quot;23 MB&quot;
+INFO[0011] Calling WorkflowHook                          ServiceDecoratorHook= WorkflowHookContext=&quot;map[]&quot;
+INFO[0011] Uploading local file to S3                    Bucket=weagle Key=SpartaWebSocket-123412341234/SpartaWebSocket_123412341234-cftemplate.json Path=./.sparta/SpartaWebSocket_123412341234-cftemplate.json Size=&quot;14 kB&quot;
+INFO[0011] Creating stack                                StackID=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaWebSocket-123412341234/d8a405b0-ae9c-11e9-a05a-0a1528792fce&quot;
+INFO[0122] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+...
+INFO[0122] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0122]     APIGatewayURL                             Description=&quot;API Gateway Websocket URL&quot; Value=&quot;wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1&quot;
+INFO[0122] Stack provisioned                             CreationTime=&quot;2019-07-25 05:27:08.687 +0000 UTC&quot; StackId=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaWebSocket-123412341234/d8a405b0-ae9c-11e9-a05a-0a1528792fce&quot; StackName=SpartaWebSocket-123412341234
+INFO[0122] ════════════════════════════════════════════════
+INFO[0122] SpartaWebSocket-123412341234 Summary
+INFO[0122] ════════════════════════════════════════════════
+INFO[0122] Verifying IAM roles                           Duration (s)=0
+INFO[0122] Verifying AWS preconditions                   Duration (s)=0
+INFO[0122] Creating code bundle                          Duration (s)=1
+INFO[0122] Uploading code                                Duration (s)=9
+INFO[0122] Ensuring CloudFormation stack                 Duration (s)=112
+INFO[0122] Total elapsed time                            Duration (s)=122
+</code></pre>
+
+<h2 id="test">Test</h2>
+
+<p>With the API Gateway deployed, the last step is to test it. Download and install the <a href="go get -u github.com/hashrocket/ws">ws</a> tool:</p>
+
+<pre><code class="language-bash">go get -u github.com/hashrocket/ws
+</code></pre>
+
+<p>then connect to your new API and send a message as in:</p>
+
+<pre><code class="language-bash">22:31 $ ws wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1
+&gt; {&quot;message&quot;:&quot;sendmessage&quot;, &quot;data&quot;:&quot;hello world !&quot;}
+&lt; &quot;hello world !&quot;
+</code></pre>
+
+<p>You can also send messages with <a href="https://chrome.google.com/webstore/detail/firecamp-a-campsite-for-d/eajaahbjpnhghjcdaclbkeamlkepinbl?hl=en">Firecamp</a>, a Chrome extension, and send messages between your <code>ws</code> session and the web (or vice versa).</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+
+
 
 
 <footer class=" footline" >
 	
 </footer>
-
 
         
         </div> 
@@ -2149,34 +2476,6 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
                 
                     
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-                        
-            
-            
-                
                     
                 
                 
@@ -2194,6 +2493,9 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
                 
                     
+                        
+                        
+                    
                 
                 
 
@@ -2201,9 +2503,6 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
                     
                     
 
-                    
-            
-        
                     
                         
             
@@ -2268,102 +2567,6 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
                     
             
         
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-            
-        
-                    
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
                         
             
@@ -2589,22 +2792,6 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
         
                     
-            
-        
-                    
-                        
-            
-            
-                
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
                         
             
             
@@ -2717,40 +2904,21 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
         
                     
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
             
         
-                    
-                        
-            
-            
-                
-                    
-                    
-                
-                
-
-                    
-                    
-                        
-                    
-                    
-
-                    
-                        
-            
-            
-                
-                    
-                        
-                        
-                    
-                
-                
-
-                    
-                    
-                    
-
                     
             
         
@@ -2768,30 +2936,10 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
                     
 
                     
-            
-        
-                    
                         
             
             
                 
-                    
-                    
-                
-                
-
-                    
-                    
-                    
-
-                    
-                        
-            
-            
-                
-                    
-                        
-                        
                     
                 
                 
@@ -2803,6 +2951,22 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
                     
             
         
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
                     
                         
             
@@ -2884,11 +3048,169 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
         
                     
+            
+        
+                    
                         
             
             
                 
                     
+                
+                
+
+                    
+                    
+                        
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
+                    
+                
+                
+
+                    
+                    
+                    
+
+                    
+            
+        
+                    
+                        
+            
+            
+                
                     
                 
                 
@@ -2911,9 +3233,6 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
             
             
                 
-                    
-                        
-                        
                     
                 
                 
@@ -3226,10 +3545,10 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
 	 
 	 
 		
-			<a class="nav nav-prev" href="/reference/step/services/sqs/" title="Amazon SQS"> <i class="fa fa-chevron-left"></i></a>
+			<a class="nav nav-prev" href="/reference/apigateway/s3site/" title="S3 Sites with CORS"> <i class="fa fa-chevron-left"></i></a>
 		
 		
-			<a class="nav nav-next" href="/reference/discovery/" title="Discovery Service" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+			<a class="nav nav-next" href="/reference/eventsources/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 		
 	
     </div>
@@ -3267,4 +3586,3 @@ TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/
 </script>
   </body>
 </html>
-
