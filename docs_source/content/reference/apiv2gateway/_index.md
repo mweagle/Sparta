@@ -231,12 +231,12 @@ Because the `lambdaSend` function also needs to invoke the API Gateway Managemen
 
 ## Annotating Lambda Functions
 
-The final step is to use the API gateway to create an instance of the `APIV2GatewayDecorator`. This decorator is responsible for:
+The final configuration step is to use the API gateway to create an instance of the `APIV2GatewayDecorator`. This decorator is responsible for:
 
 * Provisioning the DynamoDB table.
 * Ensuring DynamoDB "CRUD" permissions for all the AWS Lambda functions.
 * Publishing the table name into the Lambda function's Environment block.
-* Add the WebSocket `wss://...` URL to the Stack's Outputs.
+* Adding the WebSocket `wss://...` URL to the Stack's Outputs.
 
 ```go
   decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
@@ -253,7 +253,7 @@ The final step is to use the API gateway to create an instance of the `APIV2Gate
 
 ## Provision
 
-The final step is to provide the decorator as a Workflow hook as in:
+With everything defined, provide the API V2 Decorator as a Workflow hook as in:
 
 ```go
 // Set everything up and run it...
@@ -330,4 +330,9 @@ then connect to your new API and send a message as in:
 You can also send messages with [Firecamp](https://chrome.google.com/webstore/detail/firecamp-a-campsite-for-d/eajaahbjpnhghjcdaclbkeamlkepinbl?hl=en), a Chrome extension, and send messages between your `ws` session and the web (or vice versa).
 
 ## Conclusion
+
+While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service.
+
+Remember to terminate the stack when you're done to avoid any unintentional costs.
+
 
