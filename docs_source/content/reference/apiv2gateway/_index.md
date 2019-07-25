@@ -331,8 +331,17 @@ You can also send messages with [Firecamp](https://chrome.google.com/webstore/de
 
 ## Conclusion
 
-While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service.
+While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service in fewer than 200 lines of application code:
 
-Remember to terminate the stack when you're done to avoid any unintentional costs.
+```bash
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Go                               1             21             52            183
+Markdown                         1              0              2              0
+-------------------------------------------------------------------------------
+TOTAL                            2             21             54            183
+-------------------------------------------------------------------------------
+```
 
-
+Remember to terminate the stack when you're done to avoid any unintentional costs!
