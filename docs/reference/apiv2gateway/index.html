@@ -12,20 +12,20 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1564033388" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1564033388" rel="stylesheet">
-    <link href="/css/hybrid.css?1564033388" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1564033388" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1564033388" rel="stylesheet">
-    <link href="/css/auto-complete.css?1564033388" rel="stylesheet">
-    <link href="/css/atom-one-dark-reasonable.css?1564033388" rel="stylesheet">
-    <link href="/css/theme.css?1564033388" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1564033388" rel="stylesheet">
+    <link href="/css/nucleus.css?1564034083" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1564034083" rel="stylesheet">
+    <link href="/css/hybrid.css?1564034083" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1564034083" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1564034083" rel="stylesheet">
+    <link href="/css/auto-complete.css?1564034083" rel="stylesheet">
+    <link href="/css/atom-one-dark-reasonable.css?1564034083" rel="stylesheet">
+    <link href="/css/theme.css?1564034083" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1564034083" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1564033388" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1564034083" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1564033388"></script>
+    <script src="/js/jquery-3.3.1.min.js?1564034083"></script>
 
     <style type="text/css">
       :root #header + #content > #left > #rlblock_left{
@@ -58,14 +58,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1564033388"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1564033388"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1564034083"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1564034083"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1564033388"></script>
+<script type="text/javascript" src="/js/search.js?1564034083"></script>
 
     
   </div>
@@ -1789,8 +1789,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/80e3555e">80e3555e</a><p/>
-  Date: 2019-07-24 22:42:46 -0700 PDT
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/8a4d8e47">8a4d8e47</a><p/>
+  Date: 2019-07-24 22:54:38 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -2127,13 +2127,13 @@ apiv2SendRoute.OperationName = &quot;SendRoute&quot;
 
 <h2 id="annotating-lambda-functions">Annotating Lambda Functions</h2>
 
-<p>The final step is to use the API gateway to create an instance of the <code>APIV2GatewayDecorator</code>. This decorator is responsible for:</p>
+<p>The final configuration step is to use the API gateway to create an instance of the <code>APIV2GatewayDecorator</code>. This decorator is responsible for:</p>
 
 <ul>
 <li>Provisioning the DynamoDB table.</li>
 <li>Ensuring DynamoDB &ldquo;CRUD&rdquo; permissions for all the AWS Lambda functions.</li>
 <li>Publishing the table name into the Lambda function&rsquo;s Environment block.</li>
-<li>Add the WebSocket <code>wss://...</code> URL to the Stack&rsquo;s Outputs.</li>
+<li>Adding the WebSocket <code>wss://...</code> URL to the Stack&rsquo;s Outputs.</li>
 </ul>
 
 <pre><code class="language-go">  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
@@ -2150,7 +2150,7 @@ apiv2SendRoute.OperationName = &quot;SendRoute&quot;
 
 <h2 id="provision">Provision</h2>
 
-<p>The final step is to provide the decorator as a Workflow hook as in:</p>
+<p>With everything defined, provide the API V2 Decorator as a Workflow hook as in:</p>
 
 <pre><code class="language-go">// Set everything up and run it...
   workflowHooks := &amp;sparta.WorkflowHooks{
@@ -2222,6 +2222,20 @@ INFO[0122] Total elapsed time                            Duration (s)=122
 <p>You can also send messages with <a href="https://chrome.google.com/webstore/detail/firecamp-a-campsite-for-d/eajaahbjpnhghjcdaclbkeamlkepinbl?hl=en">Firecamp</a>, a Chrome extension, and send messages between your <code>ws</code> session and the web (or vice versa).</p>
 
 <h2 id="conclusion">Conclusion</h2>
+
+<p>While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service in fewer than 200 lines of application code:</p>
+
+<pre><code class="language-bash">-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Go                               1             21             52            183
+Markdown                         1              0              2              0
+-------------------------------------------------------------------------------
+TOTAL                            2             21             54            183
+-------------------------------------------------------------------------------
+</code></pre>
+
+<p>Remember to terminate the stack when you&rsquo;re done to avoid any unintentional costs!</p>
 
 
 
@@ -3558,20 +3572,20 @@ INFO[0122] Total elapsed time                            Duration (s)=122
     <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
       <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
     </div>
-    <script src="/js/clipboard.min.js?1564033388"></script>
-    <script src="/js/perfect-scrollbar.min.js?1564033388"></script>
-    <script src="/js/perfect-scrollbar.jquery.min.js?1564033388"></script>
-    <script src="/js/jquery.sticky.js?1564033388"></script>
-    <script src="/js/featherlight.min.js?1564033388"></script>
-    <script src="/js/html5shiv-printshiv.min.js?1564033388"></script>
-    <script src="/js/highlight.pack.js?1564033388"></script>
+    <script src="/js/clipboard.min.js?1564034083"></script>
+    <script src="/js/perfect-scrollbar.min.js?1564034083"></script>
+    <script src="/js/perfect-scrollbar.jquery.min.js?1564034083"></script>
+    <script src="/js/jquery.sticky.js?1564034083"></script>
+    <script src="/js/featherlight.min.js?1564034083"></script>
+    <script src="/js/html5shiv-printshiv.min.js?1564034083"></script>
+    <script src="/js/highlight.pack.js?1564034083"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="/js/modernizr.custom-3.6.0.js?1564033388"></script>
-    <script src="/js/learn.js?1564033388"></script>
-    <script src="/js/hugo-learn.js?1564033388"></script>
+    <script src="/js/modernizr.custom-3.6.0.js?1564034083"></script>
+    <script src="/js/learn.js?1564034083"></script>
+    <script src="/js/hugo-learn.js?1564034083"></script>
 
-    <link href="/mermaid/mermaid.css?1564033388" type="text/css" rel="stylesheet" />
-    <script src="/mermaid/mermaid.js?1564033388"></script>
+    <link href="/mermaid/mermaid.css?1564034083" type="text/css" rel="stylesheet" />
+    <script src="/mermaid/mermaid.js?1564034083"></script>
     <script>
         mermaid.initialize({ startOnLoad: true });
     </script>
