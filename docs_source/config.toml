@@ -7,6 +7,7 @@ metaDataFormat = "yaml"
 defaultContentLanguageInSubdir= true
 enableGitInfo=true
 publishDir = "../docs"
+pygmentsStyle = "vs"
 
 [params]
   editURL = "https://github.com/mweagle/Sparta/tree/docs/content/"
