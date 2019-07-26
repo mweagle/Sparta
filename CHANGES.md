@@ -7,7 +7,7 @@
 - :checkered_flag: **CHANGES**
   - Added [API V2] type to provision WebSocket APIs
     - See the [documentation](http://gosparta.io/reference/apiv2gateway/) for more details
-  - Update to `go` modules
+  - Update to `go` [modules](https://github.com/golang/go/wiki/Modules)
 - :bug:  **FIXED**
 
 ## v1.9.3 - The Discovery Edition ☁️🔍
