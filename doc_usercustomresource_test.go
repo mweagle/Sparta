@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/aws/aws-lambda-go/lambdacontext"
-	awsLambdaCtx "github.com/aws/aws-lambda-go/lambdacontext"
 	spartaCFResources "github.com/mweagle/Sparta/aws/cloudformation/resources"
 	gocf "github.com/mweagle/go-cloudformation"
 	"github.com/sirupsen/logrus"
@@ -26,7 +25,7 @@ func userDefinedCustomResource(ctx context.Context,
 	event spartaCFResources.CloudFormationLambdaEvent) (map[string]interface{}, error) {
 
 	logger, _ := ctx.Value(ContextKeyLogger).(*logrus.Logger)
-	lambdaCtx, _ := awsLambdaCtx.FromContext(ctx)
+	lambdaCtx, _ := lambdacontext.FromContext(ctx)
 
 	var opResults = map[string]interface{}{
 		"CustomResourceResult": "Victory!",
