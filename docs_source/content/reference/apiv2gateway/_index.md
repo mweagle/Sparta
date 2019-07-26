@@ -86,9 +86,11 @@ The complement to `connectWorld` is `disconnectWorld` which is responsible for r
 
 With the `connectWorld` and `disconnectWorld` connection management functions created, the core of the WebSocket API is `sendMessage`. This function is responsible for scanning over the set of registered _connectionIDs_ and forwarding a request to [PostConnectionWithContext](https://godoc.org/github.com/aws/aws-sdk-go/service/apigatewaymanagementapi#ApiGatewayManagementApi.PostToConnectionWithContext). This function sends the message to the registered connections.
 
-The `sendMessage` function has a few distinct sections that can be understood as follows.
+The `sendMessage` function can be broken down into a few sections.
 
-The first requirement is to setup the API Gateway Management service instance using the proper endpoint:
+#### Setup API Gateway Management Instance
+
+The first requirement is to setup the API Gateway Management service instance using the proper endpoint. The endpoint can be constructed from the incoming [APIGatewayWebsocketProxyRequestContext](https://godoc.org/github.com/aws/aws-lambda-go/events#APIGatewayWebsocketProxyRequestContext) member of the request.
 
 ```go
   endpointURL := fmt.Sprintf("%s/%s",
@@ -98,6 +100,8 @@ The first requirement is to setup the API Gateway Management service instance us
   dynamoClient := dynamodb.New(sess)
     apigwMgmtClient := apigwManagement.New(sess, aws.NewConfig().WithEndpoint(endpointURL))
 ```
+
+#### Validate Input 
 
 The new step is to unmarshal and validate the incoming JSON request body:
 
@@ -113,16 +117,23 @@ The new step is to unmarshal and validate the incoming JSON request body:
   }
 ```
 
+Once we have verified that the input is valid, the final step is to notify all the subscribers.
+
+#### Scan and Publish
+
 Once the incoming `data` property is validated, the next step is to scan the DynamoDB table for the registered connections and post a message to each one. Note that the scan callback also attempts to cleanup connections that are no longer valid, but which haven't been cleanly removed.
 
 ```go
   scanCallback := func(output *dynamodb.ScanOutput, lastPage bool) bool {
     // Send the message to all the clients
     for _, eachItem := range output.Items {
+      // Get the connectionID
       receiverConnection := ""
       if eachItem[ddbAttributeConnectionID].S != nil {
         receiverConnection = *eachItem[ddbAttributeConnectionID].S
       }
+
+      // Post to this connectionID
       postConnectionInput := &apigwManagement.PostToConnectionInput{
         ConnectionId: aws.String(receiverConnection),
         Data:         *objMap["data"],
@@ -131,7 +142,7 @@ Once the incoming `data` property is validated, the next step is to scan the Dyn
       if respErr != nil {
         if receiverConnection != "" &&
           strings.Contains(respErr.Error(), apigwManagement.ErrCodeGoneException) {
-          // Async clean it up...
+          // Cleanup in case the connection is stale
           go deleteConnection(receiverConnection, dynamoClient)
         } else {
           logger.WithField("Error", respErr).Warn("Failed to post to connection")
@@ -149,20 +160,20 @@ Once the incoming `data` property is validated, the next step is to scan the Dyn
   scanItemErr := dynamoClient.ScanPagesWithContext(ctx,
     scanInput,
     scanCallback)
-    ...
+  ...
 ```
 
 These three functions are the core of the WebSocket service.
 
 ## API V2 Gateway Decorator
 
-The next step is to create the API V2 API which is comprised of:
+The next step is to create the API V2 API object which is comprised of:
 
 * [Stage](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html)
 * [API](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html)
 * [Routes](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html)
 
-There is one Stage and one API per service, but a given service (including this one) may include multiple Routes:
+There is one Stage and one API per service, but a given service (including this one) may include multiple Routes.
 
 ```go
 // APIv2 Websockets
@@ -197,7 +208,7 @@ apiv2SendRoute.OperationName = "SendRoute"
 
 The `$connect` routeKey is a special [route key value](https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/) that is sent when a client first connects to the WebSocket API. 
 
-The `sendmessage` routeKey value means that a payload of the form:
+In comparison, the `sendmessage` routeKey value of `sendmessage` means that a payload of the form:
 
 ```json
 {
@@ -239,16 +250,17 @@ The final configuration step is to use the API gateway to create an instance of 
 * Adding the WebSocket `wss://...` URL to the Stack's Outputs.
 
 ```go
-  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
+decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
     ddbAttributeConnectionID /* DDB attr name for connectionID */,
     5 /* readCapacity */,
     5 /* writeCapacity */)
-  var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFunctions = append(lambdaFunctions,
+
+var lambdaFunctions []*sparta.LambdaAWSInfo
+lambdaFunctions = append(lambdaFunctions,
     lambdaConnect,
     lambdaDisconnect,
     lambdaSend)
-  decorator.AnnotateLambdas(lambdaFunctions)
+decorator.AnnotateLambdas(lambdaFunctions)
 ```
 
 ## Provision
