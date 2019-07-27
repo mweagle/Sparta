@@ -34,9 +34,9 @@ The Sparta service consists of three lambda functions:
 * `disconnectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
 * `sendMessage(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)`
 
-Our functions will use the __PROXY__ style integration and therefore accept an instance of the [APIGatewayWebsocketProxyRequest](https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest) 
+Our functions will use the [PROXY](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-create-api-as-simple-proxy) style integration and therefore accept an instance of the [APIGatewayWebsocketProxyRequest](https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest) type.
 
-Each function returns a `*wsResponse` instance that satisfies the __PROXY__ mapping:
+Each function returns a `*wsResponse` instance that satisfies the __PROXY__ response:
 
 ```go
 type wsResponse struct {
@@ -206,7 +206,7 @@ apiv2SendRoute.OperationName = "SendRoute"
 ...
 ```
 
-The `$connect` routeKey is a special [route key value](https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/) that is sent when a client first connects to the WebSocket API. 
+The `$connect` routeKey is a special [route key value](https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/) that is sent when a client first connects to the WebSocket API. See the official [documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-route-keys-connect-disconnect.html) for more information.
 
 In comparison, the `sendmessage` routeKey value of `sendmessage` means that a payload of the form:
 
@@ -221,7 +221,7 @@ will trigger the `lambdaSend` function given the parent API's route selection ex
 
 ### Additional Privileges
 
-Because the `lambdaSend` function also needs to invoke the API Gateway Management APIs an additional IAM Privilege must be enabled:
+Because the `lambdaSend` function also needs to invoke the API Gateway Management APIs to broadcast, an additional IAM Privilege must be enabled:
 
 ```go
   var apigwPermissions = []sparta.IAMRolePrivilege{
@@ -245,7 +245,7 @@ Because the `lambdaSend` function also needs to invoke the API Gateway Managemen
 The final configuration step is to use the API gateway to create an instance of the `APIV2GatewayDecorator`. This decorator is responsible for:
 
 * Provisioning the DynamoDB table.
-* Ensuring DynamoDB "CRUD" permissions for all the AWS Lambda functions.
+* Ensuring DynamoDB CRUD permissions for all the AWS Lambda functions.
 * Publishing the table name into the Lambda function's Environment block.
 * Adding the WebSocket `wss://...` URL to the Stack's Outputs.
 
@@ -366,3 +366,7 @@ TOTAL                            2             21             54            183
 ```
 
 Remember to terminate the stack when you're done to avoid any unintentional costs!
+
+## References
+
+* The SpartaWebSocket application is modeled after the [https://github.com/aws-samples/simple-websockets-chat-app](https://github.com/aws-samples/simple-websockets-chat-app) sample.
