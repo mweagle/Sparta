@@ -18,7 +18,7 @@
       
       <guid>/example_service/step1/</guid>
       <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Please be aware that running Lambda functions may incur [costs](https://aws.amazon.com/lambda/pricing&#34;). Be sure to decommission Sparta stacks after you are finished using them (via the `delete` command line option) to avoid unwanted charges.</description>
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
     </item>
     
     <item>

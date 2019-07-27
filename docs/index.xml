@@ -64,7 +64,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/batch/</guid>
-      <description>TODO: Document [Batch](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-batch.html) integration.  </description>
+      <description> TODO: Document Batch integration.
+ </description>
     </item>
     
     <item>
@@ -73,7 +74,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/fargate/</guid>
-      <description>TODO: Document [Fargate](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ecs.html) integration.  </description>
+      <description> TODO: Document Fargate integration.
+ </description>
     </item>
     
     <item>
@@ -82,7 +84,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/glue/</guid>
-      <description>TODO: Document [Glue](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-glue.html) integration.  </description>
+      <description> TODO: Document Glue integration.
+ </description>
     </item>
     
     <item>
@@ -91,7 +94,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/dynamodb/</guid>
-      <description>TODO: Document [Dynamo](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-ddb.html) integration.  </description>
+      <description> TODO: Document Dynamo integration.
+ </description>
     </item>
     
     <item>
@@ -100,7 +104,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sns/</guid>
-      <description>TODO: Document [SNS](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sns.html) integration.  </description>
+      <description> TODO: Document SNS integration.
+ </description>
     </item>
     
     <item>
@@ -109,7 +114,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sqs/</guid>
-      <description>TODO: Document [SQS](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sqs.html) integration.  </description>
+      <description> TODO: Document SQS integration.
+ </description>
     </item>
     
     <item>
@@ -118,7 +124,8 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
       
       <guid>/reference/step/services/sagemaker/</guid>
-      <description>TODO: Document [SageMaker](https://docs.aws.amazon.com/step-functions/latest/dg/connectors-sagemaker.html) integration.  </description>
+      <description> TODO: Document SageMaker integration.
+ </description>
     </item>
     
     <item>
@@ -137,7 +144,8 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       <pubDate>Sat, 01 Dec 2018 06:24:24 +0000</pubDate>
       
       <guid>/reference/interceptors/xray_interceptor/</guid>
-      <description>TODO: Document the [XRayInterceptor](https://godoc.org/github.com/mweagle/Sparta/interceptor#RegisterXRayInterceptor)  🎉 Sparta v1.7.0: The Time Machine Edition 🕰 🎉 For those times when you wish you could go back in time and enable debug logging for a single request.https://t.co/BP60qQpKva#serverless #go
+      <description>TODO: Document the XRayInterceptor
+ 🎉 Sparta v1.7.0: The Time Machine Edition 🕰 🎉 For those times when you wish you could go back in time and enable debug logging for a single request.https://t.co/BP60qQpKva#serverless #go
 &amp;mdash; Matt Weagle (@mweagle) November 12, 2018  Sparta v1.7.0 adds `Interceptors`: user defined hooks called during the lambda event handling flow to support cross-cutting concerns. The first interceptor is an XRay annotation and metadata interceptor.</description>
     </item>
     
@@ -246,7 +254,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/operations/codedeploy_service_update/</guid>
-      <description>TODO: Document the [CodeDeployServiceUpdateDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CodeDeployServiceUpdateDecorator) decorator. See also the [Deployment Strategy](/reference/operations/deployment_strategies.md) page.  </description>
+      <description> TODO: Document the CodeDeployServiceUpdateDecorator decorator. See also the Deployment Strategy page.
+ </description>
     </item>
     
     <item>
@@ -255,7 +264,8 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <pubDate>Mon, 22 Jan 2018 21:49:38 +0000</pubDate>
       
       <guid>/reference/decorators/lambda_versioning/</guid>
-      <description>TODO: [LambdaVersioningDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#LambdaVersioningDecorator)  </description>
+      <description> TODO: LambdaVersioningDecorator
+ </description>
     </item>
     
     <item>
@@ -288,7 +298,7 @@ hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ 
       
       <guid>/example_service/step1/</guid>
       <description>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&amp;rsquo;ll begin with a &amp;ldquo;Hello World&amp;rdquo; lambda function and eventually deploy that to AWS. Note that we&amp;rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Please be aware that running Lambda functions may incur [costs](https://aws.amazon.com/lambda/pricing&#34;). Be sure to decommission Sparta stacks after you are finished using them (via the `delete` command line option) to avoid unwanted charges.</description>
+Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</description>
     </item>
     
     <item>
@@ -297,7 +307,8 @@ Please be aware that running Lambda functions may incur [costs](https://aws.amaz
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/operations/cicd/</guid>
-      <description>TODO: Document the [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) example. Also see the [Medium Post](https://medium.com/@mweagle/serverless-serverfull-and-weaving-pipelines-c9f83eec9227)  </description>
+      <description> TODO: Document the SpartaCodePipeline example. Also see the Medium Post
+ </description>
     </item>
     
     <item>
@@ -306,7 +317,8 @@ Please be aware that running Lambda functions may incur [costs](https://aws.amaz
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/eventsources/cloudformation/</guid>
-      <description>TODO: CloudFormation source documentation  </description>
+      <description> TODO: CloudFormation source documentation
+ </description>
     </item>
     
     <item>
@@ -337,7 +349,8 @@ Getting Started Our lambda function is relatively short:</description>
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/eventsources/cognito/</guid>
-      <description>TODO: Cognito source documentation  </description>
+      <description> TODO: Cognito source documentation
+ </description>
     </item>
     
     <item>
@@ -499,7 +512,8 @@ Sparta makes CORS support a single CORSEnabled field of the API struct:
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/operations/deployment_strategies/</guid>
-      <description>Document the [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) example.  </description>
+      <description> Document the SpartaSafeDeploy example.
+ </description>
     </item>
     
     <item>
@@ -583,7 +597,8 @@ The following sections walk through provisioning a S3 bucket, declaring an expli
       <pubDate>Wed, 09 Mar 2016 19:56:50 +0100</pubDate>
       
       <guid>/reference/docker/</guid>
-      <description>TODO  Docker Support Document the SpartaDocker project.</description>
+      <description>TODO
+ Docker Support Document the SpartaDocker project.</description>
     </item>
     
     <item>
