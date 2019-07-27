@@ -46,7 +46,7 @@ func Main(serviceName string,
 func MainEx(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
+	api APIGateway,
 	site *S3Site,
 	workflowHooks *WorkflowHooks,
 	useCGO bool) error {

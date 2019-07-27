@@ -1,0 +1,11 @@
+documentation
+test
+debug
+gulpfile.js
+bower.json
+build
+node_modules
+snippets
+benchmark
+CONTRIBUTING.md
+.babelrc

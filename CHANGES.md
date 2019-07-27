@@ -1,5 +1,15 @@
 # Change Notes
 
+## v1.9.4 - The Sockets Edition 🔌
+
+- :warning: **BREAKING**
+  - Update `sparta.Main` and `sparta.MainEx` to accept new _APIGateway_ interface type rather than concrete _API_ type. This should be backward compatible for most usage and was done to support the new APIV2 Gateway type.
+- :checkered_flag: **CHANGES**
+  - Added [API V2] type to provision WebSocket APIs
+    - See the [documentation](http://gosparta.io/reference/apiv2gateway/) for more details
+  - Update to `go` [modules](https://github.com/golang/go/wiki/Modules)
+- :bug:  **FIXED**
+
 ## v1.9.3 - The Discovery Edition ☁️🔍
 
 - :warning: **BREAKING**

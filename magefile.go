@@ -1,5 +1,7 @@
 // +build mage
 
+// lint:file-ignore U1000 Ignore all  code, it's only for development
+
 package main
 
 import (
@@ -27,7 +29,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.55.6"
+	hugoVersion  = "0.56.0"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -283,9 +285,7 @@ const SpartaGitHash = "%s"
 func GenerateConstants() error {
 	generateCommands := [][]string{
 		// Create the embedded version
-		{"go",
-			"run",
-			"$GOPATH/src/github.com/mjibson/esc/main.go",
+		{"esc",
 			"-o",
 			"./CONSTANTS.go",
 			"-private",
@@ -293,9 +293,7 @@ func GenerateConstants() error {
 			"sparta",
 			"./resources"},
 		//Create a secondary CONSTANTS_AWSBINARY.go file with empty content.
-		{"go",
-			"run",
-			"$GOPATH/src/github.com/mjibson/esc/main.go",
+		{"esc",
 			"-o",
 			"./CONSTANTS_AWSBINARY.go",
 			"-private",
@@ -330,18 +328,22 @@ func InstallBuildRequirements() error {
 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
 	requirements := []string{
-		"github.com/golang/dep/...",
-		"honnef.co/go/tools/...",
+		"honnef.co/go/tools/cmd/...",
 		"golang.org/x/tools/cmd/goimports",
 		"github.com/fzipp/gocyclo",
 		"golang.org/x/lint/golint",
 		"github.com/mjibson/esc",
-		"github.com/securego/gosec/cmd/gosec/...",
+		"github.com/securego/gosec/cmd/gosec",
 		"github.com/alexkohler/prealloc",
 		"github.com/client9/misspell/cmd/misspell",
 	}
+	envMap := map[string]string{
+		"GO111MODULE": "off",
+	}
 	for _, eachDep := range requirements {
-		cmdErr := sh.Run("go",
+
+		cmdErr := sh.RunWith(envMap,
+			"go",
 			"get",
 			os.Getenv("GO_GET_FLAG"),
 			eachDep)
@@ -437,8 +439,6 @@ func EnsureFormatted() error {
 func EnsureStaticChecks() error {
 	// https://staticcheck.io/
 	staticCheckErr := sh.Run("staticcheck",
-		"-ignore",
-		"github.com/mweagle/Sparta/CONSTANTS.go:*",
 		"github.com/mweagle/Sparta/...")
 	if staticCheckErr != nil {
 		return staticCheckErr
@@ -483,9 +483,7 @@ func EnsureTravisBuildEnvironment() error {
 
 	// Super run some commands
 	travisComands := [][]string{
-		{"dep", "version"},
-		{"dep", "ensure", "-v"},
-		{"rsync", "-a", "--quiet", "--remove-source-files", "./vendor/", "$GOPATH/src"},
+		{"go", "version"},
 	}
 	return spartamage.Script(travisComands)
 }

@@ -283,6 +283,11 @@
   </url>
   
   <url>
+    <loc>/reference/apiv2gateway/</loc>
+    <lastmod>2019-07-26T19:24:01-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/eventsources/</loc>
     <lastmod>2018-12-11T20:52:53-08:00</lastmod>
   </url>
@@ -394,7 +399,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-01-17T06:41:22-08:00</lastmod>
+    <lastmod>2019-07-26T06:24:12-07:00</lastmod>
   </url>
   
   <url>

@@ -1,0 +1,3639 @@
+<!DOCTYPE html>
+<html lang="en" class="js csstransforms3d">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Hugo 0.56.0" />
+    <meta name="description" content="Sparta - AWS Lambda Microservices">
+<meta name="author" content="Matt Weagle">
+
+    <link rel="icon" href="/images/favicon.png" type="image/png">
+
+    <title> :: Sparta - AWS Lambda Microservices</title>
+
+    
+    <link href="/css/nucleus.css?1564194441" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1564194441" rel="stylesheet">
+    <link href="/css/hybrid.css?1564194441" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1564194441" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1564194441" rel="stylesheet">
+    <link href="/css/auto-complete.css?1564194441" rel="stylesheet">
+    <link href="/css/theme.css?1564194441" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1564194441" rel="stylesheet">
+    
+      <link href="/css/theme-sparta.css?1564194441" rel="stylesheet">
+    
+
+    <script src="/js/jquery-3.3.1.min.js?1564194441"></script>
+    
+    <link href="/css/vs.css?1564194441" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1564194441"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <style>
+      :root #header + #content > #left > #rlblock_left{
+          display:none !important;
+      }
+      
+    </style>
+    
+<style type="text/css">
+pre {
+    padding: 2px;
+}
+</style>
+
+
+  </head>
+  <body class="" data-url="/reference/apiv2gateway/">
+    <nav id="sidebar" class="">
+
+
+
+  <div id="header-wrapper">
+    <div id="header">
+      <a href="/"><img src="/images/SpartaLogoNoDomain.png" height="50%" width="50%"/></a>
+    </div>
+    
+        <div class="searchbox">
+    <label for="search-by"><i class="fas fa-search"></i></label>
+    <input data-search-input id="search-by" type="search" placeholder="Search...">
+    <span data-search-clear=""><i class="fas fa-times"></i></span>
+</div>
+
+<script type="text/javascript" src="/js/lunr.min.js?1564194441"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1564194441"></script>
+<script type="text/javascript">
+    
+        var baseurl = "\/";
+    
+</script>
+<script type="text/javascript" src="/js/search.js?1564194441"></script>
+
+    
+  </div>
+
+    <div class="highlightable">
+    <ul class="topics">
+
+        
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/concepts/">
+          Concepts
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/example_service/" title="Example Service" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/example_service/">
+          Example Service
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/example_service/step1/" title="Overview" class="dd-item ">
+        <a href="/example_service/step1/">
+        Overview
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/example_service/step2/" title="Details" class="dd-item ">
+        <a href="/example_service/step2/">
+        Details
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/cli_options/">
+          CLI Options
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/" title="Reference" class="dd-item 
+        parent
+        
+        
+        ">
+      <a href="/reference/">
+          Reference
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apigateway/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/apigateway/">
+          <b>API Gateway</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/echo_event/" title="Echo" class="dd-item ">
+        <a href="/reference/apigateway/echo_event/">
+        Echo
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/request_params/" title="Request Parameters" class="dd-item ">
+        <a href="/reference/apigateway/request_params/">
+        Request Parameters
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/context/" title="Request Context" class="dd-item ">
+        <a href="/reference/apigateway/context/">
+        Request Context
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/cors/" title="CORS" class="dd-item ">
+        <a href="/reference/apigateway/cors/">
+        CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/slack/" title="Slack SlashCommand" class="dd-item ">
+        <a href="/reference/apigateway/slack/">
+        Slack SlashCommand
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/apigateway/s3site/" title="S3 Sites with CORS" class="dd-item ">
+        <a href="/reference/apigateway/s3site/">
+        S3 Sites with CORS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/apiv2gateway/" title="" class="dd-item 
+        parent
+        active
+        
+        ">
+      <a href="/reference/apiv2gateway/">
+          <b>API V2 Gateway</b>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/eventsources/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/eventsources/">
+          <b>Event Sources</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/eventsources/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudformation/" title="CloudFormation" class="dd-item ">
+        <a href="/reference/eventsources/cloudformation/">
+        CloudFormation
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchevents/" title="CloudWatch Events" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchevents/">
+        CloudWatch Events
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cloudwatchlogs/" title="CloudWatch Logs" class="dd-item ">
+        <a href="/reference/eventsources/cloudwatchlogs/">
+        CloudWatch Logs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/cognito/" title="Cognito" class="dd-item ">
+        <a href="/reference/eventsources/cognito/">
+        Cognito
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/eventsources/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/kinesis/" title="Kinesis" class="dd-item ">
+        <a href="/reference/eventsources/kinesis/">
+        Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/s3/" title="S3" class="dd-item ">
+        <a href="/reference/eventsources/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/ses/" title="SES" class="dd-item ">
+        <a href="/reference/eventsources/ses/">
+        SES
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/eventsources/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/eventsources/sqs/" title="SQS" class="dd-item ">
+        <a href="/reference/eventsources/sqs/">
+        SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/archetypes/">
+          <b>Archetype Constructors</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/codecommit/" title="CodeCommit" class="dd-item ">
+        <a href="/reference/archetypes/codecommit/">
+        CodeCommit
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/cloudwatch/" title="CloudWatch" class="dd-item ">
+        <a href="/reference/archetypes/cloudwatch/">
+        CloudWatch
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/dynamodb/" title="DynamoDB" class="dd-item ">
+        <a href="/reference/archetypes/dynamodb/">
+        DynamoDB
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/kinesis/" title="Kinesis" class="dd-item ">
+        <a href="/reference/archetypes/kinesis/">
+        Kinesis
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/rest/" title="REST Service" class="dd-item ">
+        <a href="/reference/archetypes/rest/">
+        REST Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/s3/" title="S3" class="dd-item ">
+        <a href="/reference/archetypes/s3/">
+        S3
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/archetypes/sns/" title="SNS" class="dd-item ">
+        <a href="/reference/archetypes/sns/">
+        SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/decorators/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/decorators/">
+          <b>Build-Time Decorators</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item ">
+        <a href="/reference/decorators/cloudmap/">
+        CloudMap Service Discovery
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" class="dd-item ">
+        <a href="/reference/decorators/cloudfront_distribution/">
+        CloudFront Distribution
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/lambda_versioning/" title="Lambda Versioning Decorator" class="dd-item ">
+        <a href="/reference/decorators/lambda_versioning/">
+        Lambda Versioning Decorator
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/publish_outputs/" title="Publishing Outputs" class="dd-item ">
+        <a href="/reference/decorators/publish_outputs/">
+        Publishing Outputs
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/s3_artifact_publisher/" title="S3 Artifact Publisher" class="dd-item ">
+        <a href="/reference/decorators/s3_artifact_publisher/">
+        S3 Artifact Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/decorators/dynamic_infrastructure/" title="Dynamic Infrastructure" class="dd-item ">
+        <a href="/reference/decorators/dynamic_infrastructure/">
+        Dynamic Infrastructure
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/interceptors/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/interceptors/">
+          <b>Runtime Interceptors</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/interceptors/xray_interceptor/" title="XRayInterceptor" class="dd-item ">
+        <a href="/reference/interceptors/xray_interceptor/">
+        XRayInterceptor
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/application/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/application/">
+          <b>Application Customization</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_commands/" title="Custom Commands" class="dd-item ">
+        <a href="/reference/application/custom_commands/">
+        Custom Commands
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_flags/" title="Custom Flags" class="dd-item ">
+        <a href="/reference/application/custom_flags/">
+        Custom Flags
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/environments/" title="Managing Environments" class="dd-item ">
+        <a href="/reference/application/environments/">
+        Managing Environments
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_lambda_resources/" title="CloudFormation Resources" class="dd-item ">
+        <a href="/reference/application/custom_lambda_resources/">
+        CloudFormation Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/application/custom_resources/" title="Custom Resources" class="dd-item ">
+        <a href="/reference/application/custom_resources/">
+        Custom Resources
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/step/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/step/">
+          <b>Step Functions</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+            
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/lambda/" title="Lambda" class="dd-item ">
+        <a href="/reference/step/lambda/">
+        Lambda
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/fargate/" title="Fargate" class="dd-item ">
+        <a href="/reference/step/fargate/">
+        Fargate
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/step/services/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/step/services/">
+          <b>Service Integrations</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/batch/" title="AWS Batch" class="dd-item ">
+        <a href="/reference/step/services/batch/">
+        AWS Batch
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/fargate/" title="AWS Fargate" class="dd-item ">
+        <a href="/reference/step/services/fargate/">
+        AWS Fargate
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/glue/" title="AWS Glue" class="dd-item ">
+        <a href="/reference/step/services/glue/">
+        AWS Glue
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/dynamodb/" title="Amazon DynamoDb" class="dd-item ">
+        <a href="/reference/step/services/dynamodb/">
+        Amazon DynamoDb
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/sns/" title="Amazon SNS" class="dd-item ">
+        <a href="/reference/step/services/sns/">
+        Amazon SNS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/sqs/" title="Amazon SQS" class="dd-item ">
+        <a href="/reference/step/services/sqs/">
+        Amazon SQS
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/step/services/sagemaker/" title="Amazon SageMaker" class="dd-item ">
+        <a href="/reference/step/services/sagemaker/">
+        Amazon SageMaker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/discovery/" title="Discovery Service" class="dd-item ">
+        <a href="/reference/discovery/">
+        Discovery Service
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/docker/" title="Docker" class="dd-item ">
+        <a href="/reference/docker/">
+        Docker
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/hybrid_topologies/" title="Hybrid Topologies" class="dd-item ">
+        <a href="/reference/hybrid_topologies/">
+        Hybrid Topologies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+    <li data-nav-id="/reference/operations/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/operations/">
+          <b>Operations</b>
+          
+      </a>
+      
+      
+        <ul>
+          
+          
+          
+          
+        
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/magefile/" title="Magefiles" class="dd-item ">
+        <a href="/reference/operations/magefile/">
+        Magefiles
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/cloudwatch_alarms/" title="CloudWatch Alarms" class="dd-item ">
+        <a href="/reference/operations/cloudwatch_alarms/">
+        CloudWatch Alarms
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/cloudwatch_dashboard/" title="CloudWatch Dashboard" class="dd-item ">
+        <a href="/reference/operations/cloudwatch_dashboard/">
+        CloudWatch Dashboard
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/codedeploy_service_update/" title="CodeDeploy Service Update" class="dd-item ">
+        <a href="/reference/operations/codedeploy_service_update/">
+        CodeDeploy Service Update
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/cicd/" title="CI/CD" class="dd-item ">
+        <a href="/reference/operations/cicd/">
+        CI/CD
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/deployment_strategies/" title="Deployment Strategies" class="dd-item ">
+        <a href="/reference/operations/deployment_strategies/">
+        Deployment Strategies
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/metrics_publisher/" title="Metrics Publisher" class="dd-item ">
+        <a href="/reference/operations/metrics_publisher/">
+        Metrics Publisher
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/operations/profiling/" title="Profiling" class="dd-item ">
+        <a href="/reference/operations/profiling/">
+        Profiling
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/testing/" title="Testing" class="dd-item ">
+        <a href="/reference/testing/">
+        Testing
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/supporting_packages/" title="Supporting Packages" class="dd-item ">
+        <a href="/reference/supporting_packages/">
+        Supporting Packages
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/limitations/" title="Limitations" class="dd-item ">
+        <a href="/reference/limitations/">
+        Limitations
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
+      <li data-nav-id="/reference/faq/" title="FAQ" class="dd-item ">
+        <a href="/reference/faq/">
+        FAQ
+        
+        </a>
+    </li>
+     
+  
+ 
+
+            
+          
+        
+        </ul>
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/presentations/" title="Presentations" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/presentations/">
+          Presentations
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/credits/" title="Credits" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/credits/">
+          Credits
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+          
+
+
+ 
+  
+    
+    <li data-nav-id="/meta/" title="_Meta" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/meta/">
+          _Meta
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+          
+         
+    </ul>
+
+    
+    
+      <section id="shortcuts">
+        <h3>More</h3>
+        <ul>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta"><i class='fab fa-fw fa-github'></i> Github repo</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle?utf8=%E2%9C%93&amp;tab=repositories&amp;q=Sparta&amp;type=&amp;language="><i class='fas fa-fw fa-camera'></i> Showcases</a>
+              </li>
+          
+              <li> 
+                  <a class="padding" href="https://github.com/mweagle/Sparta/blob/master/CHANGES.md"><i class='fas fa-fw fa-signal'></i> Release History</a>
+              </li>
+          
+        </ul>
+      </section>
+    
+
+    
+    <section id="footer">
+      
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/dff16e2d">dff16e2d</a><p/>
+  Date: 2019-07-26 19:24:01 -0700 PDT
+
+
+<p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
+
+    </section>
+  </div>
+</nav>
+
+
+
+
+
+        <section id="body">
+        <div id="overlay"></div>
+        <div class="padding highlightable">
+              
+              <div>
+                <div id="top-bar">
+                
+                  
+                  
+                  
+                  <div id="top-github-link">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/apiv2gateway/_index.md" target="blank">
+                      <i class="fas fa-code-branch"></i>
+                      <span id="top-github-link-text">Edit this page</span>
+                    </a>
+                  </div>
+                  
+                
+                
+                <div id="breadcrumbs" itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb">
+                    <span id="sidebar-toggle-span">
+                        <a href="#" id="sidebar-toggle" data-sidebar-toggle="">
+                          <i class="fas fa-bars"></i>
+                        </a>
+                    </span>
+                  
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
+                  <span class="links">
+                 
+                 
+                    
+          
+          
+            
+            
+          
+          
+            
+            
+          
+          
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > 
+          
+         
+          
+         
+          
+        
+                 
+                  </span>
+                </div>
+                
+                    <div class="progress">
+    <div class="wrapper">
+<nav id="TableOfContents">
+<ul>
+<li><a href="#api-v2-gateway">API V2 Gateway</a>
+<ul>
+<li><a href="#payload">Payload</a></li>
+<li><a href="#routes">Routes</a>
+<ul>
+<li><a href="#connectworld">connectWorld</a></li>
+<li><a href="#disconnectworld">disconnectWorld</a></li>
+<li><a href="#sendmessage">sendMessage</a>
+<ul>
+<li><a href="#setup-api-gateway-management-instance">Setup API Gateway Management Instance</a></li>
+<li><a href="#validate-input">Validate Input</a></li>
+<li><a href="#scan-and-publish">Scan and Publish</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#api-v2-gateway-decorator">API V2 Gateway Decorator</a>
+<ul>
+<li><a href="#additional-privileges">Additional Privileges</a></li>
+</ul></li>
+<li><a href="#annotating-lambda-functions">Annotating Lambda Functions</a></li>
+<li><a href="#provision">Provision</a></li>
+<li><a href="#test">Test</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ul></li>
+</ul>
+</nav>
+    </div>
+</div>
+
+                
+              </div>
+            </div>
+            
+        <div id="head-tags">
+        
+        </div>
+        
+        <div id="body-inner">
+          
+            <h1>
+              
+              
+            </h1>
+          
+
+        
+
+
+
+
+	
+
+<h1 id="api-v2-gateway">API V2 Gateway</h1>
+
+<p>The API V2 Gateway service provides a way to expose a WebSocket API that is
+supported by a set of Lambda functions. The AWS <a href="https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/">blog post</a> supplies an excellent overview of
+the pros and cons of this approach that enables a near real time, pushed-based
+application. This section will provide an overview of how to configure a WebSocket
+API using Sparta. It is based on the <a href="https://github.com/mweagle/SpartaWebSocket">SpartaWebSocket</a> sample project.</p>
+
+<h2 id="payload">Payload</h2>
+
+<p>Similar to the AWS blog post, our WebSocket API will transmit messages of the form</p>
+
+<pre><code class="language-json">{
+    &quot;message&quot;:&quot;sendmessage&quot;,
+    &quot;data&quot;:&quot;hello world !&quot;
+}
+</code></pre>
+
+<p>We&rsquo;ll use <a href="https://github.com/hashrocket/ws">ws</a> to test the API from the command line.</p>
+
+<h2 id="routes">Routes</h2>
+
+<p>The Sparta service consists of three lambda functions:</p>
+
+<ul>
+<li><code>connectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+<li><code>disconnectWorld(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+<li><code>sendMessage(context.Context, awsEvents.APIGatewayWebsocketProxyRequest) (*wsResponse, error)</code></li>
+</ul>
+
+<p>Our functions will use the <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-create-api-as-simple-proxy">PROXY</a> style integration and therefore accept an instance of the <a href="https://godoc.org/github.com/aws/aws-lambda-gevents#APIGatewayWebsocketProxyRequest">APIGatewayWebsocketProxyRequest</a> type.</p>
+
+<p>Each function returns a <code>*wsResponse</code> instance that satisfies the <strong>PROXY</strong> response:</p>
+
+<pre><code class="language-go">type wsResponse struct {
+  StatusCode int    `json:&quot;statusCode&quot;`
+  Body       string `json:&quot;body&quot;`
+}
+</code></pre>
+
+<h3 id="connectworld">connectWorld</h3>
+
+<p>The <code>connectWorld</code> AWS Lambda function is responsible for saving the incoming <em>connectionID</em> into a dynamically provisioned DynamoDB database so that subsequent <em>sendMessage</em> requests can broadcast to all subscribed parties.</p>
+
+<p>The table name is advertised in the Lambda function via a user-defined environment variable. The specifics of how that table is provisioned will be addressed in a section below.</p>
+
+<pre><code class="language-go">...
+// Operation
+putItemInput := &amp;dynamodb.PutItemInput{
+  TableName: aws.String(os.Getenv(envKeyTableName)),
+  Item: map[string]*dynamodb.AttributeValue{
+    ddbAttributeConnectionID: &amp;dynamodb.AttributeValue{
+      S: aws.String(request.RequestContext.ConnectionID),
+     },
+  },
+}
+_, putItemErr := dynamoClient.PutItem(putItemInput)
+...
+</code></pre>
+
+<h3 id="disconnectworld">disconnectWorld</h3>
+
+<p>The complement to <code>connectWorld</code> is <code>disconnectWorld</code> which is responsible for removing the <em>connectionID</em> from the list of registered connections:</p>
+
+<pre><code class="language-go">  delItemInput := &amp;dynamodb.DeleteItemInput{
+    TableName: aws.String(os.Getenv(envKeyTableName)),
+    Key: map[string]*dynamodb.AttributeValue{
+      ddbAttributeConnectionID: &amp;dynamodb.AttributeValue{
+        S: aws.String(connectionID),
+      },
+    },
+  }
+  _, delItemErr := ddbService.DeleteItem(delItemInput)
+</code></pre>
+
+<h3 id="sendmessage">sendMessage</h3>
+
+<p>With the <code>connectWorld</code> and <code>disconnectWorld</code> connection management functions created, the core of the WebSocket API is <code>sendMessage</code>. This function is responsible for scanning over the set of registered <em>connectionIDs</em> and forwarding a request to <a href="https://godoc.org/github.com/aws/aws-sdk-go/service/apigatewaymanagementapi#ApiGatewayManagementApi.PostToConnectionWithContext">PostConnectionWithContext</a>. This function sends the message to the registered connections.</p>
+
+<p>The <code>sendMessage</code> function can be broken down into a few sections.</p>
+
+<h4 id="setup-api-gateway-management-instance">Setup API Gateway Management Instance</h4>
+
+<p>The first requirement is to setup the API Gateway Management service instance using the proper endpoint. The endpoint can be constructed from the incoming <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#APIGatewayWebsocketProxyRequestContext">APIGatewayWebsocketProxyRequestContext</a> member of the request.</p>
+
+<pre><code class="language-go">  endpointURL := fmt.Sprintf(&quot;%s/%s&quot;,
+    request.RequestContext.DomainName,
+    request.RequestContext.Stage)
+  logger.WithField(&quot;Endpoint&quot;, endpointURL).Info(&quot;API Gateway Endpoint&quot;)
+  dynamoClient := dynamodb.New(sess)
+    apigwMgmtClient := apigwManagement.New(sess, aws.NewConfig().WithEndpoint(endpointURL))
+</code></pre>
+
+<h4 id="validate-input">Validate Input</h4>
+
+<p>The new step is to unmarshal and validate the incoming JSON request body:</p>
+
+<pre><code class="language-go">  // Get the input request...
+  var objMap map[string]*json.RawMessage
+  unmarshalErr := json.Unmarshal([]byte(request.Body), &amp;objMap)
+  if unmarshalErr != nil || objMap[&quot;data&quot;] == nil {
+    return &amp;wsResponse{
+      StatusCode: 500,
+      Body:       &quot;Failed to unmarshal request: &quot; + unmarshalErr.Error(),
+    }, nil
+  }
+</code></pre>
+
+<p>Once we have verified that the input is valid, the final step is to notify all the subscribers.</p>
+
+<h4 id="scan-and-publish">Scan and Publish</h4>
+
+<p>Once the incoming <code>data</code> property is validated, the next step is to scan the DynamoDB table for the registered connections and post a message to each one. Note that the scan callback also attempts to cleanup connections that are no longer valid, but which haven&rsquo;t been cleanly removed.</p>
+
+<pre><code class="language-go">  scanCallback := func(output *dynamodb.ScanOutput, lastPage bool) bool {
+    // Send the message to all the clients
+    for _, eachItem := range output.Items {
+      // Get the connectionID
+      receiverConnection := &quot;&quot;
+      if eachItem[ddbAttributeConnectionID].S != nil {
+        receiverConnection = *eachItem[ddbAttributeConnectionID].S
+      }
+
+      // Post to this connectionID
+      postConnectionInput := &amp;apigwManagement.PostToConnectionInput{
+        ConnectionId: aws.String(receiverConnection),
+        Data:         *objMap[&quot;data&quot;],
+      }
+      _, respErr := apigwMgmtClient.PostToConnectionWithContext(ctx, postConnectionInput)
+      if respErr != nil {
+        if receiverConnection != &quot;&quot; &amp;&amp;
+          strings.Contains(respErr.Error(), apigwManagement.ErrCodeGoneException) {
+          // Cleanup in case the connection is stale
+          go deleteConnection(receiverConnection, dynamoClient)
+        } else {
+          logger.WithField(&quot;Error&quot;, respErr).Warn(&quot;Failed to post to connection&quot;)
+        }
+      }
+      return true
+    }
+    return true
+  }
+
+  // Scan the connections table
+  scanInput := &amp;dynamodb.ScanInput{
+    TableName: aws.String(os.Getenv(envKeyTableName)),
+  }
+  scanItemErr := dynamoClient.ScanPagesWithContext(ctx,
+    scanInput,
+    scanCallback)
+  ...
+</code></pre>
+
+<p>These three functions are the core of the WebSocket service.</p>
+
+<h2 id="api-v2-gateway-decorator">API V2 Gateway Decorator</h2>
+
+<p>The next step is to create the API V2 API object which is comprised of:</p>
+
+<ul>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-stage.html">Stage</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-api.html">API</a></li>
+<li><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigatewayv2-route.html">Routes</a></li>
+</ul>
+
+<p>There is one Stage and one API per service, but a given service (including this one) may include multiple Routes.</p>
+
+<pre><code class="language-go">// APIv2 Websockets
+stage, _ := sparta.NewAPIV2Stage(&quot;v1&quot;)
+stage.Description = &quot;New deploy!&quot;
+
+apiGateway, _ := sparta.NewAPIV2(sparta.Websocket,
+  &quot;sample&quot;,
+  &quot;$request.body.message&quot;,
+   stage)
+</code></pre>
+
+<p>The <code>NewAPIV2</code> creation function requires:</p>
+
+<ul>
+<li>The protocol to use (<code>sparta.Websocket</code>)</li>
+<li>The name of the API (<code>sample</code>)</li>
+<li>The <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-selection-expressions.html#apigateway-websocket-api-route-selection-expressions">route selection expression</a> that represents a JSONPath selection expression to map input data to the corresponding lambda function.</li>
+<li>The stage</li>
+</ul>
+
+<p>Once the API is defined, each route is associated with the API as in:</p>
+
+<pre><code class="language-go">apiv2ConnectRoute, _ := apiGateway.NewAPIV2Route(&quot;$connect&quot;,
+    lambdaConnect)
+apiv2ConnectRoute.OperationName = &quot;ConnectRoute&quot;
+...
+apiv2SendRoute, _ := apiGateway.NewAPIV2Route(&quot;sendmessage&quot;,
+    lambdaSend)
+apiv2SendRoute.OperationName = &quot;SendRoute&quot;
+...
+</code></pre>
+
+<p>The <code>$connect</code> routeKey is a special <a href="https://aws.amazon.com/blogs/compute/announcing-websocket-apis-in-amazon-api-gateway/">route key value</a> that is sent when a client first connects to the WebSocket API. See the official <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-websocket-api-route-keys-connect-disconnect.html">documentation</a> for more information.</p>
+
+<p>In comparison, the <code>sendmessage</code> routeKey value of <code>sendmessage</code> means that a payload of the form:</p>
+
+<pre><code class="language-json">{
+    &quot;message&quot;:&quot;sendmessage&quot;,
+    &quot;data&quot;:&quot;hello world !&quot;
+}
+</code></pre>
+
+<p>will trigger the <code>lambdaSend</code> function given the parent API&rsquo;s route selection expression of <code>$request.body.message</code>.</p>
+
+<h3 id="additional-privileges">Additional Privileges</h3>
+
+<p>Because the <code>lambdaSend</code> function also needs to invoke the API Gateway Management APIs to broadcast, an additional IAM Privilege must be enabled:</p>
+
+<pre><code class="language-go">  var apigwPermissions = []sparta.IAMRolePrivilege{
+    {
+      Actions: []string{&quot;execute-api:ManageConnections&quot;},
+      Resource: gocf.Join(&quot;&quot;,
+        gocf.String(&quot;arn:aws:execute-api:&quot;),
+        gocf.Ref(&quot;AWS::Region&quot;),
+        gocf.String(&quot;:&quot;),
+        gocf.Ref(&quot;AWS::AccountId&quot;),
+        gocf.String(&quot;:&quot;),
+        gocf.Ref(apiGateway.LogicalResourceName()),
+        gocf.String(&quot;/*&quot;)),
+    },
+  }
+  lambdaSend.RoleDefinition.Privileges = append(lambdaSend.RoleDefinition.Privileges, apigwPermissions...)
+</code></pre>
+
+<h2 id="annotating-lambda-functions">Annotating Lambda Functions</h2>
+
+<p>The final configuration step is to use the API gateway to create an instance of the <code>APIV2GatewayDecorator</code>. This decorator is responsible for:</p>
+
+<ul>
+<li>Provisioning the DynamoDB table.</li>
+<li>Ensuring DynamoDB CRUD permissions for all the AWS Lambda functions.</li>
+<li>Publishing the table name into the Lambda function&rsquo;s Environment block.</li>
+<li>Adding the WebSocket <code>wss://...</code> URL to the Stack&rsquo;s Outputs.</li>
+</ul>
+
+<p>The decorator is created by a call to <code>NewConnectionTableDecorator</code> which accepts:</p>
+
+<ul>
+<li>The environment variable to populate with the dynamically assigned DynamoDB table</li>
+<li>The DynamoDB attribute name to use to store the connectionID</li>
+<li>The read capacity units</li>
+<li>The write capacity units</li>
+</ul>
+
+<p>For instance:</p>
+
+<pre><code class="language-go">  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName,
+      ddbAttributeConnectionID,
+      5,
+      5)
+
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFunctions = append(lambdaFunctions,
+      lambdaConnect,
+      lambdaDisconnect,
+      lambdaSend)
+  decorator.AnnotateLambdas(lambdaFunctions)
+</code></pre>
+
+<h2 id="provision">Provision</h2>
+
+<p>With everything defined, provide the API V2 Decorator as a Workflow hook as in:</p>
+
+<pre><code class="language-go">  // Set everything up and run it...
+  workflowHooks := &amp;sparta.WorkflowHooks{
+    ServiceDecorators: []sparta.ServiceDecoratorHookHandler{decorator},
+  }
+  err := sparta.MainEx(awsName,
+    &quot;Sparta application that demonstrates API v2 Websocket support&quot;,
+    lambdaFunctions,
+    apiGateway,
+    nil,
+    workflowHooks,
+    false)
+</code></pre>
+
+<p>and then provision the application:</p>
+
+<pre><code class="language-bash">go run main.go provision --s3Bucket $S3_BUCKET --noop
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.9.4
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : cfd44e2
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.12.6
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Service: SpartaWebSocket-123412341234         LinkFlags= Option=provision UTC=&quot;2019-07-25T05:26:57Z&quot;
+INFO[0000] ════════════════════════════════════════════════
+INFO[0000] Using `git` SHA for StampedBuildID            Command=&quot;git rev-parse HEAD&quot; SHA=6b26f8e645e9d58c1b678e46576e19bbc29886c0
+INFO[0000] Provisioning service                          BuildID=6b26f8e645e9d58c1b678e46576e19bbc29886c0 CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
+INFO[0000] Verifying IAM Lambda execution roles
+INFO[0000] IAM roles verified                            Count=3
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
+INFO[0000] Running `go generate`
+INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
+INFO[0002] Creating code ZIP archive for upload          TempName=./.sparta/SpartaWebSocket_123412341234-code.zip
+INFO[0002] Lambda code archive size                      Size=&quot;23 MB&quot;
+INFO[0002] Uploading local file to S3                    Bucket=weagle Key=SpartaWebSocket-123412341234/SpartaWebSocket_123412341234-code.zip Path=./.sparta/SpartaWebSocket_123412341234-code.zip Size=&quot;23 MB&quot;
+INFO[0011] Calling WorkflowHook                          ServiceDecoratorHook= WorkflowHookContext=&quot;map[]&quot;
+INFO[0011] Uploading local file to S3                    Bucket=weagle Key=SpartaWebSocket-123412341234/SpartaWebSocket_123412341234-cftemplate.json Path=./.sparta/SpartaWebSocket_123412341234-cftemplate.json Size=&quot;14 kB&quot;
+INFO[0011] Creating stack                                StackID=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaWebSocket-123412341234/d8a405b0-ae9c-11e9-a05a-0a1528792fce&quot;
+INFO[0122] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+...
+INFO[0122] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0122]     APIGatewayURL                             Description=&quot;API Gateway Websocket URL&quot; Value=&quot;wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1&quot;
+INFO[0122] Stack provisioned                             CreationTime=&quot;2019-07-25 05:27:08.687 +0000 UTC&quot; StackId=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/SpartaWebSocket-123412341234/d8a405b0-ae9c-11e9-a05a-0a1528792fce&quot; StackName=SpartaWebSocket-123412341234
+INFO[0122] ════════════════════════════════════════════════
+INFO[0122] SpartaWebSocket-123412341234 Summary
+INFO[0122] ════════════════════════════════════════════════
+INFO[0122] Verifying IAM roles                           Duration (s)=0
+INFO[0122] Verifying AWS preconditions                   Duration (s)=0
+INFO[0122] Creating code bundle                          Duration (s)=1
+INFO[0122] Uploading code                                Duration (s)=9
+INFO[0122] Ensuring CloudFormation stack                 Duration (s)=112
+INFO[0122] Total elapsed time                            Duration (s)=122
+</code></pre>
+
+<h2 id="test">Test</h2>
+
+<p>With the API Gateway deployed, the last step is to test it. Download and install the <a href="go get -u github.com/hashrocket/ws">ws</a> tool:</p>
+
+<pre><code class="language-bash">go get -u github.com/hashrocket/ws
+</code></pre>
+
+<p>then connect to your new API and send a message as in:</p>
+
+<pre><code class="language-bash">22:31 $ ws wss://gu4vmnia27.execute-api.us-west-2.amazonaws.com/v1
+&gt; {&quot;message&quot;:&quot;sendmessage&quot;, &quot;data&quot;:&quot;hello world !&quot;}
+&lt; &quot;hello world !&quot;
+</code></pre>
+
+<p>You can also send messages with <a href="https://chrome.google.com/webstore/detail/firecamp-a-campsite-for-d/eajaahbjpnhghjcdaclbkeamlkepinbl?hl=en">Firecamp</a>, a Chrome extension, and send messages between your <code>ws</code> session and the web (or vice versa).</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>While a production ready application would likely need to include authentication and authorization, this is the beginnings of a full featured WebSocket service in fewer than 200 lines of application code:</p>
+
+<pre><code class="language-bash">-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+Go                               1             21             52            183
+Markdown                         1              0              2              0
+-------------------------------------------------------------------------------
+TOTAL                            2             21             54            183
+-------------------------------------------------------------------------------
+</code></pre>
+
+<p>Remember to terminate the stack when you&rsquo;re done to avoid any unintentional costs!</p>
+
+<h2 id="references">References</h2>
+
+<ul>
+<li>The SpartaWebSocket application is modeled after the <a href="https://github.com/aws-samples/simple-websockets-chat-app">https://github.com/aws-samples/simple-websockets-chat-app</a> sample.</li>
+</ul>
+
+
+
+
+
+<footer class=" footline" >
+	
+</footer>
+
+
+</div> 
+
+
+</div>
+
+<div id="navigation">
+
+
+
+
+
+
+    
+        
+        
+    
+    
+
+        
+        
+            
+        
+        
+
+        
+            
+
+
+    
+        
+            
+            
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+        
+    
+    
+
+        
+        
+            
+        
+        
+
+        
+            
+
+
+    
+        
+            
+            
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+            
+            
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+            
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
+
+
+        
+
+
+
+
+
+
+
+
+
+<a class="nav nav-prev" href="/reference/apigateway/s3site/" title="S3 Sites with CORS"> <i class="fa fa-chevron-left"></i></a>
+
+
+<a class="nav nav-next" href="/reference/eventsources/" title="" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+
+
+</div>
+
+</section>
+
+<div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
+<div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
+</div>
+<script src="/js/clipboard.min.js?1564194441"></script>
+<script src="/js/perfect-scrollbar.min.js?1564194441"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1564194441"></script>
+<script src="/js/jquery.sticky.js?1564194441"></script>
+<script src="/js/featherlight.min.js?1564194441"></script>
+<script src="/js/html5shiv-printshiv.min.js?1564194441"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1564194441"></script>
+<script src="/js/learn.js?1564194441"></script>
+<script src="/js/hugo-learn.js?1564194441"></script>
+
+<link href="/mermaid/mermaid.css?1564194441" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1564194441"></script>
+<script>
+mermaid.initialize({ startOnLoad: true });
+</script>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-70794971-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-70794971-2');
+</script>
+</body>
+</html>

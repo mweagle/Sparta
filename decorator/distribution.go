@@ -10,15 +10,39 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// CloudFrontSiteDistributionDecorator returns a ServiceDecoratorHookHandler
-// function that provisions a CloudFront distribution whose origin
-// is the supplied S3Site bucket. If the acmCertificateARN
-// value is non-nil, the CloudFront distribution will support SSL
-// access via the ViewerCertificate struct
+// CloudFrontSiteDistributionDecorator returns a CloudFrontSiteDecorator with
+// the default VIP certificate.
+// NOTE: The default VIP certificate is expensive. Consider using SNI to
+// reduce costs. See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html#cfn-cloudfront-distribution-viewercertificate-sslsupportmethod
+// for more information.
 func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 	subdomain string,
 	domainName string,
 	acmCertificateARN gocf.Stringable) sparta.ServiceDecoratorHookHandler {
+
+	var cert *gocf.CloudFrontDistributionViewerCertificate
+	if acmCertificateARN != nil {
+		cert = &gocf.CloudFrontDistributionViewerCertificate{
+			AcmCertificateArn: acmCertificateARN.String(),
+			SslSupportMethod:  gocf.String("vip"),
+		}
+	}
+	return CloudFrontSiteDistributionDecoratorWithCert(s3Site,
+		subdomain,
+		domainName,
+		cert)
+}
+
+// CloudFrontSiteDistributionDecoratorWithCert returns a ServiceDecoratorHookHandler
+// function that provisions a CloudFront distribution whose origin
+// is the supplied S3Site bucket. The supplied viewer certificate
+// allows customization of the CloudFront Distribution SSL options.
+// See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html
+// for more information.
+func CloudFrontSiteDistributionDecoratorWithCert(s3Site *sparta.S3Site,
+	subdomain string,
+	domainName string,
+	cert *gocf.CloudFrontDistributionViewerCertificate) sparta.ServiceDecoratorHookHandler {
 
 	// Setup the CF distro
 	distroDecorator := func(context map[string]interface{},
@@ -93,12 +117,8 @@ func CloudFrontSiteDistributionDecorator(s3Site *sparta.S3Site,
 				ViewerProtocolPolicy: gocf.String("allow-all"),
 			},
 		}
-		if acmCertificateARN != nil {
-			distroConfig.ViewerCertificate = &gocf.CloudFrontDistributionViewerCertificate{
-				AcmCertificateArn: acmCertificateARN.String(),
-				SslSupportMethod:  gocf.String("vip"),
-			}
-		}
+		// Update the cert...
+		distroConfig.ViewerCertificate = cert
 
 		cloudfrontDistro := &gocf.CloudFrontDistribution{
 			DistributionConfig: distroConfig,

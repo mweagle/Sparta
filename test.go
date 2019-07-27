@@ -122,7 +122,7 @@ func testProvision(t *testing.T,
 // supplying the result to the evaluator function
 func testProvisionEx(t *testing.T,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
+	api APIGateway,
 	site *S3Site,
 	workflowHooks *WorkflowHooks,
 	useCGO bool,

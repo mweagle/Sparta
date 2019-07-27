@@ -28,7 +28,7 @@ const (
 func Explore(serviceName string,
 	serviceDescription string,
 	lambdaAWSInfos []*LambdaAWSInfo,
-	api *API,
+	api APIGateway,
 	site *S3Site,
 	s3BucketName string,
 	buildTags string,
