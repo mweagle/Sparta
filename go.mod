@@ -7,8 +7,8 @@ require (
 	github.com/AlecAivazis/survey/v2 v2.0.1
 	github.com/Netflix/go-expect v0.0.0-20180928190340-9d1f4485533b // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
-	github.com/aws/aws-lambda-go v1.11.1
-	github.com/aws/aws-sdk-go v1.21.3
+	github.com/aws/aws-lambda-go v1.12.0
+	github.com/aws/aws-sdk-go v1.21.6
 	github.com/aws/aws-xray-sdk-go v0.9.4
 	github.com/briandowns/spinner v1.6.1
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575 // indirect
@@ -30,9 +30,11 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/pprof v0.0.0-20190723021845-34ac40c74b70
 	github.com/grpc-ecosystem/grpc-gateway v1.9.5 // indirect
+	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20180920040306-f579f869bbfe
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
+	github.com/json-iterator/go v1.1.7 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/klauspost/compress v1.7.4 // indirect
 	github.com/klauspost/cpuid v1.2.1 // indirect
@@ -76,9 +78,9 @@ require (
 	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
 	golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028 // indirect
 	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
-	golang.org/x/sys v0.0.0-20190712062909-fae7ac547cb7 // indirect
-	golang.org/x/tools v0.0.0-20190723021737-8bb11ff117ca // indirect
-	google.golang.org/grpc v1.22.0 // indirect
+	golang.org/x/sys v0.0.0-20190726091711-fc99dfbffb4e // indirect
+	golang.org/x/tools v0.0.0-20190726230722-1bd56024c620 // indirect
+	google.golang.org/grpc v1.22.1 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	honnef.co/go/tools v0.0.0-20190622161425-0d05180ad8c0 // indirect
