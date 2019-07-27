@@ -249,18 +249,27 @@ The final configuration step is to use the API gateway to create an instance of 
 * Publishing the table name into the Lambda function's Environment block.
 * Adding the WebSocket `wss://...` URL to the Stack's Outputs.
 
-```go
-decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName /* ENV key to use for DDB table name*/,
-    ddbAttributeConnectionID /* DDB attr name for connectionID */,
-    5 /* readCapacity */,
-    5 /* writeCapacity */)
+The decorator is created by a call to `NewConnectionTableDecorator` which accepts:
 
-var lambdaFunctions []*sparta.LambdaAWSInfo
-lambdaFunctions = append(lambdaFunctions,
-    lambdaConnect,
-    lambdaDisconnect,
-    lambdaSend)
-decorator.AnnotateLambdas(lambdaFunctions)
+* The environment variable to populate with the dynamically assigned DynamoDB table
+* The DynamoDB attribute name to use to store the connectionID
+* The read capacity units
+* The write capacity units
+
+For instance:
+
+```go
+  decorator, _ := apiGateway.NewConnectionTableDecorator(envKeyTableName,
+      ddbAttributeConnectionID,
+      5,
+      5)
+
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFunctions = append(lambdaFunctions,
+      lambdaConnect,
+      lambdaDisconnect,
+      lambdaSend)
+  decorator.AnnotateLambdas(lambdaFunctions)
 ```
 
 ## Provision
@@ -268,7 +277,7 @@ decorator.AnnotateLambdas(lambdaFunctions)
 With everything defined, provide the API V2 Decorator as a Workflow hook as in:
 
 ```go
-// Set everything up and run it...
+  // Set everything up and run it...
   workflowHooks := &sparta.WorkflowHooks{
     ServiceDecorators: []sparta.ServiceDecoratorHookHandler{decorator},
   }
