@@ -8,11 +8,36 @@ The [ApplicationLoadBalancerDecorator](https://godoc.org/github.com/mweagle/Spar
 
 This can be useful to expose one or more Lambda functions to the public internet without requiring an API-Gateway configuration. See 
 
+## Lambda Function
+
+The lambda function target for an ALB request is required to have a specific signature: `func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse`
+
+See the [ALBTargetGroupRequest](https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupRequest) and [ALBTargetGroupResponse](https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupResponse) _godoc_ entries for more information.
+
+An example ALB target function might look like:
+
+```go
+// ALB eligible lambda function
+func helloNewWorld(ctx context.Context,
+  albEvent awsEvents.ALBTargetGroupRequest) (awsEvents.ALBTargetGroupResponse, error) {
+
+  return awsEvents.ALBTargetGroupResponse{
+    StatusCode:        200,
+    StatusDescription: fmt.Sprintf("200 OK"),
+    Body:              "Some other handler",
+    IsBase64Encoded:   false,
+    Headers:           map[string]string{},
+  }, nil
+}
+```
+
+Once you've defined your ALB-compatible functions, the next step is to register them with the decorator responsible for configuring them as ALB listener targets.
+
 ## Definition
 
 The `ApplicationLoadBalancerDecorator` satisfies the [ServiceDecoratorHookHandler](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler) interface and adds a set of CloudFormation Resources to support properly publishing your Lambda functions.
 
-Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted. 
+Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted.
 
 For an ALB that accepts all HTTP traffic on port `80`,  is done via code similar to:
 
@@ -48,6 +73,7 @@ albDecorator, albDecoratorErr := spartaDecorators.NewApplicationLoadBalancerDeco
     "HTTP",
     lambdaFn)
 ```
+
 The `NewApplicationLoadBalancerDecorator` accepts four arguments:
 
 - The ApplicationLoadBalancer that will handle this service's incoming requests
@@ -73,7 +99,7 @@ This will create a rule that associates the _/newhello*_ path with `lambdaFn2`. 
 
 ## Additional Resources
 
-The final step is to ensure that the Security Group that we associated with our ALB is included in the final template. This is done by including it in the `ApplicationLoadBalancerDecorator.Resources` map which allows you to provide additional CloudFormation resources that should be included in the final template:
+The next step is to ensure that the Security Group that we associated with our ALB is included in the final template. This is done by including it in the `ApplicationLoadBalancerDecorator.Resources` map which allows you to provide additional CloudFormation resources that should be included in the final template:
 
 ```go
 // Finally, tell the ALB decorator we have some additional resources that need to be
