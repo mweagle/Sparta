@@ -12,6 +12,18 @@
     
     
     <item>
+      <title>Application Load Balancer</title>
+      <link>/reference/decorators/application_load_balancer/</link>
+      <pubDate>Sat, 10 Aug 2019 14:59:12 +0000</pubDate>
+      
+      <guid>/reference/decorators/application_load_balancer/</guid>
+      <description>The ApplicationLoadBalancerDecorator allows your service to register your lambda functions as Application Load Balancer targets.
+This can be useful to expose one or more Lambda functions to the public internet without requiring an API-Gateway configuration. See
+Definition The ApplicationLoadBalancerDecorator satisfies the ServiceDecoratorHookHandler interface and adds a set of CloudFormation Resources to support properly publishing your Lambda functions.
+Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted.</description>
+    </item>
+    
+    <item>
       <title>CloudMap Service Discovery</title>
       <link>/reference/decorators/cloudmap/</link>
       <pubDate>Mon, 27 May 2019 22:31:25 +0000</pubDate>

@@ -23,6 +23,18 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
     </item>
     
     <item>
+      <title>Application Load Balancer</title>
+      <link>/reference/decorators/application_load_balancer/</link>
+      <pubDate>Sat, 10 Aug 2019 14:59:12 +0000</pubDate>
+      
+      <guid>/reference/decorators/application_load_balancer/</guid>
+      <description>The ApplicationLoadBalancerDecorator allows your service to register your lambda functions as Application Load Balancer targets.
+This can be useful to expose one or more Lambda functions to the public internet without requiring an API-Gateway configuration. See
+Definition The ApplicationLoadBalancerDecorator satisfies the ServiceDecoratorHookHandler interface and adds a set of CloudFormation Resources to support properly publishing your Lambda functions.
+Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted.</description>
+    </item>
+    
+    <item>
       <title>CloudMap Service Discovery</title>
       <link>/reference/decorators/cloudmap/</link>
       <pubDate>Mon, 27 May 2019 22:31:25 +0000</pubDate>
@@ -492,7 +504,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS. Perhaps due to third party libraries, latency, or storage requirements, the FaaS model isn&amp;rsquo;t an ideal fit.</description>
+&amp;mdash; Paul Johnston 🌍 is on a break! 🌍 (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
     <item>
