@@ -74,7 +74,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	// Closure to manage the permissions, version, and alias resources needed
 	// for each lambda target group
 	//
-	visitedLambdaFuncs := make(map[string]bool, 0)
+	visitedLambdaFuncs := make(map[string]bool)
 	ensureLambdaPreconditions := func(lambdaFn *sparta.LambdaAWSInfo, dependentResource *gocf.Resource) error {
 		_, exists := visitedLambdaFuncs[lambdaFn.LogicalResourceName()]
 		if exists {
@@ -240,6 +240,6 @@ func NewApplicationLoadBalancerDecorator(alb *gocf.ElasticLoadBalancingV2LoadBal
 		protocol:             protocol,
 		defaultLambdaHandler: defaultLambdaHandler,
 		targets:              make([]*targetGroupEntry, 0),
-		Resources:            make(map[string]gocf.ResourceProperties, 0),
+		Resources:            make(map[string]gocf.ResourceProperties),
 	}, nil
 }
