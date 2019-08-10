@@ -70,6 +70,11 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	noop bool,
 	logger *logrus.Logger) error {
 
+	portScopedResourceName := func(prefix string, parts ...string) string {
+		return sparta.CloudFormationResourceName(fmt.Sprintf("%s%d", prefix, albd.port),
+			parts...)
+	}
+
 	////////////////////////////////////////////////////////////////////////////
 	// Closure to manage the permissions, version, and alias resources needed
 	// for each lambda target group
@@ -81,7 +86,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 			return nil
 		}
 		// Add the lambda permission
-		albPermissionResourceName := sparta.CloudFormationResourceName("ALBPermission", lambdaFn.LogicalResourceName())
+		albPermissionResourceName := portScopedResourceName("ALBPermission", lambdaFn.LogicalResourceName())
 		lambdaInvokePermission := &gocf.LambdaPermission{
 			Action:       gocf.String("lambda:InvokeFunction"),
 			FunctionName: gocf.GetAtt(lambdaFn.LogicalResourceName(), "Arn"),
@@ -89,8 +94,8 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 		}
 		template.AddResource(albPermissionResourceName, lambdaInvokePermission)
 		// The stable alias resource and unstable, retained version resource
-		aliasResourceName := sparta.CloudFormationResourceName("ALBAlias", lambdaFn.LogicalResourceName())
-		versionResourceName := sparta.CloudFormationResourceName("ALBVersion", lambdaFn.LogicalResourceName(), buildID)
+		aliasResourceName := portScopedResourceName("ALBAlias", lambdaFn.LogicalResourceName())
+		versionResourceName := portScopedResourceName("ALBVersion", lambdaFn.LogicalResourceName(), buildID)
 
 		versionResource := &gocf.LambdaVersion{
 			FunctionName: gocf.GetAtt(lambdaFn.LogicalResourceName(), "Arn").String(),
@@ -119,8 +124,8 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	//
 	// Add the alb. We'll link each target group inside the loop...
 	albRes := template.AddResource(albd.LogicalResourceName(), albd.alb)
-	defaultListenerResName := sparta.CloudFormationResourceName("ALBListener", "DefaultListener")
-	defaultTargetGroupResName := sparta.CloudFormationResourceName("ALBDefaultTarget", albd.defaultLambdaHandler.LogicalResourceName())
+	defaultListenerResName := portScopedResourceName("ALBListener", "DefaultListener")
+	defaultTargetGroupResName := portScopedResourceName("ALBDefaultTarget", albd.defaultLambdaHandler.LogicalResourceName())
 
 	// Create the default lambda target group...
 	defaultTargetGroupRes := &gocf.ElasticLoadBalancingV2TargetGroup{
@@ -132,7 +137,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 		},
 	}
 	// Add it...
-	template.AddResource(defaultTargetGroupResName, defaultTargetGroupRes)
+	targetGroupRes := template.AddResource(defaultTargetGroupResName, defaultTargetGroupRes)
 
 	// Then create the ELB listener with the default entry. We'll add the conditional
 	// lambda targets after this...
@@ -151,7 +156,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	defaultListenerRes.DependsOn = append(defaultListenerRes.DependsOn, defaultTargetGroupResName)
 
 	// Make sure this is all hooked up
-	ensureErr := ensureLambdaPreconditions(albd.defaultLambdaHandler, defaultListenerRes)
+	ensureErr := ensureLambdaPreconditions(albd.defaultLambdaHandler, targetGroupRes)
 	if ensureErr != nil {
 		return errors.Wrapf(ensureErr, "Failed to create precondition resources for Lambda TargetGroup")
 	}
@@ -159,7 +164,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	// set so that the ALB can actually call them...
 	for eachIndex, eachTarget := range albd.targets {
 		// Create a new TargetGroup for this lambda function
-		conditionalLambdaTargetGroupResName := sparta.CloudFormationResourceName("ALBTargetCond",
+		conditionalLambdaTargetGroupResName := portScopedResourceName("ALBTargetCond",
 			eachTarget.lambdaFn.LogicalResourceName())
 		conditionalLambdaTargetGroup := &gocf.ElasticLoadBalancingV2TargetGroup{
 			TargetType: gocf.String("lambda"),
@@ -193,7 +198,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 			Priority:    gocf.Integer(int64(1 + eachIndex)),
 		}
 		// Add the rule...
-		listenerRuleResName := sparta.CloudFormationResourceName("ALBRule",
+		listenerRuleResName := portScopedResourceName("ALBRule",
 			eachTarget.lambdaFn.LogicalResourceName(),
 			fmt.Sprintf("%d", eachIndex))
 
@@ -207,16 +212,19 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 		// All the secondary resources are dependencies for the ALB
 		albRes.DependsOn = append(albRes.DependsOn, eachKey)
 	}
+	portOutputName := func(prefix string) string {
+		return fmt.Sprintf("%s%d", prefix, albd.port)
+	}
 	// Add the output to the template
-	template.Outputs["ApplicationLoadBalancerDNS"] = &gocf.Output{
+	template.Outputs[portOutputName("ApplicationLoadBalancerDNS")] = &gocf.Output{
 		Description: "DNS value of the ALB",
 		Value:       gocf.GetAtt(albd.LogicalResourceName(), "DNSName"),
 	}
-	template.Outputs["ApplicationLoadBalancerName"] = &gocf.Output{
+	template.Outputs[portOutputName("ApplicationLoadBalancerName")] = &gocf.Output{
 		Description: "Name of the ALB",
 		Value:       gocf.GetAtt(albd.LogicalResourceName(), "LoadBalancerName"),
 	}
-	template.Outputs["ApplicationLoadBalancerURL"] = &gocf.Output{
+	template.Outputs[portOutputName("ApplicationLoadBalancerURL")] = &gocf.Output{
 		Description: "URL value of the ALB",
 		Value: gocf.Join("",
 			gocf.String(strings.ToLower(albd.protocol)),
