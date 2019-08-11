@@ -14,6 +14,7 @@ import (
 type targetGroupEntry struct {
 	conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList
 	lambdaFn   *sparta.LambdaAWSInfo
+	priority   int64
 }
 
 // ApplicationLoadBalancerDecorator is an instance of a service decorator that
@@ -38,12 +39,18 @@ func (albd *ApplicationLoadBalancerDecorator) LogicalResourceName() string {
 func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntry(condition gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
-	// Add a version resource to the lambda so that we target that resource...
-	albd.targets = append(albd.targets, &targetGroupEntry{
-		conditions: &gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList{condition},
-		lambdaFn:   lambdaFn,
-	})
-	return albd
+	return albd.AddConditionalEntryWithPriority(condition, 0, lambdaFn)
+}
+
+// AddConditionalEntryWithPriority adds a new lambda target that is conditionally routed
+// to depending on the condition value using the user supplied priority value
+func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntryWithPriority(condition gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition,
+	priority int64,
+	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
+
+	return albd.AddMultiConditionalEntryWithPriority(&gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList{condition},
+		priority,
+		lambdaFn)
 }
 
 // AddMultiConditionalEntry adds a new lambda target that is conditionally routed
@@ -51,9 +58,19 @@ func (albd *ApplicationLoadBalancerDecorator) AddConditionalEntry(condition gocf
 func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntry(conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList,
 	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
 
+	return albd.AddMultiConditionalEntryWithPriority(conditions, 0, lambdaFn)
+}
+
+// AddMultiConditionalEntryWithPriority adds a new lambda target that is conditionally routed
+// to depending on the multi condition value with the given priority index
+func (albd *ApplicationLoadBalancerDecorator) AddMultiConditionalEntryWithPriority(conditions *gocf.ElasticLoadBalancingV2ListenerRuleRuleConditionList,
+	priority int64,
+	lambdaFn *sparta.LambdaAWSInfo) *ApplicationLoadBalancerDecorator {
+
 	// Add a version resource to the lambda so that we target that resource...
 	albd.targets = append(albd.targets, &targetGroupEntry{
 		conditions: conditions,
+		priority:   priority,
 		lambdaFn:   lambdaFn,
 	})
 	return albd
@@ -182,8 +199,11 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 			return errors.Wrapf(preconditionErr, "Failed to create precondition resources for Lambda TargetGroup")
 		}
 
-		// The ALB depends on it...
-		//defaultListenerRes.DependsOn = append(defaultListenerRes.DependsOn, conditionalLambdaTargetGroupResName)
+		// Priority is either user defined or the current slice index
+		rulePriority := eachTarget.priority
+		if rulePriority <= 0 {
+			rulePriority = int64(1 + eachIndex)
+		}
 
 		// Now create the rule that conditionally routes to this Lambda, in priority order...
 		listenerRule := &gocf.ElasticLoadBalancingV2ListenerRule{
@@ -195,7 +215,7 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 			},
 			Conditions:  eachTarget.conditions,
 			ListenerArn: gocf.Ref(defaultListenerResName).String(),
-			Priority:    gocf.Integer(int64(1 + eachIndex)),
+			Priority:    gocf.Integer(rulePriority),
 		}
 		// Add the rule...
 		listenerRuleResName := portScopedResourceName("ALBRule",
@@ -215,23 +235,29 @@ func (albd *ApplicationLoadBalancerDecorator) DecorateService(context map[string
 	portOutputName := func(prefix string) string {
 		return fmt.Sprintf("%s%d", prefix, albd.port)
 	}
+	albOutput := func(label string, value interface{}) *gocf.Output {
+		return &gocf.Output{
+			Description: fmt.Sprintf("%s (port: %d, protocol: %s)", label, albd.port, albd.protocol),
+			Value:       value,
+		}
+	}
 	// Add the output to the template
-	template.Outputs[portOutputName("ApplicationLoadBalancerDNS")] = &gocf.Output{
-		Description: "DNS value of the ALB",
-		Value:       gocf.GetAtt(albd.LogicalResourceName(), "DNSName"),
-	}
-	template.Outputs[portOutputName("ApplicationLoadBalancerName")] = &gocf.Output{
-		Description: "Name of the ALB",
-		Value:       gocf.GetAtt(albd.LogicalResourceName(), "LoadBalancerName"),
-	}
-	template.Outputs[portOutputName("ApplicationLoadBalancerURL")] = &gocf.Output{
-		Description: "URL value of the ALB",
-		Value: gocf.Join("",
+	template.Outputs[portOutputName("ApplicationLoadBalancerDNS")] = albOutput(
+		"ALB DNSName",
+		gocf.GetAtt(albd.LogicalResourceName(), "DNSName"))
+
+	template.Outputs[portOutputName("ApplicationLoadBalancerName")] = albOutput(
+		"ALB Name",
+		gocf.GetAtt(albd.LogicalResourceName(), "LoadBalancerName"))
+
+	template.Outputs[portOutputName("ApplicationLoadBalancerURL")] = albOutput(
+		"ALB URL",
+		gocf.Join("",
 			gocf.String(strings.ToLower(albd.protocol)),
 			gocf.String("://"),
 			gocf.GetAtt(albd.LogicalResourceName(), "DNSName"),
-			gocf.String(fmt.Sprintf(":%d", albd.port))),
-	}
+			gocf.String(fmt.Sprintf(":%d", albd.port))))
+
 	return nil
 }
 
