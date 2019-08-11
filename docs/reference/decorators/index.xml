@@ -12,6 +12,19 @@
     
     
     <item>
+      <title>Application Load Balancer</title>
+      <link>/reference/decorators/application_load_balancer/</link>
+      <pubDate>Sat, 10 Aug 2019 14:59:12 +0000</pubDate>
+      
+      <guid>/reference/decorators/application_load_balancer/</guid>
+      <description>The ApplicationLoadBalancerDecorator allows you to expose lambda functions as Application Load Balancer targets.
+This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.
+Lambda Function Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:
+import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse  See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
+An example ALB-eligible target function might look like:</description>
+    </item>
+    
+    <item>
       <title>CloudMap Service Discovery</title>
       <link>/reference/decorators/cloudmap/</link>
       <pubDate>Mon, 27 May 2019 22:31:25 +0000</pubDate>

@@ -18,7 +18,7 @@ const (
 )
 const (
 	// SpartaVersion defines the current Sparta release
-	SpartaVersion = "1.9.4"
+	SpartaVersion = "1.10.0"
 	// GoLambdaVersion is the Go version runtime used for the lambda function
 	GoLambdaVersion = "go1.x"
 	// LambdaBinaryTag is the build tag name used when building the binary
@@ -71,6 +71,8 @@ const (
 	EC2Principal = "ec2.amazonaws.com"
 	// @enum AWSPrincipal
 	LambdaPrincipal = "lambda.amazonaws.com"
+	// @enum AWSPrincipal
+	ElasticLoadBalancingPrincipal = "elasticloadbalancing.amazonaws.com"
 )
 
 type contextKey int
