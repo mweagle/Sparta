@@ -1,5 +1,14 @@
 # Change Notes
 
+## v1.10.0 - The Load Balancer Edition ⚖️
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added [ApplicationLoadBalancerDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#ApplicationLoadBalancerDecorator) type to support Lambda functions as load balancer targets.
+    - See the [documentation](http://gosparta.io/reference/decorators/application_load_balancer/) for more details
+    - Also the corresponding sample application at the [SpartaALB repo](https://github.com/mweagle/SpartaALB).
+- :bug:  **FIXED**
+
 ## v1.9.4 - The Sockets Edition 🔌
 
 - :warning: **BREAKING**
@@ -30,16 +39,18 @@
     - This field exposes the [EndpointConfiguration](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-apigateway-restapi-endpointconfiguration.html) property to specify either _EDGE_ or _REGIONAL_ API types.
   - Added `decorator.APIGatewayDomainDecorator` to associate a custom domain with an API Gateway instance
     - Usage:
-    ```
-      hooks := &sparta.WorkflowHooks{}
-      serviceDecorator := spartaDecorators.APIGatewayDomainDecorator(apiGateway,
-        gocf.String(acmCertARNLiteral),
-        "", // Optional base path value
-        "subdomain.mydomain.net")
-      hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
-        serviceDecorator,
-      }
-    ```
+
+      ```go
+        hooks := &sparta.WorkflowHooks{}
+        serviceDecorator := spartaDecorators.APIGatewayDomainDecorator(apiGateway,
+          gocf.String(acmCertARNLiteral),
+          "", // Optional base path value
+          "subdomain.mydomain.net")
+        hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+          serviceDecorator,
+        }
+      ```
+
     - See [apigateway_domain_test](https://github.com/mweagle/Sparta/blob/master/decorator/dashboard.go) for a complete example.
     - See the [AWS Documentation](https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-custom-domains.html) for more information.
 - :bug:  **FIXED**
@@ -52,22 +63,24 @@
   - Added `CodeCommitPermission` type to support CodeCommit [notifications](https://docs.aws.amazon.com/codecommit/latest/userguide/how-to-repository-email.html)
   - There is an _archetype_ constructor that encapsulates this type of Lambda reactor.
     - Usage:
-    ```go
-    func echoCodeCommit(ctx context.Context,
-      event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
-      // ...
-      return &event, nil
-    }
-    func main() {
-      // ...
-      reactor, reactorErr := spartaArchetype.NewCodeCommitReactor(spartaArchetype.CodeCommitReactorFunc(echoCodeCommit),
-          gocf.String("TestCodeCommitRepo"),
-          nil,
-          nil,
-          nil)
-      ...
-    }
-    ```
+
+      ```go
+      func echoCodeCommit(ctx context.Context,
+        event awsLambdaEvents.CodeCommitEvent) (interface{}, error) {
+        // ...
+        return &event, nil
+      }
+      func main() {
+        // ...
+        reactor, reactorErr := spartaArchetype.NewCodeCommitReactor(spartaArchetype.CodeCommitReactorFunc(echoCodeCommit),
+            gocf.String("TestCodeCommitRepo"),
+            nil,
+            nil,
+            nil)
+        ...
+      }
+      ```
+
   - Updated to [staticcheck.io](https://staticcheck.io/)
 - :bug:  **FIXED**
   - [Add CodeCommit support](https://github.com/mweagle/Sparta/issues/86)
@@ -81,22 +94,24 @@
 - :checkered_flag: **CHANGES**
   - Added `LambdaAWSInfo.Layers` field to support [Lambda Layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
     - Usage:
-      ```go
-      lambdaRole := sparta.IAMRoleDefinition{
-        Privileges: []sparta.IAMRolePrivilege{
-          iamBuilder.Allow("lambda:GetLayerVersion").
-            ForResource().
-            Literal("*").
-            ToPrivilege(),
-        },
-      }
-      lambdaFn, lambdaFnErr := sparta.NewAWSLambda("Hello World",
-        helloWorld,
-        lambdaRole)
-      lambdaFn.Layers = []gocf.Stringable{
-        gocf.String("arn:aws:lambda:us-west-2:123412341234:layer:ffmpeg:1"),
-      }
-      ```
+
+        ```go
+        lambdaRole := sparta.IAMRoleDefinition{
+          Privileges: []sparta.IAMRolePrivilege{
+            iamBuilder.Allow("lambda:GetLayerVersion").
+              ForResource().
+              Literal("*").
+              ToPrivilege(),
+          },
+        }
+        lambdaFn, lambdaFnErr := sparta.NewAWSLambda("Hello World",
+          helloWorld,
+          lambdaRole)
+        lambdaFn.Layers = []gocf.Stringable{
+          gocf.String("arn:aws:lambda:us-west-2:123412341234:layer:ffmpeg:1"),
+        }
+        ```
+
   - Added `WithCondition` to [IAM Builder](https://godoc.org/github.com/mweagle/Sparta/aws/iam/builder)
   - Added `s3Site.UserManifestData` map property to allow for custom user data to be included in _MANIFEST.json_ content that is deployed to an S3 Site bucket.
     - Userdata is scoped to a **userdata** keyname in _MANIFEST.json_
@@ -128,34 +143,40 @@
       - Uses the resulting ECR Image URL as a Fargate Task in a Step function:
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.8.0/step_functions_fargate.jpg" />
   - Added _github.com/mweagle/Sparta/aws/iam/builder.IAMBuilder::ForPrincipals_ fluent builder. Example usage:
+
       ```go
-      "Statement": []spartaIAM.PolicyStatement{
-        iamBuilder.Allow("sts:AssumeRole").
-          ForPrincipals("states.amazonaws.com").
-          ToPolicyStatement(),
+        "Statement": []spartaIAM.PolicyStatement{
+          iamBuilder.Allow("sts:AssumeRole").
+            ForPrincipals("states.amazonaws.com").
+            ToPolicyStatement(),
       ```
+
   - Upgraded to `docker login --password-stdin` for local authentication. Previously used `docker login --password`. Example:
-      ```text
+
+      ```plain
       INFO[0005] df64d3292fd6: Preparing
       INFO[0006] denied: Your Authorization Token has expired. Please run 'aws ecr get-login --no-include-email' to fetch a new one.
       INFO[0006] ECR push failed - reauthorizing               Error="exit status 1"
       INFO[0006] Login Succeeded
       INFO[0006] The push refers to repository [123412341234.dkr.ecr.us-west-2.amazonaws.com/argh]
       ```
+
     - See the [Docker docs](https://docs.docker.com/engine/reference/commandline/login/#parent-command)
   - Include `docker -v` output in log when calling [BuildDockerImage](https://godoc.org/github.com/mweagle/Sparta/docker#BuildDockerImage)
   - Added `StateMachineNamedDecorator(stepFunctionResourceName)` to supply the name of the Step function
   - Migrated all API-Gateway integration mappings to use the [mapping override](https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) support in VTL.
     - This reduces the number of API-Gateway RegExp-based integration mappings and relies on a Lambda function returning a shape that matches the default _application/json_ expectations:
-    ```json
-    {
-      "code" : int,
-      "body" : ...,
-      "headers": {
-        "x-lowercase-header" : "foo",
+
+      ```json
+      {
+        "code" : int,
+        "body" : ...,
+        "headers": {
+          "x-lowercase-header" : "foo",
+        }
       }
-    }
-    ```
+      ```
+
     - The default shape can be customized by providing custom mapping templates to the [IntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#IntegrationResponse)
   - [rest.MethodHandler:Headers](https://godoc.org/github.com/mweagle/Sparta/archetype/rest#MethodHandler.Headers) has been deprecated.
     - Moving all header management to VTL eliminated the need to explicitly declare headers.
@@ -182,19 +203,22 @@
   - Moved `decorator.DriftDetector` to `validator.DriftDetector` and changed signature to [ServiceValidationHookHandler](https://godoc.org/github.com/mweagle/Sparta#ServiceValidationHookHandler)
     - Clearly I was too focused on enabling drift detection than enabling it in an appropriate place.
     - Updated usage:
-      ```go
-        import (
-          "github.com/mweagle/Sparta/validator"
-        )
-        workflowHooks := &sparta.WorkflowHooks{
-          Validators: []sparta.ServiceValidationHookHandler{
-            validator.DriftDetector(true),
-          },
-        }
-      ```
+
+        ```go
+          import (
+            "github.com/mweagle/Sparta/validator"
+          )
+          workflowHooks := &sparta.WorkflowHooks{
+            Validators: []sparta.ServiceValidationHookHandler{
+              validator.DriftDetector(true),
+            },
+          }
+        ```
+
   - Added `LambdaFuncName` to output when stack drift detected.
     - Example:
-      ```text
+
+      ```plain
       WARN[0013] Stack drift detected                          Actual=debug Expected=info LambdaFuncName="Hello World" PropertyPath=/Environment/Variables/SPARTA_LOG_LEVEL Relation=NOT_EQUAL Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693
       ```
 
@@ -206,21 +230,25 @@
 - :checkered_flag: **CHANGES**
   - Added `decorator.DriftDetector` to optionally prevent operations in the presence of [CloudFormation Drift](https://aws.amazon.com/blogs/aws/new-cloudformation-drift-detection/).
     - Usage:
-    ```go
-    workflowHooks := &sparta.WorkflowHooks{
-      PreBuilds: []sparta.WorkflowHookHandler{
-        decorator.DriftDetector(false),
-      },
-    }
-    ```
+
+      ```go
+      workflowHooks := &sparta.WorkflowHooks{
+        PreBuilds: []sparta.WorkflowHookHandler{
+          decorator.DriftDetector(false),
+        },
+      }
+      ```
+
     - Sample output:
-    ```text
-    INFO[0001] Calling WorkflowHook                          Phase=PreBuild WorkflowHookContext="map[]"
-    INFO[0001] Waiting for drift detection to complete       Status=DETECTION_IN_PROGRESS
-    ERRO[0012] Stack drift detected                          Actual=debug Expected=info PropertyPath=/Environment/Variables/SPARTA_LOG_LEVEL Relation=NOT_EQUAL Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693
-    INFO[0012] Invoking rollback functions
-    ERRO[0012] Failed to provision service: DecorateWorkflow returned an error: stack MyHelloWorldStack-mweagle prevented update due to drift being detected
-    ```
+
+      ```text
+      INFO[0001] Calling WorkflowHook                          Phase=PreBuild WorkflowHookContext="map[]"
+      INFO[0001] Waiting for drift detection to complete       Status=DETECTION_IN_PROGRESS
+      ERRO[0012] Stack drift detected                          Actual=debug Expected=info PropertyPath=/Environment/Variables/SPARTA_LOG_LEVEL Relation=NOT_EQUAL Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693
+      INFO[0012] Invoking rollback functions
+      ERRO[0012] Failed to provision service: DecorateWorkflow returned an error: stack MyHelloWorldStack-mweagle prevented update due to drift being detected
+      ```
+
   - Usability improvements when errors produced. Previously the usage instructions were output on every failed command. Now they are only displayed if there are CLI argument validation errors.
   - Usability improvement to log individual [validation errors](https://godoc.org/gopkg.in/go-playground/validator.v9) if the CLI arguments are invalid.
 - :bug:  **FIXED**
@@ -247,7 +275,7 @@
       - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.7.0/XRaySegment.jpg" />
     </div>
 
-    - See the https://github.com/mweagle/SpartaXRayInterceptor for a complete sample
+    - See the [SpartaXRayInterceptor](https://github.com/mweagle/SpartaXRayInterceptor) repo for a complete sample
 
     - Go back in time to when you wish you had enabled debug-level logging before the error ever occurred.
 
@@ -272,36 +300,40 @@
   - Added _Sparta/archetype/rest_ package to streamline REST-based Sparta services.
     - This package includes a fluent builder (`MethodHandler`) and constructor function (`RegisterResource`) that transforms a _rest.Resource_ implementing struct into an API Gateway resource.
     - Usage:
-      ```go
-      // File: resource.go
-      // TodoItemResource is the /todo/{id} resource
-      type TodoItemResource struct {
-      }
-      // ResourceDefinition returns the Sparta REST definition for the Todo item
-      func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) {
 
-        return spartaREST.ResourceDefinition{
-          URL: todoItemURL,
-          MethodHandlers: spartaREST.MethodHandlerMap{
-            ...
-          }
-        }, nil
-      }
+        ```go
+        // File: resource.go
+        // TodoItemResource is the /todo/{id} resource
+        type TodoItemResource struct {
+        }
+        // ResourceDefinition returns the Sparta REST definition for the Todo item
+        func (svc *TodoItemResource) ResourceDefinition() (spartaREST.ResourceDefinition, error) {
 
-      // File: main.go
-      func() {
-        myResource := &TodoItemResource{}
-        resourceMap, resourcesErr := spartaREST.RegisterResource(apiGatewayInstance, myResource)
-      }
-      ```
+          return spartaREST.ResourceDefinition{
+            URL: todoItemURL,
+            MethodHandlers: spartaREST.MethodHandlerMap{
+              ...
+            }
+          }, nil
+        }
+
+        // File: main.go
+        func() {
+          myResource := &TodoItemResource{}
+          resourceMap, resourcesErr := spartaREST.RegisterResource(apiGatewayInstance, myResource)
+        }
+        ```
+
     - Sample fluent method builder:
-      ```go
-        // GET
-        http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
-          StatusCodes(http.StatusInternalServerError).
-          Privileges(svc.S3Accessor.KeysPrivilege("s3:GetObject"),
-                      svc.S3Accessor.BucketPrivilege("s3:ListBucket")),
-      ```
+
+        ```go
+          // GET
+          http.MethodGet: spartaREST.NewMethodHandler(svc.Get, http.StatusOK).
+            StatusCodes(http.StatusInternalServerError).
+            Privileges(svc.S3Accessor.KeysPrivilege("s3:GetObject"),
+                        svc.S3Accessor.BucketPrivilege("s3:ListBucket")),
+        ```
+
     - See [SpartaTodoBackend](https://github.com/mweagle/SpartaTodoBackend) for a complete example
       - The _SpartaTodoBackend_ is a self-deploying CORS-accessible service that satisfies the [TodoBackend](https://www.todobackend.com/) online tests
   - Added _Sparta/aws/accessor_ package to streamline S3-backed service creation.
@@ -313,7 +345,7 @@
       - `DeleteAll`
   - Added [prealloc](https://github.com/alexkohler/prealloc) check to ensure that slices are preallocated when possible
 - :bug:  **FIXED**
-  - Fix latent issue where CloudWatch Log ARN was malformed (https://github.com/mweagle/Sparta/commit/5800553983ed16e6c5e4a622559909c050c00219)
+  - Fix latent issue where CloudWatch Log ARN was malformed [commit](https://github.com/mweagle/Sparta/commit/5800553983ed16e6c5e4a622559909c050c00219)
 
 ## v1.5.0 - The Observability Edition 🔭
 
@@ -323,74 +355,80 @@
     - The _instanceID_ field is also included in the [ContextLogger](https://godoc.org/github.com/mweagle/Sparta#pkg-constants)
   - Add a self-monitoring function that publishes container-level metrics to CloudWatch.
     - Usage:
-    ```go
-      import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
-      func main() {
-        ...
-        spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
-          "BuildId":    sparta.StampedBuildID,
-        })
-        ...
-      }
-    ```
+
+      ```go
+        import spartaCloudWatch "github.com/mweagle/Sparta/aws/cloudwatch"
+        func main() {
+          ...
+          spartaCloudWatch.RegisterLambdaUtilizationMetricPublisher(map[string]string{
+            "BuildId":    sparta.StampedBuildID,
+          })
+          ...
+        }
+      ```
+
     - The optional `map[string]string` parameter is the custom Name-Value pairs to use as a [CloudWatch Dimension](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension)
     - <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.5.0/CloudWatch_Management_Console.jpg" />
   - Add `WorkflowHooks.Validators` to support policy-based validation of the materialized template.
     - Each validator receives a complete read-only copy of the template
   - Add [magefile](https://magefile.org/) actions in _github.com/mweagle/Sparta/magefile_ to support cross platform scripting.
     - A Sparta service can use a standard _magefile.go_ as in:
-    ```go
-    // +build mage
 
-    package main
+      ```go
+      // +build mage
 
-    import (
-      spartaMage "github.com/mweagle/Sparta/magefile"
-    )
+      package main
 
-    // Provision the service
-    func Provision() error {
-      return spartaMage.Provision()
-    }
+      import (
+        spartaMage "github.com/mweagle/Sparta/magefile"
+      )
 
-    // Describe the stack by producing an HTML representation of the CloudFormation
-    // template
-    func Describe() error {
-      return spartaMage.Describe()
-    }
+      // Provision the service
+      func Provision() error {
+        return spartaMage.Provision()
+      }
 
-    // Delete the service, iff it exists
-    func Delete() error {
-      return spartaMage.Delete()
-    }
+      // Describe the stack by producing an HTML representation of the CloudFormation
+      // template
+      func Describe() error {
+        return spartaMage.Describe()
+      }
 
-    // Status report if the stack has been provisioned
-    func Status() error {
-      return spartaMage.Status()
-    }
+      // Delete the service, iff it exists
+      func Delete() error {
+        return spartaMage.Delete()
+      }
 
-    // Version information
-    func Version() error {
-      return spartaMage.Version()
-    }
-    ```
+      // Status report if the stack has been provisioned
+      func Status() error {
+        return spartaMage.Status()
+      }
+
+      // Version information
+      func Version() error {
+        return spartaMage.Version()
+      }
+      ```
+
     which exposes the most common Sparta command line options.
     - Usage: `mage status`:
-    ```shell
-    $ mage status
-    INFO[0000] ════════════════════════════════════════════════
-    INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
-    INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
-    INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-    INFO[0000] ════════════════════════════════════════════════
-    INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=status UTC="2018-10-20T04:46:57Z"
-    INFO[0000] ════════════════════════════════════════════════
-    INFO[0001] StackId                                       Id="arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99"
-    INFO[0001] Stack status                                  State=UPDATE_COMPLETE
-    INFO[0001] Created                                       Time="2018-10-02 03:14:59.127 +0000 UTC"
-    INFO[0001] Last Update                                   Time="2018-10-19 03:23:00.048 +0000 UTC"
-    INFO[0001] Tag                                           io:gosparta:buildId=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
-    ```
+
+      ```plain
+      $ mage status
+      INFO[0000] ════════════════════════════════════════════════
+      INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.5.0
+      INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 8f199e1
+      INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+      INFO[0000] ════════════════════════════════════════════════
+      INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=status UTC="2018-10-20T04:46:57Z"
+      INFO[0000] ════════════════════════════════════════════════
+      INFO[0001] StackId                                       Id="arn:aws:cloudformation:us-west-2:************:stack/MyHelloWorldStack-mweagle/5817dff0-c5f1-11e8-b43a-503ac9841a99"
+      INFO[0001] Stack status                                  State=UPDATE_COMPLETE
+      INFO[0001] Created                                       Time="2018-10-02 03:14:59.127 +0000 UTC"
+      INFO[0001] Last Update                                   Time="2018-10-19 03:23:00.048 +0000 UTC"
+      INFO[0001] Tag                                           io:gosparta:buildId=7ee3e1bc52f15c4a636e05061eaec7b748db22a9
+      ```
+
 - :bug:  **FIXED**
   - Fix latent issue where multiple [archetype](https://godoc.org/github.com/mweagle/Sparta/archetype) handlers of the same type would collide.
 
@@ -406,67 +444,76 @@
     - The benefit of this is that users can define new `CustomResourceCommand` implementing CustomResources and have them roundtripped and instantiated at AWS Lambda execution time. 🎉
     - I'll write up more documentation, but the steps to defining your own Lambda-backed custom resource:
       1. Create a resource that embeds [gocf.CloudFormationCustomResource](https://godoc.org/github.com/mweagle/go-cloudformation#CloudFormationCustomResource) and your custom event properties:
-        ```go
-          type HelloWorldResourceRequest struct {
-            Message *gocf.StringExpr
-          }
-          type HelloWorldResource struct {
-            gocf.CloudFormationCustomResource
-            HelloWorldResourceRequest
-          }
-        ```
+
+          ```go
+            type HelloWorldResourceRequest struct {
+              Message *gocf.StringExpr
+            }
+            type HelloWorldResource struct {
+              gocf.CloudFormationCustomResource
+              HelloWorldResourceRequest
+            }
+          ```
+
       1. Register the custom resource provider with [RegisterCustomResourceProvider](https://godoc.org/github.com/mweagle/go-cloudformation#RegisterCustomResourceProvider)
       1. Implement [CustomResourceCommand](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CustomResourceCommand)
     - At provisioning time, an instance of your CustomResource will be created and the appropriate functions will be called with the incoming [CloudFormationLambdaEvent](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation/resources#CloudFormationLambdaEvent).
       - Unmarshal the `event.ResourceProperties` map into your command handler instance and perform the requested operation.
   - Added a set of `archetype.*` convenience functions to create `sparta.LambdaAWSInfo` for specific event types.
     - The `archetype.*` package exposes creation functions to simplify common lambda types. Sample S3 _Reactor_ handler:
-      ```go
-        func echoS3Event(ctx context.Context, s3Event awsLambdaEvents.S3Event) (interface{}, error) {
-          // Respond to s3:ObjectCreated:*", "s3:ObjectRemoved:*" S3 events
-        }
-        func main() {
-          lambdaFn, _ := spartaArchetype.NewS3Reactor(spartaArchetype.S3ReactorFunc(echoS3Event),
-            gocf.String("MY_S3_BUCKET"),
-            nil)
-            // ...
-        }
-      ```
+
+        ```go
+          func echoS3Event(ctx context.Context, s3Event awsLambdaEvents.S3Event) (interface{}, error) {
+            // Respond to s3:ObjectCreated:*", "s3:ObjectRemoved:*" S3 events
+          }
+          func main() {
+            lambdaFn, _ := spartaArchetype.NewS3Reactor(spartaArchetype.S3ReactorFunc(echoS3Event),
+              gocf.String("MY_S3_BUCKET"),
+              nil)
+              // ...
+          }
+        ```
+
   - Added `--nocolor` command line option to suppress colorized output. Default value: `false`.
   - When a service `provision` fails, only report resources that failed to succeed.
     - Previously, resources that were cancelled due to other resource failures were also logged as *ERROR* statements.
   - Added `decorator.CloudWatchErrorAlarmDecorator(...)` to create per-Lambda CloudWatch Alarms.
     - Sample usage:
-      ```go
-        lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
-          spartaDecorators.CloudWatchErrorAlarmDecorator(1, // Number of periods
-            1, // Number of minutes per period
-            1, // GreaterThanOrEqualToThreshold value
-            gocf.String("SNS_TOPIC_ARN_OR_RESOURCE_REF")),
-        }
-      ```
+
+        ```go
+          lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{
+            spartaDecorators.CloudWatchErrorAlarmDecorator(1, // Number of periods
+              1, // Number of minutes per period
+              1, // GreaterThanOrEqualToThreshold value
+              gocf.String("SNS_TOPIC_ARN_OR_RESOURCE_REF")),
+          }
+        ```
+
   - Added `decorator.NewLogAggregatorDecorator` which forwards all CloudWatch log messages to a Kinesis stream.
     - See [SpartaPProf](https://github.com/mweagle/SpartaPProf) for an example of forwarding CloudWatch log messages to Google StackDriver
   - Added [decorator.CloudFrontSiteDistributionDecorator](https://godoc.org/github.com/mweagle/Sparta/decorator#CloudFrontSiteDistributionDecorator) to provision a CloudFront distribution with a custom Route53 name and optional SSL support.
     - Sample usage:
-      ```go
-      func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
-        hooks := &sparta.WorkflowHooks{}
-        siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
-          "subdomainNameHere",
-          "myAWSHostedZone.com",
-          "arn:aws:acm:us-east-1:OPTIONAL-ACM-CERTIFICATE-FOR-SSL")
-        hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
-          siteHookDecorator,
+
+        ```go
+        func distroHooks(s3Site *sparta.S3Site) *sparta.WorkflowHooks {
+          hooks := &sparta.WorkflowHooks{}
+          siteHookDecorator := spartaDecorators.CloudFrontSiteDistributionDecorator(s3Site,
+            "subdomainNameHere",
+            "myAWSHostedZone.com",
+            "arn:aws:acm:us-east-1:OPTIONAL-ACM-CERTIFICATE-FOR-SSL")
+          hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{
+            siteHookDecorator,
+          }
+          return hooks
         }
-        return hooks
-      }
-      ```
+        ```
+
     - Supply the `WorkflowHooks` struct to `MainEx` to annotate your service with an example CloudFront distribution. Note that CF distributions introduce a significant provisioning delay.
     - See [SpartaHTML](https://github.com/mweagle/SpartaHTML) for more
   - Added `decorator.S3ArtifactPublisherDecorator` to publish an arbitrary JSON file to an S3 location
     - This is implemented as Sparta-backed CustomResource
   - Added `status` command to produce a report of a provisioned service. Sample usage:
+
     ```bash
     $ go run main.go status --redact
     INFO[0000] ════════════════════════════════════════════════
@@ -484,9 +531,11 @@
     INFO[0000] Output                                        HelloWorldFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_Hello_World"
     INFO[0000] Output                                        KinesisLogConsumerFunctionARN="arn:aws:lambda:us-west-2:************:function:SpartaPProf-mweagle_KinesisLogConsumer"
     ```
+
   - Replaced _Makefile_ with [magefile](https://magefile.org/) to better support cross platform builds.
     - This is an internal only change and does not impact users
     - For **CONTRIBUTORS**, to use the new _mage_ targets:
+
       ```plain
       $> go get -u github.com/magefile/mage
       $> mage -l
@@ -510,6 +559,7 @@
         testCover                       runs the test and opens up the resulting report
         travisBuild                     is the task to build in the context of a Travis CI pipeline
       ```
+
   - Added [misspell](https://github.com/client9/misspell) static check as part of `mage test` to catch misspellings
 - :bug:  **FIXED**
 
@@ -545,6 +595,7 @@
 - :checkered_flag: **CHANGES**
   - Added support for SQS event triggers.
     - SQS event sources use the same [EventSourceMappings](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-eventsourcemapping.html) entry that is used by DynamoDB and Kinesis. For example:
+
       ```go
       lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
           &sparta.EventSourceMapping{
@@ -552,12 +603,14 @@
             BatchSize:      2,
           })
       ```
+
       - Where `sqsResourceName` is the name of a CloudFormation resource provisioned by the stack
       - Use the [aws.SQSEvent](https://godoc.org/github.com/aws/aws-lambda-go/events#SQSEvent) value type as the incoming message
     - See the [SpartaSQS](https://github.com/mweagle/SpartaSQS) project for a complete example
   - Migrated `describe` command to use [Cytoscape.JS](http://js.cytoscape.org/) library
     - Cytoscape supports several layout algorithms and per-service node icons.
   - Added `APIGatewayEnvelope` type to allow struct embedding and overriding of the `Body` field. Example:
+
     ```go
     // FeedbackBody is the typed body submitted in a FeedbackRequest
     type FeedbackBody struct {
@@ -572,13 +625,16 @@
       Body FeedbackBody `json:"body"`
     }
     ```
+
   - The previous [APIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/aws/events#APIGatewayRequest) remains unchanged:
+
     ```go
     type APIGatewayRequest struct {
       APIGatewayEnvelope
       Body interface{} `json:"body"`
     }
     ```
+
 - :bug:  **FIXED**
   - Fixed latent bug where dynamically created DynamoDB and Kinesis Event Source mappings had insufficient IAM privileges
   - Fixed latent bug where the [S3Site](https://godoc.org/github.com/mweagle/Sparta#S3Site) source directory was validated before `go:generate` could have been executed. This resulted in cases where fresh-cloned repositories would not self-deploy.
@@ -607,7 +663,8 @@
   - Change [EventSourceMapping.EventSourceArn](https://godoc.org/github.com/mweagle/Sparta#EventSourceMapping) from string to `interface{}` type.
     - This change was to allow for provisioning of Pull-based event sources being provisioned in the same Sparta application as the lambda definition.
     - For example, to reference a DynamoDB Stream created by in a [ServiceDecoratorHook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) for the _myDynamoDBResourceName_ resource you can now use:
-    ```
+
+    ```go
     lambdaFn.EventSourceMappings = append(lambdaFn.EventSourceMappings,
       &sparta.EventSourceMapping{
         EventSourceArn:   gocf.GetAtt(myDynamoDBResourceName, "StreamArn"),
@@ -615,14 +672,16 @@
         BatchSize:        10,
       })
     ```
+
   - Updated `describe` output format and upgraded to latest versions of static HTML assets.
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/1.1.0/describe.jpg" />
     </div>
   - Delegate CloudFormation template aggregation to [go-cloudcondenser](https://github.com/mweagle/go-cloudcondenser)
   - Exposed [ReservedConcurrentExecutions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-reservedconcurrentexecutions) option for Lambda functions.
   - Exposed [DeadLetterConfigArn](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-deadletterconfig) property to support custom DLQ destinations.
-  - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample
-    ```
+  - Added IAM `sparta.IAMRolePrivilege` fluent builder type in the _github.com/mweagle/Sparta/aws/iam/builder_. Sample usage:
+
+    ```go
     iambuilder.Allow("ssm:GetParameter").ForResource().
       Literal("arn:aws:ssm:").
       Region(":").
@@ -630,6 +689,7 @@
       Literal("parameter/MyReservedParameter").
       ToPrivilege()
     ```
+
   - Remove _io:gosparta:home_ and _io:gosparta:sha_ Tags from Lambda functions
   - Standardize on Lambda function naming in AWS Console
   - Reduced AWS Go binary size by 20% or more by including the `-s` and `-w` [link flags](https://golang.org/cmd/link/)
@@ -640,22 +700,26 @@
   - Added [Sparta/aws/apigateway.Error](https://godoc.org/github.com/mweagle/Sparta/aws/apigateway#Error) to support returning custom API Gateway errors
     - See [SpartaHTML](https://github.com/mweagle/SpartaHTML) for example usage
   - API Gateway `error` responses are now converted to JSON objects via a Body Mapping template:
-    ```
+
+    ```go
     "application/json": "$input.path('$.errorMessage')",
     ```
+
     - See the [AWS docs](https://docs.aws.amazon.com/apigateway/latest/developerguide/handle-errors-in-lambda-integration.html) for more information
   - Added check for Linux only package [sysinfo](github.com/zcalusic/sysinfo). This Linux-only package is ignored by `go get` because of build tags and cannot be safely imported. An error will be shown if the package cannot be found:
-    ```
-    ERRO[0000] Failed to validate preconditions: Please run
-    `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package.
-    This package is used when cross-compiling your AWS Lambda binary and cannot
-    be safely imported across platforms. When you `go get` the package, you may
-    see errors as in `undefined: syscall.Utsname`. These are expected and can be
-    ignored
-    ```
+
+      ```plain
+      ERRO[0000] Failed to validate preconditions: Please run
+      `go get -v github.com/zcalusic/sysinfo` to install this Linux-only package.
+      This package is used when cross-compiling your AWS Lambda binary and cannot
+      be safely imported across platforms. When you `go get` the package, you may
+      see errors as in `undefined: syscall.Utsname`. These are expected and can be
+      ignored
+      ```
+
   - Added additional build-time static analysis check for suspicious coding practices with [gas](https://github.com/GoASTScanner/gas)
 - :bug:  **FIXED**
-  - [101 - Doesn't work with Mac OSX ](https://github.com/mweagle/Sparta/issues/101)
+  - [101](https://github.com/mweagle/Sparta/issues/101)
   - Fixed latent bug where `NewAuthorizedMethod` didn't properly preserve the [AuthorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-method.html#cfn-apigateway-method-authorizationtype) when serializing to CloudFormation. This also forced a change to the function signature to accept a `gocf.Stringable` satisfying type for the [authorizerID](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-apigateway-authorizer.html).
 
 ## v1.0.1
@@ -671,27 +735,28 @@
   - Fixed latent bug where [CommandLineOptions](https://github.com/mweagle/Sparta/blob/master/sparta_main.go#L72) weren't properly defined in AWS build target
     - Affected [SpartaCodePipeline](https://github.com/mweagle/SpartaCodePipeline) project
 
-# v1.0.0
+## v1.0.0
 
 ## 🎉 AWS Lambda for Go Support 🎉
 
-  - Sparta Go function signature has been changed to **ONLY** support the official AWS Lambda Go signatures
+- Sparta Go function signature has been changed to **ONLY** support the official AWS Lambda Go signatures
 
-    - `func ()`
-    - `func () error`
-    - `func (TIn) error`
-    - `func () (TOut, error)`
-    - `func (context.Context) error`
-    - `func (context.Context, TIn) error`
-    - `func (context.Context) (TOut, error)`
-    - `func (context.Context, TIn) (TOut, error)`
+  - `func ()`
+  - `func () error`
+  - `func (TIn) error`
+  - `func () (TOut, error)`
+  - `func (context.Context) error`
+  - `func (context.Context, TIn) error`
+  - `func (context.Context) (TOut, error)`
+  - `func (context.Context, TIn) (TOut, error)`
 
-  - See the  lambda.Start [docs](https://godoc.org/github.com/aws/aws-lambda-go/lambda#Start) or the related [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
-  - *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, a function pointer that satisfies one of the supported signatures.
-  - Providing an invalid signature such as `func() string` will produce a `provision` time error as in:
-    ```
-    Error: Invalid lambda returns: Hello World. Error: handler returns a single value, but it does not implement error
-    ```
+- See the  lambda.Start [docs](https://godoc.org/github.com/aws/aws-lambda-go/lambda#Start) or the related [AWS Blog Post](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/) for more information.
+- *ALL* Sparta Go Lambda function targets **MUST** now use the `sparta.HandleAWSLambda` creation function, a function pointer that satisfies one of the supported signatures.
+- Providing an invalid signature such as `func() string` will produce a `provision` time error as in:
+
+  ```plain
+  Error: Invalid lambda returns: Hello World. Error: handler returns a single value, but it does not implement error
+  ```
 
 - :warning: **BREAKING**
   - Removed `sparta.NewLambda` constructor
@@ -716,22 +781,27 @@
     - See [SpartaSafeDeploy](https://github.com/mweagle/SpartaSafeDeploy) for a complete example
   - Added **requestID** and **lambdaARN** request-scoped [*logrus.Entry](https://godoc.org/github.com/sirupsen/logrus#Entry) to `context` argument.
     - This can be accessed as in:
-    ```
+
+    ```go
       contextLogger, contextLoggerOk := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
       if contextLoggerOk {
         contextLogger.Info("Request scoped log")
       }
     ```
+
     - The existing `*logrus.Logger` entry is also available in the `context` via:
-    ```
+
+    ```go
       logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
     ```
+
   - [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) now accepts variadic parameters to limit how many API Gateway integration mappings are defined
   - Added `SupportedRequestContentTypes` to [NewMethod](https://godoc.org/github.com/mweagle/Sparta#Resource.NewMethod) to limit API Gateway generated content.
   - Added `apiGateway.CORSOptions` field to configure _CORS_ settings
   - Added `Add S3Site.CloudFormationS3ResourceName()`
     - This value can be used to scope _CORS_ access to a dynamoc S3 website as in:
-    ```
+
+    ```go
     apiGateway.CORSOptions = &sparta.CORSOptions{
       Headers: map[string]interface{}{
         "Access-Control-Allow-Origin":  gocf.GetAtt(s3Site.CloudFormationS3ResourceName(),
@@ -739,11 +809,13 @@
       }
     }
     ```
+
     - Improved CLI usability in consistency of named outputs, formatting.
-- :bug:  **FIXED**
-  - Fix latent bug where `provision` would not consistently create new [API Gateway Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/stages.html) events.
+  - :bug:  **FIXED**
+    - Fix latent bug where `provision` would not consistently create new [API Gateway Stage](https://docs.aws.amazon.com/apigateway/latest/developerguide/stages.html) events.
 
 ## v0.30.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Improved API-Gateway CORS support. The following customizations are opt-in:
@@ -758,8 +830,8 @@
 - :bug:  **FIXED**
   - Re-enable `cloudformation:DescribeStacks` and `cloudformation:DescribeStackResource` privileges to support HTML based deployments
 
-
 ## v0.30.0
+
 - :warning: **BREAKING**
   - `Tags` for dependent resources no longer available via [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover)
   - Remove public sparta `Tag*` constants that were previously reserved for Discover support.
@@ -771,38 +843,44 @@
   - Correct CLI typo
 
 ## v0.20.4
+
 - :warning: **BREAKING**
   - Changed `step.NewStateMachine` signature to include _StateMachineName_ as first argument per [Nov 15th, 2017 release](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/ReleaseHistory.html)
 - :checkered_flag: **CHANGES**
-  * Add `profile` command
+  - Add `profile` command
     - Profile snapshots are enabled via:
-    ```
+
+    ```go
     sparta.ScheduleProfileLoop(nil, 5*time.Second, 30*time.Second, "heap")
     ```
+
     - Profile snapshots are published to S3 and are locally aggregated across all lambda instance publishers. To view the ui, run the `profile` Sparta command.
       - For more information, please see [The new pprof user interface - ⭐️](https://rakyll.org/pprof-ui/), [Profiling Go programs with pprof](https://jvns.ca/blog/2017/09/24/profiling-go-with-pprof/), or the [Go blog](https://blog.golang.org/profiling-go-programs)
     - See the [SpartaPProf](https://github.com/mweagle/SpartaPProf) sample for a service that installs profiling hooks.
     - Ensure you have the latest `pprof` UI via _go get -u -v github.com/google/pprof_
     - The standard [profile names](https://golang.org/pkg/runtime/pprof/#Profile) are available, as well as a _cpu_ type implied by a non-zero `time.Duration` supplied as the third parameter to `ScheduleProfileLoop`.
-  * Eliminate unnecessary logging in AWS lambda environment
-  * Log NodeJS [process.uptime()](https://nodejs.org/api/process.html#process_process_uptime)
+  - Eliminate unnecessary logging in AWS lambda environment
+  - Log NodeJS [process.uptime()](https://nodejs.org/api/process.html#process_process_uptime)
 - :bug:  **FIXED**
-  * Added more constructive message when working directory for `go build` doesn't contain `main` package.
+  - Added more constructive message when working directory for `go build` doesn't contain `main` package.
 
 ## v0.20.3
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
 - :bug:  **FIXED**
-  * Fixed `explore` interactive debugging instructions
+  - Fixed `explore` interactive debugging instructions
 
 ## v0.20.2
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Added support for [Step functions](https://aws.amazon.com/step-functions/faqs/).
     - Step functions are expressed via a combination of: states, `NewStateMachine`, and adding a `StateMachineDecorator` as a [service hook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook).
     - See the [SpartaStep](https://github.com/mweagle/SpartaStep) sample for a service that provisions a simple roll die state machine.
   - Usability improvements & enhancements for CLI log output. Text-formatted output now includes cleaner header as in:
-    ```
+
+    ```plain
     INFO[0000] ══════════════════════════════════════════════════════════════
     INFO[0000]    _______  ___   ___  _________
     INFO[0000]   / __/ _ \/ _ | / _ \/_  __/ _ |     Version : 0.20.2
@@ -813,18 +891,20 @@
     INFO[0000] Service: SpartaStep-mweagle                   LinkFlags= Option=provision UTC="2017-11-01T01:14:31Z"
     INFO[0000] ══════════════════════════════════════════════════════════════
     ```
+
   - Added [megacheck](https://github.com/dominikh/go-tools/tree/master/cmd/megacheck) to compile pipeline. Fixed issues.
   - Corrected inline Go examples to use proper function references & signatures.
 - :bug:  **FIXED**
-  * Handle case where multipart forms with empty values weren't handled [https://github.com/mweagle/Sparta/issues/74]
+  - Handle case where multipart forms with empty values weren't handled [https://github.com/mweagle/Sparta/issues/74](https://github.com/mweagle/Sparta/issues/74)
 
 ## v0.20.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Add `sparta.LambdaName` to return the reflection-discovered name of an `http.HandleFunc` instance.
 - :bug:  **FIXED**
-  * Fixed issue with `--describe` not rendering CloudFormation template properly
-  * Better handle failures when [posting body](https://github.com/mweagle/Sparta/pull/72) - thanks https://github.com/nylar
+  - Fixed issue with `--describe` not rendering CloudFormation template properly
+  - Better handle failures when [posting body](https://github.com/mweagle/Sparta/pull/72) - thanks [@nylar](https://github.com/nylar)
 
 ## v0.20.0
 
@@ -848,7 +928,8 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - HTTP handler `panic` events are now recovered and the traceback logged for both NodeJS and `cgo` deployments
   - Introduced `sparta.HandleAWSLambda`
     - `sparta.HandleAWSLambda` accepts standard `http.RequestFunc` signatures as in:
-      ```
+
+      ```go
       func helloWorld(w http.ResponseWriter, r *http.Request) {
         ...
       }
@@ -857,14 +938,17 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
         http.HandlerFunc(helloWorld),
         sparta.IAMRoleDefinition{})
       ```
+
     - This allows you to [chain middleware](https://github.com/justinas/alice) for a lambda function as if it were a standard HTTP handler. Say, for instance: [X-Ray](https://github.com/aws/aws-xray-sdk-go).
     - The legacy [sparta.LambdaFunction](https://godoc.org/github.com/mweagle/Sparta#LambdaFunction) is still supported, but marked for deprecation. You will see a log warning as in:
-      ```
+
+      ```plain
       WARN[0045] DEPRECATED: sparta.LambdaFunc() signature provided. Please migrate to http.HandlerFunc()
       ```
+
     - _LambdaContext_ and _*logrus.Logger_ are now available in the [requext.Context()](https://golang.org/pkg/net/http/#Request.Context) via:
-      * `sparta.ContextKeyLogger` => `*logrus.Logger`
-      * `sparta.ContextKeyLambdaContext` => `*sparta.LambdaContext`
+      - `sparta.ContextKeyLogger` => `*logrus.Logger`
+      - `sparta.ContextKeyLambdaContext` => `*sparta.LambdaContext`
     - Example:
       - `loggerVal, loggerValOK := r.Context().Value(sparta.ContextKeyLogger).(*logrus.Logger)`
   - Added support for [CodePipeline](https://aws.amazon.com/about-aws/whats-new/2016/11/aws-codepipeline-introduces-aws-cloudformation-deployment-action/)
@@ -872,8 +956,9 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Upgraded NodeJS to [nodejs6.10](http://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime) runtime
   - Parity between NodeJS and Python/`cgo` startup output
   - Both NodeJS and `cgo` based Sparta applications now log equivalent system information.
-      - Example:
-      ```
+    - Example:
+
+      ```json
       {
         "level": "info",
         "msg": "SystemInfo",
@@ -912,44 +997,52 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
             "memory": {}
         },
         "time": "2017-09-16T17:07:34Z"
-    }
-    ```
+      }
+      ```
+
 - :bug: **FIXED**
   - There were more than a few
 
 ## v0.13.2
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Changed how Lambda [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) values are defined so that function name uniqueness is preserved for free, imported free, and struct-defined functions
 - :bug: **FIXED**
 
 ## v0.13.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Changed how Lambda [FunctionName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html#cfn-lambda-function-functionname) values are defined so that same-named functions provisioned across multiple stacks remain unique. This is done by prefixing the function name with the CloudFormation StackName.
   - Cleaned up S3 upload log statements to prefer relative paths iff applicable
 - :bug: **FIXED**
   - [Cloudformation lambda function name validation error](https://github.com/mweagle/Sparta/issues/63)
-  - [Python error with cgo lambda ](https://github.com/mweagle/Sparta/issues/64)
+  - [64](https://github.com/mweagle/Sparta/issues/64)
 
 ## v0.13.0
+
 - :warning: **BREAKING**
   - Removed `sparta.NewNamedLambda`. Stable, user-defined function names can be supplied via the [SpartaOptions.Name](https://godoc.org/github.com/mweagle/Sparta#SpartaOptions) field.
 - :checkered_flag: **CHANGES**
   - [CloudWatch Dashboard Support!](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)
     - You can provision a CloudWatch dashboard that provides a single overview and link portal for your Lambda-based service. Use the new `sparta.DashboardDecorator` function to automatically create a dashboard. This leverages the existing [WorkflowHooks](https://godoc.org/github.com/mweagle/Sparta#WorkflowHooks) functionality.
     - Example:
-    ```
+
+    ```go
     // Setup the DashboardDecorator lambda hook
     workflowHooks := &sparta.WorkflowHooks{
       ServiceDecorator: sparta.DashboardDecorator(lambdaFunctions, 60),
     }
     ```
+
     - Where the `60` value is the CloudWatch time series [period](http://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html).
     - The CloudWatch Dashboard URL will be included in your stack's Outputs as in:
-    ```
+
+    ```plain
     INFO[0064] Stack output                                  Description="CloudWatch Dashboard URL" Key=CloudWatchDashboardURL Value="https://us-west-2.console.aws.amazon.com/cloudwatch/home?region=us-west-2#dashboards:name=SpartaXRay-mweagle"
     ```
+
     - *Example*: <div align="center"><img src="https://raw.githubusercontent.com/mweagle/Sparta/master/docs_source/static/site/0.13.0/dashboard.jpg" />
     </div>
 
@@ -967,52 +1060,62 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Fixed latent issue where `SpartaOptions.Name` field wasn't consistently used for function names.
 
 ## v0.12.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - added _Sparta/aws/cloudformation.UserScopedStackName()_ to generate username-suffixed CloudFormation StackNames
 - :bug: **FIXED**
 
 ## v0.12.0
+
 - :warning: **BREAKING**
-  - Replaced all https://github.com/crewjam/go-cloudformation references with https://github.com/mweagle/go-cloudformation references
+  - Replaced all [https://github.com/crewjam/go-cloudformation](https://github.com/crewjam/go-cloudformation) references with [https://github.com/mweagle/go-cloudformation](https://github.com/mweagle/go-cloudformation) references
     - This is mostly internal facing, but impacts advanced usage via [ServiceDecoratorHook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook) users. Clients may
     need to update the types used to create [alternative topologies](http://gosparta.io/docs/alternative_topologies/).
 - :checkered_flag: **CHANGES**
 - :bug: **FIXED**
   - Fixed latent issue where CGO-enabled services that reference `cgo.NewSession()` would not build properly
   - Fixed latent issue where S3 backed sites (eg: [SpartaHugo](https://github.com/mweagle/SpartaHugo)) would not refresh on update.
-  - https://github.com/mweagle/Sparta/issues/55
+  - [55](https://github.com/mweagle/Sparta/issues/55)
 
 ## v0.11.2
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Added `--inplace/-c` command line option to support safe, concurrent updating of Lambda code packages
     - If enabled *AND* the stack update [changeset](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html) reports _only_ modifications to Lambda functions, then Sparta will use the AWS Lambda API to [update the function code](http://docs.aws.amazon.com/sdk-for-go/api/service/lambda/#Lambda.UpdateFunctionCode).
     - If enabled *AND* additional mutations are reported, you'll see an error as in:
-    ```
+
+    ```plain
     ERRO[0022] Unsupported in-place operations detected:
       Add for IAMRole9fd267df3a3d0a144ae11a64c7fb9b7ffff3fb6c (ResourceType: AWS::IAM::Role),
       Add for mainhelloWorld2Lambda32fcf388f6b20e86feb93e990fa8decc5b3f9095 (ResourceType: AWS::Lambda::Function)
     ```
+
   - Prefer [NewRecorder](https://golang.org/pkg/net/http/httptest/#NewRecorder) to internal type for CGO marshalling
   - Added `--format/-f` command line flag `[text, txt, json]` to specify logfile output format. Default is `text`.
     - See [logrus.Formatters](https://github.com/sirupsen/logrus#formatters)
 - :bug: **FIXED**
-  - https://github.com/mweagle/Sparta/issues/45
+  - [45](https://github.com/mweagle/Sparta/issues/45)
 
 ## v0.11.1
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
   - Support Go 1.8 newly optional _GOPATH_ environment variable
   - Python proxied `cgo` builds now preserve the transformed source in the _./sparta_ scratch space directory.
   - Sparta assigned AWS Lambda function names now strip the leading SCM prefix. Example:
+  
   ```bash
   github.com/mweagle/SpartaPython.HelloWorld
   ```
+
   becomes:
+  
   ```bash
   mweagle/SpartaPython.HelloWorld
   ```
+
   - Upgrade to Mermaid [7.0.0](https://github.com/knsv/mermaid/releases/tag/7.0.0)
   - Use stable _PolicyName_ in `IAM::Role` definitions to minimize CloudFormation resource update churn
 - :bug: **FIXED**
@@ -1020,9 +1123,10 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Fixed latent `cgo` bug where command line arguments weren't properly parsed
 
 ## v0.11.0
+
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
-  - :tada: Python CGO support added. See the https://github.com/mweagle/SpartaPython project for example usage!
+  - :tada: Python CGO support added. See the [https://github.com/mweagle/SpartaPython](https://github.com/mweagle/SpartaPython) project for example usage!
     - In preliminary testing, the Python CGO package provides significant cold start and hot-execution performance benefits.
   - Migrated dependency management to [dep](https://github.com/golang/dep)
 - :bug: **FIXED**
@@ -1051,16 +1155,16 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   ```
 
   - Add support for `Environment` and `KmsKeyArn` properties to [LambdaFunctionOptions](https://godoc.org/github.com/mweagle/Sparta#LambdaFunctionOptions).  See [AWS](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html) for more information.
- - Move all build artifacts to _./sparta_ directory
+  - Move all build artifacts to _./sparta_ directory
   - `-n/--noop` argument orphans S3 artifacts in _./sparta_ directory
   - Add support for S3 version policy enabled buckets
     - Artifacts pushed to S3 version-enabled buckets now use stable object keys. Rollback functions target specific versions if available.
   - Cleanup log statements
   - Add `sparta/aws/session.NewSessionWithLevel()` to support [AWS LogLevel](http://docs.aws.amazon.com/sdk-for-go/api/aws/#LogLevelType) parameter
 - :bug: **FIXED**
-  - https://github.com/mweagle/Sparta/issues/34
-  - https://github.com/mweagle/Sparta/issues/37
-  - https://github.com/mweagle/Sparta/issues/38
+  - [34](https://github.com/mweagle/Sparta/issues/34)
+  - [37](https://github.com/mweagle/Sparta/issues/37)
+  - [38](https://github.com/mweagle/Sparta/issues/38)
 
 ## v0.9.3
 
@@ -1145,9 +1249,9 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Relaxed constraint that an API GW resource is bound to single Sparta lambda function. You can now register per-HTTP method name lambda functions for the same API GW resource.
   - Added [Contributors](https://github.com/mweagle/Sparta#contributors) section to README
 - :bug: **FIXED**
-  - https://github.com/mweagle/Sparta/issues/19
-  - https://github.com/mweagle/Sparta/issues/16
-  - https://github.com/mweagle/Sparta/issues/15
+  - [19](https://github.com/mweagle/Sparta/issues/19)
+  - [15](https://github.com/mweagle/Sparta/issues/15)
+  - [16](https://github.com/mweagle/Sparta/issues/16)
 
 ## v0.8.0
 
@@ -1165,10 +1269,12 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
   - Add `sparta.MainEx` for non-breaking signature extension
 - :bug: **FIXED**
   - (@sdbeard) Fixed latent bug in Kinesis event source subscriptions that caused `ValidationError`s during provisioning:
+
     ```bash
     ERRO[0028] ValidationError: [/Resources/IAMRole3dbc1b4199ad659e6267d25cfd8cc63b4124530d/Type/Policies/0/PolicyDocument/Statement/5/Resource] 'null' values are not allowed in templates
         status code: 400, request id: ed5fae8e-7103-11e6-8d13-b943b498f5a2
     ```
+
   - Fixed latent bug in [ConvertToTemplateExpression](https://godoc.org/github.com/mweagle/Sparta/aws/cloudformation#ConvertToTemplateExpression) when parsing input with multiple AWS JSON fragments.
   - Fixed latent bug in [sparta.Discover](https://godoc.org/github.com/mweagle/Sparta#Discover) which prevented dependent resources from being discovered at Lambda execution time.
   - Fixed latent bug in [explore.NewAPIGatewayRequest](https://godoc.org/github.com/mweagle/Sparta/explore#NewAPIGatewayRequest) where whitelisted param keynames were unmarshalled to `method.request.TYPE.VALUE` rather than `TYPE`.
@@ -1213,8 +1319,8 @@ The `sparta.LambdaFunc` signature is officially deprecated in favor of `http.Han
 
 This release includes a major internal refactoring to move the current set of NodeJS [Lambda-backed CloudFormation CustomResources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) to Sparta Go functions. The two migrated CustomActions are:
 
-* The S3 event source configuration
-* Provisioning an S3-static site
+- The S3 event source configuration
+- Provisioning an S3-static site
 
 Both are implemented using [cloudformationresources](https://github.com/mweagle/cloudformationresources). There are no changes to the calling code and no regressions are expected.
 
@@ -1228,7 +1334,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 - :bug: **FIXED**
   - Fixed latent issue where `IAM::Role` resources didn't use stable CloudFormation resource names
   - Fixed latent issue where names & descriptions of Lambda functions weren't consistent
-  - https://github.com/mweagle/SpartaApplication/issues/1
+  - [1](https://github.com/mweagle/SpartaApplication/issues/1)
 
 ## v0.5.4
 
@@ -1246,7 +1352,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 - :checkered_flag: **CHANGES**
   - N/A
 - :bug: **FIXED**
-  - https://github.com/mweagle/Sparta/issues/6
+  - [6](https://github.com/mweagle/Sparta/issues/6)
 
 ## v0.5.2
 
@@ -1261,9 +1367,9 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - N/A
 - :checkered_flag: **CHANGES**
   - Added [LambdaAWSInfo.URLPath](https://godoc.org/github.com/mweagle/Sparta#LambdaAWSInfo.URLPath) to enable _localhost_ testing
-    - See <i>explore_test.go</i> for example
+    - See _explore_test.go_ for example
 - :bug: **FIXED**
-  - https://github.com/mweagle/Sparta/issues/8
+  - [8](https://github.com/mweagle/Sparta/issues/8)
 
 ## v0.5.0
 
@@ -1282,7 +1388,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
 - :warning: **BREAKING**
   - Change `sparta.Discovery()` return type from `map[string]interface{}` to `sparta.DiscoveryInfo`.
-      - This type provides first class access to service-scoped and `DependsOn`-related resource information
+    - This type provides first class access to service-scoped and `DependsOn`-related resource information
 - :checkered_flag: **CHANGES**
   - N/A
 
@@ -1294,7 +1400,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - Enforce that a non-nil `*sparta.API` value provided to `sparta.Main()` includes a non-empty set of resources and methods
 - :checkered_flag: **CHANGES**
  type
-    - This type can be used to enable [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
+  - This type can be used to enable [CloudWatch Events](https://aws.amazon.com/blogs/aws/new-cloudwatch-events-track-and-respond-to-changes-to-your-aws-resources/)
     - See the [SpartaApplication](https://github.com/mweagle/SpartaApplication/blob/master/application.go#L381) example app for a sample usage.
   - `sparta.Discovery` now returns the following CloudFormation [Pseudo Parameters](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html):
     - _StackName_
@@ -1315,7 +1421,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
 - :checkered_flag: **CHANGES**
   - :boom: Add `LambdaAWSInfo.DependsOn` slice
-    -  Lambda functions can now declare explicit dependencies on resources added via a `TemplateDecorator` function
+    - Lambda functions can now declare explicit dependencies on resources added via a `TemplateDecorator` function
     - The `DependsOn` value should be the dependency's logical resource name.  Eg, the value returned from `CloudFormationResourceName(...)`.
   - :boom: Add `sparta.Discovery()` function
     - To be called from a **Go** lambda function (Eg, `func echoEvent(*json.RawMessage, *LambdaContext, http.ResponseWriter, *logrus.Logger)`), it returns the Outputs (both [Fn::Att](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-getatt.html) and [Ref](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/intrinsic-function-reference-ref.html) ) values of dynamically generated CloudFormation resources that are declared as explicit `DependsOn` of the current function.
@@ -1339,7 +1445,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
         }
         ```
 
-        - See the [SES EventSource docs](http://gosparta.io/docs/eventsources/ses/) for more information.
+    - See the [SES EventSource docs](http://gosparta.io/docs/eventsources/ses/) for more information.
   - Added `TS` (UTC TimeStamp) field to startup message
   - Improved stack provisioning performance
   - Fixed latent issue where CloudFormation template wasn't deleted from S3 on stack provisioning failure.
@@ -1371,10 +1477,10 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - Previously all responses were wrapped which prevented integration with other services.
 - :checkered_flag: **CHANGES**
   - Default [integration mappings](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html) now defined for:
-    * _application/json_
-    * _text/plain_
-    * _application/x-www-form-urlencoded_
-    * _multipart/form-data_
+    - _application/json_
+    - _text/plain_
+    - _application/x-www-form-urlencoded_
+    - _multipart/form-data_
     - Depending on the content-type, the **Body** value of the incoming event will either be a `string` or a `json.RawMessage` type.
   - CloudWatch log files support spawned golang binary JSON formatted logfiles
   - CloudWatch log output includes environment.  Sample:
@@ -1451,7 +1557,6 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - Fixed latent issue where `IAMRoleDefinition` CloudFormation names would collide if they had the same Permission set.
     - Remove _API Gateway_ view from `describe` if none is defined.
 
-
 ## v0.0.6
 
 - :warning: **BREAKING**
@@ -1462,16 +1567,16 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
     - See also [FAQ: When should I use a pointer to an interface?](https://golang.org/doc/faq#pointer_to_interface).
 - Add _.travis.yml_ for CI support.
 - :checkered_flag: **CHANGES**
-    - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
-      - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
-    - Improved API Gateway `describe` output.
-    - Added [method response](http://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/) support.
-      - The [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) map is used if [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method) is empty  (`len(Responses) <= 0`) at provision time.
-      - The default response map defines `201` for _POST_ methods, and `200` for all other methods. An API Gateway method may only support a single 2XX status code.
-    - Added [integration response](http://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/) support for to support HTTP status codes defined in [status.go](https://golang.org/src/net/http/status.go).
-      - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map is used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty  (`len(Responses) <= 0`) at provision time.
-      - The mapping uses regular expressions based on the standard _golang_ [HTTP StatusText](https://golang.org/src/net/http/status.go) values.
-    - Added `SpartaHome` and `SpartaVersion` template [outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
+  - Added [LambdaAWSInfo.Decorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L603) field (type [TemplateDecorator](https://github.com/mweagle/Sparta/blob/master/sparta.go#L192) ). If defined, the template decorator will be called during CloudFormation template creation and enables a Sparta lambda function to annotate the CloudFormation template with additional Resources or Output entries.
+    - See [TestDecorateProvision](https://github.com/mweagle/Sparta/blob/master/provision_test.go#L44) for an example.
+  - Improved API Gateway `describe` output.
+  - Added [method response](http://docs.aws.amazon.com/apigateway/api-reference/resource/method-response/) support.
+    - The [DefaultMethodResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultMethodResponses) map is used if [Method.Responses](https://godoc.org/github.com/mweagle/Sparta#Method) is empty  (`len(Responses) <= 0`) at provision time.
+    - The default response map defines `201` for _POST_ methods, and `200` for all other methods. An API Gateway method may only support a single 2XX status code.
+  - Added [integration response](http://docs.aws.amazon.com/apigateway/api-reference/resource/integration-response/) support for to support HTTP status codes defined in [status.go](https://golang.org/src/net/http/status.go).
+    - The [DefaultIntegrationResponses](https://godoc.org/github.com/mweagle/Sparta#DefaultIntegrationResponses) map is used if [Integration.Responses](https://godoc.org/github.com/mweagle/Sparta#Integration) is empty  (`len(Responses) <= 0`) at provision time.
+    - The mapping uses regular expressions based on the standard _golang_ [HTTP StatusText](https://golang.org/src/net/http/status.go) values.
+  - Added `SpartaHome` and `SpartaVersion` template [outputs](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html).
 
 ## v0.0.5
 
@@ -1505,7 +1610,7 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
   - `SNSPermission` type
     - `SNSPermission` types denote an SNS topic that should should send events to the target Lambda function
     - An SNS Topic's [subscriber list](http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SNS.html#subscribe-property) is managed by a [Lambda custom resource](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) dynamically generated as part of in the [CloudFormation template](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources.html).
-   - The subscription management resource is inline NodeJS code and leverages the [cfn-response](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/walkthrough-custom-resources-lambda-cross-stack-ref.html) module.
+  - The subscription management resource is inline NodeJS code and leverages the [cfn-response](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/walkthrough-custom-resources-lambda-cross-stack-ref.html) module.
   - `LambdaPermission` type
     - These denote Lambda Permissions whose event source subscriptions should **NOT** be managed by the service definition.
   - Improved `describe` output CSS and layout
@@ -1514,9 +1619,9 @@ Both are implemented using [cloudformationresources](https://github.com/mweagle/
 
 ## v0.0.2
 
-  - Update describe command to use [mermaid](https://github.com/knsv/mermaid) for resource dependency tree
-    - Previously used [vis.js](http://visjs.org/#)
+- Update describe command to use [mermaid](https://github.com/knsv/mermaid) for resource dependency tree
+  - Previously used [vis.js](http://visjs.org/#)
 
 ## v0.0.1
 
-  - Initial release
+- Initial release
