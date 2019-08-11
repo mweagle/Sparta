@@ -28,11 +28,11 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
       <pubDate>Sat, 10 Aug 2019 14:59:12 +0000</pubDate>
       
       <guid>/reference/decorators/application_load_balancer/</guid>
-      <description>The ApplicationLoadBalancerDecorator allows your service to register your lambda functions as Application Load Balancer targets.
-This can be useful to expose one or more Lambda functions to the public internet without requiring an API-Gateway configuration. See
-Lambda Function The lambda function target for an ALB request is required to have a specific signature: func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse
-See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
-An example ALB target function might look like:</description>
+      <description>The ApplicationLoadBalancerDecorator allows you to expose lambda functions as Application Load Balancer targets.
+This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.
+Lambda Function Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:
+import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse  See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
+An example ALB-eligible target function might look like:</description>
     </item>
     
     <item>

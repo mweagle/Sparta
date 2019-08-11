@@ -12,22 +12,22 @@
     <title>Application Load Balancer :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1565554073" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1565554073" rel="stylesheet">
-    <link href="/css/hybrid.css?1565554073" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1565554073" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1565554073" rel="stylesheet">
-    <link href="/css/auto-complete.css?1565554073" rel="stylesheet">
-    <link href="/css/theme.css?1565554073" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1565554073" rel="stylesheet">
+    <link href="/css/nucleus.css?1565556819" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1565556819" rel="stylesheet">
+    <link href="/css/hybrid.css?1565556819" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1565556819" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1565556819" rel="stylesheet">
+    <link href="/css/auto-complete.css?1565556819" rel="stylesheet">
+    <link href="/css/theme.css?1565556819" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1565556819" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1565554073" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1565556819" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1565554073"></script>
+    <script src="/js/jquery-3.3.1.min.js?1565556819"></script>
     
-    <link href="/css/vs.css?1565554073" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1565554073"></script>
+    <link href="/css/vs.css?1565556819" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1565556819"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1565554073"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1565554073"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1565556819"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1565556819"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1565554073"></script>
+<script type="text/javascript" src="/js/search.js?1565556819"></script>
 
     
   </div>
@@ -1812,8 +1812,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/73dddf83">73dddf83</a><p/>
-  Date: 2019-08-10 16:29:47 -0700 PDT
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/24a3b520">24a3b520</a><p/>
+  Date: 2019-08-11 13:53:33 -0700 PDT
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1897,6 +1897,7 @@ pre {
 <li><a href="#additional-resources">Additional Resources</a></li>
 <li><a href="#workflow-hooks">Workflow Hooks</a></li>
 <li><a href="#output">Output</a></li>
+<li><a href="#testing">Testing</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -1925,17 +1926,24 @@ pre {
 
 
 
-<p>The <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#ApplicationLoadBalancerDecorator">ApplicationLoadBalancerDecorator</a> allows your service to register your lambda functions as <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html">Application Load Balancer targets</a>.</p>
+<p>The <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#ApplicationLoadBalancerDecorator">ApplicationLoadBalancerDecorator</a> allows you to expose lambda functions as <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/application/lambda-functions.html">Application Load Balancer targets</a>.</p>
 
-<p>This can be useful to expose one or more Lambda functions to the public internet without requiring an API-Gateway configuration. See</p>
+<p>This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.</p>
 
 <h2 id="lambda-function">Lambda Function</h2>
 
-<p>The lambda function target for an ALB request is required to have a specific signature: <code>func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse</code></p>
+<p>Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:</p>
+
+<pre><code class="language-go">import (
+  awsEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+)
+
+func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse
+</code></pre>
 
 <p>See the <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupRequest">ALBTargetGroupRequest</a> and <a href="https://godoc.org/github.com/aws/aws-lambda-go/events#ALBTargetGroupResponse">ALBTargetGroupResponse</a> <em>godoc</em> entries for more information.</p>
 
-<p>An example ALB target function might look like:</p>
+<p>An example ALB-eligible target function might look like:</p>
 
 <pre><code class="language-go">// ALB eligible lambda function
 func helloNewWorld(ctx context.Context,
@@ -1959,7 +1967,7 @@ func helloNewWorld(ctx context.Context,
 
 <p>Since this access path requires an Application Load Balancer, the first step is to define the SecurityGroup associated with the ALB so that incoming requests can be accepted.</p>
 
-<p>For an ALB that accepts all HTTP traffic on port <code>80</code>,  is done via code similar to:</p>
+<p>The following definition will create an Security Group that accepts public traffic on port <code>80</code>:</p>
 
 <pre><code class="language-go">  sgResName := sparta.CloudFormationResourceName(&quot;ALBSecurityGroup&quot;, &quot;ALBSecurityGroup&quot;)
   sgRes := &amp;gocf.EC2SecurityGroup{
@@ -1975,6 +1983,15 @@ func helloNewWorld(ctx context.Context,
   }
 </code></pre>
 
+<p>The subnets for our Application Load Balancer are supplied as an environment variable (<strong>TEST_SUBNETS</strong>) of the form <code>id1,id2</code>:</p>
+
+<pre><code class="language-go">  subnetList := strings.Split(os.Getenv(&quot;TEST_SUBNETS&quot;), &quot;,&quot;)
+  subnetIDs := make([]gocf.Stringable, len(subnetList))
+  for eachIndex, eachSubnet := range subnetList {
+    subnetIDs[eachIndex] = gocf.String(eachSubnet)
+  }
+</code></pre>
+
 <p>The next step is to define the ALB and associate it with both the account Subnets and SecurityGroup we just defined:</p>
 
 <pre><code class="language-go">  alb := &amp;gocf.ElasticLoadBalancingV2LoadBalancer{
@@ -1983,7 +2000,8 @@ func helloNewWorld(ctx context.Context,
   }
 </code></pre>
 
-<p>With this definition, we can create a decorator as in:</p>
+<p>This <code>ElasticLoadBalancingV2LoadBalancer</code> instance is provided to <code>NewApplicationLoadBalancerDecorator</code> to create the decorator that will annotate the CloudFormation
+template with the required resources.</p>
 
 <pre><code class="language-go">albDecorator, albDecoratorErr := spartaDecorators.NewApplicationLoadBalancerDecorator(alb,
     80,
@@ -1994,7 +2012,7 @@ func helloNewWorld(ctx context.Context,
 <p>The <code>NewApplicationLoadBalancerDecorator</code> accepts four arguments:</p>
 
 <ul>
-<li>The ApplicationLoadBalancer that will handle this service&rsquo;s incoming requests</li>
+<li>The <code>ElasticLoadBalancingV2LoadBalancer</code> that handles this service&rsquo;s incoming requests</li>
 <li>The port (<code>80</code>) that incoming requests will be accepted</li>
 <li>The protocol (<code>HTTP</code>) for incoming requests</li>
 <li>The default <em>*sparta.LambdaAWSInfo</em> instance (<code>lambdaFn</code>) to use as the ALB&rsquo;s <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listener.html#cfn-elasticloadbalancingv2-listener-defaultactions">DefaultAction</a> handler in case no other conditional target matches the incoming request.</li>
@@ -2002,9 +2020,9 @@ func helloNewWorld(ctx context.Context,
 
 <h2 id="conditional-targets">Conditional Targets</h2>
 
-<p>Services may expose more than a single Lambda function on the same port using <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html">ListenerRule</a> entries.</p>
+<p>Services may expose more than one Lambda function on that same port using multiple <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-elasticloadbalancingv2-listenerrule.html">ListenerRule</a> entries.</p>
 
-<p>For instance, to expose a second lambda function <code>lambdaFn2</code> on the same listener but on a specific path, register a <code>ConditionalEntry</code> as in:</p>
+<p>For instance, to register a second lambda function <code>lambdaFn2</code> with the same Application Load Balancer at the <em>/newhello</em> path, add a <code>ConditionalEntry</code> as in:</p>
 
 <pre><code class="language-go">  albDecorator.AddConditionalEntry(gocf.ElasticLoadBalancingV2ListenerRuleRuleCondition{
     Field: gocf.String(&quot;path-pattern&quot;),
@@ -2014,7 +2032,9 @@ func helloNewWorld(ctx context.Context,
   }, lambdaFn2)
 </code></pre>
 
-<p>This will create a rule that associates the <em>/newhello*</em> path with <code>lambdaFn2</code>. Requests that do not match the incoming path will fallback to the default handler (<code>lambdaFn</code>).</p>
+<p>This will create a rule that associates the <em>/newhello*</em> path with <code>lambdaFn2</code>. Requests that do not match the incoming path will fallback to the default handler (<code>lambdaFn</code>).
+See the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticloadbalancingv2-listenerrule-conditions.html">RuleCondition</a> documentation
+for the full set of conditions that can be expressed.</p>
 
 <h2 id="additional-resources">Additional Resources</h2>
 
@@ -2023,7 +2043,6 @@ func helloNewWorld(ctx context.Context,
 <pre><code class="language-go">// Finally, tell the ALB decorator we have some additional resources that need to be
 // included in the CloudFormation template
 albDecorator.Resources[sgResName] = sgRes
-
 </code></pre>
 
 <h2 id="workflow-hooks">Workflow Hooks</h2>
@@ -2035,9 +2054,9 @@ albDecorator.Resources[sgResName] = sgRes
     ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
       albDecorator,
     },
-    }
-    
-    err := sparta.MainEx(awsName,
+  }
+
+  err := sparta.MainEx(awsName,
     &quot;Simple Sparta application that demonstrates how to make Lambda functions an ALB Target&quot;,
     lambdaFunctions,
     nil,
@@ -2048,12 +2067,49 @@ albDecorator.Resources[sgResName] = sgRes
 
 <h2 id="output">Output</h2>
 
-<p>The <code>ApplicationLoadBalancerDecorator</code> includes the Application Load Balancer discovery information in the Outputs section as in:</p>
+<p>As part of the provisioning workflow, the <code>ApplicationLoadBalancerDecorator</code> will include the Application Load Balancer discovery information in the Outputs section as in:</p>
 
-<pre><code class="language-plain">INFO[0156] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-INFO[0156]     ApplicationLoadBalancerDNS80              Description=&quot;DNS value of the ALB&quot; Value=MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
-INFO[0156]     ApplicationLoadBalancerName80             Description=&quot;Name of the ALB&quot; Value=MyALB-ELBv2-44R3J0MV1D37
-INFO[0156]     ApplicationLoadBalancerURL80              Description=&quot;URL value of the ALB&quot; Value=&quot;http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com:80&quot;
+<pre><code class="language-plain">INFO[0056] Stack Outputs ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0056]     ApplicationLoadBalancerDNS80              Description=&quot;ALB DNSName (port: 80, protocol: HTTP)&quot; Value=MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
+INFO[0056]     ApplicationLoadBalancerName80             Description=&quot;ALB Name (port: 80, protocol: HTTP)&quot; Value=MyALB-ELBv2-44R3J0MV1D37
+INFO[0056]     ApplicationLoadBalancerURL80              Description=&quot;ALB URL (port: 80, protocol: HTTP)&quot; Value=&quot;http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com:80&quot;
+</code></pre>
+
+<h2 id="testing">Testing</h2>
+
+<p>Using <em>curl</em> we can verify the newly provisioned Application Load Balancer behavior. The default lambda function echoes the incoming request and is available at the ALB URL basepath:</p>
+
+<pre><code class="language-plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com
+</code></pre>
+
+<p>returns</p>
+
+<pre><code class="language-json">{
+  &quot;httpMethod&quot;: &quot;GET&quot;,
+  &quot;path&quot;: &quot;/&quot;,
+  &quot;headers&quot;: {
+    &quot;accept&quot;: &quot;*/*&quot;,
+    &quot;host&quot;: &quot;MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com&quot;,
+    &quot;user-agent&quot;: &quot;curl/7.54.0&quot;,
+    &quot;x-amzn-trace-id&quot;: &quot;Root=1-5d507bf4-ca98d1ad44ac0fe56ec6a9ae&quot;,
+    &quot;x-forwarded-for&quot;: &quot;24.17.9.178&quot;,
+    &quot;x-forwarded-port&quot;: &quot;80&quot;,
+    &quot;x-forwarded-proto&quot;: &quot;http&quot;
+  },
+  &quot;requestContext&quot;: {
+    &quot;elb&quot;: {
+      &quot;targetGroupArn&quot;: &quot;arn:aws:elasticloadbalancing:us-west-2:123412341234:targetgroup/MyALB-ALBDe-1OJX6J3VGX369/1dab61286efaebb6&quot;
+    }
+  },
+  &quot;isBase64Encoded&quot;: false,
+  &quot;body&quot;: &quot;&quot;
+}
+</code></pre>
+
+<p>The conditional lambda function behavior is exposed at <em>/newhello</em> as in:</p>
+
+<pre><code class="language-plain">curl http://MyALB-ELBv2-44R3J0MV1D37-943334334.us-west-2.elb.amazonaws.com/newhello
+Some other handler
 </code></pre>
 
 
@@ -3406,18 +3462,18 @@ INFO[0156]     ApplicationLoadBalancerURL80              Description=&quot;URL v
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1565554073"></script>
-<script src="/js/perfect-scrollbar.min.js?1565554073"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1565554073"></script>
-<script src="/js/jquery.sticky.js?1565554073"></script>
-<script src="/js/featherlight.min.js?1565554073"></script>
-<script src="/js/html5shiv-printshiv.min.js?1565554073"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1565554073"></script>
-<script src="/js/learn.js?1565554073"></script>
-<script src="/js/hugo-learn.js?1565554073"></script>
+<script src="/js/clipboard.min.js?1565556819"></script>
+<script src="/js/perfect-scrollbar.min.js?1565556819"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1565556819"></script>
+<script src="/js/jquery.sticky.js?1565556819"></script>
+<script src="/js/featherlight.min.js?1565556819"></script>
+<script src="/js/html5shiv-printshiv.min.js?1565556819"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1565556819"></script>
+<script src="/js/learn.js?1565556819"></script>
+<script src="/js/hugo-learn.js?1565556819"></script>
 
-<link href="/mermaid/mermaid.css?1565554073" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1565554073"></script>
+<link href="/mermaid/mermaid.css?1565556819" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1565556819"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>
