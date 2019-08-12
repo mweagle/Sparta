@@ -120,8 +120,7 @@ func runHugoCommand(hugoCommandArgs ...string) error {
 		output = os.Stdout
 	}
 	cmd := exec.Command(absHugoPath, hugoCommandArgs...)
-	cmd.Env = append(os.Environ() , fmt.Sprintf("GIT_HEAD_COMMIT=%s", gitSHA))
-
+	cmd.Env = append(os.Environ(), fmt.Sprintf("GIT_HEAD_COMMIT=%s", gitSHA))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = output
 	cmd.Dir = workDir
@@ -264,8 +263,6 @@ func DocsEdit() error {
 ////////////////////////////////////////////////////////////////////////////////
 // END - DOCUMENTATION
 ////////////////////////////////////////////////////////////////////////////////
-
-
 
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
