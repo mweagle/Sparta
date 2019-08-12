@@ -383,6 +383,11 @@
   </url>
   
   <url>
+    <loc>/meta/</loc>
+    <lastmod>2019-08-11T20:56:53-07:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/reference/faq/</loc>
     <lastmod>2018-11-28T19:54:10-08:00</lastmod>
   </url>
@@ -395,11 +400,6 @@
   <url>
     <loc>/reference/step/services/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/meta/</loc>
-    <lastmod>2018-11-29T06:41:07-08:00</lastmod>
   </url>
   
   <url>
