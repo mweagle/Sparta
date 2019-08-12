@@ -1,6 +1,6 @@
 {{ if $.GitInfo }}
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ .GitInfo.AbbreviatedHash}}">{{ .GitInfo.AbbreviatedHash}}</a><p/>
-  Date: {{ .GitInfo.AuthorDate}}
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/{{ getenv "GIT_HEAD_COMMIT"}}">{{ getenv "GIT_HEAD_COMMIT"}}</a><p/>
+  Date: {{ now.Format "2006-01-02T15:04:05Z07:00" }}
 {{ end }}
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
