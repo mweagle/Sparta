@@ -64,6 +64,23 @@ func goSourceApply(commandParts ...string) error {
 	return spartamage.ApplyToSource("go", ignoreSubdirectoryPaths, commandParts...)
 }
 
+func gitCommit(shortVersion bool) (string, error) {
+	shortFlag := ""
+	if shortVersion {
+		shortFlag = "--short"
+	}
+	// The first thing we need is the `git` SHA
+	cmd := exec.Command("git", "rev-parse", shortFlag, "HEAD")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+	return strings.TrimSpace(string(stdout.Bytes())), nil
+}
+
 // EnsureCleanTree ensures that the git tree is clean
 func EnsureCleanTree() error {
 	cleanTreeScript := [][]string{
@@ -87,6 +104,13 @@ func runHugoCommand(hugoCommandArgs ...string) error {
 	if absHugoPathErr != nil {
 		return absHugoPathErr
 	}
+
+	// Get the git short value
+	gitSHA, gitSHAErr := gitCommit(true)
+	if gitSHAErr != nil {
+		return gitSHAErr
+	}
+
 	workDir, workDirErr := filepath.Abs(hugoDocsSourcePath)
 	if workDirErr != nil {
 		return workDirErr
@@ -96,6 +120,8 @@ func runHugoCommand(hugoCommandArgs ...string) error {
 		output = os.Stdout
 	}
 	cmd := exec.Command(absHugoPath, hugoCommandArgs...)
+	cmd.Env = append(os.Environ() , fmt.Sprintf("GIT_HEAD_COMMIT=%s", gitSHA))
+
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = output
 	cmd.Dir = workDir
@@ -239,21 +265,18 @@ func DocsEdit() error {
 // END - DOCUMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
+
+
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
 func GenerateBuildInfo() error {
 	mg.SerialDeps(EnsureCleanTree)
 
 	// The first thing we need is the `git` SHA
-	cmd := exec.Command("git", "rev-parse", "HEAD")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
+	gitSHA, gitSHAErr := gitCommit(false)
+	if gitSHAErr != nil {
+		return gitSHAErr
 	}
-	stdOutResult := strings.TrimSpace(string(stdout.Bytes()))
 
 	// Super = update the buildinfo data
 	buildInfoTemplate := `package sparta
@@ -265,7 +288,7 @@ func GenerateBuildInfo() error {
 // SpartaGitHash is the commit hash of this Sparta library
 const SpartaGitHash = "%s"
 `
-	updatedInfo := fmt.Sprintf(buildInfoTemplate, time.Now().UTC(), stdOutResult)
+	updatedInfo := fmt.Sprintf(buildInfoTemplate, time.Now().UTC(), gitSHA)
 	// Write it to the output location...
 	writeErr := ioutil.WriteFile("./buildinfo.go", []byte(updatedInfo), os.ModePerm)
 
