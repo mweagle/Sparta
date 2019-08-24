@@ -163,7 +163,7 @@ func templateJSFiles(logger *logrus.Logger) []*templateResource {
 		"popper/popper.min.js",
 		"bootstrap-4.0.0/dist/js/bootstrap.min.js",
 		"highlight.js/highlight.pack.js",
-		"dagre-0.8.4/dist/dagre.js",
+		"dagre-0.8.4/dist/dagre.min.js",
 		"cytoscape.js/dist/cytoscape.min.js",
 		"cytoscape.js-dagre/cytoscape-dagre.js",
 		"sparta.js",
