@@ -62,7 +62,7 @@ var defaults = {
   // dagre algo options, uses default value on undefined
   nodeSep: undefined, // the separation between adjacent nodes in the same rank
   edgeSep: undefined, // the separation between adjacent edges in the same rank
-  rankSep: undefined, // the separation between adjacent nodes in the same rank
+  rankSep: undefined, // the separation between each rank in the layout
   rankDir: undefined, // 'TB' for top to bottom flow, 'LR' for left to right,
   ranker: undefined, // Type of algorithm to assign a rank to each node in the input graph. Possible values: 'network-simplex', 'tight-tree' or 'longest-path'
   minLen: function( edge ){ return 1; }, // number of ranks to keep between the source and target of the edge
