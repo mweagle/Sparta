@@ -72,6 +72,46 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
     </item>
     
     <item>
+      <title>Amazon DynamoDb</title>
+      <link>/reference/step/services/dynamodb/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/dynamodb/</guid>
+      <description> TODO: Document Dynamo integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SageMaker</title>
+      <link>/reference/step/services/sagemaker/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sagemaker/</guid>
+      <description> TODO: Document SageMaker integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SNS</title>
+      <link>/reference/step/services/sns/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sns/</guid>
+      <description> TODO: Document SNS integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SQS</title>
+      <link>/reference/step/services/sqs/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sqs/</guid>
+      <description> TODO: Document SQS integration.
+ </description>
+    </item>
+    
+    <item>
       <title>AWS Batch</title>
       <link>/reference/step/services/batch/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
@@ -98,46 +138,6 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/step/services/glue/</guid>
       <description> TODO: Document Glue integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon DynamoDb</title>
-      <link>/reference/step/services/dynamodb/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/dynamodb/</guid>
-      <description> TODO: Document Dynamo integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SNS</title>
-      <link>/reference/step/services/sns/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sns/</guid>
-      <description> TODO: Document SNS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SQS</title>
-      <link>/reference/step/services/sqs/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sqs/</guid>
-      <description> TODO: Document SQS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SageMaker</title>
-      <link>/reference/step/services/sagemaker/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sagemaker/</guid>
-      <description> TODO: Document SageMaker integration.
  </description>
     </item>
     
@@ -505,7 +505,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston 🌍 is on a break! 🌍 (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston (extending hols &amp;#39;cause work is meh) (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
     </item>
     
     <item>

@@ -28,22 +28,12 @@
   </url>
   
   <url>
-    <loc>/reference/step/services/batch/</loc>
-    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step/services/fargate/</loc>
-    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/reference/step/services/glue/</loc>
-    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/reference/step/services/dynamodb/</loc>
+    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/sagemaker/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
   </url>
   
@@ -58,7 +48,17 @@
   </url>
   
   <url>
-    <loc>/reference/step/services/sagemaker/</loc>
+    <loc>/reference/step/services/batch/</loc>
+    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/fargate/</loc>
+    <lastmod>2018-12-16T09:22:50-08:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/step/services/glue/</loc>
     <lastmod>2018-12-16T09:22:50-08:00</lastmod>
   </url>
   
@@ -204,7 +204,7 @@
   
   <url>
     <loc>/reference/application/environments/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <lastmod>2019-08-29T19:07:19-07:00</lastmod>
   </url>
   
   <url>
@@ -364,7 +364,7 @@
   
   <url>
     <loc>/presentations/</loc>
-    <lastmod>2018-11-28T18:16:08-08:00</lastmod>
+    <lastmod>2019-08-23T17:01:05-07:00</lastmod>
   </url>
   
   <url>
@@ -419,12 +419,10 @@
   
   <url>
     <loc>/categories/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
