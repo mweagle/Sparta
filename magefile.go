@@ -419,21 +419,12 @@ func EnsureLint() error {
 
 // EnsureGoFmt ensures that the source is `gofmt -s` is empty
 func EnsureGoFmt() error {
-	cmd := exec.Command("gofmt", "-s", "-d", ".")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	if stdout.String() != "" {
-		if mg.Verbose() {
-			log.Print(stdout.String())
-		}
-		return errors.New("`gofmt -s -d .` found simplification opportunities")
-	}
-	return nil
+
+	ignoreGlobs := append(ignoreSubdirectoryPaths,
+		"CONSTANTS.go",
+		"CONSTANTS_AWSBINARY.go")
+
+	return spartamage.ApplyToSource("go", ignoreGlobs, "gofmt", "-s", "-d")
 }
 
 // EnsureFormatted ensures that the source code is formatted with goimports
