@@ -423,7 +423,6 @@ func EnsureGoFmt() error {
 	ignoreGlobs := append(ignoreSubdirectoryPaths,
 		"CONSTANTS.go",
 		"CONSTANTS_AWSBINARY.go")
-
 	return spartamage.ApplyToSource("go", ignoreGlobs, "gofmt", "-s", "-d")
 }
 
