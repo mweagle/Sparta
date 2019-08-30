@@ -40,12 +40,12 @@ func Script(commands [][]string) error {
 // ApplyToSource is a mage compatible function that applies a
 // command to your source tree
 func ApplyToSource(fileExtension string,
-	ignoredSubdirectories []string,
+	ignoredGlobs []string,
 	commandParts ...string) error {
 	if len(commandParts) <= 0 {
 		return errors.New("applyToSource requires a command to apply to source files")
 	}
-	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension, ignoredSubdirectories)
+	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension, ignoredGlobs)
 	if eligibleSourceFilesErr != nil {
 		return eligibleSourceFilesErr
 	}
