@@ -4,7 +4,7 @@ title: Presentations
 weight: 800
 ---
 
-![CouchPotato Gopher](/gophers/CouchPotatoGopher.png | width=300)
+{{< figure src="/gophers/CouchPotatoGopher.png" height="300px" width="300px" >}}
 
 ### Slides
 
