@@ -248,7 +248,7 @@ func defaultLambdaFunctionOptions() *LambdaFunctionOptions {
 		MemorySize:                   128,
 		Timeout:                      3,
 		VpcConfig:                    nil,
-		Environment:                  nil,
+		Environment:                  make(map[string]*gocf.StringExpr),
 		KmsKeyArn:                    "",
 		ReservedConcurrentExecutions: 0,
 		SpartaOptions:                nil,
