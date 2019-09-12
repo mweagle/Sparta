@@ -601,6 +601,11 @@ func WaitForStackOperationComplete(stackID string,
 	return result, nil
 }
 
+// StableResourceName returns a stable resource name
+func StableResourceName(value string) string {
+	return CloudFormationResourceName(value, value)
+}
+
 // CloudFormationResourceName returns a name suitable as a logical
 // CloudFormation resource value.  See http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 // for more information.  The `prefix` value should provide a hint as to the
