@@ -5,6 +5,9 @@ go 1.12
 require (
 	cloud.google.com/go v0.44.3 // indirect
 	github.com/AlecAivazis/survey/v2 v2.0.4
+	github.com/Masterminds/goutils v1.1.0 // indirect
+	github.com/Masterminds/semver v1.4.2 // indirect
+	github.com/Masterminds/sprig v2.20.0+incompatible
 	github.com/Netflix/go-expect v0.0.0-20190729225929-0e00d9168667 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.13.0
@@ -30,12 +33,16 @@ require (
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/pprof v0.0.0-20190723021845-34ac40c74b70
+	github.com/google/uuid v1.1.1 // indirect
 	github.com/gorilla/websocket v1.4.1 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.10.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c // indirect
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e
+	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20181102032728-5e5cf60278f6 // indirect
+	github.com/imdario/mergo v0.3.7 // indirect
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/kisielk/errcheck v1.2.0 // indirect
 	github.com/klauspost/compress v1.8.1 // indirect
 	github.com/klauspost/cpuid v1.2.1 // indirect
@@ -47,8 +54,6 @@ require (
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
 	github.com/mweagle/go-cloudformation v0.0.0-20190824022255-0b695fc6095a
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
@@ -95,5 +100,6 @@ require (
 	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
-	honnef.co/go/tools v0.0.1-2019.2.2 // indirect
+	gopkg.in/ini.v1 v1.46.0 // indirect
+	honnef.co/go/tools v0.0.0-20190622161425-0d05180ad8c0 // indirect
 )

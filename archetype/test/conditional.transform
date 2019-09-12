@@ -1,0 +1,8 @@
+{{if eq (.Record.Data.JMESPathAsString "ticker_symbol") "QAZ"}} 
+{   
+    "region" : "{{ .Record.KinesisEventHeader.Region  }}",
+    "key" : {{ .Record.Data.JMESPath "sector"}}
+}
+{{else}} 
+{{ KinesisFirehoseDrop }}
+{{end}}
