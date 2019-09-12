@@ -96,6 +96,15 @@ func SpartaCommand(commandParts ...string) error {
 		commandArgs...)
 }
 
+// Test runs the tests in verbose mode
+func Test() error {
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	return sh.Run("go", "test", verboseFlag, ".")
+}
+
 // Provision deploys the given service
 func Provision() error {
 	// Get the bucketName
