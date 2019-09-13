@@ -1,0 +1,2 @@
+negsector: {{.Record.Data.RegExpGroup "\"sector\":\"(?P<Sector>\\d+)\"" "Sector"}}
+negsecString: {{.Record.Data.RegExpGroupAsFormattedString "\"sector\":\"(?P<Sector>\\d+)\"" "Sector" "\"%s\""}}

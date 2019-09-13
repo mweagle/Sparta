@@ -42,6 +42,16 @@ var firehoseTests = []struct {
 		"test/regexp.transform",
 		verifyPredicate("sector", 3),
 	},
+	{
+		"test/records-sm.json",
+		"test/regexp.transform",
+		verifyPredicate("FINANCIAL", 2),
+	},
+	{
+		"test/records-sm.json",
+		"test/regexpEmpty.transform",
+		verifyPredicate("TECHNOLOGY", 0),
+	},
 }
 
 type testPredicate func(t *testing.T, response *awsEvents.KinesisFirehoseResponse) error
