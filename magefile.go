@@ -71,6 +71,7 @@ func gitCommit(shortVersion bool) (string, error) {
 	}
 	// The first thing we need is the `git` SHA
 	cmd := exec.Command("git", "rev-parse", shortFlag, "HEAD")
+	cmd.Dir = "/Users/mweagle/go/src/github.com/mweagle/Sparta"
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
