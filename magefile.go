@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.57.2"
+	hugoVersion  = "0.58.1"
 )
 
 func xplatPath(pathParts ...string) string {
