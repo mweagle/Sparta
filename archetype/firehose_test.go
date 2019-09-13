@@ -3,7 +3,6 @@ package archetype
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"strings"
 	"testing"
@@ -36,7 +35,12 @@ var firehoseTests = []struct {
 	{
 		"test/records-sm.json",
 		"test/conditional.transform",
-		verifyPredicate("Dropped", 2),
+		verifyPredicate("Dropped", 1),
+	},
+	{
+		"test/records-sm.json",
+		"test/regexp.transform",
+		verifyPredicate("sector", 3),
 	},
 }
 
@@ -60,17 +64,20 @@ func verifyPredicate(value string, expectedCount int) testPredicate {
 		counter := 0
 		jsonMap := make(map[string]interface{})
 		for _, eachEntry := range response.Records {
-			//t.Logf("Record: %#v\n", string(eachEntry.Data))
+			rawData := string(eachEntry.Data)
+
 			unmarshalErr := json.Unmarshal(eachEntry.Data, &jsonMap)
-			if unmarshalErr != nil {
-				continue
+			if unmarshalErr == nil {
+				jsonData, _ := json.MarshalIndent(jsonMap, "", " ")
+				rawData = string(jsonData)
 			}
-			recordVal := fmt.Sprintf("%#v", jsonMap)
-			counter += strings.Count(recordVal, value)
+			//t.Logf("RAW DATA: %s\n", string(rawData))
+			counter += strings.Count(rawData, value)
 		}
 		jsonData, _ := json.MarshalIndent(response, "", " ")
-		// t.Log(string(jsonData))
 		counter += strings.Count(string(jsonData), value)
+		// t.Log(string(jsonData))
+		// counter += strings.Count(string(jsonData), value)
 
 		if counter != expectedCount {
 			return errors.Errorf("Invalid count. Expected: %d, Found: %d for value: %s",
@@ -119,7 +126,6 @@ func TestTransforms(t *testing.T) {
 				t.Fatal(responseErr)
 				return
 			}
-
 			// Unmarshal everything...
 			predicateErr := tt.predicate(t, response)
 			if predicateErr != nil {
