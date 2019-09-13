@@ -76,6 +76,7 @@ func gitCommit(shortVersion bool) (string, error) {
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
+		fmt.Printf("OUTPUT: %s\n", string(stdout.Bytes()))
 		return "", errors.Wrapf(err, "Failed to run `git` command: %s", cmd.String())
 	}
 	return strings.TrimSpace(string(stdout.Bytes())), nil
