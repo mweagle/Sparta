@@ -65,8 +65,7 @@ func (reactorFunc KinesisFirehoseReactorFunc) ReactorName() string {
 // NewKinesisFirehoseLambdaTransformer returns a new firehose proocessor that supports
 // transforming records.
 func NewKinesisFirehoseLambdaTransformer(reactor KinesisFirehoseReactor,
-	timeout time.Duration,
-	hooks *sparta.WorkflowHooks) (*sparta.LambdaAWSInfo, error) {
+	timeout time.Duration) (*sparta.LambdaAWSInfo, error) {
 
 	reactorLambda := func(ctx context.Context,
 		kinesisFirehoseEvent awsLambdaEvents.KinesisFirehoseEvent) (interface{}, error) {
@@ -172,6 +171,11 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 	templateBytes []byte,
 	kinesisEvent awsEvents.KinesisFirehoseEvent) (*awsEvents.KinesisFirehoseResponse, error) {
 
+	logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+	if loggerOk {
+		logger.Info("Hello world structured log message")
+	}
+
 	funcMap := sprig.TxtFuncMap()
 	funcMap["KinesisFirehoseDrop"] = interface{}(func() (string, error) {
 		return "", dropError()
@@ -219,12 +223,12 @@ func ApplyTransformToKinesisFirehoseEvent(ctx context.Context,
 			} else if xform.Error() != nil {
 				xformedRecord.Result = awsEvents.KinesisFirehoseTransformedStateProcessingFailed
 			} else {
-				// logData := map[string]interface{}{
-				// 	"input":  eachRecord.Data,
-				// 	"output": outputBuffer.Bytes(),
-				// }
-				// logBytes, _ := json.MarshalIndent(logData, "", " ")
-				// fmt.Printf("%s", string(logBytes))
+				if loggerOk && logger.IsLevelEnabled(logrus.DebugLevel) {
+					logger.WithFields(logrus.Fields{
+						"input":  eachRecord.Data,
+						"output": outputBuffer.Bytes(),
+					}).Debug("Transformation result")
+				}
 
 				xformedRecord.Data = outputBuffer.Bytes()
 				xformedRecord.Result = awsEvents.KinesisFirehoseTransformedStateOk
