@@ -9,25 +9,25 @@
 
     <link rel="icon" href="/images/favicon.png" type="image/png">
 
-    <title>Magefiles :: Sparta - AWS Lambda Microservices</title>
+    <title>Kinesis Firehose :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1568382493" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1568382493" rel="stylesheet">
-    <link href="/css/hybrid.css?1568382493" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1568382493" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1568382493" rel="stylesheet">
-    <link href="/css/auto-complete.css?1568382493" rel="stylesheet">
-    <link href="/css/theme.css?1568382493" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1568382493" rel="stylesheet">
+    <link href="/css/nucleus.css?1568382494" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1568382494" rel="stylesheet">
+    <link href="/css/hybrid.css?1568382494" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1568382494" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1568382494" rel="stylesheet">
+    <link href="/css/auto-complete.css?1568382494" rel="stylesheet">
+    <link href="/css/theme.css?1568382494" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1568382494" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1568382493" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1568382494" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1568382493"></script>
+    <script src="/js/jquery-3.3.1.min.js?1568382494"></script>
     
-    <link href="/css/vs.css?1568382493" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1568382493"></script>
+    <link href="/css/vs.css?1568382494" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1568382494"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -46,7 +46,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/operations/magefile/">
+  <body class="" data-url="/reference/archetypes/kinesis_firehose/">
     <nav id="sidebar" class="">
 
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1568382493"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1568382493"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1568382494"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1568382494"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1568382493"></script>
+<script type="text/javascript" src="/js/search.js?1568382494"></script>
 
     
   </div>
@@ -642,7 +642,7 @@ pre {
   
     
     <li data-nav-id="/reference/archetypes/" title="" class="dd-item 
-        
+        parent
         
         
         ">
@@ -742,7 +742,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/archetypes/kinesis_firehose/" title="Kinesis Firehose" class="dd-item ">
+      <li data-nav-id="/reference/archetypes/kinesis_firehose/" title="Kinesis Firehose" class="dd-item active">
         <a href="/reference/archetypes/kinesis_firehose/">
         Kinesis Firehose
         
@@ -1475,7 +1475,7 @@ pre {
   
     
     <li data-nav-id="/reference/operations/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -1499,7 +1499,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/operations/magefile/" title="Magefiles" class="dd-item active">
+      <li data-nav-id="/reference/operations/magefile/" title="Magefiles" class="dd-item ">
         <a href="/reference/operations/magefile/">
         Magefiles
         
@@ -1832,7 +1832,7 @@ pre {
     <section id="footer">
       
   Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/b5919f34">b5919f34</a><p/>
-  Date: 2019-09-13T06:48:13-07:00
+  Date: 2019-09-13T06:48:14-07:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1856,7 +1856,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/operations/magefile.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/archetypes/kinesis_firehose.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1891,7 +1891,7 @@ pre {
             
           
           
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/operations/'></a> > Magefiles
+            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/archetypes/'></a> > Kinesis Firehose
           
          
           
@@ -1908,10 +1908,14 @@ pre {
     <div class="wrapper">
 <nav id="TableOfContents">
 <ul>
-<li><a href="#magefile">Magefile</a>
+<li>
 <ul>
-<li><a href="#default-sparta-magefile-go">Default Sparta <em>magefile.go</em></a></li>
-<li><a href="#sparta-magefile-helpers">Sparta Magefile Helpers</a></li>
+<li><a href="#newkinesisfirehoselambdatransformer">NewKinesisFirehoseLambdaTransformer</a></li>
+<li><a href="#newkinesisfirehosetransformer">NewKinesisFirehoseTransformer</a>
+<ul>
+<li><a href="#data-model">Data Model</a></li>
+<li><a href="#functions">Functions</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -1930,7 +1934,7 @@ pre {
           
             <h1>
               
-              Magefiles
+              Kinesis Firehose
             </h1>
           
 
@@ -1940,68 +1944,134 @@ pre {
 
 
 
-<h1 id="magefile">Magefile</h1>
+<p>There are two ways to create a Firehose Transform reactor that transforms a <a href="https://github.com/aws/aws-lambda-go/blob/master/events/firehose.go#L14">KinesisFirehoseEventRecord</a> with a <a href="https://aws.amazon.com/blogs/compute/amazon-kinesis-firehose-data-transformation-with-aws-lambda/">Lambda function</a>:</p>
 
-<p>To support cross platform development and usage, Sparta uses <a href="https://magefile.org">magefiles</a> rather
-than <em>Makefiles</em>.  Most projects can start with the <em>magefile.go</em> sample below. The Magefiles
-provide a discoverable CLI, but are entirely optional. <code>go run main.go XXXX</code> style invocation remains
-available as well.</p>
+<ul>
+<li><code>NewKinesisFirehoseLambdaTransformer</code>
 
-<h2 id="default-sparta-magefile-go">Default Sparta <em>magefile.go</em></h2>
+<ul>
+<li>Transform using a Lambda function</li>
+</ul></li>
+<li><code>NewKinesisFirehoseTransformer</code>
 
-<p>This <em>magefile.go</em> can be used, unchanged, for most standard Sparta projects.</p>
+<ul>
+<li>Transform using a go <a href="https://golang.org/pkg/text/template/">text/template</a> declaration</li>
+</ul></li>
+</ul>
 
-<pre><code class="language-go">// +build mage
+<h2 id="newkinesisfirehoselambdatransformer">NewKinesisFirehoseLambdaTransformer</h2>
 
-// File: magefile.go
-
-package main
-
-import (
-  spartaMage &quot;github.com/mweagle/Sparta/magefile&quot;
+<pre><code class="language-go">import (
+awsEvents &quot;github.com/aws/aws-lambda-go/events&quot;
+  spartaArchetype &quot;github.com/mweagle/Sparta/archetype&quot;
 )
+// KinesisStream reactor function
+func reactorFunc(ctx context.Context,
+                    record *awsEvents.KinesisFirehoseEventRecord)
+                    (*awsEvents.KinesisFirehoseResponseRecord, error) {
+  logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry)
 
-// Provision the service
-func Provision() error {
-  return spartaMage.Provision()
+  logger.WithFields(logrus.Fields{
+    &quot;Record&quot;: record,
+  }).Info(&quot;Kinesis Firehose Event&quot;)
+
+  responseRecord = &amp;awsEvents.KinesisFirehoseResponseRecord{
+    RecordID: record.RecordID,
+    Result:   awsEvents.KinesisFirehoseTransformedStateOk,
+    Data:     record.Data,
+  }
+  return responseRecord, nil
 }
 
-// Describe the stack by producing an HTML representation of the CloudFormation
-// template
-func Describe() error {
-  return spartaMage.Describe()
-}
-
-// Delete the service, iff it exists
-func Delete() error {
-  return spartaMage.Delete()
-}
-
-// Status report if the stack has been provisioned
-func Status() error {
-  return spartaMage.Status()
-}
-
-// Version information
-func Version() error {
-  return spartaMage.Version()
+func main() {
+  // ...
+  handler := spartaArchetype.KinesisFirehoseReactorFunc(reactorFunc)
+  lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisFirehoseLambdaTransformer(handler,
+    5*time.Minute /* Duration: recommended minimum of 1m */)
+  // ...
 }
 </code></pre>
 
-<pre><code class="language-shell">$ mage -l
-Targets:
-  delete       the service, iff it exists
-  describe     the stack by producing an HTML representation of the CloudFormation template
-  provision    the service
-  status       report if the stack has been provisioned
-  version      information
+<p>This is the lowest level transformation type supported and it enables the most flexibility.</p>
+
+<h2 id="newkinesisfirehosetransformer">NewKinesisFirehoseTransformer</h2>
+
+<p>Another option for creating Kinesis Firehose Transformers is to leverage the <a href="https://golang.org/pkg/text/template/">text/template</a> package to define a transformation template. For instance:</p>
+
+<pre><code class="language-text">{{/* file: transform.template */}}
+{{if eq (.Record.Data.JMESPathAsString &quot;sector&quot;) &quot;TECHNOLOGY&quot;}}
+{
+    &quot;region&quot; : &quot;{{ .Record.KinesisEventHeader.Region }}&quot;,
+    &quot;ticker_symbol&quot; : {{ .Record.Data.JMESPath &quot;ticker_symbol&quot;}}
+}
+{{else}}
+{{ KinesisFirehoseDrop }}
+{{end}}
 </code></pre>
 
-<h2 id="sparta-magefile-helpers">Sparta Magefile Helpers</h2>
+<p>A new <code>*sparta.LambdaAWSInfo</code> instance can be created from <em>transform.template</em> as in:</p>
 
-<p>There are several <a href="https://godoc.org/github.com/mweagle/Sparta/magefile">magefile helpers</a> available
-in the Sparta package. These are in addition to and often delegate to, the core
-<a href="https://magefile.org/libraries/">mage libraries</a>.</p>
+<pre><code class="language-go">func main() {
+  // ...
+  hooks := &amp;sparta.WorkflowHooks{}
+  reactorFunc, reactorFuncErr := archetype.NewKinesisFirehoseTransformer(&quot;transform.template&quot;,
+    5*time.Minute,
+    hooks)
+  // ...
+
+  var lambdaFunctions []*sparta.LambdaAWSInfo
+  lambdaFunctions = append(lambdaFunctions, reactorFunc)
+  err := sparta.MainEx(awsName,
+    &quot;Simple Sparta application that demonstrates core functionality&quot;,
+    lambdaFunctions,
+    nil,
+    nil,
+    hooks,
+    false)
+}
+</code></pre>
+
+<p>The template execution context includes the the following:</p>
+
+<h3 id="data-model">Data Model</h3>
+
+<ul>
+<li><em>Data</em> (<code>string</code>)
+
+<ul>
+<li>The <a href="https://github.com/aws/aws-lambda-go/blob/master/events/firehose.go#L17">data</a> available in the Kinesis Firehose Record. Values can be extracted from the Data content by either <a href="https://github.com/jmespath/go-jmespath">JMESPath</a> expressions (<code>JMESPath</code>, <code>JMESPathAsString</code>, <code>JMESPathAsFormattedString</code>) or <a href="https://golang.org/pkg/regexp/#pkg-overview">regexp capture groups</a> (<code>RegExpGroup</code>, <code>RegExpGroupAsString</code>, <code>RegExpGroupAsJSON</code>).</li>
+<li>See for more information</li>
+</ul></li>
+<li><em>RecordID</em> (<code>string</code>)
+
+<ul>
+<li>The specific record id being processed</li>
+</ul></li>
+<li><em>Metadata</em> (<code>struct</code>)
+
+<ul>
+<li>The <a href="https://github.com/aws/aws-lambda-go/blob/master/events/firehose.go#L38">metadata</a> associated with the specific record being processed</li>
+</ul></li>
+<li><em>ApproximateArrivalTimestamp</em> (<code>awsEvents.MilliSecondsEpochTime</code>)
+
+<ul>
+<li>The time at which the record arrived</li>
+</ul></li>
+<li><em>KinesisEventHeader</em> (<code>struct</code>)
+
+<ul>
+<li>Metadata associated with the set of records being processed</li>
+</ul></li>
+</ul>
+
+<h3 id="functions">Functions</h3>
+
+<p>Functions available in the template&rsquo;s <a href="https://golang.org/pkg/text/template/#FuncMap">FuncMap</a> include:</p>
+
+<ul>
+<li><code>KinesisFirehoseDrop</code>: indicates that the record should be marked as <a href="https://github.com/aws/aws-lambda-go/blob/master/events/firehose.go#L24">KinesisFirehoseTransformedStateDropped</a></li>
+<li>The set of <a href="https://masterminds.github.io/sprig/">masterminds/sprig</a> functions available in <a href="https://godoc.org/github.com/Masterminds/sprig#TxtFuncMap">TxtFuncMap</a></li>
+</ul>
 
 
 <footer class=" footline" >
@@ -2462,6 +2532,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -2474,6 +2545,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -2539,6 +2613,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -2554,6 +2629,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -3634,6 +3712,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -3648,6 +3727,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -3711,6 +3793,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -3728,6 +3811,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -4473,7 +4559,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -4487,7 +4572,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -4503,9 +4587,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -4959,6 +5040,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -4973,6 +5055,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -5036,6 +5121,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -5053,6 +5139,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -5798,7 +5887,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -5812,7 +5900,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -5828,9 +5915,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -6284,6 +6368,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -6298,6 +6383,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -6361,6 +6449,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
         
     
     
@@ -6378,6 +6467,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+            
+            
+        
     
     
 
@@ -7123,7 +7215,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -7137,7 +7228,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -7153,9 +7243,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -7274,7 +7361,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
         
     
     
@@ -7289,7 +7375,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -7305,9 +7390,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -7759,6 +7841,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -7771,6 +7854,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -7836,6 +7922,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -7851,6 +7938,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -8596,7 +8686,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
         
     
     
@@ -8611,7 +8700,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -8627,9 +8715,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -9084,6 +9169,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -9096,6 +9182,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -9161,6 +9250,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -9176,6 +9266,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -9921,7 +10014,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
         
     
     
@@ -9936,7 +10028,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -9952,9 +10043,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -10409,6 +10497,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -10421,6 +10510,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -10486,6 +10578,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -10501,6 +10594,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -11246,7 +11342,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
         
     
     
@@ -11261,7 +11356,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -11277,9 +11371,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -11734,6 +11825,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -11746,6 +11838,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -11811,6 +11906,7 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
+        
     
     
 
@@ -11826,6 +11922,9 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
+        
+            
+            
         
     
     
@@ -12571,7 +12670,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
         
     
     
@@ -12586,7 +12684,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
     
         
-        
     
     
 
@@ -12602,9 +12699,6 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
     
-        
-            
-            
         
     
     
@@ -12779,10 +12873,10 @@ in the Sparta package. These are in addition to and often delegate to, the core
 
 
 
-<a class="nav nav-prev" href="/reference/operations/" title=""> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/reference/archetypes/kinesis/" title="Kinesis"> <i class="fa fa-chevron-left"></i></a>
 
 
-<a class="nav nav-next" href="/reference/operations/cloudwatch_alarms/" title="CloudWatch Alarms" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href="/reference/archetypes/rest/" title="REST Service" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 
 
 </div>

@@ -56,6 +56,16 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
     </item>
     
     <item>
+      <title>Kinesis Firehose</title>
+      <link>/reference/archetypes/kinesis_firehose/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/kinesis_firehose/</guid>
+      <description>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function  NewKinesisFirehoseTransformer  Transform using a go text/template declaration   NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Record&amp;quot;: record, }).Info(&amp;quot;Kinesis Firehose Event&amp;quot;) responseRecord = &amp;amp;awsEvents.</description>
+    </item>
+    
+    <item>
       <title>REST Service</title>
       <link>/reference/archetypes/rest/</link>
       <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
