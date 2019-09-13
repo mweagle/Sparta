@@ -1,0 +1,2 @@
+sector: {{.Record.Data.RegExpGroup "\"sector\":\"(?P<Sector>\\w+)\"" "Sector"}}
+secString: {{.Record.Data.RegExpGroupAsFormattedString "\"sector\":\"(?P<Sector>\\w+)\"" "Sector" "\"%s\""}}
