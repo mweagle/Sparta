@@ -272,7 +272,7 @@ func GenerateBuildInfo() error {
 	// The first thing we need is the `git` SHA
 	gitSHA, gitSHAErr := gitCommit(false)
 	if gitSHAErr != nil {
-		return gitSHAErr
+		return errors.Wrapf(gitSHAErr, "Failed to get git commit SHA")
 	}
 
 	// Super = update the buildinfo data
