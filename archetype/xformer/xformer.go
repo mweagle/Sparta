@@ -40,12 +40,14 @@ func (xf *XFormableData) regexpGroupValue(regexpString string, groupName string)
 		if reErr == nil {
 			xformResults.capturedNames = make(map[string]string)
 			matches := xformResults.re.FindStringSubmatch(xf.stringData)
-			for i, eachName := range xformResults.re.SubexpNames() {
-				// Ignore the whole regexp match and unnamed groups
-				if i == 0 || eachName == "" {
-					continue
+			if len(matches) > 0 {
+				for i, eachName := range xformResults.re.SubexpNames() {
+					// Ignore the whole regexp match and unnamed groups
+					if i == 0 || eachName == "" {
+						continue
+					}
+					xformResults.capturedNames[eachName] = matches[i]
 				}
-				xformResults.capturedNames[eachName] = matches[i]
 			}
 		}
 		xf.regexps[regexpString] = xformResults
@@ -57,13 +59,24 @@ func (xf *XFormableData) regexpGroupValue(regexpString string, groupName string)
 	return results.capturedNames[groupName]
 }
 
-// RegExpGroupAsString captures the output as a String
-func (xf *XFormableData) RegExpGroupAsString(regexpString string, groupName string) interface{} {
+// RegExpGroup captures the output as a String
+func (xf *XFormableData) RegExpGroup(regexpString string, groupName string) interface{} {
 	value := xf.regexpGroupValue(regexpString, groupName)
 	if value == nil {
 		return ""
 	}
-	return fmt.Sprintf("%v", value)
+	return xf.RegExpGroupAsFormattedString(regexpString, groupName, "%s")
+}
+
+// RegExpGroupAsFormattedString captures the output as a String
+func (xf *XFormableData) RegExpGroupAsFormattedString(regexpString string,
+	groupName string,
+	formatSpecifier string) interface{} {
+	value := xf.regexpGroupValue(regexpString, groupName)
+	if value == nil {
+		return ""
+	}
+	return fmt.Sprintf(formatSpecifier, value)
 }
 
 // RegExpGroupAsJSON captures the output as a JSON blob
