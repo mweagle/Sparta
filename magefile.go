@@ -65,22 +65,15 @@ func goSourceApply(commandParts ...string) error {
 }
 
 func gitCommit(shortVersion bool) (string, error) {
-	shortFlag := ""
+	args := []string{
+		"rev-parse",
+	}
 	if shortVersion {
-		shortFlag = "--short"
+		args = append(args, "--short")
 	}
-	// The first thing we need is the `git` SHA
-	cmd := exec.Command("git", "rev-parse", shortFlag, "HEAD")
-	cmd.Dir = "/Users/mweagle/go/src/github.com/mweagle/Sparta"
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		fmt.Printf("OUTPUT: %s\n", string(stdout.Bytes()))
-		return "", errors.Wrapf(err, "Failed to run `git` command: %s", cmd.String())
-	}
-	return strings.TrimSpace(string(stdout.Bytes())), nil
+	args = append(args, "HEAD")
+	val, valErr := sh.Output("git", args...)
+	return strings.TrimSpace(val), valErr
 }
 
 // EnsureCleanTree ensures that the git tree is clean
