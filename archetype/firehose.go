@@ -16,7 +16,6 @@ import (
 
 	"github.com/Masterminds/sprig"
 	awsEvents "github.com/aws/aws-lambda-go/events"
-	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws/session"
 	sparta "github.com/mweagle/Sparta"
 	"github.com/mweagle/Sparta/archetype/xformer"
@@ -28,10 +27,6 @@ import (
 func dropError() error {
 	return errors.New("KinesisFirehoseDrop")
 }
-
-var (
-	xformError error
-)
 
 // TemplateFileName is the name of the file in the ZIP archive
 const TemplateFileName = "xform.template"
@@ -68,7 +63,7 @@ func NewKinesisFirehoseLambdaTransformer(reactor KinesisFirehoseReactor,
 	timeout time.Duration) (*sparta.LambdaAWSInfo, error) {
 
 	reactorLambda := func(ctx context.Context,
-		kinesisFirehoseEvent awsLambdaEvents.KinesisFirehoseEvent) (interface{}, error) {
+		kinesisFirehoseEvent awsEvents.KinesisFirehoseEvent) (interface{}, error) {
 		// Apply the transform to each record and see
 		// what it says
 
@@ -138,6 +133,8 @@ func NewKinesisFirehoseTransformer(xformFilePath string,
 		if fileInfoErr != nil {
 			return errors.Wrapf(fileInfoErr, "Failed to get fileInfo for Kinesis Firehose transform")
 		}
+		// G304: Potential file inclusion via variable
+		/* #nosec */
 		fileReader, fileReaderErr := os.Open(xformFilePath)
 		if fileReaderErr != nil {
 			return errors.Wrapf(fileReaderErr, "Failed to open Kinesis Firehose transform file")
