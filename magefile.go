@@ -575,15 +575,11 @@ func CompareAgainstMasterBranch() error {
 	// Get the current branch, open a browser
 	// to the change...
 	// The first thing we need is the `git` branch
-	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
+	gitInfo, gitInfoErr := sh.Output("git", "rev-parse", "--abbrev-ref", "HEAD")
+	if gitInfoErr != nil {
+		return gitInfoErr
 	}
-	stdOutResult := strings.TrimSpace(string(stdout.Bytes()))
+	stdOutResult := strings.TrimSpace(gitInfo)
 	githubURL := fmt.Sprintf("https://github.com/mweagle/Sparta/compare/master...%s", stdOutResult)
 	return browser.OpenURL(githubURL)
 }
