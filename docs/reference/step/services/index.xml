@@ -12,6 +12,46 @@
     
     
     <item>
+      <title>Amazon DynamoDb</title>
+      <link>/reference/step/services/dynamodb/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/dynamodb/</guid>
+      <description> TODO: Document Dynamo integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SageMaker</title>
+      <link>/reference/step/services/sagemaker/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sagemaker/</guid>
+      <description> TODO: Document SageMaker integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SNS</title>
+      <link>/reference/step/services/sns/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sns/</guid>
+      <description> TODO: Document SNS integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SQS</title>
+      <link>/reference/step/services/sqs/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sqs/</guid>
+      <description> TODO: Document SQS integration.
+ </description>
+    </item>
+    
+    <item>
       <title>AWS Batch</title>
       <link>/reference/step/services/batch/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
@@ -38,46 +78,6 @@
       
       <guid>/reference/step/services/glue/</guid>
       <description> TODO: Document Glue integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon DynamoDb</title>
-      <link>/reference/step/services/dynamodb/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/dynamodb/</guid>
-      <description> TODO: Document Dynamo integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SNS</title>
-      <link>/reference/step/services/sns/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sns/</guid>
-      <description> TODO: Document SNS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SQS</title>
-      <link>/reference/step/services/sqs/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sqs/</guid>
-      <description> TODO: Document SQS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SageMaker</title>
-      <link>/reference/step/services/sagemaker/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sagemaker/</guid>
-      <description> TODO: Document SageMaker integration.
  </description>
     </item>
     

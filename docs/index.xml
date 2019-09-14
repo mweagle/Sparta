@@ -72,6 +72,46 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
     </item>
     
     <item>
+      <title>Amazon DynamoDb</title>
+      <link>/reference/step/services/dynamodb/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/dynamodb/</guid>
+      <description> TODO: Document Dynamo integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SageMaker</title>
+      <link>/reference/step/services/sagemaker/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sagemaker/</guid>
+      <description> TODO: Document SageMaker integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SNS</title>
+      <link>/reference/step/services/sns/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sns/</guid>
+      <description> TODO: Document SNS integration.
+ </description>
+    </item>
+    
+    <item>
+      <title>Amazon SQS</title>
+      <link>/reference/step/services/sqs/</link>
+      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
+      
+      <guid>/reference/step/services/sqs/</guid>
+      <description> TODO: Document SQS integration.
+ </description>
+    </item>
+    
+    <item>
       <title>AWS Batch</title>
       <link>/reference/step/services/batch/</link>
       <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
@@ -98,46 +138,6 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       
       <guid>/reference/step/services/glue/</guid>
       <description> TODO: Document Glue integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon DynamoDb</title>
-      <link>/reference/step/services/dynamodb/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/dynamodb/</guid>
-      <description> TODO: Document Dynamo integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SNS</title>
-      <link>/reference/step/services/sns/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sns/</guid>
-      <description> TODO: Document SNS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SQS</title>
-      <link>/reference/step/services/sqs/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sqs/</guid>
-      <description> TODO: Document SQS integration.
- </description>
-    </item>
-    
-    <item>
-      <title>Amazon SageMaker</title>
-      <link>/reference/step/services/sagemaker/</link>
-      <pubDate>Mon, 10 Dec 2018 21:45:23 +0000</pubDate>
-      
-      <guid>/reference/step/services/sagemaker/</guid>
-      <description> TODO: Document SageMaker integration.
  </description>
     </item>
     
@@ -192,6 +192,16 @@ import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot;
       <guid>/reference/archetypes/kinesis/</guid>
       <description>To create a Kinesis Stream reactor that subscribes via an EventSourceMapping, use the NewKinesisReactor constructor as in:
 import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, kinesisEvent awsLambdaEvents.KinesisEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: kinesisEvent, }).Info(&amp;quot;Kinesis Event&amp;quot;) return &amp;quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&amp;quot;, nil } func main() { // ... handler := spartaArchetype.KinesisReactorFunc(reactorFunc) lambdaFn, lambdaFnErr := spartaArchetype.NewKinesisReactor(handler, &amp;quot;KINESIS_STREAM_ARN_OR_CLOUDFORMATION_REF_VALUE&amp;quot;, &amp;quot;TRIM_HORIZON&amp;quot;, 10, nil) }  </description>
+    </item>
+    
+    <item>
+      <title>Kinesis Firehose</title>
+      <link>/reference/archetypes/kinesis_firehose/</link>
+      <pubDate>Wed, 28 Nov 2018 20:03:46 +0000</pubDate>
+      
+      <guid>/reference/archetypes/kinesis_firehose/</guid>
+      <description>There are two ways to create a Firehose Transform reactor that transforms a KinesisFirehoseEventRecord with a Lambda function:
+ NewKinesisFirehoseLambdaTransformer  Transform using a Lambda function  NewKinesisFirehoseTransformer  Transform using a go text/template declaration   NewKinesisFirehoseLambdaTransformer import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; spartaArchetype &amp;quot;github.com/mweagle/Sparta/archetype&amp;quot; ) // KinesisStream reactor function func reactorFunc(ctx context.Context, record *awsEvents.KinesisFirehoseEventRecord) (*awsEvents.KinesisFirehoseResponseRecord, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Record&amp;quot;: record, }).Info(&amp;quot;Kinesis Firehose Event&amp;quot;) responseRecord = &amp;amp;awsEvents.</description>
     </item>
     
     <item>
@@ -505,7 +515,7 @@ As this function is only expected to be invoked from the API Gateway, we&amp;rsq
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston 🌍 is on a break! 🌍 (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS. Perhaps due to third party libraries, latency, or storage requirements, the FaaS model isn&amp;rsquo;t an ideal fit.</description>
     </item>
     
     <item>

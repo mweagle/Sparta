@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.56.3"
+	hugoVersion  = "0.58.1"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -65,20 +65,15 @@ func goSourceApply(commandParts ...string) error {
 }
 
 func gitCommit(shortVersion bool) (string, error) {
-	shortFlag := ""
+	args := []string{
+		"rev-parse",
+	}
 	if shortVersion {
-		shortFlag = "--short"
+		args = append(args, "--short")
 	}
-	// The first thing we need is the `git` SHA
-	cmd := exec.Command("git", "rev-parse", shortFlag, "HEAD")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return "", err
-	}
-	return strings.TrimSpace(string(stdout.Bytes())), nil
+	args = append(args, "HEAD")
+	val, valErr := sh.Output("git", args...)
+	return strings.TrimSpace(val), valErr
 }
 
 // EnsureCleanTree ensures that the git tree is clean
@@ -272,7 +267,7 @@ func GenerateBuildInfo() error {
 	// The first thing we need is the `git` SHA
 	gitSHA, gitSHAErr := gitCommit(false)
 	if gitSHAErr != nil {
-		return gitSHAErr
+		return errors.Wrapf(gitSHAErr, "Failed to get git commit SHA")
 	}
 
 	// Super = update the buildinfo data
@@ -419,21 +414,11 @@ func EnsureLint() error {
 
 // EnsureGoFmt ensures that the source is `gofmt -s` is empty
 func EnsureGoFmt() error {
-	cmd := exec.Command("gofmt", "-s", "-d", ".")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
-	}
-	if stdout.String() != "" {
-		if mg.Verbose() {
-			log.Print(stdout.String())
-		}
-		return errors.New("`gofmt -s -d .` found simplification opportunities")
-	}
-	return nil
+
+	ignoreGlobs := append(ignoreSubdirectoryPaths,
+		"CONSTANTS.go",
+		"CONSTANTS_AWSBINARY.go")
+	return spartamage.ApplyToSource("go", ignoreGlobs, "gofmt", "-s", "-d")
 }
 
 // EnsureFormatted ensures that the source code is formatted with goimports
@@ -590,15 +575,11 @@ func CompareAgainstMasterBranch() error {
 	// Get the current branch, open a browser
 	// to the change...
 	// The first thing we need is the `git` branch
-	cmd := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD")
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-	err := cmd.Run()
-	if err != nil {
-		return err
+	gitInfo, gitInfoErr := sh.Output("git", "rev-parse", "--abbrev-ref", "HEAD")
+	if gitInfoErr != nil {
+		return gitInfoErr
 	}
-	stdOutResult := strings.TrimSpace(string(stdout.Bytes()))
+	stdOutResult := strings.TrimSpace(gitInfo)
 	githubURL := fmt.Sprintf("https://github.com/mweagle/Sparta/compare/master...%s", stdOutResult)
 	return browser.OpenURL(githubURL)
 }

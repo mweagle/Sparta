@@ -4,12 +4,11 @@ title: Presentations
 weight: 800
 ---
 
-<img src="/gophers/CouchPotatoGopher.png" width="33%" height="33%">
+{{< figure src="/gophers/CouchPotatoGopher.png" height="300px" width="300px" >}}
 
 ### Slides
 
-  * [Getting Started - February](/presentations/getting-started.html)
-  * [Overview - October 2017](/presentations/overview.html)
+* [Getting Started - February](/presentations/getting-started.html)
+* [Overview - October 2017](/presentations/overview.html)
 
-
-<smallest>Image courtesy of <a href="https://github.com/ashleymcnamara/gophers">Ashley McNamara<a/></smallest>
+#### Image courtesy of [Ashley McNamara](https://github.com/ashleymcnamara/gophers)

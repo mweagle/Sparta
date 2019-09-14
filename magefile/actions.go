@@ -40,12 +40,12 @@ func Script(commands [][]string) error {
 // ApplyToSource is a mage compatible function that applies a
 // command to your source tree
 func ApplyToSource(fileExtension string,
-	ignoredSubdirectories []string,
+	ignoredGlobs []string,
 	commandParts ...string) error {
 	if len(commandParts) <= 0 {
 		return errors.New("applyToSource requires a command to apply to source files")
 	}
-	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension, ignoredSubdirectories)
+	eligibleSourceFiles, eligibleSourceFilesErr := sourceFilesOfType(fileExtension, ignoredGlobs)
 	if eligibleSourceFilesErr != nil {
 		return eligibleSourceFilesErr
 	}
@@ -94,6 +94,15 @@ func SpartaCommand(commandParts ...string) error {
 	}
 	return sh.Run("go",
 		commandArgs...)
+}
+
+// Test runs the tests in verbose mode
+func Test() error {
+	verboseFlag := ""
+	if mg.Verbose() {
+		verboseFlag = "-v"
+	}
+	return sh.Run("go", "test", verboseFlag, ".")
 }
 
 // Provision deploys the given service
