@@ -13,7 +13,7 @@ import (
 
 var (
 	xformTemplateBytes []byte
-	xformError error
+	xformError         error
 )
 
 func init() {
