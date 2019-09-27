@@ -43,471 +43,11 @@ const (
 	StatesNoChoiceMatched StateError = "States.NoChoiceMatched"
 )
 
-/*******************************************************************************
-   ___ ___  __  __ ___  _   ___ ___ ___  ___  _  _ ___
-  / __/ _ \|  \/  | _ \/_\ | _ \_ _/ __|/ _ \| \| / __|
- | (_| (_) | |\/| |  _/ _ \|   /| |\__ \ (_) | .` \__ \
-  \___\___/|_|  |_|_|/_/ \_\_|_\___|___/\___/|_|\_|___/
-
-/******************************************************************************/
-
-// Comparison is the generic comparison operator interface
-type Comparison interface {
-	json.Marshaler
-}
-
-// ChoiceBranch represents a type for a ChoiceState "Choices" entry
-type ChoiceBranch interface {
-	nextState() MachineState
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringEquals
-////////////////////////////////////////////////////////////////////////////////
-
-/**
-
-Validations
-	- JSONPath: https://github.com/NodePrime/jsonpath
-	- Choices lead to existing states
-	- Choice statenames are scoped to same depth
-*/
-
-// StringEquals comparison
-type StringEquals struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable     string
-		StringEquals string
-	}{
-		Variable:     cmp.Variable,
-		StringEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThan
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThan comparison
-type StringLessThan struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable       string
-		StringLessThan string
-	}{
-		Variable:       cmp.Variable,
-		StringLessThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// StringGreaterThan comparison
-type StringGreaterThan struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable          string
-		StringGreaterThan string
-	}{
-		Variable:          cmp.Variable,
-		StringGreaterThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringLessThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// StringLessThanEquals comparison
-type StringLessThanEquals struct {
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringLessThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable             string
-		StringLessThanEquals string
-	}{
-		Variable:             cmp.Variable,
-		StringLessThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// StringGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// StringGreaterThanEquals comparison
-type StringGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    string
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *StringGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                string
-		StringGreaterThanEquals string
-	}{
-		Variable:                cmp.Variable,
-		StringGreaterThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericEquals comparison
-type NumericEquals struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable      string
-		NumericEquals int64
-	}{
-		Variable:      cmp.Variable,
-		NumericEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericLessThan
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericLessThan comparison
-type NumericLessThan struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericLessThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable        string
-		NumericLessThan int64
-	}{
-		Variable:        cmp.Variable,
-		NumericLessThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericGreaterThan comparison
-type NumericGreaterThan struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable           string
-		NumericGreaterThan int64
-	}{
-		Variable:           cmp.Variable,
-		NumericGreaterThan: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericLessThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericLessThanEquals comparison
-type NumericLessThanEquals struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericLessThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable              string
-		NumericLessThanEquals int64
-	}{
-		Variable:              cmp.Variable,
-		NumericLessThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// NumericGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// NumericGreaterThanEquals comparison
-type NumericGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    int64
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *NumericGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                 string
-		NumericGreaterThanEquals int64
-	}{
-		Variable:                 cmp.Variable,
-		NumericGreaterThanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// BooleanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// BooleanEquals comparison
-type BooleanEquals struct {
-	Comparison
-	Variable string
-	Value    interface{}
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *BooleanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable      string
-		BooleanEquals interface{}
-	}{
-		Variable:      cmp.Variable,
-		BooleanEquals: cmp.Value,
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampEquals comparison
-type TimestampEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable        string
-		TimestampEquals string
-	}{
-		Variable:        cmp.Variable,
-		TimestampEquals: cmp.Value.Format(time.RFC3339),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThan
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThan comparison
-type TimestampLessThan struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable          string
-		TimestampLessThan string
-	}{
-		Variable:          cmp.Variable,
-		TimestampLessThan: cmp.Value.Format(time.RFC3339),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThan
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThan comparison
-type TimestampGreaterThan struct {
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThan) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable             string
-		TimestampGreaterThan string
-	}{
-		Variable:             cmp.Variable,
-		TimestampGreaterThan: cmp.Value.Format(time.RFC3339),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampLessThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampLessThanEquals comparison
-type TimestampLessThanEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampLessThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                string
-		TimestampLessThanEquals string
-	}{
-		Variable:                cmp.Variable,
-		TimestampLessThanEquals: cmp.Value.Format(time.RFC3339),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// TimestampGreaterThanEquals
-////////////////////////////////////////////////////////////////////////////////
-
-// TimestampGreaterThanEquals comparison
-type TimestampGreaterThanEquals struct {
-	Comparison
-	Variable string
-	Value    time.Time
-}
-
-// MarshalJSON for custom marshalling
-func (cmp *TimestampGreaterThanEquals) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Variable                   string
-		TimestampGreaterThanEquals string
-	}{
-		Variable:                   cmp.Variable,
-		TimestampGreaterThanEquals: cmp.Value.Format(time.RFC3339),
-	})
-}
-
-/*******************************************************************************
-   ___  ___ ___ ___    _ _____ ___  ___  ___
-  / _ \| _ \ __| _ \  /_\_   _/ _ \| _ \/ __|
- | (_) |  _/ _||   / / _ \| || (_) |   /\__ \
-  \___/|_| |___|_|_\/_/ \_\_| \___/|_|_\|___/
-/******************************************************************************/
-
-////////////////////////////////////////////////////////////////////////////////
-// And
-////////////////////////////////////////////////////////////////////////////////
-
-// And operator
-type And struct {
-	ChoiceBranch
-	Comparison []Comparison
-	Next       MachineState
-}
-
-func (andOperation *And) nextState() MachineState {
-	return andOperation.Next
-}
-
-// MarshalJSON for custom marshalling
-func (andOperation *And) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Comparison []Comparison `json:"And,omitempty"`
-		Next       string       `json:",omitempty"`
-	}{
-		Comparison: andOperation.Comparison,
-		Next:       andOperation.Next.Name(),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Or
-////////////////////////////////////////////////////////////////////////////////
-
-// Or operator
-type Or struct {
-	ChoiceBranch
-	Comparison []Comparison
-	Next       MachineState
-}
-
-func (orOperation *Or) nextState() MachineState {
-	return orOperation.Next
-}
-
-// MarshalJSON for custom marshalling
-func (orOperation *Or) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Comparison []Comparison `json:"Or,omitempty"`
-		Next       string       `json:",omitempty"`
-	}{
-		Comparison: orOperation.Comparison,
-		Next:       orOperation.Next.Name(),
-	})
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Not
-////////////////////////////////////////////////////////////////////////////////
-
-// Not operator
-type Not struct {
-	ChoiceBranch
-	Comparison Comparison
-	Next       MachineState
-}
-
-func (notOperation *Not) nextState() MachineState {
-	return notOperation.Next
-}
-
-// MarshalJSON for custom marshalling
-func (notOperation *Not) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Not  Comparison
-		Next string
-	}{
-		Not:  notOperation.Comparison,
-		Next: notOperation.Next.Name(),
-	})
-}
-
 // MachineState is the base state for all AWS Step function
 type MachineState interface {
 	Name() string
 	nodeID() string
+	enableEndState(bool)
 }
 
 // TransitionState is the generic state according to
@@ -536,6 +76,10 @@ type baseInnerState struct {
 
 func (bis *baseInnerState) nodeID() string {
 	return fmt.Sprintf("%s-%d", bis.name, bis.id)
+}
+
+func (bis *baseInnerState) enableEndState(isEnabled bool) {
+	bis.isEndStateInvalid = !isEnabled
 }
 
 // marshalStateJSON for subclass marshalling of state information
@@ -1209,239 +753,29 @@ func NewWaitDynamicUntilState(stateName string, timestampPath string) *WaitDynam
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// SuccessState
-////////////////////////////////////////////////////////////////////////////////
-
-// SuccessState represents the end of the state machine
-type SuccessState struct {
-	baseInnerState
-}
-
-// Name returns the WaitDelay name
-func (ss *SuccessState) Name() string {
-	return ss.name
-}
-
-// Next sets the step after the wait delay
-func (ss *SuccessState) Next(nextState MachineState) MachineState {
-	ss.next = nextState
-	return ss
-}
-
-// AdjacentStates returns nodes reachable from this node
-func (ss *SuccessState) AdjacentStates() []MachineState {
-	if ss.next == nil {
-		return nil
-	}
-	return []MachineState{ss.next}
-}
-
-// WithComment returns the WaitDelay comment
-func (ss *SuccessState) WithComment(comment string) TransitionState {
-	ss.comment = comment
-	return ss
-}
-
-// WithInputPath returns the TaskState input data selector
-func (ss *SuccessState) WithInputPath(inputPath string) TransitionState {
-	ss.inputPath = inputPath
-	return ss
-}
-
-// WithOutputPath returns the TaskState output data selector
-func (ss *SuccessState) WithOutputPath(outputPath string) TransitionState {
-	ss.outputPath = outputPath
-	return ss
-}
-
-// MarshalJSON for custom marshalling
-func (ss *SuccessState) MarshalJSON() ([]byte, error) {
-	return ss.marshalStateJSON("Succeed", nil)
-}
-
-// NewSuccessState returns a "SuccessState" with the supplied
-// name
-func NewSuccessState(name string) *SuccessState {
-	return &SuccessState{
-		baseInnerState: baseInnerState{
-			name:              name,
-			id:                rand.Int63(),
-			isEndStateInvalid: true,
-		},
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// FailState represents the end of state machine
-type FailState struct {
-	baseInnerState
-	ErrorName string
-	Cause     error
-}
-
-// Name returns the WaitDelay name
-func (fs *FailState) Name() string {
-	return fs.name
-}
-
-// Next sets the step after the wait delay
-func (fs *FailState) Next(nextState MachineState) MachineState {
-	return fs
-}
-
-// AdjacentStates returns nodes reachable from this node
-func (fs *FailState) AdjacentStates() []MachineState {
-	return nil
-}
-
-// WithComment returns the WaitDelay comment
-func (fs *FailState) WithComment(comment string) TransitionState {
-	fs.comment = comment
-	return fs
-}
-
-// WithInputPath returns the TaskState input data selector
-func (fs *FailState) WithInputPath(inputPath string) TransitionState {
-	return fs
-}
-
-// WithOutputPath returns the TaskState output data selector
-func (fs *FailState) WithOutputPath(outputPath string) TransitionState {
-	return fs
-}
-
-// MarshalJSON for custom marshaling
-func (fs *FailState) MarshalJSON() ([]byte, error) {
-	additionalParams := make(map[string]interface{})
-	additionalParams["Error"] = fs.ErrorName
-	if fs.Cause != nil {
-		additionalParams["Cause"] = fs.Cause.Error()
-	}
-	return fs.marshalStateJSON("Fail", additionalParams)
-}
-
-// NewFailState returns a "FailState" with the supplied
-// information
-func NewFailState(failStateName string, errorName string, cause error) *FailState {
-	return &FailState{
-		baseInnerState: baseInnerState{
-			name:              failStateName,
-			id:                rand.Int63(),
-			isEndStateInvalid: true,
-		},
-		ErrorName: errorName,
-		Cause:     cause,
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// ParallelState
-////////////////////////////////////////////////////////////////////////////////
-
-// ParallelState is a synthetic state that executes a lot of independent
-// branches in parallel
-type ParallelState struct {
-	baseInnerState
-	States     StateMachine
-	ResultPath string
-	Retriers   []*TaskRetry
-	Catchers   []*TaskCatch
-}
-
-// WithResultPath is the fluent builder for the result path
-func (ps *ParallelState) WithResultPath(resultPath string) *ParallelState {
-	ps.ResultPath = resultPath
-	return ps
-}
-
-// WithRetriers is the fluent builder for TaskState
-func (ps *ParallelState) WithRetriers(retries ...*TaskRetry) *ParallelState {
-	if ps.Retriers == nil {
-		ps.Retriers = make([]*TaskRetry, 0)
-	}
-	ps.Retriers = append(ps.Retriers, retries...)
-	return ps
-}
-
-// WithCatchers is the fluent builder for TaskState
-func (ps *ParallelState) WithCatchers(catch ...*TaskCatch) *ParallelState {
-	if ps.Catchers == nil {
-		ps.Catchers = make([]*TaskCatch, 0)
-	}
-	ps.Catchers = append(ps.Catchers, catch...)
-	return ps
-}
-
-// Next returns the next state
-func (ps *ParallelState) Next(nextState MachineState) MachineState {
-	ps.next = nextState
-	return nextState
-}
-
-// AdjacentStates returns nodes reachable from this node
-func (ps *ParallelState) AdjacentStates() []MachineState {
-	if ps.next == nil {
-		return nil
-	}
-	return []MachineState{ps.next}
-}
-
-// Name returns the name of this Task state
-func (ps *ParallelState) Name() string {
-	return ps.name
-}
-
-// WithComment returns the TaskState comment
-func (ps *ParallelState) WithComment(comment string) TransitionState {
-	ps.comment = comment
-	return ps
-}
-
-// WithInputPath returns the TaskState input data selector
-func (ps *ParallelState) WithInputPath(inputPath string) TransitionState {
-	ps.inputPath = inputPath
-	return ps
-}
-
-// WithOutputPath returns the TaskState output data selector
-func (ps *ParallelState) WithOutputPath(outputPath string) TransitionState {
-	ps.outputPath = outputPath
-	return ps
-}
-
-// MarshalJSON for custom marshalling
-func (ps *ParallelState) MarshalJSON() ([]byte, error) {
-	/*
-		A state in a Parallel state branch “States” field MUST NOT have a “Next” field that targets a field outside of that “States” field. A state MUST NOT have a “Next” field which matches a state name inside a Parallel state branch’s “States” field unless it is also inside the same “States” field.
-
-		Put another way, states in a branch’s “States” field can transition only to each other, and no state outside of that “States” field can transition into it.
-	*/
-	additionalParams := make(map[string]interface{})
-	if ps.ResultPath != "" {
-		additionalParams["ResultPath"] = ps.ResultPath
-	}
-	if len(ps.Retriers) != 0 {
-		additionalParams["Retry"] = ps.Retriers
-	}
-	if ps.Catchers != nil {
-		additionalParams["Catch"] = ps.Catchers
-	}
-	return ps.marshalStateJSON("Parallel", additionalParams)
-}
-
-// NewParallelState returns a "ParallelState" with the supplied
-// information
-func NewParallelState(parallelStateName string, states StateMachine) *ParallelState {
-	return &ParallelState{
-		baseInnerState: baseInnerState{
-			name: parallelStateName,
-			id:   rand.Int63(),
-		},
-		States: states,
-	}
-}
+/*
+Validate-All": {
+  "Type": "Map",
+  "InputPath": "$.detail",
+  "ItemsPath": "$.shipped",
+  "MaxConcurrency": 0,
+  "Parameters": {
+    "parcel.$": "$$.Map.Item.Value",
+    "courier.$": "$.delivery-partner"
+  },
+  "Iterator": {
+    "StartAt": "Validate",
+    "States": {
+      "Validate": {
+        "Type": "Task",
+        "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ship-val",
+        "End": true
+      }
+    }
+  },
+  "ResultPath": "$.detail.shipped",
+  "End": true
+*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // StateMachine
@@ -1455,6 +789,9 @@ type StateMachine struct {
 	startAt              TransitionState
 	uniqueStates         map[string]MachineState
 	roleArn              gocf.Stringable
+	// internal flag to suppress the automatic "End" property
+	// from being serialized for Map states
+	disableEndState bool
 }
 
 //Comment sets the StateMachine comment
@@ -1520,10 +857,38 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 
 		lambdaFunctionResourceNames := []string{}
 		for _, eachState := range sm.uniqueStates {
-			taskState, taskStateOk := eachState.(*LambdaTaskState)
-			if taskStateOk {
-				lambdaFunctionResourceNames = append(lambdaFunctionResourceNames,
-					taskState.lambdaLogicalResourceName)
+			switch taskState := eachState.(type) {
+			case *LambdaTaskState:
+				{
+					lambdaFunctionResourceNames = append(lambdaFunctionResourceNames,
+						taskState.lambdaLogicalResourceName)
+				}
+			case *MapState:
+				{
+					for _, eachUniqueState := range taskState.States.uniqueStates {
+						switch typedMapState := eachUniqueState.(type) {
+						case *LambdaTaskState:
+							{
+								lambdaFunctionResourceNames = append(lambdaFunctionResourceNames,
+									typedMapState.lambdaLogicalResourceName)
+							}
+						}
+					}
+				}
+			case *ParallelState:
+				{
+					for _, eachBranch := range taskState.Branches {
+						for _, eachUniqueState := range eachBranch.uniqueStates {
+							switch typedParallelState := eachUniqueState.(type) {
+							case *LambdaTaskState:
+								{
+									lambdaFunctionResourceNames = append(lambdaFunctionResourceNames,
+										typedParallelState.lambdaLogicalResourceName)
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -1621,7 +986,7 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 		Comment: sm.comment,
 		StartAt: sm.startAt.Name(),
 		States:  sm.uniqueStates,
-		End:     len(sm.uniqueStates) == 1,
+		End:     (len(sm.uniqueStates) == 1) && !sm.disableEndState,
 	})
 }
 
