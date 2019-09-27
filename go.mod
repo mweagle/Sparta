@@ -42,7 +42,7 @@ require (
 	github.com/kr/pty v1.1.8 // indirect
 	github.com/leodido/go-urn v1.1.0 // indirect
 	github.com/lib/pq v1.2.0 // indirect
-	github.com/magefile/mage v1.8.0
+	github.com/magefile/mage v1.9.0
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
