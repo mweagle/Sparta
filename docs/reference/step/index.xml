@@ -28,7 +28,7 @@ Lambda Functions The first step is to define the core Lambda function Task that 
       
       <guid>/reference/step/fargate/</guid>
       <description>Teaching people to do serverless is hard. It&amp;#39;s far less about teaching someone about FaaS and far more about getting people into the right mindset. It is not about technology, or at least, it&amp;#39;s not about doing technology
-&amp;mdash; Paul Johnston 🌍 is on a break! 🌍 (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS.</description>
+&amp;mdash; Paul Johnston (@PaulDJohnston) December 13, 2018  While Serverless and FaaS are often used interchangeably, there are types of workloads that are more challenging to move to FaaS. Perhaps due to third party libraries, latency, or storage requirements, the FaaS model isn&amp;rsquo;t an ideal fit.</description>
     </item>
     
   </channel>
