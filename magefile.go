@@ -85,6 +85,7 @@ func gitCommit(shortVersion bool) (string, error) {
 func EnsureCleanTree() error {
 	cleanTreeScript := [][]string{
 		// No dirty trees
+		{"git", "status"},
 		{"git", "diff", "--exit-code"},
 	}
 	return spartamage.Script(cleanTreeScript)
