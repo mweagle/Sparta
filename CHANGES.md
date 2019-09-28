@@ -1,6 +1,6 @@
 # Change Notes
 
-## v1.12.0 - The Cartography Edition 🗺
+## v1.12.0 - The Mapping Edition 🗺
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
