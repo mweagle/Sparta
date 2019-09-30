@@ -65,12 +65,14 @@ func goSourceApply(commandParts ...string) error {
 }
 
 func gitCommit(shortVersion bool) (string, error) {
-	shortFlag := ""
-	if shortVersion {
-		shortFlag = "--short"
-	}
 	// The first thing we need is the `git` SHA
-	cmd := exec.Command("git", "rev-parse", shortFlag, "HEAD")
+	args := []string{"rev-parse"}
+	if shortVersion {
+		args = append(args, "--short")
+	}
+	args = append(args, "HEAD")
+	cmd := exec.Command("git", args...)
+	spartamage.Log("Executing command: `%s`", cmd.String())
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
