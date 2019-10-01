@@ -8,7 +8,7 @@ require (
 	github.com/Netflix/go-expect v0.0.0-20180928190340-9d1f4485533b // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.13.2
-	github.com/aws/aws-sdk-go v1.25.0
+	github.com/aws/aws-sdk-go v1.25.2
 	github.com/aws/aws-xray-sdk-go v0.9.4
 	github.com/briandowns/spinner v1.7.0
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575 // indirect
@@ -28,7 +28,7 @@ require (
 	github.com/go-playground/universal-translator v0.16.0 // indirect
 	github.com/golang/groupcache v0.0.0-20190702054246-869f871628b6 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/google/pprof v0.0.0-20190908185732-236ed259b199
+	github.com/google/pprof v0.0.0-20190930153522-6ce02741cba3
 	github.com/grpc-ecosystem/grpc-gateway v1.9.5 // indirect
 	github.com/hashicorp/golang-lru v0.5.3 // indirect
 	github.com/hinshun/vt10x v0.0.0-20180809195222-d55458df857c // indirect
@@ -44,6 +44,7 @@ require (
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/magefile/mage v1.9.0
 	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.9 // indirect
 	github.com/mholt/archiver v3.1.1+incompatible
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
@@ -84,7 +85,7 @@ require (
 	golang.org/x/tools v0.0.0-20190726230722-1bd56024c620 // indirect
 	google.golang.org/grpc v1.22.1 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.29.1
+	gopkg.in/go-playground/validator.v9 v9.30.0
 	gopkg.in/urfave/cli.v1 v1.20.0 // indirect
 	honnef.co/go/tools v0.0.0-20190622161425-0d05180ad8c0 // indirect
 )
