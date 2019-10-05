@@ -8,7 +8,7 @@ require (
 	github.com/Netflix/go-expect v0.0.0-20180928190340-9d1f4485533b // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.13.2
-	github.com/aws/aws-sdk-go v1.25.2
+	github.com/aws/aws-sdk-go v1.25.6
 	github.com/aws/aws-xray-sdk-go v0.9.4
 	github.com/briandowns/spinner v1.7.0
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575 // indirect
@@ -64,7 +64,7 @@ require (
 	github.com/rogpeppe/fastuuid v1.2.0 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/securego/gosec v0.0.0-20190709033609-4b59c948083c // indirect
-	github.com/shirou/gopsutil v2.18.12+incompatible
+	github.com/shirou/gopsutil v2.19.9+incompatible
 	github.com/shirou/w32 v0.0.0-20160930032740-bb4de0191aa4 // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/afero v1.2.2 // indirect
@@ -81,7 +81,7 @@ require (
 	golang.org/x/image v0.0.0-20190703141733-d6a02ce849c9 // indirect
 	golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028 // indirect
 	golang.org/x/net v0.0.0-20190724013045-ca1201d0de80 // indirect
-	golang.org/x/sys v0.0.0-20190927073244-c990c680b611 // indirect
+	golang.org/x/sys v0.0.0-20191003212358-c178f38b412c // indirect
 	golang.org/x/tools v0.0.0-20190726230722-1bd56024c620 // indirect
 	google.golang.org/grpc v1.22.1 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
