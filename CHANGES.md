@@ -10,6 +10,15 @@
 - :bug: **FIXED**
   - Fixed latent issue in [step.ParallelState](https://godoc.org/github.com/mweagle/Sparta/aws/step#ParallelState) that prevented `Branches` field from being properly marshaled.
 
+## v1.11.0 - The Firehose Edition 🚒
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+  - Added [archetype.NewKinesisFirehoseTransformer](https://godoc.org/github.com/mweagle/Sparta/archetype#NewKinesisFirehoseTransformer) and [archetype.NewKinesisFirehoseLambdaTransformer](https://godoc.org/github.com/mweagle/Sparta/archetype#NewKinesisFirehoseLambdaTransformer) to support Kinesis Firehose Lambda Transforms
+    - See the [documentation](http://gosparta.io/reference/archetypes/kinesis_firehose/) for more details
+    - Also the corresponding sample application at the [SpartaXForm repo](https://github.com/mweagle/SpartaXForm).
+- :bug: **FIXED**
+
 ## v1.10.0 - The Load Balancer Edition ⚖️
 
 - :warning: **BREAKING**
