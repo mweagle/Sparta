@@ -119,3 +119,104 @@ func TestDynamoDB(t *testing.T) {
 	}
 	t.Logf("JSON DATA:\n%s", string(stateJSON))
 }
+
+func createDataLambda(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+
+	return map[string]interface{}{
+		"ship-date": "2016-03-14T01:59:00Z",
+		"detail": map[string]interface{}{
+			"delivery-partner": "UQS",
+			"shipped": []map[string]interface{}{
+				{
+					"prod":      "R31",
+					"dest-code": 9511,
+					"quantity":  1344,
+				},
+				{
+					"prod":      "S39",
+					"dest-code": 9511,
+					"quantity":  40,
+				},
+				{
+					"prod":      "R31",
+					"dest-code": 9833,
+					"quantity":  12,
+				},
+				{
+					"prod":      "R40",
+					"dest-code": 9860,
+					"quantity":  887,
+				},
+				{
+					"prod":      "R40",
+					"dest-code": 9511,
+					"quantity":  1220,
+				},
+			},
+		},
+	}, nil
+}
+
+// Standard AWS λ function
+func applyCallback(ctx context.Context,
+	props map[string]interface{}) (map[string]interface{}, error) {
+	return map[string]interface{}{
+		"Message": "Hello",
+		"Event":   props,
+	}, nil
+}
+
+func TestMapState(t *testing.T) {
+	// Make the Map state
+	lambdaMapFn, _ := sparta.NewAWSLambda("mapLambdaCallback",
+		applyCallback,
+		sparta.IAMRoleDefinition{})
+	lambdaMapTaskState := NewLambdaTaskState("lambdaMapData", lambdaMapFn)
+	mapMachine := NewStateMachine("mapStateName", lambdaMapTaskState)
+	mapState := NewMapState("mapResults", mapMachine)
+	successState := NewSuccessState("success")
+	mapState.Next(successState)
+
+	// Then the start state to produce some data
+	lambdaProducerFn, _ := sparta.NewAWSLambda("produceData",
+		createDataLambda,
+		sparta.IAMRoleDefinition{})
+	lambdaProducerTaskState := NewLambdaTaskState("lambdaProduceData", lambdaProducerFn)
+
+	// Hook up the transitions
+	stateMachineName := spartaCF.UserScopedStackName("TestMapStateMachine")
+	lambdaProducerTaskState.Next(mapState)
+	stateMachine := NewStateMachine(stateMachineName, lambdaProducerTaskState)
+	// Startup the machine.
+	testStepProvision(t,
+		[]*sparta.LambdaAWSInfo{lambdaMapFn, lambdaProducerFn},
+		stateMachine)
+}
+
+func TestParallelState(t *testing.T) {
+	// Make the Map state
+	lambdaMapFn, _ := sparta.NewAWSLambda("parallelLambdaCallback",
+		applyCallback,
+		sparta.IAMRoleDefinition{})
+	lambdaMapTaskState := NewLambdaTaskState("lambdaMapData", lambdaMapFn)
+	parallelMachine := NewStateMachine("mapStateName", lambdaMapTaskState)
+	parallelState := NewParallelState("mapResults", parallelMachine)
+	successState := NewSuccessState("success")
+	parallelState.Next(successState)
+
+	// Then the start state to produce some data
+	lambdaProducerFn, _ := sparta.NewAWSLambda("produceData",
+		createDataLambda,
+		sparta.IAMRoleDefinition{})
+	lambdaProducerTaskState := NewLambdaTaskState("lambdaProduceData", lambdaProducerFn)
+
+	// Hook up the transitions
+	stateMachineName := spartaCF.UserScopedStackName("TestParallelStateMachine")
+	lambdaProducerTaskState.Next(parallelState)
+	stateMachine := NewStateMachine(stateMachineName, lambdaProducerTaskState)
+	// Startup the machine.
+	testStepProvision(t,
+		[]*sparta.LambdaAWSInfo{lambdaMapFn, lambdaProducerFn},
+		stateMachine)
+}

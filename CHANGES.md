@@ -1,13 +1,14 @@
 # Change Notes
 
-## v1.11.0 - The Firehose Edition 🚒
+## v1.12.0 - The Mapping Edition 🗺
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
-  - Added [archetype.NewKinesisFirehoseTransformer](https://godoc.org/github.com/mweagle/Sparta/archetype#NewKinesisFirehoseTransformer) and [archetype.NewKinesisFirehoseLambdaTransformer](https://godoc.org/github.com/mweagle/Sparta/archetype#NewKinesisFirehoseLambdaTransformer) to support Kinesis Firehose Lambda Transforms
-    - See the [documentation](http://gosparta.io/reference/archetypes/kinesis_firehose/) for more details
-    - Also the corresponding sample application at the [SpartaXForm repo](https://github.com/mweagle/SpartaXForm).
+  - Added [step.MapState](https://godoc.org/github.com/mweagle/Sparta/aws/step#MapState) to support creating AWS Step functions that support the new [Map State](https://states-language.net/spec.html#map-state)
+    - See the [blog post](https://aws.amazon.com/blogs/aws/new-step-functions-support-for-dynamic-parallelism/) for more details
+    - Also the corresponding sample application in the [Sparta Step](https://github.com/mweagle/SpartaStep/blob/master/parallel/main.go) project.
 - :bug: **FIXED**
+  - Fixed latent issue in [step.ParallelState](https://godoc.org/github.com/mweagle/Sparta/aws/step#ParallelState) that prevented `Branches` field from being properly marshaled.
 
 ## v1.10.0 - The Load Balancer Edition ⚖️
 

@@ -1,7 +1,7 @@
 language: go
 go:
   # https://twitter.com/dgryski/status/964626204488695808
-  - "1.13"
+  - "1.13.1"
 before_install:
   - ./prerequisites.sh
   - go build .
