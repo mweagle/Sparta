@@ -9,16 +9,19 @@ import (
 
 var header = strings.Repeat("-", 80)
 
-func sourceFilesOfType(extension string, ignoredSubdirectories []string) ([]string, error) {
+func sourceFilesOfType(extension string, ignoreGlobs []string) ([]string, error) {
 	testExtension := strings.TrimPrefix(extension, ".")
 	testExtension = fmt.Sprintf(".%s", testExtension)
 
 	files := make([]string, 0)
 	walker := func(path string, info os.FileInfo, err error) error {
 		contains := false
-		for _, eachComponent := range ignoredSubdirectories {
-			contains = strings.Contains(path, eachComponent)
-			if contains {
+		for _, eachComponent := range ignoreGlobs {
+			matched, matchErr := filepath.Match(eachComponent, path)
+			if matchErr != nil {
+				return nil
+			}
+			if matched {
 				break
 			}
 		}

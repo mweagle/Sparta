@@ -1,0 +1,8 @@
+{{if eq (.Record.Data.JMESPathAsString "sector") "TECHNOLOGY"}}
+{   
+    "region" : "{{ .Record.KinesisEventHeader.Region }}",
+    "ticker_symbol" : {{ .Record.Data.JMESPath "ticker_symbol"}}
+}
+{{else}} 
+{{ KinesisFirehoseDrop }}
+{{end}}
