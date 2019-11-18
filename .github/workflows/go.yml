@@ -3,7 +3,11 @@ on: [push]
 jobs:
   build:
     name: CI
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [1.13.4]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
     env:
       GO111MODULE: on
       S3_BUCKET: weagle
@@ -15,7 +19,7 @@ jobs:
       - name: Set up Go 1.13
         uses: actions/setup-go@v1
         with:
-          go-version: 1.13.4
+          go-version: ${{ matrix.go-version }}
         id: go
 
       - name: Check out code into the Go module directory
