@@ -339,35 +339,35 @@ func GenerateConstants() error {
 // InstallBuildRequirements installs or updates the dependent
 // packages that aren't referenced by the source, but are needed
 // to build the Sparta source
-func InstallBuildRequirements() error {
-	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
+// func InstallBuildRequirements() error {
+// 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
 
-	requirements := []string{
-		"honnef.co/go/tools/cmd/...",
-		"golang.org/x/tools/cmd/goimports",
-		"github.com/fzipp/gocyclo",
-		"golang.org/x/lint/golint",
-		"github.com/mjibson/esc",
-		"github.com/securego/gosec/cmd/gosec",
-		"github.com/alexkohler/prealloc",
-		"github.com/client9/misspell/cmd/misspell",
-	}
-	envMap := map[string]string{
-		"GO111MODULE": "off",
-	}
-	for _, eachDep := range requirements {
+// 	requirements := []string{
+// 		"honnef.co/go/tools/cmd/...",
+// 		"golang.org/x/tools/cmd/goimports",
+// 		"github.com/fzipp/gocyclo",
+// 		"golang.org/x/lint/golint",
+// 		"github.com/mjibson/esc",
+// 		"github.com/securego/gosec/cmd/gosec",
+// 		"github.com/alexkohler/prealloc",
+// 		"github.com/client9/misspell/cmd/misspell",
+// 	}
+// 	envMap := map[string]string{
+// 		"GO111MODULE": "off",
+// 	}
+// 	for _, eachDep := range requirements {
 
-		cmdErr := sh.RunWith(envMap,
-			"go",
-			"get",
-			os.Getenv("GO_GET_FLAG"),
-			eachDep)
-		if cmdErr != nil {
-			return cmdErr
-		}
-	}
-	return nil
-}
+// 		cmdErr := sh.RunWith(envMap,
+// 			"go",
+// 			"get",
+// 			os.Getenv("GO_GET_FLAG"),
+// 			eachDep)
+// 		if cmdErr != nil {
+// 			return cmdErr
+// 		}
+// 	}
+// 	return nil
+// }
 
 // EnsurePrealloc ensures that slices that could be preallocated are enforced
 func EnsurePrealloc() error {
@@ -469,7 +469,6 @@ func LogCodeMetrics() error {
 // precondition steps
 func EnsureAllPreconditions() error {
 	mg.SerialDeps(
-		InstallBuildRequirements,
 		EnsureVet,
 		EnsureLint,
 		EnsureGoFmt,
@@ -484,8 +483,6 @@ func EnsureAllPreconditions() error {
 // EnsureTravisBuildEnvironment is the command that sets up the Travis
 // environment to run the build.
 func EnsureTravisBuildEnvironment() error {
-	mg.SerialDeps(InstallBuildRequirements)
-
 	// Super run some commands
 	travisComands := [][]string{
 		{"go", "version"},
