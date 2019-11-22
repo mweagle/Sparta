@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.58.1"
+	hugoVersion  = "0.59.1"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -259,6 +259,26 @@ func DocsEdit() error {
 // END - DOCUMENTATION
 ////////////////////////////////////////////////////////////////////////////////
 
+// GenerateAutomaticCode is the handler that runs the codegen part of things
+func GenerateAutomaticCode() error {
+	// First one is the embedded metric format
+	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html
+
+	args := []string{"aws/cloudwatch/emf/emf.schema.json",
+		"--capitalization", 
+		"AWS",
+		"--output",
+		"aws/cloudwatch/emf/emf.go",
+		"--package",
+		"emf",
+	}
+	if mg.Verbose(){
+		args = append(args, "--verbose")
+	}
+
+	return sh.Run("gojsonschema", args...)
+}
+
 // GenerateBuildInfo creates the automatic buildinfo.go file so that we can
 // stamp the SHA into the binaries we build...
 func GenerateBuildInfo() error {
@@ -335,39 +355,6 @@ func GenerateConstants() error {
 	}
 	return spartamage.Script(generateCommands)
 }
-
-// InstallBuildRequirements installs or updates the dependent
-// packages that aren't referenced by the source, but are needed
-// to build the Sparta source
-// func InstallBuildRequirements() error {
-// 	spartamage.Log("`go get` update flags (env.GO_GET_FLAG): %s", os.Getenv("GO_GET_FLAG"))
-
-// 	requirements := []string{
-// 		"honnef.co/go/tools/cmd/...",
-// 		"golang.org/x/tools/cmd/goimports",
-// 		"github.com/fzipp/gocyclo",
-// 		"golang.org/x/lint/golint",
-// 		"github.com/mjibson/esc",
-// 		"github.com/securego/gosec/cmd/gosec",
-// 		"github.com/alexkohler/prealloc",
-// 		"github.com/client9/misspell/cmd/misspell",
-// 	}
-// 	envMap := map[string]string{
-// 		"GO111MODULE": "off",
-// 	}
-// 	for _, eachDep := range requirements {
-
-// 		cmdErr := sh.RunWith(envMap,
-// 			"go",
-// 			"get",
-// 			os.Getenv("GO_GET_FLAG"),
-// 			eachDep)
-// 		if cmdErr != nil {
-// 			return cmdErr
-// 		}
-// 	}
-// 	return nil
-// }
 
 // EnsurePrealloc ensures that slices that could be preallocated are enforced
 func EnsurePrealloc() error {
