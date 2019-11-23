@@ -90,7 +90,6 @@ const (
 
 // EmbeddedMetric represents an embedded metric that should be published
 type EmbeddedMetric struct {
-	namespace  string
 	metrics    []*MetricDirective
 	properties map[string]interface{}
 }

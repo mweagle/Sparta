@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+//lint:ignore U1000 because it's actually used
 type emf struct {
 	// AWS corresponds to the JSON schema field "_aws".
 	AWS emfAWS `json:"_aws"`
@@ -114,6 +115,7 @@ func (j *emf) UnmarshalJSON(b []byte) error {
 	if v, ok := raw["_aws"]; !ok || v == nil {
 		return fmt.Errorf("field _aws: required")
 	}
+	//lint:ignore U1000 because it's actually used
 	type Plain emf
 	var plain Plain
 	if err := json.Unmarshal(b, &plain); err != nil {
