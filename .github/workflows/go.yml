@@ -1,4 +1,4 @@
-name: Sparta Build
+name: Sparta_Build
 on: [push]
 jobs:
   build:
