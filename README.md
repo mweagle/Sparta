@@ -3,7 +3,7 @@
 
 # Sparta <p align="center">
 
-![Build Status](https://github.com/mweagle/Sparta/workflows/go.yml/badge.svg)
+![Build Status](https://github.com/mweagle/Sparta/workflows/.github/workflows/go.yml/badge.svg)
 
 [![GoDoc](https://godoc.org/github.com/mweagle/Sparta?status.svg)](https://godoc.org/github.com/mweagle/Sparta)
 
