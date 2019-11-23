@@ -126,6 +126,15 @@ func (em *EmbeddedMetric) NewMetricDirective(namespace string) *MetricDirective 
 
 // Publish the metric to the logfile
 func (em *EmbeddedMetric) Publish(additionalProperties map[string]interface{}) {
+	// BEGIN - Preconditions
+	for _, eachDirective := range em.metrics {
+		// Precondition...
+		if len(eachDirective.Dimensions) > 9 {
+			fmt.Printf("DimensionSet for structured metric must not have more than 9 elements. Count: %d",
+				len(eachDirective.Dimensions))
+		}
+	}
+	// END - Preconditions
 	em.properties = additionalProperties
 	rawJSON, rawJSONErr := json.Marshal(em)
 	if rawJSONErr == nil {
