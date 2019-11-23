@@ -264,13 +264,15 @@ func GenerateAutomaticCode() error {
 	// First one is the embedded metric format
 	// https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html
 
-	args := []string{"aws/cloudwatch/emf/emf.schema.json",
+	args := []string{"aws/cloudwatch/emf.schema.json",
 		"--capitalization", 
 		"AWS",
-		"--output",
-		"aws/cloudwatch/emf/emf.go",
-		"--package",
+		"--capitalization",
 		"emf",
+		"--output",
+		"aws/cloudwatch/emf.go",
+		"--package",
+		"cloudwatch",
 	}
 	if mg.Verbose(){
 		args = append(args, "--verbose")
