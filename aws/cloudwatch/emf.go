@@ -2,8 +2,10 @@
 
 package cloudwatch
 
-import "fmt"
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type emf struct {
 	// AWS corresponds to the JSON schema field "_aws".

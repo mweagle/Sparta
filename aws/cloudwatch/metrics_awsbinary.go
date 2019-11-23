@@ -18,66 +18,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// MetricUnit Represents a MetricUnit type
-type MetricUnit string
-
-const (
-	// UnitSeconds Seconds
-	UnitSeconds MetricUnit = "Seconds"
-	// UnitMicroseconds Microseconds
-	UnitMicroseconds MetricUnit = "Microseconds"
-	// UnitMilliseconds Milliseconds
-	UnitMilliseconds MetricUnit = "Milliseconds"
-	// UnitBytes Bytes
-	UnitBytes MetricUnit = "Bytes"
-	//UnitKilobytes Kilobytes
-	UnitKilobytes MetricUnit = "Kilobytes"
-	//UnitMegabytes Megabytes
-	UnitMegabytes MetricUnit = "Megabytes"
-	//UnitGigabytes Gigabytes
-	UnitGigabytes MetricUnit = "Gigabytes"
-	//UnitTerabytes Terabytes
-	UnitTerabytes MetricUnit = "Terabytes"
-	//UnitBits Bits
-	UnitBits MetricUnit = "Bits"
-	//UnitKilobits Kilobits
-	UnitKilobits MetricUnit = "Kilobits"
-	//UnitMegabits Megabits
-	UnitMegabits MetricUnit = "Megabits"
-	//UnitGigabits Gigabits
-	UnitGigabits MetricUnit = "Gigabits"
-	//UnitTerabits Terabits
-	UnitTerabits MetricUnit = "Terabits"
-	//UnitPercent Percent
-	UnitPercent MetricUnit = "Percent"
-	//UnitCount Count
-	UnitCount MetricUnit = "Count"
-	//UnitBytesPerSecond BytesPerSecond
-	UnitBytesPerSecond MetricUnit = "Bytes/Second"
-	//UnitKilobytesPerSecond KilobytesPerSecond
-	UnitKilobytesPerSecond MetricUnit = "Kilobytes/Second"
-	//UnitMegabytesPerSecond MegabytesPerSecond
-	UnitMegabytesPerSecond MetricUnit = "Megabytes/Second"
-	//UnitGigabytesPerSecond GigabytesPerSecond
-	UnitGigabytesPerSecond MetricUnit = "Gigabytes/Second"
-	//UnitTerabytesPerSecond TerabytesPerSecond
-	UnitTerabytesPerSecond MetricUnit = "Terabytes/Second"
-	//UnitBitsPerSecond BitsPerSecond
-	UnitBitsPerSecond MetricUnit = "Bits/Second"
-	//UnitKilobitsPerSecond KilobitsPerSecond
-	UnitKilobitsPerSecond MetricUnit = "Kilobits/Second"
-	//UnitMegabitsPerSecond MegabitsPerSecond
-	UnitMegabitsPerSecond MetricUnit = "Megabits/Second"
-	//UnitGigabitsPerSecond GigabitsPerSecond
-	UnitGigabitsPerSecond MetricUnit = "Gigabits/Second"
-	//UnitTerabitsPerSecond TerabitsPerSecond
-	UnitTerabitsPerSecond MetricUnit = "Terabits/Second"
-	//UnitCountPerSecond CountPerSecond
-	UnitCountPerSecond MetricUnit = "Count/Second"
-	// UnitNone No units
-	UnitNone MetricUnit = "None"
-)
-
 // publishMetrics is the actual metric publishing logic. T
 func publishMetrics(customDimensionMap map[string]string) {
 	currentTime := time.Now()
