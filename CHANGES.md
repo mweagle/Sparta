@@ -1,5 +1,30 @@
 # Change Notes
 
+## v1.13.0 - The pre:Invent Edition 🗓
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+
+  - Added [cloudwatch.EmbeddedMetric](https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatch#EmbeddedMetric) to support publishing CloudWatch [Embedded Metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html) via logs
+
+    - See the [announcement](https://aws.amazon.com/about-aws/whats-new/2019/11/amazon-cloudwatch-launches-embedded-metric-format/) for more details
+    - Also the corresponding sample application in the [SpartaEMF](https://github.com/mweagle/SpartaEMF) project.
+    - Usage:
+
+      ```go
+      metricDirective := emMetric.NewMetricDirective("SpecialNamespace",
+        map[string]string{"functionVersion": os.Getenv("AWS_LAMBDA_FUNCTION_VERSION")})
+
+      metricDirective.Metrics["invocations"] = cloudwatch.MetricValue{
+        Unit:  cloudwatch.UnitCount,
+        Value: 1,
+      }
+      emMetric.Publish(nil)
+      ```
+
+- :bug: **FIXED**
+  - [Set executable bit on Sparta binary in ZIP archive](https://github.com/mweagle/Sparta/issues/158)
+
 ## v1.12.0 - The Mapping Edition 🗺
 
 - :warning: **BREAKING**
