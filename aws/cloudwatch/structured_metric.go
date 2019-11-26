@@ -88,12 +88,6 @@ const (
 	UnitNone MetricUnit = "None"
 )
 
-// EmbeddedMetric represents an embedded metric that should be published
-type EmbeddedMetric struct {
-	metrics    []*MetricDirective
-	properties map[string]interface{}
-}
-
 // MetricValue represents a metric value
 type MetricValue struct {
 	Value interface{}
@@ -112,13 +106,33 @@ type MetricDirective struct {
 	namespace string
 }
 
+// EmbeddedMetric represents an embedded metric that should be published
+type EmbeddedMetric struct {
+	metrics    []*MetricDirective
+	properties map[string]interface{}
+}
+
+// WithProperty is a fluent builder to add property to the EmbeddedMetric state.
+// Properties should be used for high cardintality values that need to be
+// searchable, but not treated as independent metrics
+func (em *EmbeddedMetric) WithProperty(key string, value interface{}) *EmbeddedMetric {
+	if em.properties == nil {
+		em.properties = make(map[string]interface{})
+	}
+	em.properties[key] = value
+	return em
+}
+
 // NewMetricDirective returns an initialized MetricDirective
 // that's included in the EmbeddedMetric instance
-func (em *EmbeddedMetric) NewMetricDirective(namespace string) *MetricDirective {
+func (em *EmbeddedMetric) NewMetricDirective(namespace string, dimensions map[string]string) *MetricDirective {
 	md := &MetricDirective{
 		namespace:  namespace,
-		Dimensions: make(map[string]string),
+		Dimensions: dimensions,
 		Metrics:    make(map[string]MetricValue),
+	}
+	if md.Dimensions == nil {
+		md.Dimensions = make(map[string]string)
 	}
 	em.metrics = append(em.metrics, md)
 	return md
@@ -135,7 +149,9 @@ func (em *EmbeddedMetric) Publish(additionalProperties map[string]interface{}) {
 		}
 	}
 	// END - Preconditions
-	em.properties = additionalProperties
+	for eachKey, eachValue := range additionalProperties {
+		em = em.WithProperty(eachKey, eachValue)
+	}
 	rawJSON, rawJSONErr := json.Marshal(em)
 	if rawJSONErr == nil {
 		fmt.Println((string)(rawJSON))
@@ -203,6 +219,19 @@ func NewEmbeddedMetric() (*EmbeddedMetric, error) {
 	embeddedMetric := &EmbeddedMetric{
 		metrics:    []*MetricDirective{},
 		properties: make(map[string]interface{}),
+	}
+	return embeddedMetric, nil
+}
+
+// NewEmbeddedMetricWithProperties returns an EmbeddedMetric with the
+// user supplied properties
+func NewEmbeddedMetricWithProperties(props map[string]interface{}) (*EmbeddedMetric, error) {
+	embeddedMetric := &EmbeddedMetric{
+		metrics:    []*MetricDirective{},
+		properties: props,
+	}
+	if embeddedMetric.properties == nil {
+		embeddedMetric.properties = make(map[string]interface{})
 	}
 	return embeddedMetric, nil
 }
