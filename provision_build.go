@@ -864,17 +864,18 @@ func createPackageStep() workflowStep {
 			return nil, archiveErr
 		}
 		// Issue: https://github.com/mweagle/Sparta/issues/103. If the executable
-		// bit isn't set, then AWS Lambda won't be able to fork the binary
-		var fileHeaderAnnotator spartaZip.FileHeaderAnnotator
-		if runtime.GOOS == "windows" {
-			fileHeaderAnnotator = func(header *zip.FileHeader) (*zip.FileHeader, error) {
-				// Make the binary executable
-				// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
-				header.CreatorVersion = 3 << 8
-				header.ExternalAttrs = 0777 << 16
-				return header, nil
-			}
+		// bit isn't set, then AWS Lambda won't be able to fork the binary. This tends
+		// to be set properly on a mac/linux os, but not on others. So pre-emptively
+		// always set the bit.
+		// Ref: https://github.com/mweagle/Sparta/issues/158
+		fileHeaderAnnotator := func(header *zip.FileHeader) (*zip.FileHeader, error) {
+			// Make the binary executable
+			// Ref: https://github.com/aws/aws-lambda-go/blob/master/cmd/build-lambda-zip/main.go#L51
+			header.CreatorVersion = 3 << 8
+			header.ExternalAttrs = 0777 << 16
+			return header, nil
 		}
+
 		// File info for the binary executable
 		readerErr := spartaZip.AnnotateAddToZip(lambdaArchive,
 			ctx.context.binaryName,
