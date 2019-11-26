@@ -69,6 +69,8 @@ github.com/aws/aws-sdk-go v1.25.36 h1:4+TL/Y2G5hsR1zdfHmjNG1ou1WEqsSWk8v7m1GaDKy
 github.com/aws/aws-sdk-go v1.25.36/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-sdk-go v1.25.41 h1:/hj7nZ0586wFqpwjNpzWiUTwtaMgxAZNZKHay80MdXw=
 github.com/aws/aws-sdk-go v1.25.41/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
+github.com/aws/aws-sdk-go v1.25.42 h1:TTsk8HoF5sIq/i5jTjHmY2t3g+b6EiAyiolw7p50UBY=
+github.com/aws/aws-sdk-go v1.25.42/go.mod h1:KmX6BPdI08NWTb3/sm4ZGu5ShLoqVDhKgpiN924inxo=
 github.com/aws/aws-xray-sdk-go v0.9.4 h1:3mtFCrgFR5IefmWFV5pscHp9TTyOWuqaIKJIY0d1Y4g=
 github.com/aws/aws-xray-sdk-go v0.9.4/go.mod h1:XtMKdBQfpVut+tJEwI7+dJFRxxRdxHDyVNp2tHXRq04=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
@@ -303,6 +305,8 @@ github.com/mweagle/go-cloudformation v0.0.0-20190824022255-0b695fc6095a h1:1XixM
 github.com/mweagle/go-cloudformation v0.0.0-20190824022255-0b695fc6095a/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
 github.com/mweagle/go-cloudformation v0.0.0-20191010040426-98e3901ae304 h1:txnEM8dlQ9ra/g+x3mpQ+cbp/cFfZRuXvN5zphlF+eg=
 github.com/mweagle/go-cloudformation v0.0.0-20191010040426-98e3901ae304/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
+github.com/mweagle/go-cloudformation v0.0.0-20191126131239-b51de29f58d8 h1:ARt5bORIqDeBReAeushtJh5jvV7/yTb5UslOPVCMuX0=
+github.com/mweagle/go-cloudformation v0.0.0-20191126131239-b51de29f58d8/go.mod h1:ZkuUgvDIuRW0sYTRfCz7VmL3IodhIufcb8HNdI6b6AI=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d h1:AREM5mwr4u1ORQBMvzfzBgpsctsbQikCVpvC+tX285E=
@@ -556,6 +560,8 @@ golang.org/x/sys v0.0.0-20191118013547-6254a7c3cac6 h1:8mlr2HX+lfl0eaQcjiHfVeM2F
 golang.org/x/sys v0.0.0-20191118013547-6254a7c3cac6/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e h1:N7DeIrjYszNmSW409R3frPPwglRwMkXSBzwVbkOjLLA=
 golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d h1:kCXqdOO2GMlu0vCsEMBXwj/b0E9wyFpNPBpuv/go/F8=
+golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0 h1:g61tztE5qeGQ89tm6NTjjM9VPIm088od1l6aSorWRWg=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
@@ -626,6 +632,8 @@ gopkg.in/go-playground/validator.v9 v9.29.1 h1:SvGtYmN60a5CVKTOzMSyfzWDeZRxRuGvR
 gopkg.in/go-playground/validator.v9 v9.29.1/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
 gopkg.in/go-playground/validator.v9 v9.30.0 h1:Wk0Z37oBmKj9/n+tPyBHZmeL19LaCoK3Qq48VwYENss=
 gopkg.in/go-playground/validator.v9 v9.30.0/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
+gopkg.in/go-playground/validator.v9 v9.30.2 h1:icxYLlYflpazIV3ufMoNB9h9SYMQ37DZ8CTwkU4pnOs=
+gopkg.in/go-playground/validator.v9 v9.30.2/go.mod h1:+c9/zcJMFNgbLvly1L1V+PpxWdVbfP1avr/N00E2vyQ=
 gopkg.in/ini.v1 v1.46.0 h1:VeDZbLYGaupuvIrsYCEOe/L/2Pcs5n7hdO1ZTjporag=
 gopkg.in/ini.v1 v1.46.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
 gopkg.in/resty.v1 v1.12.0/go.mod h1:mDo4pnntr5jdWRML875a/NmxYqAlA73dVijT2AXvQQo=

@@ -11,7 +11,7 @@ require (
 	github.com/Netflix/go-expect v0.0.0-20190729225929-0e00d9168667 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/aws/aws-lambda-go v1.13.3
-	github.com/aws/aws-sdk-go v1.25.41
+	github.com/aws/aws-sdk-go v1.25.42
 	github.com/aws/aws-xray-sdk-go v0.9.4
 	github.com/briandowns/spinner v1.8.0
 	github.com/cihub/seelog v0.0.0-20170130134532-f561c5e57575 // indirect
@@ -59,7 +59,7 @@ require (
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mweagle/go-cloudcondenser v0.0.0-20180209031108-e1ad78f4b780
-	github.com/mweagle/go-cloudformation v0.0.0-20191010040426-98e3901ae304
+	github.com/mweagle/go-cloudformation v0.0.0-20191126131239-b51de29f58d8
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f // indirect
 	github.com/nwaples/rardecode v1.0.0 // indirect
 	github.com/onsi/ginkgo v1.10.0 // indirect
@@ -95,14 +95,14 @@ require (
 	golang.org/x/image v0.0.0-20190829233526-b3c06291d021 // indirect
 	golang.org/x/mobile v0.0.0-20190826170111-cafc553e1ac5 // indirect
 	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 // indirect
-	golang.org/x/sys v0.0.0-20191120155948-bd437916bb0e // indirect
+	golang.org/x/sys v0.0.0-20191126131656-8a8471f7e56d // indirect
 	golang.org/x/tools v0.0.0-20190829210313-340205e581e5 // indirect
 	google.golang.org/api v0.9.0 // indirect
 	google.golang.org/appengine v1.6.2 // indirect
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55 // indirect
 	google.golang.org/grpc v1.23.0 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
-	gopkg.in/go-playground/validator.v9 v9.30.0
+	gopkg.in/go-playground/validator.v9 v9.30.2
 	gopkg.in/ini.v1 v1.46.0 // indirect
 	honnef.co/go/tools v0.0.0-20190622161425-0d05180ad8c0 // indirect
 )
