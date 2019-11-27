@@ -14,7 +14,6 @@
   - Added [cloudwatch.EmbeddedMetric](https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatch#EmbeddedMetric) to support publishing CloudWatch [Embedded Metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html) via logs
 
     - See the [blog post](https://aws.amazon.com/about-aws/whats-new/2019/11/amazon-cloudwatch-launches-embedded-metric-format/) for more information
-    - Also the corresponding sample application in the [SpartaEMF](https://github.com/mweagle/SpartaEMF) project.
     - Usage:
 
       ```go
