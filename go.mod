@@ -19,6 +19,7 @@ require (
 	github.com/coreos/etcd v3.3.15+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20190719114852-fd7a80b32e1f // indirect
+	github.com/crewjam/awsregion v0.0.0-20151220134809-605add6968b2 // indirect
 	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/dsnet/golib v0.0.0-20190531212259-571cdbcff553 // indirect
