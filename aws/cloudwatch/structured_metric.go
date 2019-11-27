@@ -125,7 +125,8 @@ func (em *EmbeddedMetric) WithProperty(key string, value interface{}) *EmbeddedM
 
 // NewMetricDirective returns an initialized MetricDirective
 // that's included in the EmbeddedMetric instance
-func (em *EmbeddedMetric) NewMetricDirective(namespace string, dimensions map[string]string) *MetricDirective {
+func (em *EmbeddedMetric) NewMetricDirective(namespace string,
+	dimensions map[string]string) *MetricDirective {
 	md := &MetricDirective{
 		namespace:  namespace,
 		Dimensions: dimensions,
