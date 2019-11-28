@@ -166,7 +166,7 @@ func DocsInstallRequirements() error {
 		hugoArchiveName = fmt.Sprintf("UNSUPPORTED_%s", runtime.GOOS)
 	}
 
-	hugoURL := fmt.Sprintf("https://github.com/gohugoio/hugo/releases/download/v%s/hugo_%s_%s",
+	hugoURL := fmt.Sprintf("https://github.com/gohugoio/hugo/releases/download/v%s/hugo_extended_%s_%s",
 		hugoVersion,
 		hugoVersion,
 		hugoArchiveName)
