@@ -1,7 +1,8 @@
 ---
 date: 2018-01-22 21:49:38
-title: CLI Options
-weight: 15
+title:
+pre: "<b>Command Line Options</b>"
+weight: 139
 alwaysopen: false
 ---
 
@@ -42,7 +43,6 @@ It's also possible to add [custom flags](/reference/application/custom_flags) an
 
 These command line options are briefly described in the following sections. For the most up to date information, use the `--help` subcommand option.
 
-
 # Standard Commands
 
 ## Delete
@@ -61,7 +61,7 @@ This command is used when the cross compiled binary is provisioned in AWS lambda
 
 ## Explore
 
-The `explore` option creates a terminal GUI that supports interactive exploration of lambda functions deployed to AWS. This ui recursively searches for all _*.json_ files in the source tree to populate the set of eligible events that can be submitted.
+The `explore` option creates a terminal GUI that supports interactive exploration of lambda functions deployed to AWS. This ui recursively searches for all _\*.json_ files in the source tree to populate the set of eligible events that can be submitted.
 
 ![Explore](/images/explore.jpg "Explore")
 
@@ -71,7 +71,7 @@ The `profile` command line option enters an interactive session where a previous
 
 ## Provision
 
-The `provision` option is the subcommand most likely to be used during development.  It provisions the Sparta application to AWS Lambda.
+The `provision` option is the subcommand most likely to be used during development. It provisions the Sparta application to AWS Lambda.
 
 ## Status
 

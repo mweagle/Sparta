@@ -7,11 +7,11 @@ weight: 0
 
 <img src="/images/SpartaLogoNoDomain.png" width="33%" height="33%">
 
-# Serverless *go* microservices for AWS
+## Serverless _go_ microservices for AWS
 
-Sparta is a framework that transforms a standard *go* application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
+Sparta is a framework that transforms a standard _go_ application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!
 
-## Support Sparta
+### Support Sparta
 
 Help support continued Sparta development by becoming a Patreon patron!
 
@@ -58,41 +58,40 @@ func main() {
 ### 2. Deployment
 
 ```shell
-$ go run main.go provision --s3Bucket $MY_S3_BUCKET
 INFO[0000] ════════════════════════════════════════════════
-INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
-INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 597d3ba
-INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
+INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.13.0
+INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : b0686ca
+INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.13.3
 INFO[0000] ════════════════════════════════════════════════
-INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=provision UTC="2018-12-22T15:23:56Z"
+INFO[0000] Service: MyHelloWorldStack-123412341234       LinkFlags= Option=provision UTC="2019-11-28T00:04:55Z"
 INFO[0000] ════════════════════════════════════════════════
 INFO[0000] Using `git` SHA for StampedBuildID            Command="git rev-parse HEAD" SHA=b114e329ed37b532e1f7d2e727aa8211d9d5889c
 INFO[0000] Provisioning service                          BuildID=b114e329ed37b532e1f7d2e727aa8211d9d5889c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
 INFO[0000] Verifying IAM Lambda execution roles
 INFO[0000] IAM roles verified                            Count=1
-INFO[0000] Checking S3 versioning                        Bucket=MY_S3_BUCKET VersioningEnabled=true
-INFO[0000] Checking S3 region                            Bucket=MY_S3_BUCKET Region=us-west-2
+INFO[0000] Checking S3 versioning                        Bucket=weagle VersioningEnabled=true
+INFO[0000] Checking S3 region                            Bucket=weagle Region=us-west-2
 INFO[0000] Running `go generate`
 INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack_mweagle-code.zip
-INFO[0010] Lambda code archive size                      Size="18 MB"
-INFO[0010] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-code.zip Path=./.sparta/MyHelloWorldStack_mweagle-code.zip Size="18 MB"
-INFO[0016] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-cftemplate.json Path=./.sparta/MyHelloWorldStack_mweagle-cftemplate.json Size="2.2 kB"
-INFO[0018] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2"
-INFO[0056] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-INFO[0056]     Operation duration                        Duration=26.47s Resource=MyHelloWorldStack-mweagle Type="AWS::CloudFormation::Stack"
-INFO[0056]     Operation duration                        Duration=17.33s Resource=IAMRolee41ad3d6e9c0dc2ca45a24ef8475a8fb6ad021e9 Type="AWS::IAM::Role"
-INFO[0056]     Operation duration                        Duration=1.96s Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693 Type="AWS::Lambda::Function"
-INFO[0056] Stack provisioned                             CreationTime="2018-12-22 15:24:13.845 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2" StackName=MyHelloWorldStack-mweagle
-INFO[0056] ════════════════════════════════════════════════
-INFO[0056] MyHelloWorldStack-mweagle Summary
-INFO[0056] ════════════════════════════════════════════════
-INFO[0056] Verifying IAM roles                           Duration (s)=0
-INFO[0056] Verifying AWS preconditions                   Duration (s)=0
-INFO[0056] Creating code bundle                          Duration (s)=10
-INFO[0056] Uploading code                                Duration (s)=6
-INFO[0056] Ensuring CloudFormation stack                 Duration (s)=40
-INFO[0056] Total elapsed time                            Duration (s)=56
+INFO[0002] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack_123412341234-code.zip
+INFO[0002] Lambda code archive size                      Size="22 MB"
+INFO[0002] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack-123412341234/MyHelloWorldStack_123412341234-code.zip Path=./.sparta/MyHelloWorldStack_123412341234-code.zip Size="22 MB"
+INFO[0009] Uploading local file to S3                    Bucket=weagle Key=MyHelloWorldStack-123412341234/MyHelloWorldStack_123412341234-cftemplate.json Path=./.sparta/MyHelloWorldStack_123412341234-cftemplate.json Size="2.2 kB"
+INFO[0009] Creating stack                                StackID="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-123412341234/bab01fb0-1172-11ea-84a9-0ab88639bbc6"
+INFO[0042] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+INFO[0042]     Operation duration                        Duration=30.21s Resource=MyHelloWorldStack-123412341234 Type="AWS::CloudFormation::Stack"
+INFO[0042]     Operation duration                        Duration=21.07s Resource=IAMRoleab7c5f892f664495a141273e0676f2c20c25560b Type="AWS::IAM::Role"
+INFO[0042]     Operation duration                        Duration=2.23s Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693 Type="AWS::Lambda::Function"
+INFO[0042] Stack provisioned                             CreationTime="2019-11-28 00:05:04.508 +0000 UTC" StackId="arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-123412341234/bab01fb0-1172-11ea-84a9-0ab88639bbc6" StackName=MyHelloWorldStack-123412341234
+INFO[0042] ════════════════════════════════════════════════
+INFO[0042] MyHelloWorldStack-123412341234 Summary
+INFO[0042] ════════════════════════════════════════════════
+INFO[0042] Verifying IAM roles                           Duration (s)=0
+INFO[0042] Verifying AWS preconditions                   Duration (s)=0
+INFO[0042] Creating code bundle                          Duration (s)=1
+INFO[0042] Uploading code                                Duration (s)=7
+INFO[0042] Ensuring CloudFormation stack                 Duration (s)=34
+INFO[0042] Total elapsed time                            Duration (s)=42
 ```
 
 ### 3. Invoke
@@ -108,7 +107,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
   <tr>
     <td style="width:50%">
       <h2>Unified</h2>
-      <p>Use a <b>go</b> monorepo to define and your microservice's:
+      <p>Use a <i>go</i> monorepo to define and your microservice's:
       <ul>
         <li>Application logic</li>
         <li>AWS infrastructure</li>
@@ -128,6 +127,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
           <li>SES</li>
           <li>CloudWatch Events</li>
           <li>CloudWatch Logs</li>
+          <li>Step Functions</li>
         </ul>
         Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource and even your own <a href="http://gosparta.io/docs/custom_resources">CustomResources</a>.
         </p>
@@ -158,11 +158,10 @@ INFO[0056] Total elapsed time                            Duration (s)=56
   </tr>
 </table>
 
-
 <hr />
 <a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch">![Sparta Overview](/images/sparta_overview.png)</a>
 
-Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application.  For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics.  Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) and minimize resource churn during updates.
+Sparta relies on [CloudFormation](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) to deploy and update your application. For resources that CloudFormation does not yet support, it uses [Lambda-backed Custom Resources](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html) so that all service updates support both update and rollback semantics. Sparta's automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve [service availability](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html) and minimize resource churn during updates.
 
 ## Getting Started
 
@@ -170,7 +169,7 @@ To get started using Sparta, begin with the [Overview](/example_service/step1/).
 
 ## Administration
 
-- Problems?  Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
+- Problems? Please open an [issue](https://github.com/mweagle/Sparta/issues/new) in GitHub.
 
 <br />
 <img src="/images/GopherInclusion.png" alt="Eveyone Welcome" height="256">
@@ -179,7 +178,6 @@ To get started using Sparta, begin with the [Overview](/example_service/step1/).
 </h6>
 </center>
 <br />
-
 
 ## Questions?
 
@@ -202,6 +200,7 @@ Get in touch via:
 
 ## Other resources
 
+- [AWS SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html)
 - [Build an S3 website with API Gateway and AWS Lambda for Go using Sparta](https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef)
 - [AWS blog post announcing Go support](https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/)
 - [Sparta - A Go framework for AWS Lambda](https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg)
