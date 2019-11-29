@@ -4,12 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="Hugo 0.59.1" />
-    <meta name="description" content="Sparta - AWS Lambda Microservices">
+    <meta name="description" content="Getting started with Sparta">
 <meta name="author" content="Matt Weagle">
 
     <link rel="icon" href="/images/favicon.png" type="image/png">
 
-    <title>CloudMap Service Discovery :: Sparta - AWS Lambda Microservices</title>
+    <title>Getting Started :: Sparta - AWS Lambda Microservices</title>
 
     
     <link href="/css/nucleus.css?1575002108" rel="stylesheet">
@@ -46,7 +46,7 @@ pre {
 
 
   </head>
-  <body class="" data-url="/reference/decorators/cloudmap/">
+  <body class="" data-url="/getting_started/">
     <nav id="sidebar" class="">
 
 
@@ -86,8 +86,8 @@ pre {
   
     
     <li data-nav-id="/getting_started/" title="Getting Started" class="dd-item 
-        
-        
+        parent
+        active
         
         ">
       <a href="/getting_started/">
@@ -200,7 +200,7 @@ pre {
   
     
     <li data-nav-id="/reference/" title="Reference" class="dd-item 
-        parent
+        
         
         
         ">
@@ -828,7 +828,7 @@ pre {
   
     
     <li data-nav-id="/reference/decorators/" title="" class="dd-item 
-        parent
+        
         
         
         ">
@@ -871,7 +871,7 @@ pre {
  
   
     
-      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item active">
+      <li data-nav-id="/reference/decorators/cloudmap/" title="CloudMap Service Discovery" class="dd-item ">
         <a href="/reference/decorators/cloudmap/">
         CloudMap Service Discovery
         
@@ -1880,7 +1880,7 @@ pre {
                   
                   
                   <div id="top-github-link">
-                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/reference/decorators/cloudmap.md" target="blank">
+                    <a class="github-link" title='Edit this page' href="https://github.com/mweagle/Sparta/tree/docs/content/getting_started/_index.md" target="blank">
                       <i class="fas fa-code-branch"></i>
                       <span id="top-github-link-text">Edit this page</span>
                     </a>
@@ -1907,19 +1907,7 @@ pre {
             
           
           
-            
-            
-          
-          
-            
-            
-          
-          
-            <a href='/'></a> > <a href='/reference/'>Reference</a> > <a href='/reference/decorators/'></a> > CloudMap Service Discovery
-          
-         
-          
-         
+            <a href='/'></a> > Getting Started
           
          
           
@@ -1930,21 +1918,7 @@ pre {
                 
                     <div class="progress">
     <div class="wrapper">
-<nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#definition">Definition</a></li>
-<li><a href="#registering">Registering</a>
-<ul>
-<li><a href="#lambda-functions">Lambda Functions</a></li>
-<li><a href="#other-resources">Other Resources</a></li>
-</ul></li>
-<li><a href="#enabling">Enabling</a></li>
-<li><a href="#invoking">Invoking</a></li>
-</ul></li>
-</ul>
-</nav>
+
     </div>
 </div>
 
@@ -1960,7 +1934,7 @@ pre {
           
             <h1>
               
-              CloudMap Service Discovery
+              Getting Started
             </h1>
           
 
@@ -1969,203 +1943,85 @@ pre {
 
 
 
+	<p>To build a Sparta application, follow these steps:</p>
 
-<p>The <a href="https://godoc.org/github.com/mweagle/Sparta/decorator#CloudMapServiceDecorator">CloudMapServiceDecorator</a> allows your service to register a <a href="https://docs.aws.amazon.com/cloud-map/latest/dg/working-with-instances.html">service instance</a> for your application.</p>
+<ol>
+<li><code>go get -u -v https://github.com/mweagle/Sparta/...</code></li>
 
-<p>For example, an application that provisions a SQS queue and an AWS Lambda function that consumes messages from that queue may need a way for the Lambda function to discover the dynamically provisioned queue.</p>
+<li><p>Configure your AWS Credentials according to the <a href="https://docs.aws.amazon.com/sdk-for-go/v1/developer-guide/configuring-sdk.html#specifying-credentials">go SDK docs</a>. The most reliable approach is to use environment variables as in:</p>
 
-<p>Sparta supports an environment-based <a href="http://gosparta.io/reference/discovery/">discovery service</a> but that discovery is limited to a single Service.</p>
+<pre><code class="language-shell">$ env | grep AWS
+AWS_DEFAULT_REGION=us-xxxx-x
+AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+AWS_REGION=us-xxxx-x
+AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+</code></pre></li>
 
-<p>The <code>CloudMapServiceDecorator</code> leverages the <a href="https://aws.amazon.com/cloud-map/">CloudMap</a> service to support intra- and inter-service resource discovery.</p>
+<li><p>Create a sample <em>main.go</em> file as in:</p>
 
-<h2 id="definition">Definition</h2>
+<pre><code class="language-go">package main
 
-<p>The first step is to create an instance of the <code>CloudMapServiceDecorator</code> type that can be used to register additional resources.</p>
+import (
+   &quot;context&quot;
+   &quot;fmt&quot;
+   &quot;os&quot;
 
-<pre><code class="language-go">import (
-  spartaDecorators &quot;github.com/mweagle/Sparta/decorator&quot;
+   &quot;github.com/aws/aws-sdk-go/aws/session&quot;
+   sparta &quot;github.com/mweagle/Sparta&quot;
+   spartaCF &quot;github.com/mweagle/Sparta/aws/cloudformation&quot;
+   &quot;github.com/sirupsen/logrus&quot;
 )
 
-func main() {
+// Standard AWS λ function
 
-  ...
-  cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String(&quot;SpartaServices&quot;),
-    gocf.String(&quot;SpartaSampleCloudMapService&quot;))
-...
-}
-</code></pre>
-
-<p>The first argument is the <a href="https://docs.aws.amazon.com/cloud-map/latest/dg/working-with-namespaces.html">Cloud Map Namespace ID</a> value to which the service (<em>MyService</em>) will publish.</p>
-
-<p>The decorator satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a>. The instance should be provided as a <code>WorkflowHooks.ServiceDecorators</code> element to <code>MainEx</code> as in:</p>
-
-<pre><code class="language-go">func main() {
-  // ...
-  cloudMapDecorator, cloudMapDecoratorErr := spartaDecorators.NewCloudMapServiceDecorator(gocf.String(&quot;SpartaServices&quot;),
-    gocf.String(&quot;SpartaSampleCloudMapService&quot;))
-    
-  workflowHooks := &amp;sparta.WorkflowHooks{
-    ServiceDecorators: []sparta.ServiceDecoratorHookHandler{
-      cloudMapDecorator,
-    },
-  }
-
-  // ...
-  err := sparta.MainEx(awsName,
-    &quot;Simple Sparta application that demonstrates core functionality&quot;,
-    lambdaFunctions,
-    nil,
-    nil,
-    workflowHooks,
-    false)
-}
-</code></pre>
-
-<h2 id="registering">Registering</h2>
-
-<p>The returned <code>CloudMapServiceDecorator</code> instance satisfies the <a href="https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHookHandler">ServiceDecoratorHookHandler</a> interface. When invoked, it updates the content of you CloudFormation template with the resources and permissions as described below. <code>CloudMapServiceDecorator</code> implicitly creates a new <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-servicediscovery-service.html">AWS::ServiceDiscovery::Service</a> resource to which your resources will be published.</p>
-
-<h3 id="lambda-functions">Lambda Functions</h3>
-
-<p>The <code>CloudMapServiceDecorator.PublishLambda</code> function publishes Lambda function information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
-
-<pre><code class="language-go">lambdaFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;,
-    helloWorld,
-    sparta.IAMRoleDefinition{})
-cloudMapDecorator.PublishLambda(&quot;lambdaDiscoveryName&quot;, lambdaFn, nil)
-</code></pre>
-
-<p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html">Lambda Outputs</a> and Type information:</p>
-
-<pre><code class="language-json">{
-    &quot;Id&quot;: &quot;CloudMapResbe2b7c536074312c-VuIPjfjuFaoc&quot;,
-    &quot;Attributes&quot;: {
-        &quot;Arn&quot;: &quot;arn:aws:lambda:us-west-2:123412341234:function:MyHelloWorldStack-123412341234_Hello_World&quot;,
-        &quot;Name&quot;: &quot;lambdaDiscoveryName&quot;,
-        &quot;Ref&quot;: &quot;MyHelloWorldStack-123412341234_Hello_World&quot;,
-        &quot;Type&quot;: &quot;AWS::Lambda::Function&quot;
-    }
-}
-</code></pre>
-
-<h3 id="other-resources">Other Resources</h3>
-
-<p>The <code>CloudMapServiceDecorator.PublishResource</code> function publishes arbitrary CloudFormation resource outputs information to the <em>(NamespaceID, ServiceID)</em> pair.</p>
-
-<p>For instance, to publish SQS information in the context of a standard <code>ServiceDecorator</code></p>
-
-<pre><code class="language-go">func createSQSResourceDecorator(cloudMapDecorator *spartaDecorators.CloudMapServiceDecorator) sparta.ServiceDecoratorHookHandler {
-  return sparta.ServiceDecoratorHookFunc(func(context map[string]interface{},
-    serviceName string,
-    template *gocf.Template,
-    S3Bucket string,
-    S3Key string,
-    buildID string,
-    awsSession *session.Session,
-    noop bool,
-    logger *logrus.Logger) error {
-
-    sqsResource := &amp;gocf.SQSQueue{}
-    template.AddResource(&quot;SQSResource&quot;, sqsResource)
-    return cloudMapDecorator.PublishResource(&quot;SQSResource&quot;,
-      &quot;SQSResource&quot;,
-      sqsResource,
-      nil)
-  })
-}
-</code></pre>
-
-<p>The default properties published include the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-sqs-queues.html">SQS Outputs</a> and Type information:</p>
-
-<pre><code class="language-json">{
-    &quot;Id&quot;: &quot;CloudMapRes21cf275e8bbbe136-CqWZ27gdLHf8&quot;,
-    &quot;Attributes&quot;: {
-        &quot;Arn&quot;: &quot;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Name&quot;: &quot;SQSResource&quot;,
-        &quot;QueueName&quot;: &quot;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Ref&quot;: &quot;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Type&quot;: &quot;AWS::SQS::Queue&quot;
-    }
-}
-</code></pre>
-
-<h2 id="enabling">Enabling</h2>
-
-<p>Publishing instances to CloudMap only makes them available for other services to discover them. Call the <code>EnableDiscoverySupport</code> with your <code>*sparta.LambdaAWSInfo</code> instance as the only argument. This function updates your Lambda function&rsquo;s environment to include the provisioned <em>ServiceInstance</em> and also the IAM role privileges to authorize:</p>
-
-<ul>
-<li><em>servicediscovery:DiscoverInstances</em></li>
-<li><em>servicediscovery:GetNamespace</em></li>
-<li><em>servicediscovery:ListInstances</em></li>
-<li><em>servicediscovery:GetService</em></li>
-</ul>
-
-<p>For instance:</p>
-
-<pre><code class="language-go">func main() {
-  // ...
-
-  lambdaFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;,
-      helloWorld,
-      sparta.IAMRoleDefinition{})
-
-  // ...
-
-  cloudMapDecorator.EnableDiscoverySupport(lambdaFn)
-  
-  // ...
-}
-
-</code></pre>
-
-<h2 id="invoking">Invoking</h2>
-
-<p>With the resources published and the lambda role properly updated, the last step is to dynamically discover the provisioned resources via CloudMap. Call <code>DiscoverInstancesWithContext</code> with the the set of key-value pairs to use for discovery as below:</p>
-
-<pre><code class="language-go">
 func helloWorld(ctx context.Context) (string, error) {
-    // ...
-
-  props := map[string]string{
-    &quot;Type&quot;: &quot;AWS::SQS::Queue&quot;,
-  }
-  results, resultsErr := spartaDecorators.DiscoverInstancesWithContext(ctx,
-    props,
-    logger)
-  logger.WithFields(logrus.Fields{
-    &quot;Instances&quot;: results,
-    &quot;Error&quot;:     resultsErr,
-    }).Info(&quot;Discovered instances!&quot;)
-    // ...
+   logger, loggerOk := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+   if loggerOk {
+       logger.Info(&quot;Accessing structured logger 🙌&quot;)
+   }
+   return &quot;Hello World 👋. Welcome to AWS Lambda! 🙌🎉🍾&quot;, nil
 }
-</code></pre>
 
-<p>Given the previous example of a single lambda function and an SQS-queue provisioning decorator, the <code>DiscoverInstancesWithContext</code> would return the matching instance with data similar to:</p>
+////////////////////////////////////////////////////////////////////////////////
+// Main
+func main() {
+   lambdaFn, _ := sparta.NewAWSLambda(&quot;Hello World&quot;,
+       helloWorld,
+       sparta.IAMRoleDefinition{})
 
-<pre><code class="language-json">{
-  &quot;Instances&quot;: [
-    {
-      &quot;Attributes&quot;: {
-        &quot;Arn&quot;: &quot;arn:aws:sqs:us-west-2:123412341234:MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Name&quot;: &quot;SQSResource&quot;,
-        &quot;QueueName&quot;: &quot;MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Ref&quot;: &quot;https://sqs.us-west-2.amazonaws.com/123412341234/MyHelloWorldStack-123412341234-SQSResource-S9DWKIFKP14U&quot;,
-        &quot;Type&quot;: &quot;AWS::SQS::Queue&quot;
-      },
-      &quot;HealthStatus&quot;: &quot;HEALTHY&quot;,
-      &quot;InstanceId&quot;: &quot;CloudMapResd1a507076543ccd0-Fln1ITi5cf0y&quot;,
-      &quot;NamespaceName&quot;: &quot;SpartaServices&quot;,
-      &quot;ServiceName&quot;: &quot;SpartaSampleCloudMapService&quot;
-    }
-  ]
+   sess := session.Must(session.NewSession())
+   awsName, awsNameErr := spartaCF.UserAccountScopedStackName(&quot;MyHelloWorldStack&quot;,
+       sess)
+   if awsNameErr != nil {
+       fmt.Print(&quot;Failed to create stack name\n&quot;)
+       os.Exit(1)
+   }
+   var lambdaFunctions []*sparta.LambdaAWSInfo
+   lambdaFunctions = append(lambdaFunctions, lambdaFn)
+
+   err := sparta.Main(awsName,
+       &quot;Simple Sparta HelloWorld application&quot;,
+       lambdaFunctions,
+       nil,
+       nil)
+   if err != nil {
+       os.Exit(1)
+   }
 }
-</code></pre>
+</code></pre></li>
+
+<li><p>Build with <code>go run main.go provision --s3Bucket YOUR_S3_BUCKET_NAME</code> where <code>YOUR_S3_BUCKET_NAME</code> is an S3 bucket to which your account has write privileges.</p></li>
+</ol>
+
+<p>The following <a href="/example_service">Example Service</a> section provides more details regarding how Sparta transforms your application into a self-deploying service.</p>
+
+
+
 
 
 <footer class=" footline" >
 	
 </footer>
-
 
 
 </div> 
@@ -2198,8 +2054,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-            
-            
         
     
     
@@ -2216,6 +2070,9 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
+        
+            
+            
         
     
     
@@ -2280,7 +2137,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -2296,9 +2152,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -2764,7 +2617,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -2777,9 +2629,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -2797,7 +2646,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -2813,9 +2661,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -3960,7 +3805,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -3975,9 +3819,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-            
-            
-        
     
     
 
@@ -3993,7 +3834,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -4011,9 +3851,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-            
-            
-        
     
     
 
@@ -5305,7 +5142,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -5318,9 +5154,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -5338,7 +5171,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -5354,9 +5186,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -6649,7 +6478,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -6662,9 +6490,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -6681,7 +6506,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -6698,9 +6522,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -8136,7 +7957,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -8150,9 +7970,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -8170,7 +7987,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -8186,9 +8002,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -9481,7 +9294,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -9494,9 +9306,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -9513,7 +9322,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -9531,9 +9339,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-            
-            
-        
     
     
 
@@ -10824,7 +10629,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -10839,9 +10643,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-            
-            
-        
     
     
 
@@ -10858,7 +10659,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -10874,9 +10674,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -12169,7 +11966,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
     
         
-        
     
     
 
@@ -12182,9 +11978,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -12201,7 +11994,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
         
     
     
@@ -12218,9 +12010,6 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
     
-        
-            
-            
         
     
     
@@ -13089,10 +12878,10 @@ func helloWorld(ctx context.Context) (string, error) {
 
 
 
-<a class="nav nav-prev" href="/reference/decorators/application_load_balancer/" title="Application Load Balancer"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/" title=""> <i class="fa fa-chevron-left"></i></a>
 
 
-<a class="nav nav-next" href="/reference/decorators/cloudfront_distribution/" title="CloudFront Distribution" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href="/example_service/" title="Example Service" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 
 
 </div>
@@ -13128,4 +12917,3 @@ mermaid.initialize({ startOnLoad: true });
 </script>
 </body>
 </html>
-

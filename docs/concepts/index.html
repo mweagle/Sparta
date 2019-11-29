@@ -12,22 +12,22 @@
     <title>Concepts :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1574866631" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1574866631" rel="stylesheet">
-    <link href="/css/hybrid.css?1574866631" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1574866631" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1574866631" rel="stylesheet">
-    <link href="/css/auto-complete.css?1574866631" rel="stylesheet">
-    <link href="/css/theme.css?1574866631" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1574866631" rel="stylesheet">
+    <link href="/css/nucleus.css?1575002108" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1575002108" rel="stylesheet">
+    <link href="/css/hybrid.css?1575002108" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1575002108" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1575002108" rel="stylesheet">
+    <link href="/css/auto-complete.css?1575002108" rel="stylesheet">
+    <link href="/css/theme.css?1575002108" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1575002108" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1574866631" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1575002108" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1574866631"></script>
+    <script src="/js/jquery-3.3.1.min.js?1575002108"></script>
     
-    <link href="/css/vs.css?1574866631" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1574866631"></script>
+    <link href="/css/vs.css?1575002108" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1575002108"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1574866631"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1574866631"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1575002108"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1575002108"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1574866631"></script>
+<script type="text/javascript" src="/js/search.js?1575002108"></script>
 
     
   </div>
@@ -85,13 +85,13 @@ pre {
  
   
     
-    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
-        parent
-        active
+    <li data-nav-id="/getting_started/" title="Getting Started" class="dd-item 
+        
+        
         
         ">
-      <a href="/concepts/">
-          Concepts
+      <a href="/getting_started/">
+          Getting Started
           
       </a>
       
@@ -177,13 +177,13 @@ pre {
  
   
     
-    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
-        
-        
+    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
+        parent
+        active
         
         ">
-      <a href="/cli_options/">
-          CLI Options
+      <a href="/concepts/">
+          Concepts
           
       </a>
       
@@ -1047,6 +1047,30 @@ pre {
  
   
     
+    <li data-nav-id="/reference/cli_options/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/cli_options/">
+          <b>Command Line Options</b>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
     <li data-nav-id="/reference/application/" title="" class="dd-item 
         
         
@@ -1831,8 +1855,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/6c6de461">6c6de461</a><p/>
-  Date: 2019-11-27T06:57:11-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/08b488e4">08b488e4</a><p/>
+  Date: 2019-11-28T20:35:08-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1937,15 +1961,15 @@ pre {
 
 	
 
-<p>This is a brief overview of Sparta&rsquo;s core concepts.  Additional information regarding specific features is available from the menu.</p>
+<p>This is a brief overview of Sparta&rsquo;s core concepts. Additional information regarding specific features is available from the menu.</p>
 
 <h1 id="terms-and-concepts">Terms and Concepts</h1>
 
-<p>At a high level, Sparta transforms a <strong>go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
+<p>At a high level, Sparta transforms a <strong>go</strong> binary&rsquo;s registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).</p>
 
 <h2 id="service-name">Service Name</h2>
 
-<p>Sparta applications are deployed as a single unit, using the <strong>ServiceName</strong> as a stable logical identifier.  The <strong>ServiceName</strong> is used as your application&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a></p>
+<p>Sparta applications are deployed as a single unit, using the <strong>ServiceName</strong> as a stable logical identifier. The <strong>ServiceName</strong> is used as your application&rsquo;s <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html">CloudFormation StackName</a></p>
 
 <pre><code class="language-go">stackName := &quot;MyUniqueServiceName&quot;
 sparta.Main(stackName,
@@ -1970,14 +1994,14 @@ sparta.Main(stackName,
 <li><code>func (context.Context, TIn) (TOut, error)</code></li>
 </ul>
 
-<p>where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types.  Supplying an invalid signature will produce a run time error as in:</p>
+<p>where the <code>TIn</code> and <code>TOut</code> parameters represent <a href="https://golang.org/pkg/encoding/json">encoding/json</a> un/marshallable types. Supplying an invalid signature will produce a run time error as in:</p>
 
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ERRO[0000] Lambda function (Hello World) has invalid returns: handler
 returns a single value, but it does not implement error exit status 1</code></pre></div>
 
 <h2 id="privileges">Privileges</h2>
 
-<p>To support accessing other AWS resources in your <strong>go</strong> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with narrowly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">sparta.IAMRolePrivilege</a> values. This allows you to define the <em>minimal</em> set of privileges under which your <strong>go</strong> function will execute.  The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/mweagle/go-cloudformation#StringExpr">StringExpression</a> referencing a dynamically provisioned CloudFormation resource.</p>
+<p>To support accessing other AWS resources in your <strong>go</strong> function, Sparta allows you to define and link <a href="http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html">IAM Roles</a> with narrowly defined <a href="https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege">sparta.IAMRolePrivilege</a> values. This allows you to define the <em>minimal</em> set of privileges under which your <strong>go</strong> function will execute. The <code>Privilege.Resource</code> field value may also be a <a href="https://godoc.org/github.com/mweagle/go-cloudformation#StringExpr">StringExpression</a> referencing a dynamically provisioned CloudFormation resource.</p>
 
 <pre><code class="language-go">lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,
   sparta.IAMRolePrivilege{
@@ -2251,6 +2275,8 @@ graph TD
 
     
         
+            
+            
         
     
     
@@ -2267,9 +2293,6 @@ graph TD
 
 
     
-        
-            
-            
         
     
     
@@ -2318,6 +2341,7 @@ graph TD
 
 
     
+        
         
     
     
@@ -2334,6 +2358,9 @@ graph TD
 
 
     
+        
+            
+            
         
     
     
@@ -2957,13 +2984,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
+
 
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -4134,9 +4177,25 @@ graph TD
         
         
         
+
+        
+
+
+        
+
+
+        
+            
 
+
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -5450,13 +5509,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
+
 
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -6770,13 +6845,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
 
+
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -8234,13 +8325,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
 
+
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -9554,13 +9661,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
+
 
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -10874,13 +10997,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
 
+
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -12194,13 +12333,29 @@ graph TD
         
     
     
+
+        
+        
+        
 
         
+
+
         
+
+
         
+            
 
+
+    
         
+    
+    
 
+        
+        
+        
 
         
 
@@ -12947,10 +13102,10 @@ graph TD
 
 
 
-<a class="nav nav-prev" href="/" title=""> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/example_service/step2/" title="Details"> <i class="fa fa-chevron-left"></i></a>
 
 
-<a class="nav nav-next" href="/example_service/" title="Example Service" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href="/reference/" title="Reference" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 
 
 </div>
@@ -12960,18 +13115,18 @@ graph TD
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1574866631"></script>
-<script src="/js/perfect-scrollbar.min.js?1574866631"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1574866631"></script>
-<script src="/js/jquery.sticky.js?1574866631"></script>
-<script src="/js/featherlight.min.js?1574866631"></script>
-<script src="/js/html5shiv-printshiv.min.js?1574866631"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1574866631"></script>
-<script src="/js/learn.js?1574866631"></script>
-<script src="/js/hugo-learn.js?1574866631"></script>
+<script src="/js/clipboard.min.js?1575002108"></script>
+<script src="/js/perfect-scrollbar.min.js?1575002108"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1575002108"></script>
+<script src="/js/jquery.sticky.js?1575002108"></script>
+<script src="/js/featherlight.min.js?1575002108"></script>
+<script src="/js/html5shiv-printshiv.min.js?1575002108"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1575002108"></script>
+<script src="/js/learn.js?1575002108"></script>
+<script src="/js/hugo-learn.js?1575002108"></script>
 
-<link href="/mermaid/mermaid.css?1574866631" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1574866631"></script>
+<link href="/mermaid/mermaid.css?1575002108" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1575002108"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

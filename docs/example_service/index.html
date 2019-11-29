@@ -12,22 +12,22 @@
     <title>Example Service :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1574866631" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1574866631" rel="stylesheet">
-    <link href="/css/hybrid.css?1574866631" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1574866631" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1574866631" rel="stylesheet">
-    <link href="/css/auto-complete.css?1574866631" rel="stylesheet">
-    <link href="/css/theme.css?1574866631" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1574866631" rel="stylesheet">
+    <link href="/css/nucleus.css?1575002108" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1575002108" rel="stylesheet">
+    <link href="/css/hybrid.css?1575002108" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1575002108" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1575002108" rel="stylesheet">
+    <link href="/css/auto-complete.css?1575002108" rel="stylesheet">
+    <link href="/css/theme.css?1575002108" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1575002108" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1574866631" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1575002108" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1574866631"></script>
+    <script src="/js/jquery-3.3.1.min.js?1575002108"></script>
     
-    <link href="/css/vs.css?1574866631" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1574866631"></script>
+    <link href="/css/vs.css?1575002108" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1575002108"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1574866631"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1574866631"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1575002108"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1575002108"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1574866631"></script>
+<script type="text/javascript" src="/js/search.js?1575002108"></script>
 
     
   </div>
@@ -85,13 +85,13 @@ pre {
  
   
     
-    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
+    <li data-nav-id="/getting_started/" title="Getting Started" class="dd-item 
         
         
         
         ">
-      <a href="/concepts/">
-          Concepts
+      <a href="/getting_started/">
+          Getting Started
           
       </a>
       
@@ -177,13 +177,13 @@ pre {
  
   
     
-    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
         
         
         
         ">
-      <a href="/cli_options/">
-          CLI Options
+      <a href="/concepts/">
+          Concepts
           
       </a>
       
@@ -1047,6 +1047,30 @@ pre {
  
   
     
+    <li data-nav-id="/reference/cli_options/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/cli_options/">
+          <b>Command Line Options</b>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
     <li data-nav-id="/reference/application/" title="" class="dd-item 
         
         
@@ -1831,8 +1855,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/6c6de461">6c6de461</a><p/>
-  Date: 2019-11-27T06:57:11-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/08b488e4">08b488e4</a><p/>
+  Date: 2019-11-28T20:35:08-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1871,6 +1895,8 @@ pre {
                         </a>
                     </span>
                   
+                  <span id="toc-menu"><i class="fas fa-list-alt"></i></span>
+                  
                   <span class="links">
                  
                  
@@ -1890,6 +1916,13 @@ pre {
                   </span>
                 </div>
                 
+                    <div class="progress">
+    <div class="wrapper">
+
+    </div>
+</div>
+
+                
               </div>
             </div>
             
@@ -1897,9 +1930,12 @@ pre {
         
         </div>
         
-          <div id="chapter">
-        
         <div id="body-inner">
+          
+            <h1>
+              
+              Example Service
+            </h1>
           
 
         
@@ -1907,11 +1943,7 @@ pre {
 
 
 
-	
-
-<h1 id="walkthrough">Walkthrough</h1>
-
-<p>This is a walkthrough of a simple &ldquo;Hello World&rdquo; style Sparta service.</p>
+	<p>This is a walkthrough of a simple &ldquo;Hello World&rdquo; style Sparta service.</p>
 
 <p>The <em>Overview</em> section talks about the programming model.</p>
 
@@ -1945,11 +1977,6 @@ pre {
 				
 
 				
-					
-<p>Sparta is a framework for developing and deploying go based AWS Lambda-backed microservices. To help understand what that means we&rsquo;ll begin with a &ldquo;Hello World&rdquo; lambda function and eventually deploy that to AWS. Note that we&rsquo;re not going to handle all error cases to keep the example code to a minimum.
-Please be aware that running Lambda functions may incur costs. Be sure to decommission Sparta stacks after you are finished using them (via the delete command line option) to avoid unwanted charges.</p>
-					
-				
 			
 			
 		
@@ -1962,11 +1989,6 @@ Please be aware that running Lambda functions may incur costs. Be sure to decomm
 </li>
 				
 
-				
-					
-<p>The Overview walked through a simple &ldquo;Hello World&rdquo; example. In this section we&rsquo;ll cover how Sparta works in preparation for moving on to more advanced use. Most development will use the provision command line argument, so this section will outline exactly what that entails.
-Provisioning Flow The provisioning workflow is defined in provision.go, with a goal of marshalling all AWS operations into a CloudFormation template. Where CloudFormation does not support a given service, Sparta falls back to using Lambda-backed Custom Resources in the template definition.</p>
-					
 				
 			
 			
@@ -1988,8 +2010,6 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 	
 </footer>
 
-
-</div> 
 
 </div> 
 
@@ -2755,6 +2775,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -3910,6 +3946,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -5248,6 +5300,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -6550,6 +6618,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -8032,6 +8116,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -9334,6 +9434,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -10672,6 +10788,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -11974,6 +12106,22 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -12720,7 +12868,7 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 
 
 
-<a class="nav nav-prev" href="/concepts/" title="Concepts"> <i class="fa fa-chevron-left"></i></a>
+<a class="nav nav-prev" href="/getting_started/" title="Getting Started"> <i class="fa fa-chevron-left"></i></a>
 
 
 <a class="nav nav-next" href="/example_service/step1/" title="Overview" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
@@ -12733,18 +12881,18 @@ Provisioning Flow The provisioning workflow is defined in provision.go, with a g
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1574866631"></script>
-<script src="/js/perfect-scrollbar.min.js?1574866631"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1574866631"></script>
-<script src="/js/jquery.sticky.js?1574866631"></script>
-<script src="/js/featherlight.min.js?1574866631"></script>
-<script src="/js/html5shiv-printshiv.min.js?1574866631"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1574866631"></script>
-<script src="/js/learn.js?1574866631"></script>
-<script src="/js/hugo-learn.js?1574866631"></script>
+<script src="/js/clipboard.min.js?1575002108"></script>
+<script src="/js/perfect-scrollbar.min.js?1575002108"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1575002108"></script>
+<script src="/js/jquery.sticky.js?1575002108"></script>
+<script src="/js/featherlight.min.js?1575002108"></script>
+<script src="/js/html5shiv-printshiv.min.js?1575002108"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1575002108"></script>
+<script src="/js/learn.js?1575002108"></script>
+<script src="/js/hugo-learn.js?1575002108"></script>
 
-<link href="/mermaid/mermaid.css?1574866631" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1574866631"></script>
+<link href="/mermaid/mermaid.css?1575002108" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1575002108"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>

@@ -12,22 +12,22 @@
     <title> :: Sparta - AWS Lambda Microservices</title>
 
     
-    <link href="/css/nucleus.css?1574866632" rel="stylesheet">
-    <link href="/css/fontawesome-all.min.css?1574866632" rel="stylesheet">
-    <link href="/css/hybrid.css?1574866632" rel="stylesheet">
-    <link href="/css/featherlight.min.css?1574866632" rel="stylesheet">
-    <link href="/css/perfect-scrollbar.min.css?1574866632" rel="stylesheet">
-    <link href="/css/auto-complete.css?1574866632" rel="stylesheet">
-    <link href="/css/theme.css?1574866632" rel="stylesheet">
-    <link href="/css/hugo-theme.css?1574866632" rel="stylesheet">
+    <link href="/css/nucleus.css?1575002108" rel="stylesheet">
+    <link href="/css/fontawesome-all.min.css?1575002108" rel="stylesheet">
+    <link href="/css/hybrid.css?1575002108" rel="stylesheet">
+    <link href="/css/featherlight.min.css?1575002108" rel="stylesheet">
+    <link href="/css/perfect-scrollbar.min.css?1575002108" rel="stylesheet">
+    <link href="/css/auto-complete.css?1575002108" rel="stylesheet">
+    <link href="/css/theme.css?1575002108" rel="stylesheet">
+    <link href="/css/hugo-theme.css?1575002108" rel="stylesheet">
     
-      <link href="/css/theme-sparta.css?1574866632" rel="stylesheet">
+      <link href="/css/theme-sparta.css?1575002108" rel="stylesheet">
     
 
-    <script src="/js/jquery-3.3.1.min.js?1574866632"></script>
+    <script src="/js/jquery-3.3.1.min.js?1575002108"></script>
     
-    <link href="/css/vs.css?1574866632" rel="stylesheet">
-    <script src="/js/highlight.pack.js?1574866632"></script>
+    <link href="/css/vs.css?1575002108" rel="stylesheet">
+    <script src="/js/highlight.pack.js?1575002108"></script>
     <script>hljs.initHighlightingOnLoad();</script>
     
 
@@ -62,14 +62,14 @@ pre {
     <span data-search-clear=""><i class="fas fa-times"></i></span>
 </div>
 
-<script type="text/javascript" src="/js/lunr.min.js?1574866632"></script>
-<script type="text/javascript" src="/js/auto-complete.js?1574866632"></script>
+<script type="text/javascript" src="/js/lunr.min.js?1575002108"></script>
+<script type="text/javascript" src="/js/auto-complete.js?1575002108"></script>
 <script type="text/javascript">
     
         var baseurl = "\/";
     
 </script>
-<script type="text/javascript" src="/js/search.js?1574866632"></script>
+<script type="text/javascript" src="/js/search.js?1575002108"></script>
 
     
   </div>
@@ -85,13 +85,13 @@ pre {
  
   
     
-    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
+    <li data-nav-id="/getting_started/" title="Getting Started" class="dd-item 
         
         
         
         ">
-      <a href="/concepts/">
-          Concepts
+      <a href="/getting_started/">
+          Getting Started
           
       </a>
       
@@ -177,13 +177,13 @@ pre {
  
   
     
-    <li data-nav-id="/cli_options/" title="CLI Options" class="dd-item 
+    <li data-nav-id="/concepts/" title="Concepts" class="dd-item 
         
         
         
         ">
-      <a href="/cli_options/">
-          CLI Options
+      <a href="/concepts/">
+          Concepts
           
       </a>
       
@@ -1047,6 +1047,30 @@ pre {
  
   
     
+    <li data-nav-id="/reference/cli_options/" title="" class="dd-item 
+        
+        
+        
+        ">
+      <a href="/reference/cli_options/">
+          <b>Command Line Options</b>
+          
+      </a>
+      
+              
+    </li>
+  
+ 
+
+            
+          
+            
+            
+
+
+ 
+  
+    
     <li data-nav-id="/reference/application/" title="" class="dd-item 
         
         
@@ -1831,8 +1855,8 @@ pre {
     
     <section id="footer">
       
-  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/6c6de461">6c6de461</a><p/>
-  Date: 2019-11-27T06:57:12-08:00
+  Build: <a target="_blank" href="https://github.com/mweagle/Sparta/commit/08b488e4">08b488e4</a><p/>
+  Date: 2019-11-28T20:35:08-08:00
 
 
 <p>Built with <a href="https://github.com/matcornic/hugo-theme-learn"><i class="fas fa-heart"></i></a> from <a href="http://getgrav.org">Grav</a> and <a href="http://gohugo.io/">Hugo</a></p>
@@ -1868,95 +1892,26 @@ pre {
 
 <p><img src="/images/SpartaLogoNoDomain.png" width="33%" height="33%"></p>
 
-<h1 id="serverless-go-microservices-for-aws">Serverless <em>go</em> microservices for AWS</h1>
+<h2 id="serverless-go-microservices-for-aws">Serverless <em>go</em> microservices for AWS</h2>
 
-<p>Sparta is a framework that transforms a standard <em>go</em> application into a self-deploying AWS Lambda powered service. All configuration and infrastructure requirements are expressed as go types - no JSON or YAML needed!</p>
+<table style="width:90%">
+  <!-- Row 1 -->
+  <tr>
+    <td style="width:33%" valign="top">
+      <h4>
+      Sparta is a framework that transforms a <i>go<i> application into a self-deploying AWS Lambda powered service.
+      <p />
 
-<h2 id="support-sparta">Support Sparta</h2>
+      All configuration and infrastructure requirements are expressed as <i>go<i> types for GitOps, repeatable, typesafe deployments.
+      </h4>
+    </td>
 
-<p>Help support continued Sparta development by becoming a Patreon patron!</p>
+    <td style="width:66%">
+      <img src="/images/sparta_ecosystem.png" alt="Sparta Ecosystem" />
+    </td>
 
-<p><a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script></p>
-
-<h2 id="sample-application">Sample Application</h2>
-
-<h3 id="1-definition">1. Definition</h3>
-
-<pre><code class="language-go">// File: application.go
-package main
-
-import (
-  sparta &quot;github.com/mweagle/Sparta&quot;
-)
-
-////////////////////////////////////////////////////////////////////////////////
-// Hello world event handler
-//
-func helloWorld() (string, error) {
-  return &quot;Hello World 🌏&quot;, nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Main
-func main() {
-
-  var lambdaFunctions []*sparta.LambdaAWSInfo
-  lambdaFn, _ := sparta.NewAWSLambda(&quot;Hello world test&quot;,
-    helloWorld,
-    sparta.IAMRoleDefinition{})
-  lambdaFunctions = append(lambdaFunctions, lambdaFn)
-
-  // Delegate to Sparta
-  sparta.Main(&quot;SpartaHelloWorld&quot;,
-    &quot;Simple Sparta application that creates a single AWS Lambda function&quot;,
-    lambdaFunctions,
-                nil,
-                nil)
-}
-</code></pre>
-
-<h3 id="2-deployment">2. Deployment</h3>
-
-<pre><code class="language-shell">$ go run main.go provision --s3Bucket $MY_S3_BUCKET
-INFO[0000] ════════════════════════════════════════════════
-INFO[0000] ╔═╗╔═╗╔═╗╦═╗╔╦╗╔═╗   Version : 1.8.0
-INFO[0000] ╚═╗╠═╝╠═╣╠╦╝ ║ ╠═╣   SHA     : 597d3ba
-INFO[0000] ╚═╝╩  ╩ ╩╩╚═ ╩ ╩ ╩   Go      : go1.11.1
-INFO[0000] ════════════════════════════════════════════════
-INFO[0000] Service: MyHelloWorldStack-mweagle            LinkFlags= Option=provision UTC=&quot;2018-12-22T15:23:56Z&quot;
-INFO[0000] ════════════════════════════════════════════════
-INFO[0000] Using `git` SHA for StampedBuildID            Command=&quot;git rev-parse HEAD&quot; SHA=b114e329ed37b532e1f7d2e727aa8211d9d5889c
-INFO[0000] Provisioning service                          BuildID=b114e329ed37b532e1f7d2e727aa8211d9d5889c CodePipelineTrigger= InPlaceUpdates=false NOOP=false Tags=
-INFO[0000] Verifying IAM Lambda execution roles
-INFO[0000] IAM roles verified                            Count=1
-INFO[0000] Checking S3 versioning                        Bucket=MY_S3_BUCKET VersioningEnabled=true
-INFO[0000] Checking S3 region                            Bucket=MY_S3_BUCKET Region=us-west-2
-INFO[0000] Running `go generate`
-INFO[0000] Compiling binary                              Name=Sparta.lambda.amd64
-INFO[0010] Creating code ZIP archive for upload          TempName=./.sparta/MyHelloWorldStack_mweagle-code.zip
-INFO[0010] Lambda code archive size                      Size=&quot;18 MB&quot;
-INFO[0010] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-code.zip Path=./.sparta/MyHelloWorldStack_mweagle-code.zip Size=&quot;18 MB&quot;
-INFO[0016] Uploading local file to S3                    Bucket=MY_S3_BUCKET Key=MyHelloWorldStack-mweagle/MyHelloWorldStack_mweagle-cftemplate.json Path=./.sparta/MyHelloWorldStack_mweagle-cftemplate.json Size=&quot;2.2 kB&quot;
-INFO[0018] Creating stack                                StackID=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2&quot;
-INFO[0056] CloudFormation Metrics ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-INFO[0056]     Operation duration                        Duration=26.47s Resource=MyHelloWorldStack-mweagle Type=&quot;AWS::CloudFormation::Stack&quot;
-INFO[0056]     Operation duration                        Duration=17.33s Resource=IAMRolee41ad3d6e9c0dc2ca45a24ef8475a8fb6ad021e9 Type=&quot;AWS::IAM::Role&quot;
-INFO[0056]     Operation duration                        Duration=1.96s Resource=HelloWorldLambda80576f7b21690b0cb485a6b69c927aac972cd693 Type=&quot;AWS::Lambda::Function&quot;
-INFO[0056] Stack provisioned                             CreationTime=&quot;2018-12-22 15:24:13.845 +0000 UTC&quot; StackId=&quot;arn:aws:cloudformation:us-west-2:123412341234:stack/MyHelloWorldStack-mweagle/a3671f60-05fd-11e9-b307-50a686be73f2&quot; StackName=MyHelloWorldStack-mweagle
-INFO[0056] ════════════════════════════════════════════════
-INFO[0056] MyHelloWorldStack-mweagle Summary
-INFO[0056] ════════════════════════════════════════════════
-INFO[0056] Verifying IAM roles                           Duration (s)=0
-INFO[0056] Verifying AWS preconditions                   Duration (s)=0
-INFO[0056] Creating code bundle                          Duration (s)=10
-INFO[0056] Uploading code                                Duration (s)=6
-INFO[0056] Ensuring CloudFormation stack                 Duration (s)=40
-INFO[0056] Total elapsed time                            Duration (s)=56
-</code></pre>
-
-<h3 id="3-invoke">3. Invoke</h3>
-
-<p><img src="/images/invoke.jpg" alt="Console GUI" title="Invoke" /></p>
+  </tr>
+</table>
 
 <hr />
 
@@ -1967,7 +1922,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
   <tr>
     <td style="width:50%">
       <h2>Unified</h2>
-      <p>Use a <b>go</b> monorepo to define and your microservice's:
+      <p>Use a <i>go</i> monorepo to define and your microservice's:
       <ul>
         <li>Application logic</li>
         <li>AWS infrastructure</li>
@@ -1985,8 +1940,10 @@ INFO[0056] Total elapsed time                            Duration (s)=56
           <li>Kinesis</li>
           <li>SNS</li>
           <li>SES</li>
+          <li>CloudMap</li>
           <li>CloudWatch Events</li>
           <li>CloudWatch Logs</li>
+          <li>Step Functions</li>
         </ul>
         Additionally, your service may provision any other <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html">CloudFormation</a> supported resource and even your own <a href="http://gosparta.io/docs/custom_resources">CustomResources</a>.
         </p>
@@ -2021,7 +1978,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
 <p><a href="https://cloudcraft.co/view/8571b3bc-76ef-48c1-8401-0b6ae1d36b4e?key=d44zi4j1pxj00000" rel="Sparta Arch"><img src="/images/sparta_overview.png" alt="Sparta Overview" /></a></p>
 
-<p>Sparta relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application.  For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics.  Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> and minimize resource churn during updates.</p>
+<p>Sparta relies on <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">CloudFormation</a> to deploy and update your application. For resources that CloudFormation does not yet support, it uses <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-custom-resources-lambda.html">Lambda-backed Custom Resources</a> so that all service updates support both update and rollback semantics. Sparta&rsquo;s automatically generated CloudFormation resources use content-based logical IDs whenever possible to preserve <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks.html">service availability</a> and minimize resource churn during updates.</p>
 
 <h2 id="getting-started">Getting Started</h2>
 
@@ -2030,7 +1987,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 <h2 id="administration">Administration</h2>
 
 <ul>
-<li>Problems?  Please open an <a href="https://github.com/mweagle/Sparta/issues/new">issue</a> in GitHub.</li>
+<li>Problems? Please open an <a href="https://github.com/mweagle/Sparta/issues/new">issue</a> in GitHub.</li>
 </ul>
 
 <p><br />
@@ -2079,9 +2036,16 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 </ul></li>
 </ul>
 
+<h3 id="support-sparta">Support Sparta</h3>
+
+<p>Help support continued Sparta development by becoming a Patreon patron!</p>
+
+<p><a href="https://www.patreon.com/bePatron?u=12960916" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script></p>
+
 <h2 id="other-resources">Other resources</h2>
 
 <ul>
+<li><a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam.html">AWS SAM</a></li>
 <li><a href="https://medium.com/@mweagle/go-aws-lambda-building-an-html-website-with-api-gateway-and-lambda-for-go-using-sparta-5e6fe79f63ef">Build an S3 website with API Gateway and AWS Lambda for Go using Sparta</a></li>
 <li><a href="https://aws.amazon.com/blogs/compute/announcing-go-support-for-aws-lambda/">AWS blog post announcing Go support</a></li>
 <li><a href="https://medium.com/@mweagle/a-go-framework-for-aws-lambda-ab14f0c42cb#.6gtlwe5vg">Sparta - A Go framework for AWS Lambda</a></li>
@@ -2865,6 +2829,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -4020,6 +4000,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -5358,6 +5354,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -6660,6 +6672,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -8142,6 +8170,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -9444,6 +9488,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -10782,6 +10842,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
         
 
         
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
+
+        
             
 
 
@@ -12084,6 +12160,22 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
         
 
+
+        
+
+
+        
+            
+
+
+    
+        
+    
+    
+
+        
+        
+        
 
         
 
@@ -12831,7 +12923,7 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 
 
 
-<a class="nav nav-next" href="/concepts/" title="Concepts" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
+<a class="nav nav-next" href="/getting_started/" title="Getting Started" style="margin-right: 0px;"><i class="fa fa-chevron-right"></i></a>
 
 
 </div>
@@ -12841,18 +12933,18 @@ INFO[0056] Total elapsed time                            Duration (s)=56
 <div style="left: -1000px; overflow: scroll; position: absolute; top: -1000px; border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;">
 <div style="border: none; box-sizing: content-box; height: 200px; margin: 0px; padding: 0px; width: 200px;"></div>
 </div>
-<script src="/js/clipboard.min.js?1574866632"></script>
-<script src="/js/perfect-scrollbar.min.js?1574866632"></script>
-<script src="/js/perfect-scrollbar.jquery.min.js?1574866632"></script>
-<script src="/js/jquery.sticky.js?1574866632"></script>
-<script src="/js/featherlight.min.js?1574866632"></script>
-<script src="/js/html5shiv-printshiv.min.js?1574866632"></script>
-<script src="/js/modernizr.custom-3.6.0.js?1574866632"></script>
-<script src="/js/learn.js?1574866632"></script>
-<script src="/js/hugo-learn.js?1574866632"></script>
+<script src="/js/clipboard.min.js?1575002109"></script>
+<script src="/js/perfect-scrollbar.min.js?1575002109"></script>
+<script src="/js/perfect-scrollbar.jquery.min.js?1575002109"></script>
+<script src="/js/jquery.sticky.js?1575002109"></script>
+<script src="/js/featherlight.min.js?1575002109"></script>
+<script src="/js/html5shiv-printshiv.min.js?1575002109"></script>
+<script src="/js/modernizr.custom-3.6.0.js?1575002109"></script>
+<script src="/js/learn.js?1575002109"></script>
+<script src="/js/hugo-learn.js?1575002109"></script>
 
-<link href="/mermaid/mermaid.css?1574866632" rel="stylesheet" />
-<script src="/mermaid/mermaid.js?1574866632"></script>
+<link href="/mermaid/mermaid.css?1575002109" rel="stylesheet" />
+<script src="/mermaid/mermaid.js?1575002109"></script>
 <script>
 mermaid.initialize({ startOnLoad: true });
 </script>
