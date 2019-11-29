@@ -14,10 +14,10 @@ weight: 0
   <tr>
     <td style="width:33%" valign="top">
       <h4>
-      Sparta is a framework that transforms a <i>go<i> application into a self-deploying AWS Lambda powered service.
+      Sparta is a framework that transforms a <i>go</i> application into a self-deploying AWS Lambda powered service.
       <p />
 
-      All configuration and infrastructure requirements are expressed as <i>go<i> types for GitOps, repeatable, typesafe deployments.
+      All configuration and infrastructure requirements are expressed as <i>go</i> types for GitOps, repeatable, typesafe deployments.
       </h4>
     </td>
 
