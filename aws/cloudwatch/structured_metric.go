@@ -156,10 +156,14 @@ func (em *EmbeddedMetric) PublishToSink(additionalProperties map[string]interfac
 		em = em.WithProperty(eachKey, eachValue)
 	}
 	rawJSON, rawJSONErr := json.Marshal(em)
+	var writtenErr error
 	if rawJSONErr == nil {
-		io.WriteString(sink, (string)(rawJSON))
+		_, writtenErr = io.WriteString(sink, (string)(rawJSON))
 	} else {
-		io.WriteString(sink, fmt.Sprintf("Error publishing metric: %v", rawJSONErr))
+		_, writtenErr = io.WriteString(sink, fmt.Sprintf("Error publishing metric: %v", rawJSONErr))
+	}
+	if writtenErr != nil {
+		fmt.Printf("ERROR: %#v", writtenErr)
 	}
 }
 
