@@ -9,10 +9,20 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-func TestStructuredMetric(t *testing.T) {
-
+func ensureValidMetric(t *testing.T, emMetric *EmbeddedMetric) {
 	sink := &bytes.Buffer{}
+	emMetric.PublishToSink(nil, sink)
+	// Verify...
+	schemaLoader := gojsonschema.NewReferenceLoader("file://./emf.schema.json")
+	documentLoader := gojsonschema.NewBytesLoader(sink.Bytes())
 
+	_, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		t.Fatalf("Failed to produce valid structured metric: %v", err)
+	}
+}
+
+func TestStructuredMetric(t *testing.T) {
 	// Initialize with high cardinality property
 	emMetric, _ := NewEmbeddedMetricWithProperties(map[string]interface{}{
 		"testMetric": "42",
@@ -29,15 +39,5 @@ func TestStructuredMetric(t *testing.T) {
 	emMetric.Publish(map[string]interface{}{
 		"additional": fmt.Sprintf("high cardinality prop: %d", time.Now().Unix()),
 	})
-
-	emMetric.PublishToSink(nil, sink)
-	// Verify...
-	schemaLoader := gojsonschema.NewReferenceLoader("file://./emf.schema.json")
-	documentLoader := gojsonschema.NewBytesLoader(sink.Bytes())
-
-	_, err := gojsonschema.Validate(schemaLoader, documentLoader)
-	if err != nil {
-		t.Fatalf("Failed to produce valid structured metric: %v", err)
-	}
-
+	ensureValidMetric(t, emMetric)
 }
