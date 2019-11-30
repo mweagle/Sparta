@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>/getting_started/</loc>
+    <lastmod>2019-11-27T19:45:05-08:00</lastmod>
+  </url>
   
   <url>
     <loc>/reference/operations/magefile/</loc>
@@ -128,11 +133,6 @@
   </url>
   
   <url>
-    <loc>/concepts/</loc>
-    <lastmod>2019-02-01T19:37:47+10:00</lastmod>
-  </url>
-  
-  <url>
     <loc>/reference/decorators/lambda_versioning/</loc>
     <lastmod>2018-12-01T06:45:02-08:00</lastmod>
   </url>
@@ -199,7 +199,7 @@
   
   <url>
     <loc>/example_service/</loc>
-    <lastmod>2019-06-02T21:51:22-07:00</lastmod>
+    <lastmod>2019-11-27T19:45:05-08:00</lastmod>
   </url>
   
   <url>
@@ -243,13 +243,13 @@
   </url>
   
   <url>
-    <loc>/cli_options/</loc>
-    <lastmod>2018-12-01T06:45:02-08:00</lastmod>
+    <loc>/reference/step/fargate/</loc>
+    <lastmod>2018-12-16T19:04:57-08:00</lastmod>
   </url>
   
   <url>
-    <loc>/reference/step/fargate/</loc>
-    <lastmod>2018-12-16T19:04:57-08:00</lastmod>
+    <loc>/concepts/</loc>
+    <lastmod>2019-11-27T19:45:05-08:00</lastmod>
   </url>
   
   <url>
@@ -315,6 +315,11 @@
   <url>
     <loc>/reference/interceptors/</loc>
     <lastmod>2019-06-02T21:51:22-07:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/reference/cli_options/</loc>
+    <lastmod>2019-11-27T19:45:05-08:00</lastmod>
   </url>
   
   <url>
@@ -409,7 +414,7 @@
   
   <url>
     <loc>/</loc>
-    <lastmod>2019-07-26T06:24:12-07:00</lastmod>
+    <lastmod>2019-11-28T20:40:49-08:00</lastmod>
   </url>
   
   <url>

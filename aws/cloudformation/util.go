@@ -540,6 +540,10 @@ func WaitForStackOperationComplete(stackID string,
 	charSetIndex := 7
 	cliSpinner := spinner.New(spinner.CharSets[charSetIndex],
 		333*time.Millisecond)
+	spinnerErr := cliSpinner.Color("red", "bold")
+	if spinnerErr != nil {
+		logger.WithField("error", spinnerErr).Warn("Failed to set spinner color")
+	}
 	cliSpinnerStarted := false
 
 	// Poll for the current stackID state, and

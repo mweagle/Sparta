@@ -25,9 +25,10 @@ func newTestObject() *testObject {
 }
 
 // Disable test in Travis.
-// Ref: https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
+// Ref: https://help.github.com/en/actions/automating-your-workflow-with-github-actions/using-environment-variables
+//
 func testDisabled() bool {
-	return os.Getenv("TRAVIS_BUILD_NUMBER") != ""
+	return os.Getenv("GITHUB_WORKFLOW") != ""
 }
 func testObjectConstructor() interface{} {
 	return &testObject{}

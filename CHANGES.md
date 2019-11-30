@@ -1,5 +1,37 @@
 # Change Notes
 
+## v1.13.0 - The pre:Invent Edition 🗓
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+
+  - Updated [go-cloudformation](https://github.com/mweagle/go-cloudformation) dependency to expose:
+    - [LambdaEventInvokeConfig](https://godoc.org/github.com/mweagle/go-cloudformation#LambdaEventInvokeConfig) for success/failure handlers
+      - See the [blog post](https://aws.amazon.com/blogs/compute/introducing-aws-lambda-destinations/) for more information
+      - Destinations can be connected via [TemplateDecorators](https://godoc.org/github.com/mweagle/Sparta#TemplateDecorator) or [ServiceDecoratorHook](https://godoc.org/github.com/mweagle/Sparta#ServiceDecoratorHook)
+    - [LambdaEventSourceMapping](https://godoc.org/github.com/mweagle/go-cloudformation#LambdaEventSourceMapping) for updated stream controls
+      - See the [blog post](https://aws.amazon.com/blogs/compute/new-aws-lambda-scaling-controls-for-kinesis-and-dynamodb-event-sources/) for more information
+  - Added [cloudwatch.EmbeddedMetric](https://godoc.org/github.com/mweagle/Sparta/aws/cloudwatch#EmbeddedMetric) to support publishing CloudWatch [Embedded Metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html) via logs
+
+    - See the [blog post](https://aws.amazon.com/about-aws/whats-new/2019/11/amazon-cloudwatch-launches-embedded-metric-format/) for more information
+    - Usage:
+
+      ```go
+      metricDirective := emMetric.NewMetricDirective("SpecialNamespace",
+        // Initialize with metric dimensions
+        map[string]string{"functionVersion": os.Getenv("AWS_LAMBDA_FUNCTION_VERSION")})
+      // Record a metric value
+      metricDirective.Metrics["invocations"] = cloudwatch.MetricValue{
+        Unit:  cloudwatch.UnitCount,
+        Value: 1,
+      }
+      // Publish optionally accepts additional high-cardinality KV properties
+      emMetric.Publish(nil)
+      ```
+
+- :bug: **FIXED**
+  - [Set executable bit on Sparta binary in ZIP archive](https://github.com/mweagle/Sparta/issues/158)
+
 ## v1.12.0 - The Mapping Edition 🗺
 
 - :warning: **BREAKING**

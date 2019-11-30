@@ -2,19 +2,19 @@
 date: 2018-01-22 21:49:38
 title: Concepts
 description: Core Sparta Concepts
-weight: 10
+weight: 20
 alwaysopen: false
 ---
 
-This is a brief overview of Sparta's core concepts.  Additional information regarding specific features is available from the menu.
+This is a brief overview of Sparta's core concepts. Additional information regarding specific features is available from the menu.
 
 # Terms and Concepts
 
-At a high level, Sparta transforms a **go** binary's registered lambda functions into a set of independently addressable AWS Lambda functions .  Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).
+At a high level, Sparta transforms a **go** binary's registered lambda functions into a set of independently addressable AWS Lambda functions . Additionally, Sparta provides microservice authors an opportunity to satisfy other requirements such as defining the IAM Roles under which their function will execute in AWS, additional infrastructure requirements, and telemetry and alerting information (via CloudWatch).
 
 ## Service Name
 
-Sparta applications are deployed as a single unit, using the **ServiceName** as a stable logical identifier.  The **ServiceName** is used as your application's [CloudFormation StackName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html)
+Sparta applications are deployed as a single unit, using the **ServiceName** as a stable logical identifier. The **ServiceName** is used as your application's [CloudFormation StackName](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/pseudo-parameter-reference.html)
 
 ```go
 stackName := "MyUniqueServiceName"
@@ -29,16 +29,16 @@ sparta.Main(stackName,
 
 A Sparta-compatible lambda is a standard [AWS Lambda Go](https://docs.aws.amazon.com/lambda/latest/dg/go-programming-model-handler-types.html) function. The following function signatures are supported:
 
-* `func ()`
-* `func () error`
-* `func (TIn), error`
-* `func () (TOut, error)`
-* `func (context.Context) error`
-* `func (context.Context, TIn) error`
-* `func (context.Context) (TOut, error)`
-* `func (context.Context, TIn) (TOut, error)`
+- `func ()`
+- `func () error`
+- `func (TIn), error`
+- `func () (TOut, error)`
+- `func (context.Context) error`
+- `func (context.Context, TIn) error`
+- `func (context.Context) (TOut, error)`
+- `func (context.Context, TIn) (TOut, error)`
 
-where the `TIn` and `TOut` parameters represent [encoding/json](https://golang.org/pkg/encoding/json) un/marshallable types.  Supplying an invalid signature will produce a run time error as in:
+where the `TIn` and `TOut` parameters represent [encoding/json](https://golang.org/pkg/encoding/json) un/marshallable types. Supplying an invalid signature will produce a run time error as in:
 
 {{< highlight text >}}
 ERRO[0000] Lambda function (Hello World) has invalid returns: handler
@@ -47,7 +47,7 @@ returns a single value, but it does not implement error exit status 1
 
 ## Privileges
 
-To support accessing other AWS resources in your **go** function, Sparta allows you to define and link [IAM Roles](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with narrowly defined [sparta.IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) values. This allows you to define the _minimal_ set of privileges under which your **go** function will execute.  The `Privilege.Resource` field value may also be a [StringExpression](https://godoc.org/github.com/mweagle/go-cloudformation#StringExpr) referencing a dynamically provisioned CloudFormation resource.
+To support accessing other AWS resources in your **go** function, Sparta allows you to define and link [IAM Roles](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles.html) with narrowly defined [sparta.IAMRolePrivilege](https://godoc.org/github.com/mweagle/Sparta#IAMRolePrivilege) values. This allows you to define the _minimal_ set of privileges under which your **go** function will execute. The `Privilege.Resource` field value may also be a [StringExpression](https://godoc.org/github.com/mweagle/go-cloudformation#StringExpr) referencing a dynamically provisioned CloudFormation resource.
 
 ```go
 lambdaFn.RoleDefinition.Privileges = append(lambdaFn.RoleDefinition.Privileges,

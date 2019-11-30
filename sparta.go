@@ -424,10 +424,16 @@ func (roleDefinition *IAMRoleDefinition) logicalName(serviceName string, targetL
 // directly correspond to the golang AWS SDK's CreateEventSourceMappingInput
 // (http://docs.aws.amazon.com/sdk-for-go/api/service/lambda.html#type-CreateEventSourceMappingInput)
 type EventSourceMapping struct {
-	StartingPosition string
-	EventSourceArn   interface{}
-	Disabled         bool
-	BatchSize        int64
+	StartingPosition               string
+	EventSourceArn                 interface{}
+	Disabled                       bool
+	BatchSize                      int64
+	BisectBatchOnFunctionError     bool
+	DestinationConfig              *gocf.LambdaEventSourceMappingDestinationConfig
+	MaximumBatchingWindowInSeconds int64
+	MaximumRecordAgeInSeconds      int64
+	MaximumRetryAttempts           int64
+	ParallelizationFactor          int64
 }
 
 func (mapping *EventSourceMapping) export(serviceName string,
@@ -440,13 +446,17 @@ func (mapping *EventSourceMapping) export(serviceName string,
 
 	dynamicArn := spartaCF.DynamicValueToStringExpr(mapping.EventSourceArn)
 	eventSourceMappingResource := gocf.LambdaEventSourceMapping{
-		EventSourceArn: dynamicArn.String(),
-		FunctionName:   targetLambdaArn,
-		BatchSize:      gocf.Integer(mapping.BatchSize),
-		Enabled:        gocf.Bool(!mapping.Disabled),
-	}
-	if mapping.StartingPosition != "" {
-		eventSourceMappingResource.StartingPosition = gocf.String(mapping.StartingPosition)
+		StartingPosition:               marshalString(mapping.StartingPosition),
+		EventSourceArn:                 dynamicArn.String(),
+		FunctionName:                   targetLambdaArn,
+		BatchSize:                      gocf.Integer(mapping.BatchSize),
+		Enabled:                        gocf.Bool(!mapping.Disabled),
+		BisectBatchOnFunctionError:     gocf.Bool(mapping.BisectBatchOnFunctionError),
+		DestinationConfig:              mapping.DestinationConfig,
+		MaximumBatchingWindowInSeconds: marshalInt(mapping.MaximumBatchingWindowInSeconds),
+		MaximumRecordAgeInSeconds:      marshalInt(mapping.MaximumRecordAgeInSeconds),
+		MaximumRetryAttempts:           marshalInt(mapping.MaximumRetryAttempts),
+		ParallelizationFactor:          marshalInt(mapping.ParallelizationFactor),
 	}
 
 	// Unique components for the hash for the EventSource mapping
