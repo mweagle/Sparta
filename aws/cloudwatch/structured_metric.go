@@ -6,6 +6,7 @@ package cloudwatch
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"strings"
 	"time"
@@ -139,8 +140,9 @@ func (em *EmbeddedMetric) NewMetricDirective(namespace string,
 	return md
 }
 
-// Publish the metric to the logfile
-func (em *EmbeddedMetric) Publish(additionalProperties map[string]interface{}) {
+// PublishToSink writes the EmbeddedMetric info to the provided writer
+func (em *EmbeddedMetric) PublishToSink(additionalProperties map[string]interface{},
+	sink io.Writer) {
 	// BEGIN - Preconditions
 	for _, eachDirective := range em.metrics {
 		// Precondition...
@@ -155,10 +157,15 @@ func (em *EmbeddedMetric) Publish(additionalProperties map[string]interface{}) {
 	}
 	rawJSON, rawJSONErr := json.Marshal(em)
 	if rawJSONErr == nil {
-		fmt.Println((string)(rawJSON))
+		io.WriteString(sink, (string)(rawJSON))
 	} else {
-		fmt.Printf("Error publishing metric: %v", rawJSONErr)
+		io.WriteString(sink, fmt.Sprintf("Error publishing metric: %v", rawJSONErr))
 	}
+}
+
+// Publish the metric to the logfile
+func (em *EmbeddedMetric) Publish(additionalProperties map[string]interface{}) {
+	em.PublishToSink(additionalProperties, os.Stdout)
 }
 
 // MarshalJSON is a custom marshaller to ensure that the marshalled
