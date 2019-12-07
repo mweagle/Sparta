@@ -99,7 +99,7 @@ func askQuestions(userStackName string, stackNameToIDMap map[string]string) (*us
 		{
 			Name: "downloadNewSnapshots",
 			Prompt: &survey.Select{
-				Message: fmt.Sprintf("What profile snapshot(s) would you like to view?"),
+				Message: "What profile snapshot(s) would you like to view?",
 				Options: refreshCacheOptions,
 				Default: refreshCacheOptions[0],
 			},
