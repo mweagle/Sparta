@@ -1,5 +1,12 @@
 # Change Notes
 
+## v1.13.1 - The post:Invent Edition 🗓
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+- :bug: **FIXED**
+  - [Correct documentation links](https://github.com/mweagle/Sparta/issues/160)
+
 ## v1.13.0 - The pre:Invent Edition 🗓
 
 - :warning: **BREAKING**

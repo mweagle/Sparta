@@ -1,5 +1,5 @@
 .vscode/*
-graph.html
+./graph.html
 .envrc
 tags
 .atom-build.json
