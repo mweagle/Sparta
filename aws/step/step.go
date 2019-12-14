@@ -17,6 +17,13 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Types of state machines per
+// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-stepfunctions-statemachine.html
+const (
+	stateMachineStandard = "STANDARD"
+	stateMachineExpress  = "EXPRESS"
+)
+
 // StateError is the reserved type used for AWS Step function error names
 // Ref: https://states-language.net/spec.html#appendix-a
 type StateError string
@@ -786,6 +793,8 @@ type StateMachine struct {
 	name                 string
 	comment              string
 	stateDefinitionError error
+	machineType          string
+	loggingConfiguration *gocf.StepFunctionsStateMachineLoggingConfiguration
 	startAt              TransitionState
 	uniqueStates         map[string]MachineState
 	roleArn              gocf.Stringable
@@ -960,13 +969,17 @@ func (sm *StateMachine) StateMachineNamedDecorator(stepFunctionResourceName stri
 
 		// Awsome - add an AWS::StepFunction to the template with this info and roll with it...
 		stepFunctionResource := &gocf.StepFunctionsStateMachine{
-			StateMachineName: gocf.String(sm.name),
-			DefinitionString: templateExpr,
+			StateMachineName:     gocf.String(sm.name),
+			DefinitionString:     templateExpr,
+			LoggingConfiguration: sm.loggingConfiguration,
 		}
 		if iamRoleResourceName != "" {
 			stepFunctionResource.RoleArn = gocf.GetAtt(iamRoleResourceName, "Arn").String()
 		} else if sm.roleArn != nil {
 			stepFunctionResource.RoleArn = sm.roleArn.String()
+		}
+		if sm.machineType != "" {
+			stepFunctionResource.StateMachineType = gocf.String(sm.machineType)
 		}
 		template.AddResource(stepFunctionResourceName, stepFunctionResource)
 		return nil
@@ -990,8 +1003,8 @@ func (sm *StateMachine) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// NewStateMachine returns a new StateMachine instance
-func NewStateMachine(stateMachineName string,
+func createStateMachine(stateMachineName string,
+	machineType string,
 	startState TransitionState) *StateMachine {
 	uniqueStates := make(map[string]MachineState)
 	pendingStates := []MachineState{startState}
@@ -1037,11 +1050,38 @@ func NewStateMachine(stateMachineName string,
 		startAt:      startState,
 		uniqueStates: uniqueStates,
 	}
+	if machineType != "" {
+		sm.machineType = machineType
+	}
 	// Store duplicate state names
 	if len(duplicateStateNames) != 0 {
 		sm.stateDefinitionError = fmt.Errorf("duplicate state names: %#v", duplicateStateNames)
 	}
 	return sm
+
+}
+
+// NewExpressStateMachine returns a new Express StateMachine instance. See
+// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-stepfunctions-statemachine.html
+// for more information.
+func NewExpressStateMachine(stateMachineName string,
+	loggingConfiguration *gocf.StepFunctionsStateMachineLoggingConfiguration,
+	startState TransitionState) *StateMachine {
+
+	sm := createStateMachine(stateMachineName,
+		stateMachineExpress,
+		startState)
+	sm.loggingConfiguration = loggingConfiguration
+	return sm
+}
+
+// NewStateMachine returns a new StateMachine instance
+func NewStateMachine(stateMachineName string,
+	startState TransitionState) *StateMachine {
+
+	return createStateMachine(stateMachineName,
+		stateMachineStandard,
+		startState)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,9 +1,10 @@
 # Change Notes
 
-## v1.13.1 - The post:Invent Edition 🗓
+## v1.13.1 - The post:Invent Edition 🎰
 
 - :warning: **BREAKING**
 - :checkered_flag: **CHANGES**
+  - Added [step.NewExpressStateMachine](https://godoc.org/github.com/mweagle/Sparta/aws/step#NewExpressStateMachine) to support creating AWS Step Functions Express Workflows functions that support the new [step function type](https://aws.amazon.com/blogs/aws/new-aws-step-functions-express-workflows-high-performance-low-cost/)
 - :bug: **FIXED**
   - [Correct documentation links](https://github.com/mweagle/Sparta/issues/160)
 
