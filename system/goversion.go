@@ -169,8 +169,8 @@ func BuildGoBinary(serviceName string,
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
 		// Any CGO paths?
-		cgoLibPath := fmt.Sprintf(containerSourcePath, "/cgo/lib")
-		cgoIncludePath := fmt.Sprintf(containerSourcePath, "/cgo/include")
+		cgoLibPath := fmt.Sprintf("%s/cgo/lib", containerSourcePath)
+		cgoIncludePath := fmt.Sprintf("%s/cgo/include", containerSourcePath)
 
 		// Pass any SPARTA_* prefixed environment variables to the docker build
 		//
