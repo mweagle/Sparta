@@ -54,6 +54,11 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 			fileHeader = annotatedHeader
 		}
 
+		logger.WithFields(logrus.Fields{
+			"Source": info.Name(),
+			"Header": fileHeader,
+		}).Info("Adding ZIP")
+
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)
 		if binaryWriterErr != nil {
