@@ -121,7 +121,7 @@ func BuildGoBinary(serviceName string,
 			buildTags = append(buildTags, eachTag)
 		}
 	}
-	userBuildFlags := []string{"-tags", strings.Join(buildTags, ",")}
+	userBuildFlags := []string{"-tags", strings.Join(buildTags, " ")}
 
 	// Append all the linker flags
 	// Stamp the service name into the binary
