@@ -192,7 +192,7 @@ func BuildGoBinary(serviceName string,
 			"-e",
 			fmt.Sprintf("CGO_LDFLAGS=\"-L%s\"", cgoLibPath),
 			"-e",
-			fmt.Sprintf("CGO_CFLAGS=\"%s\"", cgoIncludePath),
+			fmt.Sprintf("CGO_CFLAGS=\"-I%s\"", cgoIncludePath),
 		}
 		// User vars
 		for _, eachPair := range os.Environ() {
