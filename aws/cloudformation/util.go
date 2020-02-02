@@ -28,13 +28,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-//lint:ignore U1000 because it's actually used
-var cloudFormationStackTemplateMap map[string]*gocf.Template
-
 //var cacheLock sync.Mutex
 
 func init() {
-	cloudFormationStackTemplateMap = make(map[string]*gocf.Template)
 	rand.Seed(time.Now().Unix())
 }
 
@@ -194,46 +190,6 @@ func (converter *templateConverter) results() (*gocf.StringExpr, error) {
 func cloudformationPollingDelay() time.Duration {
 	return time.Duration(3+rand.Int31n(5)) * time.Second
 }
-
-// func existingStackTemplate(serviceName string,
-// 	session *session.Session,
-// 	logger *logrus.Logger) (*gocf.Template, error) {
-// 	cacheLock.Lock()
-// 	defer cacheLock.Unlock()
-// 	template, templateExists := cloudFormationStackTemplateMap[serviceName]
-// 	if !templateExists {
-// 		templateParams := &cloudformation.GetTemplateInput{
-// 			StackName: aws.String(serviceName),
-// 		}
-// 		logger.WithFields(logrus.Fields{
-// 			"Service": serviceName,
-// 		}).Info("Fetching existing CloudFormation template")
-
-// 		cloudformationSvc := cloudformation.New(session)
-// 		rawTemplate, rawTemplateErr := cloudformationSvc.GetTemplate(templateParams)
-// 		if nil != rawTemplateErr {
-// 			if strings.Contains(rawTemplateErr.Error(), "does not exist") {
-// 				template = nil
-// 			} else {
-// 				return nil, rawTemplateErr
-// 			}
-// 		} else {
-// 			t := gocf.Template{}
-// 			jsonDecodeErr := json.NewDecoder(strings.NewReader(*rawTemplate.TemplateBody)).Decode(&t)
-// 			if nil != jsonDecodeErr {
-// 				return nil, jsonDecodeErr
-// 			}
-// 			template = &t
-// 		}
-// 		cloudFormationStackTemplateMap[serviceName] = template
-// 	} else {
-// 		logger.WithFields(logrus.Fields{
-// 			"Service": serviceName,
-// 		}).Debug("Using cached CloudFormation Template resources")
-// 	}
-
-// 	return template, nil
-// }
 
 func updateStackViaChangeSet(serviceName string,
 	cfTemplate *gocf.Template,

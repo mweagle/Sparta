@@ -117,9 +117,7 @@ func BuildGoBinary(serviceName string,
 	}
 	if userSuppliedBuildTags != "" {
 		userBuildTagsParts := strings.Split(userSuppliedBuildTags, " ")
-		for _, eachTag := range userBuildTagsParts {
-			buildTags = append(buildTags, eachTag)
-		}
+		buildTags = append(buildTags, userBuildTagsParts...)
 	}
 	userBuildFlags := []string{"-tags", strings.Join(buildTags, " ")}
 
