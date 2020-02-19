@@ -1049,6 +1049,7 @@ func UserAccountScopedStackName(basename string,
 		return "", awsNameErr
 	}
 	userName := strings.Replace(awsName, " ", "-", -1)
+	userName = strings.Replace(userName, ".", "-", -1)
 	return fmt.Sprintf("%s-%s", basename, userName), nil
 }
 
