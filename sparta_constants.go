@@ -75,6 +75,8 @@ const (
 	ElasticLoadBalancingPrincipal = "elasticloadbalancing.amazonaws.com"
 	// @enum KinesisFirehosePrincipal
 	KinesisFirehosePrincipal = "firehose.amazonaws.com"
+	// @enum EventBridgePrincipal
+	EventBridgePrincipal = "events.amazonaws.com"
 )
 
 type contextKey int
