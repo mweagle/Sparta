@@ -1,8 +1,11 @@
 # reveal.js [![Build Status](https://travis-ci.org/hakimel/reveal.js.svg?branch=master)](https://travis-ci.org/hakimel/reveal.js) <a href="https://slides.com?ref=github"><img src="https://s3.amazonaws.com/static.slid.es/images/slides-github-banner-320x40.png?1" alt="Slides" width="160" height="20"></a>
 
-A framework for easily creating beautiful presentations using HTML. [Check out the live demo](http://revealjs.com/).
+A framework for easily creating beautiful presentations using HTML. [Check out the live demo](https://revealjs.com/).
 
-reveal.js comes with a broad range of features including [nested slides](https://github.com/hakimel/reveal.js#markup), [Markdown contents](https://github.com/hakimel/reveal.js#markdown), [PDF export](https://github.com/hakimel/reveal.js#pdf-export), [speaker notes](https://github.com/hakimel/reveal.js#speaker-notes) and a [JavaScript API](https://github.com/hakimel/reveal.js#api). There's also a fully featured visual editor and platform for sharing reveal.js presentations at [slides.com](https://slides.com?ref=github).
+reveal.js comes with a broad range of features including [nested slides](https://github.com/hakimel/reveal.js#markup), [Markdown support](https://github.com/hakimel/reveal.js#markdown), [PDF export](https://github.com/hakimel/reveal.js#pdf-export), [speaker notes](https://github.com/hakimel/reveal.js#speaker-notes) and a [JavaScript API](https://github.com/hakimel/reveal.js#api). There's also a fully featured visual editor and platform for sharing reveal.js presentations at [slides.com](https://slides.com?ref=github).
+
+### Supporting reveal.js
+This project was started and is maintained by [@hakimel](https://github.com/hakimel/) with the help of many [contributions from the community](https://github.com/hakimel/reveal.js/graphs/contributors). The best way to support the project is to [become a paying member of Slides.com](https://slides.com/pricing)—the reveal.js presentation platform that Hakim is building.
 
 
 ## Table of contents
@@ -27,6 +30,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 - [Touch Navigation](#touch-navigation)
 - [Lazy Loading](#lazy-loading)
 - [API](#api)
+  - [Custom Key Bindings](#custom-key-bindings)
   - [Slide Changed Event](#slide-changed-event)
   - [Presentation State](#presentation-state)
   - [Slide States](#slide-states)
@@ -49,6 +53,7 @@ reveal.js comes with a broad range of features including [nested slides](https:/
 - [Speaker Notes](#speaker-notes)
   - [Share and Print Speaker Notes](#share-and-print-speaker-notes)
   - [Server Side Speaker Notes](#server-side-speaker-notes)
+- [Plugins](#plugins)
 - [Multiplexing](#multiplexing)
   - [Master presentation](#master-presentation)
   - [Client presentation](#client-presentation)
@@ -85,7 +90,7 @@ The core of reveal.js is very easy to install. You'll simply need to download a 
 
 Some reveal.js features, like external Markdown and speaker notes, require that presentations run from a local web server. The following instructions will set up such a server as well as all of the development tasks needed to make edits to the reveal.js source code.
 
-1. Install [Node.js](http://nodejs.org/) (4.0.0 or later)
+1. Install [Node.js](https://nodejs.org/) (9.0.0 or later)
 
 1. Clone the reveal.js repository
    ```sh
@@ -339,6 +344,19 @@ Reveal.initialize({
 	// speaker view
 	defaultTiming: 120,
 
+	// Specify the total time in seconds that is available to
+	// present.  If this is set to a nonzero value, the pacing
+	// timer will work out the time available for each slide,
+	// instead of using the defaultTiming value
+	totalTime: 0,
+
+	// Specify the minimum amount of time you want to allot to
+	// each slide, if using the totalTime calculation method.  If
+	// the automated time allocation causes slide pacing to fall
+	// below this threshold, then you will see an alert in the
+	// speaker notes window
+	minimumTimePerSlide: 0;
+
 	// Enable slide navigation via mouse wheel
 	mouseWheel: false,
 
@@ -367,6 +385,11 @@ Reveal.initialize({
 
 	// Number of slides away from the current that are visible
 	viewDistance: 3,
+
+	// Number of slides away from the current that are visible on mobile
+	// devices. It is advisable to set this to a lower number than
+	// viewDistance in order to save resources.
+	mobileViewDistance: 2,
 
 	// Parallax background image
 	parallaxBackgroundImage: '', // e.g. "'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg'"
@@ -450,7 +473,7 @@ Reveal.initialize({
 		{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
 
 		// Syntax highlight for <code> elements
-		{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		{ src: 'plugin/highlight/highlight.js', async: true },
 
 		// Zoom in and out with Alt+click
 		{ src: 'plugin/zoom-js/zoom.js', async: true },
@@ -530,7 +553,7 @@ Slides can be nested within other slides to create vertical stacks (see [Markup]
 <img src="https://static.slid.es/support/reveal.js-vertical-slides.gif" width="450">
 
 #### Navigation Mode
-You can finetune the reveal.js navigation behavior by using the `navigationMode` config option. Note that these options are only useful for presnetations that use a mix of horizontal and vertical slides. The following navigation modes are available:
+You can fine tune the reveal.js navigation behavior by using the `navigationMode` config option. Note that these options are only useful for presentations that use a mix of horizontal and vertical slides. The following navigation modes are available:
 
 | Value                         | Description |
 | :---------------------------  | :---------- |
@@ -628,6 +651,15 @@ Reveal.getProgress();       // (0 == first slide, 1 == last slide)
 Reveal.getSlides();         // Array of all slides
 Reveal.getTotalSlides();    // Total number of slides
 
+// Returns an array with all horizontal/vertical slides in the deck
+Reveal.getHorizontalSlides();
+Reveal.getVerticalSlides();
+
+// Checks if the presentation contains two or more
+// horizontal/vertical slides
+Reveal.hasHorizontalSlides();
+Reveal.hasVerticalSlides();
+
 // Returns the speaker notes for the current slide
 Reveal.getSlideNotes();
 
@@ -639,7 +671,7 @@ Reveal.isPaused();
 Reveal.isAutoSliding();
 
 // Returns the top-level DOM element
-getRevealElement(); // <div class="reveal">...</div>
+Reveal.getRevealElement(); // <div class="reveal">...</div>
 ```
 
 ### Custom Key Bindings
@@ -776,6 +808,8 @@ Embeds a web page as a slide background that covers 100% of the reveal.js width 
 	<h2>Iframe</h2>
 </section>
 ```
+
+Iframes are lazy-loaded when they become visible. If you'd like to preload iframes ahead of time, you can append a `data-preload` attribute to the slide `<section>`. You can also enable preloading globally for all iframes using the `preloadIframes` configuration option.
 
 #### Background Transitions
 
@@ -916,7 +950,7 @@ Reveal.addEventListener( 'fragmenthidden', function( event ) {
 } );
 ```
 
-### Code syntax highlighting
+### Code Syntax Highlighting
 
 By default, Reveal is configured with [highlight.js](https://highlightjs.org/) for code syntax highlighting. To enable syntax highlighting, you'll have to load the highlight plugin ([plugin/highlight/highlight.js](plugin/highlight/highlight.js)) and a highlight.js CSS theme (Reveal comes packaged with the Monokai themes: [lib/css/monokai.css](lib/css/monokai.css)).
 
@@ -924,7 +958,7 @@ By default, Reveal is configured with [highlight.js](https://highlightjs.org/) f
 Reveal.initialize({
 	// More info https://github.com/hakimel/reveal.js#dependencies
 	dependencies: [
-		{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+		{ src: 'plugin/highlight/highlight.js', async: true },
 	]
 });
 ```
@@ -943,6 +977,37 @@ Below is an example with clojure code that will be syntax highlighted. When the 
 </section>
 ```
 
+#### Line Numbers & Highlights
+
+To enable line numbers, add `data-line-numbers` to your `<code>` tags. If you want to highlight specific lines you can provide a comma separated list of line numbers using the same attribute. For example, in the following example lines 4 and 8-11 are highlighted:
+
+```html
+<pre><code class="hljs" data-line-numbers="4,8-11">
+import React, { useState } from 'react';
+ 
+function Example() {
+  const [count, setCount] = useState(0);
+ 
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
+}
+</code></pre>
+```
+
+<img width="300" alt="line-numbers" src="https://user-images.githubusercontent.com/629429/55332077-eb3c4780-5494-11e9-8854-ba33cd0fa740.png">
+
+#### Step-by-step Highlights
+
+You can step through multiple code highlights on the same code block. Delimit each of your highlight steps with the `|` character. For example `data-line-numbers="1|2-3|4,6-10"` will produce three steps. It will start by highlighting line 1, next step is lines 2-3, and finally line 4 and 6 through 10.
+
+
+
 ### Slide number
 
 If you would like to display the page number of the current slide you can do so using the `slideNumber` and `showSlideNumber` configuration values.
@@ -959,9 +1024,9 @@ Reveal.configure({ slideNumber: true });
 Reveal.configure({ slideNumber: 'c/t' });
 
 // You can provide a function to fully customize the number:
-Reveal.configure({ slideNumber: function() {
+Reveal.configure({ slideNumber: function( slide ) {
     // Ignore numbering of vertical slides
-    return [ Reveal.getIndices().h ];
+    return [ Reveal.getIndices( slide ).h ];
 }});
 
 // Control which views the slide number displays on using the "showSlideNumber" value:
@@ -1037,18 +1102,38 @@ The framework has a built-in postMessage API that can be used when communicating
 <window>.postMessage( JSON.stringify({ method: 'slide', args: [ 2 ] }), '*' );
 ```
 
+#### postMessage Events
+
 When reveal.js runs inside of an iframe it can optionally bubble all of its events to the parent. Bubbled events are stringified JSON with three fields: namespace, eventName and state. Here's how you subscribe to them from the parent window:
 
 ```javascript
 window.addEventListener( 'message', function( event ) {
 	var data = JSON.parse( event.data );
-	if( data.namespace === 'reveal' && data.eventName ==='slidechanged' ) {
+	if( data.namespace === 'reveal' && data.eventName === 'slidechanged' ) {
 		// Slide changed, see data.state for slide number
 	}
 } );
 ```
 
-This cross-window messaging can be toggled on or off using configuration flags.
+#### postMessage Callbacks
+
+When you call any method via the postMessage API, reveal.js will dispatch a message with the return value. This is done so that you can call a getter method and see what the result is. Check out this example:
+
+```javascript
+<revealWindow>.postMessage( JSON.stringify({ method: 'getTotalSlides' }), '*' );
+
+window.addEventListener( 'message', function( event ) {
+	var data = JSON.parse( event.data );
+	// `data.method`` is the method that we invoked
+	if( data.namespace === 'reveal' && data.eventName === 'callback' && data.method === 'getTotalSlides' ) {
+		data.result // = the total number of slides
+	}
+} );
+```
+
+#### Turning postMessage on/off
+
+This cross-window messaging can be toggled on or off using configuration flags. These are the default values.
 
 ```javascript
 Reveal.initialize({
@@ -1180,7 +1265,7 @@ The speaker notes window will also show:
 - Current wall-clock time
 - (Optionally) a pacing timer which indicates whether the current pace of the presentation is on track for the right timing (shown in green), and if not, whether the presenter should speed up (shown in red) or has the luxury of slowing down (blue).
 
-The pacing timer can be enabled by configuring by the `defaultTiming` parameter in the `Reveal` configuration block, which specifies the number of seconds per slide.  120 can be a reasonable rule of thumb.  Timings can also be given per slide `<section>` by setting the `data-timing` attribute.  Both values are in numbers of seconds.
+The pacing timer can be enabled by configuring the `defaultTiming` parameter in the `Reveal` configuration block, which specifies the number of seconds per slide.  120 can be a reasonable rule of thumb.  Alternatively, you can enable the timer by setting `totalTime`, which sets the total length of your presentation (also in seconds).  If both values are specified, `totalTime` wins and `defaultTiming` is ignored.  Regardless of the baseline timing method, timings can also be given per slide `<section>` by setting the `data-timing` attribute (again, in seconds).
 
 
 ## Server Side Speaker Notes
@@ -1200,9 +1285,31 @@ Reveal.initialize({
 
 Then:
 
-1. Install [Node.js](http://nodejs.org/) (4.0.0 or later)
+1. Install [Node.js](http://nodejs.org/) (9.0.0 or later)
 2. Run `npm install`
 3. Run `node plugin/notes-server`
+
+
+## Plugins
+
+Plugins should register themselves with reveal.js by calling `Reveal.registerPlugin( 'myPluginID', MyPlugin )`. Registered plugin instances can optionally expose an "init" function that reveal.js will call to initialize them.
+
+When reveal.js is booted up via `Reveal.initialize()`, it will go through all registered plugins and invoke their "init" methods. If the "init" method returns a Promise, reveal.js will wait for that promise to be fulfilled before finishing the startup sequence and firing the [ready](#ready-event) event. Here's an example of a plugin that does some asynchronous work before reveal.js can proceed:
+
+```javascript
+let MyPlugin = {
+	init: () =>  new Promise( resolve => setTimeout( resolve, 3000 ) )
+};
+Reveal.registerPlugin( 'myPlugin', MyPlugin );
+Reveal.addEventListener( 'ready', () => console.log( 'Three seconds later...' ) );
+Reveal.initialize();
+```
+
+Note that reveal.js will *not* wait for init Promise fulfillment if the plugin is loaded as an [async dependency](#dependencies). If the plugin's init method does _not_ return a Promise, the plugin is considered ready right away and will not hold up the reveal.js startup sequence.
+
+### Retrieving Plugins
+
+If you want to check if a specific plugin is registered you can use the `Reveal.hasPlugin` method and pass in a plugin ID, for example: `Reveal.hasPlugin( 'myPlugin' )`. If you want to retrieve a plugin instance you can use `Reveal.getPlugin( 'myPlugin' )`.
 
 
 ## Multiplexing
@@ -1254,7 +1361,7 @@ Reveal.initialize({
 
 #### Client presentation
 
-Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via `http://example.com/path/to/presentation/client/index.html`, with the configuration below causing them to connect to the socket.io server as clients.
+Served from a publicly accessible static file server. Examples include: GitHub Pages, Amazon S3, Dreamhost, Akamai, etc. The more reliable, the better. Your audience can then access the client presentation via `https://example.com/path/to/presentation/client/index.html`, with the configuration below causing them to connect to the socket.io server as clients.
 
 Example configuration:
 
@@ -1288,7 +1395,7 @@ Server that receives the `slideChanged` events from the master presentation and 
 
 Or you can use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/).
 
-You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit `http://example.com/token`, where `http://example.com` is the location of your socket.io server. Or if you're going to use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), visit [https://reveal-js-multiplex-ccjbegmaii.now.sh/token](https://reveal-js-multiplex-ccjbegmaii.now.sh/token).
+You'll need to generate a unique secret and token pair for your master and client presentations. To do so, visit `https://example.com/token`, where `https://example.com` is the location of your socket.io server. Or if you're going to use the socket.io server at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), visit [https://reveal-js-multiplex-ccjbegmaii.now.sh/token](https://reveal-js-multiplex-ccjbegmaii.now.sh/token).
 
 You are very welcome to point your presentations at the Socket.io server running at [https://reveal-js-multiplex-ccjbegmaii.now.sh/](https://reveal-js-multiplex-ccjbegmaii.now.sh/), but availability and stability are not guaranteed.
 
@@ -1351,7 +1458,7 @@ Reveal.initialize({
 
 If you want to display math equations in your presentation you can easily do so by including this plugin. The plugin is a very thin wrapper around the [MathJax](http://www.mathjax.org/) library. To use it you'll need to include it as a reveal.js dependency, [find our more about dependencies here](#dependencies).
 
-The plugin defaults to using [LaTeX](http://en.wikipedia.org/wiki/LaTeX) but that can be adjusted through the `math` configuration object. Note that MathJax is loaded from a remote server. If you want to use it offline you'll need to download a copy of the library and adjust the `mathjax` configuration value.
+The plugin defaults to using [LaTeX](https://en.wikipedia.org/wiki/LaTeX) but that can be adjusted through the `math` configuration object. Note that MathJax is loaded from a remote server. If you want to use it offline you'll need to download a copy of the library and adjust the `mathjax` configuration value.
 
 Below is an example of how the plugin can be configured. If you don't intend to change these values you do not need to include the `math` config object at all.
 
@@ -1361,9 +1468,9 @@ Reveal.initialize({
 
 	math: {
 		mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
-		config: 'TeX-AMS_HTML-full'  // See http://docs.mathjax.org/en/latest/config-files.html
+		config: 'TeX-AMS_HTML-full', // See http://docs.mathjax.org/en/latest/config-files.html
 		// pass other options into `MathJax.Hub.Config()`
-		TeX: { Macros: macros }
+		TeX: { Macros: { RR: "{\\bf R}" } }
 	},
 
 	dependencies: [
@@ -1385,4 +1492,4 @@ If you want to include math inside of a presentation written in Markdown you nee
 
 MIT licensed
 
-Copyright (C) 2019 Hakim El Hattab, http://hakim.se
+Copyright (C) 2020 Hakim El Hattab, http://hakim.se
