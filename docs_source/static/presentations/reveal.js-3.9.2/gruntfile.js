@@ -19,7 +19,7 @@ module.exports = grunt => {
 				' * http://revealjs.com\n' +
 				' * MIT licensed\n' +
 				' *\n' +
-				' * Copyright (C) 2019 Hakim El Hattab, http://hakim.se\n' +
+				' * Copyright (C) 2020 Hakim El Hattab, http://hakim.se\n' +
 				' */'
 		},
 
@@ -161,9 +161,6 @@ module.exports = grunt => {
 		}
 
 	});
-
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
 	// Default task
 	grunt.registerTask( 'default', [ 'css', 'js' ] );
