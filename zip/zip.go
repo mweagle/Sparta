@@ -34,7 +34,7 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 	}
 
 	appendFile := func(info os.FileInfo) error {
-		zipEntryName := source
+		zipEntryName := info.Name()
 		if rootSource != "" {
 			zipEntryName = fmt.Sprintf("%s/%s", linuxZipName(rootSource), info.Name())
 		}
@@ -53,6 +53,11 @@ func AnnotateAddToZip(zipWriter *zip.Writer,
 			}
 			fileHeader = annotatedHeader
 		}
+
+		logger.WithFields(logrus.Fields{
+			"Source": info.Name(),
+			"Header": fileHeader,
+		}).Info("Adding ZIP")
 
 		// File info for the binary executable
 		binaryWriter, binaryWriterErr := zipWriter.CreateHeader(fileHeader)

@@ -20,7 +20,7 @@
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to CodeCommit Events.
 Goal Assume that we&amp;rsquo;re supposed to write a Lambda function that is triggered in response to any event emitted by a CodeCommit repository.
 Getting Started Our lambda function is relatively short:
-import ( awsLambdaEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;quot;Event&amp;quot;: event, }).Info(&amp;quot;Event received&amp;quot;) return &amp;amp;event, nil }  Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
+import ( awsLambdaEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func echoCodeCommit(ctx context.Context, event awsLambdaEvents.CodeCommitEvent) (interface{}, error) { logger, _ := ctx.Value(sparta.ContextKeyRequestLogger).(*logrus.Entry) logger.WithFields(logrus.Fields{ &amp;#34;Event&amp;#34;: event, }).Info(&amp;#34;Event received&amp;#34;) return &amp;amp;event, nil } Our lambda function doesn&amp;rsquo;t need to do much with the repository message other than log and return it.</description>
     </item>
     
     <item>
@@ -93,7 +93,8 @@ Getting Started We&amp;rsquo;ll start with an empty lambda function and build up
       
       <guid>/reference/eventsources/s3/</guid>
       <description>In this section we&amp;rsquo;ll walkthrough how to trigger your lambda function in response to S3 events. This overview is based on the SpartaImager sample code if you&amp;rsquo;d rather jump to the end result.
-Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.</description>
+Goal Assume we have an S3 bucket that stores images. You&amp;rsquo;ve been asked to write a service that creates a duplicate image that includes a characteristic stamp overlay and store it in the same S3 bucket.
+Getting Started We&amp;rsquo;ll start with an empty lambda function and build up the needed functionality.</description>
     </item>
     
     <item>

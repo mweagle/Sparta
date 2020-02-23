@@ -29,7 +29,7 @@ import (
 
 const (
 	localWorkDir = "./.sparta"
-	hugoVersion  = "0.59.1"
+	hugoVersion  = "0.65.2"
 )
 
 func xplatPath(pathParts ...string) string {
@@ -365,6 +365,14 @@ func EnsurePrealloc() error {
 	return spartamage.Script(preallocCommand)
 }
 
+// CIBuild is the task to build in the context of  CI pipeline
+func CIBuild() error {
+	mg.SerialDeps(EnsureCIBuildEnvironment,
+		Build,
+		Test)
+	return nil
+}
+
 // EnsureMarkdownSpelling ensures that all *.MD files are checked for common
 // spelling mistakes
 func EnsureMarkdownSpelling() error {
@@ -467,14 +475,14 @@ func EnsureAllPreconditions() error {
 	return nil
 }
 
-// EnsureTravisBuildEnvironment is the command that sets up the Travis
+// EnsureCIBuildEnvironment is the command that sets up the CI
 // environment to run the build.
-func EnsureTravisBuildEnvironment() error {
+func EnsureCIBuildEnvironment() error {
 	// Super run some commands
-	travisComands := [][]string{
+	ciCommands := [][]string{
 		{"go", "version"},
 	}
-	return spartamage.Script(travisComands)
+	return spartamage.Script(ciCommands)
 }
 
 // Build the application
@@ -543,14 +551,6 @@ func TestCover() error {
 		{"open", fmt.Sprintf("%s/cover.html", localWorkDir)},
 	}
 	return spartamage.Script(testCoverCommands)
-}
-
-// TravisBuild is the task to build in the context of a Travis CI pipeline
-func TravisBuild() error {
-	mg.SerialDeps(EnsureTravisBuildEnvironment,
-		Build,
-		Test)
-	return nil
 }
 
 // CompareAgainstMasterBranch is a convenience function to show the comparisons

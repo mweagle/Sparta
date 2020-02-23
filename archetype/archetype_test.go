@@ -2,6 +2,7 @@ package archetype
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	awsLambdaEvents "github.com/aws/aws-lambda-go/events"
@@ -53,6 +54,19 @@ func (at *archetypeTest) OnKinesisMessage(ctx context.Context,
 	return nil, nil
 }
 
+func (at *archetypeTest) OnEventBridgeBroadcast(ctx context.Context,
+	msg json.RawMessage) (interface{}, error) {
+	return nil, nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___ ____
+ / __|__ /
+ \__ \|_ \
+ |___/___/
+*/
+////////////////////////////////////////////////////////////////////////////////
 func TestS3Archetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
@@ -95,6 +109,15 @@ func TestS3ScopedArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___ _  _ ___
+ / __| \| / __|
+ \__ \ .` \__ \
+ |___/_|\_|___/
+*/
+////////////////////////////////////////////////////////////////////////////////
+
 func TestSNSArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
@@ -115,6 +138,16 @@ func TestSNSArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___                           ___  ___
+ |   \ _  _ _ _  __ _ _ __  ___|   \| _ )
+ | |) | || | ' \/ _` | '  \/ _ \ |) | _ \
+ |___/ \_, |_||_\__,_|_|_|_\___/___/|___/
+	   |__/
+*/
+////////////////////////////////////////////////////////////////////////////////
 
 func TestDynamoDBArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
@@ -140,6 +173,14 @@ func TestDynamoDBArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/*
+  _  ___             _
+ | |/ (_)_ _  ___ __(_)___
+ | ' <| | ' \/ -_|_-< (_-<
+ |_|\_\_|_||_\___/__/_/__/
+*/
+////////////////////////////////////////////////////////////////////////////////
 func TestKinesisArchetype(t *testing.T) {
 	testStruct := &archetypeTest{}
 
@@ -164,6 +205,14 @@ func TestKinesisArchetype(t *testing.T) {
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+/*
+   ___ _             ___      __    _      _
+  / __| |___ _  _ __| \ \    / /_ _| |_ __| |_
+ | (__| / _ \ || / _` |\ \/\/ / _` |  _/ _| ' \
+  \___|_\___/\_,_\__,_| \_/\_/\__,_|\__\__|_||_|
+*/
+////////////////////////////////////////////////////////////////////////////////
 func TestCloudWatchEvented(t *testing.T) {
 	testStruct := &archetypeTest{}
 
@@ -212,6 +261,59 @@ func TestCloudWatchScheduled(t *testing.T) {
 		nil)
 	if lambdaFnErr != nil {
 		t.Fatalf("Failed to instantiate NewCloudWatchScheduledReactor: %s", lambdaFnErr.Error())
+	}
+	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+/*
+  ___             _   ___     _    _
+ | __|_ _____ _ _| |_| _ )_ _(_)__| |__ _ ___
+ | _|\ V / -_) ' \  _| _ \ '_| / _` / _` / -_)
+ |___|\_/\___|_||_\__|___/_| |_\__,_\__, \___|
+									|___/
+*/
+////////////////////////////////////////////////////////////////////////////////
+func TestEventBridgeScheduled(t *testing.T) {
+	testStruct := &archetypeTest{}
+
+	lambdaFn, lambdaFnErr := NewEventBridgeScheduledReactor(testStruct,
+		"rate(5 minutes)",
+		nil)
+	if lambdaFnErr != nil {
+		t.Fatalf("Failed to instantiate NewEventBridgeScheduledReactor: %s", lambdaFnErr.Error())
+	}
+	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
+
+	lambdaFn, lambdaFnErr = NewEventBridgeScheduledReactor(EventBridgeReactorFunc(testStruct.OnEventBridgeBroadcast),
+		"rate(5 minutes)",
+		nil)
+	if lambdaFnErr != nil {
+		t.Fatalf("Failed to instantiate NewEventBridgeScheduledReactor: %s", lambdaFnErr.Error())
+	}
+	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
+}
+
+func TestEventBridgeEvented(t *testing.T) {
+	testStruct := &archetypeTest{}
+
+	lambdaFn, lambdaFnErr := NewEventBridgeEventReactor(testStruct,
+		map[string]interface{}{
+			"source": []string{"aws.ec2"},
+		},
+		nil)
+	if lambdaFnErr != nil {
+		t.Fatalf("Failed to instantiate NewEventBridgeEventReactor: %s", lambdaFnErr.Error())
+	}
+	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
+
+	lambdaFn, lambdaFnErr = NewEventBridgeEventReactor(EventBridgeReactorFunc(testStruct.OnEventBridgeBroadcast),
+		map[string]interface{}{
+			"source": []string{"aws.ec2"},
+		},
+		nil)
+	if lambdaFnErr != nil {
+		t.Fatalf("Failed to instantiate NewEventBridgeEventReactor: %s", lambdaFnErr.Error())
 	}
 	spartaTesting.Provision(t, []*sparta.LambdaAWSInfo{lambdaFn}, nil)
 }

@@ -20,7 +20,7 @@
       <description>The ApplicationLoadBalancerDecorator allows you to expose lambda functions as Application Load Balancer targets.
 This can be useful to provide HTTP(S) access to one or more Lambda functions without requiring an API-Gateway service.
 Lambda Function Application Load Balancer (ALB) lambda targets must satisfy a prescribed Lambda signature:
-import ( awsEvents &amp;quot;github.com/aws/aws-lambda-go/events&amp;quot; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse  See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
+import ( awsEvents &amp;#34;github.com/aws/aws-lambda-go/events&amp;#34; ) func(context.Context, awsEvents.ALBTargetGroupRequest) awsEvents.ALBTargetGroupResponse See the ALBTargetGroupRequest and ALBTargetGroupResponse godoc entries for more information.
 An example ALB-eligible target function might look like:</description>
     </item>
     
@@ -44,7 +44,7 @@ The CloudMapServiceDecorator leverages the CloudMap service to support intra- an
       <guid>/reference/decorators/cloudfront_distribution/</guid>
       <description>The CloudFrontDistributionDecorator associates a CloudFront Distribution with your S3-backed website. It is implemented as a ServiceDecoratorHookHandler as a single service can only provision one CloudFront distribution.
 Sample usage:
-//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;quot;mySiteSubdomain&amp;quot; // The domain managed by Route53. const domainName = &amp;quot;myRoute53ManagedDomain.net&amp;quot; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
+//////////////////////////////////////////////////////////////////////////////// // CloudFront settings const subdomain = &amp;#34;mySiteSubdomain&amp;#34; // The domain managed by Route53. const domainName = &amp;#34;myRoute53ManagedDomain.net&amp;#34; // The site will be available at // https://mySiteSubdomain.myRoute53ManagedDomain.net  // The S3 bucketname must match the subdomain.domain // name pattern to serve as a CloudFront Distribution target var bucketName = fmt.</description>
     </item>
     
     <item>
@@ -66,7 +66,7 @@ Sample usage:
       <description>CloudFormation stack outputs can be used to advertise information about a service.
 Sparta provides different publishing output decorators depending on the type of CloudFormation resource output:
  Ref: PublishRefOutputDecorator Fn::Att: PublishAttOutputDecorator  Publishing Resource Ref Values For example, to publish the dynamically lambda resource name for a given AWS Lambda function, use PublishRefOutputDecorator such as:
-lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;quot;%s FunctionName&amp;quot;, lambdaFunctionName), fmt.</description>
+lambdaFunctionName := &amp;#34;Hello World&amp;#34; lambdaFn, _ := sparta.NewAWSLambda(lambdaFunctionName, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = append(lambdaFn.Decorators, spartaDecorators.PublishRefOutputDecorator(fmt.Sprintf(&amp;#34;%s FunctionName&amp;#34;, lambdaFunctionName), fmt.</description>
     </item>
     
     <item>
@@ -77,7 +77,7 @@ lambdaFunctionName := &amp;quot;Hello World&amp;quot; lambdaFn, _ := sparta.NewA
       <guid>/reference/decorators/s3_artifact_publisher/</guid>
       <description>The S3ArtifactPublisherDecorator enables a service to publish objects to S3 locations as part of the service lifecycle.
 This decorator is implemented as a ServiceDecoratorHookHandler which is supplied to MainEx. For example:
-hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;quot;SomeValue&amp;quot;: gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;quot;MY-S3-BUCKETNAME&amp;quot;), gocf.Join(&amp;quot;&amp;quot;, gocf.String(&amp;quot;metadata/&amp;quot;), gocf.Ref(&amp;quot;AWS::StackName&amp;quot;), gocf.String(&amp;quot;.json&amp;quot;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook}  </description>
+hooks := &amp;amp;sparta.WorkflowHooks{} payloadData := map[string]interface{}{ &amp;#34;SomeValue&amp;#34;: gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), } serviceHook := spartaDecorators.S3ArtifactPublisherDecorator(gocf.String(&amp;#34;MY-S3-BUCKETNAME&amp;#34;), gocf.Join(&amp;#34;&amp;#34;, gocf.String(&amp;#34;metadata/&amp;#34;), gocf.Ref(&amp;#34;AWS::StackName&amp;#34;), gocf.String(&amp;#34;.json&amp;#34;)), payloadData) hooks.ServiceDecorators = []sparta.ServiceDecoratorHookHandler{serviceHook} </description>
     </item>
     
     <item>

@@ -1,5 +1,44 @@
 # Change Notes
 
+## v1.14.0 - The post:Invent Edition 🎰
+
+- :warning: **BREAKING**
+- :checkered_flag: **CHANGES**
+
+  - Added [step.NewExpressStateMachine](https://godoc.org/github.com/mweagle/Sparta/aws/step#NewExpressStateMachine) to support creating AWS Step Functions Express Workflows functions that support the new [step function type](https://aws.amazon.com/blogs/aws/new-aws-step-functions-express-workflows-high-performance-low-cost/)
+  - Added [archetype.NewEventBridgeScheduledReactor](https://godoc.org/github.com/mweagle/Sparta/aws/archetype#NewEventBridgeScheduledReactor) and [archetype.NewEventBridgeEventReactor](https://godoc.org/github.com/mweagle/Sparta/aws/archetype#NewEventBridgeEventReactor)
+
+    - These convenience functions provide convenience constructors for [EventBridge Lambda Subscribers](https://aws.amazon.com/eventbridge/).
+    - Sample usage:
+
+      ```go
+      func echoEventBridgeEvent(ctx context.Context, msg json.RawMessage) (interface{}, error) {
+        logger, _ := ctx.Value(sparta.ContextKeyLogger).(*logrus.Logger)
+        var eventData map[string]interface{}
+        err := json.Unmarshal(msg, &eventData)
+        logger.WithFields(logrus.Fields{
+          "error":   err,
+          "message": eventData,
+        }).Info("EventBridge event")
+        return nil, err
+      }
+
+      func main() {
+        //...
+        eventBridgeReactorFunc := spartaArchetype.EventBridgeReactorFunc(echoEventBridgeEvent)
+        lambdaFn, _ := spartaArchetype.NewEventBridgeScheduledReactor(eventBridgeReactorFunc,
+                        "rate(1 minute)",
+                        nil)
+        // Register lambdaFn
+      }
+      ```
+
+  - Updated `describe` output to use latest [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/).
+
+- :bug: **FIXED**
+  - [Handle usernames with periods](https://github.com/mweagle/Sparta/pull/161)
+    - Thanks [sasanrose](https://github.com/sasanrose)
+
 ## v1.13.0 - The pre:Invent Edition 🗓
 
 - :warning: **BREAKING**

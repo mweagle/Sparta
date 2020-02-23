@@ -79,7 +79,7 @@ func BuildGoBinary(serviceName string,
 	executableOutput string,
 	useCGO bool,
 	buildID string,
-	buildTags string,
+	userSuppliedBuildTags string,
 	linkFlags string,
 	noop bool,
 	logger *logrus.Logger) error {
@@ -108,8 +108,18 @@ func BuildGoBinary(serviceName string,
 		noopTag = "noop "
 	}
 
-	userBuildFlags := []string{"-tags",
-		fmt.Sprintf("lambdabinary %s%s", noopTag, buildTags)}
+	buildTags := []string{
+		"lambdabinary",
+		"linux",
+	}
+	if noopTag != "" {
+		buildTags = append(buildTags, noopTag)
+	}
+	if userSuppliedBuildTags != "" {
+		userBuildTagsParts := strings.Split(userSuppliedBuildTags, " ")
+		buildTags = append(buildTags, userBuildTagsParts...)
+	}
+	userBuildFlags := []string{"-tags", strings.Join(buildTags, " ")}
 
 	// Append all the linker flags
 	// Stamp the service name into the binary
@@ -156,6 +166,15 @@ func BuildGoBinary(serviceName string,
 		volumeMountMapping := fmt.Sprintf("%s:%s", gopath, containerGoPath)
 		containerSourcePath := fmt.Sprintf("%s%s", containerGoPath, packagePath)
 
+		// If there's one from the environment, use that...
+		// TODO
+
+		// Otherwise, make one...
+
+		// Any CGO paths?
+		cgoLibPath := fmt.Sprintf("%s/cgo/lib", containerSourcePath)
+		cgoIncludePath := fmt.Sprintf("%s/cgo/include", containerSourcePath)
+
 		// Pass any SPARTA_* prefixed environment variables to the docker build
 		//
 		goosTarget := os.Getenv("SPARTA_GOOS")
@@ -167,12 +186,16 @@ func BuildGoBinary(serviceName string,
 			goArch = "amd64"
 		}
 		spartaEnvVars := []string{
-			"-e",
-			fmt.Sprintf("GOPATH=%s", containerGoPath),
+			// "-e",
+			// fmt.Sprintf("GOPATH=%s", containerGoPath),
 			"-e",
 			fmt.Sprintf("GOOS=%s", goosTarget),
 			"-e",
 			fmt.Sprintf("GOARCH=%s", goArch),
+			"-e",
+			fmt.Sprintf("CGO_LDFLAGS=-L%s", cgoLibPath),
+			"-e",
+			fmt.Sprintf("CGO_CFLAGS=-I%s", cgoIncludePath),
 		}
 		// User vars
 		for _, eachPair := range os.Environ() {
@@ -180,7 +203,6 @@ func BuildGoBinary(serviceName string,
 				spartaEnvVars = append(spartaEnvVars, "-e", eachPair)
 			}
 		}
-
 		dockerBuildArgs := []string{
 			"run",
 			"--rm",
@@ -195,9 +217,7 @@ func BuildGoBinary(serviceName string,
 			"build",
 			"-o",
 			executableOutput,
-			"-tags",
-			"lambdabinary linux ",
-			"-buildmode=c-shared",
+			"-buildmode=default",
 		)
 		dockerBuildArgs = append(dockerBuildArgs, userBuildFlags...)
 		cmd = exec.Command("docker", dockerBuildArgs...)

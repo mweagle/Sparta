@@ -1108,37 +1108,47 @@ func validateSpartaPreconditions(lambdaAWSInfos []*LambdaAWSInfo,
 			collisionMemo[keyName] = collisionMemo[keyName] + 1
 		}
 	}
-	// 0 - check for invalid signatures
-	for _, eachLambda := range lambdaAWSInfos {
-		validationErr := ensureValidSignature(eachLambda.userSuppliedFunctionName,
-			eachLambda.handlerSymbol)
-		if validationErr != nil {
-			errorText = append(errorText, validationErr.Error())
-		}
-	}
-
-	// 1 - check for duplicate golang function references.
-	for _, eachLambda := range lambdaAWSInfos {
-		incrementCounter(eachLambda.lambdaFunctionName())
-		for _, eachCustom := range eachLambda.customResources {
-			incrementCounter(eachCustom.userFunctionName)
-		}
-	}
-	// Duplicates?
-	for eachLambdaName, eachCount := range collisionMemo {
-		if eachCount > 1 {
-			logger.WithFields(logrus.Fields{
-				"CollisionCount": eachCount,
-				"Name":           eachLambdaName,
-			}).Error("NewAWSLambda")
+	// 0 - check for nil
+	for eachIndex, eachLambda := range lambdaAWSInfos {
+		if eachLambda == nil {
 			errorText = append(errorText,
-				fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
+				fmt.Sprintf("Lambda at position %d is `nil`", eachIndex))
 		}
 	}
-	logger.WithFields(logrus.Fields{
-		"CollisionMap": collisionMemo,
-	}).Debug("Lambda collision map")
+	// Semantic checks only iff lambdas are non-nil
+	if len(errorText) == 0 {
 
+		// 1 - check for invalid signatures
+		for _, eachLambda := range lambdaAWSInfos {
+			validationErr := ensureValidSignature(eachLambda.userSuppliedFunctionName,
+				eachLambda.handlerSymbol)
+			if validationErr != nil {
+				errorText = append(errorText, validationErr.Error())
+			}
+		}
+
+		// 2 - check for duplicate golang function references.
+		for _, eachLambda := range lambdaAWSInfos {
+			incrementCounter(eachLambda.lambdaFunctionName())
+			for _, eachCustom := range eachLambda.customResources {
+				incrementCounter(eachCustom.userFunctionName)
+			}
+		}
+		// Duplicates?
+		for eachLambdaName, eachCount := range collisionMemo {
+			if eachCount > 1 {
+				logger.WithFields(logrus.Fields{
+					"CollisionCount": eachCount,
+					"Name":           eachLambdaName,
+				}).Error("NewAWSLambda")
+				errorText = append(errorText,
+					fmt.Sprintf("Multiple definitions of lambda: %s", eachLambdaName))
+			}
+		}
+		logger.WithFields(logrus.Fields{
+			"CollisionMap": collisionMemo,
+		}).Debug("Lambda collision map")
+	}
 	if len(errorText) != 0 {
 		return errors.New(strings.Join(errorText[:], "\n"))
 	}

@@ -19,7 +19,7 @@
       <guid>/reference/operations/magefile/</guid>
       <description>Magefile To support cross platform development and usage, Sparta uses magefiles rather than Makefiles. Most projects can start with the magefile.go sample below. The Magefiles provide a discoverable CLI, but are entirely optional. go run main.go XXXX style invocation remains available as well.
 Default Sparta magefile.go This magefile.go can be used, unchanged, for most standard Sparta projects.
-// +build mage // File: magefile.go package main import ( spartaMage &amp;quot;github.com/mweagle/Sparta/magefile&amp;quot; ) // Provision the service func Provision() error { return spartaMage.</description>
+// +build mage  // File: magefile.go  package main import ( spartaMage &amp;#34;github.</description>
     </item>
     
     <item>
@@ -30,7 +30,7 @@ Default Sparta magefile.go This magefile.go can be used, unchanged, for most sta
       <guid>/reference/operations/cloudwatch_alarms/</guid>
       <description>The CloudWatchErrorAlarmDecorator associates a CloudWatch alarm and destination with your Lambda function.
 Sample usage:
-lambdaFn, _ := sparta.NewAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;quot;MY_SNS_ARN&amp;quot;)), }  </description>
+lambdaFn, _ := sparta.NewAWSLambda(&amp;#34;Hello World&amp;#34;, helloWorld, sparta.IAMRoleDefinition{}) lambdaFn.Decorators = []sparta.TemplateDecoratorHandler{ spartaDecorators.CloudWatchErrorAlarmDecorator(1, 1, 1, gocf.String(&amp;#34;MY_SNS_ARN&amp;#34;)), } </description>
     </item>
     
     <item>
@@ -41,7 +41,7 @@ lambdaFn, _ := sparta.NewAWSLambda(&amp;quot;Hello World&amp;quot;, helloWorld, 
       <guid>/reference/operations/cloudwatch_dashboard/</guid>
       <description>The DashboardDecorator creates a CloudWatch Dashboard that produces a single CloudWatch Dashboard to summarize your stack&amp;rsquo;s behavior.
 Sample usage:
-func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks }  A sample dashboard for the SpartaGeekwire project is:
+func workflowHooks(connections *service.Connections, lambdaFunctions []*sparta.LambdaAWSInfo, websiteURL *gocf.StringExpr) *sparta.WorkflowHooks { // Setup the DashboardDecorator lambda hook  workflowHooks := &amp;amp;sparta.WorkflowHooks{ ServiceDecorators: []sparta.ServiceDecoratorHookHandler{ spartaDecorators.DashboardDecorator(lambdaFunctions, 60), serviceResourceDecorator(connections, websiteURL), }, } return workflowHooks } A sample dashboard for the SpartaGeekwire project is:
 Related to this, see the recently announced AWS Lambda Application Dashboard.</description>
     </item>
     
@@ -83,7 +83,7 @@ Related to this, see the recently announced AWS Lambda Application Dashboard.</d
       <guid>/reference/operations/metrics_publisher/</guid>
       <description>AWS Lambda is tightly integrated with other AWS services and provides excellent opportunities for improving your service&amp;rsquo;s observability posture. Sparta includes a CloudWatch Metrics publisher that periodically publishes metrics to CloudWatch.
 This periodic task publishes environment-level metrics that have been detected by the gopsutil package. Metrics include:
- CPU  Percent used  Disk  Percent used  Host  Uptime (milliseconds)  Load  Load1 (no units) Load5 (no units) Load15 (no units)  Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)   You can provide an optional map[string]string set of dimensions to which the metrics should be published.</description>
+ CPU  Percent used   Disk  Percent used   Host  Uptime (milliseconds)   Load  Load1 (no units) Load5 (no units) Load15 (no units)   Network  NetBytesSent (bytes) NetBytesRecv (bytes) NetErrin (count) NetErrout (count)    You can provide an optional map[string]string set of dimensions to which the metrics should be published.</description>
     </item>
     
     <item>

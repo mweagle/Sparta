@@ -5,7 +5,7 @@ jobs:
     name: CI
     strategy:
       matrix:
-        go-version: [1.13.4]
+        go-version: [1.13.7]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     env:
@@ -39,4 +39,4 @@ jobs:
           # Workaround
           # https://github.com/actions/setup-go/issues/27
           export PATH=${PATH}:`go env GOPATH`/bin
-          mage -v travisBuild
+          mage -v CIBuild

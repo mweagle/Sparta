@@ -173,8 +173,8 @@ func templateJSFiles(logger *logrus.Logger) []*templateResource {
 
 func templateImageMap(logger *logrus.Logger) map[string]string {
 	images := []string{"SpartaHelmet256.png",
-		"AWSIcons/Compute/Compute_AWSLambda_LambdaFunction.svg",
-		"AWSIcons/Management Tools/ManagementTools_AWSCloudFormation.svg",
+		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Compute/AWS-Lambda_Lambda-Function_light-bg.svg",
+		"AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/AWS-CloudFormation_light-bg.svg",
 	}
 	resources := templateResourcesForKeys(images, logger)
 	imageMap := make(map[string]string)
@@ -194,13 +194,14 @@ func iconForAWSResource(rawEmitter interface{}) string {
 	}
 	canonicalRaw := strings.ToLower(string(jsonBytes))
 	iconMappings := map[string]string{
-		"dynamodb":   "AWSIcons/Database/Database_AmazonDynamoDB.svg",
-		"sqs":        "AWSIcons/Messaging/Messaging_AmazonSQS.svg",
-		"sns":        "AWSIcons/Messaging/Messaging_AmazonSNS_topic.svg",
-		"cloudwatch": "AWSIcons/Management Tools/ManagementTools_AmazonCloudWatch.svg",
-		"kinesis":    "AWSIcons/Analytics/Analytics_AmazonKinesis.svg",
-		"s3":         "AWSIcons/Storage/Storage_AmazonS3_bucket.svg",
-		"codecommit": "AWSIcons/Developer Tools/DeveloperTools_AWSCodeCommit.svg",
+		"dynamodb":   "AWS-Architecture-Icons_SVG_20200131/SVG Light/Database/Amazon-DynamoDB_Table_light-bg.svg",
+		"sqs":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Queue-Service-SQS_light-bg.svg",
+		"sns":        "AWS-Architecture-Icons_SVG_20200131/SVG Light/Application Integration/Amazon-Simple-Notification-Service-SNS_light-bg.svg",
+		"cloudwatch": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Management & Governance/Amazon-CloudWatch.svg",
+		"kinesis":    "AWS-Architecture-Icons_SVG_20200131/SVG Light/Analytics/Amazon-Kinesis_light-bg.svg",
+		//lint:ignore ST1018 This is the name of the icon
+		"s3": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Storage/Amazon-Simple-Storage-Service-S3.svg",
+		"codecommit": "AWS-Architecture-Icons_SVG_20200131/SVG Light/Developer Tools/AWS-CodeCommit_light-bg.svg",
 	}
 	// Return it if we have it...
 	for eachKey, eachPath := range iconMappings {
@@ -208,5 +209,5 @@ func iconForAWSResource(rawEmitter interface{}) string {
 			return eachPath
 		}
 	}
-	return "AWSIcons/General/General_AWScloud.svg"
+	return "AWS-Architecture-Icons_SVG_20200131/SVG Light/_General/General_light-bg.svg"
 }

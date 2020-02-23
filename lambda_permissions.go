@@ -895,7 +895,167 @@ func (perm CloudWatchEventsPermission) descriptionInfo() ([]descriptionNode, err
 
 //
 // END - CloudWatchEventsPermission
-///////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - EventBridgeRule
+//
+
+// EventBridgeRule defines parameters for invoking a lambda function
+// in response to specific EventBridge triggers
+type EventBridgeRule struct {
+	Description  string
+	EventBusName string
+	// ArbitraryJSONObject filter for events as documented at
+	// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-events-rule.html#cfn-events-rule-eventpattern
+	// Rules matches should use the JSON representation (NOT the string form).  Sparta will serialize
+	// the map[string]interface{} to a string form during CloudFormation Template
+	// marshalling.
+	EventPattern map[string]interface{} `json:"EventPattern,omitempty"`
+	// Schedule pattern per
+	// https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-events-rule.html#cfn-events-rule-scheduleexpression
+	ScheduleExpression string
+}
+
+// MarshalJSON customizes the JSON representation used when serializing to the
+// CloudFormation template representation.
+func (rule EventBridgeRule) MarshalJSON() ([]byte, error) {
+	ruleJSON := map[string]interface{}{}
+
+	ruleJSON["Description"] = marshalString(rule.Description)
+	ruleJSON["EventBusName"] = marshalString(rule.EventBusName)
+	if rule.EventPattern != nil {
+		ruleJSON["EventPattern"] = marshalInterface(rule.EventPattern)
+	}
+	if rule.ScheduleExpression != "" {
+		ruleJSON["ScheduleExpression"] = marshalString(rule.ScheduleExpression)
+	}
+	return json.Marshal(ruleJSON)
+}
+
+//
+// END - EventBridgeRule
+////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// START - EventBridgePermission
+//
+
+// EventBridgePermission struct implies that the EventBridge sources
+// should be configured as part of provisioning.  The BasePermission.SourceArn
+// isn't considered for this configuration. Each EventBridge Rule or Schedule struct
+// in the Rules map is used to register for push based event notifications via
+// `putRule` and `deleteRule`.
+// See http://docs.aws.amazon.com/lambda/latest/dg/intro-core-components.html#intro-core-components-event-sources
+// for more information.
+type EventBridgePermission struct {
+	BasePermission
+	// EventBridgeRule for this permission
+	Rule *EventBridgeRule
+}
+
+func (perm EventBridgePermission) export(serviceName string,
+	lambdaFunctionDisplayName string,
+	lambdaLogicalCFResourceName string,
+	template *gocf.Template,
+	S3Bucket string,
+	S3Key string,
+	logger *logrus.Logger) (string, error) {
+
+	// There needs to be at least one rule to apply
+	if perm.Rule == nil {
+		return "", fmt.Errorf("function %s EventBridgePermission does not specify any EventBridgeRule",
+			lambdaFunctionDisplayName)
+	}
+
+	// Name for the rule...
+	eventBridgeRuleResourceName := CloudFormationResourceName(fmt.Sprintf("EventBridge-%s", lambdaLogicalCFResourceName),
+		lambdaFunctionDisplayName)
+
+	// Tell the user we're ignoring any Arns provided, since it doesn't make sense for this.
+	if nil != perm.BasePermission.SourceArn &&
+		perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...).String() != wildcardArn.String() {
+		logger.WithFields(logrus.Fields{
+			"Arn": perm.BasePermission.sourceArnExpr(cloudformationEventsSourceArnParts...),
+		}).Warn("EventBridge Events do not support literal ARN values")
+	}
+
+	// Add the permission
+	basePerm := BasePermission{
+		SourceArn: gocf.GetAtt(eventBridgeRuleResourceName, "Arn"),
+	}
+	_, exportErr := basePerm.export(gocf.String(EventBridgePrincipal),
+		cloudformationEventsSourceArnParts,
+		lambdaFunctionDisplayName,
+		lambdaLogicalCFResourceName,
+		template,
+		S3Bucket,
+		S3Key,
+		logger)
+
+	if nil != exportErr {
+		return "", exportErr
+	}
+
+	eventBridgeRuleTargetList := gocf.EventsRuleTargetList{}
+	eventBridgeRuleTargetList = append(eventBridgeRuleTargetList,
+		gocf.EventsRuleTarget{
+			Arn: gocf.GetAtt(lambdaLogicalCFResourceName, "Arn"),
+			ID:  gocf.String(serviceName),
+		},
+	)
+	if nil != perm.Rule.EventPattern &&
+		perm.Rule.ScheduleExpression != "" {
+		return "", fmt.Errorf("rule %s EventBridge specifies both EventPattern and ScheduleExpression",
+			perm.Rule)
+	}
+
+	// Add the rule
+	eventsRule := &gocf.EventsRule{
+		Targets: &eventBridgeRuleTargetList,
+	}
+	if perm.Rule.EventBusName != "" {
+		eventsRule.EventBusName = marshalString(perm.Rule.EventBusName)
+	}
+	// Setup the description placeholder...we'll set it in a bit...
+	ruleDescription := ""
+	if perm.Rule.EventPattern != nil {
+		eventsRule.EventPattern = marshalInterface(perm.Rule.EventPattern)
+		ruleDescription = fmt.Sprintf("%s (Stack: %s) event pattern subscriber",
+			lambdaFunctionDisplayName,
+			serviceName)
+	} else if perm.Rule.ScheduleExpression != "" {
+		eventsRule.ScheduleExpression = marshalString(perm.Rule.ScheduleExpression)
+		ruleDescription = fmt.Sprintf("%s (Stack: %s) scheduled subscriber",
+			lambdaFunctionDisplayName,
+			serviceName)
+	}
+	eventsRule.Description = marshalString(ruleDescription)
+	template.AddResource(eventBridgeRuleResourceName, eventsRule)
+	return "", nil
+}
+
+func (perm EventBridgePermission) descriptionInfo() ([]descriptionNode, error) {
+	var ruleTriggers = " "
+
+	filter := perm.Rule.ScheduleExpression
+	if filter == "" && perm.Rule.EventPattern != nil {
+		filter = fmt.Sprintf("%v", perm.Rule.EventPattern)
+	}
+	ruleTriggers = fmt.Sprintf("EventBridge-(%s)\n%s", filter, ruleTriggers)
+
+	nodes := []descriptionNode{
+		{
+			Name:     "EventBridge Event",
+			Relation: ruleTriggers,
+		},
+	}
+	return nodes, nil
+}
+
+//
+// END - CloudWatchEventsPermission
+////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 // START - CloudWatchLogsPermission
@@ -1061,22 +1221,6 @@ func (perm CloudWatchLogsPermission) descriptionInfo() ([]descriptionNode, error
 //
 // END - CloudWatchLogsPermission
 ///////////////////////////////////////////////////////////////////////////////////
-
-/*
-{
-    "configurationId": "5af0e618-67c7-4cfc-be51-9509194b9414",
-    "triggers": [
-        {
-            "name": "codeCommitTrigger",
-            "destinationArn": "arn:aws:lambda:us-west-2:027159405834:function:codeCommitTriggered",
-            "branches": [],
-            "events": [
-                "all"
-            ]
-        }
-    ]
-}
-*/
 
 ////////////////////////////////////////////////////////////////////////////////
 // START - CodeCommitPermission
